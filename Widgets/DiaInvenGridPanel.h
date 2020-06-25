@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/DiaInvenGridSlot.h"
 #include "Components/GridPanel.h"
@@ -40,4 +40,14 @@ public:
 	void SetGrid(int x,int y);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void UpdateSlot(int index, const FItemInstance& itemInst);
+	UFUNCTION(BlueprintCallable, Category = "Widget")
+	void AddItem(int index, FItemInstance& itemWantAdd);
+	UFUNCTION(BlueprintCallable, Category = "Widget")
+	void AddItemStack(int index);
+	UFUNCTION(BlueprintCallable, Category = "Widget")
+	void RemoveItem(int index);
+	UFUNCTION(BlueprintCallable, Category = "Widget")
+	void RemoveItemStack(int index);
+
+	bool OnDropHeapedIndex(int dropIndex, int dragIndex);
 };

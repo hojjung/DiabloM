@@ -34,22 +34,49 @@ void UDiaInvenGridPanel::SetGrid(int x, int y)
 	{
 		for (int Y = 0; Y < InvenY; Y++)
 		{
-			m_SlotGridPanel->SetColumnFill(X, 1);
-			m_SlotGridPanel->SetRowFill(Y, 1);
+			m_SlotGridPanel->SetColumnFill(Y, 1);
+			m_SlotGridPanel->SetRowFill(X, 1);
 			UDiaInvenGridSlot* SlotCreated = CreateWidget<UDiaInvenGridSlot>(this, m_ClassGridSlot);
 			UGridSlot* ChildSlot = m_SlotGridPanel->AddChildToGrid(SlotCreated);
-			ChildSlot->SetColumn(X);
-			ChildSlot->SetRow(Y);
+			ChildSlot->SetColumn(Y);
+			ChildSlot->SetRow(X);
 			m_ArySlot.Add(SlotCreated);
-			SlotCreated->InitSlot(Index);
+			SlotCreated->InitSlot(Index,this);
 			Index++;
 		}
 	}
-
-	//SetBoxSize(invenSize);
 }
+
 
 void UDiaInvenGridPanel::UpdateSlot(int index, const FItemInstance& itemInst)
 {
 	m_ArySlot[index]->SetSlot(itemInst);
+}
+
+
+void UDiaInvenGridPanel::AddItem(int index, FItemInstance & itemWantAdd)
+{
+	m_Inven->AddItem(index, itemWantAdd);
+}
+
+void UDiaInvenGridPanel::AddItemStack(int index )
+{
+	m_Inven->AddItemStack(index);
+}
+
+void UDiaInvenGridPanel::RemoveItem(int index)
+{
+	m_Inven->RemoveItem(index);
+}
+
+void UDiaInvenGridPanel::RemoveItemStack(int index )
+{
+	m_Inven->RemoveItemStack(index );
+}
+
+bool UDiaInvenGridPanel::OnDropHeapedIndex(int dropIndex, int dragIndex)
+{
+
+	return m_Inven->OnDropIndexHeaped(dropIndex, dragIndex);
+
 }

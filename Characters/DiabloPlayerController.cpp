@@ -9,6 +9,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "DrawDebugHelpers.h"
 #include "Objs/DroppedItem.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 
 ADiabloPlayerController::ADiabloPlayerController()
@@ -83,12 +84,12 @@ void ADiabloPlayerController::PrintInven()
 
 bool ADiabloPlayerController::AddItem(FItemInstance itemInst)
 {
-	return m_Inven->AddItem(itemInst);
+	return m_Inven->AddItemAuto(itemInst);
 }
 
 bool ADiabloPlayerController::PickUpItem(ADroppedItem * pickupItem)
 {
-	return m_Inven->AddItem(pickupItem->GetItemInstance());
+	return AddItem(pickupItem->GetItemInstance());
 }
 
 void ADiabloPlayerController::OpenMainMenu()
@@ -99,11 +100,14 @@ void ADiabloPlayerController::OpenMainMenu()
 		return;
 	}
 
-
+	//UWidgetBlueprintLibrary::SetInputMode_UIOnly(this);
+	bShowMouseCursor = true;
 	m_MainMenu->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
 void ADiabloPlayerController::CloseMainMenu()
 {
+	//UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
 	m_MainMenu->SetVisibility(ESlateVisibility::Hidden);
+	bShowMouseCursor = false;
 }

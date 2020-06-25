@@ -111,7 +111,7 @@ public:
 		m_nGridIndex = gridIndex;
 	}
 
-protected:
+public:
 	int m_nCurrentStack;
 	int m_nGridIndex;
 	const FItemData* m_ItemData;
@@ -146,24 +146,9 @@ public:
 		return --m_nCurrentStack;
 	}//리턴값이 0보다 작으면,밖에서 삭제할것
 
-public:
-	FORCEINLINE FName GetItemID() const
+	void ClearData()
 	{
-		return m_ItemData->m_NameID;
-	}
-
-	FORCEINLINE int GetCurrentStack() const
-	{
-		return m_nCurrentStack;
-	}
-
-	FORCEINLINE int GetIndex() const
-	{
-		return m_nGridIndex;
-	}
-
-	FORCEINLINE const FItemData& GetItemData() const
-	{
-		return *m_ItemData;
+		m_ItemData = nullptr;
+		m_nCurrentStack = -1;
 	}
 };

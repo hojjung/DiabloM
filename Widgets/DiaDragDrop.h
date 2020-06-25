@@ -19,7 +19,7 @@
  성공 및 교체시 내자리로 이전 아이템 옮김
 
  휴지통에 드랍할경우, 땅에 버림
-
+ 캡슐화 x
  */
 
 
@@ -28,7 +28,7 @@ class DIABLOM_API UDiaDragDrop : public UDragDropOperation
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	USizeBox* m_MainSizeBox;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -38,19 +38,19 @@ protected:
 	UPROPERTY()
 	UDiaInvenGridSlot* m_PreSlot;
 
-protected:
+public:
 	int m_nPreIndex;
 
 	FItemInstance m_DraggedItem;
 
 public:
 	void SetDDO(const FItemInstance& itemInst);
-	void InitDrag(UDiaInvenGridSlot* preSlot, UDiaInvenGridPanel* prePanel);//slot turn blur
-	void FailDrag();//back to pre grid slot
-	void SuccessDrop();//
-	void RemovePreItemVisualFromInven();
-	bool DropItemToGround(ADGRG_CombatCharacter* dropper);
+
+	void InitDrag(UDiaInvenGridSlot* preSlot);//slot turn blur
 
 public:
+	UFUNCTION()
 	void OnDragCancel(UDragDropOperation* meSelf);
+	UFUNCTION()
+	void OnDrop(UDragDropOperation* meSelf);
 };
