@@ -16,6 +16,7 @@ ADiabloPlayerController::ADiabloPlayerController()
 {
 	CheatClass = UDiabloCheatManager::StaticClass();
 	m_ClassMainMenu = UDefaultMenu::StaticClass();
+
 	m_nInvenX = 5;
 	m_nInvenY = 8;
 }
@@ -23,13 +24,14 @@ ADiabloPlayerController::ADiabloPlayerController()
 void ADiabloPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
 	m_Inven = new Inventory();
 	m_Inven->InitInven(m_nInvenX,m_nInvenY);
 
 	m_SkillSystem = new PlayerSkillSystem();
 
 	m_EquipSystem = new EquipmentSystem();
-
+	m_EquipSystem->Init();
 
 	InitWidget();
 }
@@ -39,6 +41,7 @@ void ADiabloPlayerController::InitWidget()
 	m_MainMenu = CreateWidget<UDefaultMenu>(this, m_ClassMainMenu, "MainMenu00");
 	m_MainMenu->AddToViewport();
 	m_MainMenu->Init(this,Cast<APlayerDiabloCharacter>(GetPawn()),m_SkillSystem ,m_EquipSystem,m_Inven);
+
 	CloseMainMenu();
 }
 
@@ -82,9 +85,15 @@ void ADiabloPlayerController::PrintInven()
 	m_Inven->PrintInven();
 }
 
+void ADiabloPlayerController::PrintEquipment()
+{
+	m_EquipSystem->PrintEquipStats();
+}
+
 bool ADiabloPlayerController::AddItem(FItemInstance itemInst)
 {
-	return m_Inven->AddItemAuto(itemInst);
+	static int Index = 0;
+	return m_Inven->AddItem(Index++,itemInst);
 }
 
 bool ADiabloPlayerController::PickUpItem(ADroppedItem * pickupItem)

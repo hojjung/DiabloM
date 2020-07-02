@@ -8,11 +8,11 @@
 
 
 
-class DIABLOM_API Inventory
+class DIABLOM_API Inventory :public IItemHolder
 {
 public:
 	~Inventory();
-	DECLARE_DELEGATE_TwoParams(FOnItemSlotChanged, int,const FItemInstance&);
+	
 
 protected:
 	int m_nXGridCount;
@@ -25,48 +25,33 @@ protected:
 
 	int m_nCurrentEmptyIndex;
 
-public:
 	FOnItemSlotChanged m_OnSlotChanged;
-
+public:
+	virtual FOnItemSlotChanged& GetItemChangeCallback() override
+	{
+		return m_OnSlotChanged;
+	}
 public:
 	void InitInven(int xCount,int yCount);
-
 	//
-	void AddItem(int index, FItemInstance& itemWantAdd);
+	virtual bool CheckSlotValid(int droppedIndex, FItemInstance& itemWantAdd) override;
+
+	virtual void SetItem(int index, FItemInstance& itemWantAdd) override;
 
 	void AddItemStack(int index );
 
-	void RemoveItem(int index);
+	virtual void RemoveItem(FItemInstance& itemWantErase)override;
+	virtual void RemoveItemByIndex(int index) override;
 
 	void RemoveItemStack(int index);
 
-	void SwapItemIndex(int aIndex,int bIndex);
+	virtual bool AddItem(int droppedIndex, FItemInstance& itemWantAdd ) override;
+	virtual bool SwapMove(FItemInstance &Drop, FItemInstance &Drag) override;
 
-	bool StackMoveItem(int increaseIndex, int decreaseIndex);
+	void StackMove(FItemInstance &Drop, FItemInstance &Drag, IItemHolder* preItemHolder);
 
-	bool OnDropIndexHeaped(int droppedSlot, int draggedDDO);
-	void SwapMove(int draggedDDO, FItemInstance &Drop, int droppedSlot, FItemInstance &Drag);
-	void StackMove(FItemInstance &Drop, FItemInstance &Drag, int droppedSlot, int draggedDDO);
-	//드랍으로 인덱스가 겹칠때
-
-	//
-	bool AddItemAuto(FItemInstance& itemWantAdd);
-
-	bool AddItemToIndex(int index, FItemInstance& itemWantAdd);
-	//
-	FItemInstance RemoveItemFromIndex(int index);
-
-	//TArray<FItemInstance> RemoveItemAuto(FName itemId,int wantCount);
-	//
-	bool AddToList(TArray<FItemInstance>& FoundItemList, FItemInstance &itemWantAdd);
-	void SetEmptyIndex();
-	bool RemoveItemByName(FName id, int itemCount = 1);//퀘스트 등의 제거
-	void RemoveItemInstance(FItemInstance itemWantRemove);//전체 때어냄.드래그
 	void PrintInven();
 	void GetInvenSize(int& x, int & y);
 
 	FItemInstance& GetItemRef(int index);
-protected:
-	bool CheckItemExist(TArray<FItemInstance>*& foundItemList, FName id, bool stackable, int countWant = 1);
-	bool TryGetStackable(TArray<FItemInstance>& itemList, FItemInstance*& outItemInst);
 };

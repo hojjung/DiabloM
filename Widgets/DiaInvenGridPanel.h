@@ -6,7 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "Widgets/DiaInvenGridSlot.h"
 #include "Components/GridPanel.h"
-
 #include "DiaInvenGridPanel.generated.h"
 
 /**
@@ -41,7 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void UpdateSlot(int index, const FItemInstance& itemInst);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
-	void AddItem(int index, FItemInstance& itemWantAdd);
+	bool AddItem(int index, FItemInstance& itemWantAdd);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void AddItemStack(int index);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
@@ -49,5 +48,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void RemoveItemStack(int index);
 
-	bool OnDropHeapedIndex(int dropIndex, int dragIndex);
+
+	FORCEINLINE Inventory* GetInven() const
+	{
+		return m_Inven;
+	}
+
 };

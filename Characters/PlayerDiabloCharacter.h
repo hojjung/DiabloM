@@ -4,13 +4,13 @@
 
 #include "DiabloM.h"
 #include "Characters/UnitPawn.h"
-#include "Objs/Interactable.h"
+
 #include "PlayerDiabloCharacter.generated.h"
 
 /**
  * 
  */
-
+class IInteractable;
 class ADiabloPlayerController;
 class UCameraDissolve;
 UCLASS()

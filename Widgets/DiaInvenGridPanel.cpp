@@ -18,7 +18,7 @@ void UDiaInvenGridPanel::Init(Inventory* itemContainer )
 	int X, Y;
 
 	m_Inven->GetInvenSize(X,Y);
-	m_Inven->m_OnSlotChanged.BindUObject(this, &UDiaInvenGridPanel::UpdateSlot);
+	m_Inven->GetItemChangeCallback().AddUObject(this, &UDiaInvenGridPanel::UpdateSlot);
 	SetGrid(X, Y);
 }
 
@@ -41,7 +41,8 @@ void UDiaInvenGridPanel::SetGrid(int x, int y)
 			ChildSlot->SetColumn(Y);
 			ChildSlot->SetRow(X);
 			m_ArySlot.Add(SlotCreated);
-			SlotCreated->InitSlot(Index,this);
+			SlotCreated->InitSlot(Index);
+			SlotCreated->m_OnDropIndex.BindUObject(this,&UDiaInvenGridPanel::AddItem);
 			Index++;
 		}
 	}
@@ -54,9 +55,9 @@ void UDiaInvenGridPanel::UpdateSlot(int index, const FItemInstance& itemInst)
 }
 
 
-void UDiaInvenGridPanel::AddItem(int index, FItemInstance & itemWantAdd)
+bool UDiaInvenGridPanel::AddItem(int index, FItemInstance & itemWantAdd)
 {
-	m_Inven->AddItem(index, itemWantAdd);
+	return m_Inven->AddItem(index, itemWantAdd);
 }
 
 void UDiaInvenGridPanel::AddItemStack(int index )
@@ -66,17 +67,11 @@ void UDiaInvenGridPanel::AddItemStack(int index )
 
 void UDiaInvenGridPanel::RemoveItem(int index)
 {
-	m_Inven->RemoveItem(index);
+	//m_Inven->RemoveItem(index);
 }
 
 void UDiaInvenGridPanel::RemoveItemStack(int index )
 {
-	m_Inven->RemoveItemStack(index );
+	//m_Inven->RemoveItemStack(index );
 }
 
-bool UDiaInvenGridPanel::OnDropHeapedIndex(int dropIndex, int dragIndex)
-{
-
-	return m_Inven->OnDropIndexHeaped(dropIndex, dragIndex);
-
-}

@@ -50,10 +50,6 @@ void ADroppedItem::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 }
 
-void ADroppedItem::CreateItemInstance(EItemType itemType, const FItemData * itemTable)
-{
-	m_ItemInstance =  FItemInstance(itemTable, -1);
-}
 
 void ADroppedItem::PickupItem(AActor * interactCaster)
 {
@@ -83,7 +79,7 @@ void ADroppedItem::SetItem(FName itemID)
 
     m_MeshComp->SetStaticMesh(ItemData->m_ItemMesh);
 
-	CreateItemInstance(ItemData->m_ItemType, ItemData);
+	m_ItemInstance = GetGameInstance<UDiabloGameInstance>()->CreateItem(itemID);
 }
 
 FItemInstance  ADroppedItem::GetItemInstance()

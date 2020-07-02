@@ -44,7 +44,6 @@ protected:
 protected:
 	UPROPERTY()
 	UDefaultMenu* m_MainMenu;//실제로 태어난 위젯 메인 메뉴
-	
 
 	//able skill tree
 	//learned skill tree
@@ -72,12 +71,15 @@ public:
 
 	void PrintInven();
 
+	void PrintEquipment();
+
 	bool AddItem(FItemInstance itemInst);
 
 	bool PickUpItem(ADroppedItem* pickupItem);
 
+	UFUNCTION(BlueprintCallable)
 	void OpenMainMenu();
-
+	UFUNCTION(BlueprintCallable)
 	void CloseMainMenu();
 	//
 	//배울수 있는 스킬

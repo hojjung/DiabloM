@@ -2,16 +2,54 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
+#include "Objs/EquipmentSystem.h"
 #include "DiaEquipmentPanel.generated.h"
 
-/**
- * 
- */
+
+class UDiaInvenGridSlot;
 UCLASS()
 class DIABLOM_API UDiaEquipmentPanel : public UUserWidget
 {
 	GENERATED_BODY()
 	
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaInvenGridSlot* m_SlotHead;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaInvenGridSlot* m_SlotNeck;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaInvenGridSlot* m_SlotTorso;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaInvenGridSlot* m_SlotWaist;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaInvenGridSlot* m_SlotLeg;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaInvenGridSlot* m_SlotHand;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaInvenGridSlot* m_SlotShoulder;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaInvenGridSlot* m_SlotWeaponLeft;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaInvenGridSlot* m_SlotWeaponRight;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaInvenGridSlot* m_SlotFingerLeft;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaInvenGridSlot* m_SlotFingerRight;
+
+protected:
+	EquipmentSystem* m_EquipSys;
+
+	TArray<UDiaInvenGridSlot*> m_ArySlots;
+
+public:
+	void Init(EquipmentSystem* equipContainer);
+
+	bool EquipItem(int dropIndex, FItemInstance& drag);
+
+protected:
+	void UpdateSlot(int index, const FItemInstance& itemInst);
+
+	void UpdateStance(EAnimStance currentStance);
 };

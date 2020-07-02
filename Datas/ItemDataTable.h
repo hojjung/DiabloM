@@ -7,39 +7,54 @@
 #include "Engine/DataAsset.h"
 #include "Engine/DataTable.h"
 #include "Engine/StaticMesh.h"
+#include "Objs/Interfaces/ItemHolder.h"
+#include "AbilitySystem/AbilityTypes.h"
 #include "ItemDataTable.generated.h"
 
 /**
  * 
  */
+
 UCLASS()
 class DIABLOM_API UItemDataTable : public UObject
 {
 	GENERATED_BODY()
 	
 };
-
+UENUM(BlueprintType)
+enum class EItemLocation :uint8//아이템 인스턴스의 위치
+{
+	Void,
+	Ground,
+	Equipment,
+	Inventory,
+	Stash,
+	Length
+};
 
 UENUM(BlueprintType)
 enum class EItemType :uint8//아이템 사용을 뜻함
 {
+	None,
 	Misc,
-	Equipment,
+	OneHandSword,
+	TwohandSword,
+	Dagger,
+	Katana,
+	Bow,
+	Staff,
+	Shield,
+	Helmet,
+	Necklace,
+	BodyArmor,
+	Belt,
+	Leggins,
+	Gauntlets,
+	ShoulderArmor,
+	Ring, 
 	Consumable,
 	Length
 };
-
-UENUM(BlueprintType)
-enum class EItemThrowType :uint8
-{
-	CantThrow,
-	DefaultThrow,//공격할수 없는 물건을 던질때
-	AttackThrow,//공격용 물건을 던짐
-	GiveThrow,
-	Length
-};
-
-
 
 USTRUCT(BlueprintType)//난이도,티어
 struct FItemData : public FTableRowBase
@@ -53,7 +68,7 @@ public:
 		m_ItemType = EItemType::Misc;
 		m_bStackable = true;
 		m_nInitStack = 1;
-		m_nMaxStack = 99;//(B=242,G=242,R=242,A=255)
+		m_nMaxStack = 99;
 		m_Color = FColor(242, 242, 242, 255);
 	}
 
@@ -76,6 +91,8 @@ public:
 	FLinearColor m_Color;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTexture* m_ItemIcon;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<TSubclassOf<UGameplayEffect>> m_DefaultPassive;
 };
 
 
@@ -100,38 +117,40 @@ struct FItemInstance
 public:
 	FItemInstance()
 	{
-		m_ItemData = nullptr;
-		m_nCurrentStack = -1;
-		m_nGridIndex = -1;
+		ClearData();
 	}
-	FItemInstance(const FItemData* itemData, int gridIndex)
+
+	FItemInstance(const FItemData* itemData, int gridIndex, IItemHolder* holder, TArray<float>* aryUseEffect=nullptr)
 	{
 		m_ItemData = itemData;
 		m_nCurrentStack = m_ItemData->m_nInitStack;
 		m_nGridIndex = gridIndex;
+		m_Holder = holder;
+
+
+		m_AryEffectScale.Init(1, 1.f);
+
+		if(aryUseEffect)
+			m_AryEffectScale = *aryUseEffect;
 	}
 
 public:
 	int m_nCurrentStack;
 	int m_nGridIndex;
 	const FItemData* m_ItemData;
-
+	TArray<float> m_AryEffectScale;
+	IItemHolder* m_Holder;
 public:
+
+	bool IsValid()
+	{
+		return m_ItemData;
+	}
+
 	void SetGridNewIndex(int newIndex)
 	{
 		m_nGridIndex = newIndex;
 	}//드래그 드랍
-	bool AddStack()
-	{
-		if (!CheckCanStack())
-		{
-			return false;
-		}
-
-		m_nCurrentStack++;
-
-		return true;
-	}
 
 	bool CheckCanStack() const
 	{
@@ -141,14 +160,12 @@ public:
 	{
 		return m_ItemData->m_bStackable;
 	}//근본적으로 스택이 되는지
-	int RemoveStack()
-	{
-		return --m_nCurrentStack;
-	}//리턴값이 0보다 작으면,밖에서 삭제할것
 
 	void ClearData()
 	{
 		m_ItemData = nullptr;
 		m_nCurrentStack = -1;
+		m_nGridIndex = -1;
 	}
+
 };

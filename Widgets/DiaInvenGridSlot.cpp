@@ -2,15 +2,11 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Widgets/DiaDragDrop.h"
 
-
 UDiaDragDrop* UDiaInvenGridSlot::GetDDOInst = nullptr;
 
 
-void UDiaInvenGridSlot::InitSlot(int indexFromGrid, UDiaInvenGridPanel* parentGrid)
+void UDiaInvenGridSlot::InitSlot(int indexFromGrid)
 {
-	m_ParentGrid = nullptr;
-	m_ParentGrid = parentGrid;
-
 	m_nIndex = indexFromGrid;
 	
 	ClearSlot();
@@ -41,6 +37,8 @@ void UDiaInvenGridSlot::ClearSlot()
 	m_ImgItemVisual->SetVisibility(ESlateVisibility::Hidden);
 	SetIconOpacity(1.0f);
 	m_CopiedItemData.ClearData();
+	SetVisualColorTint(FColor::White);
+	ClearSlotFocus();
 }
 
 void UDiaInvenGridSlot::UpdateText(const FItemInstance& itemInstance)
@@ -77,6 +75,12 @@ void UDiaInvenGridSlot::SetIconOpacity(float opacityMaxOne)
 	m_ImgItemVisual->SetOpacity(opacityMaxOne);
 }
 
+void UDiaInvenGridSlot::SetVisualColorTint(FLinearColor colorW)
+{
+	m_ImgItemVisual->SetBrushTintColor(FSlateColor(colorW));
+	m_ImgSlotHighlight->SetBrushTintColor(FSlateColor(colorW));
+}
+
 bool UDiaInvenGridSlot::IsSlotEmpty()
 {
 	return !m_CopiedItemData.m_ItemData;
@@ -102,11 +106,6 @@ UDiaDragDrop * UDiaInvenGridSlot::CreateDDO(const FItemInstance & itemInst)
 	return DDO;
 }
 
-bool UDiaInvenGridSlot::CanDrop(const FItemInstance & itemInst)
-{//implemet require
-	return true;
-}
-
 
 FReply UDiaInvenGridSlot::NativeOnMouseButtonDown(const FGeometry & MyGeometry, const FPointerEvent & MouseEvent)
 {
@@ -130,32 +129,25 @@ void UDiaInvenGridSlot::NativeOnDragEnter(const FGeometry & InGeometry, const FD
 {
 	Super::NativeOnDragEnter(InGeometry, InDragDropEvent, InOperation);
 	SetSlotFocus();
-	//PRINTF("Enter");
 }
 
 void UDiaInvenGridSlot::NativeOnDragLeave(const FDragDropEvent & InDragDropEvent, UDragDropOperation * InOperation)
 {
 	Super::NativeOnDragLeave(InDragDropEvent,InOperation);
 	ClearSlotFocus();
-	//PRINTF("Leave");
 }
 
 bool UDiaInvenGridSlot::NativeOnDrop(const FGeometry & InGeometry, const FDragDropEvent & InDragDropEvent, UDragDropOperation * InOperation)
 {
 	bool Result=Super::NativeOnDrop(InGeometry,InDragDropEvent,InOperation);
+
 	ClearSlotFocus();
+
 	PRINTF("Dropped Slot Index:%d",m_nIndex);
+
 	UDiaInvenGridSlot::GetDDOInst->m_PreSlot->SetIconOpacity(1.f);
 
-	if (!CanDrop(UDiaInvenGridSlot::GetDDOInst->m_DraggedItem))
-	{
-		return false;
-	}
-
-	int DropIndex = m_nIndex;
-	int DragIndex = UDiaInvenGridSlot::GetDDOInst->m_PreSlot->m_nIndex;
-
-	Result=m_ParentGrid->OnDropHeapedIndex(DropIndex, DragIndex);
+	Result= m_OnDropIndex.Execute(m_nIndex, UDiaInvenGridSlot::GetDDOInst->m_DraggedItem);
 
 	return Result;
 }

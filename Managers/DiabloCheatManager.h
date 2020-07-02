@@ -32,4 +32,6 @@ public:
 	void PrintPlayerStats();
 	UFUNCTION(exec)
 	void PrintInventory();
+	UFUNCTION(exec)
+	void PrintEquipment();
 };

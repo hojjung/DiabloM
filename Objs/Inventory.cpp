@@ -26,103 +26,111 @@ void Inventory::InitInven(int xCount, int yCount)
 	//m_ItemDic.Reserve(CountTotal);
 }
 
-void Inventory::AddItem(int index, FItemInstance & itemWantAdd)
+bool Inventory::CheckSlotValid(int droppedIndex, FItemInstance & itemWantAdd)
 {
-	m_ItemAry[index] = itemWantAdd;
-	m_ItemAry[index].m_nGridIndex = index;
-	m_OnSlotChanged.ExecuteIfBound(index, m_ItemAry[index]);
+	return &m_ItemAry[droppedIndex];
+}
+
+void Inventory::SetItem(int droppedIndex, FItemInstance & itemWantAdd)
+{
+	m_ItemAry[droppedIndex] = itemWantAdd;
+	m_ItemAry[droppedIndex].m_nGridIndex = droppedIndex;
+	m_ItemAry[droppedIndex].m_Holder = this;
+	m_OnSlotChanged.Broadcast(droppedIndex, m_ItemAry[droppedIndex]);
 }
 
 void Inventory::AddItemStack(int index)
 {
-	m_ItemAry[index].AddStack();
+	m_ItemAry[index].m_nCurrentStack++;
+
+	m_OnSlotChanged.Broadcast(index, m_ItemAry[index]);
 }
 
-void Inventory::RemoveItem(int index)
+void Inventory::RemoveItem(FItemInstance & itemWantErase)
+{
+	RemoveItemByIndex(itemWantErase.m_nGridIndex);
+}
+
+void Inventory::RemoveItemByIndex(int index)
 {
 	m_ItemAry[index].ClearData();
-	m_OnSlotChanged.ExecuteIfBound(index, m_ItemAry[index]);
+	m_OnSlotChanged.Broadcast(index, m_ItemAry[index]);
 }
 
 void Inventory::RemoveItemStack(int index)
 {
-	m_ItemAry[index].RemoveStack();
-}
+	m_ItemAry[index].m_nCurrentStack--;
 
-void Inventory::SwapItemIndex(int aIndex, int bIndex)
-{
-	FItemInstance A = m_ItemAry[aIndex];
-	FItemInstance B = m_ItemAry[bIndex];
-
-	AddItem(aIndex, A);
-
-	AddItem(bIndex, B);
-}
-
-bool Inventory::StackMoveItem(int increaseIndex, int decreaseIndex)
-{
-	FItemInstance I = m_ItemAry[increaseIndex];//
-	FItemInstance D = m_ItemAry[decreaseIndex];//
-
-	if (!I.CheckCanStack() || !I.GetIsStackable() || I.m_ItemData != D.m_ItemData)
+	if (m_ItemAry[index].m_nCurrentStack <= 0)
 	{
+		RemoveItemByIndex(index);
+	}
+
+	m_OnSlotChanged.Broadcast(index, m_ItemAry[index]);
+}
+
+bool Inventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//빌드후 여기도
+{
+	if (this == (Inventory*)(itemWantAdd.m_Holder) && droppedIndex == itemWantAdd.m_nGridIndex)
+	{
+		PRINTF("Prevent MySelf");
 		return false;
 	}
 
-
-
-
-	return true;
-}
-
-bool Inventory::OnDropIndexHeaped(int droppedSlot, int draggedDDO)
-{
-	if (droppedSlot == draggedDDO)
+	if (CheckSlotValid(droppedIndex,itemWantAdd) && !m_ItemAry[droppedIndex].m_ItemData)
 	{
-		return false;
-	}
-
-	if (!m_ItemAry[droppedSlot].m_ItemData)
-	{
-		AddItem(droppedSlot, GetItemRef(draggedDDO));
-		RemoveItem(draggedDDO);
+		SetItem(droppedIndex, itemWantAdd);
+		itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
 		PRINTF("Success1");
 		return true;
 	}
 
-	FItemInstance Drop = m_ItemAry[droppedSlot];
+	int DragIndex = itemWantAdd.m_nGridIndex;
 
-	FItemInstance Drag = GetItemRef(draggedDDO);
+	FItemInstance Drop = m_ItemAry[droppedIndex];
 
 	//Stack
-	if (Drag.GetIsStackable()&& Drag.CheckCanStack() && Drop.m_ItemData->m_NameID == Drag.m_ItemData->m_NameID)//스왑방지코드
+	bool Result = false;
+	if (itemWantAdd.GetIsStackable() && itemWantAdd.CheckCanStack() && Drop.m_ItemData->m_NameID == itemWantAdd.m_ItemData->m_NameID)//스왑방지코드
 	{
-		StackMove(Drop, Drag, droppedSlot, draggedDDO);
+		StackMove(Drop, itemWantAdd, itemWantAdd.m_Holder);
 
+		Result = true;
 		PRINTF("Stack");
 	}
 	else
 	{
-
-		PRINTF("SWap");
 		//Swap
-		SwapMove(draggedDDO, Drop, droppedSlot, Drag);
+		PRINTF("SWap");
+		Result=SwapMove(Drop, itemWantAdd);
 	}
 
-	m_OnSlotChanged.ExecuteIfBound(droppedSlot, m_ItemAry[droppedSlot]);
-	m_OnSlotChanged.ExecuteIfBound(draggedDDO, m_ItemAry[draggedDDO]);
+	if (Result)
+	{
+		m_OnSlotChanged.Broadcast(droppedIndex, m_ItemAry[droppedIndex]);
+		m_OnSlotChanged.Broadcast(DragIndex, m_ItemAry[DragIndex]);
+	}
+
+	return Result;
+}
+
+bool Inventory::SwapMove(FItemInstance &Drop, FItemInstance &Drag)
+{
+	int DropIndex = Drop.m_nGridIndex;
+	int DragIndex = Drag.m_nGridIndex;
+
+	if (!Drag.m_Holder->CheckSlotValid(DragIndex, Drop))
+	{
+		return false;
+	}
+
+	Drag.m_Holder->SetItem(DragIndex, Drop);
+	SetItem(DropIndex, Drag);
 
 	return true;
 }
 
-void Inventory::SwapMove(int draggedDDO, FItemInstance &Drop, int droppedSlot, FItemInstance &Drag)
-{
-	AddItem(draggedDDO, Drop);
-
-	AddItem(droppedSlot, Drag);
-}
-
-void Inventory::StackMove(FItemInstance &Drop, FItemInstance &Drag, int droppedSlot, int draggedDDO)
+void Inventory::StackMove(FItemInstance &Drop, FItemInstance &Drag, IItemHolder* preItemHolder)
 {
 	int DiffStackCount = Drop.m_ItemData->m_nMaxStack - Drop.m_nCurrentStack;
 
@@ -130,202 +138,20 @@ void Inventory::StackMove(FItemInstance &Drop, FItemInstance &Drag, int droppedS
 
 	while (Count--)
 	{
-		AddItemStack(droppedSlot);
-		RemoveItemStack(draggedDDO);
+		AddItemStack(Drop.m_nGridIndex);
+		Drag.m_nCurrentStack--;
 	}
 
-	if (m_ItemAry[draggedDDO].m_nCurrentStack <= 0)
+	if (Drag.m_nCurrentStack <= 0)
 	{
-		m_ItemAry[draggedDDO].ClearData();
-	}
-}
-
-bool Inventory::AddItemAuto(FItemInstance& itemWantAdd)//use for auto add
-{
-	AddItem(m_nCurrentEmptyIndex++, itemWantAdd);
-	//FName ItemID = itemWantAdd.GetItemID();
-
-	//bool IsStackable = itemWantAdd.GetIsStackable();
-
-	//if (!IsStackable)
-	//{
-	//	if (m_nCurrentEmptyIndex == -1)
-	//	{
-	//		PRINTF("Inven Max 1");
-
-	//		return false;
-	//	}
-	//}
-
-	//TArray<FItemInstance>*  FoundItemList = nullptr;
-
-	//if (CheckItemExist(FoundItemList, ItemID, IsStackable))//이미 아이템이 존재하는지
-	//{
-	//	if (IsStackable)//스택이 가능한 아이템이야?
-	//	{
-	//		FItemInstance* FoundItem=nullptr;
-
-	//		if (TryGetStackable(*FoundItemList, FoundItem))//스택추가 가능한거 찾아냄
-	//		{
-	//			FoundItem->AddStack();
-
-	//			m_OnSlotChanged.ExecuteIfBound(FoundItem->GetIndex(), *FoundItem);
-	//			//스텍만 늘어남
-	//			return true;
-	//		}
-	//	}
-
-	//	return AddToList(*FoundItemList, itemWantAdd);
-	//}
-
-	//
-	//TArray<FItemInstance> NewList;
-	//if (!AddToList(NewList, itemWantAdd))
-	//{
-	//	return false;
-	//}
-	//m_ItemContainer.Emplace(ItemID, NewList);
-	//리스트 자체 추가
-	return true;
-}
-
-bool Inventory::AddItemToIndex(int index, FItemInstance & itemWantAdd)
-{
-	if (!m_ItemAry[index].m_ItemData)//비어있음
-	{
-		m_ItemAry[index] = itemWantAdd;
-		m_ItemAry[index].m_nGridIndex = index;
-		m_OnSlotChanged.ExecuteIfBound(index, m_ItemAry[index]);
-		return true;
+		preItemHolder->RemoveItem(Drag);
 	}
 
-	//비어있지 않다면?
-
-	//스택 불가 아이템이면 불가능 혹은 스왑,스왑못하지 지금,저 아이템이 어디서 온건지 어케알아
-
-	/*if (!itemWantAdd.GetIsStackable() || !m_ItemAry[index].CheckCanStack())
-	{
-		return false;
-	}*/
-	//
-
-	if (itemWantAdd.GetIsStackable() && itemWantAdd.m_ItemData->m_NameID == m_ItemAry[index].m_ItemData->m_NameID)//스왑방지코드
-	{
-		while (m_ItemAry[index].CheckCanStack() && itemWantAdd.m_nCurrentStack > 0)
-		{
-			m_ItemAry[index].AddStack();
-			itemWantAdd.RemoveStack();
-		}
-	}
-	else
-	{
-		m_ItemAry[index] = itemWantAdd;
-		m_ItemAry[index].m_nGridIndex = index;
-		m_OnSlotChanged.ExecuteIfBound(index, m_ItemAry[index]);
-	}
-
-
-
-	m_OnSlotChanged.ExecuteIfBound(index, m_ItemAry[index]);
-
-	return true;
-
-}
-
-FItemInstance Inventory::RemoveItemFromIndex(int index)
-{
-	FItemInstance RemovedData = m_ItemAry[index];
-	m_ItemAry[index].ClearData();
-
-	return RemovedData;
-}
-
-bool Inventory::AddToList(TArray<FItemInstance>& FoundItemList, FItemInstance &itemWantAdd)
-{
-	/*if (m_nCurrentEmptyIndex == -1)
-	{
-		return false;
-	}
-	itemWantAdd.SetGridNewIndex(m_nCurrentEmptyIndex);
-	int Index= FoundItemList.Add(itemWantAdd);
-	m_GridItem[m_nCurrentEmptyIndex] = true;
-	m_OnSlotChanged.ExecuteIfBound(m_nCurrentEmptyIndex, FoundItemList[Index]);
-	SetEmptyIndex();*/
-
-	return true;
-}
-
-void Inventory::SetEmptyIndex()
-{
-	//m_nCurrentEmptyIndex = -1;
-	//for (int i = 0; i < m_GridItem.Num(); i++)
-	//{
-	//	if (!m_GridItem[i])
-	//	{
-	//		m_nCurrentEmptyIndex = i;
-	//		return;
-	//	}
-	//}
-
-	//remove 시 누가 더작은지 비교
-}
-
-
-bool Inventory::CheckItemExist(TArray<FItemInstance>*&  foundItemList, FName id, bool stackable, int countWant)//지금은 개수가 중요하다
-{
-	/*int FoundCount = 0;
-
-	if (m_ItemContainer.Contains(id))
-	{
-		if (!stackable)
-		{
-			for (FItemInstance& InItem : m_ItemContainer[id])
-			{
-				FoundCount++;
-			}
-		}
-		else
-		{
-			for (FItemInstance& InItem : m_ItemContainer[id])
-			{
-				FoundCount += InItem.GetCurrentStack();
-			}
-		}
-
-		if (FoundCount >= countWant)
-		{
-			foundItemList = &m_ItemContainer[id];
-
-			return true;
-		}
-	}*/
-	return false;
-}
-
-bool Inventory::RemoveItemByName(FName id, int itemCount)
-{
-	return false;
-}
-
-void Inventory::RemoveItemInstance(FItemInstance itemWantRemove)
-{
 }
 
 void Inventory::PrintInven()
 {
-	//int Count = m_ItemContainer.Num();
 	PRINTF("----InvenPrint----");
-	//PRINTF("There is %d of Item In Inventory", Count);
-
-	//for (auto& List : m_ItemContainer)
-	//{
-	//	PRINTF("ItemName: %s",  *List.Key.ToString());
-
-	//	for (FItemInstance& ItemInst : List.Value)
-	//	{
-	//		PRINTF("Index: %d , Stack: %d, Ptr:%x", ItemInst.GetIndex(), ItemInst.GetCurrentStack(), &ItemInst);
-	//	}
-	//}
 
 	for (auto& Item : m_ItemAry)
 	{
@@ -349,17 +175,3 @@ FItemInstance & Inventory::GetItemRef(int index)
 	return m_ItemAry[index];
 }
 
-bool Inventory::TryGetStackable(TArray<FItemInstance>& itemList, FItemInstance*& outItemInst)
-{
-	for (auto& Item : itemList)
-	{
-		if (Item.CheckCanStack())
-		{
-			outItemInst = &Item;
-
-			return true;
-		}
-	}
-
-	return false;
-}

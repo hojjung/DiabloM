@@ -6,11 +6,9 @@
 #include "Engine/GameInstance.h"
 #include "Datas/CharacterDataTable.h"
 #include "Datas/ItemDataTable.h"
+#include "Managers/ItemManager.h"
 #include "DiabloGameInstance.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class DIABLOM_API UDiabloGameInstance : public UGameInstance
 {
@@ -20,6 +18,8 @@ public:
 	UDiabloGameInstance(const FObjectInitializer& objInit);
 
 protected:
+	ItemManager* m_ItemManager;
+protected:
 	UPROPERTY(EditAnywhere)
 	UDataTable* m_BaseUnitTable;
 	UPROPERTY(EditAnywhere)
@@ -27,7 +27,15 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UDataTable* m_ItemTable;
 
+
+protected:
+	virtual void Init() override;
+
+	virtual void Shutdown()override ;
+
 public:
 	const FBaseStatTable* GetBaseUnit(FName id) const;
 	const FItemData* GetItemData(FName id)const;
+
+	FItemInstance CreateItem(FName id);
 };

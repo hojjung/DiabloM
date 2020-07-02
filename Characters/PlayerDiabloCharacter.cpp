@@ -4,6 +4,7 @@
 #include "Datas/CharacterDataTable.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Camera/CameraDissolve.h"
+#include "Objs/Interfaces/Interactable.h"
 
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
 	:Super(objInit.SetDefaultSubobjectClass<UPlayerDiabloAttribute>("AttributeSet00"))

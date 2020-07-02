@@ -9,7 +9,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
-#include "Objs/Interactable.h"
+#include "Objs/Interfaces/Interactable.h"
 #include "DroppedItem.generated.h"
 
 UCLASS()
@@ -37,8 +37,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
-	void CreateItemInstance(EItemType itemType, const FItemData * itemTable);
 
 	void PickupItem(AActor* interactCaster);
 

@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
+#include "Widgets/DiaEquipmentPanel.h"
 #include "DefaultMenu.generated.h"
 
 
@@ -24,6 +25,8 @@ class DIABLOM_API UDefaultMenu : public UUserWidget
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaInvenGridPanel* m_InvenGridPanel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaEquipmentPanel* m_EquipPanel;
 protected:
 	UPROPERTY()
 	ADiabloPlayerController* m_PlayerCon;

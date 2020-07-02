@@ -16,15 +16,18 @@
  */
 class UDiaInvenGridPanel;
 class UDiaDragDrop;
+
+
+
 UCLASS()
 class DIABLOM_API UDiaInvenGridSlot : public UUserWidget
 {
 	GENERATED_BODY()
 	
-	
+public:
+	DECLARE_DELEGATE_RetVal_TwoParams(bool, FDropIndex, int, FItemInstance&);
+
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UDiaDragDrop> m_ClassDDO;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UOverlay* m_Overlay1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -38,8 +41,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextItemStackCount;
 
-	UPROPERTY()
-	UDiaInvenGridPanel* m_ParentGrid;
 protected:
 	int m_nIndex;
 
@@ -48,11 +49,13 @@ protected:
 public:
 	static UDiaDragDrop* GetDDOInst;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	USizeBox* m_SizeItemVisual;
+	USizeBox* m_SizeItemVisual;//for DDO
+
+	FDropIndex m_OnDropIndex;
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Item")
-	void InitSlot(int indexFromGrid,UDiaInvenGridPanel* parentGrid);
+	void InitSlot(int indexFromGrid);
 	UFUNCTION(BlueprintCallable,Category="Item")
 	void SetSlot(const FItemInstance& itemInstance);
 	UFUNCTION(BlueprintCallable, Category = "Item")
@@ -60,14 +63,16 @@ public:
 
 	void SetIconOpacity(float opacityMaxOne);
 
+	void SetVisualColorTint(FLinearColor colorW);
+
 	bool IsSlotEmpty();
 
+	void UpdateItemVisual(const FItemInstance& itemInstance);
 protected:
 	void UpdateText(const FItemInstance& itemInstance);
 
 	void UpdateEffectBG(const FItemInstance& itemInstance);
 
-	void UpdateItemVisual(const FItemInstance& itemInstance);
 
 	void SetSlotFocus();
 
@@ -81,7 +86,6 @@ protected:
 	//
 	UDiaDragDrop* CreateDDO(const FItemInstance& itemInst);
 
-	virtual bool CanDrop(const FItemInstance& itemInst);//for slot limit
 
 public:
 	FORCEINLINE int  GetIndex()

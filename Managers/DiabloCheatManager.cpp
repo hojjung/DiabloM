@@ -21,3 +21,8 @@ void UDiabloCheatManager::PrintInventory()
 {
 	m_PlayerController->PrintInven();
 }
+
+void UDiabloCheatManager::PrintEquipment()
+{
+	m_PlayerController->PrintEquipment();
+}

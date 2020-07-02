@@ -17,6 +17,19 @@ UDiabloGameInstance::UDiabloGameInstance(const FObjectInitializer& objInit):Supe
 	}
 }
 
+void UDiabloGameInstance::Init()
+{
+	Super::Init();
+	m_ItemManager = new ItemManager();
+	m_ItemManager->Init(this);
+}
+
+void UDiabloGameInstance::Shutdown()
+{
+	Super::Shutdown();
+	delete m_ItemManager;
+}
+
 const FBaseStatTable * UDiabloGameInstance::GetBaseUnit(FName id) const
 {
 	return m_BaseUnitTable->FindRow<FBaseStatTable>(id, "");
@@ -25,5 +38,10 @@ const FBaseStatTable * UDiabloGameInstance::GetBaseUnit(FName id) const
 const FItemData * UDiabloGameInstance::GetItemData(FName id) const
 {
 	return m_ItemTable->FindRow<FItemData>(id, "");
+}
+
+FItemInstance UDiabloGameInstance::CreateItem(FName id)
+{
+	return m_ItemManager->CreateItemInstance(id);
 }
 
