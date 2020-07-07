@@ -2,7 +2,8 @@
 #include "Widgets/DiaInvenGridSlot.h"
 #include "Datas/ItemDataTable.h"
 #include "Widgets/ItemPopupInfo.h"
-
+#include "WidgetLayoutLibrary.h"
+#include "Components/CanvasPanelSlot.h"
 UDiaEquipmentPanel* UDiaEquipmentPanel::GetEquipWidgetInst = nullptr;
 
 void UDiaEquipmentPanel::Init(EquipmentSystem * equipContainer)
@@ -118,7 +119,39 @@ void UDiaEquipmentPanel::ShowItemInfo(const FGeometry & theInstigator, const FIt
 {
 	m_ItemPopup->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	m_ItemPopup->SetInfoPanel(itemInst);
-	//m_ItemPopup->SetPositionInViewport(theInstigator->GetAnchorsInViewport());
+
+	m_ItemPopup->SetInfoPanel(itemInst);
+	//
+	auto Geo = UWidgetLayoutLibrary::GetPlayerScreenWidgetGeometry(GetOwningPlayer());
+	auto* PanelSlot = Cast<UCanvasPanelSlot>(m_ItemPopup->Slot);
+	auto ClickedItemSlot = this->GetCachedGeometry().AbsoluteToLocal(theInstigator.GetAbsolutePosition()) + theInstigator.GetLocalSize() / 2.0f;
+
+	ClickedItemSlot.X -= ((m_ItemPopup->GetDesiredSize().X) / 2.0f) +( theInstigator.GetLocalSize().X/2.0f);
+
+
+	float ScreenY = Geo.GetAbsoluteSize().Y;
+	float PopupSizeY = ((m_ItemPopup->GetDesiredSize().Y*Geo.Scale)) / 2.0f;
+	float ScreenTopToItem = ClickedItemSlot.Y*Geo.Scale;
+	float ScreenBottomToItem = ScreenY - ClickedItemSlot.Y*Geo.Scale;
+
+	float ReverseScale = 1.f / Geo.Scale;
+
+	if (ScreenTopToItem < PopupSizeY)
+	{
+		float Diff = PopupSizeY - ScreenTopToItem;
+
+		ClickedItemSlot.Y += Diff * ReverseScale;
+		ClickedItemSlot.Y += 70.f;
+	}
+	else if (ScreenBottomToItem < PopupSizeY)
+	{
+		float Diff = PopupSizeY - FMath::Abs(ScreenBottomToItem);
+
+		ClickedItemSlot.Y -= Diff * ReverseScale;
+		ClickedItemSlot.Y -= 70.f;
+	}
+
+	PanelSlot->SetPosition(ClickedItemSlot);
 }
 
 void UDiaEquipmentPanel::HideItemInfo()

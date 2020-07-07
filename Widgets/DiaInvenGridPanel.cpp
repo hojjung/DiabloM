@@ -31,11 +31,13 @@ void UDiaInvenGridPanel::ShowItemInfo(const FGeometry & theInstigator, const FIt
 	m_ItemPopup->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	m_ItemPopup->SetInfoPanel(itemInst);
 	//
-	auto* PanelSlot = Cast<UCanvasPanelSlot>(m_ItemPopup->Slot);
-	ClickedItemSlot = this->GetCachedGeometry().AbsoluteToLocal(theInstigator.GetAbsolutePosition()) + theInstigator.GetLocalSize() / 2.0f;
-	ClickedItemSlot.X -= m_ItemPopup->GetDesiredSize().X / 2.0f;
-
 	auto Geo= UWidgetLayoutLibrary::GetPlayerScreenWidgetGeometry(GetOwningPlayer());
+	auto* PanelSlot = Cast<UCanvasPanelSlot>(m_ItemPopup->Slot);
+	auto ClickedItemSlot = this->GetCachedGeometry().AbsoluteToLocal(theInstigator.GetAbsolutePosition()) + theInstigator.GetLocalSize() / 2.0f;
+
+	//ClickedItemSlot.X -= ((m_ItemPopup->GetCachedGeometry().GetLocalSize().X) / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f);
+	ClickedItemSlot.X -= ((m_ItemPopup->GetDesiredSize().X) / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f);
+
 
 	float ScreenY = Geo.GetAbsoluteSize().Y;
 	float PopupSizeY = ((m_ItemPopup->GetDesiredSize().Y*Geo.Scale))/2.0f;
@@ -49,14 +51,14 @@ void UDiaInvenGridPanel::ShowItemInfo(const FGeometry & theInstigator, const FIt
 		float Diff = PopupSizeY - ScreenTopToItem;
 
 		ClickedItemSlot.Y += Diff * ReverseScale;
-		ClickedItemSlot.Y += 50.f;
+		ClickedItemSlot.Y += 70.f;
 	}
 	else if (ScreenBottomToItem < PopupSizeY)
 	{
 		float Diff = PopupSizeY - FMath::Abs(ScreenBottomToItem);
 
 		ClickedItemSlot.Y -= Diff * ReverseScale;
-		ClickedItemSlot.Y -= 50.f ;
+		ClickedItemSlot.Y -= 70.f ;
 	}
 
 	PanelSlot->SetPosition(ClickedItemSlot);
@@ -119,43 +121,5 @@ void UDiaInvenGridPanel::RemoveItem(int index)
 void UDiaInvenGridPanel::RemoveItemStack(int index )
 {
 	//m_Inven->RemoveItemStack(index );
-}
-
-void UDiaInvenGridPanel::BoxDraw2(FPaintContext & cont, FVector2D point, float widthheight, FLinearColor color) const
-{
-	float newH = widthheight / 2.0f;
-
-	FVector2D p1 = point;
-
-	p1.X -= newH;
-	p1.Y += newH;
-
-	FVector2D p2 = p1;
-
-	p2.X += widthheight;
-
-	UWidgetBlueprintLibrary::DrawLine(cont, p1, p2, color);
-
-	FVector2D p3 = p1;
-	FVector2D p4 = p2;
-
-	p3.Y -= widthheight;
-	p4.Y -= widthheight;
-
-	UWidgetBlueprintLibrary::DrawLine(cont, p3, p4, color);
-
-	UWidgetBlueprintLibrary::DrawLine(cont, p1, p3, color);
-
-	UWidgetBlueprintLibrary::DrawLine(cont, p2, p4, color);
-}
-
-int32 UDiaInvenGridPanel::NativePaint(const FPaintArgs & Args, const FGeometry & AllottedGeometry, const FSlateRect & MyCullingRect, FSlateWindowElementList & OutDrawElements, int32 LayerId, const FWidgetStyle & InWidgetStyle, bool bParentEnabled) const
-{
-	FPaintContext Context(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
-
-	BoxDraw2(Context, ClickedItemSlot, 40.0f, FLinearColor::Red);
-	BoxDraw2(Context, B, 40.0f, FLinearColor::Blue);
-
-	return Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
 }
 

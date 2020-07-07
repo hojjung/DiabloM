@@ -66,13 +66,4 @@ public:
 		return m_Inven;
 	}
 
-	void BoxDraw2(FPaintContext& cont, FVector2D point, float widthheight, FLinearColor color) const;
-
-	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
-	//
-
-private:
-	FVector2D ClickedItemSlot;
-	FVector2D B;
-	FVector2D C;
 };

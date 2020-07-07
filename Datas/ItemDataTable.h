@@ -10,6 +10,7 @@
 #include "Objs/Interfaces/ItemHolder.h"
 #include "AbilitySystem/AbilityTypes.h"
 #include "ConstructorHelpers.h"
+#include "Datas/OptionDataTable.h"
 #include "ItemDataTable.generated.h"
 
 /**
@@ -21,6 +22,26 @@ class DIABLOM_API UItemDataTable : public UObject
 {
 	GENERATED_BODY()
 	
+public:
+	UItemDataTable(const FObjectInitializer& objInit) :Super(objInit)
+	{
+		static ConstructorHelpers::FObjectFinder<UDataTable> FoundOptionTable(TEXT("DataTable'/Game/DataTables/EquipOptionTable.EquipOptionTable'"));
+		m_OptionTable = FoundOptionTable.Object;
+
+		static ConstructorHelpers::FObjectFinder<UDataTable> FoundTierTable(TEXT("DataTable'/Game/DataTables/TierTable.TierTable'"));
+		m_TierTable = FoundTierTable.Object;
+
+		static ConstructorHelpers::FObjectFinder<UDataTable> FoundItemTable(TEXT("DataTable'/Game/DataTables/DefaultItemTable.DefaultItemTable'"));
+		m_DefaultItemTable = FoundItemTable.Object;
+
+	}
+
+	UDataTable* m_OptionTable;
+
+	UDataTable* m_TierTable;
+
+	UDataTable* m_DefaultItemTable;
+
 };
 UENUM(BlueprintType)
 enum class EItemLocation :uint8//아이템 인스턴스의 위치
@@ -68,11 +89,14 @@ public:
 	{
 		m_ShowingName = FText::FromString("Normal");
 		m_TierColor = FColor(242, 242, 242, 255);
+		m_nOptionMaxCount = 0;
 	}
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText m_ShowingName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FLinearColor m_TierColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int m_nOptionMaxCount;
 };
 
 
@@ -84,26 +108,24 @@ struct FItemData : public FTableRowBase
 public:
 	FItemData()
 	{
-		static ConstructorHelpers::FObjectFinder<UDataTable> FoundItemTable(TEXT("DataTable'/Game/DataTables/TierTable.TierTable'"));
-		if (FoundItemTable.Succeeded())
-		{
-			
-			m_ItemTier.DataTable = FoundItemTable.Object;
-			m_ItemTier.RowName = "Normal";
-		}
+		m_ItemTier.DataTable = UItemDataTable::StaticClass()->GetDefaultObject<UItemDataTable>()->m_TierTable;
+		m_ItemTier.RowName = "Normal";
+
 		m_ItemType = EItemType::Misc;
 		m_bStackable = true;
 		m_nInitStack = 1;
 		m_nMaxStack = 99;
 
 		m_nSellValue = 100;
+
 	}
 
-protected:
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FDataTableRowHandle m_ItemTier;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FDataTableRowHandle> m_Options;
 
-public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText m_ShowingName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -131,9 +153,35 @@ public:
 	{
 		return *m_ItemTier.GetRow<FItemTier>("");
 	}
+
+	const FOption& GetOption(int index) const
+	{
+		return *m_Options[index].GetRow<FOption>("");
+	}
 };
 
 
+
+USTRUCT(BlueprintType)
+struct FOptionValue
+{
+	GENERATED_BODY()
+
+public:
+	FOptionValue()
+	{
+		m_nIndex = -1;
+		m_fValue = 0;
+	}
+
+	FOptionValue(int index , float v)
+	{
+		m_nIndex = index;
+		m_fValue = v;
+	}
+	int m_nIndex;
+	float m_fValue;
+};
 
 
 USTRUCT(BlueprintType)
@@ -147,7 +195,7 @@ public:
 		ClearData();
 	}
 
-	FItemInstance(const FItemData* itemData, int gridIndex, IItemHolder* holder, TArray<float>* aryUseEffect=nullptr)
+	FItemInstance(const FItemData* itemData, int gridIndex, IItemHolder* holder, TArray<FOptionValue>* aryUseEffect=nullptr)
 	{
 		m_ItemData = itemData;
 		m_nCurrentStack = m_ItemData->m_nInitStack;
@@ -155,17 +203,16 @@ public:
 		m_Holder = holder;
 
 
-		m_AryEffectScale.Init(1, 1.f);
 
 		if(aryUseEffect)
-			m_AryEffectScale = *aryUseEffect;
+			m_AryOptions = *aryUseEffect;
 	}
 
 public:
 	int m_nCurrentStack;
 	int m_nGridIndex;
 	const FItemData* m_ItemData;
-	TArray<float> m_AryEffectScale;
+	TArray<FOptionValue> m_AryOptions;
 	IItemHolder* m_Holder;
 
 public:

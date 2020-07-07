@@ -24,6 +24,14 @@ protected:
 	int m_nCurrentIndex;
 
 	FOnItemSlotChanged m_OnItemGroundChanged;
+
+protected:
+	bool CreateRandomOption(int level, const FItemData& itemData,TArray<FOptionValue>& outOption);
+
+	void CreateIntAryForShuffle(int maxAryLen,TArray<int>& outIndexAry);
+
+	FOptionValue CreateRandomOptionValue(int indexRandomd,const FItemData& itemData);
+
 public:
 	void Init(UDiabloGameInstance* gameInstance);
 

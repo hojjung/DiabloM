@@ -5,6 +5,7 @@
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/ImageAndTextAndCompare.h"
+#include "Components/VerticalBox.h"
 #include "Datas/ItemDataTable.h"
 #include "ItemPopupInfo.generated.h"
 
@@ -22,6 +23,8 @@ protected:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
 	USizeBox* m_SizeInfoPanel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+	UVerticalBox* m_VerticalOptionList;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
 	UTextBlock* m_TextItemName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
@@ -67,16 +70,22 @@ protected:
 	UPROPERTY()
 	UEnum* m_ItemTypeString;
 
+	int m_nOptionCount;
+
 protected:
 	FText GetItemTypeTxt(EItemType typeV) const;
 	void SetIcon(const FItemInstance& itemInst);
 	void SetColorTier(const FItemInstance& itemInst);
-	void HideAllSubOptions();
+	
 	void SetItemText(const FItemInstance& itemInst);
 	void SetFlavorText(const FItemInstance& itemInst);
-
+	void SetOptionTexts(const FItemInstance& itemInst);
 public:
+	UFUNCTION(BlueprintCallable, Category = "Info")
+	void HideAllSubOptions();
 	UFUNCTION(BlueprintCallable,Category="Info")
 	void SetInfoPanel(const FItemInstance& itemInst);
+	UFUNCTION(BlueprintCallable, Category = "Info")
+	void SetPanelSizeByOption(int optionCount);
 	//void SetMainOptions();
 };
