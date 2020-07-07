@@ -91,7 +91,7 @@ bool Inventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//빌드후 여
 
 	//Stack
 	bool Result = false;
-	if (itemWantAdd.GetIsStackable() && itemWantAdd.CheckCanStack() && Drop.m_ItemData->m_NameID == itemWantAdd.m_ItemData->m_NameID)//스왑방지코드
+	if (itemWantAdd.GetIsStackable() && itemWantAdd.CheckCanStack() && &Drop.m_ItemData == &itemWantAdd.m_ItemData)//스왑방지코드
 	{
 		StackMove(Drop, itemWantAdd, itemWantAdd.m_Holder);
 
@@ -160,7 +160,7 @@ void Inventory::PrintInven()
 			continue;
 		}
 
-		PRINTF("ItemName: %s,Index: %d, Stack:%d", *Item.m_ItemData->m_NameID.ToString(), Item.m_nGridIndex, Item.m_nCurrentStack);
+		PRINTF("ItemName: %s,Index: %d, Stack:%d", *Item.m_ItemData->m_ShowingName.ToString(), Item.m_nGridIndex, Item.m_nCurrentStack);
 	}
 }
 

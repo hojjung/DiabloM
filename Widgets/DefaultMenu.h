@@ -5,6 +5,7 @@
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/DiaEquipmentPanel.h"
+#include "Widgets/ItemPopupInfo.h"
 #include "DefaultMenu.generated.h"
 
 
@@ -13,7 +14,7 @@ class EquipmentSystem;
 class PlayerSkillSystem;
 class APlayerDiabloCharacter;
 class ADiabloPlayerController;
-class ItemInstance;
+struct FItemInstance;
 class UDiaInvenGridPanel;
 
 UCLASS()
@@ -42,13 +43,6 @@ protected:
 public:
 	void Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar, PlayerSkillSystem* skill, EquipmentSystem* equipment,Inventory* inven);
 
-	void UpdateStatPanel();
+	
 
-	//UFUNCTION(BlueprintImplementableEvent)
-	//void AddItemToIndex(int Index,ItemInstance* itemInstance);
-	//스텟
-	//장비칸
-	//인벤
-
-	//아이템인스턴스 구조체로 바꿀것
 };

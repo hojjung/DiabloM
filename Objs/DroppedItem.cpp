@@ -25,7 +25,7 @@ ADroppedItem::ADroppedItem(const FObjectInitializer& objInit):Super(objInit)
 	m_BillBoard = CreateDefaultSubobject<UWidgetComponent>("Billboard03");
 	m_BillBoard->SetWidgetSpace(EWidgetSpace::Screen);
 	m_BillBoard->SetWidgetClass(UItemNameCard::StaticClass());
-	m_BillBoard->SetDrawAtDesiredSize(true);
+	m_BillBoard->SetDrawAtDesiredSize(false);
 	m_BillBoard->SetGenerateOverlapEvents(false);
 	m_BillBoard->SetupAttachment(RootComponent);
 	m_BillBoard->SetRelativeLocation( FVector(0.f, 0.f, 70.f));
@@ -75,11 +75,14 @@ void ADroppedItem::SetItem(FName itemID)
 
 	ItemCard->SetItemName(ItemData->m_ShowingName);
 
-	ItemCard->SetItemColor(ItemData->m_Color);
+	ItemCard->SetItemColor(ItemData->GetItemTier().m_TierColor);
 
     m_MeshComp->SetStaticMesh(ItemData->m_ItemMesh);
 
 	m_ItemInstance = GetGameInstance<UDiabloGameInstance>()->CreateItem(itemID);
+
+
+	m_BillBoard->SetDrawSize(m_BillBoard->GetUserWidgetObject()->GetDesiredSize());
 }
 
 FItemInstance  ADroppedItem::GetItemInstance()

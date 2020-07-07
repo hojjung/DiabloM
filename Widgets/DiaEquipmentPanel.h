@@ -7,7 +7,8 @@
 #include "Objs/EquipmentSystem.h"
 #include "DiaEquipmentPanel.generated.h"
 
-
+struct FItemInstance;
+class UItemPopupInfo;
 class UDiaInvenGridSlot;
 UCLASS()
 class DIABLOM_API UDiaEquipmentPanel : public UUserWidget
@@ -37,11 +38,16 @@ protected:
 	UDiaInvenGridSlot* m_SlotFingerLeft;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaInvenGridSlot* m_SlotFingerRight;
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+	UItemPopupInfo* m_ItemPopup;
 
 protected:
 	EquipmentSystem* m_EquipSys;
 
 	TArray<UDiaInvenGridSlot*> m_ArySlots;
+
+	
 
 public:
 	void Init(EquipmentSystem* equipContainer);
@@ -49,7 +55,16 @@ public:
 	bool EquipItem(int dropIndex, FItemInstance& drag);
 
 protected:
+	bool CheckItemEquipable(int dropIndex, FItemInstance& drag);
+
 	void UpdateSlot(int index, const FItemInstance& itemInst);
 
 	void UpdateStance(EAnimStance currentStance);
+
+	void ShowItemInfo(const FGeometry &theInstigator, const FItemInstance& itemInst);
+
+	void HideItemInfo();
+
+public:
+	static UDiaEquipmentPanel* GetEquipWidgetInst;
 };

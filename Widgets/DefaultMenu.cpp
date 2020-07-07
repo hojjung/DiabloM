@@ -17,9 +17,6 @@ void UDefaultMenu::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharac
 	m_InvenGridPanel->Init(m_Inven);
 
 	m_EquipPanel->Init(m_Equipment);
-}
-
-void UDefaultMenu::UpdateStatPanel()
-{
 
 }
+

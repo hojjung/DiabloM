@@ -57,7 +57,7 @@ void UDiaInvenGridSlot::UpdateText(const FItemInstance& itemInstance)
 void UDiaInvenGridSlot::UpdateEffectBG(const FItemInstance& itemInstance)
 {
 	m_ImgItemEffectBG->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	FLinearColor ColorW = itemInstance.m_ItemData->m_Color;
+	FLinearColor ColorW = itemInstance.m_ItemData->GetItemTier().m_TierColor;
 	m_ImgItemEffectBG->SetColorAndOpacity(ColorW);
 	m_ImgItemEffectBG->SetBrushTintColor(FSlateColor(ColorW));
 }
@@ -78,6 +78,11 @@ void UDiaInvenGridSlot::SetIconOpacity(float opacityMaxOne)
 void UDiaInvenGridSlot::SetVisualColorTint(FLinearColor colorW)
 {
 	m_ImgItemVisual->SetBrushTintColor(FSlateColor(colorW));
+	
+}
+
+void UDiaInvenGridSlot::SetHighlightColorTint(FLinearColor colorW)
+{
 	m_ImgSlotHighlight->SetBrushTintColor(FSlateColor(colorW));
 }
 
@@ -86,8 +91,20 @@ bool UDiaInvenGridSlot::IsSlotEmpty()
 	return !m_CopiedItemData.m_ItemData;
 }
 
-void UDiaInvenGridSlot::SetSlotFocus()
+void UDiaInvenGridSlot::SetSlotFocus(UDiaDragDrop* ddo)
 {
+	if (m_OnDragIndex.IsBound())
+	{
+		if (m_OnDragIndex.Execute(m_nIndex, UDiaInvenGridSlot::GetDDOInst->m_DraggedItem))
+		{
+			SetHighlightColorTint(FLinearColor::White);
+		}
+		else
+		{
+			SetHighlightColorTint(FLinearColor::Red);
+		}
+	}
+
 	m_ImgSlotHighlight->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
@@ -107,9 +124,21 @@ UDiaDragDrop * UDiaInvenGridSlot::CreateDDO(const FItemInstance & itemInst)
 }
 
 
+FReply UDiaInvenGridSlot::NativeOnMouseButtonUp(const FGeometry & InGeometry, const FPointerEvent & InMouseEvent)
+{
+	FReply Repl = Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+
+	if (!IsSlotEmpty())
+		m_OnClicked.Execute(InGeometry, m_CopiedItemData);
+
+	return Repl;
+}
+
 FReply UDiaInvenGridSlot::NativeOnMouseButtonDown(const FGeometry & MyGeometry, const FPointerEvent & MouseEvent)
 {
 	FReply Repl = Super::NativeOnMouseButtonDown(MyGeometry, MouseEvent);
+
+	
 
 	return UWidgetBlueprintLibrary::DetectDragIfPressed(MouseEvent,this,EKeys::LeftMouseButton).NativeReply;
 }
@@ -128,7 +157,7 @@ void UDiaInvenGridSlot::NativeOnDragDetected(const FGeometry & InGeometry, const
 void UDiaInvenGridSlot::NativeOnDragEnter(const FGeometry & InGeometry, const FDragDropEvent & InDragDropEvent, UDragDropOperation * InOperation)
 {
 	Super::NativeOnDragEnter(InGeometry, InDragDropEvent, InOperation);
-	SetSlotFocus();
+	SetSlotFocus(UDiaInvenGridSlot::GetDDOInst);
 }
 
 void UDiaInvenGridSlot::NativeOnDragLeave(const FDragDropEvent & InDragDropEvent, UDragDropOperation * InOperation)

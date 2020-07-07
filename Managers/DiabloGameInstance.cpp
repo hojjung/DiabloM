@@ -1,6 +1,8 @@
 #include "DiabloGameInstance.h"
 #include "ConstructorHelpers.h"
 
+
+
 UDiabloGameInstance::UDiabloGameInstance(const FObjectInitializer& objInit):Super(objInit)
 {
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundBaseTable(TEXT("DataTable'/Game/DataTables/MonsterStatTable.MonsterStatTable'"));
@@ -10,7 +12,7 @@ UDiabloGameInstance::UDiabloGameInstance(const FObjectInitializer& objInit):Supe
 	}
 	//
 
-	static ConstructorHelpers::FObjectFinder<UDataTable> FoundItemTable(TEXT("DataTable'/Game/DataTables/TestItemTable.TestItemTable'"));
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundItemTable(TEXT("DataTable'/Game/DataTables/DefaultItemTable.DefaultItemTable'"));
 	if (FoundItemTable.Succeeded())
 	{
 		m_ItemTable = FoundItemTable.Object;

@@ -1,5 +1,9 @@
 #include "DiaEquipmentPanel.h"
 #include "Widgets/DiaInvenGridSlot.h"
+#include "Datas/ItemDataTable.h"
+#include "Widgets/ItemPopupInfo.h"
+
+UDiaEquipmentPanel* UDiaEquipmentPanel::GetEquipWidgetInst = nullptr;
 
 void UDiaEquipmentPanel::Init(EquipmentSystem * equipContainer)
 {
@@ -42,13 +46,45 @@ void UDiaEquipmentPanel::Init(EquipmentSystem * equipContainer)
 	m_SlotFingerLeft->m_OnDropIndex.BindUObject(this,&UDiaEquipmentPanel::EquipItem);
 	m_SlotFingerRight->m_OnDropIndex.BindUObject(this,&UDiaEquipmentPanel::EquipItem);
 
+	m_SlotHead->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
+	m_SlotNeck->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
+	m_SlotTorso->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
+	m_SlotWaist->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
+	m_SlotLeg->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
+	m_SlotHand->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
+	m_SlotShoulder->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
+	m_SlotWeaponLeft->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
+	m_SlotWeaponRight->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
+	m_SlotFingerLeft->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
+	m_SlotFingerRight->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
+
+	m_SlotHead->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotNeck->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotTorso->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotWaist->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotLeg->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotHand->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotShoulder->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotWeaponLeft->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotWeaponRight->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotFingerLeft->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotFingerRight->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+
 	m_EquipSys->GetItemChangeCallback().AddUObject(this, &UDiaEquipmentPanel::UpdateSlot);
 	m_EquipSys->GetStanceChangeCallaback().AddUObject(this, &UDiaEquipmentPanel::UpdateStance);
+
+
+	UDiaEquipmentPanel::GetEquipWidgetInst = this;
 }
 
 bool UDiaEquipmentPanel::EquipItem(int dropIndex, FItemInstance& drag)
 {
 	return m_EquipSys->AddItem(dropIndex, drag);
+}
+
+bool UDiaEquipmentPanel::CheckItemEquipable(int dropIndex, FItemInstance & drag)
+{
+	return m_EquipSys->CheckSlotValid(dropIndex,drag);
 }
 
 void UDiaEquipmentPanel::UpdateSlot(int index, const FItemInstance& itemInst)
@@ -63,8 +99,8 @@ void UDiaEquipmentPanel::UpdateStance(EAnimStance currentStance)
 	{
 		m_ArySlots[(int)ESlots::WeaponLeft]->UpdateItemVisual(m_EquipSys->GetItem((int)ESlots::WeaponRight));
 		m_ArySlots[(int)ESlots::WeaponLeft]->SetVisualColorTint(FColor::Red);
+		m_ArySlots[(int)ESlots::WeaponLeft]->SetHighlightColorTint(FColor::Red);
 	}
-	//else if(currentStance == EAnimStance::DualSword || currentStance == EAnimStance::Shield)
 	else
 	{
 		m_ArySlots[(int)ESlots::WeaponLeft]->SetVisualColorTint(FColor::White);
@@ -76,6 +112,18 @@ void UDiaEquipmentPanel::UpdateStance(EAnimStance currentStance)
 
 		PRINTF("ClearSlot EquipPanel");
 	}
+}
+
+void UDiaEquipmentPanel::ShowItemInfo(const FGeometry & theInstigator, const FItemInstance & itemInst)
+{
+	m_ItemPopup->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	m_ItemPopup->SetInfoPanel(itemInst);
+	//m_ItemPopup->SetPositionInViewport(theInstigator->GetAnchorsInViewport());
+}
+
+void UDiaEquipmentPanel::HideItemInfo()
+{
+	m_ItemPopup->SetVisibility(ESlateVisibility::Hidden);
 }
 
 //void EquipmentSystem::ChangeStance()//erase

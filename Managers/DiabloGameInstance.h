@@ -9,6 +9,10 @@
 #include "Managers/ItemManager.h"
 #include "DiabloGameInstance.generated.h"
 
+struct FItemInstance;
+struct FItemTier;
+struct FItemTier;
+
 UCLASS()
 class DIABLOM_API UDiabloGameInstance : public UGameInstance
 {
@@ -27,7 +31,6 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UDataTable* m_ItemTable;
 
-
 protected:
 	virtual void Init() override;
 
@@ -36,6 +39,5 @@ protected:
 public:
 	const FBaseStatTable* GetBaseUnit(FName id) const;
 	const FItemData* GetItemData(FName id)const;
-
 	FItemInstance CreateItem(FName id);
 };

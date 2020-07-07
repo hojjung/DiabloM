@@ -18,7 +18,7 @@ class UDiaInvenGridPanel;
 class UDiaDragDrop;
 
 
-
+//const UUserWidget * theInstigator, const FItemInstance & itemInst
 UCLASS()
 class DIABLOM_API UDiaInvenGridSlot : public UUserWidget
 {
@@ -26,6 +26,7 @@ class DIABLOM_API UDiaInvenGridSlot : public UUserWidget
 	
 public:
 	DECLARE_DELEGATE_RetVal_TwoParams(bool, FDropIndex, int, FItemInstance&);
+	DECLARE_DELEGATE_TwoParams(FOnClicked, const FGeometry &, const FItemInstance &);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -52,6 +53,11 @@ public:
 	USizeBox* m_SizeItemVisual;//for DDO
 
 	FDropIndex m_OnDropIndex;
+
+	FDropIndex m_OnDragIndex;
+
+	FOnClicked m_OnClicked;
+
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Item")
@@ -65,6 +71,8 @@ public:
 
 	void SetVisualColorTint(FLinearColor colorW);
 
+	void SetHighlightColorTint(FLinearColor colorW);
+
 	bool IsSlotEmpty();
 
 	void UpdateItemVisual(const FItemInstance& itemInstance);
@@ -74,10 +82,11 @@ protected:
 	void UpdateEffectBG(const FItemInstance& itemInstance);
 
 
-	void SetSlotFocus();
+	void SetSlotFocus(UDiaDragDrop* ddo);
 
 	void ClearSlotFocus();
 
+	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)override;
 	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;

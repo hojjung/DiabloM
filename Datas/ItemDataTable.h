@@ -9,6 +9,7 @@
 #include "Engine/StaticMesh.h"
 #include "Objs/Interfaces/ItemHolder.h"
 #include "AbilitySystem/AbilityTypes.h"
+#include "ConstructorHelpers.h"
 #include "ItemDataTable.generated.h"
 
 /**
@@ -56,6 +57,25 @@ enum class EItemType :uint8//아이템 사용을 뜻함
 	Length
 };
 
+
+USTRUCT(BlueprintType)//난이도,티어
+struct FItemTier : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	FItemTier()
+	{
+		m_ShowingName = FText::FromString("Normal");
+		m_TierColor = FColor(242, 242, 242, 255);
+	}
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText m_ShowingName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FLinearColor m_TierColor;
+};
+
+
 USTRUCT(BlueprintType)//난이도,티어
 struct FItemData : public FTableRowBase
 {
@@ -64,21 +84,33 @@ struct FItemData : public FTableRowBase
 public:
 	FItemData()
 	{
-		m_NameID = NAME_None;
+		static ConstructorHelpers::FObjectFinder<UDataTable> FoundItemTable(TEXT("DataTable'/Game/DataTables/TierTable.TierTable'"));
+		if (FoundItemTable.Succeeded())
+		{
+			
+			m_ItemTier.DataTable = FoundItemTable.Object;
+			m_ItemTier.RowName = "Normal";
+		}
 		m_ItemType = EItemType::Misc;
 		m_bStackable = true;
 		m_nInitStack = 1;
 		m_nMaxStack = 99;
-		m_Color = FColor(242, 242, 242, 255);
+
+		m_nSellValue = 100;
 	}
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FDataTableRowHandle m_ItemTier;
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName m_NameID;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText m_ShowingName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText m_FlavorText;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	EItemType m_ItemType;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool m_bStackable;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -86,27 +118,22 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int m_nMaxStack;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UStaticMesh* m_ItemMesh;
+	int m_nSellValue;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FLinearColor m_Color;
+	UStaticMesh* m_ItemMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTexture* m_ItemIcon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<TSubclassOf<UGameplayEffect>> m_DefaultPassive;
+
+public:
+	const FItemTier& GetItemTier() const
+	{
+		return *m_ItemTier.GetRow<FItemTier>("");
+	}
 };
 
 
-
-USTRUCT(BlueprintType)//난이도,티어
-struct FEquipmentColorTable : public FTableRowBase
-{
-	GENERATED_BODY()
-
-
-	public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FColor m_Color;
-};
 
 
 USTRUCT(BlueprintType)
@@ -140,6 +167,7 @@ public:
 	const FItemData* m_ItemData;
 	TArray<float> m_AryEffectScale;
 	IItemHolder* m_Holder;
+
 public:
 
 	bool IsValid()
