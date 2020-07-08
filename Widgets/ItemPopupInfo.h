@@ -18,6 +18,7 @@ class DIABLOM_API UItemPopupInfo : public UUserWidget
 	GENERATED_BODY()
 	
 protected:
+	virtual void NativeOnInitialized()override;
 	virtual void NativePreConstruct() override;
 
 protected:
@@ -69,23 +70,24 @@ protected:
 	TArray< UImageAndText*> m_AryOptions;
 	UPROPERTY()
 	UEnum* m_ItemTypeString;
-
-	int m_nOptionCount;
+	UPROPERTY()
+	FVector2D m_InitSize;
 
 protected:
 	FText GetItemTypeTxt(EItemType typeV) const;
+
 	void SetIcon(const FItemInstance& itemInst);
 	void SetColorTier(const FItemInstance& itemInst);
-	
 	void SetItemText(const FItemInstance& itemInst);
-	void SetFlavorText(const FItemInstance& itemInst);
-	void SetOptionTexts(const FItemInstance& itemInst);
+
+	float SetFlavorText(const FItemInstance& itemInst);
+	float SetOptionTexts(const FItemInstance& itemInst);
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "Info")
 	void HideAllSubOptions();
+	UFUNCTION(BlueprintCallable, Category = "Info")
+	void HideFlavorText();
 	UFUNCTION(BlueprintCallable,Category="Info")
 	void SetInfoPanel(const FItemInstance& itemInst);
-	UFUNCTION(BlueprintCallable, Category = "Info")
-	void SetPanelSizeByOption(int optionCount);
-	//void SetMainOptions();
 };

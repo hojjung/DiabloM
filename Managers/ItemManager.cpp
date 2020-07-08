@@ -58,25 +58,29 @@ bool ItemManager::CreateRandomOption(int level, const FItemData & itemData, TArr
 
 	int NumMaxOption = itemData.m_Options.Num();
 
-	if (NumMaxOption <= 0)
+	int TierMaxOption = itemData.GetItemTier().m_nOptionMaxCount;
+
+	if (NumMaxOption <= 0 || TierMaxOption <=0)
 	{
 		return false;
 	}
 
-	int OptionRandomCount = FMath::Rand() % itemData.GetItemTier().m_nOptionMaxCount;//생성할 옵션의 개수는 등급과 옵션의 개수에 따라 상이하다.
+	int OptionRandomCount = FMath::Rand() % TierMaxOption;//생성할 옵션의 개수는 등급과 옵션의 개수에 따라 상이하다.
 
 	OptionRandomCount = FMath::Min<int>(OptionRandomCount, NumMaxOption);
 
 
 	TArray<int> optionRandom;
 
-	CreateIntAryForShuffle(NumMaxOption, optionRandom);
+	CreateIntAryForShuffle(OptionRandomCount, optionRandom);
 
 
 	int i = 0;
-	while (i++ <= OptionRandomCount)
+	while (i < OptionRandomCount)
 	{
 		outOption.Add(CreateRandomOptionValue(optionRandom[i], itemData));
+
+		i++;
 	}
 	//아웃옵션한텐 인덱스를 줘야한다.
 
@@ -86,7 +90,6 @@ bool ItemManager::CreateRandomOption(int level, const FItemData & itemData, TArr
 void ItemManager::CreateIntAryForShuffle(int maxAryLen, TArray<int>& outIndexAry)
 {
 	int NumMaxOption = maxAryLen;
-	int iter = NumMaxOption * 2;
 
 	outIndexAry.Reset();
 
@@ -96,16 +99,18 @@ void ItemManager::CreateIntAryForShuffle(int maxAryLen, TArray<int>& outIndexAry
 		outIndexAry.Add(index++);
 	}
 
-	for (int a = 0; a < iter; a++)
-	{
-		int RandIndex = FMath::Rand() % NumMaxOption;
 
-		auto First = outIndexAry[a];
-		auto Second = outIndexAry[RandIndex];
+	for(int b =0; b< NumMaxOption;b++)
+		for (int a = 0; a < NumMaxOption; a++)
+		{
+			int RandIndex = FMath::Rand() % NumMaxOption;
 
-		outIndexAry[a] = Second;
-		outIndexAry[RandIndex] = First;
-	}
+			auto First = outIndexAry[a];
+			auto Second = outIndexAry[RandIndex];
+
+			outIndexAry[a] = Second;
+			outIndexAry[RandIndex] = First;
+		}
 
 }
 
