@@ -129,7 +129,7 @@ FReply UDiaInvenGridSlot::NativeOnMouseButtonUp(const FGeometry & InGeometry, co
 	FReply Repl = Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
 
 	if (!IsSlotEmpty())
-		m_OnClicked.Execute(InGeometry, m_CopiedItemData);
+		m_OnClicked.Broadcast(InGeometry, m_CopiedItemData);
 
 	return Repl;
 }

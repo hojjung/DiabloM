@@ -26,7 +26,7 @@ class DIABLOM_API UDiaInvenGridSlot : public UUserWidget
 	
 public:
 	DECLARE_DELEGATE_RetVal_TwoParams(bool, FDropIndex, int, FItemInstance&);
-	DECLARE_DELEGATE_TwoParams(FOnClicked, const FGeometry &, const FItemInstance &);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnClicked, const FGeometry &,instigator, const FItemInstance &,itemClicked);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -56,6 +56,7 @@ public:
 
 	FDropIndex m_OnDragIndex;
 
+	UPROPERTY(BlueprintAssignable,BlueprintReadWrite)
 	FOnClicked m_OnClicked;
 
 public:

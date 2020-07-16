@@ -71,7 +71,7 @@ void Inventory::RemoveItemStack(int index)
 
 bool Inventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//빌드후 여기도
 {
-	if (this == (Inventory*)(itemWantAdd.m_Holder) && droppedIndex == itemWantAdd.m_nGridIndex)
+	if (this == static_cast<Inventory*>(itemWantAdd.m_Holder) && droppedIndex == itemWantAdd.m_nGridIndex)
 	{
 		PRINTF("Prevent MySelf");
 		return false;
@@ -91,7 +91,10 @@ bool Inventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//빌드후 여
 
 	//Stack
 	bool Result = false;
-	if (itemWantAdd.GetIsStackable() && itemWantAdd.CheckCanStack() && &Drop.m_ItemData == &itemWantAdd.m_ItemData)//스왑방지코드
+
+	if (itemWantAdd.GetIsStackable() && itemWantAdd.CheckCanStack()&&
+		Drop.GetIsStackable() && Drop.CheckCanStack() &&
+		Drop.m_ItemData == itemWantAdd.m_ItemData)//스왑방지코드
 	{
 		StackMove(Drop, itemWantAdd, itemWantAdd.m_Holder);
 

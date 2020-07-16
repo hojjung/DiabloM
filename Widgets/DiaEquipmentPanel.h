@@ -61,10 +61,11 @@ protected:
 
 	void UpdateStance(EAnimStance currentStance);
 
-	void ShowItemInfo(const FGeometry &theInstigator, const FItemInstance& itemInst);
 
 	void HideItemInfo();
 
 public:
+	UFUNCTION()
+	void ShowItemInfo(const FGeometry &theInstigator, const FItemInstance& itemInst);
 	static UDiaEquipmentPanel* GetEquipWidgetInst;
 };

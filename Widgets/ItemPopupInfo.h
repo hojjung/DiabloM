@@ -7,6 +7,8 @@
 #include "Widgets/ImageAndTextAndCompare.h"
 #include "Components/VerticalBox.h"
 #include "Datas/ItemDataTable.h"
+#include "Animation/WidgetAnimation.h"
+#include "Animation/WidgetAnimationPlayCallbackProxy.h"
 #include "ItemPopupInfo.generated.h"
 
 /**
@@ -72,7 +74,8 @@ protected:
 	UEnum* m_ItemTypeString;
 	UPROPERTY()
 	FVector2D m_InitSize;
-
+	UPROPERTY(meta = (BindWidgetAnim))
+	UWidgetAnimation* m_FadeAnimation;
 protected:
 	FText GetItemTypeTxt(EItemType typeV) const;
 
@@ -83,11 +86,21 @@ protected:
 	float SetFlavorText(const FItemInstance& itemInst);
 	float SetOptionTexts(const FItemInstance& itemInst);
 
+	virtual FReply NativeOnMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent )override;
+	//NativeOnMouseButtonDoubleClick
 public:
 	UFUNCTION(BlueprintCallable, Category = "Info")
 	void HideAllSubOptions();
 	UFUNCTION(BlueprintCallable, Category = "Info")
 	void HideFlavorText();
 	UFUNCTION(BlueprintCallable,Category="Info")
-	void SetInfoPanel(const FItemInstance& itemInst);
+	void ShowInfoPanel(const FItemInstance& itemInst);
+
+	UFUNCTION(BlueprintCallable,Category="Info")
+	void PlayHideInfoAnim();
+
+	UFUNCTION(BlueprintCallable,Category="Info")
+	void HideInfoPanel();
 };
+
+

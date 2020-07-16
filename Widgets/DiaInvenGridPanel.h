@@ -31,6 +31,7 @@ protected:
 	UGridPanel* m_SlotGridPanel;
 	UPROPERTY()
 	TArray<UDiaInvenGridSlot*> m_ArySlot;
+
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
 	UItemPopupInfo* m_ItemPopup;
@@ -38,15 +39,16 @@ public:
 protected:
 	Inventory* m_Inven;
 
+	int m_nPopupSelectedIndex;
 public:
 	void Init(Inventory* itemContainer);
 
 protected:
-	void ShowItemInfo(const FGeometry & theInstigator, const FItemInstance& itemInst);
-
 	void HideItemInfo();
 
 public:
+	UFUNCTION()
+	void ShowItemInfo(const FGeometry & theInstigator, const FItemInstance& itemInst);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void SetGrid(int x,int y);
 	UFUNCTION(BlueprintCallable, Category = "Widget")

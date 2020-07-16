@@ -10,6 +10,7 @@
 
 UDiaInvenGridPanel::UDiaInvenGridPanel(const FObjectInitializer& objInit):Super(objInit)
 {
+	m_nPopupSelectedIndex=-1;
 	m_ClassGridSlot = UDiaInvenGridSlot::StaticClass();
 }
 
@@ -28,19 +29,25 @@ void UDiaInvenGridPanel::Init(Inventory* itemContainer )
 
 void UDiaInvenGridPanel::ShowItemInfo(const FGeometry & theInstigator, const FItemInstance & itemInst)
 {
+	if (m_ItemPopup->GetVisibility() == ESlateVisibility::SelfHitTestInvisible && m_nPopupSelectedIndex==itemInst.m_nGridIndex)
+	{
+		m_ItemPopup->PlayHideInfoAnim();
+		return;
+	}
+	
+	m_nPopupSelectedIndex=itemInst.m_nGridIndex;
+	
 	m_ItemPopup->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	m_ItemPopup->SetInfoPanel(itemInst);
+	m_ItemPopup->ShowInfoPanel(itemInst);
 	//
 	auto Geo= UWidgetLayoutLibrary::GetPlayerScreenWidgetGeometry(GetOwningPlayer());
 	auto* PanelSlot = Cast<UCanvasPanelSlot>(m_ItemPopup->Slot);
 	auto ClickedItemSlot = this->GetCachedGeometry().AbsoluteToLocal(theInstigator.GetAbsolutePosition()) + theInstigator.GetLocalSize() / 2.0f;
 
-	//ClickedItemSlot.X -= ((m_ItemPopup->GetCachedGeometry().GetLocalSize().X) / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f);
-	ClickedItemSlot.X -= ((m_ItemPopup->GetDesiredSize().X) / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f);
-
+	ClickedItemSlot.X -= (m_ItemPopup->GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f);
 
 	float ScreenY = Geo.GetAbsoluteSize().Y;
-	float PopupSizeY = ((m_ItemPopup->GetDesiredSize().Y*Geo.Scale))/2.0f;
+	float PopupSizeY = (m_ItemPopup->GetDesiredSize().Y*Geo.Scale)/2.0f;
 	float ScreenTopToItem = ClickedItemSlot.Y*Geo.Scale;
 	float ScreenBottomToItem= ScreenY-ClickedItemSlot.Y*Geo.Scale;
 
@@ -51,14 +58,12 @@ void UDiaInvenGridPanel::ShowItemInfo(const FGeometry & theInstigator, const FIt
 		float Diff = PopupSizeY - ScreenTopToItem;
 
 		ClickedItemSlot.Y += Diff * ReverseScale;
-		ClickedItemSlot.Y += 70.f;
 	}
 	else if (ScreenBottomToItem < PopupSizeY)
 	{
 		float Diff = PopupSizeY - FMath::Abs(ScreenBottomToItem);
 
 		ClickedItemSlot.Y -= Diff * ReverseScale;
-		ClickedItemSlot.Y -= 70.f ;
 	}
 
 	PanelSlot->SetPosition(ClickedItemSlot);
@@ -90,7 +95,7 @@ void UDiaInvenGridPanel::SetGrid(int x, int y)
 			m_ArySlot.Add(SlotCreated);
 			SlotCreated->InitSlot(Index);
 			SlotCreated->m_OnDropIndex.BindUObject(this,&UDiaInvenGridPanel::AddItem);
-			SlotCreated->m_OnClicked.BindUObject(this, &UDiaInvenGridPanel::ShowItemInfo);
+			SlotCreated->m_OnClicked.AddDynamic(this, &UDiaInvenGridPanel::ShowItemInfo);
 			Index++;
 		}
 	}

@@ -2,6 +2,8 @@
 #include "Components/CanvasPanelSlot.h"
 #include "WidgetLayoutLibrary.h"
 #include "Components/VerticalBoxSlot.h"
+#include "Animation/UMGSequencePlayer.h"
+
 
 void UItemPopupInfo::NativeOnInitialized()
 {
@@ -25,8 +27,19 @@ void UItemPopupInfo::NativeOnInitialized()
 
 	m_InitSize = UWidgetLayoutLibrary::SlotAsCanvasSlot(this)->GetSize();
 	PRINTF("InitSize:%s", *m_InitSize.ToString());
+
+	//NativeOnMouseButtonDoubleClick()
 }
 
+FReply UItemPopupInfo::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	auto Rep=Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	PlayHideInfoAnim();
+	
+	return Rep;
+	
+}
 //NativeOnInitialized
 void UItemPopupInfo::NativePreConstruct()
 {
@@ -64,6 +77,7 @@ void UItemPopupInfo::HideAllSubOptions()
 {
 	for (auto* Options : m_AryOptions)
 	{
+		Options->SetString(FText());
 		Options->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
@@ -92,7 +106,7 @@ void UItemPopupInfo::SetItemText(const FItemInstance & itemInst)
 
 float UItemPopupInfo::SetFlavorText(const FItemInstance & itemInst)
 {
-	m_TextFlavor->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	//m_TextFlavor->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	
 	m_TextFlavor->SetText(itemInst.m_ItemData->m_FlavorText);
 	m_TextFlavor->ForceLayoutPrepass();
@@ -105,26 +119,24 @@ float UItemPopupInfo::SetOptionTexts(const FItemInstance & itemInst)
 
 	int OptionCount = itemInst.m_AryOptions.Num();
 
-	PRINTF("TheItemOptionCount:%d", OptionCount);
-
 	int i = 0;
+
 	while (i<OptionCount)
 	{
 		m_AryOptions[i]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		m_AryOptions[i]->SetString(itemInst.m_ItemData->GetOption(i).GetOptionFormat(itemInst.m_AryOptions[i].m_fValue));
 		m_AryOptions[i]->ForceLayoutPrepass();
 		OptionSizeY+= m_AryOptions[i]->GetDesiredSize().Y;
-
 		i++;
 	}
 
 	return OptionSizeY;
 }
 
-void UItemPopupInfo::SetInfoPanel(const FItemInstance & itemInst)
+void UItemPopupInfo::ShowInfoPanel(const FItemInstance & itemInst)
 {
+	PlayAnimation(m_FadeAnimation);
 	HideAllSubOptions();
-	HideFlavorText();
 
 	UWidgetLayoutLibrary::SlotAsCanvasSlot(this)->SetSize(m_InitSize);
 
@@ -138,5 +150,17 @@ void UItemPopupInfo::SetInfoPanel(const FItemInstance & itemInst)
 	NewSize.Y += SetFlavorText(itemInst);
 	//
 	UWidgetLayoutLibrary::SlotAsCanvasSlot(this)->SetSize(NewSize);
+}
+
+void UItemPopupInfo::PlayHideInfoAnim()
+{
+	PlayAnimationReverse(m_FadeAnimation);	
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UItemPopupInfo::HideInfoPanel, m_FadeAnimation->GetEndTime(), false);
+}
+
+void UItemPopupInfo::HideInfoPanel()
+{
+	SetVisibility(ESlateVisibility::Collapsed);
 }
 

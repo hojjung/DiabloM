@@ -59,17 +59,17 @@ void UDiaEquipmentPanel::Init(EquipmentSystem * equipContainer)
 	m_SlotFingerLeft->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
 	m_SlotFingerRight->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
 
-	m_SlotHead->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotNeck->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotTorso->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotWaist->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotLeg->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotHand->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotShoulder->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotWeaponLeft->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotWeaponRight->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotFingerLeft->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotFingerRight->m_OnClicked.BindUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotHead->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotNeck->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotTorso->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotWaist->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotLeg->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotHand->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotShoulder->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotWeaponLeft->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotWeaponRight->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotFingerLeft->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotFingerRight->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
 
 	m_EquipSys->GetItemChangeCallback().AddUObject(this, &UDiaEquipmentPanel::UpdateSlot);
 	m_EquipSys->GetStanceChangeCallaback().AddUObject(this, &UDiaEquipmentPanel::UpdateStance);
@@ -117,10 +117,14 @@ void UDiaEquipmentPanel::UpdateStance(EAnimStance currentStance)
 
 void UDiaEquipmentPanel::ShowItemInfo(const FGeometry & theInstigator, const FItemInstance & itemInst)
 {
+	if (m_ItemPopup->GetVisibility() == ESlateVisibility::SelfHitTestInvisible)
+	{
+		m_ItemPopup->PlayHideInfoAnim();
+		return;
+	}
+	
 	m_ItemPopup->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	m_ItemPopup->SetInfoPanel(itemInst);
-
-	m_ItemPopup->SetInfoPanel(itemInst);
+	m_ItemPopup->ShowInfoPanel(itemInst);
 	//
 	auto Geo = UWidgetLayoutLibrary::GetPlayerScreenWidgetGeometry(GetOwningPlayer());
 	auto* PanelSlot = Cast<UCanvasPanelSlot>(m_ItemPopup->Slot);

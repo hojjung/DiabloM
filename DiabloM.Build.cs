@@ -9,29 +9,34 @@ public class DiabloM : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] {
-            "GameplayAbilities",
-            "GameplayTags",
-            "GameplayTasks",
+          
             "Core",
             "CoreUObject",
             "Engine",
             "InputCore",
+            "UMG",
+            "GameplayAbilities",
+            "GameplayTags",
+            "GameplayTasks",
             "AIModule",
             "NavigationSystem",
             "DialoguePlugin",
             "DungeonArchitectRuntime",
             "TechTree"
+           
         });
 
         
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore",
-         "AIModule",
+        PrivateDependencyModuleNames.AddRange(new string[] { 
+            "Slate", "SlateCore","UMG",
+            "AIModule",
             "NavigationSystem",
             "DialoguePlugin",
             "DungeonArchitectRuntime",
             "TechTree",
             "OnlineSubsystem"
+           
         });
 
     }
