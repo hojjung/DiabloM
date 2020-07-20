@@ -71,7 +71,7 @@ void UDiaInvenGridPanel::ShowItemInfo(const FGeometry & theInstigator, const FIt
 
 void UDiaInvenGridPanel::HideItemInfo()
 {
-	m_ItemPopup->SetVisibility(ESlateVisibility::Hidden);
+	m_ItemPopup->PlayHideInfoAnim();
 }
 
 void UDiaInvenGridPanel::SetGrid(int x, int y)
@@ -96,6 +96,7 @@ void UDiaInvenGridPanel::SetGrid(int x, int y)
 			SlotCreated->InitSlot(Index);
 			SlotCreated->m_OnDropIndex.BindUObject(this,&UDiaInvenGridPanel::AddItem);
 			SlotCreated->m_OnClicked.AddDynamic(this, &UDiaInvenGridPanel::ShowItemInfo);
+			SlotCreated->m_OnDragDetect.BindUObject(this, &UDiaInvenGridPanel::HideItemInfo);
 			Index++;
 		}
 	}

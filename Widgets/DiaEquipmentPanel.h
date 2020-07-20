@@ -47,7 +47,7 @@ protected:
 
 	TArray<UDiaInvenGridSlot*> m_ArySlots;
 
-	
+	int m_nPopupSelectedIndex;
 
 public:
 	void Init(EquipmentSystem* equipContainer);

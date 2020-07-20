@@ -87,6 +87,7 @@ protected:
 	float SetOptionTexts(const FItemInstance& itemInst);
 
 	virtual FReply NativeOnMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent )override;
+
 	//NativeOnMouseButtonDoubleClick
 public:
 	UFUNCTION(BlueprintCallable, Category = "Info")

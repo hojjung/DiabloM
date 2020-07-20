@@ -18,6 +18,7 @@ class UDiaInvenGridPanel;
 class UDiaDragDrop;
 
 
+
 //const UUserWidget * theInstigator, const FItemInstance & itemInst
 UCLASS()
 class DIABLOM_API UDiaInvenGridSlot : public UUserWidget
@@ -58,6 +59,8 @@ public:
 
 	UPROPERTY(BlueprintAssignable,BlueprintReadWrite)
 	FOnClicked m_OnClicked;
+	DECLARE_DELEGATE(FOnDrag);
+	FOnDrag m_OnDragDetect;
 
 public:
 

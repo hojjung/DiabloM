@@ -1,4 +1,5 @@
 #include "DiaInvenGridSlot.h"
+
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Widgets/DiaDragDrop.h"
 
@@ -151,6 +152,7 @@ void UDiaInvenGridSlot::NativeOnDragDetected(const FGeometry & InGeometry, const
 	{
 		return;
 	}
+	m_OnDragDetect.ExecuteIfBound();
 	OutOperation = CreateDDO(m_CopiedItemData);
 }
 

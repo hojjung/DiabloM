@@ -40,6 +40,8 @@ FReply UItemPopupInfo::NativeOnMouseButtonDown(const FGeometry& InGeometry, cons
 	return Rep;
 	
 }
+
+
 //NativeOnInitialized
 void UItemPopupInfo::NativePreConstruct()
 {

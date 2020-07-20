@@ -9,7 +9,7 @@ UDiaEquipmentPanel* UDiaEquipmentPanel::GetEquipWidgetInst = nullptr;
 void UDiaEquipmentPanel::Init(EquipmentSystem * equipContainer)
 {
 	m_EquipSys = equipContainer;
-
+	m_nPopupSelectedIndex=-1;
 	m_ArySlots.Reset(10);
 	m_ArySlots.Emplace(m_SlotHead);
 	m_ArySlots.Emplace(m_SlotNeck);
@@ -71,6 +71,19 @@ void UDiaEquipmentPanel::Init(EquipmentSystem * equipContainer)
 	m_SlotFingerLeft->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
 	m_SlotFingerRight->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
 
+	m_SlotHead->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
+	m_SlotNeck->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
+	m_SlotTorso->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
+	m_SlotWaist->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
+	m_SlotLeg->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
+	m_SlotHand->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
+	m_SlotShoulder->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
+	m_SlotWeaponLeft->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
+	m_SlotWeaponRight->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
+	m_SlotFingerLeft->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
+	m_SlotFingerRight->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
+	
+
 	m_EquipSys->GetItemChangeCallback().AddUObject(this, &UDiaEquipmentPanel::UpdateSlot);
 	m_EquipSys->GetStanceChangeCallaback().AddUObject(this, &UDiaEquipmentPanel::UpdateStance);
 
@@ -117,50 +130,49 @@ void UDiaEquipmentPanel::UpdateStance(EAnimStance currentStance)
 
 void UDiaEquipmentPanel::ShowItemInfo(const FGeometry & theInstigator, const FItemInstance & itemInst)
 {
-	if (m_ItemPopup->GetVisibility() == ESlateVisibility::SelfHitTestInvisible)
-	{
-		m_ItemPopup->PlayHideInfoAnim();
-		return;
-	}
-	
-	m_ItemPopup->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	m_ItemPopup->ShowInfoPanel(itemInst);
-	//
-	auto Geo = UWidgetLayoutLibrary::GetPlayerScreenWidgetGeometry(GetOwningPlayer());
-	auto* PanelSlot = Cast<UCanvasPanelSlot>(m_ItemPopup->Slot);
-	auto ClickedItemSlot = this->GetCachedGeometry().AbsoluteToLocal(theInstigator.GetAbsolutePosition()) + theInstigator.GetLocalSize() / 2.0f;
-
-	ClickedItemSlot.X -= ((m_ItemPopup->GetDesiredSize().X) / 2.0f) +( theInstigator.GetLocalSize().X/2.0f);
-
-
-	float ScreenY = Geo.GetAbsoluteSize().Y;
-	float PopupSizeY = ((m_ItemPopup->GetDesiredSize().Y*Geo.Scale)) / 2.0f;
-	float ScreenTopToItem = ClickedItemSlot.Y*Geo.Scale;
-	float ScreenBottomToItem = ScreenY - ClickedItemSlot.Y*Geo.Scale;
-
-	float ReverseScale = 1.f / Geo.Scale;
-
-	if (ScreenTopToItem < PopupSizeY)
-	{
-		float Diff = PopupSizeY - ScreenTopToItem;
-
-		ClickedItemSlot.Y += Diff * ReverseScale;
-		ClickedItemSlot.Y += 70.f;
-	}
-	else if (ScreenBottomToItem < PopupSizeY)
-	{
-		float Diff = PopupSizeY - FMath::Abs(ScreenBottomToItem);
-
-		ClickedItemSlot.Y -= Diff * ReverseScale;
-		ClickedItemSlot.Y -= 70.f;
-	}
-
-	PanelSlot->SetPosition(ClickedItemSlot);
+	if (m_ItemPopup->GetVisibility() == ESlateVisibility::SelfHitTestInvisible && m_nPopupSelectedIndex==itemInst.m_nGridIndex)
+    	{
+    		m_ItemPopup->PlayHideInfoAnim();
+    		return;
+    	}
+    	
+    	m_nPopupSelectedIndex = itemInst.m_nGridIndex;
+    	
+    	m_ItemPopup->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    	m_ItemPopup->ShowInfoPanel(itemInst);
+    	//
+    	auto Geo= UWidgetLayoutLibrary::GetPlayerScreenWidgetGeometry(GetOwningPlayer());
+    	auto* PanelSlot = Cast<UCanvasPanelSlot>(m_ItemPopup->Slot);
+    	auto ClickedItemSlot = this->GetCachedGeometry().AbsoluteToLocal(theInstigator.GetAbsolutePosition()) + theInstigator.GetLocalSize() / 2.0f;
+    
+    	ClickedItemSlot.X -= (m_ItemPopup->GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f);
+    
+    	float ScreenY = Geo.GetAbsoluteSize().Y;
+    	float PopupSizeY = (m_ItemPopup->GetDesiredSize().Y*Geo.Scale)/2.0f;
+    	float ScreenTopToItem = ClickedItemSlot.Y*Geo.Scale;
+    	float ScreenBottomToItem= ScreenY-ClickedItemSlot.Y*Geo.Scale;
+    
+    	float ReverseScale = 1.f / Geo.Scale;
+    
+    	if (ScreenTopToItem < PopupSizeY)
+    	{
+    		float Diff = PopupSizeY - ScreenTopToItem;
+    
+    		ClickedItemSlot.Y += Diff * ReverseScale;
+    	}
+    	else if (ScreenBottomToItem < PopupSizeY)
+    	{
+    		float Diff = PopupSizeY - FMath::Abs(ScreenBottomToItem);
+    
+    		ClickedItemSlot.Y -= Diff * ReverseScale;
+    	}
+    
+    	PanelSlot->SetPosition(ClickedItemSlot);
 }
 
 void UDiaEquipmentPanel::HideItemInfo()
 {
-	m_ItemPopup->SetVisibility(ESlateVisibility::Hidden);
+	m_ItemPopup->PlayHideInfoAnim();
 }
 
 //void EquipmentSystem::ChangeStance()//erase
