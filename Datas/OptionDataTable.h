@@ -21,7 +21,7 @@ class DIABLOM_API UOptionDataTable : public UObject
 	
 };
 
-USTRUCT(BlueprintType)//³­ÀÌµµ,Æ¼¾î
+USTRUCT(BlueprintType)//ë‚œì´ë„,í‹°ì–´
 struct FOption : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -49,7 +49,7 @@ public:
 
 
 
-	FText GetOptionFormat(float value) const
+	FText GetOptionFormat(int value) const
 	{
 
 		FFormatOrderedArguments Args;
@@ -63,7 +63,7 @@ public:
 };
 
 
-USTRUCT(BlueprintType)//³­ÀÌµµ,Æ¼¾î
+USTRUCT(BlueprintType)//ë‚œì´ë„,í‹°ì–´
 struct FOptionInstance
 {
 	GENERATED_BODY()
@@ -82,6 +82,6 @@ public:
 
 
 
-//¿É¼ÇÀÇ Æ÷¸Ë È¿°ú ÅØ½ºÆ®
-//¿É¼Ç °ªÀÇ ÃÖ¼Ò ÃÖ´ëÄ¡
-//¿É¼ÇÀÇ ½ÇÁ¦ ÀÌÆåÆ®
+//ì˜µì…˜ì˜ í¬ë§· íš¨ê³¼ í…ìŠ¤íŠ¸
+//ì˜µì…˜ ê°’ì˜ ìµœì†Œ ìµœëŒ€ì¹˜
+//ì˜µì…˜ì˜ ì‹¤ì œ ì´í™íŠ¸

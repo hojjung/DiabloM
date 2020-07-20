@@ -104,6 +104,13 @@ bool UDiaEquipmentPanel::CheckItemEquipable(int dropIndex, FItemInstance & drag)
 void UDiaEquipmentPanel::UpdateSlot(int index, const FItemInstance& itemInst)
 {
 	m_ArySlots[index]->SetSlot(m_EquipSys->GetItem(index));
+
+	if(m_ItemPopup->GetVisibility()==ESlateVisibility::SelfHitTestInvisible)
+	{
+		m_ItemPopup->SetVisibility(ESlateVisibility::Hidden);
+		ShowItemInfo(m_ArySlots[index]->GetCachedGeometry(),itemInst);
+	}
+	
 	PRINTF("UpdateSlot EquipPanel");
 }
 

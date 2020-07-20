@@ -1,9 +1,12 @@
 #include "ItemPopupInfo.h"
+
+#include <string>
+
 #include "Components/CanvasPanelSlot.h"
 #include "WidgetLayoutLibrary.h"
 #include "Components/VerticalBoxSlot.h"
 #include "Animation/UMGSequencePlayer.h"
-
+#include "Kismet/KismetTextLibrary.h"
 
 void UItemPopupInfo::NativeOnInitialized()
 {
@@ -104,6 +107,8 @@ void UItemPopupInfo::SetItemText(const FItemInstance & itemInst)
 	FTextFormat FormatT = FText::FromString("{0} {1}");
 
 	m_TextItemTierAndType->SetText(FText::Format(FormatT, Args));
+
+	m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.m_ItemData->m_nSellValue));
 }
 
 float UItemPopupInfo::SetFlavorText(const FItemInstance & itemInst)

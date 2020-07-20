@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Button.h"
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/ImageAndTextAndCompare.h"
@@ -66,7 +67,10 @@ protected:
 	UImageAndText* m_SubOption11;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
 	UTextBlock* m_TextFlavor;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+	UImageAndText* m_TextSellValue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+	UButton* m_UseButton;
 protected:
 	UPROPERTY()
 	TArray< UImageAndText*> m_AryOptions;

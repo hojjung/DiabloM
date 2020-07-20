@@ -26,23 +26,28 @@ public:
 	UItemDataTable(const FObjectInitializer& objInit) :Super(objInit)
 	{
 		static ConstructorHelpers::FObjectFinder<UDataTable> FoundOptionTable(TEXT("DataTable'/Game/DataTables/EquipOptionTable.EquipOptionTable'"));
-		m_OptionTable = FoundOptionTable.Object;
+		UItemDataTable::m_OptionTable = FoundOptionTable.Object;
 
 		static ConstructorHelpers::FObjectFinder<UDataTable> FoundTierTable(TEXT("DataTable'/Game/DataTables/TierTable.TierTable'"));
-		m_TierTable = FoundTierTable.Object;
+		UItemDataTable::m_TierTable = FoundTierTable.Object;
 
 		static ConstructorHelpers::FObjectFinder<UDataTable> FoundItemTable(TEXT("DataTable'/Game/DataTables/DefaultItemTable.DefaultItemTable'"));
-		m_DefaultItemTable = FoundItemTable.Object;
+		UItemDataTable::m_DefaultItemTable = FoundItemTable.Object;
+
 
 	}
 
-	UDataTable* m_OptionTable;
+static	UDataTable* m_OptionTable;//static?
 
-	UDataTable* m_TierTable;
+static	UDataTable* m_TierTable;
 
-	UDataTable* m_DefaultItemTable;
+static	UDataTable* m_DefaultItemTable;
 
 };
+UDataTable* UItemDataTable::m_OptionTable=nullptr;
+UDataTable* UItemDataTable::m_TierTable=nullptr;
+UDataTable* UItemDataTable::m_DefaultItemTable=nullptr;
+
 UENUM(BlueprintType)
 enum class EItemLocation :uint8//아이템 인스턴스의 위치
 {
@@ -108,7 +113,7 @@ struct FItemData : public FTableRowBase
 public:
 	FItemData()
 	{
-		m_ItemTier.DataTable = UItemDataTable::StaticClass()->GetDefaultObject<UItemDataTable>()->m_TierTable;
+		m_ItemTier.DataTable = UItemDataTable::m_TierTable;
 		m_ItemTier.RowName = "Normal";
 
 		m_ItemType = EItemType::Misc;
