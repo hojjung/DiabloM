@@ -1,7 +1,6 @@
 #include "ItemPopupInfo.h"
-
-#include <string>
-
+#include "DiaEquipmentPanel.h"
+#include "DiaInvenGridSlot.h"
 #include "Components/CanvasPanelSlot.h"
 #include "WidgetLayoutLibrary.h"
 #include "Components/VerticalBoxSlot.h"
@@ -31,6 +30,10 @@ void UItemPopupInfo::NativeOnInitialized()
 	m_InitSize = UWidgetLayoutLibrary::SlotAsCanvasSlot(this)->GetSize();
 	PRINTF("InitSize:%s", *m_InitSize.ToString());
 
+	GetUseButton()->OnClicked.AddDynamic(this,&UItemPopupInfo::UseItem);
+	GetEquipButton()->OnClicked.AddDynamic(this,&UItemPopupInfo::EquipItem);
+
+	m_SelectedItem=nullptr;
 	//NativeOnMouseButtonDoubleClick()
 }
 
@@ -42,6 +45,38 @@ FReply UItemPopupInfo::NativeOnMouseButtonDown(const FGeometry& InGeometry, cons
 	
 	return Rep;
 	
+}
+
+void UItemPopupInfo::UseItem()
+{
+	//item use
+	//m_SelectedItem->m_ItemData->
+	PRINTF("Use[!");
+}
+
+void UItemPopupInfo::EquipItem()
+{
+	//자신의 장비 타입
+	//슬롯가져와서 넣어야함
+	//드래그 드랍하듯 아이템 삭제 등
+
+	//보니까
+	//팝업창이 해줄일은 자신의 버튼 띄우기 뿐이고
+	//장착행위자체는 따로?
+	PRINTF("Equi[!");
+	auto& Arys= UDiaEquipmentPanel::GetEquipWidgetInst->GetArySlots();
+
+	for(auto* EquipSlot : Arys)
+	{
+		if(UDiaEquipmentPanel::GetEquipWidgetInst->EquipItem(EquipSlot->GetIndex(),*m_SelectedItem))
+		{
+			PRINTF("Equip complete!");
+
+			HideInfoPanel();
+			//끼운 아이템을 삭제
+			return;
+		}
+	}
 }
 
 
@@ -140,7 +175,7 @@ float UItemPopupInfo::SetOptionTexts(const FItemInstance & itemInst)
 	return OptionSizeY;
 }
 
-void UItemPopupInfo::ShowInfoPanel(const FItemInstance & itemInst)
+void UItemPopupInfo::ShowInfoPanel(FItemInstance & itemInst)
 {
 	PlayAnimation(m_FadeAnimation);
 	HideAllSubOptions();
@@ -157,10 +192,18 @@ void UItemPopupInfo::ShowInfoPanel(const FItemInstance & itemInst)
 	NewSize.Y += SetFlavorText(itemInst);
 	//
 	UWidgetLayoutLibrary::SlotAsCanvasSlot(this)->SetSize(NewSize);
+
+	m_SelectedItem=&itemInst;
+
+	if(m_SelectedItem->m_ItemData->m_bEquipable)
+	{
+		m_EquipButton->SetVisibility(ESlateVisibility::Visible);
+	}
 }
 
 void UItemPopupInfo::PlayHideInfoAnim()
 {
+	m_SelectedItem=nullptr;
 	PlayAnimationReverse(m_FadeAnimation);	
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UItemPopupInfo::HideInfoPanel, m_FadeAnimation->GetEndTime(), false);
@@ -168,6 +211,9 @@ void UItemPopupInfo::PlayHideInfoAnim()
 
 void UItemPopupInfo::HideInfoPanel()
 {
+	m_SelectedItem=nullptr;
 	SetVisibility(ESlateVisibility::Collapsed);
+	m_UseButton->SetVisibility(ESlateVisibility::Hidden);
+	m_EquipButton->SetVisibility(ESlateVisibility::Hidden);
 }
 

@@ -23,11 +23,15 @@ void UDiaInvenGridPanel::Init(Inventory* itemContainer )
 	m_Inven->GetInvenSize(X,Y);
 	m_Inven->GetItemChangeCallback().AddUObject(this, &UDiaInvenGridPanel::UpdateSlot);
 	SetGrid(X, Y);
+
+	m_ItemPopup->GetUseButton()->SetVisibility(ESlateVisibility::Hidden);
+	m_ItemPopup->GetEquipButton()->SetVisibility(ESlateVisibility::Hidden);
+	
 }
 
 
 
-void UDiaInvenGridPanel::ShowItemInfo(const FGeometry & theInstigator, const FItemInstance & itemInst)
+void UDiaInvenGridPanel::ShowItemInfo(const FGeometry & theInstigator,  FItemInstance & itemInst)
 {
 	if (m_ItemPopup->GetVisibility() == ESlateVisibility::SelfHitTestInvisible && m_nPopupSelectedIndex==itemInst.m_nGridIndex)
 	{
@@ -74,6 +78,7 @@ void UDiaInvenGridPanel::HideItemInfo()
 	m_ItemPopup->PlayHideInfoAnim();
 }
 
+
 void UDiaInvenGridPanel::SetGrid(int x, int y)
 {
 	int InvenX = x;
@@ -95,7 +100,7 @@ void UDiaInvenGridPanel::SetGrid(int x, int y)
 			m_ArySlot.Add(SlotCreated);
 			SlotCreated->InitSlot(Index);
 			SlotCreated->m_OnDropIndex.BindUObject(this,&UDiaInvenGridPanel::AddItem);
-			SlotCreated->m_OnClicked.AddDynamic(this, &UDiaInvenGridPanel::ShowItemInfo);
+			SlotCreated->m_OnClicked.AddUObject(this, &UDiaInvenGridPanel::ShowItemInfo);
 			SlotCreated->m_OnDragDetect.BindUObject(this, &UDiaInvenGridPanel::HideItemInfo);
 			Index++;
 		}
@@ -103,7 +108,7 @@ void UDiaInvenGridPanel::SetGrid(int x, int y)
 }
 
 
-void UDiaInvenGridPanel::UpdateSlot(int index, const FItemInstance& itemInst)
+void UDiaInvenGridPanel::UpdateSlot(int index, FItemInstance& itemInst)
 {
 	m_ArySlot[index]->SetSlot(itemInst);
 }

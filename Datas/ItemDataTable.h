@@ -122,7 +122,7 @@ public:
 		m_nMaxStack = 99;
 
 		m_nSellValue = 100;
-
+		m_bEquipable=true;
 	}
 
 public:
@@ -137,7 +137,9 @@ public:
 	FText m_FlavorText;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	EItemType m_ItemType;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool m_bEquipable;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool m_bStackable;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

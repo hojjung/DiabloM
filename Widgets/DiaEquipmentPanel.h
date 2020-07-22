@@ -47,6 +47,13 @@ protected:
 
 	TArray<UDiaInvenGridSlot*> m_ArySlots;
 
+public:
+	FORCEINLINE TArray<UDiaInvenGridSlot*>& GetArySlots()
+	{
+		return m_ArySlots;
+	}
+
+protected:
 	int m_nPopupSelectedIndex;
 
 public:
@@ -57,7 +64,7 @@ public:
 protected:
 	bool CheckItemEquipable(int dropIndex, FItemInstance& drag);
 
-	void UpdateSlot(int index, const FItemInstance& itemInst);
+	void UpdateSlot(int index,  FItemInstance& itemInst);
 
 	void UpdateStance(EAnimStance currentStance);
 
@@ -66,6 +73,7 @@ protected:
 
 public:
 	UFUNCTION()
-	void ShowItemInfo(const FGeometry &theInstigator, const FItemInstance& itemInst);
+	void ShowItemInfo(const FGeometry &theInstigator,  FItemInstance& itemInst);
 	static UDiaEquipmentPanel* GetEquipWidgetInst;
+	
 };

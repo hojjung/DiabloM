@@ -29,10 +29,10 @@ void EquipmentSystem::Init()
 	m_ArySlots.Emplace(&m_Leg);
 	m_ArySlots.Emplace(&m_Hand);
 	m_ArySlots.Emplace(&m_Shoulder);
-	m_ArySlots.Emplace(&m_WeaponLeft);
 	m_ArySlots.Emplace(&m_WeaponRight);
-	m_ArySlots.Emplace(&m_FingerLeft);
+	m_ArySlots.Emplace(&m_WeaponLeft);
 	m_ArySlots.Emplace(&m_FingerRight);
+	m_ArySlots.Emplace(&m_FingerLeft);
 
 	//right/left
 	m_StanceFPtr[(int)EItemType::None][(int)EItemType::None] = &EquipmentSystem::SetStanceAllNull;
@@ -59,16 +59,16 @@ void EquipmentSystem::Init()
 	m_StanceFPtr[(int)EItemType::TwohandSword][(int)EItemType::None] = &EquipmentSystem::SetStanceTwoHand;
 }
 
-bool EquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//dragµÈ ´ë»óÀÌ ¾î¶² ¾ÆÀÌÅÛÀ» °¡Á³´ÂÁö ¾Ë¹æ¹ıÀÌ ¾øÀ½
+bool EquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//dragëœ ëŒ€ìƒì´ ì–´ë–¤ ì•„ì´í…œì„ ê°€ì¡ŒëŠ”ì§€ ì•Œë°©ë²•ì´ ì—†ìŒ
 {
 	if (!CheckSlotValid(droppedIndex, itemWantAdd))
 	{
-		return false;//¾ÖÃÊºÎÅÍ ¾È¸ÂÀ½ È¤Àº ¾ç¼Õ°Ë µîÀ¸·Î ºó ¿ÀÅ¥ÆÄÀÌÀÏ¶§
+		return false;//ì• ì´ˆë¶€í„° ì•ˆë§ìŒ í˜¹ì€ ì–‘ì†ê²€ ë“±ìœ¼ë¡œ ë¹ˆ ì˜¤ííŒŒì´ì¼ë•Œ
 	}
 
 	if (!CheckSlotOccupied(droppedIndex))
 	{
-		SetItem(droppedIndex,itemWantAdd);//±×³É ºñ¾îÀÖ´ø ½½·Ô
+		SetItem(droppedIndex,itemWantAdd);//ê·¸ëƒ¥ ë¹„ì–´ìˆë˜ ìŠ¬ë¡¯
 		itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
 		return true;
 	}
@@ -100,8 +100,8 @@ void EquipmentSystem::OnItemSlotChanged(int index)
 {
 	CalculateStance();
 	m_ItemChanged.Broadcast(index, GetItem(index));
-	//ÀÌÆåÆ® ºÎ¿©
-	//¹«±â »ı¼º
+	//ì´í™íŠ¸ ë¶€ì—¬
+	//ë¬´ê¸° ìƒì„±
 	//
 }
 
@@ -128,16 +128,37 @@ bool EquipmentSystem::SwapMove(FItemInstance & Drop, FItemInstance & Drag)
 		return false;
 	}
 
+	auto DragBackup=Drag;
 	Drag.m_Holder->SetItem(DragIndex, Drop);
 
-	SetItem(DropIndex, Drag);
+	SetItem(DropIndex, DragBackup);
 
 	return true;
 }
 
 bool EquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance & itemWantAdd)
 {
-	return m_ArySlots[droppedIndex]->m_AbleEquipSlot[(int)itemWantAdd.m_ItemData->m_ItemType];
+	if(!m_ArySlots[droppedIndex]->m_AbleEquipSlot[(int)itemWantAdd.m_ItemData->m_ItemType])
+	{
+		return false;
+	}
+	
+	if( itemWantAdd.m_ItemData->m_ItemType == EItemType::TwohandSword || itemWantAdd.m_ItemData->m_ItemType == EItemType::Katana)
+	{
+
+		if(m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType==EItemType::TwohandSword
+			||m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType==EItemType::Katana)
+		{
+			return true;;			
+		}
+		
+		if(m_WeaponLeft.m_bIsOccupied)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void EquipmentSystem::SetItem(int droppedIndex, FItemInstance & itemWantAdd)
@@ -186,7 +207,7 @@ EItemType EquipmentSystem::GetEquippedItem(int slotIndex)
 void EquipmentSystem::SetStanceAllNull()
 {
 	m_WeaponLeft.SetOccupie(false);
-	//¾Æ·¡¶û ¶È°°¾Æº¸ÀÌÁö¸¸ ¾Æ·¡ÀÇ °æ¿ì´Â ¿Ş¼Õ¿¡ ¹«±â°¡ µé·ÁÀÖÀ¸³ª ¿À¸¥¼Õ¿¡ ¹«±â°¡ ¾ø¾î¼­ °ø°İÀ» ¸øÇÏ´Â°ÍÀÓ
+	//ì•„ë˜ë‘ ë˜‘ê°™ì•„ë³´ì´ì§€ë§Œ ì•„ë˜ì˜ ê²½ìš°ëŠ” ì™¼ì†ì— ë¬´ê¸°ê°€ ë“¤ë ¤ìˆìœ¼ë‚˜ ì˜¤ë¥¸ì†ì— ë¬´ê¸°ê°€ ì—†ì–´ì„œ ê³µê²©ì„ ëª»í•˜ëŠ”ê²ƒì„
 	m_WeaponRight.SetEquipableType(EItemType::Katana, true);
 	m_WeaponRight.SetEquipableType(EItemType::TwohandSword, true);
 	m_CurrentStance = EAnimStance::None;

@@ -71,6 +71,8 @@ protected:
 	UImageAndText* m_TextSellValue;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
 	UButton* m_UseButton;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+	UButton* m_EquipButton;//equip패널은 그냥 unequip만있으면 된다,인벤은 둘다있어야한다
 protected:
 	UPROPERTY()
 	TArray< UImageAndText*> m_AryOptions;
@@ -80,6 +82,8 @@ protected:
 	FVector2D m_InitSize;
 	UPROPERTY(meta = (BindWidgetAnim))
 	UWidgetAnimation* m_FadeAnimation;
+
+	FItemInstance* m_SelectedItem;
 protected:
 	FText GetItemTypeTxt(EItemType typeV) const;
 
@@ -94,18 +98,32 @@ protected:
 
 	//NativeOnMouseButtonDoubleClick
 public:
+	UFUNCTION()
+    void UseItem();
+	UFUNCTION()
+    void EquipItem();
 	UFUNCTION(BlueprintCallable, Category = "Info")
 	void HideAllSubOptions();
 	UFUNCTION(BlueprintCallable, Category = "Info")
 	void HideFlavorText();
 	UFUNCTION(BlueprintCallable,Category="Info")
-	void ShowInfoPanel(const FItemInstance& itemInst);
+	void ShowInfoPanel(FItemInstance& itemInst);
 
 	UFUNCTION(BlueprintCallable,Category="Info")
 	void PlayHideInfoAnim();
 
 	UFUNCTION(BlueprintCallable,Category="Info")
 	void HideInfoPanel();
+
+	FORCEINLINE UButton* GetEquipButton()
+	{
+		return m_EquipButton;
+	}
+
+	FORCEINLINE UButton* GetUseButton()
+	{
+		return m_UseButton;
+	}
 };
 
 

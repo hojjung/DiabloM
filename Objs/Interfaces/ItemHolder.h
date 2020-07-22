@@ -14,7 +14,7 @@ class UItemHolder : public UInterface
 };
 
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnItemSlotChanged, int, const FItemInstance&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnItemSlotChanged, int,  FItemInstance&);
 
 class DIABLOM_API IItemHolder
 {

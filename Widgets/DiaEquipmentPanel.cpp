@@ -18,10 +18,10 @@ void UDiaEquipmentPanel::Init(EquipmentSystem * equipContainer)
 	m_ArySlots.Emplace(m_SlotLeg);
 	m_ArySlots.Emplace(m_SlotHand);
 	m_ArySlots.Emplace(m_SlotShoulder);
-	m_ArySlots.Emplace(m_SlotWeaponLeft);
 	m_ArySlots.Emplace(m_SlotWeaponRight);
-	m_ArySlots.Emplace(m_SlotFingerLeft);
+	m_ArySlots.Emplace(m_SlotWeaponLeft);
 	m_ArySlots.Emplace(m_SlotFingerRight);
+	m_ArySlots.Emplace(m_SlotFingerLeft);
 
 	m_SlotHead->InitSlot(0);
 	m_SlotNeck->InitSlot(1);
@@ -30,10 +30,10 @@ void UDiaEquipmentPanel::Init(EquipmentSystem * equipContainer)
 	m_SlotLeg->InitSlot(4);
 	m_SlotHand->InitSlot(5);
 	m_SlotShoulder->InitSlot(6);
-	m_SlotWeaponLeft->InitSlot(7);
-	m_SlotWeaponRight->InitSlot(8);
-	m_SlotFingerLeft->InitSlot(9);
-	m_SlotFingerRight->InitSlot(10);
+	m_SlotWeaponRight->InitSlot(7);
+	m_SlotWeaponLeft->InitSlot(8);
+	m_SlotFingerRight->InitSlot(9);
+	m_SlotFingerLeft->InitSlot(10);
 
 	m_SlotHead->m_OnDropIndex.BindUObject(this,&UDiaEquipmentPanel::EquipItem);
 	m_SlotNeck->m_OnDropIndex.BindUObject(this,&UDiaEquipmentPanel::EquipItem);
@@ -59,17 +59,17 @@ void UDiaEquipmentPanel::Init(EquipmentSystem * equipContainer)
 	m_SlotFingerLeft->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
 	m_SlotFingerRight->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
 
-	m_SlotHead->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotNeck->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotTorso->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotWaist->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotLeg->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotHand->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotShoulder->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotWeaponLeft->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotWeaponRight->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotFingerLeft->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
-	m_SlotFingerRight->m_OnClicked.AddDynamic(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotHead->m_OnClicked.AddUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotNeck->m_OnClicked.AddUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotTorso->m_OnClicked.AddUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotWaist->m_OnClicked.AddUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotLeg->m_OnClicked.AddUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotHand->m_OnClicked.AddUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotShoulder->m_OnClicked.AddUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotWeaponLeft->m_OnClicked.AddUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotWeaponRight->m_OnClicked.AddUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotFingerLeft->m_OnClicked.AddUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
+	m_SlotFingerRight->m_OnClicked.AddUObject(this, &UDiaEquipmentPanel::ShowItemInfo);
 
 	m_SlotHead->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
 	m_SlotNeck->m_OnDragDetect.BindUObject(this, &UDiaEquipmentPanel::HideItemInfo);
@@ -101,7 +101,7 @@ bool UDiaEquipmentPanel::CheckItemEquipable(int dropIndex, FItemInstance & drag)
 	return m_EquipSys->CheckSlotValid(dropIndex,drag);
 }
 
-void UDiaEquipmentPanel::UpdateSlot(int index, const FItemInstance& itemInst)
+void UDiaEquipmentPanel::UpdateSlot(int index,  FItemInstance& itemInst)
 {
 	m_ArySlots[index]->SetSlot(m_EquipSys->GetItem(index));
 
@@ -135,7 +135,7 @@ void UDiaEquipmentPanel::UpdateStance(EAnimStance currentStance)
 	}
 }
 
-void UDiaEquipmentPanel::ShowItemInfo(const FGeometry & theInstigator, const FItemInstance & itemInst)
+void UDiaEquipmentPanel::ShowItemInfo(const FGeometry & theInstigator,  FItemInstance & itemInst)
 {
 	if (m_ItemPopup->GetVisibility() == ESlateVisibility::SelfHitTestInvisible && m_nPopupSelectedIndex==itemInst.m_nGridIndex)
     	{

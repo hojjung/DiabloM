@@ -47,12 +47,13 @@ protected:
 	void HideItemInfo();
 
 public:
+	
 	UFUNCTION()
-	void ShowItemInfo(const FGeometry & theInstigator, const FItemInstance& itemInst);
+	void ShowItemInfo(const FGeometry & theInstigator,  FItemInstance& itemInst);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void SetGrid(int x,int y);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
-	void UpdateSlot(int index, const FItemInstance& itemInst);
+	void UpdateSlot(int index,  FItemInstance& itemInst);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	bool AddItem(int index, FItemInstance& itemWantAdd);
 	UFUNCTION(BlueprintCallable, Category = "Widget")

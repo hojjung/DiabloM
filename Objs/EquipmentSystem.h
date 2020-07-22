@@ -4,7 +4,7 @@
 #include "Datas/ItemDataTable.h"
 
 UENUM(BlueprintType)
-enum class EAnimStance :uint8//¾Ö´Ï¸ÅÀÌ¼ÇÀ¸·Î »ç¿ëµÉ ¼¼Æ®¤Ì
+enum class EAnimStance :uint8//ì• ë‹ˆë§¤ì´ì…˜ìœ¼ë¡œ ì‚¬ìš©ë  ì„¸íŠ¸ã…œ
 {
 	None,
 	OneHandSword,
@@ -28,10 +28,10 @@ enum class ESlots:uint8
 	Leg,
 	Hand,
 	Shoulder,
-	WeaponLeft,
 	WeaponRight,
-	FingerLeft,
+	WeaponLeft,
 	FingerRight,
+	FingerLeft,
 	Length
 };
 
