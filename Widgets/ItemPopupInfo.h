@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Button.h"
+#include "CanvasPanel.h"
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/ImageAndTextAndCompare.h"
@@ -33,6 +34,8 @@ protected:
 	UTextBlock* m_TextItemName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
 	UTextBlock* m_TextItemTierAndType;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+	UImage* m_BGForTouch;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
 	UImage* m_ImageItemTierColorSmall;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
@@ -78,8 +81,6 @@ protected:
 	TArray< UImageAndText*> m_AryOptions;
 	UPROPERTY()
 	UEnum* m_ItemTypeString;
-	UPROPERTY()
-	FVector2D m_InitSize;
 	UPROPERTY(meta = (BindWidgetAnim))
 	UWidgetAnimation* m_FadeAnimation;
 
@@ -106,6 +107,8 @@ public:
 	void HideAllSubOptions();
 	UFUNCTION(BlueprintCallable, Category = "Info")
 	void HideFlavorText();
+	UFUNCTION(BlueprintCallable,Category="Info")
+	void SetPanelPosition(const FGeometry & theInstigator);
 	UFUNCTION(BlueprintCallable,Category="Info")
 	void ShowInfoPanel(FItemInstance& itemInst);
 

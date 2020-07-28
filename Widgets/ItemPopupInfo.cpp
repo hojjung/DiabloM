@@ -27,13 +27,11 @@ void UItemPopupInfo::NativeOnInitialized()
 
 	m_ItemTypeString = FindObject<UEnum>(ANY_PACKAGE, *ItemTypeName);
 
-	m_InitSize = UWidgetLayoutLibrary::SlotAsCanvasSlot(this)->GetSize();
-	PRINTF("InitSize:%s", *m_InitSize.ToString());
-
 	GetUseButton()->OnClicked.AddDynamic(this,&UItemPopupInfo::UseItem);
 	GetEquipButton()->OnClicked.AddDynamic(this,&UItemPopupInfo::EquipItem);
 
 	m_SelectedItem=nullptr;
+	
 	//NativeOnMouseButtonDoubleClick()
 }
 
@@ -56,6 +54,10 @@ void UItemPopupInfo::UseItem()
 
 void UItemPopupInfo::EquipItem()
 {
+	if(!m_SelectedItem)
+	{
+		return;
+	}
 	//자신의 장비 타입
 	//슬롯가져와서 넣어야함
 	//드래그 드랍하듯 아이템 삭제 등
@@ -72,7 +74,7 @@ void UItemPopupInfo::EquipItem()
 		{
 			PRINTF("Equip complete!");
 
-			HideInfoPanel();
+			PlayHideInfoAnim();
 			//끼운 아이템을 삭제
 			return;
 		}
@@ -90,7 +92,7 @@ void UItemPopupInfo::NativePreConstruct()
 
 FText UItemPopupInfo::GetItemTypeTxt(EItemType typeV) const
 {
-	return  FText::FromString( m_ItemTypeString->GetNameStringByIndex(static_cast<uint8>(typeV)));
+	return FText::FromString( m_ItemTypeString->GetNameStringByIndex(static_cast<uint8>(typeV)));
 }
 
 void UItemPopupInfo::SetIcon(const FItemInstance & itemInst)
@@ -110,7 +112,6 @@ void UItemPopupInfo::SetColorTier(const FItemInstance & itemInst)
 	m_ImageItemTierColorLarge->SetColorAndOpacity(ColorW);
 	m_TextItemName->SetColorAndOpacity(ColorW);
 	m_TextItemTierAndType->SetColorAndOpacity(ColorW);
-
 }
 
 void UItemPopupInfo::HideAllSubOptions()
@@ -126,6 +127,80 @@ void UItemPopupInfo::HideFlavorText()
 {
 	m_TextFlavor->SetVisibility(ESlateVisibility::Collapsed);
 }
+
+void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator)
+{
+	//TODO: canvas 에 맞춰 왼쪽 오른쪽 조절
+	
+	auto Geo= UWidgetLayoutLibrary::GetPlayerScreenWidgetGeometry(GetOwningPlayer());
+	
+	auto* PanelSlot = Cast<UCanvasPanelSlot>(Slot);
+	
+	auto* CanvasPanelParent = Cast<UCanvasPanel>( PanelSlot->Parent);
+	
+	auto ClickedItemSlot = CanvasPanelParent->GetCachedGeometry().AbsoluteToLocal(theInstigator.GetAbsolutePosition()) + theInstigator.GetLocalSize() / 2.0f;
+
+	ClickedItemSlot.X -= (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f);
+
+	CanvasPanelParent->ForceLayoutPrepass();
+	
+	float ScreenY = Geo.GetAbsoluteSize().Y;
+
+	float PopupSizeY = (GetDesiredSize().Y*Geo.Scale)/2.0f;
+	
+	float ScreenTopToItem = ClickedItemSlot.Y*Geo.Scale;
+	
+	float ScreenBottomToItem= ScreenY-ClickedItemSlot.Y*Geo.Scale;
+
+	float ReverseScale = 1.f / Geo.Scale;
+
+	
+	if (ScreenTopToItem < PopupSizeY)
+	{
+		float Diff = PopupSizeY - ScreenTopToItem;
+
+		ClickedItemSlot.Y += Diff * ReverseScale;
+	}
+	else if (ScreenBottomToItem < PopupSizeY)
+	{
+		float Diff = PopupSizeY - FMath::Abs(ScreenBottomToItem);
+	
+		ClickedItemSlot.Y -= Diff * ReverseScale;
+		
+		ClickedItemSlot.Y -= 50.f;
+	}
+	
+	PanelSlot->SetPosition(ClickedItemSlot);
+
+	PRINTF("Pos:%s",*ClickedItemSlot.ToString());
+}
+
+void UItemPopupInfo::ShowInfoPanel(FItemInstance & itemInst)
+{
+	SetRenderOpacity(1.f);
+	m_BGForTouch->SetVisibility(ESlateVisibility::Visible);
+	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	PlayAnimation(m_FadeAnimation);
+	HideAllSubOptions();
+
+	SetIcon(itemInst);
+	SetColorTier(itemInst);
+	SetItemText(itemInst);
+
+	SetOptionTexts(itemInst);
+	
+	SetFlavorText(itemInst);
+
+	m_SelectedItem=&itemInst;
+
+	if(m_SelectedItem->m_ItemData->m_bEquipable)
+	{
+		m_EquipButton->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	ForceLayoutPrepass();
+}
+
 
 void UItemPopupInfo::SetItemText(const FItemInstance & itemInst)
 {
@@ -148,8 +223,6 @@ void UItemPopupInfo::SetItemText(const FItemInstance & itemInst)
 
 float UItemPopupInfo::SetFlavorText(const FItemInstance & itemInst)
 {
-	//m_TextFlavor->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	
 	m_TextFlavor->SetText(itemInst.m_ItemData->m_FlavorText);
 	m_TextFlavor->ForceLayoutPrepass();
 	return m_TextFlavor->GetDesiredSize().Y;
@@ -175,34 +248,13 @@ float UItemPopupInfo::SetOptionTexts(const FItemInstance & itemInst)
 	return OptionSizeY;
 }
 
-void UItemPopupInfo::ShowInfoPanel(FItemInstance & itemInst)
-{
-	PlayAnimation(m_FadeAnimation);
-	HideAllSubOptions();
-
-	UWidgetLayoutLibrary::SlotAsCanvasSlot(this)->SetSize(m_InitSize);
-
-	FVector2D NewSize = m_InitSize;
-
-	SetIcon(itemInst);
-	SetColorTier(itemInst);
-	SetItemText(itemInst);
-
-	NewSize.Y += SetOptionTexts(itemInst);
-	NewSize.Y += SetFlavorText(itemInst);
-	//
-	UWidgetLayoutLibrary::SlotAsCanvasSlot(this)->SetSize(NewSize);
-
-	m_SelectedItem=&itemInst;
-
-	if(m_SelectedItem->m_ItemData->m_bEquipable)
-	{
-		m_EquipButton->SetVisibility(ESlateVisibility::Visible);
-	}
-}
-
 void UItemPopupInfo::PlayHideInfoAnim()
 {
+	if(!m_SelectedItem)
+	{
+		return;
+	}
+	m_BGForTouch->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	m_SelectedItem=nullptr;
 	PlayAnimationReverse(m_FadeAnimation);	
 	FTimerHandle TimerHandle;
