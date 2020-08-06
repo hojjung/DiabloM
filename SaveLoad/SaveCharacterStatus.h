@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
-#include "DiaSaveGame.generated.h"
+#include "SaveCharacterStatus.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UDiaSaveGame : public USaveGame
+class DIABLOM_API USaveCharacterStatus : public USaveGame
 {
 	GENERATED_BODY()
 	

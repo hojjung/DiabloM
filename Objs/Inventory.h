@@ -54,4 +54,11 @@ public:
 	void GetInvenSize(int& x, int & y);
 
 	FItemInstance& GetItemRef(int index);
+
+	FORCEINLINE const TArray<FItemInstance>& GetItemAry() const
+	{
+		return m_ItemAry;
+	}
+
+	void SetItemAry(TArray<FItemInstance>& loadedAry);
 };

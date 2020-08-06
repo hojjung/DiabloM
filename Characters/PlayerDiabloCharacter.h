@@ -25,7 +25,7 @@ public:
 	static const FName RightHandWeaponSocketBottom;
 	static const FName LeftHandWeaponSocketTop;
 	static const FName LeftHandWeaponSocketBottom;
-
+	
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player")

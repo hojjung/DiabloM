@@ -34,4 +34,9 @@ public:
 	void PrintInventory();
 	UFUNCTION(exec)
 	void PrintEquipment();
+
+	UFUNCTION(exec)
+	void SaveInven();
+	UFUNCTION(exec)
+    void LoadInven();
 };

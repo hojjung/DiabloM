@@ -3,7 +3,7 @@
 
 
 
-ItemManager::ItemManager()
+ItemManager::ItemManager(): m_GameInstance(nullptr), m_nCurrentIndex(0)
 {
 }
 
@@ -45,11 +45,11 @@ FItemInstance ItemManager::CreateItemInstance(FName itemID)
 
 bool ItemManager::CreateRandomOption(int level, const FItemData & itemData, TArray<FOptionValue>& outOption)
 {
-	//µî±Ş¿¡ µû¶ó ¿É¼ÇÀÇ °³¼ö?
-	//·¹º§¿¡ µû¶ó ¿É¼ÇÀÇ Á¾·ù ¹× °­ÇÔ?
-	//»ı°¢ÇÒ°Ô ¸¹Áö¸¸ Áö±İÀº ¿É¼ÇÀÇ °³¼ö¸¸ ·£´ıÀ¸·Î µ¹¸°´Ù.
-	//µî±Ş ÀÚÃ¼´Â Á¤ÇØÀúÀÖÁö ¾Ê³ª?
-	//µî±ŞÀÌ Á¤ÇØÀúÀÖ´Âµ¥ ¿É¼ÇÀÇ °³¼ö°¡ ¹«½¼ ÀÇ¹ÌÀÎ°¡
+	//ë“±ê¸‰ì— ë”°ë¼ ì˜µì…˜ì˜ ê°œìˆ˜?
+	//ë ˆë²¨ì— ë”°ë¼ ì˜µì…˜ì˜ ì¢…ë¥˜ ë° ê°•í•¨?
+	//ìƒê°í• ê²Œ ë§ì§€ë§Œ ì§€ê¸ˆì€ ì˜µì…˜ì˜ ê°œìˆ˜ë§Œ ëœë¤ìœ¼ë¡œ ëŒë¦°ë‹¤.
+	//ë“±ê¸‰ ìì²´ëŠ” ì •í•´ì €ìˆì§€ ì•Šë‚˜?
+	//ë“±ê¸‰ì´ ì •í•´ì €ìˆëŠ”ë° ì˜µì…˜ì˜ ê°œìˆ˜ê°€ ë¬´ìŠ¨ ì˜ë¯¸ì¸ê°€
 
 	if (itemData.m_bStackable)
 	{
@@ -65,7 +65,7 @@ bool ItemManager::CreateRandomOption(int level, const FItemData & itemData, TArr
 		return false;
 	}
 
-	int OptionRandomCount = FMath::Rand() % TierMaxOption;//»ı¼ºÇÒ ¿É¼ÇÀÇ °³¼ö´Â µî±Ş°ú ¿É¼ÇÀÇ °³¼ö¿¡ µû¶ó »óÀÌÇÏ´Ù.
+	int OptionRandomCount = FMath::Rand() % TierMaxOption;//ìƒì„±í•  ì˜µì…˜ì˜ ê°œìˆ˜ëŠ” ë“±ê¸‰ê³¼ ì˜µì…˜ì˜ ê°œìˆ˜ì— ë”°ë¼ ìƒì´í•˜ë‹¤.
 
 	OptionRandomCount = FMath::Min<int>(OptionRandomCount, NumMaxOption);
 
@@ -82,7 +82,7 @@ bool ItemManager::CreateRandomOption(int level, const FItemData & itemData, TArr
 
 		i++;
 	}
-	//¾Æ¿ô¿É¼ÇÇÑÅÙ ÀÎµ¦½º¸¦ Áà¾ßÇÑ´Ù.
+	//ì•„ì›ƒì˜µì…˜í•œí… ì¸ë±ìŠ¤ë¥¼ ì¤˜ì•¼í•œë‹¤.
 
 	return true;
 }
@@ -151,4 +151,13 @@ void ItemManager::SetItem(int droppedIndex, FItemInstance & itemWantAdd)
 bool ItemManager::SwapMove(FItemInstance & Drop, FItemInstance & Drag)
 {
 	return true;
+}
+
+const FItemData& ItemManager::GetItemData(FName id)
+{
+	return *UDiabloGameInstance::Get->GetItemData(id);
+}
+
+const FItemData& ItemManager::GetItemData(const FItemInstance& itemInst)
+{	return *UDiabloGameInstance::Get->GetItemData(itemInst.m_ItemID);
 }

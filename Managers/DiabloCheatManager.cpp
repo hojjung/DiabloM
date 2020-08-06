@@ -1,6 +1,7 @@
 #include "DiabloCheatManager.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "SaveLoad/SaveLoadManager.h"
 #include "Managers/DiabloGameInstance.h"
 
 void UDiabloCheatManager::InitCheatManager()
@@ -25,4 +26,14 @@ void UDiabloCheatManager::PrintInventory()
 void UDiabloCheatManager::PrintEquipment()
 {
 	m_PlayerController->PrintEquipment();
+}
+
+void UDiabloCheatManager::SaveInven()
+{
+	SaveLoadManager::Get->SaveInventory();
+}
+
+void UDiabloCheatManager::LoadInven()
+{
+	SaveLoadManager::Get->LoadInventory();
 }

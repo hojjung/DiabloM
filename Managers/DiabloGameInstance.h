@@ -7,6 +7,7 @@
 #include "Datas/CharacterDataTable.h"
 #include "Datas/ItemDataTable.h"
 #include "Managers/ItemManager.h"
+#include  "SaveLoad/SaveLoadManager.h"
 #include "DiabloGameInstance.generated.h"
 
 struct FItemInstance;
@@ -21,8 +22,10 @@ class DIABLOM_API UDiabloGameInstance : public UGameInstance
 public:
 	UDiabloGameInstance(const FObjectInitializer& objInit);
 
+	static UDiabloGameInstance* Get;
 protected:
 	ItemManager* m_ItemManager;
+	SaveLoadManager* m_SaveLoadManager;
 protected:
 	UPROPERTY(EditAnywhere)
 	UDataTable* m_BaseUnitTable;

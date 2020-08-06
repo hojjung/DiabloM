@@ -6,6 +6,7 @@
 #include "Components/VerticalBoxSlot.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "Kismet/KismetTextLibrary.h"
+#include "Managers/ItemManager.h"
 
 void UItemPopupInfo::NativeOnInitialized()
 {
@@ -85,8 +86,6 @@ void UItemPopupInfo::EquipItem()
 //NativeOnInitialized
 void UItemPopupInfo::NativePreConstruct()
 {
-	//m_AryOptions.Emplace(m_MainOptionAttack);
-	//m_AryOptions.Emplace(m_MainOptionDefense);
 	Super::NativePreConstruct();
 }
 
@@ -100,14 +99,14 @@ void UItemPopupInfo::SetIcon(const FItemInstance & itemInst)
 	FSlateBrush BrushWant;
 
 	BrushWant.SetImageSize(FVector2D(64.f,64.f));
-	BrushWant.SetResourceObject(itemInst.m_ItemData->m_ItemIcon);
+	BrushWant.SetResourceObject(ItemManager::GetItemData( itemInst).m_ItemIcon);
 
 	m_ImageItemVisualIcon->SetBrush(BrushWant);
 }
 
 void UItemPopupInfo::SetColorTier(const FItemInstance & itemInst)
 {
-	const auto ColorW = itemInst.m_ItemData->GetItemTier().m_TierColor;
+	const auto ColorW =ItemManager::GetItemData( itemInst).GetItemTier().m_TierColor;
 	m_ImageItemTierColorSmall->SetColorAndOpacity(ColorW);
 	m_ImageItemTierColorLarge->SetColorAndOpacity(ColorW);
 	m_TextItemName->SetColorAndOpacity(ColorW);
@@ -193,7 +192,7 @@ void UItemPopupInfo::ShowInfoPanel(FItemInstance & itemInst)
 
 	m_SelectedItem=&itemInst;
 
-	if(m_SelectedItem->m_ItemData->m_bEquipable)
+	if(ItemManager::GetItemData( *m_SelectedItem).m_bEquipable)
 	{
 		m_EquipButton->SetVisibility(ESlateVisibility::Visible);
 	}
@@ -204,11 +203,12 @@ void UItemPopupInfo::ShowInfoPanel(FItemInstance & itemInst)
 
 void UItemPopupInfo::SetItemText(const FItemInstance & itemInst)
 {
-	m_TextItemName->SetText(itemInst.m_ItemData->m_ShowingName);
+	//m_SelectedItem
+	m_TextItemName->SetText(ItemManager::GetItemData( itemInst).m_ShowingName);
 
-	FText  ItemNameT = itemInst.m_ItemData->GetItemTier().m_ShowingName;
+	FText  ItemNameT = ItemManager::GetItemData( itemInst).GetItemTier().m_ShowingName;
 	
-	FText ItemTypeT= GetItemTypeTxt(itemInst.m_ItemData->m_ItemType);
+	FText ItemTypeT= GetItemTypeTxt(ItemManager::GetItemData( itemInst).m_ItemType);
 
 	FFormatOrderedArguments Args;
 	Args.Add(ItemNameT);
@@ -218,12 +218,12 @@ void UItemPopupInfo::SetItemText(const FItemInstance & itemInst)
 
 	m_TextItemTierAndType->SetText(FText::Format(FormatT, Args));
 
-	m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.m_ItemData->m_nSellValue));
+	m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(ItemManager::GetItemData( itemInst).m_nSellValue));
 }
 
 float UItemPopupInfo::SetFlavorText(const FItemInstance & itemInst)
 {
-	m_TextFlavor->SetText(itemInst.m_ItemData->m_FlavorText);
+	m_TextFlavor->SetText(ItemManager::GetItemData( itemInst).m_FlavorText);
 	m_TextFlavor->ForceLayoutPrepass();
 	return m_TextFlavor->GetDesiredSize().Y;
 }
@@ -239,7 +239,7 @@ float UItemPopupInfo::SetOptionTexts(const FItemInstance & itemInst)
 	while (i<OptionCount)
 	{
 		m_AryOptions[i]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		m_AryOptions[i]->SetString(itemInst.m_ItemData->GetOption(i).GetOptionFormat(itemInst.m_AryOptions[i].m_fValue));
+		m_AryOptions[i]->SetString(ItemManager::GetItemData( itemInst).GetOption(i).GetOptionFormat(itemInst.m_AryOptions[i].m_fValue));
 		m_AryOptions[i]->ForceLayoutPrepass();
 		OptionSizeY+= m_AryOptions[i]->GetDesiredSize().Y;
 		i++;

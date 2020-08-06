@@ -12,8 +12,12 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
 
+ADiabloPlayerController*  ADiabloPlayerController::Get=nullptr;
+
 ADiabloPlayerController::ADiabloPlayerController()
 {
+	ADiabloPlayerController::Get=this;
+	
 	CheatClass = UDiabloCheatManager::StaticClass();
 	m_ClassMainMenu = UDefaultMenu::StaticClass();
 

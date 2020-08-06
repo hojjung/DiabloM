@@ -1,6 +1,7 @@
 #include "DiaInvenGridSlot.h"
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Managers/ItemManager.h"
 #include "Widgets/DiaDragDrop.h"
 
 UDiaDragDrop* UDiaInvenGridSlot::GetDDOInst = nullptr;
@@ -15,7 +16,7 @@ void UDiaInvenGridSlot::InitSlot(int indexFromGrid)
 
 void UDiaInvenGridSlot::SetSlot(const FItemInstance & itemInstance)
 {
-	if (!itemInstance.m_ItemData)
+	if (itemInstance.m_ItemID==NAME_None)
 	{
 		ClearSlot();
 		return;
@@ -44,7 +45,7 @@ void UDiaInvenGridSlot::ClearSlot()
 
 void UDiaInvenGridSlot::UpdateText(const FItemInstance& itemInstance)
 {
-	if (itemInstance.m_ItemData->m_bStackable)
+	if (itemInstance.m_bStackable)
 	{
 		m_TextItemStackCount->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		m_TextItemStackCount->SetText(FText::AsNumber(itemInstance.m_nCurrentStack));
@@ -58,7 +59,9 @@ void UDiaInvenGridSlot::UpdateText(const FItemInstance& itemInstance)
 void UDiaInvenGridSlot::UpdateEffectBG(const FItemInstance& itemInstance)
 {
 	m_ImgItemEffectBG->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	FLinearColor ColorW = itemInstance.m_ItemData->GetItemTier().m_TierColor;
+
+	
+	FLinearColor ColorW =ItemManager::GetItemData( itemInstance).GetItemTier().m_TierColor;
 	m_ImgItemEffectBG->SetColorAndOpacity(ColorW);
 	m_ImgItemEffectBG->SetBrushTintColor(FSlateColor(ColorW));
 }
@@ -67,7 +70,7 @@ void UDiaInvenGridSlot::UpdateItemVisual(const FItemInstance& itemInstance)
 {
 	m_ImgItemVisual->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	FSlateBrush ItemIcon = FSlateBrush();
-	ItemIcon.SetResourceObject(itemInstance.m_ItemData->m_ItemIcon);
+	ItemIcon.SetResourceObject(ItemManager::GetItemData( itemInstance).m_ItemIcon);
 	m_ImgItemVisual->SetBrush(ItemIcon);
 }
 
@@ -89,7 +92,7 @@ void UDiaInvenGridSlot::SetHighlightColorTint(FLinearColor colorW)
 
 bool UDiaInvenGridSlot::IsSlotEmpty()
 {
-	return !m_CopiedItemData.m_ItemData;
+	return m_CopiedItemData.m_ItemID==NAME_None;
 }
 
 void UDiaInvenGridSlot::SetSlotFocus(UDiaDragDrop* ddo)

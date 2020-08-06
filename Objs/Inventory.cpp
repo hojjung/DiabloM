@@ -1,5 +1,6 @@
 #include "Inventory.h"
 #include "Datas/ItemDataTable.h"
+#include "Managers/ItemManager.h"
 
 Inventory::~Inventory()
 {
@@ -77,7 +78,8 @@ bool Inventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//빌드후 여
 		return false;
 	}
 
-	if (CheckSlotValid(droppedIndex,itemWantAdd) && !m_ItemAry[droppedIndex].m_ItemData)
+	//ItemManager::GetItemData(m_ItemAry[droppedIndex]->m_Item.m_ItemID).m_ItemType;
+	if (CheckSlotValid(droppedIndex,itemWantAdd) && m_ItemAry[droppedIndex].m_ItemID==NAME_None)
 	{
 		SetItem(droppedIndex, itemWantAdd);
 		itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
@@ -94,7 +96,7 @@ bool Inventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//빌드후 여
 
 	if (itemWantAdd.GetIsStackable() && itemWantAdd.CheckCanStack()&&
 		Drop.GetIsStackable() && Drop.CheckCanStack() &&
-		Drop.m_ItemData == itemWantAdd.m_ItemData)//스왑방지코드
+		Drop.m_ItemID == itemWantAdd.m_ItemID)//스왑방지코드
 	{
 		StackMove(Drop, itemWantAdd, itemWantAdd.m_Holder);
 
@@ -135,7 +137,7 @@ bool Inventory::SwapMove(FItemInstance &Drop, FItemInstance &Drag)
 
 void Inventory::StackMove(FItemInstance &Drop, FItemInstance &Drag, IItemHolder* preItemHolder)
 {
-	int DiffStackCount = Drop.m_ItemData->m_nMaxStack - Drop.m_nCurrentStack;
+	int DiffStackCount = Drop.m_nMaxStack - Drop.m_nCurrentStack;
 
 	int Count = FMath::Min(DiffStackCount, Drag.m_nCurrentStack);
 
@@ -158,12 +160,12 @@ void Inventory::PrintInven()
 
 	for (auto& Item : m_ItemAry)
 	{
-		if (!Item.m_ItemData)
+		if (Item.m_ItemID==NAME_None)
 		{
 			continue;
 		}
-
-		PRINTF("ItemName: %s,Index: %d, Stack:%d", *Item.m_ItemData->m_ShowingName.ToString(), Item.m_nGridIndex, Item.m_nCurrentStack);
+;
+		PRINTF("ItemName: %s,Index: %d, Stack:%d", *ItemManager::GetItemData(Item.m_ItemID).m_ShowingName.ToString(), Item.m_nGridIndex, Item.m_nCurrentStack);
 	}
 }
 
@@ -176,5 +178,16 @@ void Inventory::GetInvenSize(int & x, int & y)
 FItemInstance & Inventory::GetItemRef(int index)
 {
 	return m_ItemAry[index];
+}
+
+void Inventory::SetItemAry(TArray<FItemInstance>& loadedAry)
+{
+	m_ItemAry=loadedAry;
+
+	for(int i=0; i< m_ItemAry.Num();i++)
+	{
+		m_ItemAry[i].m_Holder=this;
+		m_OnSlotChanged.Broadcast(i, m_ItemAry[i]);
+	}
 }
 

@@ -119,17 +119,17 @@ void UDiaEquipmentPanel::UpdateStance(EAnimStance currentStance)
 {
 	if (currentStance == EAnimStance::Katana || currentStance == EAnimStance::TwohandSword)
 	{
-		m_ArySlots[(int)ESlots::WeaponLeft]->UpdateItemVisual(m_EquipSys->GetItem((int)ESlots::WeaponRight));
-		m_ArySlots[(int)ESlots::WeaponLeft]->SetVisualColorTint(FColor::Red);
-		m_ArySlots[(int)ESlots::WeaponLeft]->SetHighlightColorTint(FColor::Red);
+		m_ArySlots[static_cast<int>(ESlots::WeaponLeft)]->UpdateItemVisual(m_EquipSys->GetItem(static_cast<int>(ESlots::WeaponRight)));
+		m_ArySlots[static_cast<int>(ESlots::WeaponLeft)]->SetVisualColorTint(FColor::Red);
+		m_ArySlots[static_cast<int>(ESlots::WeaponLeft)]->SetHighlightColorTint(FColor::Red);
 	}
 	else
 	{
-		m_ArySlots[(int)ESlots::WeaponLeft]->SetVisualColorTint(FColor::White);
+		m_ArySlots[static_cast<int>(ESlots::WeaponLeft)]->SetVisualColorTint(FColor::White);
 
-		if (!m_EquipSys->GetItem((int)ESlots::WeaponLeft).m_ItemData)
+		if (m_EquipSys->GetItem(static_cast<int>(ESlots::WeaponLeft)).m_ItemID==NAME_None)
 		{
-			m_ArySlots[(int)ESlots::WeaponLeft]->ClearSlot();
+			m_ArySlots[static_cast<int>(ESlots::WeaponLeft)]->ClearSlot();
 		}
 
 		PRINTF("ClearSlot EquipPanel");

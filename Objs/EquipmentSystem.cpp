@@ -1,5 +1,7 @@
 #include "EquipmentSystem.h"
 
+#include "Managers/ItemManager.h"
+
 void EquipmentSystem::Init()
 {
 	m_Head			.SetEquipableType(EItemType::Helmet,true);
@@ -35,28 +37,28 @@ void EquipmentSystem::Init()
 	m_ArySlots.Emplace(&m_FingerLeft);
 
 	//right/left
-	m_StanceFPtr[(int)EItemType::None][(int)EItemType::None] = &EquipmentSystem::SetStanceAllNull;
-	m_StanceFPtr[(int)EItemType::None][(int)EItemType::OneHandSword] = &EquipmentSystem::SetStanceNull;
-	m_StanceFPtr[(int)EItemType::None][(int)EItemType::Dagger] = &EquipmentSystem::SetStanceNull;
-	m_StanceFPtr[(int)EItemType::None][(int)EItemType::Shield] = &EquipmentSystem::SetStanceNull;
-	m_StanceFPtr[(int)EItemType::None][(int)EItemType::TwohandSword] = &EquipmentSystem::SetStanceNull;
-	m_StanceFPtr[(int)EItemType::None][(int)EItemType::Katana] = &EquipmentSystem::SetStanceNull;
+	m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::None)] = &EquipmentSystem::SetStanceAllNull;
+	m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::OneHandSword)] = &EquipmentSystem::SetStanceNull;
+	m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::Dagger)] = &EquipmentSystem::SetStanceNull;
+	m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::Shield)] = &EquipmentSystem::SetStanceNull;
+	m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::TwohandSword)] = &EquipmentSystem::SetStanceNull;
+	m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::Katana)] = &EquipmentSystem::SetStanceNull;
 	//				  EItemType
-	m_StanceFPtr[(int)EItemType::OneHandSword][(int)EItemType::OneHandSword] = &EquipmentSystem::SetStanceDual;
-	m_StanceFPtr[(int)EItemType::Dagger][(int)EItemType::OneHandSword] = &EquipmentSystem::SetStanceDual;
-	m_StanceFPtr[(int)EItemType::OneHandSword][(int)EItemType::Dagger] = &EquipmentSystem::SetStanceDual;
-	m_StanceFPtr[(int)EItemType::Dagger][(int)EItemType::Dagger] = &EquipmentSystem::SetStanceDual;
+	m_StanceFPtr[static_cast<int>(EItemType::OneHandSword)][static_cast<int>(EItemType::OneHandSword)] = &EquipmentSystem::SetStanceDual;
+	m_StanceFPtr[static_cast<int>(EItemType::Dagger)][static_cast<int>(EItemType::OneHandSword)] = &EquipmentSystem::SetStanceDual;
+	m_StanceFPtr[static_cast<int>(EItemType::OneHandSword)][static_cast<int>(EItemType::Dagger)] = &EquipmentSystem::SetStanceDual;
+	m_StanceFPtr[static_cast<int>(EItemType::Dagger)][static_cast<int>(EItemType::Dagger)] = &EquipmentSystem::SetStanceDual;
 	//				  EItemType
-	m_StanceFPtr[(int)EItemType::OneHandSword][(int)EItemType::Shield] = &EquipmentSystem::SetStanceShield;
-	m_StanceFPtr[(int)EItemType::Dagger][(int)EItemType::Shield] = &EquipmentSystem::SetStanceShield;
+	m_StanceFPtr[static_cast<int>(EItemType::OneHandSword)][static_cast<int>(EItemType::Shield)] = &EquipmentSystem::SetStanceShield;
+	m_StanceFPtr[static_cast<int>(EItemType::Dagger)][static_cast<int>(EItemType::Shield)] = &EquipmentSystem::SetStanceShield;
 	//				  EItemType
-	m_StanceFPtr[(int)EItemType::OneHandSword][(int)EItemType::None] = &EquipmentSystem::SetStanceOneHand;
+	m_StanceFPtr[static_cast<int>(EItemType::OneHandSword)][static_cast<int>(EItemType::None)] = &EquipmentSystem::SetStanceOneHand;
 	//				  EItemType
-	m_StanceFPtr[(int)EItemType::Dagger][(int)EItemType::None] = &EquipmentSystem::SetStanceDagger;
+	m_StanceFPtr[static_cast<int>(EItemType::Dagger)][static_cast<int>(EItemType::None)] = &EquipmentSystem::SetStanceDagger;
 	//				  EItemType
-	m_StanceFPtr[(int)EItemType::Katana][(int)EItemType::None] = &EquipmentSystem::SetStanceKatana;
+	m_StanceFPtr[static_cast<int>(EItemType::Katana)][static_cast<int>(EItemType::None)] = &EquipmentSystem::SetStanceKatana;
 	//				  EItemType
-	m_StanceFPtr[(int)EItemType::TwohandSword][(int)EItemType::None] = &EquipmentSystem::SetStanceTwoHand;
+	m_StanceFPtr[static_cast<int>(EItemType::TwohandSword)][static_cast<int>(EItemType::None)] = &EquipmentSystem::SetStanceTwoHand;
 }
 
 bool EquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//drag된 대상이 어떤 아이템을 가졌는지 알방법이 없음
@@ -73,7 +75,7 @@ bool EquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//dra
 		return true;
 	}
 
-	if (!m_ArySlots[droppedIndex]->m_Item.m_ItemData)
+	if (m_ArySlots[droppedIndex]->m_Item.m_ItemID == NAME_None)
 	{
 		PRINTF("Probably Katana or Twohandsword left hand blocked");
 		return false;
@@ -107,7 +109,7 @@ void EquipmentSystem::OnItemSlotChanged(int index)
 
 void EquipmentSystem::CalculateStance()
 {
-	(this->*m_StanceFPtr[(int)GetEquippedItem(ESlots::WeaponRight)][(int)GetEquippedItem(ESlots::WeaponLeft)])();
+	(this->*m_StanceFPtr[static_cast<int>(GetEquippedItem(ESlots::WeaponRight))][static_cast<int>(GetEquippedItem(ESlots::WeaponLeft))])();
 
 	m_OnStanceChanged.Broadcast(m_CurrentStance);
 }
@@ -138,16 +140,19 @@ bool EquipmentSystem::SwapMove(FItemInstance & Drop, FItemInstance & Drag)
 
 bool EquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance & itemWantAdd)
 {
-	if(!m_ArySlots[droppedIndex]->m_AbleEquipSlot[(int)itemWantAdd.m_ItemData->m_ItemType])
+	auto ItemTypeWantAdd=ItemManager::GetItemData(itemWantAdd.m_ItemID).m_ItemType;
+	auto ItemTypeDroppedBefore=ItemManager::GetItemData(m_ArySlots[droppedIndex]->m_Item.m_ItemID).m_ItemType;
+	
+	if(!m_ArySlots[droppedIndex]->m_AbleEquipSlot[static_cast<int>(ItemTypeWantAdd)])
 	{
 		return false;
 	}
 	
-	if( itemWantAdd.m_ItemData->m_ItemType == EItemType::TwohandSword || itemWantAdd.m_ItemData->m_ItemType == EItemType::Katana)
+	if(ItemTypeWantAdd == EItemType::TwohandSword ||ItemTypeWantAdd == EItemType::Katana)
 	{
 
-		if(m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType==EItemType::TwohandSword
-			||m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType==EItemType::Katana)
+		if(ItemTypeDroppedBefore==EItemType::TwohandSword
+			||ItemTypeDroppedBefore==EItemType::Katana)
 		{
 			return true;;			
 		}
@@ -165,7 +170,7 @@ void EquipmentSystem::SetItem(int droppedIndex, FItemInstance & itemWantAdd)
 {
 	m_ArySlots[droppedIndex]->m_Item = itemWantAdd;
 	m_ArySlots[droppedIndex]->SetOccupie(true);
-	m_ArySlots[droppedIndex]->m_EquippedType = m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType;
+	m_ArySlots[droppedIndex]->m_EquippedType = ItemManager::GetItemData(m_ArySlots[droppedIndex]->m_Item.m_ItemID).m_ItemType;
 	//
 	m_ArySlots[droppedIndex]->m_Item.m_nGridIndex = droppedIndex;
 	m_ArySlots[droppedIndex]->m_Item.m_Holder = this;
@@ -184,7 +189,7 @@ void EquipmentSystem::PrintEquipStats()
 
 	PRINTF("CurrentStance: %s", *EnumToStr(EAnimStance, m_CurrentStance));
 
-	for (int i = 0; i < (int)ESlots::Length; i++)
+	for (int i = 0; i < static_cast<int>(ESlots::Length); i++)
 	{
 		PRINTF("Slot: %s - EquipItem: %s", *EnumToStr(ESlots, (ESlots)i),*EnumToStr(EItemType, GetEquippedItem(i)));
 	}
@@ -192,7 +197,7 @@ void EquipmentSystem::PrintEquipStats()
 
 EItemType EquipmentSystem::GetEquippedItem(ESlots slot)
 {
-	return m_ArySlots[(int)slot]->m_EquippedType;
+	return m_ArySlots[static_cast<int>(slot)]->m_EquippedType;
 }
 
 EItemType EquipmentSystem::GetEquippedItem(int slotIndex)

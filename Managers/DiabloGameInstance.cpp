@@ -2,6 +2,7 @@
 #include "ConstructorHelpers.h"
 
 
+UDiabloGameInstance* UDiabloGameInstance::Get=nullptr;
 
 UDiabloGameInstance::UDiabloGameInstance(const FObjectInitializer& objInit):Super(objInit)
 {
@@ -17,6 +18,8 @@ UDiabloGameInstance::UDiabloGameInstance(const FObjectInitializer& objInit):Supe
 	{
 		m_ItemTable = FoundItemTable.Object;
 	}
+
+	UDiabloGameInstance::Get=this;
 }
 
 void UDiabloGameInstance::Init()
@@ -24,12 +27,18 @@ void UDiabloGameInstance::Init()
 	Super::Init();
 	m_ItemManager = new ItemManager();
 	m_ItemManager->Init(this);
+
+	m_SaveLoadManager=new SaveLoadManager();
+	m_SaveLoadManager->CreateSaveLoadInstance();
+
+	
 }
 
 void UDiabloGameInstance::Shutdown()
 {
 	Super::Shutdown();
 	delete m_ItemManager;
+	delete m_SaveLoadManager;
 }
 
 const FBaseStatTable * UDiabloGameInstance::GetBaseUnit(FName id) const

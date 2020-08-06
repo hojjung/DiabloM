@@ -123,9 +123,13 @@ public:
 
 		m_nSellValue = 100;
 		m_bEquipable=true;
+
+		m_ItemID="NeedName";
 	}
 
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName m_ItemID;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FDataTableRowHandle m_ItemTier;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -186,7 +190,9 @@ public:
 		m_nIndex = index;
 		m_fValue = v;
 	}
+	UPROPERTY(EditAnywhere)
 	int m_nIndex;
+	UPROPERTY(EditAnywhere)
 	float m_fValue;
 };
 
@@ -204,29 +210,37 @@ public:
 
 	FItemInstance(const FItemData* itemData, int gridIndex, IItemHolder* holder, TArray<FOptionValue>* aryUseEffect=nullptr)
 	{
-		m_ItemData = itemData;
-		m_nCurrentStack = m_ItemData->m_nInitStack;
+		m_ItemID = itemData->m_ItemID;
+		m_nCurrentStack = itemData->m_nInitStack;
 		m_nGridIndex = gridIndex;
 		m_Holder = holder;
-
-
+		m_nMaxStack = itemData->m_nMaxStack;
+		m_bStackable= itemData->m_bStackable;
 
 		if(aryUseEffect)
 			m_AryOptions = *aryUseEffect;
 	}
 
 public:
+	UPROPERTY(EditAnywhere)
 	int m_nCurrentStack;
+	UPROPERTY(EditAnywhere)
 	int m_nGridIndex;
-	const FItemData* m_ItemData;
+	UPROPERTY(EditAnywhere)
 	TArray<FOptionValue> m_AryOptions;
+	UPROPERTY(EditAnywhere)
+	FName m_ItemID=NAME_None;
+
+	int m_nMaxStack;
+	bool m_bStackable;
+	
 	IItemHolder* m_Holder;
 
 public:
 
 	bool IsValid()
 	{
-		return m_ItemData;
+		return m_ItemID.IsValid();
 	}
 
 	void SetGridNewIndex(int newIndex)
@@ -236,18 +250,20 @@ public:
 
 	bool CheckCanStack() const
 	{
-		return m_nCurrentStack < m_ItemData->m_nMaxStack;
+		return m_nCurrentStack < m_nMaxStack;
 	}//스텍 되는애가 최대치 이하인지
 	bool GetIsStackable() const
 	{
-		return m_ItemData->m_bStackable;
+		return m_bStackable;
 	}//근본적으로 스택이 되는지
 
 	void ClearData()
 	{
-		m_ItemData = nullptr;
+		m_ItemID = NAME_None;
 		m_nCurrentStack = -1;
 		m_nGridIndex = -1;
+		m_nMaxStack=-1;
+		m_bStackable=false;
 	}
 
 };

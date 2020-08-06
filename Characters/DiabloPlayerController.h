@@ -28,11 +28,12 @@ class DIABLOM_API ADiabloPlayerController : public APlayerController
 	
 public:
 	ADiabloPlayerController();
-
+	 static  ADiabloPlayerController* Get;
 protected:
 	Inventory* m_Inven;
 	PlayerSkillSystem* m_SkillSystem;
 	EquipmentSystem* m_EquipSystem;
+
 
 protected:
 	UPROPERTY(EditDefaultsOnly,Category="Widget")
@@ -97,4 +98,18 @@ public:
 	//생성할때 옵션과 공격력 방어력 추가
 	//이 변수값을 어빌리티로 올려줘야함
 
+
+public:
+	FORCEINLINE Inventory* GetInven() const
+	{
+		return  m_Inven;
+	}
+	FORCEINLINE PlayerSkillSystem* GetSkillSystem() const
+	{
+		return  m_SkillSystem;
+	}
+	FORCEINLINE EquipmentSystem* GetEquipment() const
+	{
+		return  m_EquipSystem;
+	}
 };

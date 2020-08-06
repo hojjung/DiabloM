@@ -20,6 +20,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_FocusedInteractable = nullptr;
 
 	m_fInteractRange = 300.f;
+
 }
 
 
