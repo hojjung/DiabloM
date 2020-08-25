@@ -37,21 +37,21 @@ protected:
 
 protected:
 	UPROPERTY(EditDefaultsOnly,Category="Widget")
-	TSubclassOf<UDefaultMenu> m_ClassMainMenu; // ÅÂ¾î³ª°Ô ÇÒ ¼³°èµµ À§Á¬ ¤·¤·
+	TSubclassOf<UDefaultMenu> m_ClassMainMenu; // íƒœì–´ë‚˜ê²Œ í•  ì„¤ê³„ë„ ìœ„ì ¯ ã…‡ã…‡
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	int m_nInvenX;
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	int m_nInvenY;
 protected:
 	UPROPERTY()
-	UDefaultMenu* m_MainMenu;//½ÇÁ¦·Î ÅÂ¾î³­ À§Á¬ ¸ŞÀÎ ¸Ş´º
+	UDefaultMenu* m_MainMenu;//ì‹¤ì œë¡œ íƒœì–´ë‚œ ìœ„ì ¯ ë©”ì¸ ë©”ë‰´
 
 	//able skill tree
 	//learned skill tree
 	//current SkillSlot
 	//Equipment slot
-	//Å°¸¦ ´­·¯¼­ ¼±ÅÃµÈ ½½·ÔÀÇ ÇÔ¼ö¸¸ ºÒ¸®°Ô
-	//À§Á¬µµ ¸¸µé¾î¼­ ÃÊ±âÈ­ ½ÃÅ³°Í
+	//í‚¤ë¥¼ ëˆŒëŸ¬ì„œ ì„ íƒëœ ìŠ¬ë¡¯ì˜ í•¨ìˆ˜ë§Œ ë¶ˆë¦¬ê²Œ
+	//ìœ„ì ¯ë„ ë§Œë“¤ì–´ì„œ ì´ˆê¸°í™” ì‹œí‚¬ê²ƒ
 protected:
 	virtual void BeginPlay() override;
 
@@ -83,20 +83,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CloseMainMenu();
 	//
-	//¹è¿ï¼ö ÀÖ´Â ½ºÅ³
-	//¹è¿î ½ºÅ³
-	//½½·Ô¿¡ ÀåÂøÇÑ ½ºÅ³
+	//ë°°ìš¸ìˆ˜ ìˆëŠ” ìŠ¤í‚¬
+	//ë°°ìš´ ìŠ¤í‚¬
+	//ìŠ¬ë¡¯ì— ì¥ì°©í•œ ìŠ¤í‚¬
 	//
-	//ÀÎº¥Åä¸®
+	//ì¸ë²¤í† ë¦¬
 	//
-	//ÀåºñÀåÂø½½·Ô
+	//ì¥ë¹„ì¥ì°©ìŠ¬ë¡¯
 
 
-	//¾ÆÀÌÅÛÀÇ ÀÎ½ºÅÏ½º´Â ¾î¶»°ÔµÇ´Â°¡?
+	//ì•„ì´í…œì˜ ì¸ìŠ¤í„´ìŠ¤ëŠ” ì–´ë–»ê²Œë˜ëŠ”ê°€?
 
-	//¾ÆÀÌÅÛÀÇ ±¸¼º? ¾ÆÀÌÄÜ,±âº» ÀÌ¸§,¸Ş½¬,±âº»°ø°İ·Â?
-	//»ı¼ºÇÒ¶§ ¿É¼Ç°ú °ø°İ·Â ¹æ¾î·Â Ãß°¡
-	//ÀÌ º¯¼ö°ªÀ» ¾îºô¸®Æ¼·Î ¿Ã·ÁÁà¾ßÇÔ
+	//ì•„ì´í…œì˜ êµ¬ì„±? ì•„ì´ì½˜,ê¸°ë³¸ ì´ë¦„,ë©”ì‰¬,ê¸°ë³¸ê³µê²©ë ¥?
+	//ìƒì„±í• ë•Œ ì˜µì…˜ê³¼ ê³µê²©ë ¥ ë°©ì–´ë ¥ ì¶”ê°€
+	//ì´ ë³€ìˆ˜ê°’ì„ ì–´ë¹Œë¦¬í‹°ë¡œ ì˜¬ë ¤ì¤˜ì•¼í•¨
 
 
 public:

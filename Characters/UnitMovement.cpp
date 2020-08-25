@@ -45,7 +45,10 @@ void UUnitMovement::TickComponent(float DeltaTime, enum ELevelTick TickType, FAc
 		return;
 	}
 
-	m_MoveVector = ConsumeInputVector().GetClampedToMaxSize(1.0f) * DeltaTime * m_fMaxSpeed;
+	Velocity = ConsumeInputVector().GetClampedToMaxSize(1.0f) *  m_fMaxSpeed;
+
+	m_MoveVector = Velocity*DeltaTime;
+	
 	float PastMoveSize = m_MoveVector.Size();
 
 	TickRotate(DeltaTime);
@@ -66,7 +69,6 @@ void UUnitMovement::TickComponent(float DeltaTime, enum ELevelTick TickType, FAc
 		}
 	}
 
-	Velocity = m_MoveVector;
 
 	UpdateDefaultRVO();
 };
@@ -185,6 +187,11 @@ FRotator UUnitMovement::ComputeOrientToMovementRotation(const FRotator & Current
 	}
 
 	return m_MoveVector.GetSafeNormal().Rotation();
+}
+
+void UUnitMovement::SetMoveSpeed(float newSpeed)
+{
+	m_fMaxSpeed=newSpeed;
 }
 
 #pragma region RVO_GETSET

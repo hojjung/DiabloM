@@ -66,7 +66,7 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
 	}
 	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
 	{
-		// ½ÃÀüÀÚ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		AActor* SourceActor = nullptr;
 		AUnitPawn* SourceCharacter = nullptr;
 		if (Source && Source->AbilityActorInfo.IsValid() && Source->AbilityActorInfo->AvatarActor.IsValid())
@@ -138,6 +138,7 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
 		{
 			// Call for all movespeed changes
 			//TargetCharacter->HandleMoveSpeedChanged(DeltaValue, SourceTags);
+			Cast<UUnitMovement>( TargetCharacter->GetMovementComponent())->SetMoveSpeed(GetMoveSpeed());
 		}
 	}
 }

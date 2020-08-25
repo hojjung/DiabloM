@@ -216,7 +216,7 @@ void EquipmentSystem::PrintEquipStats()
 
     for (int i = 0; i < static_cast<int>(ESlots::Length); i++)
     {
-        PRINTF("Slot: %s - EquipItem: %s", *EnumToStr(ESlots, (ESlots)i), *EnumToStr(EItemType, GetEquippedItem(i)));
+        PRINTF("Slot: %s - EquipItem: %s - Occupied: %B", *EnumToStr(ESlots, (ESlots)i), *EnumToStr(EItemType, GetEquippedItem(i)),m_ArySlots[i]->m_bIsOccupied);
     }
 }
 

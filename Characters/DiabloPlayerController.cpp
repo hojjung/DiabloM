@@ -122,5 +122,5 @@ void ADiabloPlayerController::CloseMainMenu()
 {
 	//UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
 	m_MainMenu->SetVisibility(ESlateVisibility::Hidden);
-	bShowMouseCursor = false;
+	bShowMouseCursor = true;
 }

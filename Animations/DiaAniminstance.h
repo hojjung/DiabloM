@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "Animation/AnimInstance.h"
 #include "DiaAniminstance.generated.h"
 
@@ -13,5 +13,9 @@ UCLASS()
 class DIABLOM_API UDiaAniminstance : public UAnimInstance
 {
 	GENERATED_BODY()
-	
+public:
+	UFUNCTION(BlueprintCallable)
+	float GetVelocitySqr() const;
+	UFUNCTION(BlueprintCallable)
+	float GetVeloPercentOne() const;
 };

@@ -24,6 +24,31 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 }
 
 
+void APlayerDiabloCharacter::SetUnit(FName unitID)
+{
+	m_NameUnitID = unitID;
+
+	const FPlayerEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetPlayerUnit(m_NameUnitID);
+
+	m_SkMesh->SetSkeletalMesh(UnitData->m_Mesh);
+	m_SkMesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	m_SkMesh->SetAnimInstanceClass(UnitData->m_AnimBP);
+
+	FGameplayEffectContextHandle EffectContext = m_AbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+
+	FGameplayEffectSpecHandle NewHandle = m_AbilitySystemComponent->MakeOutgoingSpec(UnitData->m_DefaultStatTable, GetLevel(), EffectContext);
+
+	if (!NewHandle.IsValid())
+	{
+		PRINTF("Invalid Handle");
+	}
+
+	FActiveGameplayEffectHandle ActiveGEHandle = m_AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), m_AbilitySystemComponent);
+
+
+}
+
 void APlayerDiabloCharacter::BeginPlay()
 {
 	Super::BeginPlay();

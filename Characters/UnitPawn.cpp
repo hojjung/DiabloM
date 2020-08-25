@@ -202,7 +202,7 @@ void AUnitPawn::SetUnit(FName unitID)
 {
 	m_NameUnitID = unitID;
 
-	const FBaseStatTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetBaseUnit(m_NameUnitID);
+	const FEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetMonsterUnit(m_NameUnitID);
 
 	m_SkMesh->SetSkeletalMesh(UnitData->m_Mesh);
 	m_SkMesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -220,20 +220,19 @@ void AUnitPawn::SetUnit(FName unitID)
 
 	FActiveGameplayEffectHandle ActiveGEHandle = m_AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), m_AbilitySystemComponent);
 
+	//í˜„ì¬ ë ˆë²¨ ê¸°ë³¸ ìŠ¤í…Ÿ
 
-	//ÇöÀç ·¹º§ ±âº» ½ºÅİ
+	//ê¸°ë³¸ ìºë¦­í„° íŒ¨ì‹œë¸Œ ìŠ¤í‚¬
 
-	//±âº» Ä³¸¯ÅÍ ÆĞ½Ãºê ½ºÅ³
+	//ë°°ìš´ ìŠ¤í‚¬
 
-	//¹è¿î ½ºÅ³
+	//ì•„ì´í…œ ì˜µì…˜
 
-	//¾ÆÀÌÅÛ ¿É¼Ç
-
-	//±âº» Â÷½ºÅİ
+	//ê¸°ë³¸ ì°¨ìŠ¤í…Ÿ
 
 	//
 
-	//Â÷½ºÅİ º¸³Ê½º¸¦ ±âº» ½ºÅÈ¿¡
+	//ì°¨ìŠ¤í…Ÿ ë³´ë„ˆìŠ¤ë¥¼ ê¸°ë³¸ ìŠ¤íƒ¯ì—
 }
 
 float AUnitPawn::GetHealth() const
@@ -256,16 +255,18 @@ float AUnitPawn::GetMoveSpeed() const
 	return m_AttributeSet->GetMoveSpeed();
 }
 
+
 bool AUnitPawn::SetCharacterLevel(int NewLevel)
 {
+	
 	if(NewLevel> MAXLEVEL)
 		return false;
 
 	if (m_nCharacterLevel != NewLevel && NewLevel > 0)
 	{
 		// Our level changed so we need to refresh abilities
-		//·¹º§¾÷À¸·Î ¾÷µ¥ÀÌÆ®½ÃÅ³ ½ºÅ³ÀÌ ÀÖ³ª?
-		//±âº»½ºÅİÀÖÀ½
+		//ë ˆë²¨ì—…ìœ¼ë¡œ ì—…ë°ì´íŠ¸ì‹œí‚¬ ìŠ¤í‚¬ì´ ìˆë‚˜?
+		//ê¸°ë³¸ìŠ¤í…ŸìˆìŒ
 		RemoveStartupGameplayAbilities();
 		m_nCharacterLevel = NewLevel;
 		AddStartupGameplayAbilities();

@@ -52,14 +52,6 @@ protected://pathfollow
 
 	float m_AvoidanceLockTimer;
 
-
-	FVector TestA;
-
-	FVector TestB;
-
-	FVector TestC;
-
-	FVector TestD;
 public:
 	virtual void BeginPlay() override;
 
@@ -70,8 +62,10 @@ public:
 	virtual void StopActiveMovement() override;
 
 	FRotator ComputeOrientToMovementRotation(const FRotator& CurrentRotation) const;
+
+	void SetMoveSpeed(float newSpeed);
 #pragma region RVO
-	// IRVOAvoidanceInterfaceÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// IRVOAvoidanceInterfaceï¿½ï¿½(ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Óµï¿½
 	virtual void SetRVOAvoidanceUID(int32 UID) override;
 	virtual int32 GetRVOAvoidanceUID() override;
 	virtual void SetRVOAvoidanceWeight(float Weight) override;

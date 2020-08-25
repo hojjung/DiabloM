@@ -23,19 +23,7 @@ class DIABLOM_API UItemDataTable : public UObject
 	GENERATED_BODY()
 	
 public:
-	UItemDataTable(const FObjectInitializer& objInit) :Super(objInit)
-	{
-		static ConstructorHelpers::FObjectFinder<UDataTable> FoundOptionTable(TEXT("DataTable'/Game/DataTables/EquipOptionTable.EquipOptionTable'"));
-		UItemDataTable::m_OptionTable = FoundOptionTable.Object;
-
-		static ConstructorHelpers::FObjectFinder<UDataTable> FoundTierTable(TEXT("DataTable'/Game/DataTables/TierTable.TierTable'"));
-		UItemDataTable::m_TierTable = FoundTierTable.Object;
-
-		static ConstructorHelpers::FObjectFinder<UDataTable> FoundItemTable(TEXT("DataTable'/Game/DataTables/DefaultItemTable.DefaultItemTable'"));
-		UItemDataTable::m_DefaultItemTable = FoundItemTable.Object;
-
-
-	}
+	UItemDataTable(const FObjectInitializer& objInit) ;
 
 static	UDataTable* m_OptionTable;//static?
 
@@ -44,12 +32,10 @@ static	UDataTable* m_TierTable;
 static	UDataTable* m_DefaultItemTable;
 
 };
-UDataTable* UItemDataTable::m_OptionTable=nullptr;
-UDataTable* UItemDataTable::m_TierTable=nullptr;
-UDataTable* UItemDataTable::m_DefaultItemTable=nullptr;
+
 
 UENUM(BlueprintType)
-enum class EItemLocation :uint8//¾ÆÀÌÅÛ ÀÎ½ºÅÏ½ºÀÇ À§Ä¡
+enum class EItemLocation :uint8//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
 {
 	Void,
 	Ground,
@@ -60,7 +46,7 @@ enum class EItemLocation :uint8//¾ÆÀÌÅÛ ÀÎ½ºÅÏ½ºÀÇ À§Ä¡
 };
 
 UENUM(BlueprintType)
-enum class EItemType :uint8//¾ÆÀÌÅÛ »ç¿ëÀ» ¶æÇÔ
+enum class EItemType :uint8//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 {
 	None,
 	Misc,
@@ -84,7 +70,7 @@ enum class EItemType :uint8//¾ÆÀÌÅÛ »ç¿ëÀ» ¶æÇÔ
 };
 
 
-USTRUCT(BlueprintType)//³­ÀÌµµ,Æ¼¾î
+USTRUCT(BlueprintType)//ï¿½ï¿½ï¿½Ìµï¿½,Æ¼ï¿½ï¿½
 struct FItemTier : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -105,7 +91,7 @@ public:
 };
 
 
-USTRUCT(BlueprintType)//³­ÀÌµµ,Æ¼¾î
+USTRUCT(BlueprintType)//ï¿½ï¿½ï¿½Ìµï¿½,Æ¼ï¿½ï¿½
 struct FItemData : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -246,16 +232,16 @@ public:
 	void SetGridNewIndex(int newIndex)
 	{
 		m_nGridIndex = newIndex;
-	}//µå·¡±× µå¶ø
+	}//ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 	bool CheckCanStack() const
 	{
 		return m_nCurrentStack < m_nMaxStack;
-	}//½ºÅØ µÇ´Â¾Ö°¡ ÃÖ´ëÄ¡ ÀÌÇÏÀÎÁö
+	}//ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´Â¾Ö°ï¿½ ï¿½Ö´ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	bool GetIsStackable() const
 	{
 		return m_bStackable;
-	}//±Ùº»ÀûÀ¸·Î ½ºÅÃÀÌ µÇ´ÂÁö
+	}//ï¿½Ùºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ï¿½ï¿½
 
 	void ClearData()
 	{

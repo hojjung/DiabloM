@@ -95,7 +95,7 @@ public:
 		return m_Capsule;
 	}
 
-	// IAbilitySystemInterfaceÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// IAbilitySystemInterfaceì„(ë¥¼) í†µí•´ ìƒì†ë¨
 	virtual UAbilitySystemComponent * GetAbilitySystemComponent() const override;
 
 	FORCEINLINE int GetLevel()
@@ -148,7 +148,7 @@ public:
 	FDelegateHandle InventoryUpdateHandle;
 	FDelegateHandle InventoryLoadedHandle;
 public:
-	//µ¥ÀÌÅÍ Å×ÀÌºí·Î »©Áà¾ßÇÔ.
+	//ë°ì´í„° í…Œì´ë¸”ë¡œ ë¹¼ì¤˜ì•¼í•¨.
 
 	virtual void HandleDamage(float DamageAmount, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, AUnitPawn* InstigatorCharacter, AActor* DamageCauser);
 	virtual void HandleHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);

@@ -24,13 +24,13 @@ class DIABLOM_API UCharacterDataTable : public UObject
 	
 };
 
-USTRUCT(BlueprintType)//³­ÀÌµµ,Æ¼¾î
-struct FBaseStatTable : public FTableRowBase
+USTRUCT(BlueprintType)//ï¿½ï¿½ï¿½Ìµï¿½,Æ¼ï¿½ï¿½
+struct FEntityTable : public FTableRowBase
 {
 	GENERATED_BODY()
 
 public:
-	FBaseStatTable()
+	FEntityTable()
 	{
 
 	}
@@ -52,13 +52,13 @@ public:
 	TArray<TSubclassOf<UGameplayEffect>> m_DefaultPassive;
 };
 
-USTRUCT(BlueprintType)//³­ÀÌµµ,Æ¼¾î
-struct FPlayerStatTable : public FBaseStatTable
+USTRUCT(BlueprintType)//ï¿½ï¿½ï¿½Ìµï¿½,Æ¼ï¿½ï¿½
+struct FPlayerEntityTable : public FEntityTable
 {
 	GENERATED_BODY()
 
 public:
-	FPlayerStatTable()
+	FPlayerEntityTable()
 	{
 
 	}
@@ -66,6 +66,6 @@ public:
 public:
 	//Skill
 
-	//EquipTable Á÷¾÷¸¶´Ù ³¥¼öÀÖ´Â ¹«±â ´Ù¸§
+	//EquipTable ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½
 };
 

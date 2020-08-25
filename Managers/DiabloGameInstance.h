@@ -28,7 +28,9 @@ protected:
 	SaveLoadManager* m_SaveLoadManager;
 protected:
 	UPROPERTY(EditAnywhere)
-	UDataTable* m_BaseUnitTable;
+	UDataTable* m_MonsterUnitTable;
+	UPROPERTY(EditAnywhere)
+	UDataTable* m_NPCUnitTable;
 	UPROPERTY(EditAnywhere)
 	UDataTable* m_PlayerUnitTable;
 	UPROPERTY(EditAnywhere)
@@ -40,7 +42,9 @@ protected:
 	virtual void Shutdown()override ;
 
 public:
-	const FBaseStatTable* GetBaseUnit(FName id) const;
+	const FEntityTable* GetMonsterUnit(FName id) const;
+	const FEntityTable* GetNPCUnit(FName id) const;
+	const FPlayerEntityTable* GetPlayerUnit(FName id) const;
 	const FItemData* GetItemData(FName id)const;
 	FItemInstance CreateItem(FName id);
 };

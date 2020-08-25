@@ -38,13 +38,15 @@ protected:
 	IInteractable* m_FocusedInteractable;
 
 protected:
+	virtual void SetUnit(FName unitID) override;
+	
 	virtual void BeginPlay() override;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	void TryCheckInteractable();
 
-	void InteractWithTarget();
+	
 
 	void OnInteractFound();
 
@@ -55,5 +57,8 @@ protected:
 	void AttackInput(float pressed);
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-
+	
+public:
+	UFUNCTION(BlueprintCallable,Category="Interact")
+	void InteractWithTarget();
 };

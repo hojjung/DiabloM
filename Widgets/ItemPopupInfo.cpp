@@ -166,8 +166,8 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator)
 	
 		ClickedItemSlot.Y -= Diff * ReverseScale;
 		
-		ClickedItemSlot.Y -= 50.f;
 	}
+		ClickedItemSlot.Y -= 50.f;
 	
 	PanelSlot->SetPosition(ClickedItemSlot);
 
