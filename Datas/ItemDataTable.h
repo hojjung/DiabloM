@@ -25,11 +25,11 @@ class DIABLOM_API UItemDataTable : public UObject
 public:
 	UItemDataTable(const FObjectInitializer& objInit) ;
 
-static	UDataTable* m_OptionTable;//static?
+static	UDataTable* GetOptionTable;//static?
 
-static	UDataTable* m_TierTable;
+static	UDataTable* GetTierTable;
 
-static	UDataTable* m_DefaultItemTable;
+static	UDataTable* GetDefaultItemTable;
 
 };
 
@@ -99,7 +99,7 @@ struct FItemData : public FTableRowBase
 public:
 	FItemData()
 	{
-		m_ItemTier.DataTable = UItemDataTable::m_TierTable;
+		m_ItemTier.DataTable = UItemDataTable::GetTierTable;
 		m_ItemTier.RowName = "Normal";
 
 		m_ItemType = EItemType::Misc;
@@ -128,6 +128,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	EItemType m_ItemType;
 
+	//무기 같은건 소켓과 액터
+	//무기는 스켈레탈 스태틱 둘다 있지 않나? 미리 박아놓으면 소켓이고 뭐고 할게 없다
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USkeletalMesh* m_SkEquipment;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UStaticMesh* m_StEquipment;
+	//하지만 방어구 또한 어디로 들어갈지 알아야한다.
+	//방어구는 아님
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool m_bEquipable;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -196,12 +205,13 @@ public:
 
 	FItemInstance(const FItemData* itemData, int gridIndex, IItemHolder* holder, TArray<FOptionValue>* aryUseEffect=nullptr)
 	{
-		m_ItemID = itemData->m_ItemID;
-		m_nCurrentStack = itemData->m_nInitStack;
+		m_ItemData=itemData;
+		m_ItemID = m_ItemData->m_ItemID;
+		m_nCurrentStack = m_ItemData->m_nInitStack;
 		m_nGridIndex = gridIndex;
 		m_Holder = holder;
-		m_nMaxStack = itemData->m_nMaxStack;
-		m_bStackable= itemData->m_bStackable;
+		m_nMaxStack = m_ItemData->m_nMaxStack;
+		m_bStackable= m_ItemData->m_bStackable;
 
 		if(aryUseEffect)
 			m_AryOptions = *aryUseEffect;
@@ -222,6 +232,7 @@ public:
 	
 	IItemHolder* m_Holder;
 
+	const FItemData* m_ItemData;
 public:
 
 	bool IsValid()

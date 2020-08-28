@@ -45,7 +45,7 @@ void UUnitMovement::TickComponent(float DeltaTime, enum ELevelTick TickType, FAc
 		return;
 	}
 
-	Velocity = ConsumeInputVector().GetClampedToMaxSize(1.0f) *  m_fMaxSpeed;
+	Velocity = ConsumeInputVector().GetClampedToSize(1.0f,1.0f) *  m_fMaxSpeed;
 
 	m_MoveVector = Velocity*DeltaTime;
 	

@@ -21,7 +21,7 @@ UCLASS()
 class DIABLOM_API UDefaultMenu : public UUserWidget
 {
 	GENERATED_BODY()
-	//ÀÎº¥,½ºÅİ,Àåºñ ±×³É ¸¸µé°Í
+	//ì¸ë²¤,ìŠ¤í…Ÿ,ì¥ë¹„ ê·¸ëƒ¥ ë§Œë“¤ê²ƒ
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -43,6 +43,8 @@ protected:
 public:
 	void Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar, PlayerSkillSystem* skill, EquipmentSystem* equipment,Inventory* inven);
 
-	
+	void OpenMainMenu();
+
+	void CloseMainMenu();
 
 };

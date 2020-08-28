@@ -10,7 +10,6 @@
 #include "Components/VerticalBox.h"
 #include "Datas/ItemDataTable.h"
 #include "Animation/WidgetAnimation.h"
-#include "Animation/WidgetAnimationPlayCallbackProxy.h"
 #include "ItemPopupInfo.generated.h"
 
 /**

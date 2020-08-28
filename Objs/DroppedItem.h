@@ -42,8 +42,11 @@ protected:
 
 public:
 	virtual void Interact(AActor* instigator) override;
+	void SetItemVisual(const FItemData* ItemData);
 
 	void SetItem(FName itemID);
+
+	void SetItemInstance(FItemInstance& itemInst);
 
 	FItemInstance GetItemInstance();
 };

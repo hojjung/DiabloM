@@ -5,7 +5,7 @@
 #include "DiabloM.h"
 #include "GameFramework/PlayerController.h"
 
-#include "Widgets/DefaultMenu.h"
+#include "Widgets/MainCanvas.h"
 
 #include "DiabloPlayerController.generated.h"
 
@@ -37,14 +37,14 @@ protected:
 
 protected:
 	UPROPERTY(EditDefaultsOnly,Category="Widget")
-	TSubclassOf<UDefaultMenu> m_ClassMainMenu; // 태어나게 할 설계도 위젯 ㅇㅇ
+	TSubclassOf<UMainCanvas> m_ClassMainMenu; // 태어나게 할 설계도 위젯 ㅇㅇ
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	int m_nInvenX;
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	int m_nInvenY;
 protected:
 	UPROPERTY()
-	UDefaultMenu* m_MainMenu;//실제로 태어난 위젯 메인 메뉴
+	UMainCanvas* m_MainMenu;//실제로 태어난 위젯 메인 메뉴
 
 	//able skill tree
 	//learned skill tree

@@ -4,6 +4,7 @@
 
 #include "DiabloM.h"
 #include "Datas/ItemDataTable.h"
+#include "Objs/DroppedItem.h"
 #include "Objs/Interfaces/ItemHolder.h"
 
 
@@ -19,7 +20,6 @@ public:
 protected:
 	UDiabloGameInstance* m_GameInstance;
 
-	TArray<FItemInstance*> m_AryItemInWorld;
 
 	int m_nCurrentIndex;
 
@@ -35,7 +35,9 @@ protected:
 public:
 	void Init(UDiabloGameInstance* gameInstance);
 
-	FItemInstance CreateItemInstance(FName itemID);
+	FItemInstance CreateItemInstance(FName itemID,int level=1);
+
+	ADroppedItem* CreateItemActor(FItemInstance& itemWantAdd,FVector posWant);
 
 	virtual bool AddItem(int droppedIndex, FItemInstance& itemWantAdd) override;
 	virtual void RemoveItem(FItemInstance& itemWantErase) override;

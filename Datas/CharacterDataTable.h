@@ -65,7 +65,10 @@ public:
 
 public:
 	//Skill
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USkeletalMesh* m_SkHair;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USkeletalMesh* m_SkFace;
 	//EquipTable �������� �����ִ� ���� �ٸ�
 };
 

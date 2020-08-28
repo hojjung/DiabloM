@@ -20,7 +20,14 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_FocusedInteractable = nullptr;
 
 	m_fInteractRange = 300.f;
-
+	//
+	CreateSkMeshComponent(&m_SkFace,"SkMesh01");
+	CreateSkMeshComponent(&m_SkHair,"SkMesh02");
+	CreateSkMeshComponent(&m_SkBelt,"SkMesh03");
+	CreateSkMeshComponent(&m_SkGlove,"SkMesh04");
+	CreateSkMeshComponent(&m_SkShoe,"SkMesh05");
+	CreateSkMeshComponent(&m_SkShoulderPad,"SkMesh06");
+	CreateSkMeshComponent(&m_SkHeadGear,"SkMesh07");
 }
 
 
@@ -29,11 +36,25 @@ void APlayerDiabloCharacter::SetUnit(FName unitID)
 	m_NameUnitID = unitID;
 
 	const FPlayerEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetPlayerUnit(m_NameUnitID);
-
-	m_SkMesh->SetSkeletalMesh(UnitData->m_Mesh);
+	//	
+	m_CachedHairMesh = UnitData->m_SkHair;
+	m_CachedBodyMesh = UnitData->m_Mesh;
+	//
+	SetBodyMeshToCached();
 	m_SkMesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	m_SkMesh->SetAnimInstanceClass(UnitData->m_AnimBP);
-
+	//
+	m_SkFace->SetMasterPoseComponent(m_SkMesh);
+	m_SkHair->SetMasterPoseComponent(m_SkMesh);
+	m_SkGlove->SetMasterPoseComponent(m_SkMesh);
+	m_SkShoe->SetMasterPoseComponent(m_SkMesh);
+	m_SkHeadGear->SetMasterPoseComponent(m_SkMesh);
+	m_SkShoulderPad->SetMasterPoseComponent(m_SkMesh);
+	m_SkBelt->SetMasterPoseComponent(m_SkMesh);
+	//
+	m_SkFace->SetSkeletalMesh(UnitData->m_SkFace);
+	SetHairMeshToCached();
+	//
 	FGameplayEffectContextHandle EffectContext = m_AbilitySystemComponent->MakeEffectContext();
 	EffectContext.AddSourceObject(this);
 
@@ -45,7 +66,6 @@ void APlayerDiabloCharacter::SetUnit(FName unitID)
 	}
 
 	FActiveGameplayEffectHandle ActiveGEHandle = m_AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), m_AbilitySystemComponent);
-
 
 }
 
@@ -75,7 +95,8 @@ void APlayerDiabloCharacter::TryCheckInteractable()
 		ETraceTypeQuery::TraceTypeQuery3, false, IgnoreActors, EDrawDebugTrace::ForOneFrame, OutHit, true)
 		|| !OutHit.GetActor())
 	{
-		m_FocusedInteractable = nullptr;
+		m_FocusedInteractable.SetInterface(nullptr);
+		m_FocusedInteractable.SetObject(nullptr);
 		return;
 	}
 
@@ -86,7 +107,8 @@ void APlayerDiabloCharacter::TryCheckInteractable()
 	{
 		if (m_FocusedInteractable)
 		{
-			m_FocusedInteractable = nullptr;
+			m_FocusedInteractable.SetInterface(nullptr);
+			m_FocusedInteractable.SetObject(nullptr);
 		}
 
 		return;
@@ -94,7 +116,9 @@ void APlayerDiabloCharacter::TryCheckInteractable()
 
 	if (!m_FocusedInteractable)
 	{
-		m_FocusedInteractable = FoundIntract;
+
+		m_FocusedInteractable.SetInterface(FoundIntract);
+		m_FocusedInteractable.SetObject(OutHit.GetActor());
 
 		OnInteractFound();
 
@@ -103,18 +127,18 @@ void APlayerDiabloCharacter::TryCheckInteractable()
 
 	if (m_FocusedInteractable != FoundIntract)
 	{
-		m_FocusedInteractable = FoundIntract;
+		m_FocusedInteractable.SetInterface(FoundIntract);
+		m_FocusedInteractable.SetObject(OutHit.GetActor());
 
 		OnInteractFound();
 
-		return;
 	}
-
-
 }
 
 void APlayerDiabloCharacter::InteractWithTarget()
 {
+
+	
 	if (!m_FocusedInteractable)
 		return;
 
@@ -141,6 +165,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 
 void APlayerDiabloCharacter::AttackInput(float pressed)
 {
+	PRINTF("Attacking");
 }
 
 
@@ -151,4 +176,14 @@ void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	InputComponent->BindAxis("MoveForward", this, &AUnitPawn::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &AUnitPawn::MoveRight);
 	PlayerInputComponent->BindAction("Interaction", EInputEvent::IE_Pressed, this, &APlayerDiabloCharacter::InteractWithTarget);
+}
+
+void APlayerDiabloCharacter::SetBodyMeshToCached()
+{
+	m_SkMesh->SetSkeletalMesh(m_CachedBodyMesh);
+}
+
+void APlayerDiabloCharacter::SetHairMeshToCached()
+{
+	m_SkHair->SetSkeletalMesh(m_CachedHairMesh);
 }

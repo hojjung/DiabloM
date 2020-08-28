@@ -50,13 +50,13 @@ protected:
 	UPROPERTY()
 	UNavigationSystemV1* m_NavSys;
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Character")
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Character")
 	UCapsuleComponent* m_Capsule;
-	UPROPERTY(VisibleAnywhere, Category = "Character")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Character")
 	USkeletalMeshComponent* m_SkMesh;
-	UPROPERTY(VisibleAnywhere,Category="Movement")
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Movement")
 	UUnitMovement* m_Movement;
-	UPROPERTY(VisibleAnywhere, Category = "AI")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "AI")
 	UPathFollowingComponent* m_PFComp;
 	//
 	UPROPERTY(VisibleAnywhere, Category = Abilities)
@@ -72,6 +72,8 @@ public://should go dataTable
 protected:
 	virtual void BeginPlay() override;
 
+	void CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName);
+	
 public:
 	UFUNCTION(BlueprintCallable)
 	void MoveToLocation(FVector goalLocation);

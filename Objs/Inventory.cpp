@@ -70,33 +70,34 @@ void Inventory::RemoveItemStack(int index)
 	m_OnSlotChanged.Broadcast(index, m_ItemAry[index]);
 }
 
-bool Inventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//ºôµåÈÄ ¿©±âµµ
+bool Inventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//ë¹Œë“œí›„ ì—¬ê¸°ë„
 {
+	//return true;
 	if (this == static_cast<Inventory*>(itemWantAdd.m_Holder) && droppedIndex == itemWantAdd.m_nGridIndex)
 	{
 		PRINTF("Prevent MySelf");
 		return false;
 	}
-
-	//ItemManager::GetItemData(m_ItemAry[droppedIndex]->m_Item.m_ItemID).m_ItemType;
+//ã„´safe
+	//ì´ì•„ë˜ì„
 	if (CheckSlotValid(droppedIndex,itemWantAdd) && m_ItemAry[droppedIndex].m_ItemID==NAME_None)
 	{
 		SetItem(droppedIndex, itemWantAdd);
+		//ì´ì•„ë˜ì„
 		itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
-		PRINTF("Success1");
 		return true;
 	}
-
+	///
 	int DragIndex = itemWantAdd.m_nGridIndex;
 
 	FItemInstance Drop = m_ItemAry[droppedIndex];
 
 	//Stack
 	bool Result = false;
-
+	//safe
 	if (itemWantAdd.GetIsStackable() && itemWantAdd.CheckCanStack()&&
 		Drop.GetIsStackable() && Drop.CheckCanStack() &&
-		Drop.m_ItemID == itemWantAdd.m_ItemID)//½º¿Ò¹æÁöÄÚµå
+		Drop.m_ItemID == itemWantAdd.m_ItemID)//ìŠ¤ì™‘ë°©ì§€ì½”ë“œ
 	{
 		StackMove(Drop, itemWantAdd, itemWantAdd.m_Holder);
 
@@ -109,7 +110,8 @@ bool Inventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//ºôµåÈÄ ¿©
 		PRINTF("SWap");
 		Result=SwapMove(Drop, itemWantAdd);
 	}
-
+	//safe
+	
 	if (Result)
 	{
 		m_OnSlotChanged.Broadcast(droppedIndex, m_ItemAry[droppedIndex]);

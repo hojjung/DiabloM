@@ -20,10 +20,10 @@ class DIABLOM_API UDiabloGameInstance : public UGameInstance
 	GENERATED_BODY()
 	
 public:
-	UDiabloGameInstance(const FObjectInitializer& objInit);
+	UDiabloGameInstance();//
 
 	static UDiabloGameInstance* Get;
-protected:
+public:
 	ItemManager* m_ItemManager;
 	SaveLoadManager* m_SaveLoadManager;
 protected:
@@ -38,6 +38,7 @@ protected:
 
 protected:
 	virtual void Init() override;
+	virtual void OnStart() override;
 
 	virtual void Shutdown()override ;
 

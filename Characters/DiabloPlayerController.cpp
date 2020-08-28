@@ -19,10 +19,12 @@ ADiabloPlayerController::ADiabloPlayerController()
 	ADiabloPlayerController::Get=this;
 	
 	CheatClass = UDiabloCheatManager::StaticClass();
-	m_ClassMainMenu = UDefaultMenu::StaticClass();
+	m_ClassMainMenu = UMainCanvas::StaticClass();
 
 	m_nInvenX = 5;
 	m_nInvenY = 8;
+
+	bShowMouseCursor=true;
 }
 
 void ADiabloPlayerController::BeginPlay()
@@ -38,11 +40,13 @@ void ADiabloPlayerController::BeginPlay()
 	m_EquipSystem->Init();
 
 	InitWidget();
+
+	
 }
 
 void ADiabloPlayerController::InitWidget()
 {
-	m_MainMenu = CreateWidget<UDefaultMenu>(this, m_ClassMainMenu, "MainMenu00");
+	m_MainMenu = CreateWidget<UMainCanvas>(this, m_ClassMainMenu, "MainMenu00");
 	m_MainMenu->AddToViewport();
 	m_MainMenu->Init(this,Cast<APlayerDiabloCharacter>(GetPawn()),m_SkillSystem ,m_EquipSystem,m_Inven);
 
@@ -103,6 +107,7 @@ bool ADiabloPlayerController::AddItem(FItemInstance itemInst)
 bool ADiabloPlayerController::PickUpItem(ADroppedItem * pickupItem)
 {
 	return AddItem(pickupItem->GetItemInstance());
+	//return true;
 }
 
 void ADiabloPlayerController::OpenMainMenu()
@@ -114,13 +119,11 @@ void ADiabloPlayerController::OpenMainMenu()
 	}
 
 	//UWidgetBlueprintLibrary::SetInputMode_UIOnly(this);
-	bShowMouseCursor = true;
-	m_MainMenu->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	m_MainMenu->OpenMainMenu();
 }
 
 void ADiabloPlayerController::CloseMainMenu()
 {
 	//UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
-	m_MainMenu->SetVisibility(ESlateVisibility::Hidden);
-	bShowMouseCursor = true;
+	m_MainMenu->CloseMainMenu();
 }

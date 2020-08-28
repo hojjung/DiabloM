@@ -26,16 +26,36 @@ public:
 	static const FName LeftHandWeaponSocketTop;
 	static const FName LeftHandWeaponSocketBottom;
 	
-
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player")
 	float m_fInteractRange;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UCameraDissolve* m_DissolveCam;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UCameraComponent* m_TopCamera;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	USkeletalMeshComponent* m_SkFace;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	USkeletalMeshComponent* m_SkHair;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	USkeletalMeshComponent* m_SkGlove;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	USkeletalMeshComponent* m_SkShoe;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	USkeletalMeshComponent* m_SkHeadGear;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	USkeletalMeshComponent* m_SkShoulderPad;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	USkeletalMeshComponent* m_SkBelt;
+protected:
+	UPROPERTY()
+	USkeletalMesh* m_CachedBodyMesh;
+	UPROPERTY()
+	USkeletalMesh* m_CachedHairMesh;
 
-	IInteractable* m_FocusedInteractable;
+	TScriptInterface< IInteractable> m_FocusedInteractable;
 
 protected:
 	virtual void SetUnit(FName unitID) override;
@@ -46,19 +66,22 @@ protected:
 
 	void TryCheckInteractable();
 
-	
-
 	void OnInteractFound();
 
 	void AutoPlayTick();
 
 	virtual void Tick(float DeltaTime) override;
 
-	void AttackInput(float pressed);
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+
+	void SetBodyMeshToCached();
+
+	void SetHairMeshToCached();
 	
 public:
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
+	UFUNCTION(BlueprintCallable,Category="Interact")
+	void AttackInput(float pressed);
 };

@@ -141,11 +141,11 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator)
 
 	ClickedItemSlot.X -= (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f);
 
-	CanvasPanelParent->ForceLayoutPrepass();
+	//CanvasPanelParent->ForceLayoutPrepass();
 	
 	float ScreenY = Geo.GetAbsoluteSize().Y;
 
-	float PopupSizeY = (GetDesiredSize().Y*Geo.Scale)/2.0f;
+	float PopupSizeY = (GetDesiredSize().Y*Geo.Scale)/2.0f +50.f;
 	
 	float ScreenTopToItem = ClickedItemSlot.Y*Geo.Scale;
 	
@@ -159,19 +159,21 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator)
 		float Diff = PopupSizeY - ScreenTopToItem;
 
 		ClickedItemSlot.Y += Diff * ReverseScale;
+		ClickedItemSlot.Y -= 50.f;
+		PRINTF("Popup 1");
 	}
-	else if (ScreenBottomToItem < PopupSizeY)
+	else if (ScreenBottomToItem < PopupSizeY)//아래 공간이 팝업창보다 작을때
 	{
 		float Diff = PopupSizeY - FMath::Abs(ScreenBottomToItem);
 	
 		ClickedItemSlot.Y -= Diff * ReverseScale;
-		
+
+	//	ClickedItemSlot.Y -= 50.f;
+		PRINTF("Popup 2");
 	}
-		ClickedItemSlot.Y -= 50.f;
+	
 	
 	PanelSlot->SetPosition(ClickedItemSlot);
-
-	PRINTF("Pos:%s",*ClickedItemSlot.ToString());
 }
 
 void UItemPopupInfo::ShowInfoPanel(FItemInstance & itemInst)

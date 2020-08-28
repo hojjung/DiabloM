@@ -16,20 +16,19 @@ void ItemManager::Init(UDiabloGameInstance * gameInstance)
 {
 	m_GameInstance = gameInstance;
 	m_nCurrentIndex = 0;
-	m_AryItemInWorld.Reserve(100);
+
+	PRINTF("ItemManager Init");
 }
 
-FItemInstance ItemManager::CreateItemInstance(FName itemID)
+FItemInstance ItemManager::CreateItemInstance(FName itemID,int level)
 {
 	auto* ItemData=m_GameInstance->GetItemData(itemID);
 
 	FItemInstance ItemCreated;
 
-	AddItem(0, ItemCreated);
-
 	TArray<FOptionValue> RandomOptionForItem;
 
-	if (CreateRandomOption(1, *ItemData, RandomOptionForItem))
+	if (CreateRandomOption(level, *ItemData, RandomOptionForItem))
 	{
 		ItemCreated = FItemInstance(ItemData, m_nCurrentIndex, this, &RandomOptionForItem);
 	}
@@ -40,6 +39,15 @@ FItemInstance ItemManager::CreateItemInstance(FName itemID)
 	
 
 	return ItemCreated;
+}
+
+ADroppedItem* ItemManager::CreateItemActor(FItemInstance& itemWantAdd,FVector posWant)
+{
+	ADroppedItem* DroppedActor = Cast<ADroppedItem>(m_GameInstance->GetWorld()->SpawnActor(ADroppedItem::StaticClass(),&posWant));
+
+	DroppedActor->SetItemInstance(itemWantAdd);
+	
+	return DroppedActor;
 }
 
 
@@ -124,19 +132,23 @@ FOptionValue ItemManager::CreateRandomOptionValue(int indexRandomd, const FItemD
 
 bool ItemManager::AddItem(int droppedIndex, FItemInstance& itemWantAdd)
 {
-	m_nCurrentIndex = m_AryItemInWorld.Add(&itemWantAdd);
-
 	return true;
 }
 
 void ItemManager::RemoveItem(FItemInstance & itemWantErase)
 {
-	RemoveItemByIndex(itemWantErase.m_nGridIndex);
 }
 
 void ItemManager::RemoveItemByIndex(int index)
-{
-	m_AryItemInWorld[index]->ClearData();
+{//20200825
+	//버전문제 아님
+	//위젯문제도 아니라고봄?
+
+	//일단 이줄을 지우면 인터페이스고 뭐고 작동함
+	//일단 위젯대신 마우스클릭은 문제없음
+
+	//블루프린트일때 메모리 등의 문제 있어보임
+	//m_AryItemInWorld[index]->ClearData();//what if 0?
 }
 
 bool ItemManager::CheckSlotValid(int droppedIndex, FItemInstance & itemWantAdd)

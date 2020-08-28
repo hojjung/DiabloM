@@ -6,6 +6,8 @@
 #include "Datas/ItemDataTable.h"
 #include "Managers/DiabloGameInstance.h"
 
+
+
 AUnitPawn::AUnitPawn(const FObjectInitializer& objInit):Super(objInit)
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -22,16 +24,7 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit):Super(objInit)
 	m_Movement = CreateDefaultSubobject<UUnitMovement>("Movement00");
 	m_Movement->UpdatedComponent = m_Capsule;
 
-	m_SkMesh = CreateDefaultSubobject<USkeletalMeshComponent>("SkMesh00");
-	m_SkMesh->bOwnerNoSee = false;
-	m_SkMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
-	m_SkMesh->bCastDynamicShadow = true;//chanage for mobile
-	m_SkMesh->bAffectDynamicIndirectLighting = true;
-	m_SkMesh->PrimaryComponentTick.TickGroup = TG_PrePhysics;
-	m_SkMesh->SetupAttachment(RootComponent);
-	m_SkMesh->SetCollisionProfileName("CharacterMesh");
-	m_SkMesh->SetGenerateOverlapEvents(false);
-	m_SkMesh->SetCanEverAffectNavigation(false);
+	CreateSkMeshComponent(&m_SkMesh,"SkMesh00");
 
 	m_nCharacterLevel = 1;
 	m_AbilitySystemComponent = CreateDefaultSubobject<UDiabloAbilitySystemComp>("AbilitySystemComponent00");
@@ -45,7 +38,19 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit):Super(objInit)
 
 	m_fMoveAcceptRadius = 100.f;
 }
-
+void AUnitPawn::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName)
+{
+	(*refSkComp) = CreateDefaultSubobject<USkeletalMeshComponent>(keyName);
+	(*refSkComp)->bOwnerNoSee = false;
+	(*refSkComp)->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
+	(*refSkComp)->bCastDynamicShadow = true;//chanage for mobile
+	(*refSkComp)->bAffectDynamicIndirectLighting = true;
+	(*refSkComp)->PrimaryComponentTick.TickGroup = TG_PrePhysics;
+	(*refSkComp)->SetupAttachment(RootComponent);
+	(*refSkComp)->SetCollisionProfileName("CharacterMesh");
+	(*refSkComp)->SetGenerateOverlapEvents(false);
+	(*refSkComp)->SetCanEverAffectNavigation(false);
+}
 // Called when the game starts or when spawned
 void AUnitPawn::BeginPlay()
 {

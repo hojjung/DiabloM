@@ -20,3 +20,15 @@ void UDefaultMenu::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharac
 
 }
 
+void UDefaultMenu::OpenMainMenu()
+{
+	this->SetVisibility((ESlateVisibility::SelfHitTestInvisible));
+}
+
+void UDefaultMenu::CloseMainMenu()
+{
+	this->SetVisibility((ESlateVisibility::Hidden));
+
+	//should close tool tip
+}
+
