@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "EngineMinimal.h"
 #include "Engine/Engine.h"
+#include "Kismet/GameplayStatics.h"
 
 DIABLOM_API DECLARE_LOG_CATEGORY_EXTERN(DiaM, Log, All);
 

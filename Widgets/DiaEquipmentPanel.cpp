@@ -3,7 +3,6 @@
 #include "Datas/ItemDataTable.h"
 #include "Widgets/ItemPopupInfo.h"
 #include "WidgetLayoutLibrary.h"
-#include "Components/CanvasPanelSlot.h"
 UDiaEquipmentPanel* UDiaEquipmentPanel::GetEquipWidgetInst = nullptr;
 
 void UDiaEquipmentPanel::Init(EquipmentSystem * equipContainer)
@@ -94,6 +93,11 @@ void UDiaEquipmentPanel::Init(EquipmentSystem * equipContainer)
 bool UDiaEquipmentPanel::EquipItem(int dropIndex, FItemInstance& drag)
 {
 	return m_EquipSys->AddItem(dropIndex, drag);
+}
+
+void UDiaEquipmentPanel::UnequipItem(int dropIndex)
+{
+	m_EquipSys->RemoveItemByIndex(dropIndex);
 }
 
 bool UDiaEquipmentPanel::CheckItemEquipable(int dropIndex, FItemInstance & drag)

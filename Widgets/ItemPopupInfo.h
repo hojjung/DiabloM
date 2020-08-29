@@ -102,6 +102,8 @@ public:
     void UseItem();
 	UFUNCTION()
     void EquipItem();
+	UFUNCTION()
+    void UnequipItem();
 	UFUNCTION(BlueprintCallable, Category = "Info")
 	void HideAllSubOptions();
 	UFUNCTION(BlueprintCallable, Category = "Info")

@@ -235,9 +235,9 @@ public:
 	const FItemData* m_ItemData;
 public:
 
-	bool IsValid()
+	bool IsEmpty()
 	{
-		return m_ItemID.IsValid();
+		return m_ItemID==NAME_None &&!m_ItemData;
 	}
 
 	void SetGridNewIndex(int newIndex)
@@ -261,6 +261,7 @@ public:
 		m_nGridIndex = -1;
 		m_nMaxStack=-1;
 		m_bStackable=false;
+		m_ItemData=nullptr;
 	}
 
 };

@@ -57,6 +57,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	bool AddItem(int index, FItemInstance& itemWantAdd);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
+    bool AddItemAuto(FItemInstance& itemWantAdd);
+	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void AddItemStack(int index);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void RemoveItem(int index);
@@ -69,4 +71,7 @@ public:
 		return m_Inven;
 	}
 
+public:
+	static UDiaInvenGridPanel* GetInvenWidgetInst;
+	
 };

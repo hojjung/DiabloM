@@ -92,7 +92,7 @@ void UDiaInvenGridSlot::SetHighlightColorTint(FLinearColor colorW)
 
 bool UDiaInvenGridSlot::IsSlotEmpty()
 {
-	return m_CopiedItemData.m_ItemID==NAME_None;
+	return m_CopiedItemData.IsEmpty();
 }
 
 void UDiaInvenGridSlot::SetSlotFocus(UDiaDragDrop* ddo)
@@ -176,8 +176,6 @@ bool UDiaInvenGridSlot::NativeOnDrop(const FGeometry & InGeometry, const FDragDr
 	bool Result=Super::NativeOnDrop(InGeometry,InDragDropEvent,InOperation);
 
 	ClearSlotFocus();
-
-	PRINTF("Dropped Slot Index:%d",m_nIndex);
 
 	UDiaInvenGridSlot::GetDDOInst->m_PreSlot->SetIconOpacity(1.f);
 

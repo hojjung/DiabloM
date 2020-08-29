@@ -121,6 +121,18 @@ bool Inventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//빌드후
 	return Result;
 }
 
+bool Inventory::AddItemAuto(FItemInstance& item_instance)
+{
+	int Result =GetEmptyIndex();
+
+	if(Result==-1)
+	{
+		return false;
+	}
+
+	return AddItem(Result,item_instance);
+}
+
 bool Inventory::SwapMove(FItemInstance &Drop, FItemInstance &Drag)
 {
 	int DropIndex = Drop.m_nGridIndex;
@@ -191,5 +203,17 @@ void Inventory::SetItemAry(TArray<FItemInstance>& loadedAry)
 		m_ItemAry[i].m_Holder=this;
 		m_OnSlotChanged.Broadcast(i, m_ItemAry[i]);
 	}
+}
+
+int Inventory::GetEmptyIndex()
+{
+	for(int i=0; i< m_ItemAry.Num();i++)
+	{
+		if(m_ItemAry[i].IsEmpty())
+		{
+			return i;
+		}
+	}
+	return  -1;
 }
 

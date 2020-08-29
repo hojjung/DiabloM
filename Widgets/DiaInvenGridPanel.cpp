@@ -5,8 +5,9 @@
 #include "Datas/ItemDataTable.h"
 #include "Components/CanvasPanelSlot.h"
 #include "WidgetBlueprintLibrary.h"
-#include "WidgetLayoutLibrary.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
+
+UDiaInvenGridPanel* UDiaInvenGridPanel::GetInvenWidgetInst = nullptr;
 
 UDiaInvenGridPanel::UDiaInvenGridPanel(const FObjectInitializer& objInit):Super(objInit)
 {
@@ -27,6 +28,7 @@ void UDiaInvenGridPanel::Init(Inventory* itemContainer )
 	m_ItemPopup->GetUseButton()->SetVisibility(ESlateVisibility::Hidden);
 	m_ItemPopup->GetEquipButton()->SetVisibility(ESlateVisibility::Hidden);
 
+	UDiaInvenGridPanel::GetInvenWidgetInst=this;
 }
 
 
@@ -89,6 +91,11 @@ void UDiaInvenGridPanel::UpdateSlot(int index, FItemInstance& itemInst)
 bool UDiaInvenGridPanel::AddItem(int index, FItemInstance & itemWantAdd)
 {
 	return m_Inven->AddItem(index, itemWantAdd);
+}
+
+bool UDiaInvenGridPanel::AddItemAuto(FItemInstance& itemWantAdd)
+{
+	return m_Inven->AddItemAuto(itemWantAdd);
 }
 
 void UDiaInvenGridPanel::AddItemStack(int index )

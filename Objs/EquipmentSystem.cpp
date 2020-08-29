@@ -165,9 +165,8 @@ bool EquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantAd
     }
 
 
-    if (m_ArySlots[droppedIndex]->m_Item.IsValid()) //비어있음
+    if (m_ArySlots[droppedIndex]->m_Item.IsEmpty()) //비어있지않음
     {
-        //이러면 양손검 빨간색도 떠버린다
         return true;
     }
 
@@ -236,7 +235,14 @@ EItemType EquipmentSystem::GetEquippedItem(int slotIndex)
 
 void EquipmentSystem::SetStanceAllNull()
 {
+    //
+    m_WeaponRight.SetEquipableType(EItemType::Katana, true);
+    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, true);
+    //
     m_WeaponLeft.SetOccupie(false);
+    m_WeaponLeft.SetEquipableType(EItemType::Dagger, true);
+    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
+    m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
     //아래랑 똑같아보이지만 아래의 경우는 왼손에 무기가 들려있으나 오른손에 무기가 없어서 공격을 못하는것임
     m_WeaponRight.SetEquipableType(EItemType::Katana, true);
     m_WeaponRight.SetEquipableType(EItemType::TwohandSword, true);
@@ -245,15 +251,22 @@ void EquipmentSystem::SetStanceAllNull()
 
 void EquipmentSystem::SetStanceNull()
 {
+
+    m_WeaponRight.SetEquipableType(EItemType::Katana, false);
+    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, false);
+    //
     m_WeaponLeft.SetEquipableType(EItemType::Dagger, true);
     m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
     m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
     //
-    if (!m_WeaponLeft.m_bIsOccupied)
+    if (!m_WeaponLeft.m_bIsOccupied)//비어있을때
     {
         m_WeaponRight.SetEquipableType(EItemType::Katana, true);
         m_WeaponRight.SetEquipableType(EItemType::TwohandSword, true);
+        m_WeaponLeft.SetOccupie(false);
     }
+    
+    
     m_CurrentStance = EAnimStance::None;
 }
 
@@ -271,23 +284,26 @@ void EquipmentSystem::SetStanceOneHand()
 
 void EquipmentSystem::SetStanceDual()
 {
+    m_WeaponRight.SetEquipableType(EItemType::Katana, false);
+    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, false);
+    //
     m_WeaponLeft.SetEquipableType(EItemType::Dagger, true);
     m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
     m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
     //
-    m_WeaponRight.SetEquipableType(EItemType::Katana, false);
-    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, false);
+ 
     m_CurrentStance = EAnimStance::DualSword;
 }
 
 void EquipmentSystem::SetStanceShield()
 {
+    m_WeaponRight.SetEquipableType(EItemType::Katana, false);
+    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, false);
+    //
     m_WeaponLeft.SetEquipableType(EItemType::Dagger, true);
     m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
     m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
     //
-    m_WeaponRight.SetEquipableType(EItemType::Katana, false);
-    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, false);
     m_CurrentStance = EAnimStance::Shield;
 }
 

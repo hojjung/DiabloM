@@ -12,7 +12,7 @@ class DIABLOM_API Inventory :public IItemHolder
 {
 public:
 	~Inventory();
-	
+
 
 protected:
 	int m_nXGridCount;
@@ -46,6 +46,9 @@ public:
 	void RemoveItemStack(int index);
 
 	virtual bool AddItem(int droppedIndex, FItemInstance& itemWantAdd ) override;
+	
+	bool AddItemAuto(FItemInstance& item_instance);
+	
 	virtual bool SwapMove(FItemInstance &Drop, FItemInstance &Drag) override;
 
 	void StackMove(FItemInstance &Drop, FItemInstance &Drag, IItemHolder* preItemHolder);
@@ -61,4 +64,6 @@ public:
 	}
 
 	void SetItemAry(TArray<FItemInstance>& loadedAry);
+	
+	int GetEmptyIndex();
 };

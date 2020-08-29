@@ -60,6 +60,8 @@ public:
 	void Init(EquipmentSystem* equipContainer);
 
 	bool EquipItem(int dropIndex, FItemInstance& drag);
+	
+	void UnequipItem(int dropIndex);
 
 protected:
 	bool CheckItemEquipable(int dropIndex, FItemInstance& drag);
