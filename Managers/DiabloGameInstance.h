@@ -23,6 +23,8 @@ public:
 	UDiabloGameInstance();//
 
 	static UDiabloGameInstance* Get;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ADroppedItem> m_DropItemClass; 
 public:
 	ItemManager* m_ItemManager;
 	SaveLoadManager* m_SaveLoadManager;
@@ -35,7 +37,7 @@ protected:
 	UDataTable* m_PlayerUnitTable;
 	UPROPERTY(EditAnywhere)
 	UDataTable* m_ItemTable;
-
+	
 protected:
 	virtual void Init() override;
 	virtual void OnStart() override;

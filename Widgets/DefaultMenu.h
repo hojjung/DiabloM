@@ -16,7 +16,7 @@ class APlayerDiabloCharacter;
 class ADiabloPlayerController;
 struct FItemInstance;
 class UDiaInvenGridPanel;
-
+class UItemDrop;
 UCLASS()
 class DIABLOM_API UDefaultMenu : public UUserWidget
 {
@@ -28,6 +28,8 @@ protected:
 	UDiaInvenGridPanel* m_InvenGridPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaEquipmentPanel* m_EquipPanel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UItemDrop* m_ItemDropPanel;
 protected:
 	UPROPERTY()
 	ADiabloPlayerController* m_PlayerCon;
@@ -46,5 +48,8 @@ public:
 	void OpenMainMenu();
 
 	void CloseMainMenu();
+
+	UFUNCTION(BlueprintCallable)
+	void ThrowItem(const FItemInstance& itemThrow);
 
 };

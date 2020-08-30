@@ -3,13 +3,7 @@
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-
-
-
 #include "Components/Button.h"
-
-
-
 #include "MainCanvas.generated.h"
 
 class Inventory;

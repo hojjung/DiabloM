@@ -43,9 +43,14 @@ FItemInstance ItemManager::CreateItemInstance(FName itemID,int level)
 
 ADroppedItem* ItemManager::CreateItemActor(FItemInstance& itemWantAdd,FVector posWant)
 {
-	ADroppedItem* DroppedActor = Cast<ADroppedItem>(m_GameInstance->GetWorld()->SpawnActor(ADroppedItem::StaticClass(),&posWant));
+	ADroppedItem* DroppedActor = Cast<ADroppedItem>(m_GameInstance->GetWorld()->SpawnActor(m_GameInstance->m_DropItemClass,&posWant));
 
+	itemWantAdd.m_Holder=this;
+	itemWantAdd.m_nGridIndex=-2;
+	
 	DroppedActor->SetItemInstance(itemWantAdd);
+
+
 	
 	return DroppedActor;
 }

@@ -7,11 +7,21 @@
 void UMainCanvas::OpenMainMenu()
 {
     m_MainMenu->OpenMainMenu();
+
+    m_InvenButton->SetVisibility(ESlateVisibility::Hidden);
+    m_SettingButton->SetVisibility(ESlateVisibility::Hidden);
+    m_AttackButton->SetVisibility(ESlateVisibility::Hidden);
+    m_InteractButton->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainCanvas::CloseMainMenu()
 {
     m_MainMenu->CloseMainMenu();
+
+    m_InvenButton->SetVisibility(ESlateVisibility::Visible);
+    m_SettingButton->SetVisibility(ESlateVisibility::Visible);
+    m_AttackButton->SetVisibility(ESlateVisibility::Visible);
+    m_InteractButton->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMainCanvas::Interaction()

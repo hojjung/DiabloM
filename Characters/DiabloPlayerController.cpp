@@ -100,8 +100,7 @@ void ADiabloPlayerController::PrintEquipment()
 
 bool ADiabloPlayerController::AddItem(FItemInstance itemInst)
 {
-	static int Index = 0;
-	return m_Inven->AddItem(Index++,itemInst);
+	return m_Inven->AddItemAuto(itemInst);
 }
 
 bool ADiabloPlayerController::PickUpItem(ADroppedItem * pickupItem)

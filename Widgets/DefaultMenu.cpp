@@ -1,6 +1,7 @@
 #include "DefaultMenu.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Managers/DiabloGameInstance.h"
 #include "Objs/PlayerSkillSystem.h"
 #include "Objs/EquipmentSystem.h"
 #include "Objs/Inventory.h"
@@ -18,6 +19,7 @@ void UDefaultMenu::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharac
 
 	m_EquipPanel->Init(m_Equipment);
 
+
 }
 
 void UDefaultMenu::OpenMainMenu()
@@ -30,5 +32,17 @@ void UDefaultMenu::CloseMainMenu()
 	this->SetVisibility((ESlateVisibility::Hidden));
 
 	//should close tool tip
+}
+
+void UDefaultMenu::ThrowItem(const FItemInstance& itemThrow)
+{
+	//드랍한순간
+	//아이템을 액터로 생성
+	//플레이어 주위에 랜덤 위치
+	//해당 아이템 인벤에서 삭제
+	FVector RandomPos = m_PlayerChar->GetActorLocation();
+	FItemInstance item =itemThrow;
+	itemThrow.m_Holder->RemoveItemByIndex(itemThrow.m_nGridIndex);
+	GetGameInstance<UDiabloGameInstance>()->m_ItemManager->CreateItemActor(item,RandomPos);
 }
 

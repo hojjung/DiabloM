@@ -33,6 +33,14 @@ UDiabloGameInstance::UDiabloGameInstance()
         m_ItemTable = FoundItemTable.Object;
     }
 
+////Blueprint'/Game/Blueprints/Props/BP_DroppedItem.BP_DroppedItem'
+    // static ConstructorHelpers::FClassFinder<ADroppedItem> FoundBP(
+    //        TEXT("Blueprint'/Game/Blueprints/Props/BP_DroppedItem.BP_DroppedItem_C"));
+    // if (FoundBP.Succeeded())
+    // {
+    //     m_DropItemClass = FoundBP.Class;
+    // }
+    //
     UDiabloGameInstance::Get = this;
 
     m_ItemManager=nullptr;
