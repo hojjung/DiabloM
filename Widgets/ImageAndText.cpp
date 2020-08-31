@@ -6,13 +6,15 @@ UImageAndText::UImageAndText(const FObjectInitializer& objInit) : Super(objInit)
 , m_nFontSize(24)
 , m_fIconSize(64.f)
 , m_NameTypeFace("Regular")
+, m_nOutlineSize(1)
 {
+	//Font'/Game/Fonts/FredokaOne-Regular_Font.FredokaOne-Regular_Font'
 	static ConstructorHelpers::FObjectFinder<UFont> FoundFont(
-		TEXT("Font'/Game/Fonts/Roboto_2.Roboto_2'"));
+		TEXT("Font'/Game/Fonts/FredokaOne-Regular_Font.FredokaOne-Regular_Font'"));
 	m_FontWant = FoundFont.Object;
 
 	static ConstructorHelpers::FObjectFinder<UTexture2D> FoundTexture(
-		TEXT("Texture2D'/Game/Sprite/fantasy_gui_4/textures/icons/items/fg4_icons_daggers.fg4_icons_daggers'"));
+		TEXT("Texture2D'/Game/Sprite/UI/fg4_icons_daggers.fg4_icons_daggers'"));
 
 	m_IconWant = FoundTexture.Object;
 
@@ -38,6 +40,7 @@ void UImageAndText::NativePreConstruct()
 	FontInfo.FontObject = m_FontWant;
 	FontInfo.Size = m_nFontSize;
 	FontInfo.TypefaceFontName = m_NameTypeFace;
+	FontInfo.OutlineSettings.OutlineSize = m_nOutlineSize;
 	m_TextStringShow->SetFont(FontInfo);
 	//
 

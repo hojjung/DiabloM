@@ -44,6 +44,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ImageText")
 	int m_nFontSize;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ImageText")
+	int m_nOutlineSize;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ImageText")
 	float m_fIconSize;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ImageText")
 	FName m_NameTypeFace;

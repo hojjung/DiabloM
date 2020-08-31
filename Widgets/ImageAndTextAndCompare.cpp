@@ -7,12 +7,12 @@ UImageAndTextAndCompare::UImageAndTextAndCompare(const FObjectInitializer& objIn
 {
 	//white arrow
 	static ConstructorHelpers::FObjectFinder<UTexture2D> FoundTexture1(
-		TEXT("Texture2D'/Game/Sprite/fantasy_gui_4/textures/icons/flat/fg4_iconsFlat_upArrow.fg4_iconsFlat_upArrow'"));
+		TEXT("Texture2D'/Game/Sprite/UI/fg4_iconsFlat_upArrow.fg4_iconsFlat_upArrow'"));
 
 	m_IconUpArrow = FoundTexture1.Object;
 
 	static ConstructorHelpers::FObjectFinder<UTexture2D> FoundTexture2(
-		TEXT("Texture2D'/Game/Sprite/fantasy_gui_4/textures/icons/flat/fg4_iconsFlat_downArrow.fg4_iconsFlat_downArrow'"));
+		TEXT("Texture2D'/Game/Sprite/UI/fg4_iconsFlat_downArrow.fg4_iconsFlat_downArrow'"));
 
 	m_IconDownArrow = FoundTexture2.Object;
 
