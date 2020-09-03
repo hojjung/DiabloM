@@ -4,9 +4,9 @@
 UImageAndText::UImageAndText(const FObjectInitializer& objInit) : Super(objInit)
 , m_StringWant("Test String")
 , m_nFontSize(24)
+, m_nOutlineSize(1)
 , m_fIconSize(64.f)
 , m_NameTypeFace("Regular")
-, m_nOutlineSize(1)
 {
 	//Font'/Game/Fonts/FredokaOne-Regular_Font.FredokaOne-Regular_Font'
 	static ConstructorHelpers::FObjectFinder<UFont> FoundFont(

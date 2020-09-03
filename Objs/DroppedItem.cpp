@@ -1,6 +1,6 @@
 #include "DroppedItem.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Widgets/ItemNameCard.h"
+#include "Widgets/WorldMap/ItemNameCard.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 
@@ -82,7 +82,7 @@ void ADroppedItem::SetItemVisual(const FItemData* ItemData)
 
 void ADroppedItem::SetItem(FName itemID)
 {
-	const FItemData* ItemData = GetGameInstance<UDiabloGameInstance>()->GetItemData(itemID);
+	const FItemData* ItemData = GetGameInstance<UDiabloGameInstance>()->GetItemDataPtr(itemID);
 
 	if(!ItemData)
 	{

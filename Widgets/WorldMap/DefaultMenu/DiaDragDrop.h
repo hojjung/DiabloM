@@ -7,8 +7,9 @@
 #include "Datas/ItemDataTable.h"
 #include "Components/Image.h"
 #include "Components/SizeBox.h"
-#include "Widgets/DiaInvenGridPanel.h"
-#include "Widgets/DiaInvenGridSlot.h"
+
+#include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
+#include "Widgets/WorldMap/DefaultMenu/DiaInvenGridSlot.h"
 #include "DiaDragDrop.generated.h"
 
 /**

@@ -2,7 +2,7 @@
 
 
 #include "ItemDrop.h"
-#include "DiaDragDrop.h"
+#include "Widgets/WorldMap/DefaultMenu/DiaDragDrop.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 

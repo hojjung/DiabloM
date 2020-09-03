@@ -3,8 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Widgets/ImageAndText.h"
-
+#include  "Widgets/WorldMap/DefaultMenu/ImageAndText.h"
 #include "ImageAndTextAndCompare.generated.h"
 
 /**

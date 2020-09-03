@@ -4,8 +4,8 @@
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-#include "Widgets/DiaEquipmentPanel.h"
-#include "Widgets/ItemPopupInfo.h"
+#include "Widgets/WorldMap/DefaultMenu/DiaEquipmentPanel.h"
+#include "Widgets/WorldMap/DefaultMenu/ItemPopupInfo.h"
 #include "DefaultMenu.generated.h"
 
 

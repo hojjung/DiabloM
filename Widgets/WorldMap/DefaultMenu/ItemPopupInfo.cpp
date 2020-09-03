@@ -113,14 +113,14 @@ void UItemPopupInfo::SetIcon(const FItemInstance& itemInst)
     FSlateBrush BrushWant;
 
     BrushWant.SetImageSize(FVector2D(64.f, 64.f));
-    BrushWant.SetResourceObject(ItemManager::GetItemData(itemInst).m_ItemIcon);
+    BrushWant.SetResourceObject(itemInst.m_ItemData->m_ItemIcon);
 
     m_ImageItemVisualIcon->SetBrush(BrushWant);
 }
 
 void UItemPopupInfo::SetColorTier(const FItemInstance& itemInst)
 {
-    const auto ColorW = ItemManager::GetItemData(itemInst).GetItemTier().m_TierColor;
+    const auto ColorW = itemInst.m_ItemData->GetItemTier().m_TierColor;
     m_ImageItemTierColorSmall->SetColorAndOpacity(ColorW);
     m_ImageItemTierColorLarge->SetColorAndOpacity(ColorW);
     m_TextItemName->SetColorAndOpacity(ColorW);
@@ -209,7 +209,7 @@ void UItemPopupInfo::ShowInfoPanel(FItemInstance& itemInst)
 
     m_SelectedItem = &itemInst;
 
-    if (ItemManager::GetItemData(*m_SelectedItem).m_bEquipable)
+    if (m_SelectedItem->m_ItemData->m_bEquipable)
     {
         m_EquipButton->SetVisibility(ESlateVisibility::Visible);
 
@@ -239,11 +239,11 @@ void UItemPopupInfo::ShowInfoPanel(FItemInstance& itemInst)
 void UItemPopupInfo::SetItemText(const FItemInstance& itemInst)
 {
     //m_SelectedItem
-    m_TextItemName->SetText(ItemManager::GetItemData(itemInst).m_ShowingName);
+    m_TextItemName->SetText(itemInst.m_ItemData->m_ShowingName);
 
-    FText ItemNameT = ItemManager::GetItemData(itemInst).GetItemTier().m_ShowingName;
+    FText ItemNameT = itemInst.m_ItemData->GetItemTier().m_ShowingName;
 
-    FText ItemTypeT = GetItemTypeTxt(ItemManager::GetItemData(itemInst).m_ItemType);
+    FText ItemTypeT = GetItemTypeTxt(itemInst.m_ItemData->m_ItemType);
 
     FFormatOrderedArguments Args;
     Args.Add(ItemNameT);
@@ -253,12 +253,12 @@ void UItemPopupInfo::SetItemText(const FItemInstance& itemInst)
 
     m_TextItemTierAndType->SetText(FText::Format(FormatT, Args));
 
-    m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(ItemManager::GetItemData(itemInst).m_nSellValue));
+    m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.m_ItemData->m_nSellValue));
 }
 
 float UItemPopupInfo::SetFlavorText(const FItemInstance& itemInst)
 {
-    m_TextFlavor->SetText(ItemManager::GetItemData(itemInst).m_FlavorText);
+    m_TextFlavor->SetText(itemInst.m_ItemData->m_FlavorText);
     m_TextFlavor->ForceLayoutPrepass();
     return m_TextFlavor->GetDesiredSize().Y;
 }
@@ -275,7 +275,7 @@ float UItemPopupInfo::SetOptionTexts(const FItemInstance& itemInst)
     {
         m_AryOptions[i]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
         m_AryOptions[i]->SetString(
-            ItemManager::GetItemData(itemInst).GetOption(i).GetOptionFormat(itemInst.m_AryOptions[i].m_fValue));
+           itemInst.m_ItemData->GetOption(i).GetOptionFormat(itemInst.m_AryOptions[i].m_fValue));
         m_AryOptions[i]->ForceLayoutPrepass();
         OptionSizeY += m_AryOptions[i]->GetDesiredSize().Y;
         i++;

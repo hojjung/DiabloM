@@ -1,5 +1,6 @@
 #include "Inventory.h"
 #include "Datas/ItemDataTable.h"
+#include "Managers/DiabloGameInstance.h"
 #include "Managers/ItemManager.h"
 
 Inventory::~Inventory()
@@ -179,7 +180,7 @@ void Inventory::PrintInven()
 			continue;
 		}
 ;
-		PRINTF("ItemName: %s,Index: %d, Stack:%d", *ItemManager::GetItemData(Item.m_ItemID).m_ShowingName.ToString(), Item.m_nGridIndex, Item.m_nCurrentStack);
+		PRINTF("ItemName: %s,Index: %d, Stack:%d", *UDiabloGameInstance::Get->GetItemData(Item.m_ItemID).m_ShowingName.ToString(), Item.m_nGridIndex, Item.m_nCurrentStack);
 	}
 }
 

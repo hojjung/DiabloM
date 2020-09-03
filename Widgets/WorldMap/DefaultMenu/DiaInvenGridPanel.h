@@ -4,7 +4,7 @@
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-#include "Widgets/DiaInvenGridSlot.h"
+#include "Widgets/WorldMap/DefaultMenu/DiaInvenGridSlot.h"
 #include "Components/GridPanel.h"
 #include "DiaInvenGridPanel.generated.h"
 

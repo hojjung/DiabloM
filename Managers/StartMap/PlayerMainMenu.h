@@ -3,16 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameMode.h"
-#include "DiabloGameMode.generated.h"
+#include "Managers/DiabloGameMode.h"
+#include "PlayerMainMenu.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API ADiabloGameMode : public AGameMode
+class DIABLOM_API APlayerMainMenu : public ADiabloGameMode
 {
 	GENERATED_BODY()
-public:
-	ADiabloGameMode();
+	
 };

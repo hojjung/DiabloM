@@ -53,7 +53,4 @@ public:
 	{
 		return m_OnItemGroundChanged;
 	}
-
-	static const FItemData& GetItemData(FName id);
-	static const FItemData& GetItemData(const FItemInstance& itemInst);
 };

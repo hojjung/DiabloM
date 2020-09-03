@@ -2,11 +2,15 @@
 
 #pragma once
 
+#include "DiabloM.h"
 #include "Button.h"
 #include "CanvasPanel.h"
-#include "DiabloM.h"
+#include "Image.h"
+#include "SizeBox.h"
+#include "TextBlock.h"
 #include "Blueprint/UserWidget.h"
-#include "Widgets/ImageAndTextAndCompare.h"
+#include  "Widgets/WorldMap/DefaultMenu/ImageAndTextAndCompare.h"
+#include  "Widgets/WorldMap/DefaultMenu/ImageAndText.h"
 #include "Components/VerticalBox.h"
 #include "Datas/ItemDataTable.h"
 #include "Animation/WidgetAnimation.h"

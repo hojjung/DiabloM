@@ -1,6 +1,6 @@
 #include "DiaInvenGridPanel.h"
 #include "Components/GridSlot.h"
-#include "Widgets/DefaultMenu.h"
+#include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 #include "Objs/Inventory.h"
 #include "Datas/ItemDataTable.h"
 #include "Components/CanvasPanelSlot.h"

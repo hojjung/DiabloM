@@ -2,7 +2,7 @@
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Managers/ItemManager.h"
-#include "Widgets/DiaDragDrop.h"
+#include "Widgets/WorldMap/DefaultMenu/DiaDragDrop.h"
 
 UDiaDragDrop* UDiaInvenGridSlot::GetDDOInst = nullptr;
 
@@ -60,8 +60,7 @@ void UDiaInvenGridSlot::UpdateEffectBG(const FItemInstance& itemInstance)
 {
 	m_ImgItemEffectBG->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
-	
-	FLinearColor ColorW =ItemManager::GetItemData( itemInstance).GetItemTier().m_TierColor;
+	FLinearColor ColorW =itemInstance.m_ItemData->GetItemTier().m_TierColor;
 	m_ImgItemEffectBG->SetColorAndOpacity(ColorW);
 	m_ImgItemEffectBG->SetBrushTintColor(FSlateColor(ColorW));
 }
@@ -70,7 +69,7 @@ void UDiaInvenGridSlot::UpdateItemVisual(const FItemInstance& itemInstance)
 {
 	m_ImgItemVisual->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	FSlateBrush ItemIcon = FSlateBrush();
-	ItemIcon.SetResourceObject(ItemManager::GetItemData( itemInstance).m_ItemIcon);
+	ItemIcon.SetResourceObject(itemInstance.m_ItemData->m_ItemIcon);
 	m_ImgItemVisual->SetBrush(ItemIcon);
 }
 

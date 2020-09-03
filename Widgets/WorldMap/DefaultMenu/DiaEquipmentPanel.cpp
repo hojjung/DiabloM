@@ -1,7 +1,7 @@
 #include "DiaEquipmentPanel.h"
-#include "Widgets/DiaInvenGridSlot.h"
+#include "Widgets/WorldMap/DefaultMenu/DiaInvenGridSlot.h"
 #include "Datas/ItemDataTable.h"
-#include "Widgets/ItemPopupInfo.h"
+#include "Widgets/WorldMap/DefaultMenu/ItemPopupInfo.h"
 #include "WidgetLayoutLibrary.h"
 UDiaEquipmentPanel* UDiaEquipmentPanel::GetEquipWidgetInst = nullptr;
 

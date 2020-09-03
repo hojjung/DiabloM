@@ -12,9 +12,12 @@ class PlayerSkillSystem;
 class APlayerDiabloCharacter;
 class ADiabloPlayerController;
 class UDefaultMenu;
-/**
+
+/*
+ *
  * 
  */
+ 
 UCLASS()
 class DIABLOM_API UMainCanvas : public UUserWidget
 {

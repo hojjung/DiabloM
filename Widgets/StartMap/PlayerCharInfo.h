@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "DiaItemToolTip.generated.h"
+#include "PlayerCharInfo.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UDiaItemToolTip : public UUserWidget
+class DIABLOM_API UPlayerCharInfo : public UUserWidget
 {
 	GENERATED_BODY()
 	

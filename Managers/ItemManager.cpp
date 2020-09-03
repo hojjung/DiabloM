@@ -22,7 +22,7 @@ void ItemManager::Init(UDiabloGameInstance * gameInstance)
 
 FItemInstance ItemManager::CreateItemInstance(FName itemID,int level)
 {
-	auto* ItemData=m_GameInstance->GetItemData(itemID);
+	auto* ItemData=m_GameInstance->GetItemDataPtr(itemID);
 
 	FItemInstance ItemCreated;
 
@@ -170,11 +170,3 @@ bool ItemManager::SwapMove(FItemInstance & Drop, FItemInstance & Drag)
 	return true;
 }
 
-const FItemData& ItemManager::GetItemData(FName id)
-{
-	return *UDiabloGameInstance::Get->GetItemData(id);
-}
-
-const FItemData& ItemManager::GetItemData(const FItemInstance& itemInst)
-{	return *UDiabloGameInstance::Get->GetItemData(itemInst.m_ItemID);
-}

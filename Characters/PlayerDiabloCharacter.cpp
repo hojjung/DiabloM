@@ -35,7 +35,7 @@ void APlayerDiabloCharacter::SetUnit(FName unitID)
 {
 	m_NameUnitID = unitID;
 
-	const FPlayerEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetPlayerUnit(m_NameUnitID);
+	const FPlayerEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetPlayerUnitPtr(m_NameUnitID);
 	//	
 	m_CachedHairMesh = UnitData->m_SkHair;
 	m_CachedBodyMesh = UnitData->m_Mesh;

@@ -4,25 +4,14 @@
 
 #include "DiabloM.h"
 #include "UObject/NoExportTypes.h"
-#include "Engine/DataAsset.h"
 #include "Engine/DataTable.h"
 #include "Engine/SkeletalMesh.h"
 #include "AbilitySystem/AbilityTypes.h"
 #include "CharacterDataTable.generated.h"
 
-/**
- * 
- */
 
 #define MAXLEVEL 100
 
-class UGameplayEffect;
-UCLASS()
-class DIABLOM_API UCharacterDataTable : public UObject
-{
-	GENERATED_BODY()
-	
-};
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
 struct FEntityTable : public FTableRowBase
@@ -30,9 +19,8 @@ struct FEntityTable : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FEntityTable()
+	FEntityTable(): m_Mesh(nullptr)
 	{
-
 	}
 
 public:
@@ -58,9 +46,8 @@ struct FPlayerEntityTable : public FEntityTable
 	GENERATED_BODY()
 
 public:
-	FPlayerEntityTable()
+	FPlayerEntityTable(): m_SkHair(nullptr), m_SkFace(nullptr)
 	{
-
 	}
 
 public:
@@ -72,3 +59,46 @@ public:
 	//EquipTable �������� �����ִ� ���� �ٸ�
 };
 
+USTRUCT(BlueprintType)//���̵�,Ƽ��
+struct FNPCEntityTable : public FEntityTable
+{
+	GENERATED_BODY()
+
+public:
+	FNPCEntityTable()
+	{
+	}
+
+};
+
+
+
+class UGameplayEffect;
+UCLASS()
+class DIABLOM_API UCharacterDataTable : public UObject
+{
+	GENERATED_BODY()
+	
+public:
+	UCharacterDataTable();
+
+public:
+	static  UDataTable* GetMonsterEntityTable;
+
+	static  UDataTable* GetPlayerEntityTable;
+
+	static  UDataTable* GetNPCEntityTable;
+
+public:
+	static const FEntityTable& GetMonster(FName id);
+
+	static const FEntityTable* GetMonsterPtr(FName id);
+
+	static const FPlayerEntityTable& GetPlayerEntity(FName id);
+	
+	static const FPlayerEntityTable* GetPlayerEntityPtr(FName id);
+
+	static const FNPCEntityTable& GetNPC(FName id);
+
+	static const FNPCEntityTable* GetNPCPtr(FName id);
+};

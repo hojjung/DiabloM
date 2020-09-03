@@ -5,7 +5,7 @@
 #include "DiabloM.h"
 #include "GameFramework/PlayerController.h"
 
-#include "Widgets/MainCanvas.h"
+#include "Widgets/WorldMap/MainCanvas.h"
 
 #include "DiabloPlayerController.generated.h"
 

@@ -1,51 +1,25 @@
 #include "DiabloGameInstance.h"
 #include "ConstructorHelpers.h"
+#include "StartMap/PlayerCreateManager.h"
 
 
 UDiabloGameInstance* UDiabloGameInstance::Get = nullptr;
 
 UDiabloGameInstance::UDiabloGameInstance()
 {
-    static ConstructorHelpers::FObjectFinder<UDataTable> FoundBaseTable(
-        TEXT("DataTable'/Game/DataTables/MonsterTable.MonsterTable'"));
-    if (FoundBaseTable.Succeeded())
-    {
-        m_MonsterUnitTable = FoundBaseTable.Object;
-    }
-    //
-    static ConstructorHelpers::FObjectFinder<UDataTable> FoundBaseTable2(
-        TEXT("DataTable'/Game/DataTables/NPCTable.NPCTable'"));
-    if (FoundBaseTable2.Succeeded())
-    {
-        m_NPCUnitTable = FoundBaseTable2.Object;
-    }
-    static ConstructorHelpers::FObjectFinder<UDataTable> FoundBaseTable3(
-        TEXT("DataTable'/Game/DataTables/PlayerTable.PlayerTable'"));
-    if (FoundBaseTable3.Succeeded())
-    {
-        m_PlayerUnitTable = FoundBaseTable3.Object;
-    }
-    //
-    static ConstructorHelpers::FObjectFinder<UDataTable> FoundItemTable(
-        TEXT("DataTable'/Game/DataTables/DefaultItemTable.DefaultItemTable'"));
-    if (FoundItemTable.Succeeded())
-    {
-        m_ItemTable = FoundItemTable.Object;
-    }
-
-////Blueprint'/Game/Blueprints/Props/BP_DroppedItem.BP_DroppedItem'
-    // static ConstructorHelpers::FClassFinder<ADroppedItem> FoundBP(
-    //        TEXT("Blueprint'/Game/Blueprints/Props/BP_DroppedItem.BP_DroppedItem_C"));
-    // if (FoundBP.Succeeded())
-    // {
-    //     m_DropItemClass = FoundBP.Class;
-    // }
-    //
     UDiabloGameInstance::Get = this;
 
     m_ItemManager=nullptr;
 
     m_SaveLoadManager=nullptr;
+    
+    m_PlCreateManager=nullptr;
+
+}
+
+void UDiabloGameInstance::Init()
+{
+    Super::Init();
     
     if (!m_ItemManager)
     {
@@ -60,18 +34,11 @@ UDiabloGameInstance::UDiabloGameInstance()
 
     }
 
-}
-
-void UDiabloGameInstance::Init()
-{
-    Super::Init();
-  
-}
-
-void UDiabloGameInstance::OnStart()
-{
-    Super::OnStart();
-	
+    if(!m_PlCreateManager)
+    {
+        m_PlCreateManager = new PlayerCreateManager();
+        //m_PlCreateManager->CreateSaveLoadInstance();
+    }
 }
 
 void UDiabloGameInstance::Shutdown()
@@ -82,25 +49,131 @@ void UDiabloGameInstance::Shutdown()
     delete m_SaveLoadManager;
 }
 
-const FEntityTable* UDiabloGameInstance::GetMonsterUnit(FName id) const
+#pragma region  DataGetter
+
+
+const FEntityTable* UDiabloGameInstance::GetMonsterUnitPtr(FName id) const
 {
-    return m_MonsterUnitTable->FindRow<FEntityTable>(id, "");
+    return UCharacterDataTable::GetMonsterPtr(id);
 }
 
-const FEntityTable* UDiabloGameInstance::GetNPCUnit(FName id) const
+
+
+const FNPCEntityTable* UDiabloGameInstance::GetNPCUnitPtr(FName id) const
 {
-    return m_NPCUnitTable->FindRow<FEntityTable>(id, "");
+    return UCharacterDataTable::GetNPCPtr(id);
 }
 
-const FPlayerEntityTable* UDiabloGameInstance::GetPlayerUnit(FName id) const
+const FPlayerEntityTable* UDiabloGameInstance::GetPlayerUnitPtr(FName id) const
 {
-    return m_PlayerUnitTable->FindRow<FPlayerEntityTable>(id, "");
+    return UCharacterDataTable::GetPlayerEntityPtr(id);
 }
 
-const FItemData* UDiabloGameInstance::GetItemData(FName id) const
+const FItemTier* UDiabloGameInstance::GetItemTierPtr(FName id) const
 {
-    return m_ItemTable->FindRow<FItemData>(id, "");
+    return UItemDataTable::GetItemTierPtr(id);
 }
+
+const FItemData* UDiabloGameInstance::GetItemDataPtr(FName id) const
+{
+    return UItemDataTable::GetItemDataPtr(id);
+}
+
+const FOption* UDiabloGameInstance::GetOptionPtr(FName id) const
+{
+    return UOptionDataTable::GetOptionPtr(id);
+}
+
+const FPlayerHairRow* UDiabloGameInstance::GetPlayerHairPtr(FName id) const
+{
+    return UPlayerInitDataTable::GetPlayerHairPtr(id);
+}
+
+const FPlayerFaceRow* UDiabloGameInstance::GetPlayerFacePtr(FName id) const
+{
+    return UPlayerInitDataTable::GetPlayerFacePtr(id);
+}
+
+const FPlayerArmorRow* UDiabloGameInstance::GetPlayerArmorPtr(FName id) const
+{
+    return UPlayerInitDataTable::GetPlayerArmorPtr(id);
+}
+
+const FPlayerWeaponRow* UDiabloGameInstance::GetPlayerWeaponPtr(FName id) const
+{
+    return UPlayerInitDataTable::GetPlayerWeaponPtr(id);
+}
+
+const FPlayerItemRow* UDiabloGameInstance::GetPlayerItemPtr(FName id) const
+{
+    return UPlayerInitDataTable::GetPlayerItemPtr(id);
+}
+
+const FPlayerPerkRow* UDiabloGameInstance::GetPlayerPerkPtr(FName id) const
+{
+    return UPlayerInitDataTable::GetPlayerPerkPtr(id);
+}
+
+const FEntityTable& UDiabloGameInstance::GetMonsterUnit(FName id) const
+{
+    return UCharacterDataTable::GetMonster(id);
+}
+
+const FNPCEntityTable& UDiabloGameInstance::GetNPCUnit(FName id) const
+{
+    return UCharacterDataTable::GetNPC(id);
+}
+
+const FPlayerEntityTable& UDiabloGameInstance::GetPlayerUnit(FName id) const
+{
+    return UCharacterDataTable::GetPlayerEntity(id);
+}
+
+const FItemTier& UDiabloGameInstance::GetItemTier(FName id) const
+{
+    return UItemDataTable::GetItemTier(id);
+}
+
+const FItemData& UDiabloGameInstance::GetItemData(FName id) const
+{
+    return UItemDataTable::GetItemData(id);
+}
+
+const FOption& UDiabloGameInstance::GetOption(FName id) const
+{
+    return UOptionDataTable::GetOption(id);
+}
+
+const FPlayerHairRow& UDiabloGameInstance::GetPlayerHair(FName id) const
+{
+    return UPlayerInitDataTable::GetPlayerHair(id);
+}
+
+const FPlayerFaceRow& UDiabloGameInstance::GetPlayerFace(FName id) const
+{
+    return UPlayerInitDataTable::GetPlayerFace(id);
+}
+
+const FPlayerArmorRow& UDiabloGameInstance::GetPlayerArmor(FName id) const
+{
+    return UPlayerInitDataTable::GetPlayerArmor(id);
+}
+
+const FPlayerWeaponRow& UDiabloGameInstance::GetPlayerWeapon(FName id) const
+{
+    return UPlayerInitDataTable::GetPlayerWeapon(id);
+}
+
+const FPlayerItemRow& UDiabloGameInstance::GetPlayerItem(FName id) const
+{
+    return UPlayerInitDataTable::GetPlayerItem(id);
+}
+
+const FPlayerPerkRow& UDiabloGameInstance::GetPlayerPerk(FName id) const
+{
+    return UPlayerInitDataTable::GetPlayerPerk(id);
+}
+#pragma endregion
 
 FItemInstance UDiabloGameInstance::CreateItem(FName id)
 {

@@ -1,5 +1,7 @@
 #include "EquipmentSystem.h"
 
+
+#include "Managers/DiabloGameInstance.h"
 #include "Managers/ItemManager.h"
 
 void EquipmentSystem::Init()
@@ -157,13 +159,12 @@ bool EquipmentSystem::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
 
 bool EquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantAdd)
 {
-    auto ItemTypeWantAdd = ItemManager::GetItemData(itemWantAdd.m_ItemID).m_ItemType;
+    auto ItemTypeWantAdd = itemWantAdd.m_ItemData->m_ItemType;
 
     if (!m_ArySlots[droppedIndex]->m_AbleEquipSlot[static_cast<int>(ItemTypeWantAdd)]) //못끼는 슬록이면 실패
     {
         return false;
     }
-
 
     if (m_ArySlots[droppedIndex]->m_Item.IsEmpty()) //비어있지않음
     {
@@ -172,7 +173,7 @@ bool EquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantAd
 
     if (ItemTypeWantAdd == EItemType::TwohandSword || ItemTypeWantAdd == EItemType::Katana) //낄무기가 양손무기일걍우
     {
-        auto ItemTypeDroppedBefore = ItemManager::GetItemData(m_ArySlots[droppedIndex]->m_Item.m_ItemID).m_ItemType;
+        auto ItemTypeDroppedBefore = m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType;
         //이미껴진 무기를 가져옴
         if (ItemTypeDroppedBefore == EItemType::TwohandSword
             || ItemTypeDroppedBefore == EItemType::Katana) //만일 껴저있는 무기가 양손무기라면 가능 이후 교체로 진행
@@ -193,8 +194,7 @@ void EquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
 {
     m_ArySlots[droppedIndex]->m_Item = itemWantAdd;
     m_ArySlots[droppedIndex]->SetOccupie(true);
-    m_ArySlots[droppedIndex]->m_EquippedType = ItemManager::GetItemData(m_ArySlots[droppedIndex]->m_Item.m_ItemID).
-        m_ItemType;
+    m_ArySlots[droppedIndex]->m_EquippedType = m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType;
     //
     m_ArySlots[droppedIndex]->m_Item.m_nGridIndex = droppedIndex;
     m_ArySlots[droppedIndex]->m_Item.m_Holder = this;

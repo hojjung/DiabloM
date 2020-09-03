@@ -207,7 +207,7 @@ void AUnitPawn::SetUnit(FName unitID)
 {
 	m_NameUnitID = unitID;
 
-	const FEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetMonsterUnit(m_NameUnitID);
+	const FEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetMonsterUnitPtr(m_NameUnitID);
 
 	m_SkMesh->SetSkeletalMesh(UnitData->m_Mesh);
 	m_SkMesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);

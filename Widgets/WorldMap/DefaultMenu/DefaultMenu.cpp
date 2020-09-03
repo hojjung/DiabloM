@@ -5,7 +5,7 @@
 #include "Objs/PlayerSkillSystem.h"
 #include "Objs/EquipmentSystem.h"
 #include "Objs/Inventory.h"
-#include "Widgets/DiaInvenGridPanel.h"
+#include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
 
 void UDefaultMenu::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, PlayerSkillSystem * skill, EquipmentSystem * equipment, Inventory * inven)
 {

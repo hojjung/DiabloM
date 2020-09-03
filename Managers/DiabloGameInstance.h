@@ -6,10 +6,12 @@
 #include "Engine/GameInstance.h"
 #include "Datas/CharacterDataTable.h"
 #include "Datas/ItemDataTable.h"
+#include "Datas/PlayerInitDataTable.h"
 #include "Managers/ItemManager.h"
 #include  "SaveLoad/SaveLoadManager.h"
 #include "DiabloGameInstance.generated.h"
 
+class PlayerCreateManager;
 struct FItemInstance;
 struct FItemTier;
 struct FItemTier;
@@ -21,33 +23,50 @@ class DIABLOM_API UDiabloGameInstance : public UGameInstance
 	
 public:
 	UDiabloGameInstance();//
-
 	static UDiabloGameInstance* Get;
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<ADroppedItem> m_DropItemClass; 
+	TSubclassOf<ADroppedItem> m_DropItemClass;
+	
 public:
 	ItemManager* m_ItemManager;
 	SaveLoadManager* m_SaveLoadManager;
-protected:
-	UPROPERTY(EditAnywhere)
-	UDataTable* m_MonsterUnitTable;
-	UPROPERTY(EditAnywhere)
-	UDataTable* m_NPCUnitTable;
-	UPROPERTY(EditAnywhere)
-	UDataTable* m_PlayerUnitTable;
-	UPROPERTY(EditAnywhere)
-	UDataTable* m_ItemTable;
-	
+	PlayerCreateManager* m_PlCreateManager;
+
 protected:
 	virtual void Init() override;
-	virtual void OnStart() override;
-
 	virtual void Shutdown()override ;
 
 public:
-	const FEntityTable* GetMonsterUnit(FName id) const;
-	const FEntityTable* GetNPCUnit(FName id) const;
-	const FPlayerEntityTable* GetPlayerUnit(FName id) const;
-	const FItemData* GetItemData(FName id)const;
+	
+#pragma region DataGetter
+	
+	const FEntityTable* GetMonsterUnitPtr(FName id) const;
+	const FNPCEntityTable* GetNPCUnitPtr(FName id) const;
+	const FPlayerEntityTable* GetPlayerUnitPtr(FName id) const;
+	const FItemTier* GetItemTierPtr(FName id)const;
+	const FItemData* GetItemDataPtr(FName id)const;
+	const FOption* GetOptionPtr(FName id)const;
+	const FPlayerHairRow* GetPlayerHairPtr(FName id)const;
+	const FPlayerFaceRow* GetPlayerFacePtr(FName id)const;
+	const FPlayerArmorRow* GetPlayerArmorPtr(FName id)const;
+	const FPlayerWeaponRow* GetPlayerWeaponPtr(FName id)const;
+	const FPlayerItemRow* GetPlayerItemPtr(FName id)const;
+	const FPlayerPerkRow* GetPlayerPerkPtr(FName id)const;
+	//
+	const FEntityTable& GetMonsterUnit(FName id) const;
+	const FNPCEntityTable& GetNPCUnit(FName id) const;
+	const FPlayerEntityTable& GetPlayerUnit(FName id) const;
+	const FItemTier& GetItemTier(FName id)const;
+	const FItemData& GetItemData(FName id)const;
+	const FOption& GetOption(FName id)const;
+	const FPlayerHairRow  & GetPlayerHair(FName id)const;
+	const FPlayerFaceRow  & GetPlayerFace(FName id)const;
+	const FPlayerArmorRow & GetPlayerArmor(FName id)const;
+	const FPlayerWeaponRow& GetPlayerWeapon(FName id)const;
+	const FPlayerItemRow  & GetPlayerItem(FName id)const;
+	const FPlayerPerkRow  & GetPlayerPerk(FName id)const;
+	
+#pragma endregion 
+	//
 	FItemInstance CreateItem(FName id);
 };

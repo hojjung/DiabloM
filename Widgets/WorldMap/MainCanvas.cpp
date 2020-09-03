@@ -1,7 +1,7 @@
 #include "MainCanvas.h"
 
 #include "Characters/PlayerDiabloCharacter.h"
-#include "Widgets/DefaultMenu.h"
+#include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 
 
 void UMainCanvas::OpenMainMenu()
