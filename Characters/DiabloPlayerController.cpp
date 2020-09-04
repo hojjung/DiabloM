@@ -25,6 +25,8 @@ ADiabloPlayerController::ADiabloPlayerController()
 	m_nInvenY = 8;
 
 	bShowMouseCursor=true;
+
+	APlayerController::SetVirtualJoystickVisibility(true);
 }
 
 void ADiabloPlayerController::BeginPlay()
@@ -119,10 +121,13 @@ void ADiabloPlayerController::OpenMainMenu()
 
 	//UWidgetBlueprintLibrary::SetInputMode_UIOnly(this);
 	m_MainMenu->OpenMainMenu();
+
+	APlayerController::SetVirtualJoystickVisibility(false);
 }
 
 void ADiabloPlayerController::CloseMainMenu()
 {
 	//UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
 	m_MainMenu->CloseMainMenu();
+	APlayerController::SetVirtualJoystickVisibility(true);
 }

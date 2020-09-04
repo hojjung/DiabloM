@@ -2,11 +2,15 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
+enum class ESaveVersion :uint8 //������ �ν��Ͻ��� ��ġ
+{
+    Test
+};
+
+
 class DIABLOM_API SaveLoadManager
 {
 public:
