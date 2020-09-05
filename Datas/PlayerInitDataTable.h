@@ -66,6 +66,10 @@ public:
         m_HelmetHandle.DataTable = UItemDataTable::GetItemTable;
         m_GloveHandle.DataTable = UItemDataTable::GetItemTable;
         m_ShoeHandle.DataTable = UItemDataTable::GetItemTable;
+        m_Shoulderandle.DataTable = UItemDataTable::GetItemTable;
+        m_BackpackHandle.DataTable = UItemDataTable::GetItemTable;
+        m_BeltHandle.DataTable = UItemDataTable::GetItemTable;
+      
     }
 
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -76,6 +80,13 @@ public:
     FDataTableRowHandle m_ShoeHandle;
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
     FDataTableRowHandle m_GloveHandle;
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+    FDataTableRowHandle m_Shoulderandle;
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+    FDataTableRowHandle m_BeltHandle;
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+    FDataTableRowHandle m_BackpackHandle;
+   
 };
 
 USTRUCT(BlueprintType)
@@ -166,4 +177,31 @@ public:
     static const FPlayerPerkRow& GetPlayerPerk(FName id);
 
     static const FPlayerPerkRow* GetPlayerPerkPtr(FName id); 
+};
+
+USTRUCT(BlueprintType) //���̵�,Ƽ��
+struct FCurrentCharData
+{
+    GENERATED_BODY()
+
+public:
+    FCurrentCharData(): m_CurrentHair(nullptr),
+                        m_CurrentFace(nullptr),
+                        m_CurrentArmor(nullptr),
+                        m_CurrentWeapon(nullptr),
+                        m_CurrentItem(nullptr),
+                        m_CurrentPerk(nullptr)
+    {
+    }
+
+    //위젯과 분리된 데이터
+    //
+    FPlayerHairRow*   m_CurrentHair;
+    FPlayerFaceRow*   m_CurrentFace;
+    FPlayerArmorRow*  m_CurrentArmor;
+    FPlayerWeaponRow* m_CurrentWeapon;
+    FPlayerItemRow*   m_CurrentItem;
+    FPlayerPerkRow*   m_CurrentPerk;
+    //
+    
 };

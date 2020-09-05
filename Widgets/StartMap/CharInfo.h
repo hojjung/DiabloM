@@ -7,7 +7,7 @@
 #include "CharInfo.generated.h"
 
 /**
- * 
+ * 로딩한 캐릭터 버튼
  */
 UCLASS()
 class DIABLOM_API UCharInfo : public UUserWidget

@@ -8,6 +8,7 @@ APlayerCreateController::APlayerCreateController()
 
     bShowMouseCursor=true;
     
+    m_ClassStartMenu=UStartMenuCanvas::StaticClass();
 }
 
 void APlayerCreateController::BeginPlay()

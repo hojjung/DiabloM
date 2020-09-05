@@ -19,32 +19,9 @@
  * 데이터 구조체 전부를 컨테이너로 담아서 다가저야한다.
  */
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnVisualChange,const FCurrentCharData&);
+
 class UDiabloGameInstance;
-USTRUCT(BlueprintType) //���̵�,Ƽ��
-struct FCurrentCharData
-{
-    GENERATED_BODY()
-
-public:
-    FCurrentCharData(): m_CurrentHair(nullptr),
-                        m_CurrentFace(nullptr),
-                        m_CurrentArmor(nullptr),
-                        m_CurrentWeapon(nullptr),
-                        m_CurrentItem(nullptr),
-                        m_CurrentPerk(nullptr)
-    {
-    }
-
-    //위젯과 분리된 데이터
-    //
-    FPlayerHairRow*   m_CurrentHair;
-    FPlayerFaceRow*   m_CurrentFace;
-    FPlayerArmorRow*  m_CurrentArmor;
-    FPlayerWeaponRow* m_CurrentWeapon;
-    FPlayerItemRow*   m_CurrentItem;
-    FPlayerPerkRow*   m_CurrentPerk;
-};
-
 
 class DIABLOM_API PlayerCreateManager //바뀐다는건 얘밖에 모름
 {
@@ -52,7 +29,7 @@ public:
     PlayerCreateManager();
     ~PlayerCreateManager();
 
-protected:
+public:
     FCurrentCharData m_CurrentCharData;
 
     TArray<FPlayerHairRow*> m_AryHair;
@@ -61,7 +38,16 @@ protected:
     TArray<FPlayerWeaponRow*> m_AryWeapon;
     TArray<FPlayerItemRow*> m_AryItem;
     TArray<FPlayerPerkRow*> m_AryPerk;
-
+    //
+    int m_IndexHair;
+    int m_IndexFace;
+    int m_IndexArmor;
+    int m_IndexWeapon;
+    int m_IndexItem;
+    int m_IndexPerk;
+    //
+public:
+    FOnVisualChange m_OnVisualChange;
 public:
     void Init(UDiabloGameInstance* gameInst);
 
@@ -71,4 +57,8 @@ public:
     {
         return m_CurrentCharData;
     }
+
+public:
+    void DecreaseHair();
+    void IncreaseHair();
 };

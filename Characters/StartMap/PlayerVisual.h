@@ -5,7 +5,11 @@
 #include "CoreMinimal.h"
 #include "Engine/SkeletalMesh.h"
 #include "GameFramework/Pawn.h"
+#include "Managers/StartMap/PlayerCreateManager.h"
+
 #include "PlayerVisual.generated.h"
+
+struct FCurrentCharData;
 
 UCLASS()
 class DIABLOM_API APlayerVisual : public APawn
@@ -42,6 +46,11 @@ protected:
 	USkeletalMesh* m_CachedHairFullMesh;
 	UPROPERTY()
 	USkeletalMesh* m_CachedHairHalfMesh;
+	
+	PlayerCreateManager* m_PlCreateManager;//smartponter?
+
+	UPROPERTY()
+	UAnimSequence* m_AnimSeq;
 protected:
 	void CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName);
 	
@@ -51,7 +60,7 @@ protected:
 	
 	virtual void BeginPlay() override;
 
-	void OnMeshVisualChanged();
+	void OnMeshVisualChanged(const FCurrentCharData& charData);
 	
 
 };

@@ -37,6 +37,7 @@ void UDiabloGameInstance::Init()
     if(!m_PlCreateManager)
     {
         m_PlCreateManager = new PlayerCreateManager();
+        m_PlCreateManager->Init(this);
         //m_PlCreateManager->CreateSaveLoadInstance();
     }
 }
