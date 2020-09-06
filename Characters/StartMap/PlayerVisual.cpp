@@ -85,6 +85,7 @@ void APlayerVisual::BeginPlay()
     m_PlCreateManager = GetGameInstance<UDiabloGameInstance>()->m_PlCreateManager;
     m_PlCreateManager->m_OnVisualChange.AddUObject(this, &APlayerVisual::OnMeshVisualChanged);
     m_PlCreateManager->OnDataChanged();
+  
 }
 
 void APlayerVisual::OnMeshVisualChanged(const FCurrentCharData& charData)
@@ -104,9 +105,17 @@ void APlayerVisual::OnMeshVisualChanged(const FCurrentCharData& charData)
     else
     {
         m_MeshHair->SetSkeletalMesh(charData.m_CurrentHair->m_MeshFullHair);
+        m_MeshHeadGear->SetSkeletalMesh(nullptr);
     }
-
-    m_MeshBody->SetSkeletalMesh(UItemDataTable::GetItemData(charData.m_CurrentArmor->m_BodyArmorHandle.RowName).m_SkEquipment);
+    //
+    auto* BodyMesh=UItemDataTable::GetItemData(charData.m_CurrentArmor->m_BodyArmorHandle.RowName).m_SkEquipment;
+    
+    if(m_MeshBody->SkeletalMesh != BodyMesh)
+    {
+        m_MeshBody->SetSkeletalMesh(BodyMesh);
+        m_MeshBody->SetAnimation(m_AnimSeq);
+        m_MeshBody->Play(true);//body change = need animation update
+    }
     //
     m_MeshGlove->SetSkeletalMesh(charData.m_CurrentArmor->m_GloveHandle.IsNull()? nullptr:UItemDataTable::GetItemData(charData.m_CurrentArmor->m_GloveHandle.RowName).m_SkEquipment);
     m_MeshShoe->SetSkeletalMesh(charData.m_CurrentArmor->m_ShoeHandle.IsNull()? nullptr:UItemDataTable::GetItemData(charData.m_CurrentArmor->m_ShoeHandle.RowName).m_SkEquipment);
@@ -114,11 +123,11 @@ void APlayerVisual::OnMeshVisualChanged(const FCurrentCharData& charData)
     m_MeshBelt->SetSkeletalMesh(charData.m_CurrentArmor->m_BeltHandle.IsNull()? nullptr: UItemDataTable::GetItemData(charData.m_CurrentArmor->m_BeltHandle.RowName).m_SkEquipment);
     //
     m_MeshBackpack->SetStaticMesh(charData.m_CurrentArmor->m_BackpackHandle.IsNull()? nullptr: UItemDataTable::GetItemData(charData.m_CurrentArmor->m_BackpackHandle.RowName).m_StEquipment);
-    m_MeshRightHand->SetStaticMesh(charData.m_CurrentWeapon->m_RightWeaponHandle.IsNull()? nullptr: UItemDataTable::GetItemData(charData.m_CurrentWeapon->m_RightWeaponHandle.RowName).m_StEquipment);
-    m_MeshLeftHand->SetStaticMesh(charData.m_CurrentWeapon->m_LeftWeaponHandle.IsNull()? nullptr: UItemDataTable::GetItemData(charData.m_CurrentWeapon->m_LeftWeaponHandle.RowName).m_StEquipment);
-
-    m_MeshBody->SetAnimation(m_AnimSeq);
-    m_MeshBody->Play(true);
+    m_MeshRightHand->SetStaticMesh(charData.m_CurrentArmor->m_RightWeaponHandle.IsNull()? nullptr: UItemDataTable::GetItemData(charData.m_CurrentArmor->m_RightWeaponHandle.RowName).m_StEquipment);
+    m_MeshLeftHand->SetStaticMesh(charData.m_CurrentArmor->m_LeftWeaponHandle.IsNull()? nullptr: UItemDataTable::GetItemData(charData.m_CurrentArmor->m_LeftWeaponHandle.RowName).m_StEquipment);
+    //
+    
+    
 }
 
 void APlayerVisual::SetHairMeshFull()

@@ -100,10 +100,6 @@ const FPlayerArmorRow* UDiabloGameInstance::GetPlayerArmorPtr(FName id) const
     return UPlayerInitDataTable::GetPlayerArmorPtr(id);
 }
 
-const FPlayerWeaponRow* UDiabloGameInstance::GetPlayerWeaponPtr(FName id) const
-{
-    return UPlayerInitDataTable::GetPlayerWeaponPtr(id);
-}
 
 const FPlayerItemRow* UDiabloGameInstance::GetPlayerItemPtr(FName id) const
 {
@@ -160,10 +156,6 @@ const FPlayerArmorRow& UDiabloGameInstance::GetPlayerArmor(FName id) const
     return UPlayerInitDataTable::GetPlayerArmor(id);
 }
 
-const FPlayerWeaponRow& UDiabloGameInstance::GetPlayerWeapon(FName id) const
-{
-    return UPlayerInitDataTable::GetPlayerWeapon(id);
-}
 
 const FPlayerItemRow& UDiabloGameInstance::GetPlayerItem(FName id) const
 {

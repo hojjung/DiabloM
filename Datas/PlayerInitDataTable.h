@@ -69,9 +69,12 @@ public:
         m_Shoulderandle.DataTable = UItemDataTable::GetItemTable;
         m_BackpackHandle.DataTable = UItemDataTable::GetItemTable;
         m_BeltHandle.DataTable = UItemDataTable::GetItemTable;
+        m_RightWeaponHandle.DataTable = UItemDataTable::GetItemTable;
+        m_LeftWeaponHandle.DataTable = UItemDataTable::GetItemTable;
       
     }
-
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+    FText m_ShowingName;
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
     FDataTableRowHandle m_BodyArmorHandle;
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -86,20 +89,6 @@ public:
     FDataTableRowHandle m_BeltHandle;
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
     FDataTableRowHandle m_BackpackHandle;
-   
-};
-
-USTRUCT(BlueprintType)
-struct FPlayerWeaponRow : public FTableRowBase
-{
-    GENERATED_BODY()
-
-public:
-    FPlayerWeaponRow()
-    {
-        m_RightWeaponHandle.DataTable = UItemDataTable::GetItemTable;
-        m_LeftWeaponHandle.DataTable = UItemDataTable::GetItemTable;
-    }
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
     FDataTableRowHandle m_RightWeaponHandle;
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -118,6 +107,8 @@ public:
         m_ItemHandle.DataTable = UItemDataTable::GetItemTable;
     }
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+    FText m_ShowingName;
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
     FDataTableRowHandle m_ItemHandle;
 };
 
@@ -131,7 +122,8 @@ public:
     FPlayerPerkRow()
     {
     }
-    
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+    FText m_ShowingName;
 };
 
 UCLASS()
@@ -146,8 +138,6 @@ public:
     static	UDataTable* GetPlayerFaceTable;
 
     static	UDataTable* GetPlayerArmorTable;
-
-    static	UDataTable* GetPlayerWeaponTable;
 
     static	UDataTable* GetPlayerItemTable;
 
@@ -166,9 +156,6 @@ public:
 
     static const FPlayerArmorRow* GetPlayerArmorPtr(FName id);
 
-    static const FPlayerWeaponRow& GetPlayerWeapon(FName id);
-
-    static const FPlayerWeaponRow* GetPlayerWeaponPtr(FName id);
 
     static const FPlayerItemRow& GetPlayerItem(FName id);
 
@@ -188,7 +175,6 @@ public:
     FCurrentCharData(): m_CurrentHair(nullptr),
                         m_CurrentFace(nullptr),
                         m_CurrentArmor(nullptr),
-                        m_CurrentWeapon(nullptr),
                         m_CurrentItem(nullptr),
                         m_CurrentPerk(nullptr)
     {
@@ -199,7 +185,6 @@ public:
     FPlayerHairRow*   m_CurrentHair;
     FPlayerFaceRow*   m_CurrentFace;
     FPlayerArmorRow*  m_CurrentArmor;
-    FPlayerWeaponRow* m_CurrentWeapon;
     FPlayerItemRow*   m_CurrentItem;
     FPlayerPerkRow*   m_CurrentPerk;
     //

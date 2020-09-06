@@ -15,14 +15,87 @@ void UCharCreate::Init(PlayerCreateManager* plManager)
 {
     m_PlManager=plManager;
     m_PlManager->m_OnVisualChange.AddUObject(this,&UCharCreate::OnVisualChanged);
-    m_HairSelect->m_BtnLeft->OnClicked.AddDynamic(m_PlManager,&PlayerCreateManager::DecreaseHair);
-    m_HairSelect->m_BtnRight->OnClicked.AddDynamic(m_PlManager,&PlayerCreateManager::IncreaseHair);
+    m_HairSelect->m_BtnLeft->OnClicked.AddDynamic(this,&UCharCreate::DecreaseHair);
+    m_HairSelect->m_BtnRight->OnClicked.AddDynamic(this,&UCharCreate::IncreaseHair);
+    m_FaceSelect->m_BtnLeft->OnClicked.AddDynamic(this,&UCharCreate::DecreaseFace);
+    m_FaceSelect->m_BtnRight->OnClicked.AddDynamic(this,&UCharCreate::IncreaseFace);
+    m_ArmorSelect->m_BtnLeft->OnClicked.AddDynamic(this,&UCharCreate::DecreaseArmor);
+    m_ArmorSelect->m_BtnRight->OnClicked.AddDynamic(this,&UCharCreate::IncreaseArmor);
+    m_ItemSelect->m_BtnLeft->OnClicked.AddDynamic(this,&UCharCreate::DecreaseItem);
+    m_ItemSelect->m_BtnRight->OnClicked.AddDynamic(this,&UCharCreate::IncreaseItem);
+    m_PerkSelect->m_BtnLeft->OnClicked.AddDynamic(this,&UCharCreate::DecreasePerk);
+    m_PerkSelect->m_BtnRight->OnClicked.AddDynamic(this,&UCharCreate::IncreasePerk);
 }
 
 void UCharCreate::OnVisualChanged(const FCurrentCharData& visual_change)
 {
     m_HairSelect->m_TextTypeName->SetText(visual_change.m_CurrentHair->m_ShowingName);
     m_HairSelect->m_TextTypeCount->SetText(GetFormatCount(m_PlManager->m_IndexHair,m_PlManager->m_AryHair.Num()));
+    //
+    m_FaceSelect->m_TextTypeName->SetText(visual_change.m_CurrentFace->m_ShowingName);
+    m_FaceSelect->m_TextTypeCount->SetText(GetFormatCount(m_PlManager->m_IndexFace,m_PlManager->m_AryFace.Num()));
+    //
+    m_ArmorSelect->m_TextTypeName->SetText(visual_change.m_CurrentArmor->m_ShowingName);
+    m_ArmorSelect->m_TextTypeCount->SetText(GetFormatCount(m_PlManager->m_IndexArmor,m_PlManager->m_AryArmor.Num()));
+    //
+    //
+    m_ItemSelect->m_TextTypeName->SetText(visual_change.m_CurrentItem->m_ShowingName);
+    m_ItemSelect->m_TextTypeCount->SetText(GetFormatCount(m_PlManager->m_IndexItem,m_PlManager->m_AryItem.Num()));
+    //
+    m_PerkSelect->m_TextTypeName->SetText(visual_change.m_CurrentPerk->m_ShowingName);
+    m_PerkSelect->m_TextTypeCount->SetText(GetFormatCount(m_PlManager->m_IndexPerk,m_PlManager->m_AryPerk.Num()));
+    
+}
+
+void UCharCreate::DecreaseHair()
+{
+    m_PlManager->DecreaseHair();
+}
+
+void UCharCreate::IncreaseHair()
+{
+    m_PlManager->IncreaseHair();
+}
+
+void UCharCreate::DecreaseFace()
+{
+    m_PlManager->DecreaseFace();
+}
+
+void UCharCreate::IncreaseFace()
+{
+    m_PlManager->IncreaseFace();
+}
+
+void UCharCreate::DecreaseArmor()
+{
+    m_PlManager->DecreaseArmor();
+}
+
+void UCharCreate::IncreaseArmor()
+{
+    m_PlManager->IncreaseArmor();
+}
+
+
+void UCharCreate::DecreaseItem()
+{
+    m_PlManager->DecreaseItem();
+}
+
+void UCharCreate::IncreaseItem()
+{
+    m_PlManager->IncreaseItem();
+}
+
+void UCharCreate::DecreasePerk()
+{
+    m_PlManager->DecreasePerk();
+}
+
+void UCharCreate::IncreasePerk()
+{
+    m_PlManager->IncreasePerk();
 }
 
 FText UCharCreate::GetFormatCount(int index, int aryMax)

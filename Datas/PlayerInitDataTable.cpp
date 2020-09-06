@@ -5,7 +5,6 @@
 UDataTable* UPlayerInitDataTable::GetPlayerHairTable = nullptr;
 UDataTable* UPlayerInitDataTable::GetPlayerFaceTable = nullptr;
 UDataTable* UPlayerInitDataTable::GetPlayerArmorTable = nullptr;
-UDataTable* UPlayerInitDataTable::GetPlayerWeaponTable = nullptr;
 UDataTable* UPlayerInitDataTable::GetPlayerItemTable = nullptr;
 UDataTable* UPlayerInitDataTable::GetPlayerPerkTable = nullptr;
 
@@ -23,9 +22,6 @@ UPlayerInitDataTable::UPlayerInitDataTable()
             TEXT("DataTable'/Game/DataTables/PlayerCreation/PlayerArmorTable.PlayerArmorTable'"));
     UPlayerInitDataTable::GetPlayerArmorTable = FoundTable3.Object;
 
-    static ConstructorHelpers::FObjectFinder<UDataTable> FoundTable4(
-              TEXT("DataTable'/Game/DataTables/PlayerCreation/PlayerWeaponTable.PlayerWeaponTable'"));
-    UPlayerInitDataTable::GetPlayerWeaponTable = FoundTable4.Object;
     
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundTable5(
             TEXT("DataTable'/Game/DataTables/PlayerCreation/PlayerItemTable.PlayerItemTable'"));
@@ -67,15 +63,7 @@ const FPlayerArmorRow* UPlayerInitDataTable::GetPlayerArmorPtr(FName id)
         return GetPlayerArmorTable->FindRow<FPlayerArmorRow>(id,"");
 }
 
-const FPlayerWeaponRow& UPlayerInitDataTable::GetPlayerWeapon(FName id)
-{
-        return *GetPlayerWeaponTable->FindRow<FPlayerWeaponRow>(id,"");
-}
 
-const FPlayerWeaponRow* UPlayerInitDataTable::GetPlayerWeaponPtr(FName id)
-{
-        return GetPlayerWeaponTable->FindRow<FPlayerWeaponRow>(id,"");
-}
 
 const FPlayerItemRow& UPlayerInitDataTable::GetPlayerItem(FName id)
 {

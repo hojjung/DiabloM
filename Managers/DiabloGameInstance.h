@@ -49,7 +49,6 @@ public:
 	const FPlayerHairRow* GetPlayerHairPtr(FName id)const;
 	const FPlayerFaceRow* GetPlayerFacePtr(FName id)const;
 	const FPlayerArmorRow* GetPlayerArmorPtr(FName id)const;
-	const FPlayerWeaponRow* GetPlayerWeaponPtr(FName id)const;
 	const FPlayerItemRow* GetPlayerItemPtr(FName id)const;
 	const FPlayerPerkRow* GetPlayerPerkPtr(FName id)const;
 	//
@@ -62,7 +61,6 @@ public:
 	const FPlayerHairRow  & GetPlayerHair(FName id)const;
 	const FPlayerFaceRow  & GetPlayerFace(FName id)const;
 	const FPlayerArmorRow & GetPlayerArmor(FName id)const;
-	const FPlayerWeaponRow& GetPlayerWeapon(FName id)const;
 	const FPlayerItemRow  & GetPlayerItem(FName id)const;
 	const FPlayerPerkRow  & GetPlayerPerk(FName id)const;
 	

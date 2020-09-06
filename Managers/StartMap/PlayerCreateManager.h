@@ -19,7 +19,7 @@
  * 데이터 구조체 전부를 컨테이너로 담아서 다가저야한다.
  */
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnVisualChange,const FCurrentCharData&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnVisualChange, const FCurrentCharData&);
 
 class UDiabloGameInstance;
 
@@ -35,7 +35,6 @@ public:
     TArray<FPlayerHairRow*> m_AryHair;
     TArray<FPlayerFaceRow*> m_AryFace;
     TArray<FPlayerArmorRow*> m_AryArmor;
-    TArray<FPlayerWeaponRow*> m_AryWeapon;
     TArray<FPlayerItemRow*> m_AryItem;
     TArray<FPlayerPerkRow*> m_AryPerk;
     //
@@ -61,4 +60,12 @@ public:
 public:
     void DecreaseHair();
     void IncreaseHair();
+    void DecreaseFace();
+    void IncreaseFace();
+    void DecreaseArmor();
+    void IncreaseArmor();
+    void DecreaseItem();
+    void IncreaseItem();
+    void DecreasePerk();
+    void IncreasePerk();
 };
