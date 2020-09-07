@@ -10,7 +10,8 @@ void UDiabloCheatManager::InitCheatManager()
 	PRINTF("Cheat Manager Init !");
 	m_GameManager = GetWorld()->GetGameInstance<UDiabloGameInstance>();
 	m_PlayerController = Cast<ADiabloPlayerController>(GetWorld()->GetFirstPlayerController());
-	m_Player = Cast<APlayerDiabloCharacter>(m_PlayerController->GetPawn());
+	if(m_PlayerController)
+		m_Player = Cast<APlayerDiabloCharacter>(m_PlayerController->GetPawn());
 }
 
 void UDiabloCheatManager::PrintPlayerStats()
@@ -46,5 +47,10 @@ void UDiabloCheatManager::SaveEquip()
 void UDiabloCheatManager::LoadEquip()
 {
 	SaveLoadManager::Get->LoadEquipment();
+}
+
+void UDiabloCheatManager::DeleteAllSlot()
+{
+	SaveLoadManager::Get->DeleteAllSlot();
 }
 

@@ -14,6 +14,9 @@ SaveLoadManager* SaveLoadManager::Get=nullptr;
 SaveLoadManager::~SaveLoadManager()
 {
    SaveLoadManager::Get=nullptr;
+   m_AryLoadedCharacters.Empty();
+   m_ArySlotIndexNotUsed.Empty();
+   m_OnDataCreated.Clear();
 }
 
 void SaveLoadManager::InitSaveLoadManager()
@@ -35,7 +38,31 @@ void SaveLoadManager::TryLoadAllCharacter()
       {
          //해당인덱스 슬롯에 데이터 없음
          m_ArySlotIndexNotUsed.Enqueue(i);
-         
+         PRINTF("Fail: %d",i);
+      }
+      else
+      {
+         PRINTF("Success: %d",i);
+      }
+   }
+}
+
+void SaveLoadManager::DeleteAllSlot()
+{
+   PRINTF("DeleteSlot");
+   for(int i=0; i<m_nCurrentSlotCount;i++)
+   {
+      if(!UGameplayStatics::DeleteGameInSlot("Equipment",i))
+      {
+         //PRINTF("Fail Delete Equipment");
+      }
+      if(!UGameplayStatics::DeleteGameInSlot("Character",i))
+      {
+         //PRINTF("Fail Delete Character");
+      }
+      if(!UGameplayStatics::DeleteGameInSlot("Inventory",i))
+      {
+         //PRINTF("Fail Delete Inventory");
       }
    }
 }
@@ -51,7 +78,7 @@ void SaveLoadManager::SaveInventory()const
    SaveInven->SetSaveData(Controller->GetInven());
 
    UGameplayStatics::SaveGameToSlot(SaveInven,"Inventory",m_nCurrentPlayerIndex);
-
+   
    PRINTF("SaveInventory");
 }
 
@@ -114,33 +141,30 @@ void SaveLoadManager::SaveCharacterStat() const
 
 bool SaveLoadManager::LoadCharacterStat(int index)
 {
-   auto* LoadCharStat =Cast<USaveCharacterStatus>(UGameplayStatics::LoadGameFromSlot("Character",index));
-
-   if(!LoadCharStat)
+   if(!UGameplayStatics::DoesSaveGameExist("Character",index))
    {
       return false;
    }
-   
-   auto* Controller =ADiabloPlayerController::Get;
-   LoadCharStat->SetCharStatLoad(Controller);
+   auto* LoadCharStat =Cast<USaveCharacterStatus>(UGameplayStatics::LoadGameFromSlot("Character",index));
 
+   PRINTF("Loaded - %d - %s",index,*LoadCharStat->m_TextName.ToString());  
    m_AryLoadedCharacters.Emplace(LoadCharStat);   
    //여기에도 인스턴스를 매달아야함
    
    return true;
 }
 
-int SaveLoadManager::GetEmptyIndex()
-{
-   int FrontIndex;
-   m_ArySlotIndexNotUsed.Dequeue(FrontIndex);
-   
-   return FrontIndex;
-}
 
 void SaveLoadManager::CreateNewCharacter(PlayerCreateManager* plManager)
 {
-   int PlayerIndex=GetEmptyIndex();
+   int PlayerIndex=-1;
+   
+   if(!m_ArySlotIndexNotUsed.Dequeue(PlayerIndex))
+   {
+      PRINTF("No Slot - Fail Creation");
+      return;
+   }
+   PRINTF("Empty Index: %d",PlayerIndex);
    //   
    auto* SaveCharStat =Cast<USaveCharacterStatus>( UGameplayStatics::CreateSaveGameObject(USaveCharacterStatus::StaticClass()));
    auto* SaveEquip =Cast<USaveEquipment>( UGameplayStatics::CreateSaveGameObject(USaveEquipment::StaticClass()));

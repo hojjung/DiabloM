@@ -47,6 +47,7 @@ void UDiabloGameInstance::Shutdown()
 
     delete m_ItemManager;
     delete m_SaveLoadManager;
+    delete m_PlCreateManager;
 }
 
 #pragma region  DataGetter

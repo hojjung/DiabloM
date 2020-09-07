@@ -43,4 +43,6 @@ public:
     void SaveEquip();
 	UFUNCTION(exec)
     void LoadEquip();
+	UFUNCTION(exec)
+	void DeleteAllSlot();
 };

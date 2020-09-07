@@ -28,7 +28,8 @@ public:
 
 	FOnSaveDataCreated m_OnDataCreated; 
 protected:
-	TArray<TSharedPtr<USaveCharacterStatus>> m_AryLoadedCharacters;
+	UPROPERTY()
+	TArray<USaveCharacterStatus*> m_AryLoadedCharacters;
 
 	TQueue<int> m_ArySlotIndexNotUsed;
 	
@@ -38,6 +39,7 @@ protected:
 	void TryLoadAllCharacter();
 
 public:	
+	void DeleteAllSlot();
 	void SaveInventory() const;
 
 	void LoadInventory() const;
@@ -50,12 +52,10 @@ public:
 	
 	bool LoadCharacterStat(int index);
 
-	FORCEINLINE TArray<TSharedPtr<USaveCharacterStatus>>& GetCharStatAry()
+	FORCEINLINE TArray<USaveCharacterStatus*>& GetCharStatAry()
 	{
 		return  m_AryLoadedCharacters;
 	}
-
-	int GetEmptyIndex();
 
 	void CreateNewCharacter(PlayerCreateManager* plManager);
 

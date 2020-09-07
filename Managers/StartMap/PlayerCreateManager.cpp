@@ -174,5 +174,10 @@ void PlayerCreateManager::IncreasePerk()
 
 void PlayerCreateManager::CreateCharcter()
 {
+    if(m_TextName.IsEmpty())
+    {
+        PRINTF("No Name - Fail Creation");
+        return;
+    }
     SaveLoadManager::Get->CreateNewCharacter(this);
 }

@@ -1,5 +1,5 @@
 #include "PlayerCreateController.h"
-
+#include "Managers/DiabloCheatManager.h"
 APlayerCreateController::APlayerCreateController()
 {
     APlayerController::SetVirtualJoystickVisibility(false);
@@ -9,6 +9,8 @@ APlayerCreateController::APlayerCreateController()
     bShowMouseCursor=true;
     
     m_ClassStartMenu=UStartMenuCanvas::StaticClass();
+    
+    CheatClass = UDiabloCheatManager::StaticClass();
 }
 
 void APlayerCreateController::BeginPlay()
