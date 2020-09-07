@@ -1,7 +1,7 @@
 
 #include "CharCreate.h"
 
-
+#include "EditableText.h"
 
 
 void UCharCreate::NativePreConstruct()
@@ -25,6 +25,9 @@ void UCharCreate::Init(PlayerCreateManager* plManager)
     m_ItemSelect->m_BtnRight->OnClicked.AddDynamic(this,&UCharCreate::IncreaseItem);
     m_PerkSelect->m_BtnLeft->OnClicked.AddDynamic(this,&UCharCreate::DecreasePerk);
     m_PerkSelect->m_BtnRight->OnClicked.AddDynamic(this,&UCharCreate::IncreasePerk);
+    m_NameBox->OnTextChanged.AddDynamic(this,&UCharCreate::UpdateNameText);
+    m_NameBox->OnTextCommitted.AddDynamic(this,&UCharCreate::UpdateNameTextCommit);
+    m_BtnContinue->OnClicked.AddDynamic(this,&UCharCreate::Continue);
 }
 
 void UCharCreate::OnVisualChanged(const FCurrentCharData& visual_change)
@@ -96,6 +99,23 @@ void UCharCreate::DecreasePerk()
 void UCharCreate::IncreasePerk()
 {
     m_PlManager->IncreasePerk();
+}
+
+void UCharCreate::UpdateNameText(const FText& text)
+{
+    m_TextTypedName =text;
+    m_PlManager->m_TextName=m_TextTypedName;
+}
+
+void UCharCreate::UpdateNameTextCommit(const FText& text, ETextCommit::Type type)
+{
+    UpdateNameText(text);
+}
+
+void UCharCreate::Continue()
+{
+    //create Player
+    m_PlManager->CreateCharcter();
 }
 
 FText UCharCreate::GetFormatCount(int index, int aryMax)

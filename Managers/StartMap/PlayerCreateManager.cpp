@@ -7,11 +7,17 @@ PlayerCreateManager::PlayerCreateManager(): m_IndexHair(0), m_IndexFace(0), m_In
                                             m_IndexItem(0),
                                             m_IndexPerk(0)
 {
+    
 }
 
 PlayerCreateManager::~PlayerCreateManager()
 {
-    
+    m_AryHair.Empty();
+    m_AryFace.Empty();
+    m_AryArmor.Empty();
+    m_AryItem.Empty();
+    m_AryPerk.Empty();
+    m_CurrentCharData.Clear();
 }
 
 void PlayerCreateManager::Init(UDiabloGameInstance* gameInst)
@@ -56,7 +62,7 @@ void PlayerCreateManager::IncreaseHair()
     {
         m_IndexHair=0;
     }
-
+    
     m_CurrentCharData.m_CurrentHair = m_AryHair[m_IndexHair];
     OnDataChanged();
 }
@@ -130,7 +136,7 @@ void PlayerCreateManager::DecreaseItem()
 void PlayerCreateManager::IncreaseItem()
 {
     m_IndexItem++;
-
+    
     if(m_IndexItem>=m_AryItem.Num())
     {
         m_IndexItem=0;
@@ -143,7 +149,7 @@ void PlayerCreateManager::IncreaseItem()
 void PlayerCreateManager::DecreasePerk()
 {
     m_IndexPerk--;
-
+    
     if(m_IndexPerk<0)
     {
         m_IndexPerk=m_AryPerk.Num()-1;
@@ -156,12 +162,17 @@ void PlayerCreateManager::DecreasePerk()
 void PlayerCreateManager::IncreasePerk()
 {
     m_IndexPerk++;
-
+    
     if(m_IndexPerk>=m_AryPerk.Num())
     {
         m_IndexPerk=0;
     }
-
+    
     m_CurrentCharData.m_CurrentPerk = m_AryPerk[m_IndexPerk];
     OnDataChanged();
+}
+
+void PlayerCreateManager::CreateCharcter()
+{
+    SaveLoadManager::Get->CreateNewCharacter(this);
 }

@@ -37,7 +37,10 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit):Super(objInit)
 	m_NavSys = nullptr;
 
 	m_fMoveAcceptRadius = 100.f;
+
 }
+
+
 void AUnitPawn::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName)
 {
 	(*refSkComp) = CreateDefaultSubobject<USkeletalMeshComponent>(keyName);
@@ -208,7 +211,7 @@ void AUnitPawn::SetUnit(FName unitID)
 	m_NameUnitID = unitID;
 
 	const FEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetMonsterUnitPtr(m_NameUnitID);
-
+	m_TextUnitName = UnitData->m_ShowingName;	
 	m_SkMesh->SetSkeletalMesh(UnitData->m_Mesh);
 	m_SkMesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	m_SkMesh->SetAnimInstanceClass(UnitData->m_AnimBP);
@@ -316,6 +319,10 @@ bool AUnitPawn::GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, f
 	return false;
 }
 
+void AUnitPawn::RemoveSlottedGameplayAbilities(bool bRemoveAll)
+{
+}
+
 void AUnitPawn::HandleDamage(float DamageAmount, const FHitResult & HitInfo, const FGameplayTagContainer & DamageTags, AUnitPawn * InstigatorCharacter, AActor * DamageCauser)
 {
 }
@@ -330,6 +337,11 @@ void AUnitPawn::HandleManaChanged(float DeltaValue, const FGameplayTagContainer 
 
 void AUnitPawn::HandleMoveSpeedChanged(float DeltaValue, const FGameplayTagContainer & EventTags)
 {
+}
+
+void AUnitPawn::SetLevel(int lv)
+{
+	m_nCharacterLevel=lv;
 }
 
 void AUnitPawn::AddStartupGameplayAbilities()

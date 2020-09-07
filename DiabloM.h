@@ -28,3 +28,9 @@ static FString EnumToString(const FString& enumName, const T value)
 	UEnum* pEnum = FindObject<UEnum>(ANY_PACKAGE, *enumName);
 	return *(pEnum ? pEnum->GetNameStringByIndex(static_cast<uint8>(value)) : "NoEnum-Null");
 }
+
+UENUM(BlueprintType)
+enum class ESaveVersion :uint8 //������ �ν��Ͻ��� ��ġ
+{
+	Init
+};

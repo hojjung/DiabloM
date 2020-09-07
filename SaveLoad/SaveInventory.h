@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "SaveLoadManager.h"
 #include "GameFramework/SaveGame.h"
 #include "Objs/Inventory.h"
 #include "SaveInventory.generated.h"
@@ -18,7 +20,9 @@ class DIABLOM_API USaveInventory : public USaveGame
 public:
 	USaveInventory();
 
-protected:
+public:
+	UPROPERTY(EditAnywhere)
+	ESaveVersion m_SaveVersion;
 	//어떤 아이템이, 어떤 인벤칸에 있는지, 그리고 옵션의 종류와 수치,등급
 	UPROPERTY(EditAnywhere)
 	int m_nCount;

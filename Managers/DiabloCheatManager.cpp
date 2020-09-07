@@ -37,3 +37,14 @@ void UDiabloCheatManager::LoadInven()
 {
 	SaveLoadManager::Get->LoadInventory();
 }
+
+void UDiabloCheatManager::SaveEquip()
+{
+	SaveLoadManager::Get->SaveEquipment();
+}
+
+void UDiabloCheatManager::LoadEquip()
+{
+	SaveLoadManager::Get->LoadEquipment();
+}
+

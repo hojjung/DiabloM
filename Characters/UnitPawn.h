@@ -35,7 +35,9 @@ class DIABLOM_API AUnitPawn : public APawn, public IAbilitySystemInterface
 
 public:
 	AUnitPawn(const FObjectInitializer& objInit);
-
+public:
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	FText m_TextUnitName;
 protected:
 	UPROPERTY(EditAnywhere, Category = Unit)
 	FName m_NameUnitID;
@@ -157,6 +159,8 @@ public:
 	virtual void HandleManaChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 	virtual void HandleMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 
+	virtual  void SetLevel(int lv);
+
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDamaged(float DamageAmount, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, AUnitPawn* InstigatorCharacter, AActor* DamageCauser);
@@ -167,6 +171,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 
-
-
+	
+	
 };

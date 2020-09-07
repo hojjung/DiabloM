@@ -28,6 +28,7 @@ class DIABLOM_API PlayerCreateManager //바뀐다는건 얘밖에 모름
 public:
     PlayerCreateManager();
     ~PlayerCreateManager();
+    
 
 public:
     FCurrentCharData m_CurrentCharData;
@@ -44,6 +45,8 @@ public:
     int m_IndexWeapon;
     int m_IndexItem;
     int m_IndexPerk;
+
+    FText m_TextName;
     //
 public:
     FOnVisualChange m_OnVisualChange;
@@ -68,4 +71,5 @@ public:
     void IncreaseItem();
     void DecreasePerk();
     void IncreasePerk();
+    void CreateCharcter();
 };

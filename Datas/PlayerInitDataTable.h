@@ -188,5 +188,12 @@ public:
     FPlayerItemRow*   m_CurrentItem;
     FPlayerPerkRow*   m_CurrentPerk;
     //
-    
+    void Clear()
+    {
+        m_CurrentHair=nullptr;  
+        m_CurrentFace=nullptr;  
+        m_CurrentArmor=nullptr;
+        m_CurrentItem=nullptr;  
+        m_CurrentPerk=nullptr;  
+    }
 };

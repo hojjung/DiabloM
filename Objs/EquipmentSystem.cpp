@@ -229,6 +229,16 @@ EItemType EquipmentSystem::GetEquippedItem(int slotIndex)
     return m_ArySlots[slotIndex]->m_EquippedType;
 }
 
+void EquipmentSystem::SetItemAry(const TArray<FItemInstance>& equipSlot)
+{
+    for(int i=0; i<m_ArySlots.Num();i++)
+    {
+        m_ArySlots[i]->m_Item=equipSlot[i];
+        m_ArySlots[i]->m_Item.m_Holder=this;
+        OnItemSlotChanged(i);
+    }
+}
+
 
 #pragma region SetFPtr
 

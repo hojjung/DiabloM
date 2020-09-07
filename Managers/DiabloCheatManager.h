@@ -39,4 +39,8 @@ public:
 	void SaveInven();
 	UFUNCTION(exec)
     void LoadInven();
+	UFUNCTION(exec)
+    void SaveEquip();
+	UFUNCTION(exec)
+    void LoadEquip();
 };

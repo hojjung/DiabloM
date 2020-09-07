@@ -1,8 +1,11 @@
+// ReSharper disable All
 #pragma once
 
 #include "DiabloM.h"
 #include "Datas/ItemDataTable.h"
 
+
+class USaveEquipment;
 UENUM(BlueprintType)
 enum class EAnimStance :uint8//애니매이션으로 사용될 세트ㅜ
 {
@@ -35,11 +38,8 @@ enum class ESlots:uint8
 	Length
 };
 
-
-
 struct FEquipSlot 
 {
-
 public:
 	FEquipSlot()
 	{
@@ -68,8 +68,6 @@ public:
 	}
 
 };
-//m_IsOccupied
-
 
 class DIABLOM_API EquipmentSystem : public IItemHolder
 {
@@ -96,6 +94,13 @@ protected:
 protected:
 	TArray<FEquipSlot*> m_ArySlots;
 
+public:
+	FORCEINLINE TArray<FEquipSlot*>& GetArySlotPtr()
+	{
+		return m_ArySlots;
+	}
+
+protected:
 	typedef void (EquipmentSystem::*FPtrForStance)(void);
 	FPtrForStance m_StanceFPtr[(int)EItemType::Shield + 1][(int)EItemType::Shield + 1];
 
@@ -169,6 +174,10 @@ public:
 	EItemType GetEquippedItem(ESlots slot);
 
 	EItemType GetEquippedItem(int slotIndex);
+
+	friend USaveEquipment;
+
+	void SetItemAry(const TArray<FItemInstance>& equipSlot);
 };
 
 

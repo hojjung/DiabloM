@@ -19,6 +19,7 @@ struct FItemInstance;
 class ADroppedItem;
 class PlayerSkillSystem;
 class EquipmentSystem;
+class APlayerDiabloCharacter;
 
 
 UCLASS()
@@ -34,7 +35,7 @@ protected:
 	PlayerSkillSystem* m_SkillSystem;
 	EquipmentSystem* m_EquipSystem;
 
-
+	
 protected:
 	UPROPERTY(EditDefaultsOnly,Category="Widget")
 	TSubclassOf<UMainCanvas> m_ClassMainMenu; // 태어나게 할 설계도 위젯 ㅇㅇ
@@ -42,6 +43,7 @@ protected:
 	int m_nInvenX;
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	int m_nInvenY;
+
 protected:
 	UPROPERTY()
 	UMainCanvas* m_MainMenu;//실제로 태어난 위젯 메인 메뉴
@@ -112,4 +114,8 @@ public:
 	{
 		return  m_EquipSystem;
 	}
+
+	APlayerDiabloCharacter* GetUnitPawn();
+
+	
 };

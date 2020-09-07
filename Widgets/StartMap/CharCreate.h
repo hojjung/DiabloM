@@ -13,7 +13,7 @@
  * 캐릭터 제작 패널
  */
 
-
+class UEditableText;
 UCLASS()
 class DIABLOM_API UCharCreate : public UUserWidget
 {
@@ -31,7 +31,13 @@ protected:
     UPartSelect* m_ItemSelect;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UPartSelect* m_PerkSelect;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+    UEditableText* m_NameBox;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+    UButton* m_BtnContinue;
 protected:
+    FText m_TextTypedName;
+    
     PlayerCreateManager* m_PlManager;
 
     FTextFormat m_FormatT;
@@ -61,6 +67,14 @@ public:
     void DecreasePerk();
     UFUNCTION()
     void IncreasePerk();
+
+    UFUNCTION()
+    void UpdateNameText(const FText& text);//ETextCommit::Type
+    UFUNCTION()
+    void UpdateNameTextCommit(const FText& text,ETextCommit::Type type);
+
+    UFUNCTION()
+    void Continue();
 protected:
     FText GetFormatCount(int index, int aryMax);
 };
