@@ -42,10 +42,6 @@ protected:
 	UStaticMeshComponent* m_MeshRightHand;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UStaticMeshComponent* m_MeshLeftHand;
-	UPROPERTY()
-	USkeletalMesh* m_CachedHairFullMesh;
-	UPROPERTY()
-	USkeletalMesh* m_CachedHairHalfMesh;
 	
 	PlayerCreateManager* m_PlCreateManager;//smartponter?
 
@@ -54,13 +50,13 @@ protected:
 protected:
 	void CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName);
 	
-	void SetHairMeshFull();
-	
-	void SetHairMeshHalf();
 	
 	virtual void BeginPlay() override;
 
 	void OnMeshVisualChanged(const FCurrentCharData& charData);
 	
+public:
+	void ShowMesh();
 
+	void HideMesh();
 };

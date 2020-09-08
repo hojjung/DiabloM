@@ -18,7 +18,7 @@
  *
  * 데이터 구조체 전부를 컨테이너로 담아서 다가저야한다.
  */
-
+DECLARE_DELEGATE(FOnStartCreation);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnVisualChange, const FCurrentCharData&);
 
 class UDiabloGameInstance;
@@ -28,8 +28,10 @@ class DIABLOM_API PlayerCreateManager //바뀐다는건 얘밖에 모름
 public:
     PlayerCreateManager();
     ~PlayerCreateManager();
-    
+    void SetArmorFromIndex();
 
+    static PlayerCreateManager* Get;
+	
 public:
     FCurrentCharData m_CurrentCharData;
 
@@ -50,6 +52,8 @@ public:
     //
 public:
     FOnVisualChange m_OnVisualChange;
+    FOnStartCreation m_OnStartCreation;
+    
 public:
     void Init(UDiabloGameInstance* gameInst);
 
@@ -71,5 +75,10 @@ public:
     void IncreaseItem();
     void DecreasePerk();
     void IncreasePerk();
-    void CreateCharcter();
+    
+    void StartCreateCharcter();
+    bool DoneCreateCharcter();
+    
+    USkeletalMesh* GetFace(int index);
+    USkeletalMesh* GetHair(int index,bool hasHelMet);
 };

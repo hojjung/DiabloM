@@ -32,41 +32,41 @@ void USaveEquipment::SetEquipSaveDataFromCreation(const FCurrentCharData& charDa
     m_EquipAry.Reserve(10);
     m_EquipAry.Init(FItemInstance(),(int)EItemType::Length);
     //9
-    if(!charData.m_CurrentArmor->m_HelmetHandle.IsNull())
+    if(charData.m_CurrentHelmet)
     {
-        m_EquipAry[(int)ESlots::Head] = FItemInstance( charData.m_CurrentArmor->m_HelmetHandle.GetRow<FItemData>(""),(int)ESlots::Head,nullptr); 
+        m_EquipAry[(int)ESlots::Head] = FItemInstance(charData.m_CurrentHelmet,(int)ESlots::Head,nullptr); 
     }
-    if(!charData.m_CurrentArmor->m_BodyArmorHandle.IsNull())
+    if(charData.m_CurrentBody)
     {
-        m_EquipAry[(int)ESlots::Torso] = FItemInstance( charData.m_CurrentArmor->m_BodyArmorHandle.GetRow<FItemData>(""),(int)ESlots::Torso,nullptr);  
+        m_EquipAry[(int)ESlots::Torso] = FItemInstance(charData.m_CurrentBody,(int)ESlots::Torso,nullptr);  
     }
-    if(!charData.m_CurrentArmor->m_GloveHandle.IsNull())
+    if(charData.m_CurrentGlove)
     {
-        m_EquipAry[(int)ESlots::Hand] = FItemInstance( charData.m_CurrentArmor->m_GloveHandle.GetRow<FItemData>(""),(int)ESlots::Hand,nullptr); 
+        m_EquipAry[(int)ESlots::Hand] = FItemInstance(charData.m_CurrentGlove,(int)ESlots::Hand,nullptr); 
     }
-    if(!charData.m_CurrentArmor->m_ShoeHandle.IsNull())
+    if(charData.m_CurrentShoe)
     {
-        m_EquipAry[(int)ESlots::Leg] = FItemInstance( charData.m_CurrentArmor->m_ShoeHandle.GetRow<FItemData>(""),(int)ESlots::Leg,nullptr); 
+        m_EquipAry[(int)ESlots::Leg] = FItemInstance(charData.m_CurrentShoe,(int)ESlots::Leg,nullptr); 
     }
-    if(!charData.m_CurrentArmor->m_Shoulderandle.IsNull())
+    if(charData.m_CurrentShoulder)
     {
-        m_EquipAry[(int)ESlots::Shoulder] = FItemInstance( charData.m_CurrentArmor->m_Shoulderandle.GetRow<FItemData>(""),(int)ESlots::Shoulder,nullptr); 
+        m_EquipAry[(int)ESlots::Shoulder] = FItemInstance( charData.m_CurrentShoulder,(int)ESlots::Shoulder,nullptr); 
     }
-    if(!charData.m_CurrentArmor->m_BackpackHandle.IsNull())
+    //if(charData.m_CurrentBackpack)
     {
         //TODO BackPack? 
     }
-    if(!charData.m_CurrentArmor->m_BeltHandle.IsNull())
+    if(charData.m_CurrentBelt)
     {
-        m_EquipAry[(int)ESlots::Waist] = FItemInstance( charData.m_CurrentArmor->m_BeltHandle.GetRow<FItemData>(""),(int)ESlots::Waist,nullptr); 
+        m_EquipAry[(int)ESlots::Waist] = FItemInstance(charData.m_CurrentBelt,(int)ESlots::Waist,nullptr); 
     }
-    if(!charData.m_CurrentArmor->m_RightWeaponHandle.IsNull())
+    if(charData.m_CurrentRightWeapon)
     {
-        m_EquipAry[(int)ESlots::WeaponRight] = FItemInstance( charData.m_CurrentArmor->m_RightWeaponHandle.GetRow<FItemData>(""),(int)ESlots::WeaponRight,nullptr); 
+        m_EquipAry[(int)ESlots::WeaponRight] = FItemInstance(charData.m_CurrentRightWeapon,(int)ESlots::WeaponRight,nullptr); 
     }
-    if(!charData.m_CurrentArmor->m_LeftWeaponHandle.IsNull())
+    if(charData.m_CurrentLeftWeapon)
     {
-        m_EquipAry[(int)ESlots::WeaponLeft] = FItemInstance( charData.m_CurrentArmor->m_LeftWeaponHandle.GetRow<FItemData>(""),(int)ESlots::WeaponLeft,nullptr); 
+        m_EquipAry[(int)ESlots::WeaponLeft] = FItemInstance(charData.m_CurrentLeftWeapon,(int)ESlots::WeaponLeft,nullptr); 
     }
     
 }

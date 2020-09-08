@@ -42,4 +42,4 @@ public:
     void SetCharStatLoad(ADiabloPlayerController* diaPl);
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnSaveDataCreated,USaveCharacterStatus*);
+DECLARE_DELEGATE_OneParam(FOnSaveDataCreated,const USaveCharacterStatus*);

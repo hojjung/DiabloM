@@ -32,20 +32,20 @@ void UCharCreate::Init(PlayerCreateManager* plManager)
 
 void UCharCreate::OnVisualChanged(const FCurrentCharData& visual_change)
 {
-    m_HairSelect->m_TextTypeName->SetText(visual_change.m_CurrentHair->m_ShowingName);
+    m_HairSelect->m_TextTypeName->SetText(visual_change.m_TextNameHair);
     m_HairSelect->m_TextTypeCount->SetText(GetFormatCount(m_PlManager->m_IndexHair,m_PlManager->m_AryHair.Num()));
     //
-    m_FaceSelect->m_TextTypeName->SetText(visual_change.m_CurrentFace->m_ShowingName);
+    m_FaceSelect->m_TextTypeName->SetText(visual_change.m_TextNameFace);
     m_FaceSelect->m_TextTypeCount->SetText(GetFormatCount(m_PlManager->m_IndexFace,m_PlManager->m_AryFace.Num()));
     //
-    m_ArmorSelect->m_TextTypeName->SetText(visual_change.m_CurrentArmor->m_ShowingName);
+    m_ArmorSelect->m_TextTypeName->SetText(visual_change.m_TextNameArmor);
     m_ArmorSelect->m_TextTypeCount->SetText(GetFormatCount(m_PlManager->m_IndexArmor,m_PlManager->m_AryArmor.Num()));
     //
     //
-    m_ItemSelect->m_TextTypeName->SetText(visual_change.m_CurrentItem->m_ShowingName);
+    m_ItemSelect->m_TextTypeName->SetText(visual_change.m_TextNameItem);
     m_ItemSelect->m_TextTypeCount->SetText(GetFormatCount(m_PlManager->m_IndexItem,m_PlManager->m_AryItem.Num()));
     //
-    m_PerkSelect->m_TextTypeName->SetText(visual_change.m_CurrentPerk->m_ShowingName);
+    m_PerkSelect->m_TextTypeName->SetText(visual_change.m_TextNamePerk);
     m_PerkSelect->m_TextTypeCount->SetText(GetFormatCount(m_PlManager->m_IndexPerk,m_PlManager->m_AryPerk.Num()));
     
 }
@@ -115,7 +115,12 @@ void UCharCreate::UpdateNameTextCommit(const FText& text, ETextCommit::Type type
 void UCharCreate::Continue()
 {
     //create Player
-    m_PlManager->CreateCharcter();
+    if(!m_PlManager->DoneCreateCharcter())
+    {
+        return;
+    }
+    //SetVisibility(ESlateVisibility::Hidden);
+    
 }
 
 FText UCharCreate::GetFormatCount(int index, int aryMax)

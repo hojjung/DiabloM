@@ -66,7 +66,7 @@ public:
         m_HelmetHandle.DataTable = UItemDataTable::GetItemTable;
         m_GloveHandle.DataTable = UItemDataTable::GetItemTable;
         m_ShoeHandle.DataTable = UItemDataTable::GetItemTable;
-        m_Shoulderandle.DataTable = UItemDataTable::GetItemTable;
+        m_ShoulderHandle.DataTable = UItemDataTable::GetItemTable;
         m_BackpackHandle.DataTable = UItemDataTable::GetItemTable;
         m_BeltHandle.DataTable = UItemDataTable::GetItemTable;
         m_RightWeaponHandle.DataTable = UItemDataTable::GetItemTable;
@@ -84,7 +84,7 @@ public:
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
     FDataTableRowHandle m_GloveHandle;
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-    FDataTableRowHandle m_Shoulderandle;
+    FDataTableRowHandle m_ShoulderHandle;
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
     FDataTableRowHandle m_BeltHandle;
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -172,28 +172,52 @@ struct FCurrentCharData
     GENERATED_BODY()
 
 public:
-    FCurrentCharData(): m_CurrentHair(nullptr),
-                        m_CurrentFace(nullptr),
-                        m_CurrentArmor(nullptr),
-                        m_CurrentItem(nullptr),
-                        m_CurrentPerk(nullptr)
+    FCurrentCharData(): m_CurrentHair(nullptr), m_CurrentFace(nullptr), m_CurrentHelmet(nullptr),
+                        m_CurrentBody(nullptr),
+                        m_CurrentShoe(nullptr),
+                        m_CurrentGlove(nullptr),
+                        m_CurrentShoulder(nullptr),
+                        m_CurrentBelt(nullptr),
+                        //m_CurrentBackpack(nullptr),
+                        m_CurrentRightWeapon(nullptr),
+                        m_CurrentLeftWeapon(nullptr)
     {
     }
 
     //위젯과 분리된 데이터
     //
-    FPlayerHairRow*   m_CurrentHair;
-    FPlayerFaceRow*   m_CurrentFace;
-    FPlayerArmorRow*  m_CurrentArmor;
-    FPlayerItemRow*   m_CurrentItem;
-    FPlayerPerkRow*   m_CurrentPerk;
+    FText m_TextNameHair;
+    FText m_TextNameFace;
+    FText m_TextNameArmor;
+    FText m_TextNameItem;
+    FText m_TextNamePerk;
+    UPROPERTY()
+    USkeletalMesh*   m_CurrentHair;
+    UPROPERTY()
+    USkeletalMesh*   m_CurrentFace;
+    const FItemData*       m_CurrentHelmet;
+    const FItemData*       m_CurrentBody;
+    const FItemData*       m_CurrentShoe;
+    const FItemData*       m_CurrentGlove;
+    const FItemData*       m_CurrentShoulder;
+    const FItemData*       m_CurrentBelt;
+    //FItemData*     m_CurrentBackpack;
+    const FItemData*     m_CurrentRightWeapon;
+    const FItemData*     m_CurrentLeftWeapon;
     //
     void Clear()
     {
-        m_CurrentHair=nullptr;  
-        m_CurrentFace=nullptr;  
-        m_CurrentArmor=nullptr;
-        m_CurrentItem=nullptr;  
-        m_CurrentPerk=nullptr;  
+        m_CurrentHair=nullptr;        
+        m_CurrentFace=nullptr;
+        m_CurrentBody=nullptr;
+        //
+        m_CurrentHelmet=nullptr;        
+        m_CurrentShoe=nullptr;         
+        m_CurrentGlove=nullptr;        
+        m_CurrentShoulder=nullptr;     
+        m_CurrentBelt=nullptr;         
+        //m_CurrentBackpack=nullptr;     
+        m_CurrentRightWeapon=nullptr;  
+        m_CurrentLeftWeapon=nullptr;  
     }
 };

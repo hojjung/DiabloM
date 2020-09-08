@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "PlayerVisual.h"
 #include "GameFramework/PlayerController.h"
 #include "Widgets/StartMap/StartMenuCanvas.h"
 
@@ -31,6 +33,6 @@ public:
 	
 	void InitWidget();	
 	
-	
+	APlayerVisual* GetPlayerVisual();
 	
 };

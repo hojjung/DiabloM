@@ -84,3 +84,5 @@ const FPlayerPerkRow* UPlayerInitDataTable::GetPlayerPerkPtr(FName id)
 {
         return GetPlayerPerkTable->FindRow<FPlayerPerkRow>(id,"");
 }
+
+

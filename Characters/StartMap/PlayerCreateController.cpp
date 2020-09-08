@@ -27,3 +27,8 @@ void APlayerCreateController::InitWidget()
     m_StartCanvas->InitStartMenu();
 
 }
+
+APlayerVisual* APlayerCreateController::GetPlayerVisual()
+{
+    return GetPawn<APlayerVisual>();
+}

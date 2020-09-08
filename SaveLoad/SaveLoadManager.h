@@ -6,8 +6,9 @@
 #include "SaveCharacterStatus.h"
 
 
-
 class PlayerCreateManager;
+class USaveEquipment;
+class USaveInventory;
 
 class DIABLOM_API SaveLoadManager
 {
@@ -28,18 +29,23 @@ public:
 
 	FOnSaveDataCreated m_OnDataCreated; 
 protected:
-	UPROPERTY()
+	//index Need Insul
 	TArray<USaveCharacterStatus*> m_AryLoadedCharacters;
-
-	TQueue<int> m_ArySlotIndexNotUsed;
-	
+	TArray<USaveEquipment*> m_AryLoadedEquipments;
+	TArray<USaveInventory*> m_AryLoadedInventorys;
+	//They DonNeedInst
 public:
 	void InitSaveLoadManager();
+	
 protected:
 	void TryLoadAllCharacter();
+	
 
 public:	
+	void DeleteSlot(int i);
+	
 	void DeleteAllSlot();
+	
 	void SaveInventory() const;
 
 	void LoadInventory() const;
@@ -52,12 +58,25 @@ public:
 	
 	bool LoadCharacterStat(int index);
 
-	FORCEINLINE TArray<USaveCharacterStatus*>& GetCharStatAry()
+	FORCEINLINE const TArray<USaveCharacterStatus*>& GetCharStatAry() const
 	{
 		return  m_AryLoadedCharacters;
 	}
 
 	void CreateNewCharacter(PlayerCreateManager* plManager);
-
+	
+	FORCEINLINE const TArray<USaveCharacterStatus*>& GetLoadedChars() const
+	{
+		return m_AryLoadedCharacters;
+	}
+	FORCEINLINE const TArray<USaveEquipment*>& GetLoadedEquip() const
+	{
+		return m_AryLoadedEquipments;
+	}
+	FORCEINLINE const TArray<USaveInventory*>& GetLoadedInven() const
+	{
+		return m_AryLoadedInventorys;
+	}
+	int GetEmptyIndex();
 	//Focus Character need
 };

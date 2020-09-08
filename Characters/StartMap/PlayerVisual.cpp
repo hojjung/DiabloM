@@ -58,8 +58,6 @@ APlayerVisual::APlayerVisual()
     //
     m_MeshBody->SetAnimation(m_AnimSeq);
     //
-    m_CachedHairFullMesh = nullptr;
-    m_CachedHairHalfMesh = nullptr;
     m_PlCreateManager = nullptr;
 }
 
@@ -84,58 +82,72 @@ void APlayerVisual::BeginPlay()
     Super::BeginPlay();
     m_PlCreateManager = GetGameInstance<UDiabloGameInstance>()->m_PlCreateManager;
     m_PlCreateManager->m_OnVisualChange.AddUObject(this, &APlayerVisual::OnMeshVisualChanged);
-    m_PlCreateManager->OnDataChanged();
-  
+    HideMesh();
+    m_PlCreateManager->m_OnStartCreation.BindUObject(this, &APlayerVisual::ShowMesh);
+    
 }
 
 void APlayerVisual::OnMeshVisualChanged(const FCurrentCharData& charData)
 {
-    m_CachedHairHalfMesh = charData.m_CurrentHair->m_MeshHalfHair;
-    m_CachedHairFullMesh = charData.m_CurrentHair->m_MeshFullHair;
-
-    m_MeshFace->SetSkeletalMesh(charData.m_CurrentFace->m_MeshFace);
-
-    bool HasHelmet = !charData.m_CurrentArmor->m_HelmetHandle.IsNull();
-
-    if (HasHelmet)
-    {
-        m_MeshHair->SetSkeletalMesh(charData.m_CurrentHair->m_MeshHalfHair);
-        m_MeshHeadGear->SetSkeletalMesh(UItemDataTable::GetItemData(charData.m_CurrentArmor->m_HelmetHandle.RowName).m_SkEquipment);
-    }
-    else
-    {
-        m_MeshHair->SetSkeletalMesh(charData.m_CurrentHair->m_MeshFullHair);
-        m_MeshHeadGear->SetSkeletalMesh(nullptr);
-    }
+    //만일 장비칸이 없다면 이대로면 빈칸은 없는 부위로 변함.
+    //기본 메쉬 만들어놓고 장비가 있을때만 바꿔주고 없으면 기본메쉬로 변경해야함
     //
-    auto* BodyMesh=UItemDataTable::GetItemData(charData.m_CurrentArmor->m_BodyArmorHandle.RowName).m_SkEquipment;
+    m_MeshFace->SetSkeletalMesh(charData.m_CurrentFace);
+    m_MeshHair->SetSkeletalMesh(charData.m_CurrentHair);
+    m_MeshHeadGear->SetSkeletalMesh(charData.m_CurrentHelmet?charData.m_CurrentHelmet->m_SkEquipment:nullptr);
+    //
+    auto* BodyMesh=charData.m_CurrentBody;
+
     
-    if(m_MeshBody->SkeletalMesh != BodyMesh)
+    if(BodyMesh &&m_MeshBody->SkeletalMesh != BodyMesh->m_SkEquipment)
     {
-        m_MeshBody->SetSkeletalMesh(BodyMesh);
+        m_MeshBody->SetSkeletalMesh(BodyMesh->m_SkEquipment);
         m_MeshBody->SetAnimation(m_AnimSeq);
         m_MeshBody->Play(true);//body change = need animation update
     }
     //
-    m_MeshGlove->SetSkeletalMesh(charData.m_CurrentArmor->m_GloveHandle.IsNull()? nullptr:UItemDataTable::GetItemData(charData.m_CurrentArmor->m_GloveHandle.RowName).m_SkEquipment);
-    m_MeshShoe->SetSkeletalMesh(charData.m_CurrentArmor->m_ShoeHandle.IsNull()? nullptr:UItemDataTable::GetItemData(charData.m_CurrentArmor->m_ShoeHandle.RowName).m_SkEquipment);
-    m_MeshShoulderPad->SetSkeletalMesh(charData.m_CurrentArmor->m_Shoulderandle.IsNull()? nullptr: UItemDataTable::GetItemData(charData.m_CurrentArmor->m_Shoulderandle.RowName).m_SkEquipment);
-    m_MeshBelt->SetSkeletalMesh(charData.m_CurrentArmor->m_BeltHandle.IsNull()? nullptr: UItemDataTable::GetItemData(charData.m_CurrentArmor->m_BeltHandle.RowName).m_SkEquipment);
+    if(charData.m_CurrentGlove)
+        m_MeshGlove->SetSkeletalMesh(charData.m_CurrentGlove->m_SkEquipment);
+    if(charData.m_CurrentShoe)
+        m_MeshShoe->SetSkeletalMesh(charData.m_CurrentShoe->m_SkEquipment);
+    m_MeshShoulderPad->SetSkeletalMesh(charData.m_CurrentShoulder ? charData.m_CurrentShoulder->m_SkEquipment : nullptr);
+    m_MeshBelt->SetSkeletalMesh(charData.m_CurrentBelt ? charData.m_CurrentBelt->m_SkEquipment : nullptr);
     //
-    m_MeshBackpack->SetStaticMesh(charData.m_CurrentArmor->m_BackpackHandle.IsNull()? nullptr: UItemDataTable::GetItemData(charData.m_CurrentArmor->m_BackpackHandle.RowName).m_StEquipment);
-    m_MeshRightHand->SetStaticMesh(charData.m_CurrentArmor->m_RightWeaponHandle.IsNull()? nullptr: UItemDataTable::GetItemData(charData.m_CurrentArmor->m_RightWeaponHandle.RowName).m_StEquipment);
-    m_MeshLeftHand->SetStaticMesh(charData.m_CurrentArmor->m_LeftWeaponHandle.IsNull()? nullptr: UItemDataTable::GetItemData(charData.m_CurrentArmor->m_LeftWeaponHandle.RowName).m_StEquipment);
+    //m_MeshBackpack->SetStaticMesh(charData.m_CurrentBackpack);
+    m_MeshRightHand->SetStaticMesh(charData.m_CurrentRightWeapon?charData.m_CurrentRightWeapon->m_StEquipment:nullptr);
+    m_MeshLeftHand->SetStaticMesh(charData.m_CurrentLeftWeapon?charData.m_CurrentLeftWeapon->m_StEquipment :nullptr);
     //
-    
     
 }
 
-void APlayerVisual::SetHairMeshFull()
+void APlayerVisual::ShowMesh()
 {
-    m_MeshHair->SetSkeletalMesh(m_CachedHairFullMesh);
+    m_MeshBody->SetVisibility(true);
+    m_MeshFace->SetVisibility(true);
+    m_MeshBelt->SetVisibility(true);
+    m_MeshGlove->SetVisibility(true);
+    m_MeshShoe->SetVisibility(true);
+    m_MeshHeadGear->SetVisibility(true);
+    m_MeshShoulderPad->SetVisibility(true);
+    m_MeshHair->SetVisibility(true);
+    m_MeshBackpack->SetVisibility(true);
+    m_MeshRightHand->SetVisibility(true);
+    m_MeshLeftHand->SetVisibility(true);
+    m_PlCreateManager->OnDataChanged();
 }
 
-void APlayerVisual::SetHairMeshHalf()
+void APlayerVisual::HideMesh()
 {
-    m_MeshHair->SetSkeletalMesh(m_CachedHairHalfMesh);
+    m_MeshBody->SetVisibility(false);
+    m_MeshFace->SetVisibility(false);
+    m_MeshBelt->SetVisibility(false);
+    m_MeshGlove->SetVisibility(false);
+    m_MeshShoe->SetVisibility(false);
+    m_MeshHeadGear->SetVisibility(false);
+    m_MeshShoulderPad->SetVisibility(false);
+    m_MeshHair->SetVisibility(false);
+    m_MeshBackpack->SetVisibility(false);
+    m_MeshRightHand->SetVisibility(false);
+    m_MeshLeftHand->SetVisibility(false);
 }
+

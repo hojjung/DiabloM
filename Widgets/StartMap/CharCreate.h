@@ -33,6 +33,7 @@ protected:
     UPartSelect* m_PerkSelect;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UEditableText* m_NameBox;
+public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UButton* m_BtnContinue;
 protected:
