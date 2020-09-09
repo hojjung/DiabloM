@@ -3,8 +3,6 @@
 
 PlayerCreateManager* PlayerCreateManager::Get=nullptr;
 
-
-
 PlayerCreateManager::PlayerCreateManager(): m_IndexHair(0), m_IndexFace(0), m_IndexArmor(0), m_IndexWeapon(0),
                                             m_IndexItem(0),
                                             m_IndexPerk(0)
@@ -23,33 +21,51 @@ PlayerCreateManager::~PlayerCreateManager()
     m_CurrentCharData.Clear();
 }
 
-
 void PlayerCreateManager::Init(UDiabloGameInstance* gameInst)
+{
+    InitArraysFromTable();
+    SetArmorFromSetting();
+    SetFaceFromSetting();
+    SetPerkFromSetting();
+    SetItemFromSetting();
+    SetHairFromSetting();
+}
+void PlayerCreateManager::InitArraysFromTable()
 {
     UPlayerInitDataTable::GetPlayerHairTable->GetAllRows("FailHair",m_AryHair);
     UPlayerInitDataTable::GetPlayerFaceTable->GetAllRows("FailFace",m_AryFace);
     UPlayerInitDataTable::GetPlayerArmorTable->GetAllRows("FailArmor",m_AryArmor);
     UPlayerInitDataTable::GetPlayerItemTable->GetAllRows("FailItem",m_AryItem);
     UPlayerInitDataTable::GetPlayerPerkTable->GetAllRows("FailPerk",m_AryPerk);
-    //
-  
-    //
-    SetArmorFromIndex();
-    
-    m_CurrentCharData.m_CurrentFace = GetFace(m_IndexFace);
-    m_CurrentCharData.m_TextNameHair = m_AryHair[m_IndexHair]->m_ShowingName;
-    m_CurrentCharData.m_TextNameFace = m_AryFace[m_IndexFace]->m_ShowingName;
+}
+
+void PlayerCreateManager::SetPerkFromSetting()
+{
     m_CurrentCharData.m_TextNamePerk = m_AryPerk[m_IndexPerk]->m_ShowingName;
-    m_CurrentCharData.m_TextNameItem = m_AryItem[m_IndexItem]->m_ShowingName;
-    
-    //
-    //m_CurrentCharData.m_CurrentItem = m_AryItem[m_IndexItem];
     //m_CurrentCharData.m_CurrentPerk = m_AryPerk[m_IndexPerk];
 }
 
-void PlayerCreateManager::SetArmorFromIndex()
+void PlayerCreateManager::SetItemFromSetting()
 {
- 
+    m_CurrentCharData.m_TextNameItem = m_AryItem[m_IndexItem]->m_ShowingName;
+    //m_CurrentCharData.m_CurrentItem = m_AryItem[m_IndexItem];
+}
+
+void PlayerCreateManager::SetFaceFromSetting()
+{
+    m_CurrentCharData.m_CurrentFace = GetFace(m_IndexFace);
+    m_CurrentCharData.m_TextNameFace = m_AryFace[m_IndexFace]->m_ShowingName;
+}
+
+void PlayerCreateManager::SetHairFromSetting()
+{
+    bool HasHelmet=m_CurrentCharData.m_CurrentHelmet;
+    m_CurrentCharData.m_CurrentHair = GetHair(m_IndexHair,HasHelmet);
+    m_CurrentCharData.m_TextNameHair = m_AryHair[m_IndexHair]->m_ShowingName;
+}
+
+void PlayerCreateManager::SetArmorFromSetting()
+{
     m_CurrentCharData.m_TextNameArmor = m_AryArmor[m_IndexArmor]->m_ShowingName;
     m_CurrentCharData.m_CurrentBody=m_AryArmor[m_IndexArmor]->m_BodyArmorHandle.IsNull() ? nullptr : m_AryArmor[m_IndexArmor]->m_BodyArmorHandle.GetRow<FItemData>("");
     m_CurrentCharData.m_CurrentHelmet=m_AryArmor[m_IndexArmor]->m_HelmetHandle.IsNull() ? nullptr : m_AryArmor[m_IndexArmor]->m_HelmetHandle.GetRow<FItemData>("");        
@@ -61,15 +77,29 @@ void PlayerCreateManager::SetArmorFromIndex()
     m_CurrentCharData.m_CurrentRightWeapon=m_AryArmor[m_IndexArmor]->m_RightWeaponHandle.IsNull() ? nullptr : m_AryArmor[m_IndexArmor]->m_RightWeaponHandle.GetRow<FItemData>("");  
     m_CurrentCharData.m_CurrentLeftWeapon=m_AryArmor[m_IndexArmor]->m_LeftWeaponHandle.IsNull() ? nullptr : m_AryArmor[m_IndexArmor]->m_LeftWeaponHandle.GetRow<FItemData>("");
     
-    bool HasHelmet=m_CurrentCharData.m_CurrentHelmet;
-    m_CurrentCharData.m_CurrentHair = GetHair(m_IndexHair,HasHelmet);
+  
 }
-
-
+//
 void PlayerCreateManager::OnDataChanged()
 {
-    
     m_OnVisualChange.Broadcast(m_CurrentCharData);
+}
+
+void PlayerCreateManager::SetCurrentDataFromSaveFile(const USaveCharacterStatus* char_stat,
+    const USaveEquipment* save_equipment)
+{
+    m_CurrentCharData.m_CurrentBody=save_equipment->m_EquipAry[(int)ESlots::Torso].m_ItemData;
+    m_CurrentCharData.m_CurrentHelmet = save_equipment->m_EquipAry[(int)ESlots::Head].m_ItemData;
+    m_CurrentCharData.m_CurrentHair=GetHair(char_stat->m_IndexHair,m_CurrentCharData.m_CurrentHelmet);
+    m_CurrentCharData.m_CurrentFace=GetFace(char_stat->m_IndexFace);
+    m_CurrentCharData.m_CurrentShoe= save_equipment->m_EquipAry[(int)ESlots::Leg].m_ItemData;
+    m_CurrentCharData.m_CurrentGlove= save_equipment->m_EquipAry[(int)ESlots::Hand].m_ItemData;
+    m_CurrentCharData.m_CurrentShoulder= save_equipment->m_EquipAry[(int)ESlots::Shoulder].m_ItemData;
+    m_CurrentCharData.m_CurrentBelt= save_equipment->m_EquipAry[(int)ESlots::Waist].m_ItemData;
+    m_CurrentCharData.m_CurrentRightWeapon= save_equipment->m_EquipAry[(int)ESlots::WeaponRight].m_ItemData;
+    m_CurrentCharData.m_CurrentLeftWeapon= save_equipment->m_EquipAry[(int)ESlots::WeaponLeft].m_ItemData;
+
+    OnDataChanged();
 }
 
 void PlayerCreateManager::DecreaseHair()
@@ -81,9 +111,7 @@ void PlayerCreateManager::DecreaseHair()
         m_IndexHair=m_AryHair.Num()-1;
     }
     //text change
-    bool HasHelmet=!m_AryArmor[m_IndexArmor]->m_HelmetHandle.IsNull();
-    m_CurrentCharData.m_CurrentHair = GetHair(m_IndexHair,HasHelmet);
-    m_CurrentCharData.m_TextNameHair = m_AryHair[m_IndexHair]->m_ShowingName;
+    SetHairFromSetting();
     OnDataChanged();
 }
 
@@ -96,9 +124,7 @@ void PlayerCreateManager::IncreaseHair()
         m_IndexHair=0;
     }
     
-    bool HasHelmet=!m_AryArmor[m_IndexArmor]->m_HelmetHandle.IsNull();
-    m_CurrentCharData.m_CurrentHair = GetHair(m_IndexHair,HasHelmet);
-    m_CurrentCharData.m_TextNameHair = m_AryHair[m_IndexHair]->m_ShowingName;
+    SetHairFromSetting();
     OnDataChanged();
 }
 
@@ -111,8 +137,7 @@ void PlayerCreateManager::DecreaseFace()
         m_IndexFace=m_AryFace.Num()-1;
     }
     //text change
-    m_CurrentCharData.m_CurrentFace = GetFace(m_IndexFace);
-    m_CurrentCharData.m_TextNameFace = m_AryFace[m_IndexFace]->m_ShowingName;
+    SetFaceFromSetting();
     OnDataChanged();
 }
 
@@ -125,8 +150,7 @@ void PlayerCreateManager::IncreaseFace()
         m_IndexFace=0;
     }
 
-    m_CurrentCharData.m_CurrentFace = GetFace(m_IndexFace);
-    m_CurrentCharData.m_TextNameFace = m_AryFace[m_IndexFace]->m_ShowingName;
+    SetFaceFromSetting();
     OnDataChanged();
 }
 
@@ -139,7 +163,7 @@ void PlayerCreateManager::DecreaseArmor()
         m_IndexArmor=m_AryArmor.Num()-1;
     }
     //text change
-    SetArmorFromIndex();
+    SetArmorFromSetting();
     OnDataChanged();
 }
 
@@ -152,7 +176,7 @@ void PlayerCreateManager::IncreaseArmor()
         m_IndexArmor=0;
     }
 
-    SetArmorFromIndex();
+    SetArmorFromSetting();
     OnDataChanged();
 }
 
@@ -165,7 +189,8 @@ void PlayerCreateManager::DecreaseItem()
     {
         m_IndexItem=m_AryItem.Num()-1;
     }
-    m_CurrentCharData.m_TextNameItem = m_AryItem[m_IndexItem]->m_ShowingName;
+    
+    SetItemFromSetting();
     OnDataChanged();
 }
 
@@ -178,7 +203,7 @@ void PlayerCreateManager::IncreaseItem()
         m_IndexItem=0;
     }
 
-    m_CurrentCharData.m_TextNameItem = m_AryItem[m_IndexItem]->m_ShowingName;
+    SetItemFromSetting();
     OnDataChanged();
 }
 
@@ -191,7 +216,7 @@ void PlayerCreateManager::DecreasePerk()
         m_IndexPerk=m_AryPerk.Num()-1;
     }
     //text change
-    m_CurrentCharData.m_TextNamePerk = m_AryPerk[m_IndexPerk]->m_ShowingName;
+    SetPerkFromSetting();
     OnDataChanged();
 }
 
@@ -204,25 +229,13 @@ void PlayerCreateManager::IncreasePerk()
         m_IndexPerk=0;
     }
     
-    m_CurrentCharData.m_TextNamePerk = m_AryPerk[m_IndexPerk]->m_ShowingName;
+    SetPerkFromSetting();
     OnDataChanged();
 }
 
-void PlayerCreateManager::StartCreateCharcter()
+void PlayerCreateManager::DoneCreateCharcter()
 {
-    m_OnStartCreation.ExecuteIfBound();
-}
-
-bool PlayerCreateManager::DoneCreateCharcter()
-{
-    if(m_TextName.IsEmpty())
-    {
-        PRINTF("No Name - Fail Creation");
-        return false;
-    }
     SaveLoadManager::Get->CreateNewCharacter(this);
-    
-    return true;
 }
 
 USkeletalMesh* PlayerCreateManager::GetFace(int index)
@@ -232,7 +245,11 @@ USkeletalMesh* PlayerCreateManager::GetFace(int index)
 
 USkeletalMesh* PlayerCreateManager::GetHair(int index,bool hasHelMet)
 {
-    
     return !hasHelMet ? m_AryHair[index]->m_MeshFullHair : m_AryHair[index]->m_MeshHalfHair;
+}
+
+const FCurrentCharData& PlayerCreateManager::GetCurrentCharData() const
+{
+    return m_CurrentCharData;
 }
 

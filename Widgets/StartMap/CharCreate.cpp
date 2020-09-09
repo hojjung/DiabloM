@@ -103,9 +103,9 @@ void UCharCreate::IncreasePerk()
 
 void UCharCreate::UpdateNameText(const FText& text)
 {
-    m_TextTypedName =text;
-    m_PlManager->m_TextName=m_TextTypedName;
+    m_PlManager->m_CurrentTextName=text;
 }
+
 
 void UCharCreate::UpdateNameTextCommit(const FText& text, ETextCommit::Type type)
 {
@@ -114,13 +114,19 @@ void UCharCreate::UpdateNameTextCommit(const FText& text, ETextCommit::Type type
 
 void UCharCreate::Continue()
 {
-    //create Player
-    if(!m_PlManager->DoneCreateCharcter())
+    if(m_NameBox->GetText().IsEmpty())
     {
+        PRINTF("Fail - Name Empty");
         return;
     }
-    //SetVisibility(ESlateVisibility::Hidden);
+
+    if(m_NameBox->GetText().ToString().Len() > 10)
+    {
+        PRINTF("Fail - Name too long : Max 10");
+        return;
+    }
     
+    m_PlManager->DoneCreateCharcter();
 }
 
 FText UCharCreate::GetFormatCount(int index, int aryMax)

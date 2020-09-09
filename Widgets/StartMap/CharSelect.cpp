@@ -38,11 +38,6 @@ void UCharSelect::CreateCharInfo(const USaveCharacterStatus* charStats)
     m_SlotParent->AddChildToVerticalBox(CharInfoCreated);
 }
 
-void UCharSelect::StartCreation()
-{
-    UDiabloGameInstance::Get->m_PlCreateManager->StartCreateCharcter();
-}
-
 void UCharSelect::FocusCharacter(int slotIndex)
 {
     PRINTF("Index:%d",slotIndex);
@@ -50,20 +45,6 @@ void UCharSelect::FocusCharacter(int slotIndex)
     PlayerCreateManager* PlMa=PlayerCreateManager::Get;
     auto* CharStat= SaveLoadManager::Get->GetLoadedChars()[slotIndex];
     auto* CharEquip= SaveLoadManager::Get->GetLoadedEquip()[slotIndex];
-    
-    PlMa->m_CurrentCharData. m_CurrentBody=CharEquip->m_EquipAry[(int)ESlots::Torso].m_ItemData ?CharEquip->m_EquipAry[(int)ESlots::Torso].m_ItemData :nullptr;
-    PlMa->m_CurrentCharData. m_CurrentHelmet = CharEquip->m_EquipAry[(int)ESlots::Head].m_ItemData ? CharEquip->m_EquipAry[(int)ESlots::Head].m_ItemData :nullptr;
-    PlMa->m_CurrentCharData. m_CurrentHair=PlMa->GetHair(CharStat->m_IndexHair,PlMa->m_CurrentCharData.m_CurrentHelmet);
-    PlMa->m_CurrentCharData. m_CurrentFace=PlMa->GetFace(CharStat->m_IndexFace);
-    PlMa->m_CurrentCharData. m_CurrentShoe= CharEquip->m_EquipAry[(int)ESlots::Leg].m_ItemData ? CharEquip->m_EquipAry[(int)ESlots::Leg].m_ItemData :nullptr;
-    PlMa->m_CurrentCharData. m_CurrentGlove= CharEquip->m_EquipAry[(int)ESlots::Hand].m_ItemData ? CharEquip->m_EquipAry[(int)ESlots::Hand].m_ItemData :nullptr;
-    PlMa->m_CurrentCharData. m_CurrentShoulder= CharEquip->m_EquipAry[(int)ESlots::Shoulder].m_ItemData ? CharEquip->m_EquipAry[(int)ESlots::Shoulder].m_ItemData :nullptr;
-    PlMa->m_CurrentCharData. m_CurrentBelt= CharEquip->m_EquipAry[(int)ESlots::Waist].m_ItemData ? CharEquip->m_EquipAry[(int)ESlots::Waist].m_ItemData :nullptr;
-    //PlMa->m_CurrentCharData. m_CurrentBackpack= CharEquip->m_EquipAry[(int)ESlots::Head].m_ItemData ? CharEquip->m_EquipAry[(int)ESlots::Head].m_ItemData->m_SkEquipment :nullptr;
-    PlMa->m_CurrentCharData. m_CurrentRightWeapon= CharEquip->m_EquipAry[(int)ESlots::WeaponRight].m_ItemData ? CharEquip->m_EquipAry[(int)ESlots::WeaponRight].m_ItemData :nullptr;
-    PlMa->m_CurrentCharData. m_CurrentLeftWeapon= CharEquip->m_EquipAry[(int)ESlots::WeaponLeft].m_ItemData ? CharEquip->m_EquipAry[(int)ESlots::WeaponLeft].m_ItemData :nullptr;
 
-    
-    PlayerCreateManager::Get->OnDataChanged();
-    //use index to get char info,status and equip
+    PlMa->SetCurrentDataFromSaveFile(CharStat,CharEquip);
 }

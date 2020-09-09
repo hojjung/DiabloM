@@ -17,13 +17,12 @@ void UStartMenuCanvas::CreationStart()
 {
     m_CharCreate->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_CharSelect->SetVisibility(ESlateVisibility::Hidden);
-    m_CharSelect->StartCreation();
+    Cast<APlayerCreateController>( GetOwningPlayer())->GetPlayerVisual()->ShowMesh();
 }
 
 void UStartMenuCanvas::CreationEnd()
 {
     m_CharCreate->SetVisibility(ESlateVisibility::Hidden);
     m_CharSelect->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-    PlayerCreateManager::Get->m_CurrentCharData.Clear();
     Cast<APlayerCreateController>( GetOwningPlayer())->GetPlayerVisual()->HideMesh();
 }

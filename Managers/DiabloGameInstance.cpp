@@ -23,7 +23,7 @@ void UDiabloGameInstance::Init()
     
     if (!m_ItemManager)
     {
-        m_ItemManager = new  ItemManager();
+        m_ItemManager=new  ItemManager();
         m_ItemManager->Init(this);
 
     }
@@ -37,7 +37,6 @@ void UDiabloGameInstance::Init()
     {
         m_PlCreateManager = new PlayerCreateManager();
         m_PlCreateManager->Init(this);
-        //m_PlCreateManager->CreateSaveLoadInstance();
     }
 }
 

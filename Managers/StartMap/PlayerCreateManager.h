@@ -4,6 +4,8 @@
 
 #include "DiabloM.h"
 #include "Datas/PlayerInitDataTable.h"
+#include "SaveLoad/SaveCharacterStatus.h"
+#include "SaveLoad/SaveEquipment.h"
 
 /**
  * 월드맵에서 쓰일 캐릭터를 미리
@@ -28,13 +30,20 @@ class DIABLOM_API PlayerCreateManager //바뀐다는건 얘밖에 모름
 public:
     PlayerCreateManager();
     ~PlayerCreateManager();
-    void SetArmorFromIndex();
+    void SetFaceFromSetting();
+    void InitArraysFromTable();
+    void SetPerkFromSetting();
+    void SetItemFromSetting();
+    void SetHairFromSetting();
+    void SetArmorFromSetting();
 
     static PlayerCreateManager* Get;
 	
-public:
+protected:
     FCurrentCharData m_CurrentCharData;
 
+public:
+    FText m_CurrentTextName;
     TArray<FPlayerHairRow*> m_AryHair;
     TArray<FPlayerFaceRow*> m_AryFace;
     TArray<FPlayerArmorRow*> m_AryArmor;
@@ -48,7 +57,6 @@ public:
     int m_IndexItem;
     int m_IndexPerk;
 
-    FText m_TextName;
     //
 public:
     FOnVisualChange m_OnVisualChange;
@@ -64,6 +72,7 @@ public:
         return m_CurrentCharData;
     }
 
+    void SetCurrentDataFromSaveFile(const USaveCharacterStatus* char_stat,const USaveEquipment* save_equipment);
 public:
     void DecreaseHair();
     void IncreaseHair();
@@ -76,9 +85,10 @@ public:
     void DecreasePerk();
     void IncreasePerk();
     
-    void StartCreateCharcter();
-    bool DoneCreateCharcter();
+    void DoneCreateCharcter();
     
     USkeletalMesh* GetFace(int index);
     USkeletalMesh* GetHair(int index,bool hasHelMet);
+
+    const FCurrentCharData& GetCurrentCharData() const;
 };

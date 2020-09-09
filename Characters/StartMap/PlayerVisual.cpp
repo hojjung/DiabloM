@@ -59,6 +59,10 @@ APlayerVisual::APlayerVisual()
     m_MeshBody->SetAnimation(m_AnimSeq);
     //
     m_PlCreateManager = nullptr;
+    //
+    m_DefaultBodyMesh = nullptr;
+    m_DefaultGloveMesh= nullptr;
+    m_DefaultShoeMesh= nullptr;
 }
 
 void APlayerVisual::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp, FName keyName)
@@ -82,9 +86,9 @@ void APlayerVisual::BeginPlay()
     Super::BeginPlay();
     m_PlCreateManager = GetGameInstance<UDiabloGameInstance>()->m_PlCreateManager;
     m_PlCreateManager->m_OnVisualChange.AddUObject(this, &APlayerVisual::OnMeshVisualChanged);
-    HideMesh();
     m_PlCreateManager->m_OnStartCreation.BindUObject(this, &APlayerVisual::ShowMesh);
     
+    HideMesh();
 }
 
 void APlayerVisual::OnMeshVisualChanged(const FCurrentCharData& charData)
@@ -96,28 +100,63 @@ void APlayerVisual::OnMeshVisualChanged(const FCurrentCharData& charData)
     m_MeshHair->SetSkeletalMesh(charData.m_CurrentHair);
     m_MeshHeadGear->SetSkeletalMesh(charData.m_CurrentHelmet?charData.m_CurrentHelmet->m_SkEquipment:nullptr);
     //
-    auto* BodyMesh=charData.m_CurrentBody;
 
-    
-    if(BodyMesh &&m_MeshBody->SkeletalMesh != BodyMesh->m_SkEquipment)
+    const FItemData* TorsoArmor = charData.m_CurrentBody;
+
+    if(TorsoArmor && m_MeshBody->SkeletalMesh != TorsoArmor->m_SkEquipment)
     {
-        m_MeshBody->SetSkeletalMesh(BodyMesh->m_SkEquipment);
+        m_MeshBody->SetSkeletalMesh(TorsoArmor->m_SkEquipment);
+        m_MeshBody->SetAnimation(m_AnimSeq);
+        m_MeshBody->Play(true);//body change = need animation update
+    }
+    else if(!TorsoArmor)
+    {
+        //갑옷없음
+        SetDefaultBodyMesh();
         m_MeshBody->SetAnimation(m_AnimSeq);
         m_MeshBody->Play(true);//body change = need animation update
     }
     //
     if(charData.m_CurrentGlove)
+    {
         m_MeshGlove->SetSkeletalMesh(charData.m_CurrentGlove->m_SkEquipment);
+    }
+    else
+    {
+        SetDefaultGloveMesh();
+    }
+    
     if(charData.m_CurrentShoe)
+    {
         m_MeshShoe->SetSkeletalMesh(charData.m_CurrentShoe->m_SkEquipment);
+    }
+    else
+    {
+        SetDefaultShoeMesh();
+    }
+    
     m_MeshShoulderPad->SetSkeletalMesh(charData.m_CurrentShoulder ? charData.m_CurrentShoulder->m_SkEquipment : nullptr);
+    
     m_MeshBelt->SetSkeletalMesh(charData.m_CurrentBelt ? charData.m_CurrentBelt->m_SkEquipment : nullptr);
-    //
     //m_MeshBackpack->SetStaticMesh(charData.m_CurrentBackpack);
     m_MeshRightHand->SetStaticMesh(charData.m_CurrentRightWeapon?charData.m_CurrentRightWeapon->m_StEquipment:nullptr);
     m_MeshLeftHand->SetStaticMesh(charData.m_CurrentLeftWeapon?charData.m_CurrentLeftWeapon->m_StEquipment :nullptr);
     //
-    
+}
+
+void APlayerVisual::SetDefaultBodyMesh()
+{
+    m_MeshBody->SetSkeletalMesh(m_DefaultBodyMesh);
+}
+
+void APlayerVisual::SetDefaultShoeMesh()
+{
+    m_MeshShoe->SetSkeletalMesh(m_DefaultShoeMesh);
+}
+
+void APlayerVisual::SetDefaultGloveMesh()
+{
+    m_MeshGlove->SetSkeletalMesh(m_DefaultGloveMesh);
 }
 
 void APlayerVisual::ShowMesh()
@@ -133,21 +172,31 @@ void APlayerVisual::ShowMesh()
     m_MeshBackpack->SetVisibility(true);
     m_MeshRightHand->SetVisibility(true);
     m_MeshLeftHand->SetVisibility(true);
-    m_PlCreateManager->OnDataChanged();
 }
 
 void APlayerVisual::HideMesh()
 {
     m_MeshBody->SetVisibility(false);
-    m_MeshFace->SetVisibility(false);
-    m_MeshBelt->SetVisibility(false);
     m_MeshGlove->SetVisibility(false);
     m_MeshShoe->SetVisibility(false);
-    m_MeshHeadGear->SetVisibility(false);
-    m_MeshShoulderPad->SetVisibility(false);
+    m_MeshFace->SetVisibility(false);
     m_MeshHair->SetVisibility(false);
+    m_MeshBelt->SetVisibility(false);
+    m_MeshBelt->SetSkeletalMesh(nullptr);
+    m_MeshHeadGear->SetVisibility(false);
+    m_MeshHeadGear->SetSkeletalMesh(nullptr);
+    m_MeshShoulderPad->SetVisibility(false);
+    m_MeshShoulderPad->SetSkeletalMesh(nullptr);
     m_MeshBackpack->SetVisibility(false);
+    m_MeshBackpack->SetStaticMesh(nullptr);
     m_MeshRightHand->SetVisibility(false);
+    m_MeshRightHand->SetStaticMesh(nullptr);
     m_MeshLeftHand->SetVisibility(false);
+    m_MeshLeftHand->SetStaticMesh(nullptr);
+
+
+    SetDefaultBodyMesh();
+    SetDefaultGloveMesh();
+    SetDefaultShoeMesh();
 }
 

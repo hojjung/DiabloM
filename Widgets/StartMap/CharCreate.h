@@ -37,8 +37,6 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UButton* m_BtnContinue;
 protected:
-    FText m_TextTypedName;
-    
     PlayerCreateManager* m_PlManager;
 
     FTextFormat m_FormatT;

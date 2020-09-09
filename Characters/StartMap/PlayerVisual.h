@@ -42,11 +42,17 @@ protected:
 	UStaticMeshComponent* m_MeshRightHand;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UStaticMeshComponent* m_MeshLeftHand;
-	
+protected:	
 	PlayerCreateManager* m_PlCreateManager;//smartponter?
 
 	UPROPERTY()
 	UAnimSequence* m_AnimSeq;
+	UPROPERTY()
+	USkeletalMesh* m_DefaultBodyMesh;
+	UPROPERTY()
+	USkeletalMesh* m_DefaultGloveMesh;
+	UPROPERTY()
+	USkeletalMesh* m_DefaultShoeMesh;
 protected:
 	void CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName);
 	
@@ -54,9 +60,16 @@ protected:
 	virtual void BeginPlay() override;
 
 	void OnMeshVisualChanged(const FCurrentCharData& charData);
-	
+
+	void SetDefaultBodyMesh();
+
+	void SetDefaultShoeMesh();
+
+	void SetDefaultGloveMesh();
 public:
 	void ShowMesh();
 
 	void HideMesh();
+
+	
 };

@@ -41,8 +41,6 @@ public:
     void Init(SaveLoadManager* saveLoadManager);
     
     void CreateCharInfo(const USaveCharacterStatus* charStats);
-    
-    void StartCreation();
 
     void FocusCharacter(int slotIndex);
 };

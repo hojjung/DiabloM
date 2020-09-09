@@ -185,13 +185,13 @@ void SaveLoadManager::CreateNewCharacter(PlayerCreateManager* plManager)
    SaveCharStat->m_SaveVersion=m_SaveVersion;
    SaveCharStat->m_nSlotIndex= PlayerIndex;
    SaveCharStat->m_nLevel = 1;
-   SaveCharStat->m_TextName  = plManager->m_TextName;
+   SaveCharStat->m_TextName  = plManager->m_CurrentTextName;
    SaveCharStat->m_IndexFace = plManager->m_IndexFace;
    SaveCharStat->m_IndexHair = plManager->m_IndexHair;
    UGameplayStatics::SaveGameToSlot(SaveCharStat,"Character",PlayerIndex);
    //SaveEquip
    SaveEquip->m_SaveVersion=m_SaveVersion;
-   SaveEquip->SetEquipSaveDataFromCreation(plManager->m_CurrentCharData);
+   SaveEquip->SetEquipSaveDataFromCreation(plManager->GetCurrentCharData());
    UGameplayStatics::SaveGameToSlot(SaveEquip,"Equipment",PlayerIndex);
    //SaveInven
    SaveInven->m_SaveVersion=m_SaveVersion;
