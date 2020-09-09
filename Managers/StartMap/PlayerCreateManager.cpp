@@ -30,6 +30,17 @@ void PlayerCreateManager::Init(UDiabloGameInstance* gameInst)
     SetItemFromSetting();
     SetHairFromSetting();
 }
+
+void PlayerCreateManager::ClearIndex()
+{
+     m_IndexHair=0;
+     m_IndexFace=0;
+     m_IndexArmor=0;
+     m_IndexWeapon=0;
+     m_IndexItem=0;
+     m_IndexPerk=0;
+}
+
 void PlayerCreateManager::InitArraysFromTable()
 {
     UPlayerInitDataTable::GetPlayerHairTable->GetAllRows("FailHair",m_AryHair);
@@ -164,6 +175,7 @@ void PlayerCreateManager::DecreaseArmor()
     }
     //text change
     SetArmorFromSetting();
+    SetHairFromSetting();
     OnDataChanged();
 }
 
@@ -177,6 +189,7 @@ void PlayerCreateManager::IncreaseArmor()
     }
 
     SetArmorFromSetting();
+    SetHairFromSetting();
     OnDataChanged();
 }
 

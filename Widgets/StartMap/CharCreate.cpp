@@ -2,7 +2,7 @@
 #include "CharCreate.h"
 
 #include "EditableText.h"
-
+#include "Kismet/KismetStringLibrary.h"
 
 void UCharCreate::NativePreConstruct()
 {
@@ -103,7 +103,22 @@ void UCharCreate::IncreasePerk()
 
 void UCharCreate::UpdateNameText(const FText& text)
 {
-    m_PlManager->m_CurrentTextName=text;
+    if(m_NameBox->GetText().IsEmpty())
+    {
+        PRINTF("Fail - Name Empty");
+        m_BtnContinue->SetIsEnabled(false);
+        return;
+    }
+
+    if(m_NameBox->GetText().ToString().Len() > 15)
+    {
+        FString TheString= m_NameBox->GetText().ToString();
+        m_NameBox->SetText(FText::FromString(UKismetStringLibrary::GetSubstring(TheString,0,14)));
+    }
+    
+    m_PlManager->m_CurrentTextName=m_NameBox->GetText();
+    
+    m_BtnContinue->SetIsEnabled(true);
 }
 
 
@@ -114,19 +129,16 @@ void UCharCreate::UpdateNameTextCommit(const FText& text, ETextCommit::Type type
 
 void UCharCreate::Continue()
 {
-    if(m_NameBox->GetText().IsEmpty())
-    {
-        PRINTF("Fail - Name Empty");
-        return;
-    }
-
-    if(m_NameBox->GetText().ToString().Len() > 10)
-    {
-        PRINTF("Fail - Name too long : Max 10");
-        return;
-    }
-    
     m_PlManager->DoneCreateCharcter();
+    m_BtnContinue->SetIsEnabled(false);
+    m_PlManager->m_CurrentTextName=FText();
+    m_NameBox->SetText(FText());
+}
+
+void UCharCreate::StartCreation()
+{
+    m_BtnContinue->SetIsEnabled(false);
+    m_PlManager->m_CurrentTextName=FText();
 }
 
 FText UCharCreate::GetFormatCount(int index, int aryMax)

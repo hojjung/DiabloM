@@ -30,7 +30,7 @@ void USaveEquipment::SetEquipLoadData(EquipmentSystem** outEquip)
 void USaveEquipment::SetEquipSaveDataFromCreation(const FCurrentCharData& charData)
 {
     m_EquipAry.Reserve(10);
-    m_EquipAry.Init(FItemInstance(),(int)EItemType::Length);
+    m_EquipAry.Init(FItemInstance(),(int)ESlots::Length);
     //9
     if(charData.m_CurrentHelmet)
     {

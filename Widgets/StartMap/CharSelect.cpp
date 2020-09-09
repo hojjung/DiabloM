@@ -38,8 +38,13 @@ void UCharSelect::CreateCharInfo(const USaveCharacterStatus* charStats)
     m_SlotParent->AddChildToVerticalBox(CharInfoCreated);
 }
 
-void UCharSelect::FocusCharacter(int slotIndex)
+void UCharSelect::FocusCharacter(int slotIndex,UCharInfo* focusedInfo)
 {
+    if(m_FocusedInfo && focusedInfo != m_FocusedInfo)
+    {
+        m_FocusedInfo->DeselectSlot();
+        m_FocusedInfo=nullptr;
+    }
     PRINTF("Index:%d",slotIndex);
     Cast<APlayerCreateController> (GetOwningPlayer())->GetPlayerVisual()->ShowMesh();
     PlayerCreateManager* PlMa=PlayerCreateManager::Get;
@@ -47,4 +52,6 @@ void UCharSelect::FocusCharacter(int slotIndex)
     auto* CharEquip= SaveLoadManager::Get->GetLoadedEquip()[slotIndex];
 
     PlMa->SetCurrentDataFromSaveFile(CharStat,CharEquip);
+
+    m_FocusedInfo=focusedInfo;
 }

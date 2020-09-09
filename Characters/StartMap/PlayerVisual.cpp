@@ -60,9 +60,12 @@ APlayerVisual::APlayerVisual()
     //
     m_PlCreateManager = nullptr;
     //
-    m_DefaultBodyMesh = nullptr;
-    m_DefaultGloveMesh= nullptr;
-    m_DefaultShoeMesh= nullptr;
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundMesh1(TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/ModularBodyParts/Cloth01SK.Cloth01SK'"));
+    m_DefaultBodyMesh = FoundMesh1.Object;
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundMesh2(TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/ModularBodyParts/Glove01SK.Glove01SK'"));
+    m_DefaultGloveMesh= FoundMesh2.Object;
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundMesh3(TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/ModularBodyParts/Shoe01SK.Shoe01SK'"));
+    m_DefaultShoeMesh= FoundMesh3.Object;
 }
 
 void APlayerVisual::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp, FName keyName)
@@ -91,6 +94,12 @@ void APlayerVisual::BeginPlay()
     HideMesh();
 }
 
+void APlayerVisual::SetBodyAnim()
+{
+    m_MeshBody->SetAnimation(m_AnimSeq);
+    m_MeshBody->Play(true);//body change = need animation update
+}
+
 void APlayerVisual::OnMeshVisualChanged(const FCurrentCharData& charData)
 {
     //만일 장비칸이 없다면 이대로면 빈칸은 없는 부위로 변함.
@@ -106,15 +115,13 @@ void APlayerVisual::OnMeshVisualChanged(const FCurrentCharData& charData)
     if(TorsoArmor && m_MeshBody->SkeletalMesh != TorsoArmor->m_SkEquipment)
     {
         m_MeshBody->SetSkeletalMesh(TorsoArmor->m_SkEquipment);
-        m_MeshBody->SetAnimation(m_AnimSeq);
-        m_MeshBody->Play(true);//body change = need animation update
+        SetBodyAnim();
     }
     else if(!TorsoArmor)
     {
         //갑옷없음
         SetDefaultBodyMesh();
-        m_MeshBody->SetAnimation(m_AnimSeq);
-        m_MeshBody->Play(true);//body change = need animation update
+       
     }
     //
     if(charData.m_CurrentGlove)
@@ -147,6 +154,7 @@ void APlayerVisual::OnMeshVisualChanged(const FCurrentCharData& charData)
 void APlayerVisual::SetDefaultBodyMesh()
 {
     m_MeshBody->SetSkeletalMesh(m_DefaultBodyMesh);
+    SetBodyAnim();
 }
 
 void APlayerVisual::SetDefaultShoeMesh()

@@ -65,6 +65,8 @@ public:
 public:
     void Init(UDiabloGameInstance* gameInst);
 
+    void ClearIndex();
+
     void OnDataChanged(); //바뀔때마다 비쥬얼을 업데이트함
 
     FORCEINLINE const FCurrentCharData& GetCurrentCharData()

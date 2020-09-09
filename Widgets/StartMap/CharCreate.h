@@ -74,6 +74,8 @@ public:
 
     UFUNCTION()
     void Continue();
+
+    void StartCreation();
 protected:
     FText GetFormatCount(int index, int aryMax);
 };

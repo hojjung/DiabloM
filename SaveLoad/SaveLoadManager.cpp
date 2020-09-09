@@ -65,6 +65,10 @@ void SaveLoadManager::DeleteSlot(int i)
    {
       //PRINTF("Fail Delete Inventory");
    }
+
+   m_AryLoadedCharacters[i]=nullptr;
+   m_AryLoadedEquipments[i]=nullptr;
+   m_AryLoadedInventorys[i]=nullptr;
 }
 
 void SaveLoadManager::DeleteAllSlot()
@@ -154,12 +158,16 @@ bool SaveLoadManager::LoadCharacterStat(int index)
    {
       return false;
    }
+   
    auto* LoadCharStat =Cast<USaveCharacterStatus>(UGameplayStatics::LoadGameFromSlot("Character",index));
 
    PRINTF("Loaded - %d - %s",index,*LoadCharStat->m_TextName.ToString());  
    m_AryLoadedCharacters[index]=LoadCharStat;
    
    auto* LoadCharEquip =Cast<USaveEquipment>(UGameplayStatics::LoadGameFromSlot("Equipment",index));
+   
+   LoadItemDataForInstance(LoadCharEquip->m_EquipAry);
+   
    m_AryLoadedEquipments[index]=LoadCharEquip;
    auto* LoadCharInven =Cast<USaveInventory>(UGameplayStatics::LoadGameFromSlot("Inventory",index));
    m_AryLoadedInventorys[index]=LoadCharInven;
@@ -192,6 +200,7 @@ void SaveLoadManager::CreateNewCharacter(PlayerCreateManager* plManager)
    //SaveEquip
    SaveEquip->m_SaveVersion=m_SaveVersion;
    SaveEquip->SetEquipSaveDataFromCreation(plManager->GetCurrentCharData());
+   LoadItemDataForInstance(SaveEquip->m_EquipAry);
    UGameplayStatics::SaveGameToSlot(SaveEquip,"Equipment",PlayerIndex);
    //SaveInven
    SaveInven->m_SaveVersion=m_SaveVersion;
@@ -201,6 +210,7 @@ void SaveLoadManager::CreateNewCharacter(PlayerCreateManager* plManager)
    m_AryLoadedCharacters[PlayerIndex]=SaveCharStat;
    m_AryLoadedEquipments[PlayerIndex]=SaveEquip;
    m_AryLoadedInventorys[PlayerIndex]=SaveInven;
+   PRINTF("Created in Index:%d",PlayerIndex);
    //
    m_OnDataCreated.ExecuteIfBound(SaveCharStat);
 
@@ -219,4 +229,12 @@ int SaveLoadManager::GetEmptyIndex()
    }
 
    return -1;
+}
+
+void SaveLoadManager::LoadItemDataForInstance(TArray<FItemInstance>& itemAry)
+{
+   for(auto& ItemInst : itemAry)
+   {
+      ItemInst.m_ItemData = UItemDataTable::GetItemDataPtr(ItemInst.m_ItemID);
+   }
 }

@@ -23,7 +23,8 @@ protected:
     
 public:
     void InitStartMenu();
-    
+
+    bool HaveEmptySlot();
     UFUNCTION()
     void CreationStart();
 

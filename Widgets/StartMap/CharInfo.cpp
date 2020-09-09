@@ -19,7 +19,12 @@ void UCharInfo::Init(const USaveCharacterStatus* char_stats)
 void UCharInfo::SelectSlot()
 {
     m_ImgFocus->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-    m_OnSelect.ExecuteIfBound(m_nSlotIndex);
+    m_OnSelect.ExecuteIfBound(m_nSlotIndex,this);
+}
+
+void UCharInfo::DeselectSlot()
+{
+    m_ImgFocus->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UCharInfo::DeleteSlot()

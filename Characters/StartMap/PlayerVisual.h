@@ -58,6 +58,7 @@ protected:
 	
 	
 	virtual void BeginPlay() override;
+	void SetBodyAnim();
 
 	void OnMeshVisualChanged(const FCurrentCharData& charData);
 

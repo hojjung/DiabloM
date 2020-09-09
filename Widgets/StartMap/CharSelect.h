@@ -42,5 +42,5 @@ public:
     
     void CreateCharInfo(const USaveCharacterStatus* charStats);
 
-    void FocusCharacter(int slotIndex);
+    void FocusCharacter(int slotIndex,UCharInfo* focusedInfo);
 };

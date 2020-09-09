@@ -79,4 +79,5 @@ public:
 	}
 	int GetEmptyIndex();
 	//Focus Character need
+	void LoadItemDataForInstance(TArray<FItemInstance>& itemAry);
 };

@@ -14,8 +14,8 @@
 /**
  * 로딩한 캐릭터 버튼
  */
-
-DECLARE_DELEGATE_OneParam(FOnSelected,int);
+class UCharInfo;
+DECLARE_DELEGATE_TwoParams(FOnSelected,int,UCharInfo*);
 UCLASS()
 class DIABLOM_API UCharInfo : public UUserWidget
 {
@@ -48,6 +48,8 @@ public:
 public:
 	UFUNCTION()
 	void SelectSlot();
+	UFUNCTION()
+    void DeselectSlot();
 	UFUNCTION()
     void DeleteSlot();
 };

@@ -13,11 +13,33 @@ void UStartMenuCanvas::InitStartMenu()
     m_CharCreate->m_BtnContinue->OnClicked.AddDynamic(this,&UStartMenuCanvas::CreationEnd);
 }
 
+bool UStartMenuCanvas::HaveEmptySlot()
+{
+    return SaveLoadManager::Get->GetEmptyIndex() != -1;
+}
+
 void UStartMenuCanvas::CreationStart()
 {
+    if(!HaveEmptySlot())
+    {
+        return;
+    }
+
+    
+    if(m_CharSelect->m_FocusedInfo)
+        m_CharSelect->m_FocusedInfo->DeselectSlot();
+    
     m_CharCreate->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_CharSelect->SetVisibility(ESlateVisibility::Hidden);
+    m_CharCreate->StartCreation();
     Cast<APlayerCreateController>( GetOwningPlayer())->GetPlayerVisual()->ShowMesh();
+    PlayerCreateManager::Get->ClearIndex();
+    PlayerCreateManager::Get->SetArmorFromSetting();
+    PlayerCreateManager::Get->SetFaceFromSetting();
+    PlayerCreateManager::Get->SetPerkFromSetting();
+    PlayerCreateManager::Get->SetItemFromSetting();
+    PlayerCreateManager::Get->SetHairFromSetting();
+    PlayerCreateManager::Get->OnDataChanged();
 }
 
 void UStartMenuCanvas::CreationEnd()
