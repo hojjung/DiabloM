@@ -1,10 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-#include "Objs/EquipmentSystemOld.h"
+#include "Item/EquipmentSystem.h"
 #include "DiaEquipmentPanel.generated.h"
 
 struct FItemInstance;
@@ -43,8 +41,9 @@ public:
 	UItemPopupInfo* m_ItemPopup;
 
 protected:
-	EquipmentSystemOld* m_EquipSys;
-
+	UPROPERTY()
+	UEquipmentSystem* m_EquipSys;
+	UPROPERTY()
 	TArray<UDiaInvenGridSlot*> m_ArySlots;
 
 public:
@@ -57,7 +56,7 @@ protected:
 	int m_nPopupSelectedIndex;
 
 public:
-	void Init(EquipmentSystemOld* equipContainer);
+	void Init(UEquipmentSystem* equipContainer);
 
 	bool EquipItem(int dropIndex, FItemInstance& drag);
 	

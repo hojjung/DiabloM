@@ -1,12 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "PlayerVisual.h"
 #include "ConstructorHelpers.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SkinnedMeshComponent.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/StartMap/PlayerCreateManagerOld.h"
+#include "Managers/StartMap/PlayerCreateManager.h"
 #include "Animation/AnimSequence.h"
 // Sets default values
 APlayerVisual::APlayerVisual()

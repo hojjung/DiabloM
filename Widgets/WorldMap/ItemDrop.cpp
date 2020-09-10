@@ -1,10 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "ItemDrop.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaDragDrop.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Kismet/GameplayStatics.h"
 
 
 bool UItemDrop::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
@@ -34,5 +30,5 @@ void UItemDrop::ThrowItem(const FItemInstance& itemThrow)
     FVector RandomPos = UGameplayStatics::GetPlayerPawn(GetWorld(),0)->GetMovementComponent()->GetActorFeetLocation();
     FItemInstance item =itemThrow;
     itemThrow.m_Holder->RemoveItemByIndex(itemThrow.m_nGridIndex);
-    GetGameInstance<UDiabloGameInstance>()->m_ItemManagerOld->CreateItemActor(item,RandomPos);
+    GetGameInstance<UDiabloGameInstance>()->m_ItemManager->CreateItemActor(item,RandomPos);
 }

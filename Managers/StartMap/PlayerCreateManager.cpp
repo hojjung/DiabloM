@@ -7,12 +7,12 @@ UPlayerCreateManager* UPlayerCreateManager::Get=nullptr;
 
 UPlayerCreateManager::~UPlayerCreateManager()
 {
-    m_IndexHair(0);
-    m_IndexFace(0);
-    m_IndexArmor(0);
-    m_IndexWeapon(0);
-    m_IndexItem(0);
-    m_IndexPerk(0);
+    m_IndexHair=0;
+    m_IndexFace=0;
+    m_IndexArmor=0;
+    m_IndexWeapon=0;
+    m_IndexItem=0;
+    m_IndexPerk=0;
     
     UPlayerCreateManager::Get=nullptr;
     m_AryHair.Empty();
@@ -25,6 +25,7 @@ UPlayerCreateManager::~UPlayerCreateManager()
 
 void UPlayerCreateManager::Init(UDiabloGameInstance* gameInst)
 {
+    UPlayerCreateManager::Get=this;
     InitArraysFromTable();
     SetArmorFromSetting();
     SetFaceFromSetting();

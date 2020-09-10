@@ -10,13 +10,8 @@
 #include "AbilitySystem/DiabloAbility.h"
 //
 #include "Characters/UnitMovement.h"
-#include "Components/CapsuleComponent.h"
-#include "Components/SkeletalMeshComponent.h"
 //
 #include "Navigation/PathFollowingComponent.h"
-#include "Perception/AIPerceptionListenerInterface.h"
-#include "GenericTeamAgentInterface.h"
-#include "AI/Navigation/NavAgentInterface.h"
 //
 #include "Characters/DiabloPlayerController.h"
 

@@ -1,5 +1,5 @@
 #include "SaveInventory.h"
-#include "DiabloM.h"
+
 
 USaveInventory::USaveInventory()
 {
@@ -7,7 +7,7 @@ USaveInventory::USaveInventory()
 }
 
 
-void USaveInventory::SetSaveData(const InventoryOld* inven)
+void USaveInventory::SetSaveData(const UInventory* inven)
 {
     m_InvenAry = inven->GetItemAry();
     m_nCount = m_InvenAry.Num();
@@ -15,7 +15,7 @@ void USaveInventory::SetSaveData(const InventoryOld* inven)
     PRINTF("m_nCount:%d", m_nCount);
 }
 
-void USaveInventory::SetInvenLoadData(InventoryOld* outInven)
+void USaveInventory::SetInvenLoadData(UInventory* outInven)
 {
     //m_SaveVersion
 

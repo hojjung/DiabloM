@@ -43,14 +43,13 @@ void UMainCanvas::CloseSetting()
     
 }
 
-void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, PlayerSkillSystemOld * skill, EquipmentSystemOld * equipment, InventoryOld * inven)
+void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven)
 {
     m_PlayerCon = playerCon;
     m_PlayerPawn = playerChar;
-    m_SkillSys = skill;
     m_EquipSys = equipment;
     m_Inven = inven;
-    m_MainMenu->Init(m_PlayerCon,m_PlayerPawn,m_SkillSys,m_EquipSys,m_Inven);
+    m_MainMenu->Init(m_PlayerCon,m_PlayerPawn,m_EquipSys,m_Inven);
 
     m_InvenButton->OnClicked.AddDynamic(this,&UMainCanvas::OpenMainMenu);
 

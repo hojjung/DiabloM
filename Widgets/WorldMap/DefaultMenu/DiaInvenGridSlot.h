@@ -1,13 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/Image.h"
-#include "Components/TextBlock.h"
-#include "Components/Overlay.h"
-#include "Components/SizeBox.h"
 #include "Datas/ItemDataTable.h"
 #include "DiaInvenGridSlot.generated.h"
 

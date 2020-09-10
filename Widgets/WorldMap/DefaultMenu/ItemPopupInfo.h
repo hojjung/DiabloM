@@ -1,24 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "DiabloM.h"
-#include "Button.h"
-#include "CanvasPanel.h"
-#include "Image.h"
-#include "SizeBox.h"
-#include "TextBlock.h"
 #include "Blueprint/UserWidget.h"
-#include  "Widgets/WorldMap/DefaultMenu/ImageAndTextAndCompare.h"
-#include  "Widgets/WorldMap/DefaultMenu/ImageAndText.h"
-#include "Components/VerticalBox.h"
+#include "Widgets/WorldMap/DefaultMenu/ImageAndTextAndCompare.h"
+#include "Widgets/WorldMap/DefaultMenu/ImageAndText.h"
 #include "Datas/ItemDataTable.h"
 #include "Animation/WidgetAnimation.h"
 #include "ItemPopupInfo.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class DIABLOM_API UItemPopupInfo : public UUserWidget
 {
@@ -99,8 +88,7 @@ protected:
 	float SetOptionTexts(const FItemInstance& itemInst);
 
 	virtual FReply NativeOnMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent )override;
-
-	//NativeOnMouseButtonDoubleClick
+	
 public:
 	UFUNCTION()
     void UseItem();

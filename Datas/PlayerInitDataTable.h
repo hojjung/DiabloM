@@ -2,7 +2,6 @@
 
 #include "DiabloM.h"
 #include "ItemDataTable.h"
-#include "Engine/DataTable.h"
 #include "PlayerInitDataTable.generated.h"
 
 /**

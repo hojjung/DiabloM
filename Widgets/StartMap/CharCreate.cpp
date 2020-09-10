@@ -1,8 +1,4 @@
-
 #include "CharCreate.h"
-
-#include "EditableText.h"
-#include "Kismet/KismetStringLibrary.h"
 
 void UCharCreate::NativePreConstruct()
 {
@@ -11,7 +7,7 @@ void UCharCreate::NativePreConstruct()
     m_FormatT= FText::FromString("{0}/{1}");
 }
 
-void UCharCreate::Init(PlayerCreateManagerOld* plManager)
+void UCharCreate::Init(UPlayerCreateManager* plManager)
 {
     m_PlManager=plManager;
     m_PlManager->m_OnVisualChange.AddUObject(this,&UCharCreate::OnVisualChanged);

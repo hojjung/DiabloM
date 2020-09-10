@@ -1,7 +1,7 @@
 #include "DiabloCheatManager.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
-#include "SaveLoad/SaveLoadManagerOld.h"
+#include "SaveLoad/SaveLoadManager.h"
 #include "Managers/DiabloGameInstance.h"
 
 void UDiabloCheatManager::InitCheatManager()
@@ -31,26 +31,26 @@ void UDiabloCheatManager::PrintEquipment()
 
 void UDiabloCheatManager::SaveInven()
 {
-	SaveLoadManagerOld::Get->SaveInventory();
+	USaveLoadManager::Get->SaveInventory();
 }
 
 void UDiabloCheatManager::LoadInven()
 {
-	SaveLoadManagerOld::Get->LoadInventoryOld();
+	USaveLoadManager::Get->LoadInventoryOld();
 }
 
 void UDiabloCheatManager::SaveEquip()
 {
-	SaveLoadManagerOld::Get->SaveEquipment();
+	USaveLoadManager::Get->SaveEquipment();
 }
 
 void UDiabloCheatManager::LoadEquip()
 {
-	SaveLoadManagerOld::Get->LoadEquipment();
+	USaveLoadManager::Get->LoadEquipment();
 }
 
 void UDiabloCheatManager::DeleteAllSlot()
 {
-	SaveLoadManagerOld::Get->DeleteAllSlot();
+	USaveLoadManager::Get->DeleteAllSlot();
 }
 

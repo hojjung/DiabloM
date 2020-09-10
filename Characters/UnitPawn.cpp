@@ -3,7 +3,6 @@
 #include "NavigationData.h"
 #include "NavigationSystem.h"
 #include "Datas/CharacterDataTable.h"
-#include "Datas/ItemDataTable.h"
 #include "Managers/DiabloGameInstance.h"
 
 

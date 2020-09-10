@@ -2,24 +2,21 @@
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Objs/PlayerSkillSystemOld.h"
-#include "Objs/EquipmentSystemOld.h"
-#include "Objs/InventoryOld.h"
+#include "Item/EquipmentSystem.h"
+#include "Item/Inventory.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
 
-void UDefaultMenu::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, PlayerSkillSystemOld * skill, EquipmentSystemOld * equipment, InventoryOld * inven)
+void UDefaultMenu::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar,
+	 UEquipmentSystem * equipment, UInventory * inven)
 {
 	m_PlayerCon = playerCon;
 	m_PlayerChar = playerChar;
-	m_Skill = skill;
 	m_Equipment = equipment;
 	m_Inven = inven;
 
 	m_InvenGridPanel->Init(m_Inven);
 
 	m_EquipPanel->Init(m_Equipment);
-
-
 }
 
 void UDefaultMenu::OpenMainMenu()
@@ -43,6 +40,6 @@ void UDefaultMenu::ThrowItem(const FItemInstance& itemThrow)
 	FVector RandomPos = m_PlayerChar->GetActorLocation();
 	FItemInstance item =itemThrow;
 	itemThrow.m_Holder->RemoveItemByIndex(itemThrow.m_nGridIndex);
-	GetGameInstance<UDiabloGameInstance>()->m_ItemManagerOld->CreateItemActor(item,RandomPos);
+	GetGameInstance<UDiabloGameInstance>()->m_ItemManager->CreateItemActor(item,RandomPos);
 }
 

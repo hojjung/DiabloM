@@ -3,13 +3,11 @@
 #pragma once
 
 #include "DiabloM.h"
-#include "Engine/DataTable.h"
-#include "Engine/SkeletalMesh.h"
 #include "AbilitySystem/AbilityTypes.h"
 #include "CharacterDataTable.generated.h"
 
 
-#define MAXLEVEL 100
+
 
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��

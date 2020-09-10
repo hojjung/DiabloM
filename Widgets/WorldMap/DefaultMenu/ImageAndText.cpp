@@ -1,5 +1,4 @@
 #include "ImageAndText.h"
-#include "ConstructorHelpers.h"
 
 UImageAndText::UImageAndText(const FObjectInitializer& objInit) : Super(objInit)
 , m_StringWant("Test String")

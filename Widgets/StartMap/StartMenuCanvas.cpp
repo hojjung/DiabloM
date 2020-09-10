@@ -1,21 +1,22 @@
 #include "StartMenuCanvas.h"
-
 #include "Characters/StartMap/PlayerCreateController.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/StartMap/PlayerCreateManager.h"
+#include "SaveLoad/SaveLoadManager.h"
 
 
 void UStartMenuCanvas::InitStartMenu()
 {
     PRINTF("InitStartMenu");
     m_CharCreate->Init(GetGameInstance<UDiabloGameInstance>()->m_PlCreateManager);
-    m_CharSelect->Init(GetGameInstance<UDiabloGameInstance>()->m_SaveLoadManagerOld);
+    m_CharSelect->Init(GetGameInstance<UDiabloGameInstance>()->m_SaveLoadManager);
     m_CharSelect->m_BtnCreateNewChar->OnClicked.AddDynamic(this,&UStartMenuCanvas::CreationStart);
     m_CharCreate->m_BtnContinue->OnClicked.AddDynamic(this,&UStartMenuCanvas::CreationEnd);
 }
 
 bool UStartMenuCanvas::HaveEmptySlot()
 {
-    return SaveLoadManagerOld::Get->GetEmptyIndex() != -1;
+    return USaveLoadManager::Get->GetEmptyIndex() != -1;
 }
 
 void UStartMenuCanvas::CreationStart()
@@ -33,13 +34,13 @@ void UStartMenuCanvas::CreationStart()
     m_CharSelect->SetVisibility(ESlateVisibility::Hidden);
     m_CharCreate->StartCreation();
     Cast<APlayerCreateController>( GetOwningPlayer())->GetPlayerVisual()->ShowMesh();
-    PlayerCreateManagerOld::Get->ClearIndex();
-    PlayerCreateManagerOld::Get->SetArmorFromSetting();
-    PlayerCreateManagerOld::Get->SetFaceFromSetting();
-    PlayerCreateManagerOld::Get->SetPerkFromSetting();
-    PlayerCreateManagerOld::Get->SetItemFromSetting();
-    PlayerCreateManagerOld::Get->SetHairFromSetting();
-    PlayerCreateManagerOld::Get->OnDataChanged();
+    UPlayerCreateManager::Get->ClearIndex();
+    UPlayerCreateManager::Get->SetArmorFromSetting();
+    UPlayerCreateManager::Get->SetFaceFromSetting();
+    UPlayerCreateManager::Get->SetPerkFromSetting();
+    UPlayerCreateManager::Get->SetItemFromSetting();
+    UPlayerCreateManager::Get->SetHairFromSetting();
+    UPlayerCreateManager::Get->OnDataChanged();
 }
 
 void UStartMenuCanvas::CreationEnd()

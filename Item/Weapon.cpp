@@ -2,7 +2,7 @@
 #include "Datas/ItemDataTable.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Characters/PlayerDiabloCharacter.h"
-#include "AbilitySystemBlueprintLibrary.h"
+
 // Sets default values
 AWeapon::AWeapon()
 {

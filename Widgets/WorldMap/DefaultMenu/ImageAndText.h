@@ -1,20 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/HorizontalBox.h"
-#include "Components/SizeBox.h"
-#include "Components/Image.h"
-#include "Components/TextBlock.h"
-#include "Engine/Font.h"
-#include "Engine/Texture.h"
 #include "ImageAndText.generated.h"
 
-/**
- * UDiaInvenGridPanel(const FObjectInitializer& objInit
- */
 
 UCLASS()
 class DIABLOM_API UImageAndText : public UUserWidget

@@ -1,21 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
-#include "CoreMinimal.h"
-
-#include "Button.h"
+#include "DiabloM.h"
 #include "CharInfo.h"
-#include "VerticalBox.h"
 #include "Blueprint/UserWidget.h"
 #include "CharSelect.generated.h"
 
 
-
-
-
+class UStartMenuCanvas;
 class USaveCharacterStatus;
-class SaveLoadManagerOld;
+class USaveLoadManager;
 /**
  * 로딩한 캐릭터 고르는 화면
  */
@@ -38,9 +31,11 @@ public:
     UPROPERTY()
     UCharInfo* m_FocusedInfo;
 public:
-    void Init(SaveLoadManagerOld* SaveLoadManagerOld);
+    void Init(USaveLoadManager* SaveLoadManagerOld);
     
     void CreateCharInfo(const USaveCharacterStatus* charStats);
 
     void FocusCharacter(int slotIndex,UCharInfo* focusedInfo);
+
+    friend UStartMenuCanvas;
 };

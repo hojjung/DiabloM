@@ -2,10 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
-#include "Materials/MaterialParameterCollection.h"
-#include "Materials/MaterialParameterCollectionInstance.h"
+#include "DiabloM.h"
 #include "CameraDissolve.generated.h"
 
 

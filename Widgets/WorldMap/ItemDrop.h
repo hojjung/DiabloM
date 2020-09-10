@@ -2,15 +2,12 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "Datas/ItemDataTable.h"
 
 #include "ItemDrop.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class DIABLOM_API UItemDrop : public UUserWidget
 {

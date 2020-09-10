@@ -1,10 +1,7 @@
 #include "DiaInvenGridPanel.h"
-#include "Components/GridSlot.h"
 #include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
-#include "Objs/InventoryOld.h"
+#include "Item/Inventory.h"
 #include "Datas/ItemDataTable.h"
-#include "Components/CanvasPanelSlot.h"
-#include "WidgetBlueprintLibrary.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 
 UDiaInvenGridPanel* UDiaInvenGridPanel::GetInvenWidgetInst = nullptr;
@@ -15,7 +12,7 @@ UDiaInvenGridPanel::UDiaInvenGridPanel(const FObjectInitializer& objInit):Super(
 	m_ClassGridSlot = UDiaInvenGridSlot::StaticClass();
 }
 
-void UDiaInvenGridPanel::Init(InventoryOld* itemContainer )
+void UDiaInvenGridPanel::Init(UInventory* itemContainer )
 {
 	m_Inven = itemContainer;
 

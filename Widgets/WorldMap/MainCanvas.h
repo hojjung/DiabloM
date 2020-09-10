@@ -3,12 +3,10 @@
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/Button.h"
 #include "MainCanvas.generated.h"
 
-class InventoryOld;
-class EquipmentSystemOld;
-class PlayerSkillSystemOld;
+class UInventory;
+class UEquipmentSystem;
 class APlayerDiabloCharacter;
 class ADiabloPlayerController;
 class UDefaultMenu;
@@ -39,9 +37,10 @@ protected:
     ADiabloPlayerController* m_PlayerCon;
     UPROPERTY()
     APlayerDiabloCharacter* m_PlayerPawn;
-    PlayerSkillSystemOld* m_SkillSys;
-    EquipmentSystemOld* m_EquipSys;
-    InventoryOld* m_Inven;
+    UPROPERTY()
+    UEquipmentSystem* m_EquipSys;
+    UPROPERTY()
+    UInventory* m_Inven;
 public:
     UFUNCTION(BlueprintCallable,Category="Menu")
     void OpenMainMenu();
@@ -57,5 +56,5 @@ public:
     void CloseSetting();
 
 public:
-    void Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, PlayerSkillSystemOld * skill, EquipmentSystemOld * equipment, InventoryOld * inven);
+    void Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven);
 };

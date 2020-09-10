@@ -1,12 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "DiabloM.h"
 #include "GameFramework/PlayerController.h"
-
 #include "Widgets/WorldMap/MainCanvas.h"
-
 #include "DiabloPlayerController.generated.h"
 
 /**
@@ -14,11 +10,11 @@
  */
 
 class AUnitPawn;
-class Inventory;
+class UInventory;
 struct FItemInstance;
 class ADroppedItem;
-class PlayerSkillSystemOld;
-class EquipmentSystemOld;
+class UPlayerSkillSystem;
+class UEquipmentSystem;
 class APlayerDiabloCharacter;
 
 
@@ -31,9 +27,10 @@ public:
 	ADiabloPlayerController();
 	 static  ADiabloPlayerController* Get;
 protected:
-	InventoryOld* m_Inven;
-	PlayerSkillSystemOld* m_SkillSystem;
-	EquipmentSystemOld* m_EquipSystem;
+	UPROPERTY()
+	UInventory* m_Inven;
+	UPROPERTY()
+	UEquipmentSystem* m_EquipSystem;
 
 	
 protected:
@@ -102,15 +99,11 @@ public:
 
 
 public:
-	FORCEINLINE InventoryOld* GetInven() const
+	FORCEINLINE UInventory* GetInven() const
 	{
 		return  m_Inven;
 	}
-	FORCEINLINE PlayerSkillSystemOld* GetSkillSystem() const
-	{
-		return  m_SkillSystem;
-	}
-	FORCEINLINE EquipmentSystemOld* GetEquipment() const
+	FORCEINLINE UEquipmentSystem* GetEquipment() const
 	{
 		return  m_EquipSystem;
 	}

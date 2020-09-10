@@ -1,7 +1,5 @@
 #include "DiaInvenGridSlot.h"
-
-#include "Blueprint/WidgetBlueprintLibrary.h"
-#include "Managers/ItemManagerOld.h"
+#include "Item/ItemManager.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaDragDrop.h"
 
 UDiaDragDrop* UDiaInvenGridSlot::GetDDOInst = nullptr;

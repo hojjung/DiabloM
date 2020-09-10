@@ -1,21 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaInvenGridSlot.h"
-#include "Components/GridPanel.h"
 #include "DiaInvenGridPanel.generated.h"
 
-/**
- * 
- */
 
 struct FItemInstance;
 class UItemPopupInfo;
 class UDiaInvenGridSlot;
-class InventoryOld;
+class UInventory;
 class UDefaultMenu;
 UCLASS()
 class DIABLOM_API UDiaInvenGridPanel : public UUserWidget
@@ -37,11 +31,13 @@ public:
 	UItemPopupInfo* m_ItemPopup;
 
 protected:
-	InventoryOld* m_Inven;
+	UPROPERTY()
+	UInventory* m_Inven;
 
 	int m_nPopupSelectedIndex;
+	
 public:
-	void Init(InventoryOld* itemContainer);
+	void Init(UInventory* itemContainer);
 
 protected:
 	void HideItemInfo();
@@ -66,7 +62,7 @@ public:
 	void RemoveItemStack(int index);
 
 
-	FORCEINLINE InventoryOld* GetInven() const
+	FORCEINLINE UInventory* GetInven() const
 	{
 		return m_Inven;
 	}

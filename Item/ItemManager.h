@@ -3,9 +3,9 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "ItemHolder.h"
 #include "Datas/ItemDataTable.h"
 #include "Item/DroppedItem.h"
-#include "Item/ItemHolder.h"
 #include "ItemManager.generated.h"
 
 class UDiabloGameInstance;
@@ -19,6 +19,7 @@ public:
     ~UItemManager();
 
 protected:
+    UPROPERTY()
     UDiabloGameInstance* m_GameInstance;
 
 

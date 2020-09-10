@@ -4,8 +4,6 @@
 
 #include "DiabloM.h"
 #include "GameFramework/Actor.h"
-#include "Components/CapsuleComponent.h"
-#include "Components/SkeletalMeshComponent.h"
 #include "GameplayTagContainer.h"
 #include "Weapon.generated.h"
 

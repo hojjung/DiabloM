@@ -9,9 +9,8 @@
 #include "DefaultMenu.generated.h"
 
 
-class InventoryOld;
-class EquipmentSystemOld;
-class PlayerSkillSystemOld;
+class UInventory;
+class UEquipmentSystem;
 class APlayerDiabloCharacter;
 class ADiabloPlayerController;
 struct FItemInstance;
@@ -35,15 +34,13 @@ protected:
 	ADiabloPlayerController* m_PlayerCon;
 	UPROPERTY()
 	APlayerDiabloCharacter* m_PlayerChar;
-
-	PlayerSkillSystemOld* m_Skill;
-
-	EquipmentSystemOld* m_Equipment;
-
-	InventoryOld* m_Inven;
+	UPROPERTY()
+	UEquipmentSystem* m_Equipment;
+	UPROPERTY()
+	UInventory* m_Inven;
 
 public:
-	void Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar, PlayerSkillSystemOld* skill, EquipmentSystemOld* equipment,InventoryOld* inven);
+	void Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar,  UEquipmentSystem* equipment,UInventory* inven);
 
 	void OpenMainMenu();
 

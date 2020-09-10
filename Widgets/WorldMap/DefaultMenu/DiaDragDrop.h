@@ -2,26 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "Blueprint/DragDropOperation.h"
 #include "Datas/ItemDataTable.h"
-#include "Components/Image.h"
-#include "Components/SizeBox.h"
-
-#include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaInvenGridSlot.h"
 #include "DiaDragDrop.generated.h"
-
-/**
- *드래그 시작시
- 드래그 시작한 슬롯을 반투명하게
- 실패시 원래 자리로 돌아감
- 성공시 아이템 옮김
- 성공 및 교체시 내자리로 이전 아이템 옮김
-
- 휴지통에 드랍할경우, 땅에 버림
- 캡슐화 x
- */
 
 
 UCLASS()

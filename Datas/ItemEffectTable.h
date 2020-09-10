@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "DiabloM.h"
 #include "ItemEffectTable.generated.h"
 
 /**

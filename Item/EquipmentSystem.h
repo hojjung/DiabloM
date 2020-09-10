@@ -10,9 +10,9 @@
 
 class USaveEquipment;
 UENUM(BlueprintType)
-enum class EAnimStance :uint8//애니매이션으로 사용될 세트ㅜ
+enum class EAnimStance :uint8 //애니매이션으로 사용될 세트ㅜ
 {
-	None,
+    None,
     OneHandSword,
     TwohandSword,
     Dagger,
@@ -27,7 +27,7 @@ enum class EAnimStance :uint8//애니매이션으로 사용될 세트ㅜ
 UENUM(BlueprintType)
 enum class ESlots:uint8
 {
-	Head,
+    Head,
     Neck,
     Torso,
     Waist,
@@ -41,142 +41,140 @@ enum class ESlots:uint8
     Length
 };
 
-struct FEquipSlot 
+struct FEquipSlot
 {
 public:
-	FEquipSlot()
-	{
-		m_AbleEquipSlot.Init(false, (int)EItemType::Length);
-		m_bIsOccupied = false;
-		m_EquippedType = EItemType::None;
-	}
+    FEquipSlot()
+    {
+        m_AbleEquipSlot.Init(false, (int)EItemType::Length);
+        m_bIsOccupied = false;
+        m_EquippedType = EItemType::None;
+    }
 
 public:
-	EItemType m_EquippedType;
+    EItemType m_EquippedType;
 
-	TArray<bool> m_AbleEquipSlot;
+    TArray<bool> m_AbleEquipSlot;
 
-	bool m_bIsOccupied;
+    bool m_bIsOccupied;
 
-	FItemInstance m_Item;
+    FItemInstance m_Item;
 
-	void SetOccupie(bool v)
-	{
-		m_bIsOccupied=v;
-	}
+    void SetOccupie(bool v)
+    {
+        m_bIsOccupied = v;
+    }
 
-	void SetEquipableType(EItemType equipableType,bool isAble)
-	{
-		m_AbleEquipSlot[(int)equipableType] = isAble;
-	}
-
+    void SetEquipableType(EItemType equipableType, bool isAble)
+    {
+        m_AbleEquipSlot[(int)equipableType] = isAble;
+    }
 };
 
 UCLASS()
-class DIABLOM_API UEquipmentSystem : public UObject,public IItemHolder
+class DIABLOM_API UEquipmentSystem : public UObject, public IItemHolder
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 public:
-	DECLARE_MULTICAST_DELEGATE_OneParam(FStance, EAnimStance);
+    DECLARE_MULTICAST_DELEGATE_OneParam(FStance, EAnimStance);
 public:
-	~UEquipmentSystem();
+    ~UEquipmentSystem();
 
 protected:
-	FEquipSlot	m_Head;
-	FEquipSlot	m_Neck;
-	FEquipSlot	m_Torso;
-	FEquipSlot	m_Waist;
-	FEquipSlot	m_Leg;
-	FEquipSlot	m_Hand;
-	FEquipSlot	m_Shoulder;
-	FEquipSlot	m_WeaponLeft;
-	FEquipSlot	m_WeaponRight;
-	FEquipSlot	m_FingerLeft;
-	FEquipSlot	m_FingerRight;
+    FEquipSlot m_Head;
+    FEquipSlot m_Neck;
+    FEquipSlot m_Torso;
+    FEquipSlot m_Waist;
+    FEquipSlot m_Leg;
+    FEquipSlot m_Hand;
+    FEquipSlot m_Shoulder;
+    FEquipSlot m_WeaponLeft;
+    FEquipSlot m_WeaponRight;
+    FEquipSlot m_FingerLeft;
+    FEquipSlot m_FingerRight;
 
 protected:
-	TArray<FEquipSlot*> m_ArySlots;
+    TArray<FEquipSlot*> m_ArySlots;
 
 public:
-	TArray<FEquipSlot*>& GetArySlotPtr();
+    TArray<FEquipSlot*>& GetArySlotPtr();
 
 protected:
-	typedef void (UEquipmentSystem::*FPtrForStance)(void);
-	FPtrForStance m_StanceFPtr[(int)EItemType::Shield + 1][(int)EItemType::Shield + 1];
+    typedef void (UEquipmentSystem::*FPtrForStance)(void);
+    FPtrForStance m_StanceFPtr[(int)EItemType::Shield + 1][(int)EItemType::Shield + 1];
 
-	EAnimStance m_CurrentStance;
+    EAnimStance m_CurrentStance;
 
-	FOnItemSlotChanged m_ItemChanged;
+    FOnItemSlotChanged m_ItemChanged;
 
-	FStance m_OnStanceChanged;
-
-public:
-	virtual FOnItemSlotChanged& GetItemChangeCallback()  override
-	{
-		return m_ItemChanged;
-	}
-
-	FStance& GetStanceChangeCallaback()
-	{
-		return m_OnStanceChanged;
-	}
+    FStance m_OnStanceChanged;
 
 public:
-	void Init();
+    virtual FOnItemSlotChanged& GetItemChangeCallback() override
+    {
+        return m_ItemChanged;
+    }
 
-	virtual bool AddItem(int droppedIndex, FItemInstance& itemWantAdd) override;
+    FStance& GetStanceChangeCallaback()
+    {
+        return m_OnStanceChanged;
+    }
 
-	virtual void RemoveItem(FItemInstance& itemWantErase) override;
+public:
+    void Init();
 
-	virtual void RemoveItemByIndex(int index) override;
+    virtual bool AddItem(int droppedIndex, FItemInstance& itemWantAdd) override;
+
+    virtual void RemoveItem(FItemInstance& itemWantErase) override;
+
+    virtual void RemoveItemByIndex(int index) override;
 
 protected:
-	void OnItemSlotChanged(int index);
+    void OnItemSlotChanged(int index);
 
-	void CalculateStance();
+    void CalculateStance();
 
-	void SetStanceAllNull();
+    void SetStanceAllNull();
 
-	void SetStanceNull();
+    void SetStanceNull();
 
-	void SetStanceOneHand();
+    void SetStanceOneHand();
 
-	void SetStanceDual();
+    void SetStanceDual();
 
-	void SetStanceShield();
+    void SetStanceShield();
 
-	void SetStanceDagger();
+    void SetStanceDagger();
 
-	void SetStanceKatana();
+    void SetStanceKatana();
 
-	void SetStanceTwoHand();
-
+    void SetStanceTwoHand();
 
 
 public:
-	bool CheckSlotOccupied(int index);
+    bool CheckSlotOccupied(int index);
 
-	virtual bool SwapMove(FItemInstance &Drop, FItemInstance &Drag) override;
+    virtual bool SwapMove(FItemInstance& Drop, FItemInstance& Drag) override;
 
-	virtual bool CheckSlotValid(int droppedIndex, FItemInstance& itemWantAdd) override;
+    virtual bool CheckSlotValid(int droppedIndex, FItemInstance& itemWantAdd) override;
 
-	virtual void SetItem(int droppedIndex, FItemInstance& itemWantAdd) override;
+    virtual void SetItem(int droppedIndex, FItemInstance& itemWantAdd) override;
 
-	EAnimStance GetCurrentStance() const
-	{
-		return m_CurrentStance;
-	}
+    EAnimStance GetCurrentStance() const
+    {
+        return m_CurrentStance;
+    }
 
-	FItemInstance& GetItem(int index);
+    FItemInstance& GetItem(int index);
 
-	void PrintEquipStats();
+    void PrintEquipStats();
 
-	EItemType GetEquippedItem(ESlots slot);
+    EItemType GetEquippedItem(ESlots slot);
 
-	EItemType GetEquippedItem(int slotIndex);
+    EItemType GetEquippedItem(int slotIndex);
 
-	friend USaveEquipment;
+    friend USaveEquipment;
 
-	void SetItemAry(const TArray<FItemInstance>& equipSlot);
+    void SetItemAry(const TArray<FItemInstance>& equipSlot);
 };

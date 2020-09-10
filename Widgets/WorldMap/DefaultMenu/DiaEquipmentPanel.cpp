@@ -5,7 +5,7 @@
 #include "WidgetLayoutLibrary.h"
 UDiaEquipmentPanel* UDiaEquipmentPanel::GetEquipWidgetInst = nullptr;
 
-void UDiaEquipmentPanel::Init(EquipmentSystemOld * equipContainer)
+void UDiaEquipmentPanel::Init(UEquipmentSystem * equipContainer)
 {
 	m_EquipSys = equipContainer;
 	m_nPopupSelectedIndex=-1;

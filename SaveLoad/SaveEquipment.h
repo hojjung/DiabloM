@@ -1,16 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
-#include "CoreMinimal.h"
-
-#include "SaveLoadManagerOld.h"
+#include "DiabloM.h"
+#include "SaveLoadManager.h"
 #include "Datas/PlayerInitDataTable.h"
 #include "GameFramework/SaveGame.h"
-#include "Objs/EquipmentSystemOld.h"
-
+#include "Item/EquipmentSystem.h"
 #include "SaveEquipment.generated.h"
-
 
 
 UCLASS()
@@ -27,7 +22,7 @@ public:
 	
     void SetEquipSaveData(const TArray<FEquipSlot*>& equip);//
 	
-    void SetEquipLoadData(EquipmentSystemOld** outEquip);
+    void SetEquipLoadData(UEquipmentSystem** outEquip);
 
 	void SetEquipSaveDataFromCreation(const FCurrentCharData& charData);//
 };

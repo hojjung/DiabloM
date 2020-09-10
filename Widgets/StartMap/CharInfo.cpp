@@ -1,10 +1,6 @@
-
 #include "CharInfo.h"
-
-
 #include "Characters/StartMap/PlayerCreateController.h"
-#include "SaveLoad/SaveLoadManagerOld.h"
-
+#include "SaveLoad/SaveLoadManager.h"
 
 void UCharInfo::Init(const USaveCharacterStatus* char_stats)
 {
@@ -30,7 +26,7 @@ void UCharInfo::DeselectSlot()
 void UCharInfo::DeleteSlot()
 {
     Cast<APlayerCreateController> (GetOwningPlayer())->GetPlayerVisual()->HideMesh();
-    SaveLoadManagerOld::Get->DeleteSlot(m_nSlotIndex);
+    USaveLoadManager::Get->DeleteSlot(m_nSlotIndex);
     PRINTF("SlotDelete");
     SetVisibility(ESlateVisibility::Collapsed);
     //Destroy();

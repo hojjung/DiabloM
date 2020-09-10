@@ -1,8 +1,6 @@
-// Fill out you	r copyright notice in the Description page of Project Settings.
-
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include  "Widgets/WorldMap/DefaultMenu/ImageAndText.h"
 #include "ImageAndTextAndCompare.generated.h"
 

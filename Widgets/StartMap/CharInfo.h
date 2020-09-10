@@ -1,21 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
-#include "CoreMinimal.h"
-
-#include "Image.h"
-#include "TextBlock.h"
+#include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "SaveLoad/SaveCharacterStatus.h"
-
 #include "CharInfo.generated.h"
 
-/**
- * 로딩한 캐릭터 버튼
- */
 class UCharInfo;
+
 DECLARE_DELEGATE_TwoParams(FOnSelected,int,UCharInfo*);
+
 UCLASS()
 class DIABLOM_API UCharInfo : public UUserWidget
 {

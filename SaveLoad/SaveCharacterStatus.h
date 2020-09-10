@@ -1,13 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "DiabloM.h"
-
-
 #include "Characters/DiabloPlayerController.h"
 #include "GameFramework/SaveGame.h"
-#include "SaveLoadManagerOld.h"
+#include "SaveLoadManager.h"
 #include "SaveCharacterStatus.generated.h"
 
 /**

@@ -10,7 +10,6 @@ UEquipmentSystem::~UEquipmentSystem()
 }
 
 
-
 void UEquipmentSystem::Init()
 {
     m_Head.SetEquipableType(EItemType::Helmet, true);
@@ -222,7 +221,8 @@ void UEquipmentSystem::PrintEquipStats()
 
     for (int i = 0; i < static_cast<int>(ESlots::Length); i++)
     {
-        PRINTF("Slot: %s - EquipItem: %s - Occupied: %B", *EnumToStr(ESlots, (ESlots)i), *EnumToStr(EItemType, GetEquippedItem(i)),m_ArySlots[i]->m_bIsOccupied);
+        PRINTF("Slot: %s - EquipItem: %s - Occupied: %B", *EnumToStr(ESlots, (ESlots)i),
+               *EnumToStr(EItemType, GetEquippedItem(i)), m_ArySlots[i]->m_bIsOccupied);
     }
 }
 
@@ -238,10 +238,10 @@ EItemType UEquipmentSystem::GetEquippedItem(int slotIndex)
 
 void UEquipmentSystem::SetItemAry(const TArray<FItemInstance>& equipSlot)
 {
-    for(int i=0; i<m_ArySlots.Num();i++)
+    for (int i = 0; i < m_ArySlots.Num(); i++)
     {
-        m_ArySlots[i]->m_Item=equipSlot[i];
-        m_ArySlots[i]->m_Item.m_Holder=this;
+        m_ArySlots[i]->m_Item = equipSlot[i];
+        m_ArySlots[i]->m_Item.m_Holder = this;
         OnItemSlotChanged(i);
     }
 }
@@ -268,7 +268,6 @@ void UEquipmentSystem::SetStanceAllNull()
 
 void UEquipmentSystem::SetStanceNull()
 {
-
     m_WeaponRight.SetEquipableType(EItemType::Katana, false);
     m_WeaponRight.SetEquipableType(EItemType::TwohandSword, false);
     //
@@ -276,14 +275,14 @@ void UEquipmentSystem::SetStanceNull()
     m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
     m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
     //
-    if (!m_WeaponLeft.m_bIsOccupied)//비어있을때
+    if (!m_WeaponLeft.m_bIsOccupied) //비어있을때
     {
         m_WeaponRight.SetEquipableType(EItemType::Katana, true);
         m_WeaponRight.SetEquipableType(EItemType::TwohandSword, true);
         m_WeaponLeft.SetOccupie(false);
     }
-    
-    
+
+
     m_CurrentStance = EAnimStance::None;
 }
 
@@ -308,7 +307,7 @@ void UEquipmentSystem::SetStanceDual()
     m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
     m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
     //
- 
+
     m_CurrentStance = EAnimStance::DualSword;
 }
 

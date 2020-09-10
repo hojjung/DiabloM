@@ -1,5 +1,4 @@
 #include "DiaDragDrop.h"
-#include "DiabloM.h"
 
 
 void UDiaDragDrop::SetDDO(const FItemInstance & itemInst)

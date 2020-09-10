@@ -1,19 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
-// ReSharper disable All
 #include "CharSelect.h"
 
 
 
 #include "Characters/StartMap/PlayerCreateController.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/StartMap/PlayerCreateManagerOld.h"
+#include "Managers/StartMap/PlayerCreateManager.h"
 #include "SaveLoad/SaveEquipment.h"
-#include "SaveLoad/SaveLoadManagerOld.h"
+#include "SaveLoad/SaveLoadManager.h"
 #include "SaveLoad/SaveCharacterStatus.h"
 
-void UCharSelect::Init(SaveLoadManagerOld* SaveLoadManagerOld)
+void UCharSelect::Init(USaveLoadManager* SaveLoadManagerOld)
 {
     for(const USaveCharacterStatus* Char : SaveLoadManagerOld->GetLoadedChars())
     {
@@ -47,10 +43,12 @@ void UCharSelect::FocusCharacter(int slotIndex,UCharInfo* focusedInfo)
         m_FocusedInfo=nullptr;
     }
     PRINTF("Index:%d",slotIndex);
+    
     Cast<APlayerCreateController> (GetOwningPlayer())->GetPlayerVisual()->ShowMesh();
-    PlayerCreateManagerOld* PlMa=PlayerCreateManagerOld::Get;
-    USaveCharacterStatus* CharStat = SaveLoadManagerOld::Get->GetLoadedChars()[slotIndex];
-    USaveEquipment* CharEquip = SaveLoadManagerOld::Get->GetLoadedEquip()[slotIndex];
+    
+    UPlayerCreateManager* PlMa=UPlayerCreateManager::Get;
+    USaveCharacterStatus* CharStat = USaveLoadManager::Get->GetLoadedChars()[slotIndex];
+    USaveEquipment* CharEquip = USaveLoadManager::Get->GetLoadedEquip()[slotIndex];
 
     PlMa->SetCurrentDataFromSaveFile(CharStat,CharEquip);
 

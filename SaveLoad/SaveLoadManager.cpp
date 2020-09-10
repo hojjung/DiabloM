@@ -4,10 +4,9 @@
 #include "SaveEquipment.h"
 #include "Kismet/GameplayStatics.h"
 #include "SaveLoad/SaveInventory.h"
-#include "SaveLoad/SaveEquipment.h"
 #include "SaveLoad/SaveCharacterStatus.h"
 #include "Characters/PlayerDiabloCharacter.h"
-#include "Managers/StartMap/PlayerCreateManagerOld.h"
+#include "Managers/StartMap/PlayerCreateManager.h"
 
 
 USaveLoadManager* USaveLoadManager::Get=nullptr;
@@ -133,7 +132,7 @@ void USaveLoadManager::LoadEquipment() const
 
    ADiabloPlayerController* Controller = ADiabloPlayerController::Get;
 
-   EquipmentSystemOld* EquipPtr = Controller->GetEquipment();
+   UEquipmentSystem* EquipPtr = Controller->GetEquipment();
       
    LoadEquip->SetEquipLoadData(&EquipPtr);
 
@@ -181,7 +180,7 @@ bool USaveLoadManager::LoadCharacterStat(int index)
 }
 
 
-void USaveLoadManager::CreateNewCharacter(PlayerCreateManagerOld* plManager)
+void USaveLoadManager::CreateNewCharacter(UPlayerCreateManager* plManager)
 {
    //
    int PlayerIndex =GetEmptyIndex();

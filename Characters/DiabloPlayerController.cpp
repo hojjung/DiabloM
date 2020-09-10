@@ -2,14 +2,9 @@
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloCheatManager.h"
 #include "Datas/ItemDataTable.h"
-#include "Objs/InventoryOld.h"
-#include "Objs/PlayerSkillSystemOld.h"
-#include "Objs/EquipmentSystemOld.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "DrawDebugHelpers.h"
-#include "Objs/DroppedItem.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Item/Inventory.h"
+#include "Item/EquipmentSystem.h"
+#include "Item/DroppedItem.h"
 
  
 ADiabloPlayerController*  ADiabloPlayerController::Get=nullptr;
@@ -33,12 +28,10 @@ void ADiabloPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	m_Inven = new InventoryOld();
+	m_Inven = NewObject<UInventory>();
 	m_Inven->InitInven(m_nInvenX,m_nInvenY);
 
-	m_SkillSystem = new PlayerSkillSystemOld();
-
-	m_EquipSystem = new EquipmentSystemOld();
+	m_EquipSystem = NewObject<UEquipmentSystem>();
 	m_EquipSystem->Init();
 
 	InitWidget();
@@ -50,7 +43,7 @@ void ADiabloPlayerController::InitWidget()
 {
 	m_MainMenu = CreateWidget<UMainCanvas>(this, m_ClassMainMenu, "MainMenu00");
 	m_MainMenu->AddToViewport();
-	m_MainMenu->Init(this,Cast<APlayerDiabloCharacter>(GetPawn()),m_SkillSystem ,m_EquipSystem,m_Inven);
+	m_MainMenu->Init(this,Cast<APlayerDiabloCharacter>(GetPawn()),m_EquipSystem,m_Inven);
 
 	CloseMainMenu();
 }
@@ -59,9 +52,6 @@ void ADiabloPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	delete m_EquipSystem;
-	delete m_Inven;
-	delete m_SkillSystem;
 }
 
 void ADiabloPlayerController::SetupInputComponent()

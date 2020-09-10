@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "AbilitySystem/Attribute/BaseDiabloAttribute.h"
 #include "AbilitySystem/DiabloAbilitySystemComp.h"
 #include "Characters/UnitPawn.h"

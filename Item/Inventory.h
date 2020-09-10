@@ -3,6 +3,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "ItemHolder.h"
 
 #include "Datas/ItemDataTable.h"
 #include "Inventory.generated.h"
@@ -23,6 +24,7 @@ protected:
 
     int m_nYGridCount;
 
+    UPROPERTY()
     TArray<FItemInstance> m_ItemAry;
 
     int m_nCurrentEmptyIndex;

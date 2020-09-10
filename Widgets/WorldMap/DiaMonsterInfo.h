@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "DiaMonsterInfo.generated.h"
 

@@ -1,7 +1,6 @@
  #pragma once
 
-#include "CoreMinimal.h"
-
+#include "DiabloM.h"
 #include "CharCreate.h"
 #include "CharSelect.h"
 #include "Blueprint/UserWidget.h"

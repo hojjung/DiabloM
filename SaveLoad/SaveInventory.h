@@ -2,16 +2,12 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-
-#include "SaveLoadManagerOld.h"
+#include "DiabloM.h"
+#include "SaveLoadManager.h"
 #include "GameFramework/SaveGame.h"
-#include "Objs/InventoryOld.h"
+#include "Item/Inventory.h"
 #include "SaveInventory.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class DIABLOM_API USaveInventory : public USaveGame
 {
@@ -29,7 +25,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FItemInstance> m_InvenAry;
 public:
-	void SetSaveData(const InventoryOld* inven);//
+	void SetSaveData(const UInventory* inven);//
 	
-	void SetInvenLoadData(InventoryOld* outInven);
+	void SetInvenLoadData(UInventory* outInven);
 };

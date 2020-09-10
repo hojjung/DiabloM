@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
+#include "DiabloM.h"
 #include "Widget.h"
 #include "DiaBlueprintFunctionLibrary.generated.h"
 

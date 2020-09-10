@@ -1,12 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "DiabloM.h"
-#include "UObject/NoExportTypes.h"
-#include "Engine/DataTable.h"
 #include "AbilitySystem/AbilityTypes.h"
 #include "Datas/OptionDataTable.h"
+#include "Item/ItemHolder.h"
+
 #include "ItemDataTable.generated.h"
 
 
@@ -164,7 +162,7 @@ public:
 
     int m_nMaxStack;
     bool m_bStackable;
-
+    
     IItemHolder* m_Holder;
 
     const FItemData* m_ItemData;

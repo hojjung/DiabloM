@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "Managers/DiabloGameMode.h"
 #include "PlayerMainMenu.generated.h"
 

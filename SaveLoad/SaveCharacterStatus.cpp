@@ -1,6 +1,4 @@
 #include "SaveCharacterStatus.h"
-#include "SaveLoadManagerOld.h"
-
 #include "Characters/PlayerDiabloCharacter.h"
 
 void USaveCharacterStatus::SaveCharStatSave(int index, int level, FText playerName)

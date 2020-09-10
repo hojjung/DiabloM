@@ -2,12 +2,8 @@
 #include "DiaEquipmentPanel.h"
 #include "DiaInvenGridPanel.h"
 #include "DiaInvenGridSlot.h"
-#include "Components/CanvasPanelSlot.h"
-#include "WidgetLayoutLibrary.h"
-#include "Components/VerticalBoxSlot.h"
 #include "Animation/UMGSequencePlayer.h"
-#include "Kismet/KismetTextLibrary.h"
-#include "Managers/ItemManagerOld.h"
+#include "Item/ItemManager.h"
 #include "Characters/DiabloPlayerController.h"
 
 
@@ -219,12 +215,12 @@ void UItemPopupInfo::ShowInfoPanel(FItemInstance& itemInst)
 
         auto* DiaChar= Cast<ADiabloPlayerController>( UGameplayStatics::GetPlayerController(GetWorld(),0));
         
-        if (static_cast<EquipmentSystemOld*>(Holder) ==DiaChar->GetEquipment())
+        if (Cast< UEquipmentSystem>(Holder) ==DiaChar->GetEquipment())
         {
             PRINTF("EquipSys");
             GetEquipButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::UnequipItem);
         }
-        else if (static_cast<InventoryOld*>(Holder) == DiaChar->GetInven())
+        else if (Cast<UInventory>(Holder) == DiaChar->GetInven())
         {
             PRINTF("Inven");
             GetEquipButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::EquipItem);

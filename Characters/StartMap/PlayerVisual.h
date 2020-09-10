@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/SkeletalMesh.h"
 #include "GameFramework/Pawn.h"
-#include "Managers/StartMap/PlayerCreateManagerOld.h"
+#include "Managers/StartMap/PlayerCreateManager.h"
 
 #include "PlayerVisual.generated.h"
 
@@ -42,8 +42,9 @@ protected:
 	UStaticMeshComponent* m_MeshRightHand;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UStaticMeshComponent* m_MeshLeftHand;
-protected:	
-	PlayerCreateManagerOld* m_PlCreateManager;//smartponter?
+protected:
+	UPROPERTY()
+	UPlayerCreateManager* m_PlCreateManager;//smartponter?
 
 	UPROPERTY()
 	UAnimSequence* m_AnimSeq;

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "DiabloM.h"
-#include "Engine/DataTable.h"
 #include "OptionDataTable.generated.h"
 
 

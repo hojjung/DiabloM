@@ -1,14 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "DiabloM.h"
 #include "GameFramework/Actor.h"
 #include "Engine/DataTable.h"
 #include "Datas/ItemDataTable.h"
-#include "Components/StaticMeshComponent.h"
-#include "Components/SphereComponent.h"
-#include "Components/WidgetComponent.h"
 #include "Objs/Interfaces/Interactable.h"
 #include "DroppedItem.generated.h"
 

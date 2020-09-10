@@ -3,9 +3,61 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EngineMinimal.h"
+#include "UObject/NoExportTypes.h"
+#include "ConstructorHelpers.h"
+//
+//
 #include "Engine/Engine.h"
-#include "Item/ItemHolder.h"
+#include "EngineMinimal.h"
+#include "Engine/DataTable.h"
+#include "Engine/GameInstance.h"
+//
+#include "Engine/SkeletalMesh.h"
+#include "Engine/StaticMesh.h"
+#include "Engine/Texture.h"
+#include "Engine/Font.h"
+//
+#include "Components/Button.h"
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
+#include "Components/EditableText.h"
+#include "Components/SizeBox.h"
+#include "Components/CanvasPanel.h"
+#include "Components/VerticalBoxSlot.h"
+#include "Components/VerticalBox.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Components/HorizontalBox.h"
+#include "Components/Overlay.h"
+#include "Components/GridPanel.h"
+#include "Components/GridSlot.h"
+//
+#include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
+//
+#include "Kismet/KismetStringLibrary.h"
+#include "Kismet/KismetMaterialLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetTextLibrary.h"
+#include "Kismet/BlueprintFunctionLibrary.h"
+//
+#include "WidgetLayoutLibrary.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "AbilitySystemBlueprintLibrary.h"
+//
+#include "DrawDebugHelpers.h"
+//
+#include "Components/SceneComponent.h"
+#include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
+
+
+
+//
 
 DIABLOM_API DECLARE_LOG_CATEGORY_EXTERN(DiaM, Log, All);
 
@@ -29,3 +81,4 @@ static FString EnumToString(const FString& enumName, const T value)
 	return *(pEnum ? pEnum->GetNameStringByIndex(static_cast<uint8>(value)) : "NoEnum-Null");
 }
 
+#define MAXLEVEL 100

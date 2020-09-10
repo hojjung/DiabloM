@@ -2,14 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-
-
-#include "Components/TextBlock.h"
-#include "Components/Image.h"
-
-
 #include "ItemNameCard.generated.h"
 
 /**

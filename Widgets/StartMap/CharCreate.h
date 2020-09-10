@@ -1,24 +1,18 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "PartSelect.h"
 #include "Blueprint/UserWidget.h"
-#include "Managers/StartMap/PlayerCreateManagerOld.h"
-
+#include "Managers/StartMap/PlayerCreateManager.h"
 #include "CharCreate.generated.h"
 
-/**
- * 캐릭터 제작 패널
- */
-
+class UStartMenuCanvas;
 class UEditableText;
+
 UCLASS()
 class DIABLOM_API UCharCreate : public UUserWidget
 {
     GENERATED_BODY()
-
 
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -33,17 +27,19 @@ protected:
     UPartSelect* m_PerkSelect;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UEditableText* m_NameBox;
-public:
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UButton* m_BtnContinue;
+    
 protected:
-    PlayerCreateManagerOld* m_PlManager;
+    UPROPERTY()
+    UPlayerCreateManager* m_PlManager;
 
     FTextFormat m_FormatT;
 public:
     virtual void NativePreConstruct() override;
 
-    void Init(PlayerCreateManagerOld* plManager);
+    void Init(UPlayerCreateManager* plManager);
     void OnVisualChanged(const FCurrentCharData& visual_change);
 
     UFUNCTION()
@@ -78,4 +74,6 @@ public:
     void StartCreation();
 protected:
     FText GetFormatCount(int index, int aryMax);
+
+    friend UStartMenuCanvas;
 };

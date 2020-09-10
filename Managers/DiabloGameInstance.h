@@ -1,17 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Engine/GameInstance.h"
+
+#include "DiabloM.h"
+
 #include "Datas/CharacterDataTable.h"
 #include "Datas/ItemDataTable.h"
 #include "Datas/PlayerInitDataTable.h"
-#include "Managers/ItemManagerOld.h"
-#include  "SaveLoad/SaveLoadManagerOld.h"
+#include "Item/ItemManager.h"
+#include "SaveLoad/SaveLoadManager.h"
 #include "DiabloGameInstance.generated.h"
 
-class PlayerCreateManagerOld;
+class UPlayerCreateManager;
 struct FItemInstance;
 struct FItemTier;
 struct FItemTier;
@@ -28,9 +27,12 @@ public:
 	TSubclassOf<ADroppedItem> m_DropItemClass;
 	
 public:
-	ItemManagerOld* m_ItemManagerOld;
-	SaveLoadManagerOld* m_SaveLoadManagerOld;
-	PlayerCreateManagerOld* m_PlCreateManager;
+	UPROPERTY()
+	UItemManager* m_ItemManager;
+	UPROPERTY()
+	USaveLoadManager* m_SaveLoadManager;
+	UPROPERTY()
+	UPlayerCreateManager* m_PlCreateManager;
 
 protected:
 	virtual void Init() override;

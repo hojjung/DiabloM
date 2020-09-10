@@ -1,6 +1,4 @@
-// ReSharper disable All
 #include "SaveEquipment.h"
-#include "DiabloM.h"
 
 
 void USaveEquipment::SetEquipSaveData(const TArray<FEquipSlot*>& equip)
@@ -11,7 +9,7 @@ void USaveEquipment::SetEquipSaveData(const TArray<FEquipSlot*>& equip)
     }
 }
 
-void USaveEquipment::SetEquipLoadData(EquipmentSystemOld** outEquip)
+void USaveEquipment::SetEquipLoadData(UEquipmentSystem** outEquip)
 {
     PRINTF("EquipLoaded:%d",m_EquipAry.Num());
 

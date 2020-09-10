@@ -2,15 +2,10 @@
 
 #pragma once
 
-#include "Button.h"
-#include "CoreMinimal.h"
-#include "TextBlock.h"
+#include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "PartSelect.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class DIABLOM_API UPartSelect : public UUserWidget
 {
