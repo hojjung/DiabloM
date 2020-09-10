@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 
-#include "SaveLoadManager.h"
+#include "SaveLoadManagerOld.h"
 #include "Datas/PlayerInitDataTable.h"
 #include "GameFramework/SaveGame.h"
-#include "Objs/EquipmentSystem.h"
+#include "Objs/EquipmentSystemOld.h"
 
 #include "SaveEquipment.generated.h"
 
@@ -27,7 +27,7 @@ public:
 	
     void SetEquipSaveData(const TArray<FEquipSlot*>& equip);//
 	
-    void SetEquipLoadData(EquipmentSystem** outEquip);
+    void SetEquipLoadData(EquipmentSystemOld** outEquip);
 
 	void SetEquipSaveDataFromCreation(const FCurrentCharData& charData);//
 };

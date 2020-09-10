@@ -1,6 +1,6 @@
 #include "DiabloGameInstance.h"
 #include "ConstructorHelpers.h"
-#include "StartMap/PlayerCreateManager.h"
+#include "StartMap/PlayerCreateManagerOld.h"
 
 
 UDiabloGameInstance* UDiabloGameInstance::Get = nullptr;
@@ -9,9 +9,9 @@ UDiabloGameInstance::UDiabloGameInstance()
 {
     UDiabloGameInstance::Get = this;
 
-    m_ItemManager=nullptr;
+    m_ItemManagerOld=nullptr;
 
-    m_SaveLoadManager=nullptr;
+    m_SaveLoadManagerOld=nullptr;
     
     m_PlCreateManager=nullptr;
 
@@ -21,21 +21,21 @@ void UDiabloGameInstance::Init()
 {
     Super::Init();
     
-    if (!m_ItemManager)
+    if (!m_ItemManagerOld)
     {
-        m_ItemManager=new  ItemManager();
-        m_ItemManager->Init(this);
+        m_ItemManagerOld=new  ItemManagerOld();
+        m_ItemManagerOld->Init(this);
 
     }
-    if (!m_SaveLoadManager)
+    if (!m_SaveLoadManagerOld)
     {
-        m_SaveLoadManager = new SaveLoadManager();
-        m_SaveLoadManager->InitSaveLoadManager();
+        m_SaveLoadManagerOld = new SaveLoadManagerOld();
+        m_SaveLoadManagerOld->InitSaveLoadManagerOld();
     }
 
     if(!m_PlCreateManager)
     {
-        m_PlCreateManager = new PlayerCreateManager();
+        m_PlCreateManager = new PlayerCreateManagerOld();
         m_PlCreateManager->Init(this);
     }
 }
@@ -44,8 +44,8 @@ void UDiabloGameInstance::Shutdown()
 {
     Super::Shutdown();
 
-    delete m_ItemManager;
-    delete m_SaveLoadManager;
+    delete m_ItemManagerOld;
+    delete m_SaveLoadManagerOld;
     delete m_PlCreateManager;
 }
 
@@ -169,5 +169,5 @@ const FPlayerPerkRow& UDiabloGameInstance::GetPlayerPerk(FName id) const
 
 FItemInstance UDiabloGameInstance::CreateItem(FName id)
 {
-    return m_ItemManager->CreateItemInstance(id);
+    return m_ItemManagerOld->CreateItemInstance(id);
 }

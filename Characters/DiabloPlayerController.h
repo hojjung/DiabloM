@@ -17,8 +17,8 @@ class AUnitPawn;
 class Inventory;
 struct FItemInstance;
 class ADroppedItem;
-class PlayerSkillSystem;
-class EquipmentSystem;
+class PlayerSkillSystemOld;
+class EquipmentSystemOld;
 class APlayerDiabloCharacter;
 
 
@@ -31,9 +31,9 @@ public:
 	ADiabloPlayerController();
 	 static  ADiabloPlayerController* Get;
 protected:
-	Inventory* m_Inven;
-	PlayerSkillSystem* m_SkillSystem;
-	EquipmentSystem* m_EquipSystem;
+	InventoryOld* m_Inven;
+	PlayerSkillSystemOld* m_SkillSystem;
+	EquipmentSystemOld* m_EquipSystem;
 
 	
 protected:
@@ -102,15 +102,15 @@ public:
 
 
 public:
-	FORCEINLINE Inventory* GetInven() const
+	FORCEINLINE InventoryOld* GetInven() const
 	{
 		return  m_Inven;
 	}
-	FORCEINLINE PlayerSkillSystem* GetSkillSystem() const
+	FORCEINLINE PlayerSkillSystemOld* GetSkillSystem() const
 	{
 		return  m_SkillSystem;
 	}
-	FORCEINLINE EquipmentSystem* GetEquipment() const
+	FORCEINLINE EquipmentSystemOld* GetEquipment() const
 	{
 		return  m_EquipSystem;
 	}

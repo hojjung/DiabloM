@@ -11,6 +11,8 @@ APlayerCreateController::APlayerCreateController()
     m_ClassStartMenu=UStartMenuCanvas::StaticClass();
     
     CheatClass = UDiabloCheatManager::StaticClass();
+
+    APlayerController::SetVirtualJoystickVisibility(false);
 }
 
 void APlayerCreateController::BeginPlay()

@@ -1,6 +1,5 @@
 #include "PlayerInitDataTable.h"
 
-#include "OpenGLDrv/Private/Android/AndroidOpenGL.h"
 
 UDataTable* UPlayerInitDataTable::GetPlayerHairTable = nullptr;
 UDataTable* UPlayerInitDataTable::GetPlayerFaceTable = nullptr;

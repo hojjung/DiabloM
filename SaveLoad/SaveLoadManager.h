@@ -3,20 +3,35 @@
 #pragma once
 
 #include "DiabloM.h"
-#include "SaveCharacterStatus.h"
+#include "Objs/EquipmentSystem.h"
+#include "SaveLoadManager.generated.h"
 
 
-class PlayerCreateManager;
+class PlayerCreateManagerOld;
 class USaveEquipment;
 class USaveInventory;
+class USaveCharacterStatus;
 
-class DIABLOM_API SaveLoadManager
+
+DECLARE_DELEGATE_OneParam(FOnSaveDataCreated,const USaveCharacterStatus*);
+
+UENUM(BlueprintType)
+enum class ESaveVersion :uint8 //������ �ν��Ͻ��� ��ġ
 {
-public:
-	static SaveLoadManager* Get;
-	
-	~SaveLoadManager();
+	Init
+};
 
+UCLASS()
+class DIABLOM_API USaveLoadManager : public UObject
+{
+	GENERATED_BODY()
+
+	
+public:
+	static USaveLoadManager* Get;
+
+	~USaveLoadManager();
+	
 	int m_nCurrentPlayerIndex=0;
 
 	ESaveVersion m_SaveVersion = ESaveVersion::Init;
@@ -28,27 +43,27 @@ public:
 	int m_nCurrentSlotCount;
 
 	FOnSaveDataCreated m_OnDataCreated; 
-protected:
+	protected:
 	//index Need Insul
 	TArray<USaveCharacterStatus*> m_AryLoadedCharacters;
 	TArray<USaveEquipment*> m_AryLoadedEquipments;
-	TArray<USaveInventory*> m_AryLoadedInventorys;
+	TArray<USaveInventory*> m_AryLoadedInventoryOlds;
 	//They DonNeedInst
-public:
+	public:
 	void InitSaveLoadManager();
 	
-protected:
+	protected:
 	void TryLoadAllCharacter();
 	
 
-public:	
+	public:	
 	void DeleteSlot(int i);
 	
 	void DeleteAllSlot();
 	
 	void SaveInventory() const;
 
-	void LoadInventory() const;
+	void LoadInventoryOld() const;
 	
 	void SaveEquipment() const;
 
@@ -58,25 +73,12 @@ public:
 	
 	bool LoadCharacterStat(int index);
 
-	FORCEINLINE const TArray<USaveCharacterStatus*>& GetCharStatAry() const
-	{
-		return  m_AryLoadedCharacters;
-	}
 
-	void CreateNewCharacter(PlayerCreateManager* plManager);
+	void CreateNewCharacter(PlayerCreateManagerOld* plManager);
 	
-	FORCEINLINE const TArray<USaveCharacterStatus*>& GetLoadedChars() const
-	{
-		return m_AryLoadedCharacters;
-	}
-	FORCEINLINE const TArray<USaveEquipment*>& GetLoadedEquip() const
-	{
-		return m_AryLoadedEquipments;
-	}
-	FORCEINLINE const TArray<USaveInventory*>& GetLoadedInven() const
-	{
-		return m_AryLoadedInventorys;
-	}
+	const TArray<USaveCharacterStatus*>& GetLoadedChars() const;
+	const TArray<USaveEquipment*>& GetLoadedEquip() const;
+	const TArray<USaveInventory*>& GetLoadedInven() const;
 	int GetEmptyIndex();
 	//Focus Character need
 	void LoadItemDataForInstance(TArray<FItemInstance>& itemAry);

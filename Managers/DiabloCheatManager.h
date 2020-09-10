@@ -31,7 +31,7 @@ public:
 	UFUNCTION(exec)
 	void PrintPlayerStats();
 	UFUNCTION(exec)
-	void PrintInventory();
+	void PrintInventoryOld();
 	UFUNCTION(exec)
 	void PrintEquipment();
 

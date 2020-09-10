@@ -6,7 +6,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SkinnedMeshComponent.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/StartMap/PlayerCreateManager.h"
+#include "Managers/StartMap/PlayerCreateManagerOld.h"
 #include "Animation/AnimSequence.h"
 // Sets default values
 APlayerVisual::APlayerVisual()

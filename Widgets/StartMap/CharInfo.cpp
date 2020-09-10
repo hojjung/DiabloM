@@ -3,12 +3,12 @@
 
 
 #include "Characters/StartMap/PlayerCreateController.h"
-#include "SaveLoad/SaveLoadManager.h"
+#include "SaveLoad/SaveLoadManagerOld.h"
 
 
 void UCharInfo::Init(const USaveCharacterStatus* char_stats)
 {
-    m_TextName->SetText(char_stats->m_TextName);
+    m_TextName->SetText(FText::FromString( char_stats->m_TextName));
     m_TextLevel->SetText(FText::AsNumber(char_stats->m_nLevel));
     m_BtnSelect->OnClicked.AddDynamic(this,&UCharInfo::SelectSlot);
     m_nSlotIndex=char_stats->m_nSlotIndex;
@@ -30,7 +30,7 @@ void UCharInfo::DeselectSlot()
 void UCharInfo::DeleteSlot()
 {
     Cast<APlayerCreateController> (GetOwningPlayer())->GetPlayerVisual()->HideMesh();
-    SaveLoadManager::Get->DeleteSlot(m_nSlotIndex);
+    SaveLoadManagerOld::Get->DeleteSlot(m_nSlotIndex);
     PRINTF("SlotDelete");
     SetVisibility(ESlateVisibility::Collapsed);
     //Destroy();

@@ -2,12 +2,12 @@
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Objs/PlayerSkillSystem.h"
-#include "Objs/EquipmentSystem.h"
-#include "Objs/Inventory.h"
+#include "Objs/PlayerSkillSystemOld.h"
+#include "Objs/EquipmentSystemOld.h"
+#include "Objs/InventoryOld.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
 
-void UDefaultMenu::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, PlayerSkillSystem * skill, EquipmentSystem * equipment, Inventory * inven)
+void UDefaultMenu::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, PlayerSkillSystemOld * skill, EquipmentSystemOld * equipment, InventoryOld * inven)
 {
 	m_PlayerCon = playerCon;
 	m_PlayerChar = playerChar;
@@ -43,6 +43,6 @@ void UDefaultMenu::ThrowItem(const FItemInstance& itemThrow)
 	FVector RandomPos = m_PlayerChar->GetActorLocation();
 	FItemInstance item =itemThrow;
 	itemThrow.m_Holder->RemoveItemByIndex(itemThrow.m_nGridIndex);
-	GetGameInstance<UDiabloGameInstance>()->m_ItemManager->CreateItemActor(item,RandomPos);
+	GetGameInstance<UDiabloGameInstance>()->m_ItemManagerOld->CreateItemActor(item,RandomPos);
 }
 

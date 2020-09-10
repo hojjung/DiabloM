@@ -15,7 +15,7 @@
 struct FItemInstance;
 class UItemPopupInfo;
 class UDiaInvenGridSlot;
-class Inventory;
+class InventoryOld;
 class UDefaultMenu;
 UCLASS()
 class DIABLOM_API UDiaInvenGridPanel : public UUserWidget
@@ -37,11 +37,11 @@ public:
 	UItemPopupInfo* m_ItemPopup;
 
 protected:
-	Inventory* m_Inven;
+	InventoryOld* m_Inven;
 
 	int m_nPopupSelectedIndex;
 public:
-	void Init(Inventory* itemContainer);
+	void Init(InventoryOld* itemContainer);
 
 protected:
 	void HideItemInfo();
@@ -66,7 +66,7 @@ public:
 	void RemoveItemStack(int index);
 
 
-	FORCEINLINE Inventory* GetInven() const
+	FORCEINLINE InventoryOld* GetInven() const
 	{
 		return m_Inven;
 	}

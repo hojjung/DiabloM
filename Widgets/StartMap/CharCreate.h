@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "PartSelect.h"
 #include "Blueprint/UserWidget.h"
-#include "Managers/StartMap/PlayerCreateManager.h"
+#include "Managers/StartMap/PlayerCreateManagerOld.h"
 
 #include "CharCreate.generated.h"
 
@@ -37,13 +37,13 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UButton* m_BtnContinue;
 protected:
-    PlayerCreateManager* m_PlManager;
+    PlayerCreateManagerOld* m_PlManager;
 
     FTextFormat m_FormatT;
 public:
     virtual void NativePreConstruct() override;
 
-    void Init(PlayerCreateManager* plManager);
+    void Init(PlayerCreateManagerOld* plManager);
     void OnVisualChanged(const FCurrentCharData& visual_change);
 
     UFUNCTION()

@@ -8,28 +8,29 @@
 
 #include "Characters/StartMap/PlayerCreateController.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/StartMap/PlayerCreateManager.h"
+#include "Managers/StartMap/PlayerCreateManagerOld.h"
 #include "SaveLoad/SaveEquipment.h"
-#include "SaveLoad/SaveLoadManager.h"
+#include "SaveLoad/SaveLoadManagerOld.h"
 #include "SaveLoad/SaveCharacterStatus.h"
 
-void UCharSelect::Init(SaveLoadManager* saveLoadManager)
+void UCharSelect::Init(SaveLoadManagerOld* SaveLoadManagerOld)
 {
-    for(auto* Char : saveLoadManager->GetLoadedChars())
+    for(const USaveCharacterStatus* Char : SaveLoadManagerOld->GetLoadedChars())
     {
         if(!Char)
         {
             continue;
         }
+        
         CreateCharInfo(Char);
     }
-    saveLoadManager->m_OnDataCreated.BindUObject(this,&UCharSelect::CreateCharInfo);
+    SaveLoadManagerOld->m_OnDataCreated.BindUObject(this,&UCharSelect::CreateCharInfo);
     //create all charInfo From Save Datas
 }
 
 void UCharSelect::CreateCharInfo(const USaveCharacterStatus* charStats)
 {
-    auto* CharInfoCreated= CreateWidget<UCharInfo>(this,m_ClassCharInfo);
+    UCharInfo* CharInfoCreated = CreateWidget<UCharInfo>(this, m_ClassCharInfo);
 
     CharInfoCreated->Init(charStats);
 
@@ -47,9 +48,9 @@ void UCharSelect::FocusCharacter(int slotIndex,UCharInfo* focusedInfo)
     }
     PRINTF("Index:%d",slotIndex);
     Cast<APlayerCreateController> (GetOwningPlayer())->GetPlayerVisual()->ShowMesh();
-    PlayerCreateManager* PlMa=PlayerCreateManager::Get;
-    auto* CharStat= SaveLoadManager::Get->GetLoadedChars()[slotIndex];
-    auto* CharEquip= SaveLoadManager::Get->GetLoadedEquip()[slotIndex];
+    PlayerCreateManagerOld* PlMa=PlayerCreateManagerOld::Get;
+    USaveCharacterStatus* CharStat = SaveLoadManagerOld::Get->GetLoadedChars()[slotIndex];
+    USaveEquipment* CharEquip = SaveLoadManagerOld::Get->GetLoadedEquip()[slotIndex];
 
     PlMa->SetCurrentDataFromSaveFile(CharStat,CharEquip);
 

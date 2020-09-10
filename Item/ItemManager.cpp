@@ -1,28 +1,22 @@
 #include "ItemManager.h"
 #include "Managers/DiabloGameInstance.h"
 
-
-
-ItemManager::ItemManager(): m_GameInstance(nullptr), m_nCurrentIndex(0)
-{
-}
-
-ItemManager::~ItemManager()
+UItemManager::~UItemManager()
 {
 }
 
 
-void ItemManager::Init(UDiabloGameInstance * gameInstance)
+void UItemManager::Init(UDiabloGameInstance * gameInstance)
 {
 	m_GameInstance = gameInstance;
 	m_nCurrentIndex = 0;
 
-	PRINTF("ItemManager Init");
+	PRINTF("UItemManager Init");
 }
 
-FItemInstance ItemManager::CreateItemInstance(FName itemID,int level)
+FItemInstance UItemManager::CreateItemInstance(FName itemID,int level)
 {
-	auto* ItemData=m_GameInstance->GetItemDataPtr(itemID);
+	const FItemData* ItemData = m_GameInstance->GetItemDataPtr(itemID);
 
 	FItemInstance ItemCreated;
 
@@ -41,7 +35,7 @@ FItemInstance ItemManager::CreateItemInstance(FName itemID,int level)
 	return ItemCreated;
 }
 
-ADroppedItem* ItemManager::CreateItemActor(FItemInstance& itemWantAdd,FVector posWant)
+ADroppedItem* UItemManager::CreateItemActor(FItemInstance& itemWantAdd,FVector posWant)
 {
 	ADroppedItem* DroppedActor = Cast<ADroppedItem>(m_GameInstance->GetWorld()->SpawnActor(m_GameInstance->m_DropItemClass,&posWant));
 
@@ -56,7 +50,7 @@ ADroppedItem* ItemManager::CreateItemActor(FItemInstance& itemWantAdd,FVector po
 }
 
 
-bool ItemManager::CreateRandomOption(int level, const FItemData & itemData, TArray<FOptionValue>& outOption)
+bool UItemManager::CreateRandomOption(int level, const FItemData & itemData, TArray<FOptionValue>& outOption)
 {
 	//등급에 따라 옵션의 개수?
 	//레벨에 따라 옵션의 종류 및 강함?
@@ -100,7 +94,7 @@ bool ItemManager::CreateRandomOption(int level, const FItemData & itemData, TArr
 	return true;
 }
 
-void ItemManager::CreateIntAryForShuffle(int maxAryLen, TArray<int>& outIndexAry)
+void UItemManager::CreateIntAryForShuffle(int maxAryLen, TArray<int>& outIndexAry)
 {
 	int NumMaxOption = maxAryLen;
 
@@ -127,24 +121,24 @@ void ItemManager::CreateIntAryForShuffle(int maxAryLen, TArray<int>& outIndexAry
 
 }
 
-FOptionValue ItemManager::CreateRandomOptionValue(int indexRandomd, const FItemData & itemData)
+FOptionValue UItemManager::CreateRandomOptionValue(int indexRandomd, const FItemData & itemData)
 {
-	auto& OptionData = itemData.GetOption(indexRandomd);
+	const FOption& OptionData = itemData.GetOption(indexRandomd);
 	float RandValue = FMath::FRandRange(OptionData.m_fMinValue, OptionData.m_fMaxValue);
 	return FOptionValue(indexRandomd, RandValue);
 }
 
 
-bool ItemManager::AddItem(int droppedIndex, FItemInstance& itemWantAdd)
+bool UItemManager::AddItem(int droppedIndex, FItemInstance& itemWantAdd)
 {
 	return true;
 }
 
-void ItemManager::RemoveItem(FItemInstance & itemWantErase)
+void UItemManager::RemoveItem(FItemInstance & itemWantErase)
 {
 }
 
-void ItemManager::RemoveItemByIndex(int index)
+void UItemManager::RemoveItemByIndex(int index)
 {//20200825
 	//버전문제 아님
 	//위젯문제도 아니라고봄?
@@ -156,16 +150,16 @@ void ItemManager::RemoveItemByIndex(int index)
 	//m_AryItemInWorld[index]->ClearData();//what if 0?
 }
 
-bool ItemManager::CheckSlotValid(int droppedIndex, FItemInstance & itemWantAdd)
+bool UItemManager::CheckSlotValid(int droppedIndex, FItemInstance & itemWantAdd)
 {
 	return true;
 }
 
-void ItemManager::SetItem(int droppedIndex, FItemInstance & itemWantAdd)
+void UItemManager::SetItem(int droppedIndex, FItemInstance & itemWantAdd)
 {
 }
 
-bool ItemManager::SwapMove(FItemInstance & Drop, FItemInstance & Drag)
+bool UItemManager::SwapMove(FItemInstance & Drop, FItemInstance & Drag)
 {
 	return true;
 }

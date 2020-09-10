@@ -1,10 +1,17 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
 #include "EquipmentSystem.h"
-
-
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/ItemManager.h"
+#include "Item/ItemManager.h"
 
-void EquipmentSystem::Init()
+UEquipmentSystem::~UEquipmentSystem()
+{
+}
+
+
+
+void UEquipmentSystem::Init()
 {
     m_Head.SetEquipableType(EItemType::Helmet, true);
     m_Neck.SetEquipableType(EItemType::Necklace, true);
@@ -40,46 +47,46 @@ void EquipmentSystem::Init()
 
     //right/left
     m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::None)] = &
-        EquipmentSystem::SetStanceAllNull;
+        UEquipmentSystem::SetStanceAllNull;
     m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::OneHandSword)] = &
-        EquipmentSystem::SetStanceNull;
+        UEquipmentSystem::SetStanceNull;
     m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::Dagger)] = &
-        EquipmentSystem::SetStanceNull;
+        UEquipmentSystem::SetStanceNull;
     m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::Shield)] = &
-        EquipmentSystem::SetStanceNull;
+        UEquipmentSystem::SetStanceNull;
     m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::TwohandSword)] = &
-        EquipmentSystem::SetStanceNull;
+        UEquipmentSystem::SetStanceNull;
     m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::Katana)] = &
-        EquipmentSystem::SetStanceNull;
+        UEquipmentSystem::SetStanceNull;
     //				  EItemType
     m_StanceFPtr[static_cast<int>(EItemType::OneHandSword)][static_cast<int>(EItemType::OneHandSword)] = &
-        EquipmentSystem::SetStanceDual;
+        UEquipmentSystem::SetStanceDual;
     m_StanceFPtr[static_cast<int>(EItemType::Dagger)][static_cast<int>(EItemType::OneHandSword)] = &
-        EquipmentSystem::SetStanceDual;
+        UEquipmentSystem::SetStanceDual;
     m_StanceFPtr[static_cast<int>(EItemType::OneHandSword)][static_cast<int>(EItemType::Dagger)] = &
-        EquipmentSystem::SetStanceDual;
+        UEquipmentSystem::SetStanceDual;
     m_StanceFPtr[static_cast<int>(EItemType::Dagger)][static_cast<int>(EItemType::Dagger)] = &
-        EquipmentSystem::SetStanceDual;
+        UEquipmentSystem::SetStanceDual;
     //				  EItemType
     m_StanceFPtr[static_cast<int>(EItemType::OneHandSword)][static_cast<int>(EItemType::Shield)] = &
-        EquipmentSystem::SetStanceShield;
+        UEquipmentSystem::SetStanceShield;
     m_StanceFPtr[static_cast<int>(EItemType::Dagger)][static_cast<int>(EItemType::Shield)] = &
-        EquipmentSystem::SetStanceShield;
+        UEquipmentSystem::SetStanceShield;
     //				  EItemType
     m_StanceFPtr[static_cast<int>(EItemType::OneHandSword)][static_cast<int>(EItemType::None)] = &
-        EquipmentSystem::SetStanceOneHand;
+        UEquipmentSystem::SetStanceOneHand;
     //				  EItemType
     m_StanceFPtr[static_cast<int>(EItemType::Dagger)][static_cast<int>(EItemType::None)] = &
-        EquipmentSystem::SetStanceDagger;
+        UEquipmentSystem::SetStanceDagger;
     //				  EItemType
     m_StanceFPtr[static_cast<int>(EItemType::Katana)][static_cast<int>(EItemType::None)] = &
-        EquipmentSystem::SetStanceKatana;
+        UEquipmentSystem::SetStanceKatana;
     //				  EItemType
     m_StanceFPtr[static_cast<int>(EItemType::TwohandSword)][static_cast<int>(EItemType::None)] = &
-        EquipmentSystem::SetStanceTwoHand;
+        UEquipmentSystem::SetStanceTwoHand;
 }
 
-bool EquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //drag된 대상이 어떤 아이템을 가졌는지 알방법이 없음
+bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //drag된 대상이 어떤 아이템을 가졌는지 알방법이 없음
 {
     if (!CheckSlotValid(droppedIndex, itemWantAdd))
     {
@@ -102,12 +109,12 @@ bool EquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //dr
     return SwapMove(GetItem(droppedIndex), itemWantAdd);
 }
 
-void EquipmentSystem::RemoveItem(FItemInstance& itemWantErase)
+void UEquipmentSystem::RemoveItem(FItemInstance& itemWantErase)
 {
     RemoveItemByIndex(itemWantErase.m_nGridIndex);
 }
 
-void EquipmentSystem::RemoveItemByIndex(int index)
+void UEquipmentSystem::RemoveItemByIndex(int index)
 {
     m_ArySlots[index]->SetOccupie(false);
     m_ArySlots[index]->m_EquippedType = EItemType::None;
@@ -116,7 +123,7 @@ void EquipmentSystem::RemoveItemByIndex(int index)
     OnItemSlotChanged(index);
 }
 
-void EquipmentSystem::OnItemSlotChanged(int index)
+void UEquipmentSystem::OnItemSlotChanged(int index)
 {
     CalculateStance();
     m_ItemChanged.Broadcast(index, GetItem(index));
@@ -125,7 +132,7 @@ void EquipmentSystem::OnItemSlotChanged(int index)
     //
 }
 
-void EquipmentSystem::CalculateStance()
+void UEquipmentSystem::CalculateStance()
 {
     (this->*m_StanceFPtr[static_cast<int>(GetEquippedItem(ESlots::WeaponRight))][static_cast<int>(GetEquippedItem(
         ESlots::WeaponLeft))])();
@@ -134,12 +141,12 @@ void EquipmentSystem::CalculateStance()
 }
 
 
-bool EquipmentSystem::CheckSlotOccupied(int index)
+bool UEquipmentSystem::CheckSlotOccupied(int index)
 {
     return m_ArySlots[index]->m_bIsOccupied;
 }
 
-bool EquipmentSystem::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
+bool UEquipmentSystem::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
 {
     int DropIndex = Drop.m_nGridIndex;
     int DragIndex = Drag.m_nGridIndex;
@@ -157,9 +164,9 @@ bool EquipmentSystem::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
     return true;
 }
 
-bool EquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantAdd)
+bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantAdd)
 {
-    auto ItemTypeWantAdd = itemWantAdd.m_ItemData->m_ItemType;
+    EItemType ItemTypeWantAdd = itemWantAdd.m_ItemData->m_ItemType;
 
     if (!m_ArySlots[droppedIndex]->m_AbleEquipSlot[static_cast<int>(ItemTypeWantAdd)]) //못끼는 슬록이면 실패
     {
@@ -173,7 +180,7 @@ bool EquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantAd
 
     if (ItemTypeWantAdd == EItemType::TwohandSword || ItemTypeWantAdd == EItemType::Katana) //낄무기가 양손무기일걍우
     {
-        auto ItemTypeDroppedBefore = m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType;
+        EItemType ItemTypeDroppedBefore = m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType;
         //이미껴진 무기를 가져옴
         if (ItemTypeDroppedBefore == EItemType::TwohandSword
             || ItemTypeDroppedBefore == EItemType::Katana) //만일 껴저있는 무기가 양손무기라면 가능 이후 교체로 진행
@@ -190,7 +197,7 @@ bool EquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantAd
     return true;
 }
 
-void EquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
+void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
 {
     m_ArySlots[droppedIndex]->m_Item = itemWantAdd;
     m_ArySlots[droppedIndex]->SetOccupie(true);
@@ -202,12 +209,12 @@ void EquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
     OnItemSlotChanged(droppedIndex);
 }
 
-FItemInstance& EquipmentSystem::GetItem(int index)
+FItemInstance& UEquipmentSystem::GetItem(int index)
 {
     return m_ArySlots[index]->m_Item;
 }
 
-void EquipmentSystem::PrintEquipStats()
+void UEquipmentSystem::PrintEquipStats()
 {
     PRINTF("----EquipPrint----");
 
@@ -219,17 +226,17 @@ void EquipmentSystem::PrintEquipStats()
     }
 }
 
-EItemType EquipmentSystem::GetEquippedItem(ESlots slot)
+EItemType UEquipmentSystem::GetEquippedItem(ESlots slot)
 {
     return m_ArySlots[static_cast<int>(slot)]->m_EquippedType;
 }
 
-EItemType EquipmentSystem::GetEquippedItem(int slotIndex)
+EItemType UEquipmentSystem::GetEquippedItem(int slotIndex)
 {
     return m_ArySlots[slotIndex]->m_EquippedType;
 }
 
-void EquipmentSystem::SetItemAry(const TArray<FItemInstance>& equipSlot)
+void UEquipmentSystem::SetItemAry(const TArray<FItemInstance>& equipSlot)
 {
     for(int i=0; i<m_ArySlots.Num();i++)
     {
@@ -243,7 +250,7 @@ void EquipmentSystem::SetItemAry(const TArray<FItemInstance>& equipSlot)
 #pragma region SetFPtr
 
 
-void EquipmentSystem::SetStanceAllNull()
+void UEquipmentSystem::SetStanceAllNull()
 {
     //
     m_WeaponRight.SetEquipableType(EItemType::Katana, true);
@@ -259,7 +266,7 @@ void EquipmentSystem::SetStanceAllNull()
     m_CurrentStance = EAnimStance::None;
 }
 
-void EquipmentSystem::SetStanceNull()
+void UEquipmentSystem::SetStanceNull()
 {
 
     m_WeaponRight.SetEquipableType(EItemType::Katana, false);
@@ -280,7 +287,7 @@ void EquipmentSystem::SetStanceNull()
     m_CurrentStance = EAnimStance::None;
 }
 
-void EquipmentSystem::SetStanceOneHand()
+void UEquipmentSystem::SetStanceOneHand()
 {
     m_WeaponLeft.SetEquipableType(EItemType::Dagger, true);
     m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
@@ -292,7 +299,7 @@ void EquipmentSystem::SetStanceOneHand()
     m_CurrentStance = EAnimStance::OneHandSword;
 }
 
-void EquipmentSystem::SetStanceDual()
+void UEquipmentSystem::SetStanceDual()
 {
     m_WeaponRight.SetEquipableType(EItemType::Katana, false);
     m_WeaponRight.SetEquipableType(EItemType::TwohandSword, false);
@@ -305,7 +312,7 @@ void EquipmentSystem::SetStanceDual()
     m_CurrentStance = EAnimStance::DualSword;
 }
 
-void EquipmentSystem::SetStanceShield()
+void UEquipmentSystem::SetStanceShield()
 {
     m_WeaponRight.SetEquipableType(EItemType::Katana, false);
     m_WeaponRight.SetEquipableType(EItemType::TwohandSword, false);
@@ -317,7 +324,7 @@ void EquipmentSystem::SetStanceShield()
     m_CurrentStance = EAnimStance::Shield;
 }
 
-void EquipmentSystem::SetStanceDagger()
+void UEquipmentSystem::SetStanceDagger()
 {
     m_WeaponLeft.SetOccupie(false);
     m_WeaponRight.SetEquipableType(EItemType::Katana, true);
@@ -330,7 +337,7 @@ void EquipmentSystem::SetStanceDagger()
     m_CurrentStance = EAnimStance::Dagger;
 }
 
-void EquipmentSystem::SetStanceKatana()
+void UEquipmentSystem::SetStanceKatana()
 {
     //
     m_WeaponLeft.SetEquipableType(EItemType::Dagger, false);
@@ -341,7 +348,7 @@ void EquipmentSystem::SetStanceKatana()
     m_CurrentStance = EAnimStance::Katana;
 }
 
-void EquipmentSystem::SetStanceTwoHand()
+void UEquipmentSystem::SetStanceTwoHand()
 {
     //
     m_WeaponLeft.SetEquipableType(EItemType::Dagger, false);
@@ -354,3 +361,8 @@ void EquipmentSystem::SetStanceTwoHand()
 
 
 #pragma endregion
+
+TArray<FEquipSlot*>& UEquipmentSystem::GetArySlotPtr()
+{
+    return m_ArySlots;
+}

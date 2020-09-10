@@ -2,12 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "UObject/NoExportTypes.h"
-#include "Engine/DataAsset.h"
 #include "Engine/DataTable.h"
-#include "Engine/StaticMesh.h"
-#include "Objs/Interfaces/ItemHolder.h"
 #include "AbilitySystem/AbilityTypes.h"
 #include "Datas/OptionDataTable.h"
 #include "ItemDataTable.generated.h"
@@ -19,7 +16,7 @@ enum class EItemLocation :uint8 //������ �ν��Ͻ��� ��
     Void,
     Ground,
     Equipment,
-    Inventory,
+    InventoryOld,
     Stash,
     Length
 };

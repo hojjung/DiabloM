@@ -5,7 +5,7 @@
 #include "WidgetLayoutLibrary.h"
 UDiaEquipmentPanel* UDiaEquipmentPanel::GetEquipWidgetInst = nullptr;
 
-void UDiaEquipmentPanel::Init(EquipmentSystem * equipContainer)
+void UDiaEquipmentPanel::Init(EquipmentSystemOld * equipContainer)
 {
 	m_EquipSys = equipContainer;
 	m_nPopupSelectedIndex=-1;
@@ -159,7 +159,7 @@ void UDiaEquipmentPanel::HideItemInfo()
 	m_ItemPopup->PlayHideInfoAnim();
 }
 
-//void EquipmentSystem::ChangeStance()//erase
+//void EquipmentSystemOld::ChangeStance()//erase
 //{
 	//auto SkeletalMesh = GetMesh();
 

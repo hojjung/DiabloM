@@ -6,7 +6,8 @@ USaveInventory::USaveInventory()
     m_nCount = -1;
 }
 
-void USaveInventory::SetSaveData(const Inventory* inven)
+
+void USaveInventory::SetSaveData(const InventoryOld* inven)
 {
     m_InvenAry = inven->GetItemAry();
     m_nCount = m_InvenAry.Num();
@@ -14,11 +15,11 @@ void USaveInventory::SetSaveData(const Inventory* inven)
     PRINTF("m_nCount:%d", m_nCount);
 }
 
-void USaveInventory::SetInvenLoadData(Inventory* outInven)
+void USaveInventory::SetInvenLoadData(InventoryOld* outInven)
 {
     //m_SaveVersion
 
-    for (auto& ItemLoad : m_InvenAry)
+    for (FItemInstance& ItemLoad : m_InvenAry)
     {
         if (ItemLoad.m_ItemID == NAME_None)
         {

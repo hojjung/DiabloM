@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "EngineMinimal.h"
 #include "Engine/Engine.h"
-#include "Kismet/GameplayStatics.h"
+#include "Item/ItemHolder.h"
 
 DIABLOM_API DECLARE_LOG_CATEGORY_EXTERN(DiaM, Log, All);
 
@@ -29,8 +29,3 @@ static FString EnumToString(const FString& enumName, const T value)
 	return *(pEnum ? pEnum->GetNameStringByIndex(static_cast<uint8>(value)) : "NoEnum-Null");
 }
 
-UENUM(BlueprintType)
-enum class ESaveVersion :uint8 //������ �ν��Ͻ��� ��ġ
-{
-	Init
-};

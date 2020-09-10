@@ -3,7 +3,6 @@
 #pragma once
 
 #include "DiabloM.h"
-#include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
 #include "Engine/SkeletalMesh.h"
 #include "AbilitySystem/AbilityTypes.h"

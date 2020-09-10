@@ -7,6 +7,7 @@
 
 #include "Characters/DiabloPlayerController.h"
 #include "GameFramework/SaveGame.h"
+#include "SaveLoadManagerOld.h"
 #include "SaveCharacterStatus.generated.h"
 
 /**
@@ -28,7 +29,7 @@ public:
     UPROPERTY(EditAnywhere)
     int m_nSlotIndex;
     UPROPERTY(EditAnywhere)
-    FText m_TextName;
+    FString m_TextName;
     UPROPERTY(EditAnywhere)
     int m_nLevel=1;
     UPROPERTY(EditAnywhere)
@@ -42,4 +43,3 @@ public:
     void SetCharStatLoad(ADiabloPlayerController* diaPl);
 };
 
-DECLARE_DELEGATE_OneParam(FOnSaveDataCreated,const USaveCharacterStatus*);

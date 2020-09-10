@@ -1,5 +1,5 @@
 #include "SaveCharacterStatus.h"
-#include "SaveLoadManager.h"
+#include "SaveLoadManagerOld.h"
 
 #include "Characters/PlayerDiabloCharacter.h"
 
@@ -9,14 +9,14 @@ void USaveCharacterStatus::SaveCharStatSave(int index, int level, FText playerNa
 
     m_nLevel = level;
     //m_TextUnitName
-    m_TextName = playerName;
+    m_TextName = playerName.ToString();
 }
 
 void USaveCharacterStatus::SetCharStatLoad(ADiabloPlayerController* diaPl)
 {
-    PRINTF("Load-%d, Name:%s",m_nSlotIndex,*m_TextName.ToString());
+    PRINTF("Load-%d, Name:%s",m_nSlotIndex,*m_TextName);
     
-    diaPl->GetUnitPawn()->m_TextUnitName = m_TextName;
+    diaPl->GetUnitPawn()->m_TextUnitName =FText::FromString(m_TextName);
 
     diaPl->GetUnitPawn()->SetLevel(m_nLevel);
 

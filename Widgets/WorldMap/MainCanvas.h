@@ -6,9 +6,9 @@
 #include "Components/Button.h"
 #include "MainCanvas.generated.h"
 
-class Inventory;
-class EquipmentSystem;
-class PlayerSkillSystem;
+class InventoryOld;
+class EquipmentSystemOld;
+class PlayerSkillSystemOld;
 class APlayerDiabloCharacter;
 class ADiabloPlayerController;
 class UDefaultMenu;
@@ -39,9 +39,9 @@ protected:
     ADiabloPlayerController* m_PlayerCon;
     UPROPERTY()
     APlayerDiabloCharacter* m_PlayerPawn;
-    PlayerSkillSystem* m_SkillSys;
-    EquipmentSystem* m_EquipSys;
-    Inventory* m_Inven;
+    PlayerSkillSystemOld* m_SkillSys;
+    EquipmentSystemOld* m_EquipSys;
+    InventoryOld* m_Inven;
 public:
     UFUNCTION(BlueprintCallable,Category="Menu")
     void OpenMainMenu();
@@ -57,5 +57,5 @@ public:
     void CloseSetting();
 
 public:
-    void Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, PlayerSkillSystem * skill, EquipmentSystem * equipment, Inventory * inven);
+    void Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, PlayerSkillSystemOld * skill, EquipmentSystemOld * equipment, InventoryOld * inven);
 };

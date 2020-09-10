@@ -149,8 +149,8 @@ public:
 
 	void RemoveSlottedGameplayAbilities(bool bRemoveAll);
 
-	FDelegateHandle InventoryUpdateHandle;
-	FDelegateHandle InventoryLoadedHandle;
+	FDelegateHandle InventoryOldUpdateHandle;
+	FDelegateHandle InventoryOldLoadedHandle;
 public:
 	//데이터 테이블로 빼줘야함.
 

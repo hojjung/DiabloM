@@ -15,7 +15,7 @@
 
 
 class USaveCharacterStatus;
-class SaveLoadManager;
+class SaveLoadManagerOld;
 /**
  * 로딩한 캐릭터 고르는 화면
  */
@@ -38,7 +38,7 @@ public:
     UPROPERTY()
     UCharInfo* m_FocusedInfo;
 public:
-    void Init(SaveLoadManager* saveLoadManager);
+    void Init(SaveLoadManagerOld* SaveLoadManagerOld);
     
     void CreateCharInfo(const USaveCharacterStatus* charStats);
 

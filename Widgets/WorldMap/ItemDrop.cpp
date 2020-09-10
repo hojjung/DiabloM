@@ -34,5 +34,5 @@ void UItemDrop::ThrowItem(const FItemInstance& itemThrow)
     FVector RandomPos = UGameplayStatics::GetPlayerPawn(GetWorld(),0)->GetMovementComponent()->GetActorFeetLocation();
     FItemInstance item =itemThrow;
     itemThrow.m_Holder->RemoveItemByIndex(itemThrow.m_nGridIndex);
-    GetGameInstance<UDiabloGameInstance>()->m_ItemManager->CreateItemActor(item,RandomPos);
+    GetGameInstance<UDiabloGameInstance>()->m_ItemManagerOld->CreateItemActor(item,RandomPos);
 }

@@ -11,7 +11,7 @@ void UCharCreate::NativePreConstruct()
     m_FormatT= FText::FromString("{0}/{1}");
 }
 
-void UCharCreate::Init(PlayerCreateManager* plManager)
+void UCharCreate::Init(PlayerCreateManagerOld* plManager)
 {
     m_PlManager=plManager;
     m_PlManager->m_OnVisualChange.AddUObject(this,&UCharCreate::OnVisualChanged);

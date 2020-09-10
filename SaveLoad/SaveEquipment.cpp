@@ -11,11 +11,11 @@ void USaveEquipment::SetEquipSaveData(const TArray<FEquipSlot*>& equip)
     }
 }
 
-void USaveEquipment::SetEquipLoadData(EquipmentSystem** outEquip)
+void USaveEquipment::SetEquipLoadData(EquipmentSystemOld** outEquip)
 {
     PRINTF("EquipLoaded:%d",m_EquipAry.Num());
 
-    for(auto& ItemLoad : m_EquipAry)
+    for(FItemInstance& ItemLoad : m_EquipAry)
     {
         if(ItemLoad.m_ItemID == NAME_None)
         {

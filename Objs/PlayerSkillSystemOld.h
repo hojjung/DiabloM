@@ -7,9 +7,9 @@
 /**
  * 
  */
-class DIABLOM_API PlayerSkillSystem
+class DIABLOM_API PlayerSkillSystemOld
 {
 public:
-	PlayerSkillSystem();
-	~PlayerSkillSystem();
+	PlayerSkillSystemOld();
+	~PlayerSkillSystemOld();
 };

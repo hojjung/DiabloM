@@ -7,11 +7,11 @@
 #include "Datas/CharacterDataTable.h"
 #include "Datas/ItemDataTable.h"
 #include "Datas/PlayerInitDataTable.h"
-#include "Managers/ItemManager.h"
-#include  "SaveLoad/SaveLoadManager.h"
+#include "Managers/ItemManagerOld.h"
+#include  "SaveLoad/SaveLoadManagerOld.h"
 #include "DiabloGameInstance.generated.h"
 
-class PlayerCreateManager;
+class PlayerCreateManagerOld;
 struct FItemInstance;
 struct FItemTier;
 struct FItemTier;
@@ -28,9 +28,9 @@ public:
 	TSubclassOf<ADroppedItem> m_DropItemClass;
 	
 public:
-	ItemManager* m_ItemManager;
-	SaveLoadManager* m_SaveLoadManager;
-	PlayerCreateManager* m_PlCreateManager;
+	ItemManagerOld* m_ItemManagerOld;
+	SaveLoadManagerOld* m_SaveLoadManagerOld;
+	PlayerCreateManagerOld* m_PlCreateManager;
 
 protected:
 	virtual void Init() override;

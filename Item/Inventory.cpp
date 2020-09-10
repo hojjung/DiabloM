@@ -1,18 +1,17 @@
 #include "Inventory.h"
 #include "Datas/ItemDataTable.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/ItemManager.h"
+#include "Item/ItemManager.h"
 
-Inventory::~Inventory()
+UInventory::~UInventory()
 {
 	m_nCurrentEmptyIndex = -1;
 	m_nXGridCount = -1;
 	m_nYGridCount = -1;
 
-	//m_ItemDic.Empty();
 }
 
-void Inventory::InitInven(int xCount, int yCount)
+void UInventory::InitInven(int xCount, int yCount)
 {
 	m_nCurrentEmptyIndex = 0;
 
@@ -25,15 +24,14 @@ void Inventory::InitInven(int xCount, int yCount)
 	m_ItemAry.Reserve(CountTotal);
 
 	m_ItemAry.Init(FItemInstance(), CountTotal);
-	//m_ItemDic.Reserve(CountTotal);
 }
 
-bool Inventory::CheckSlotValid(int droppedIndex, FItemInstance & itemWantAdd)
+bool UInventory::CheckSlotValid(int droppedIndex, FItemInstance & itemWantAdd)
 {
 	return &m_ItemAry[droppedIndex];
 }
 
-void Inventory::SetItem(int droppedIndex, FItemInstance & itemWantAdd)
+void UInventory::SetItem(int droppedIndex, FItemInstance & itemWantAdd)
 {
 	m_ItemAry[droppedIndex] = itemWantAdd;
 	m_ItemAry[droppedIndex].m_nGridIndex = droppedIndex;
@@ -41,25 +39,25 @@ void Inventory::SetItem(int droppedIndex, FItemInstance & itemWantAdd)
 	m_OnSlotChanged.Broadcast(droppedIndex, m_ItemAry[droppedIndex]);
 }
 
-void Inventory::AddItemStack(int index)
+void UInventory::AddItemStack(int index)
 {
 	m_ItemAry[index].m_nCurrentStack++;
 
 	m_OnSlotChanged.Broadcast(index, m_ItemAry[index]);
 }
 
-void Inventory::RemoveItem(FItemInstance & itemWantErase)
+void UInventory::RemoveItem(FItemInstance & itemWantErase)
 {
 	RemoveItemByIndex(itemWantErase.m_nGridIndex);
 }
 
-void Inventory::RemoveItemByIndex(int index)
+void UInventory::RemoveItemByIndex(int index)
 {
 	m_ItemAry[index].ClearData();
 	m_OnSlotChanged.Broadcast(index, m_ItemAry[index]);
 }
 
-void Inventory::RemoveItemStack(int index)
+void UInventory::RemoveItemStack(int index)
 {
 	m_ItemAry[index].m_nCurrentStack--;
 
@@ -71,10 +69,10 @@ void Inventory::RemoveItemStack(int index)
 	m_OnSlotChanged.Broadcast(index, m_ItemAry[index]);
 }
 
-bool Inventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//빌드후 여기도
+bool UInventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//빌드후 여기도
 {
 	//return true;
-	if (this == static_cast<Inventory*>(itemWantAdd.m_Holder) && droppedIndex == itemWantAdd.m_nGridIndex)
+	if (this == static_cast<UInventory*>(itemWantAdd.m_Holder) && droppedIndex == itemWantAdd.m_nGridIndex)
 	{
 		PRINTF("Prevent MySelf");
 		return false;
@@ -122,7 +120,7 @@ bool Inventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd)//빌드후
 	return Result;
 }
 
-bool Inventory::AddItemAuto(FItemInstance& item_instance)
+bool UInventory::AddItemAuto(FItemInstance& item_instance)
 {
 	int Result =GetEmptyIndex();
 
@@ -134,7 +132,7 @@ bool Inventory::AddItemAuto(FItemInstance& item_instance)
 	return AddItem(Result,item_instance);
 }
 
-bool Inventory::SwapMove(FItemInstance &Drop, FItemInstance &Drag)
+bool UInventory::SwapMove(FItemInstance &Drop, FItemInstance &Drag)
 {
 	int DropIndex = Drop.m_nGridIndex;
 	int DragIndex = Drag.m_nGridIndex;
@@ -150,7 +148,7 @@ bool Inventory::SwapMove(FItemInstance &Drop, FItemInstance &Drag)
 	return true;
 }
 
-void Inventory::StackMove(FItemInstance &Drop, FItemInstance &Drag, IItemHolder* preItemHolder)
+void UInventory::StackMove(FItemInstance &Drop, FItemInstance &Drag, IItemHolder* preItemHolder)
 {
 	int DiffStackCount = Drop.m_nMaxStack - Drop.m_nCurrentStack;
 
@@ -169,11 +167,11 @@ void Inventory::StackMove(FItemInstance &Drop, FItemInstance &Drag, IItemHolder*
 
 }
 
-void Inventory::PrintInven()
+void UInventory::PrintInven()
 {
 	PRINTF("----InvenPrint----");
 
-	for (auto& Item : m_ItemAry)
+	for (FItemInstance& Item : m_ItemAry)
 	{
 		if (Item.m_ItemID==NAME_None)
 		{
@@ -184,18 +182,23 @@ void Inventory::PrintInven()
 	}
 }
 
-void Inventory::GetInvenSize(int & x, int & y)
+void UInventory::GetInvenSize(int & x, int & y)
 {
 	x = m_nXGridCount;
 	y = m_nYGridCount;
 }
 
-FItemInstance & Inventory::GetItemRef(int index)
+FItemInstance & UInventory::GetItemRef(int index)
 {
 	return m_ItemAry[index];
 }
 
-void Inventory::SetItemAry(TArray<FItemInstance>& loadedAry)
+const TArray<FItemInstance>& UInventory::GetItemAry() const
+{
+	return m_ItemAry;	
+}
+
+void UInventory::SetItemAry(TArray<FItemInstance>& loadedAry)
 {
 	m_ItemAry=loadedAry;
 
@@ -206,7 +209,7 @@ void Inventory::SetItemAry(TArray<FItemInstance>& loadedAry)
 	}
 }
 
-int Inventory::GetEmptyIndex()
+int UInventory::GetEmptyIndex()
 {
 	for(int i=0; i< m_ItemAry.Num();i++)
 	{

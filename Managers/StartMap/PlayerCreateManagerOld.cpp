@@ -1,20 +1,18 @@
-#include "PlayerCreateManager.h"
+#include "PlayerCreateManagerOld.h"
 #include "Managers/DiabloGameInstance.h"
-#include "SaveLoad/SaveLoadManager.h"
 
-UPlayerCreateManager* UPlayerCreateManager::Get=nullptr;
+PlayerCreateManagerOld* PlayerCreateManagerOld::Get=nullptr;
 
-
-UPlayerCreateManager::~UPlayerCreateManager()
+PlayerCreateManagerOld::PlayerCreateManagerOld(): m_IndexHair(0), m_IndexFace(0), m_IndexArmor(0), m_IndexWeapon(0),
+                                            m_IndexItem(0),
+                                            m_IndexPerk(0)
 {
-    m_IndexHair(0);
-    m_IndexFace(0);
-    m_IndexArmor(0);
-    m_IndexWeapon(0);
-    m_IndexItem(0);
-    m_IndexPerk(0);
-    
-    UPlayerCreateManager::Get=nullptr;
+    PlayerCreateManagerOld::Get=this;
+}
+
+PlayerCreateManagerOld::~PlayerCreateManagerOld()
+{
+    PlayerCreateManagerOld::Get=nullptr;
     m_AryHair.Empty();
     m_AryFace.Empty();
     m_AryArmor.Empty();
@@ -23,7 +21,7 @@ UPlayerCreateManager::~UPlayerCreateManager()
     m_CurrentCharData.Clear();
 }
 
-void UPlayerCreateManager::Init(UDiabloGameInstance* gameInst)
+void PlayerCreateManagerOld::Init(UDiabloGameInstance* gameInst)
 {
     InitArraysFromTable();
     SetArmorFromSetting();
@@ -33,7 +31,7 @@ void UPlayerCreateManager::Init(UDiabloGameInstance* gameInst)
     SetHairFromSetting();
 }
 
-void UPlayerCreateManager::ClearIndex()
+void PlayerCreateManagerOld::ClearIndex()
 {
      m_IndexHair=0;
      m_IndexFace=0;
@@ -43,7 +41,7 @@ void UPlayerCreateManager::ClearIndex()
      m_IndexPerk=0;
 }
 
-void UPlayerCreateManager::InitArraysFromTable()
+void PlayerCreateManagerOld::InitArraysFromTable()
 {
     UPlayerInitDataTable::GetPlayerHairTable->GetAllRows("FailHair",m_AryHair);
     UPlayerInitDataTable::GetPlayerFaceTable->GetAllRows("FailFace",m_AryFace);
@@ -52,32 +50,32 @@ void UPlayerCreateManager::InitArraysFromTable()
     UPlayerInitDataTable::GetPlayerPerkTable->GetAllRows("FailPerk",m_AryPerk);
 }
 
-void UPlayerCreateManager::SetPerkFromSetting()
+void PlayerCreateManagerOld::SetPerkFromSetting()
 {
     m_CurrentCharData.m_TextNamePerk = m_AryPerk[m_IndexPerk]->m_ShowingName;
     //m_CurrentCharData.m_CurrentPerk = m_AryPerk[m_IndexPerk];
 }
 
-void UPlayerCreateManager::SetItemFromSetting()
+void PlayerCreateManagerOld::SetItemFromSetting()
 {
     m_CurrentCharData.m_TextNameItem = m_AryItem[m_IndexItem]->m_ShowingName;
     //m_CurrentCharData.m_CurrentItem = m_AryItem[m_IndexItem];
 }
 
-void UPlayerCreateManager::SetFaceFromSetting()
+void PlayerCreateManagerOld::SetFaceFromSetting()
 {
     m_CurrentCharData.m_CurrentFace = GetFace(m_IndexFace);
     m_CurrentCharData.m_TextNameFace = m_AryFace[m_IndexFace]->m_ShowingName;
 }
 
-void UPlayerCreateManager::SetHairFromSetting()
+void PlayerCreateManagerOld::SetHairFromSetting()
 {
     bool HasHelmet=m_CurrentCharData.m_CurrentHelmet;
     m_CurrentCharData.m_CurrentHair = GetHair(m_IndexHair,HasHelmet);
     m_CurrentCharData.m_TextNameHair = m_AryHair[m_IndexHair]->m_ShowingName;
 }
 
-void UPlayerCreateManager::SetArmorFromSetting()
+void PlayerCreateManagerOld::SetArmorFromSetting()
 {
     m_CurrentCharData.m_TextNameArmor = m_AryArmor[m_IndexArmor]->m_ShowingName;
     m_CurrentCharData.m_CurrentBody=m_AryArmor[m_IndexArmor]->m_BodyArmorHandle.IsNull() ? nullptr : m_AryArmor[m_IndexArmor]->m_BodyArmorHandle.GetRow<FItemData>("");
@@ -93,12 +91,12 @@ void UPlayerCreateManager::SetArmorFromSetting()
   
 }
 //
-void UPlayerCreateManager::OnDataChanged()
+void PlayerCreateManagerOld::OnDataChanged()
 {
     m_OnVisualChange.Broadcast(m_CurrentCharData);
 }
 
-void UPlayerCreateManager::SetCurrentDataFromSaveFile(const USaveCharacterStatus* char_stat,
+void PlayerCreateManagerOld::SetCurrentDataFromSaveFile(const USaveCharacterStatus* char_stat,
     const USaveEquipment* save_equipment)
 {
     m_CurrentCharData.m_CurrentBody=save_equipment->m_EquipAry[(int)ESlots::Torso].m_ItemData;
@@ -115,7 +113,7 @@ void UPlayerCreateManager::SetCurrentDataFromSaveFile(const USaveCharacterStatus
     OnDataChanged();
 }
 
-void UPlayerCreateManager::DecreaseHair()
+void PlayerCreateManagerOld::DecreaseHair()
 {
     m_IndexHair--;
 
@@ -128,7 +126,7 @@ void UPlayerCreateManager::DecreaseHair()
     OnDataChanged();
 }
 
-void UPlayerCreateManager::IncreaseHair()
+void PlayerCreateManagerOld::IncreaseHair()
 {
     m_IndexHair++;
 
@@ -141,7 +139,7 @@ void UPlayerCreateManager::IncreaseHair()
     OnDataChanged();
 }
 
-void UPlayerCreateManager::DecreaseFace()
+void PlayerCreateManagerOld::DecreaseFace()
 {
     m_IndexFace--;
 
@@ -154,7 +152,7 @@ void UPlayerCreateManager::DecreaseFace()
     OnDataChanged();
 }
 
-void UPlayerCreateManager::IncreaseFace()
+void PlayerCreateManagerOld::IncreaseFace()
 {
     m_IndexFace++;
 
@@ -167,7 +165,7 @@ void UPlayerCreateManager::IncreaseFace()
     OnDataChanged();
 }
 
-void UPlayerCreateManager::DecreaseArmor()
+void PlayerCreateManagerOld::DecreaseArmor()
 {
     m_IndexArmor--;
 
@@ -181,7 +179,7 @@ void UPlayerCreateManager::DecreaseArmor()
     OnDataChanged();
 }
 
-void UPlayerCreateManager::IncreaseArmor()
+void PlayerCreateManagerOld::IncreaseArmor()
 {
     m_IndexArmor++;
 
@@ -196,7 +194,7 @@ void UPlayerCreateManager::IncreaseArmor()
 }
 
 
-void UPlayerCreateManager::DecreaseItem()
+void PlayerCreateManagerOld::DecreaseItem()
 {
     m_IndexItem--;
 
@@ -209,7 +207,7 @@ void UPlayerCreateManager::DecreaseItem()
     OnDataChanged();
 }
 
-void UPlayerCreateManager::IncreaseItem()
+void PlayerCreateManagerOld::IncreaseItem()
 {
     m_IndexItem++;
     
@@ -222,7 +220,7 @@ void UPlayerCreateManager::IncreaseItem()
     OnDataChanged();
 }
 
-void UPlayerCreateManager::DecreasePerk()
+void PlayerCreateManagerOld::DecreasePerk()
 {
     m_IndexPerk--;
     
@@ -235,7 +233,7 @@ void UPlayerCreateManager::DecreasePerk()
     OnDataChanged();
 }
 
-void UPlayerCreateManager::IncreasePerk()
+void PlayerCreateManagerOld::IncreasePerk()
 {
     m_IndexPerk++;
     
@@ -248,22 +246,22 @@ void UPlayerCreateManager::IncreasePerk()
     OnDataChanged();
 }
 
-void UPlayerCreateManager::DoneCreateCharcter()
+void PlayerCreateManagerOld::DoneCreateCharcter()
 {
-    USaveLoadManager::Get->CreateNewCharacter(this);
+    SaveLoadManagerOld::Get->CreateNewCharacter(this);
 }
 
-USkeletalMesh* UPlayerCreateManager::GetFace(int index)
+USkeletalMesh* PlayerCreateManagerOld::GetFace(int index)
 {
     return m_AryFace[index]->m_MeshFace;
 }
 
-USkeletalMesh* UPlayerCreateManager::GetHair(int index,bool hasHelMet)
+USkeletalMesh* PlayerCreateManagerOld::GetHair(int index,bool hasHelMet)
 {
     return !hasHelMet ? m_AryHair[index]->m_MeshFullHair : m_AryHair[index]->m_MeshHalfHair;
 }
 
-const FCurrentCharData& UPlayerCreateManager::GetCurrentCharData() const
+const FCurrentCharData& PlayerCreateManagerOld::GetCurrentCharData() const
 {
     return m_CurrentCharData;
 }

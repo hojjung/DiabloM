@@ -4,7 +4,7 @@
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-#include "Objs/EquipmentSystem.h"
+#include "Objs/EquipmentSystemOld.h"
 #include "DiaEquipmentPanel.generated.h"
 
 struct FItemInstance;
@@ -43,7 +43,7 @@ public:
 	UItemPopupInfo* m_ItemPopup;
 
 protected:
-	EquipmentSystem* m_EquipSys;
+	EquipmentSystemOld* m_EquipSys;
 
 	TArray<UDiaInvenGridSlot*> m_ArySlots;
 
@@ -57,7 +57,7 @@ protected:
 	int m_nPopupSelectedIndex;
 
 public:
-	void Init(EquipmentSystem* equipContainer);
+	void Init(EquipmentSystemOld* equipContainer);
 
 	bool EquipItem(int dropIndex, FItemInstance& drag);
 	

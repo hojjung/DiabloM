@@ -43,7 +43,7 @@ void UMainCanvas::CloseSetting()
     
 }
 
-void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, PlayerSkillSystem * skill, EquipmentSystem * equipment, Inventory * inven)
+void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, PlayerSkillSystemOld * skill, EquipmentSystemOld * equipment, InventoryOld * inven)
 {
     m_PlayerCon = playerCon;
     m_PlayerPawn = playerChar;

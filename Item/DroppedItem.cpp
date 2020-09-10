@@ -69,7 +69,7 @@ void ADroppedItem::Interact(AActor * instigator)
 
 void ADroppedItem::SetItemVisual(const FItemData* ItemData)
 {
-	auto* ItemCard = Cast<UItemNameCard>(m_BillBoard->GetUserWidgetObject());
+	UItemNameCard* ItemCard = Cast<UItemNameCard>(m_BillBoard->GetUserWidgetObject());
 
 	ItemCard->SetItemName(ItemData->m_ShowingName);
 

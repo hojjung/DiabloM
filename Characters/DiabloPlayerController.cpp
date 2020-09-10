@@ -2,16 +2,16 @@
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloCheatManager.h"
 #include "Datas/ItemDataTable.h"
-#include "Objs/Inventory.h"
-#include "Objs/PlayerSkillSystem.h"
-#include "Objs/EquipmentSystem.h"
+#include "Objs/InventoryOld.h"
+#include "Objs/PlayerSkillSystemOld.h"
+#include "Objs/EquipmentSystemOld.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "DrawDebugHelpers.h"
 #include "Objs/DroppedItem.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
-
+ 
 ADiabloPlayerController*  ADiabloPlayerController::Get=nullptr;
 
 ADiabloPlayerController::ADiabloPlayerController()
@@ -33,12 +33,12 @@ void ADiabloPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	m_Inven = new Inventory();
+	m_Inven = new InventoryOld();
 	m_Inven->InitInven(m_nInvenX,m_nInvenY);
 
-	m_SkillSystem = new PlayerSkillSystem();
+	m_SkillSystem = new PlayerSkillSystemOld();
 
-	m_EquipSystem = new EquipmentSystem();
+	m_EquipSystem = new EquipmentSystemOld();
 	m_EquipSystem->Init();
 
 	InitWidget();

@@ -7,7 +7,7 @@
 #include "Components/VerticalBoxSlot.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "Kismet/KismetTextLibrary.h"
-#include "Managers/ItemManager.h"
+#include "Managers/ItemManagerOld.h"
 #include "Characters/DiabloPlayerController.h"
 
 
@@ -219,12 +219,12 @@ void UItemPopupInfo::ShowInfoPanel(FItemInstance& itemInst)
 
         auto* DiaChar= Cast<ADiabloPlayerController>( UGameplayStatics::GetPlayerController(GetWorld(),0));
         
-        if (static_cast<EquipmentSystem*>(Holder) ==DiaChar->GetEquipment())
+        if (static_cast<EquipmentSystemOld*>(Holder) ==DiaChar->GetEquipment())
         {
             PRINTF("EquipSys");
             GetEquipButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::UnequipItem);
         }
-        else if (static_cast<Inventory*>(Holder) == DiaChar->GetInven())
+        else if (static_cast<InventoryOld*>(Holder) == DiaChar->GetInven())
         {
             PRINTF("Inven");
             GetEquipButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::EquipItem);

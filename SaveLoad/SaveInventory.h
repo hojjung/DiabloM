@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 
-#include "SaveLoadManager.h"
+#include "SaveLoadManagerOld.h"
 #include "GameFramework/SaveGame.h"
-#include "Objs/Inventory.h"
+#include "Objs/InventoryOld.h"
 #include "SaveInventory.generated.h"
 
 /**
@@ -29,7 +29,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FItemInstance> m_InvenAry;
 public:
-	void SetSaveData(const Inventory* inven);//
+	void SetSaveData(const InventoryOld* inven);//
 	
-	void SetInvenLoadData(Inventory* outInven);
+	void SetInvenLoadData(InventoryOld* outInven);
 };
