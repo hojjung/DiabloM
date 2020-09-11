@@ -48,6 +48,7 @@ public:
     int m_IndexItem;
     int m_IndexPerk;
 
+    int m_CurrentSelectSlot;
     //
 public:
     FOnVisualChange m_OnVisualChange;

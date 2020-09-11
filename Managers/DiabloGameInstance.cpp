@@ -29,7 +29,6 @@ void UDiabloGameInstance::Init()
     if (!m_SaveLoadManager)
     {
         m_SaveLoadManager=NewObject<USaveLoadManager>();
-        m_SaveLoadManager->InitSaveLoadManager();
     }
 
     if(!m_PlCreateManager)

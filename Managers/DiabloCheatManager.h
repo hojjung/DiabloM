@@ -44,5 +44,9 @@ public:
 	UFUNCTION(exec)
     void LoadEquip();
 	UFUNCTION(exec)
+    void SaveCharStat();
+	UFUNCTION(exec)
+    void LoadCharStat();
+	UFUNCTION(exec)
 	void DeleteAllSlot();
 };

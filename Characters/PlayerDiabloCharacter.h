@@ -4,6 +4,8 @@
 
 #include "DiabloM.h"
 #include "Characters/UnitPawn.h"
+#include "SaveLoad/SaveCharacterStatus.h"
+
 
 #include "PlayerDiabloCharacter.generated.h"
 
@@ -26,7 +28,8 @@ public:
 	static const FName LeftHandWeaponSocketTop;
 	static const FName LeftHandWeaponSocketBottom;
 	
-	
+	int m_FaceIndex;
+	int m_HairIndex;
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player")
 	float m_fInteractRange;
@@ -84,4 +87,6 @@ public:
 	void InteractWithTarget();
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void AttackInput(float pressed);
+
+	void SetLoadedData(const USaveCharacterStatus* loadedSaveData);
 };

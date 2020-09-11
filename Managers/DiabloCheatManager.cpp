@@ -1,8 +1,11 @@
 #include "DiabloCheatManager.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Item/Inventory.h"
 #include "SaveLoad/SaveLoadManager.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/StartMap/PlayerCreateManager.h"
+
 
 void UDiabloCheatManager::InitCheatManager()
 {
@@ -31,22 +34,52 @@ void UDiabloCheatManager::PrintEquipment()
 
 void UDiabloCheatManager::SaveInven()
 {
-	USaveLoadManager::Get->SaveInventory();
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	
+	USaveLoadManager::Get->SaveInventory(UPlayerCreateManager::Get->m_CurrentSelectSlot,DiaPC->GetInven()->GetItemAry());
 }
 
 void UDiabloCheatManager::LoadInven()
 {
-	USaveLoadManager::Get->LoadInventoryOld();
+	USaveLoadManager::Get->LoadInventory(UPlayerCreateManager::Get->m_CurrentSelectSlot);
+	USaveLoadManager::Get->SetLoadedInvenDataToPlayer(UPlayerCreateManager::Get->m_CurrentSelectSlot);
 }
 
 void UDiabloCheatManager::SaveEquip()
 {
-	USaveLoadManager::Get->SaveEquipment();
+	TArray<FItemInstance> AryEquip;
+
+	for(FEquipSlot* Slot : ADiabloPlayerController::Get->GetEquipment()->GetArySlotPtr())
+	{
+		AryEquip.Emplace(Slot->m_Item);
+	}
+	
+	USaveLoadManager::Get->SaveEquipment(UPlayerCreateManager::Get->m_CurrentSelectSlot,AryEquip);
+	
 }
 
 void UDiabloCheatManager::LoadEquip()
 {
-	USaveLoadManager::Get->LoadEquipment();
+	USaveLoadManager::Get->LoadEquipment(UPlayerCreateManager::Get->m_CurrentSelectSlot);
+	USaveLoadManager::Get->SetLoadedEquipDataToPlayer(UPlayerCreateManager::Get->m_CurrentSelectSlot);
+}
+
+void UDiabloCheatManager::SaveCharStat()
+{
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
+	FText Name = DiaPl->m_TextUnitName;
+	int Lev= DiaPl->GetLevel();
+	int Hair= DiaPl->m_HairIndex;
+	int Face= DiaPl->m_FaceIndex;
+	
+	USaveLoadManager::Get->SaveCharacterStat(UPlayerCreateManager::Get->m_CurrentSelectSlot,Lev,Name,Face,Hair);
+}
+
+void UDiabloCheatManager::LoadCharStat()
+{
+	USaveLoadManager::Get->LoadCharStat(UPlayerCreateManager::Get->m_CurrentSelectSlot);
+	USaveLoadManager::Get->SetLoadedCharDataToPlayer(UPlayerCreateManager::Get->m_CurrentSelectSlot);
 }
 
 void UDiabloCheatManager::DeleteAllSlot()

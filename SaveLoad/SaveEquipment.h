@@ -2,7 +2,6 @@
 
 #include "DiabloM.h"
 #include "SaveLoadManager.h"
-#include "Datas/PlayerInitDataTable.h"
 #include "GameFramework/SaveGame.h"
 #include "Item/EquipmentSystem.h"
 #include "SaveEquipment.generated.h"
@@ -20,9 +19,8 @@ public:
     UPROPERTY(EditAnywhere)
 	TArray<FItemInstance> m_EquipAry;
 	
-    void SetEquipSaveData(const TArray<FEquipSlot*>& equip);//
+    void SetEquipSaveData(const TArray<FItemInstance>& equip);//
 	
     void SetEquipLoadData(UEquipmentSystem** outEquip);
 
-	void SetEquipSaveDataFromCreation(const FCurrentCharData& charData);//
 };

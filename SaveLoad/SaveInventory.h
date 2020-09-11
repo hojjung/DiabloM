@@ -25,7 +25,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FItemInstance> m_InvenAry;
 public:
-	void SetSaveData(const UInventory* inven);//
+	void SetSaveData(const TArray<FItemInstance>& inven);//
 	
 	void SetInvenLoadData(UInventory* outInven);
 };

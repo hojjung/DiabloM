@@ -168,6 +168,12 @@ void APlayerDiabloCharacter::AttackInput(float pressed)
 	PRINTF("Attacking");
 }
 
+void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSaveData)
+{
+	m_nCharacterLevel=loadedSaveData->m_nLevel;
+	
+}
+
 
 void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {

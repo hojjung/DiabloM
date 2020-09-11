@@ -3,6 +3,8 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "Characters/DiabloPlayerController.h"
+#include "Datas/PlayerInitDataTable.h"
 #include "Item/EquipmentSystem.h"
 #include "SaveLoadManager.generated.h"
 
@@ -26,17 +28,19 @@ class DIABLOM_API USaveLoadManager : public UObject
 {
     GENERATED_BODY()
 
-
 public:
+    const FString m_InvenSlotName;
+
+    const FString m_EquipSlotName;
+
+    const FString m_CharSlotName;
+    
     static USaveLoadManager* Get;
 
+    USaveLoadManager();
     ~USaveLoadManager();
 
-    int m_nCurrentPlayerIndex = 0;
-
     ESaveVersion m_SaveVersion = ESaveVersion::Init;
-
-
     //슬롯이존재해야함
     int m_nMaxSlotCount;
 
@@ -50,39 +54,42 @@ protected:
     UPROPERTY()
     TArray<USaveEquipment*> m_AryLoadedEquipments;
     UPROPERTY()
-    TArray<USaveInventory*> m_AryLoadedInventoryOlds;
+    TArray<USaveInventory*> m_AryLoadedInventory;
     //They DonNeedInst
-public:
-    void InitSaveLoadManager();
-
 protected:
     void TryLoadAllCharacter();
-
-
 public:
     void DeleteSlot(int i);
 
     void DeleteAllSlot();
+//
+    void SaveInventory(int slotIndex, const TArray<FItemInstance>& aryItem);
+    void SaveEquipment(int slotIndex,const TArray<FItemInstance>& aryItem);
+    void SetEquipSaveDataFromCreation(const FCurrentCharData& charData,TArray<FItemInstance>& newEquipAry);
+    void SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex);
+//
+    void LoadInventory(int slotIndex);
+    void LoadEquipment(int slotIndex);
+    void LoadCharStat(int index);
 
-    void SaveInventory() const;
-
-    void LoadInventoryOld() const;
-
-    void SaveEquipment() const;
-
-    void LoadEquipment() const;
-
-    void SaveCharacterStat() const;
-
-    bool LoadCharacterStat(int index);
-
-
+    bool DoesSaveDataExist(int slotIndex);
+    //
+private:
+    void CreateSetEquipSlotItem(TArray<FItemInstance>& arrayUsing,FName itemId, ESlots slot);
+public:
     void CreateNewCharacter(UPlayerCreateManager* plManager);
+    void SetLoadedEquipDataToPlayer(int slotIndex);
+    void SetLoadedCharDataToPlayer(int slotIndex);
+    void SetLoadedInvenDataToPlayer(int slotIndex);
 
+    void CreateSetPlayerCharacter(int slotIndex);
+    
     const TArray<USaveCharacterStatus*>& GetLoadedChars() const;
     const TArray<USaveEquipment*>& GetLoadedEquip() const;
     const TArray<USaveInventory*>& GetLoadedInven() const;
+    
     int GetEmptyIndex();
     //Focus Character need
     void LoadItemDataForInstance(TArray<FItemInstance>& itemAry);
+
 };

@@ -14,9 +14,9 @@ void USaveCharacterStatus::SetCharStatLoad(ADiabloPlayerController* diaPl)
 {
     PRINTF("Load-%d, Name:%s",m_nSlotIndex,*m_TextName);
     
-    diaPl->GetUnitPawn()->m_TextUnitName =FText::FromString(m_TextName);
+    diaPl->GetPlayerPawn()->m_TextUnitName =FText::FromString(m_TextName);
 
-    diaPl->GetUnitPawn()->SetLevel(m_nLevel);
+    diaPl->GetPlayerPawn()->SetLevel(m_nLevel);
 
     
 }

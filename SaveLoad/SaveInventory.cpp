@@ -7,9 +7,9 @@ USaveInventory::USaveInventory()
 }
 
 
-void USaveInventory::SetSaveData(const UInventory* inven)
+void USaveInventory::SetSaveData(const TArray<FItemInstance>& inven)
 {
-    m_InvenAry = inven->GetItemAry();
+    m_InvenAry = inven;
     m_nCount = m_InvenAry.Num();
 
     PRINTF("m_nCount:%d", m_nCount);

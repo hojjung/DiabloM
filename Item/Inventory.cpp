@@ -203,6 +203,10 @@ void UInventory::SetItemAry(TArray<FItemInstance>& loadedAry)
 
     for (int i = 0; i < m_ItemAry.Num(); i++)
     {
+        if(m_ItemAry[i].m_ItemID==NAME_None)
+        {
+            continue;
+        }
         m_ItemAry[i].m_Holder = this;
         m_OnSlotChanged.Broadcast(i, m_ItemAry[i]);
     }

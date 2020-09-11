@@ -108,7 +108,7 @@ public:
 		return  m_EquipSystem;
 	}
 
-	APlayerDiabloCharacter* GetUnitPawn();
+	APlayerDiabloCharacter* GetPlayerPawn();
 
 	
 };

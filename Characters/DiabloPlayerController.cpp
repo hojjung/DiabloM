@@ -122,7 +122,7 @@ void ADiabloPlayerController::CloseMainMenu()
 	APlayerController::SetVirtualJoystickVisibility(true);
 }
 
-APlayerDiabloCharacter* ADiabloPlayerController::GetUnitPawn()
+APlayerDiabloCharacter* ADiabloPlayerController::GetPlayerPawn()
 {
 	return  Cast<APlayerDiabloCharacter>( GetPawn());
 }
