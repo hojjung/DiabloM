@@ -6,6 +6,7 @@
 #include "Managers/StartMap/PlayerCreateManager.h"
 #include "CharCreate.generated.h"
 
+class UCharSelect;
 class UStartMenuCanvas;
 class UEditableText;
 
@@ -14,6 +15,9 @@ class DIABLOM_API UCharCreate : public UUserWidget
 {
     GENERATED_BODY()
 
+public:
+    UPROPERTY()
+    UCharSelect* m_CharSelect;
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UPartSelect* m_HairSelect;

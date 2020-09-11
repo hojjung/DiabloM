@@ -1,5 +1,8 @@
 #include "CharCreate.h"
 
+#include "CharSelect.h"
+#include "Characters/StartMap/PlayerCreateController.h"
+
 void UCharCreate::NativePreConstruct()
 {
     Super::NativePreConstruct();
@@ -101,7 +104,6 @@ void UCharCreate::UpdateNameText(const FText& text)
 {
     if(m_NameBox->GetText().IsEmpty())
     {
-        PRINTF("Fail - Name Empty");
         m_BtnContinue->SetIsEnabled(false);
         return;
     }
@@ -125,10 +127,17 @@ void UCharCreate::UpdateNameTextCommit(const FText& text, ETextCommit::Type type
 
 void UCharCreate::Continue()
 {
-    m_PlManager->DoneCreateCharcter();
+    PRINTF("CharCreate Contine");
+    m_NameBox->SetText(FText());
+    int Index=m_PlManager->DoneCreateCharcter();
     m_BtnContinue->SetIsEnabled(false);
     m_PlManager->m_CurrentTextName=FText();
-    m_NameBox->SetText(FText());
+    //Cast<APlayerCreateController>( GetOwningPlayer())->GetPlayerVisual()->HideMesh();
+    m_CharSelect->m_AryCharInfoSlot[Index]->SelectSlot();
+
+    //SelectSlot
+    //
+    //focus need
 }
 
 void UCharCreate::StartCreation()

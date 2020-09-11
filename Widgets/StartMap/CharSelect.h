@@ -22,20 +22,20 @@ public:
     UButton* m_BtnCreateNewChar;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UButton* m_BtnContinue;
-    UPROPERTY(EditAnywhere,BlueprintReadWrite)
-    TArray<UCharInfo*> m_AryCharSlots;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UVerticalBox* m_SlotParent;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<UCharInfo> m_ClassCharInfo;
     UPROPERTY()
-    UCharInfo* m_FocusedInfo;
+    int m_FocusedIndex;
+    UPROPERTY()
+    TArray<TWeakObjectPtr<UCharInfo>> m_AryCharInfoSlot;
 public:
     void Init(USaveLoadManager* SaveLoadManagerOld);
     
     void CreateCharInfo(const USaveCharacterStatus* charStats);
 
-    void FocusCharacter(int slotIndex,UCharInfo* focusedInfo);
+    void FocusCharacter(int slotIndex);
 
     friend UStartMenuCanvas;
 };

@@ -77,7 +77,7 @@ public:
 private:
     void CreateSetEquipSlotItem(TArray<FItemInstance>& arrayUsing,FName itemId, ESlots slot);
 public:
-    void CreateNewCharacter(UPlayerCreateManager* plManager);
+    int CreateNewCharacter(UPlayerCreateManager* plManager);
     void SetLoadedEquipDataToPlayer(int slotIndex);
     void SetLoadedCharDataToPlayer(int slotIndex);
     void SetLoadedInvenDataToPlayer(int slotIndex);

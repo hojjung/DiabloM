@@ -82,3 +82,10 @@ static FString EnumToString(const FString& enumName, const T value)
 }
 
 #define MAXLEVEL 100
+#define INVEN_X 5
+
+#define INVEN_Y 8
+
+#define CURRSLOT 2
+
+#define MAXSLOT 7

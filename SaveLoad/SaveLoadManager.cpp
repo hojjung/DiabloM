@@ -1,11 +1,4 @@
 #include "SaveLoadManager.h"
-
-
-#include <xkeycheck.h>
-#include <xkeycheck.h>
-
-
-#include "Atomic.h"
 #include "Characters/DiabloPlayerController.h"
 #include "DiabloM.h"
 #include "SaveEquipment.h"
@@ -232,6 +225,8 @@ void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameTex
     UGameplayStatics::SaveGameToSlot(SaveCharStat, m_CharSlotName, slotIndex);
 
     m_AryLoadedCharacters[slotIndex] = SaveCharStat;
+
+    PRINTF("SaveCharacter");
 }
 
 void USaveLoadManager::LoadCharStat(int index)
@@ -262,14 +257,14 @@ bool USaveLoadManager::DoesSaveDataExist(int slotIndex)
     return CharResult && InvenResult && EquipResult;
 }
 
-void USaveLoadManager::CreateNewCharacter(UPlayerCreateManager* plManager)
+int USaveLoadManager::CreateNewCharacter(UPlayerCreateManager* plManager)
 {
     int PlayerIndex = GetEmptyIndex();
     //
     if (PlayerIndex == -1)
     {
         PRINTF("Empty Index: %d", PlayerIndex);
-        return;
+        return -1;
     }
     //
     TArray<FItemInstance> AryEquip;
@@ -281,6 +276,8 @@ void USaveLoadManager::CreateNewCharacter(UPlayerCreateManager* plManager)
     SaveInventory(PlayerIndex,AryInven);
     //
     m_OnDataCreated.ExecuteIfBound(m_AryLoadedCharacters[PlayerIndex]);
+
+    return PlayerIndex;
 }
 
 void USaveLoadManager::SetLoadedEquipDataToPlayer(int slotIndex)

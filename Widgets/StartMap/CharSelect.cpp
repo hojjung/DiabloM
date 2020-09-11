@@ -11,6 +11,8 @@
 
 void UCharSelect::Init(USaveLoadManager* SaveLoadManagerOld)
 {
+    m_AryCharInfoSlot.Init(nullptr,MAXSLOT);
+    m_FocusedIndex=-1;
     for(const USaveCharacterStatus* Char : SaveLoadManagerOld->GetLoadedChars())
     {
         if(!Char)
@@ -33,24 +35,37 @@ void UCharSelect::CreateCharInfo(const USaveCharacterStatus* charStats)
     CharInfoCreated->m_OnSelect.BindUObject(this,&UCharSelect::FocusCharacter);
 
     m_SlotParent->AddChildToVerticalBox(CharInfoCreated);
+
+    m_AryCharInfoSlot[charStats->m_nSlotIndex]=TWeakObjectPtr<UCharInfo>(CharInfoCreated);
 }
 
-void UCharSelect::FocusCharacter(int slotIndex,UCharInfo* focusedInfo)
+void UCharSelect::FocusCharacter(int slotIndex)
 {
-    if(m_FocusedInfo && focusedInfo != m_FocusedInfo)
+    if(m_FocusedIndex == slotIndex)
     {
-        m_FocusedInfo->DeselectSlot();
-        m_FocusedInfo=nullptr;
+        return;
     }
-    PRINTF("Index:%d",slotIndex);
+
+    if(slotIndex == -1)
+    {
+        return;
+    }
+
+    if(m_FocusedIndex!=-1)
+        m_AryCharInfoSlot[m_FocusedIndex]->DeselectSlot();
+
+    m_FocusedIndex=slotIndex;
     
     Cast<APlayerCreateController> (GetOwningPlayer())->GetPlayerVisual()->ShowMesh();
     
     UPlayerCreateManager* PlMa=UPlayerCreateManager::Get;
-    USaveCharacterStatus* CharStat = USaveLoadManager::Get->GetLoadedChars()[slotIndex];
-    USaveEquipment* CharEquip = USaveLoadManager::Get->GetLoadedEquip()[slotIndex];
+    USaveCharacterStatus* CharStat = USaveLoadManager::Get->GetLoadedChars()[m_FocusedIndex];
+    USaveEquipment* CharEquip = USaveLoadManager::Get->GetLoadedEquip()[m_FocusedIndex];
 
     PlMa->SetCurrentDataFromSaveFile(CharStat,CharEquip);
 
-    m_FocusedInfo=focusedInfo;
+    m_FocusedIndex=slotIndex;
+    
+    PlMa->m_CurrentSelectSlot = m_FocusedIndex;
+
 }

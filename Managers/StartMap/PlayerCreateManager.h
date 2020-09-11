@@ -79,7 +79,7 @@ public:
     void DecreasePerk();
     void IncreasePerk();
     
-    void DoneCreateCharcter();
+    int DoneCreateCharcter();
     
     USkeletalMesh* GetFace(int index);
     USkeletalMesh* GetHair(int index,bool hasHelMet);

@@ -7,7 +7,7 @@
 
 class UCharInfo;
 
-DECLARE_DELEGATE_TwoParams(FOnSelected,int,UCharInfo*);
+DECLARE_DELEGATE_OneParam(FOnSelected,int);
 
 UCLASS()
 class DIABLOM_API UCharInfo : public UUserWidget

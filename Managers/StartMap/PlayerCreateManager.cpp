@@ -249,9 +249,9 @@ void UPlayerCreateManager::IncreasePerk()
     OnDataChanged();
 }
 
-void UPlayerCreateManager::DoneCreateCharcter()
+int UPlayerCreateManager::DoneCreateCharcter()
 {
-    USaveLoadManager::Get->CreateNewCharacter(this);
+    return USaveLoadManager::Get->CreateNewCharacter(this);
 }
 
 USkeletalMesh* UPlayerCreateManager::GetFace(int index)

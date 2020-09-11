@@ -12,6 +12,7 @@ void UStartMenuCanvas::InitStartMenu()
     m_CharSelect->Init(GetGameInstance<UDiabloGameInstance>()->m_SaveLoadManager);
     m_CharSelect->m_BtnCreateNewChar->OnClicked.AddDynamic(this,&UStartMenuCanvas::CreationStart);
     m_CharCreate->m_BtnContinue->OnClicked.AddDynamic(this,&UStartMenuCanvas::CreationEnd);
+    m_CharCreate->m_CharSelect=m_CharSelect;
 }
 
 bool UStartMenuCanvas::HaveEmptySlot()
@@ -25,10 +26,9 @@ void UStartMenuCanvas::CreationStart()
     {
         return;
     }
-
     
-    if(m_CharSelect->m_FocusedInfo)
-        m_CharSelect->m_FocusedInfo->DeselectSlot();
+    if(m_CharSelect->m_FocusedIndex!=-1)
+        m_CharSelect->m_AryCharInfoSlot[m_CharSelect->m_FocusedIndex]->DeselectSlot();
     
     m_CharCreate->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_CharSelect->SetVisibility(ESlateVisibility::Hidden);
@@ -47,5 +47,5 @@ void UStartMenuCanvas::CreationEnd()
 {
     m_CharCreate->SetVisibility(ESlateVisibility::Hidden);
     m_CharSelect->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-    Cast<APlayerCreateController>( GetOwningPlayer())->GetPlayerVisual()->HideMesh();
+    //Cast<APlayerCreateController>( GetOwningPlayer())->GetPlayerVisual()->HideMesh();
 }

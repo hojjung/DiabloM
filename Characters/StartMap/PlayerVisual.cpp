@@ -178,6 +178,8 @@ void APlayerVisual::ShowMesh()
     m_MeshBackpack->SetVisibility(true);
     m_MeshRightHand->SetVisibility(true);
     m_MeshLeftHand->SetVisibility(true);
+
+    PRINTF("ShowMesh");
 }
 
 void APlayerVisual::HideMesh()
@@ -204,5 +206,7 @@ void APlayerVisual::HideMesh()
     SetDefaultBodyMesh();
     SetDefaultGloveMesh();
     SetDefaultShoeMesh();
+
+    PRINTF("HideMesh");
 }
 
