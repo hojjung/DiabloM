@@ -95,7 +95,11 @@ bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //d
     if (!CheckSlotOccupied(droppedIndex))
     {
         SetItem(droppedIndex, itemWantAdd); //그냥 비어있던 슬롯
-        itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
+        
+        if(itemWantAdd.m_Holder)
+        {
+            itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
+        }
         return true;
     }
 
@@ -221,8 +225,8 @@ void UEquipmentSystem::PrintEquipStats()
 
     for (int i = 0; i < static_cast<int>(ESlots::Length); i++)
     {
-        PRINTF("Slot: %s - EquipItem: %s - Occupied: %B", *EnumToStr(ESlots, (ESlots)i),
-               *EnumToStr(EItemType, GetEquippedItem(i)), m_ArySlots[i]->m_bIsOccupied);
+        PRINTF("Slot: %s - EquipItem: %s - Occupied: %hs", *EnumToStr(ESlots, (ESlots)i),
+               *EnumToStr(EItemType, GetEquippedItem(i)), m_ArySlots[i]->m_bIsOccupied ? "Y" : "N");
     }
 }
 
@@ -236,13 +240,15 @@ EItemType UEquipmentSystem::GetEquippedItem(int slotIndex)
     return m_ArySlots[slotIndex]->m_EquippedType;
 }
 
-void UEquipmentSystem::SetItemAry(const TArray<FItemInstance>& equipSlot)
+void UEquipmentSystem::SetItemAry(TArray<FItemInstance>& equipSlot)
 {
     for (int i = 0; i < m_ArySlots.Num(); i++)
     {
-        m_ArySlots[i]->m_Item = equipSlot[i];
-        m_ArySlots[i]->m_Item.m_Holder = this;
-        OnItemSlotChanged(i);
+        if(!equipSlot[i].m_ItemData)
+        {
+            continue;
+        }
+        AddItem(i,equipSlot[i]);
     }
 }
 

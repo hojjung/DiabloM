@@ -74,6 +74,7 @@ bool UInventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //빌드�
     if (this == static_cast<UInventory*>(itemWantAdd.m_Holder) && droppedIndex == itemWantAdd.m_nGridIndex)
     {
         PRINTF("Prevent MySelf");
+        
         return false;
     }
     //ㄴsafe
@@ -82,7 +83,10 @@ bool UInventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //빌드�
     {
         SetItem(droppedIndex, itemWantAdd);
         //이아래임
-        itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
+        if(itemWantAdd.m_Holder)
+        {
+            itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
+        }
         return true;
     }
     ///
@@ -199,16 +203,14 @@ const TArray<FItemInstance>& UInventory::GetItemAry() const
 
 void UInventory::SetItemAry(TArray<FItemInstance>& loadedAry)
 {
-    m_ItemAry = loadedAry;
-
     for (int i = 0; i < m_ItemAry.Num(); i++)
     {
-        if(m_ItemAry[i].m_ItemID==NAME_None)
+        if(!loadedAry[i].m_ItemData)
         {
             continue;
         }
-        m_ItemAry[i].m_Holder = this;
-        m_OnSlotChanged.Broadcast(i, m_ItemAry[i]);
+
+        AddItem(i,loadedAry[i]);
     }
 }
 

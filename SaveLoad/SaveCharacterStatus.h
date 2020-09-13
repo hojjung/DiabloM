@@ -37,5 +37,7 @@ public:
     void SaveCharStatSave(int index,int level,FText playerName);
 
     void SetCharStatLoad(ADiabloPlayerController* diaPl);
+
+    
 };
 

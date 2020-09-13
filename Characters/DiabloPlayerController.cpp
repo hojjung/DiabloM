@@ -33,10 +33,10 @@ void ADiabloPlayerController::BeginPlay()
 
 	m_EquipSystem = NewObject<UEquipmentSystem>();
 	m_EquipSystem->Init();
-
+	m_EquipSystem->GetItemChangeCallback().AddUObject(this,&ADiabloPlayerController::PlayerMeshChange);
 	InitWidget();
 
-	
+	USaveLoadManager::Get->CreateSetPlayerCharacter();
 }
 
 void ADiabloPlayerController::InitWidget()
@@ -120,6 +120,11 @@ void ADiabloPlayerController::CloseMainMenu()
 	//UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
 	m_MainMenu->CloseMainMenu();
 	APlayerController::SetVirtualJoystickVisibility(true);
+}
+
+void ADiabloPlayerController::PlayerMeshChange(int slot, FItemInstance& item)
+{
+	GetPlayerPawn()->EquipMesh(item.m_ItemData,static_cast<ESlots>(slot));
 }
 
 APlayerDiabloCharacter* ADiabloPlayerController::GetPlayerPawn()

@@ -82,7 +82,7 @@ public:
     void SetLoadedCharDataToPlayer(int slotIndex);
     void SetLoadedInvenDataToPlayer(int slotIndex);
 
-    void CreateSetPlayerCharacter(int slotIndex);
+    void CreateSetPlayerCharacter();
     
     const TArray<USaveCharacterStatus*>& GetLoadedChars() const;
     const TArray<USaveEquipment*>& GetLoadedEquip() const;

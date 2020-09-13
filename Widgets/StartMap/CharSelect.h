@@ -38,4 +38,7 @@ public:
     void FocusCharacter(int slotIndex);
 
     friend UStartMenuCanvas;
+
+    UFUNCTION()
+    void ContinueToGameWorld();
 };

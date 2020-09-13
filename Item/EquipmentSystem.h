@@ -78,6 +78,7 @@ class DIABLOM_API UEquipmentSystem : public UObject, public IItemHolder
 
 public:
     DECLARE_MULTICAST_DELEGATE_OneParam(FStance, EAnimStance);
+
 public:
     ~UEquipmentSystem();
 
@@ -176,5 +177,5 @@ public:
 
     friend USaveEquipment;
 
-    void SetItemAry(const TArray<FItemInstance>& equipSlot);
+    void SetItemAry(TArray<FItemInstance>& equipSlot);
 };

@@ -23,6 +23,8 @@ void UCharSelect::Init(USaveLoadManager* SaveLoadManagerOld)
         CreateCharInfo(Char);
     }
     SaveLoadManagerOld->m_OnDataCreated.BindUObject(this,&UCharSelect::CreateCharInfo);
+
+    m_BtnContinue->OnClicked.AddDynamic(this,&UCharSelect::ContinueToGameWorld);
     //create all charInfo From Save Datas
 }
 
@@ -34,9 +36,10 @@ void UCharSelect::CreateCharInfo(const USaveCharacterStatus* charStats)
 
     CharInfoCreated->m_OnSelect.BindUObject(this,&UCharSelect::FocusCharacter);
 
-    m_SlotParent->AddChildToVerticalBox(CharInfoCreated);
+    m_SlotParent->AddChildToVerticalBox(CharInfoCreated)->SetPadding(FMargin(20.f));
 
     m_AryCharInfoSlot[charStats->m_nSlotIndex]=TWeakObjectPtr<UCharInfo>(CharInfoCreated);
+
 }
 
 void UCharSelect::FocusCharacter(int slotIndex)
@@ -68,4 +71,12 @@ void UCharSelect::FocusCharacter(int slotIndex)
     
     PlMa->m_CurrentSelectSlot = m_FocusedIndex;
 
+}
+
+void UCharSelect::ContinueToGameWorld()
+{
+    PRINTF("Continue World");
+
+    UGameplayStatics::OpenLevel(GetWorld(),"StartHub");
+    
 }

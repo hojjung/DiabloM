@@ -81,6 +81,8 @@ public:
 	void OpenMainMenu();
 	UFUNCTION(BlueprintCallable)
 	void CloseMainMenu();
+
+	void PlayerMeshChange(int slot,FItemInstance& item);
 	//
 	//배울수 있는 스킬
 	//배운 스킬

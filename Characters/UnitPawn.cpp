@@ -23,7 +23,8 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit):Super(objInit)
 	m_Movement = CreateDefaultSubobject<UUnitMovement>("Movement00");
 	m_Movement->UpdatedComponent = m_Capsule;
 
-	CreateSkMeshComponent(&m_SkMesh,"SkMesh00");
+	CreateSkMeshComponent(RootComponent,&m_SkBody,"SkMesh00");
+	m_SkBody->bCastDynamicShadow=true;
 
 	m_nCharacterLevel = 1;
 	m_AbilitySystemComponent = CreateDefaultSubobject<UDiabloAbilitySystemComp>("AbilitySystemComponent00");
@@ -40,18 +41,22 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit):Super(objInit)
 }
 
 
-void AUnitPawn::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName)
+void AUnitPawn::CreateSkMeshComponent(USceneComponent* rootWant,USkeletalMeshComponent** refSkComp,FName keyName)
 {
 	(*refSkComp) = CreateDefaultSubobject<USkeletalMeshComponent>(keyName);
 	(*refSkComp)->bOwnerNoSee = false;
 	(*refSkComp)->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
-	(*refSkComp)->bCastDynamicShadow = true;//chanage for mobile
+	//(*refSkComp)->bCastDynamicShadow = true;//chanage for mobile
 	(*refSkComp)->bAffectDynamicIndirectLighting = true;
 	(*refSkComp)->PrimaryComponentTick.TickGroup = TG_PrePhysics;
-	(*refSkComp)->SetupAttachment(RootComponent);
+	(*refSkComp)->SetupAttachment(rootWant);
 	(*refSkComp)->SetCollisionProfileName("CharacterMesh");
 	(*refSkComp)->SetGenerateOverlapEvents(false);
 	(*refSkComp)->SetCanEverAffectNavigation(false);
+
+	(*refSkComp)->CastShadow=false;
+	(*refSkComp)->bCastDynamicShadow=false;
+	(*refSkComp)->bReceiveMobileCSMShadows=false;
 }
 // Called when the game starts or when spawned
 void AUnitPawn::BeginPlay()
@@ -61,7 +66,7 @@ void AUnitPawn::BeginPlay()
 
 	if (m_NameUnitID != NAME_None)
 	{
-		SetUnit(m_NameUnitID);
+		SetUnitStat(m_NameUnitID);
 	}
 }
 
@@ -205,15 +210,15 @@ void AUnitPawn::PrintStats()
 	m_AttributeSet->PrintStats();
 }
 
-void AUnitPawn::SetUnit(FName unitID)
+void AUnitPawn::SetUnitStat(FName unitID)
 {
 	m_NameUnitID = unitID;
 
 	const FEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetMonsterUnitPtr(m_NameUnitID);
 	m_TextUnitName = UnitData->m_ShowingName;	
-	m_SkMesh->SetSkeletalMesh(UnitData->m_Mesh);
-	m_SkMesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	m_SkMesh->SetAnimInstanceClass(UnitData->m_AnimBP);
+	m_SkBody->SetSkeletalMesh(UnitData->m_Mesh);
+	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	m_SkBody->SetAnimInstanceClass(UnitData->m_AnimBP);
 
 	FGameplayEffectContextHandle EffectContext = m_AbilitySystemComponent->MakeEffectContext();
 	EffectContext.AddSourceObject(this);

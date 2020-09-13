@@ -296,15 +296,15 @@ void USaveLoadManager::SetLoadedCharDataToPlayer(int slotIndex)
 void USaveLoadManager::SetLoadedInvenDataToPlayer(int slotIndex)
 {
     TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
-    TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
     DiaPC->GetInven()->SetItemAry(m_AryLoadedInventory[slotIndex]->m_InvenAry);
 }
 
-void USaveLoadManager::CreateSetPlayerCharacter(int slotIndex)
+void USaveLoadManager::CreateSetPlayerCharacter()
 {
+    int slotIndex=UPlayerCreateManager::Get->m_CurrentSelectSlot;
+    SetLoadedCharDataToPlayer(slotIndex);
     SetLoadedEquipDataToPlayer(slotIndex);
     SetLoadedInvenDataToPlayer(slotIndex);
-    SetLoadedCharDataToPlayer(slotIndex);
 }
 
 const TArray<USaveCharacterStatus*>& USaveLoadManager::GetLoadedChars() const

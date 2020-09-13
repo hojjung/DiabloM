@@ -3,6 +3,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "Animations/DiaAniminstance.h"
 #include "Characters/UnitPawn.h"
 #include "SaveLoad/SaveCharacterStatus.h"
 
@@ -39,6 +40,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UCameraComponent* m_TopCamera;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	USkeletalMeshComponent* m_SkShadow;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	USkeletalMeshComponent* m_SkFace;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	USkeletalMeshComponent* m_SkHair;
@@ -52,16 +55,30 @@ protected:
 	USkeletalMeshComponent* m_SkShoulderPad;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	USkeletalMeshComponent* m_SkBelt;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	UStaticMeshComponent* m_StBackpack;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	UStaticMeshComponent* m_StRightWeapon;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	UStaticMeshComponent* m_StLeftWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	TArray<TSubclassOf<UDiaAniminstance>> m_AryAnimBP;
 protected:
 	UPROPERTY()
-	USkeletalMesh* m_CachedBodyMesh;
+	USkeletalMesh* m_DefaultFullHairMesh;
 	UPROPERTY()
-	USkeletalMesh* m_CachedHairMesh;
-
+	USkeletalMesh* m_DefaultHalfHairMesh;
+	UPROPERTY()
+	USkeletalMesh* m_DefaultBodyMesh;
+	UPROPERTY()
+	USkeletalMesh* m_DefaultGloveMesh;
+	UPROPERTY()
+	USkeletalMesh* m_DefaultShoeMesh;
+	//
 	TScriptInterface< IInteractable> m_FocusedInteractable;
 
 protected:
-	virtual void SetUnit(FName unitID) override;
+	void SetAnimStance(EAnimStance animStance);
 	
 	virtual void BeginPlay() override;
 
@@ -78,15 +95,29 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	void SetBodyMeshToCached();
+	void SetFullHairMesh();
 
-	void SetHairMeshToCached();
+	void SetHalfHairMesh();
+
+	void SetDefaultBodyMesh();
+
+	void SetDefaultShoeMesh();
+
+	void SetDefaultGloveMesh();
 	
 public:
+	virtual void SetUnitStat(FName unitID) override;
+	
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void AttackInput(float pressed);
 
 	void SetLoadedData(const USaveCharacterStatus* loadedSaveData);
+
+	void EquipMesh(const FItemData* meshItem,ESlots slotWant);
+
+
+	private:
+	EAnimStance GetAnimStance() const;
 };

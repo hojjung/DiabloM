@@ -50,7 +50,7 @@ protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Character")
 	UCapsuleComponent* m_Capsule;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Character")
-	USkeletalMeshComponent* m_SkMesh;
+	USkeletalMeshComponent* m_SkBody;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Movement")
 	UUnitMovement* m_Movement;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "AI")
@@ -69,7 +69,7 @@ public://should go dataTable
 protected:
 	virtual void BeginPlay() override;
 
-	void CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName);
+	void CreateSkMeshComponent(USceneComponent* rootWant,USkeletalMeshComponent** refSkComp,FName keyName);
 	
 public:
 	UFUNCTION(BlueprintCallable)
@@ -105,7 +105,7 @@ public:
 	//
 	void PrintStats();
 
-	virtual void SetUnit(FName unitID);
+	virtual void SetUnitStat(FName unitID);
 
 	virtual float GetHealth() const;
 
