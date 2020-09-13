@@ -152,6 +152,10 @@ protected:
 
     void SetStanceTwoHand();
 
+    void SetStanceBow();
+
+    void SetStanceStaff();
+
 
 public:
     bool CheckSlotOccupied(int index);

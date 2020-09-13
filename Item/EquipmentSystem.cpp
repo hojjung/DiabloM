@@ -30,6 +30,8 @@ void UEquipmentSystem::Init()
     m_WeaponRight.SetEquipableType(EItemType::TwohandSword, true);
     m_WeaponRight.SetEquipableType(EItemType::Katana, true);
     m_WeaponRight.SetEquipableType(EItemType::Dagger, true);
+    m_WeaponRight.SetEquipableType(EItemType::Bow, true);
+    m_WeaponRight.SetEquipableType(EItemType::Staff, true);
 
     m_ArySlots.Reset(12);
     m_ArySlots.Emplace(&m_Head);
@@ -83,6 +85,10 @@ void UEquipmentSystem::Init()
     //				  EItemType
     m_StanceFPtr[static_cast<int>(EItemType::TwohandSword)][static_cast<int>(EItemType::None)] = &
         UEquipmentSystem::SetStanceTwoHand;
+    m_StanceFPtr[static_cast<int>(EItemType::Bow)][static_cast<int>(EItemType::None)] = &
+       UEquipmentSystem::SetStanceBow;
+    m_StanceFPtr[static_cast<int>(EItemType::Staff)][static_cast<int>(EItemType::None)] = &
+       UEquipmentSystem::SetStanceStaff;
 }
 
 bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //drag된 대상이 어떤 아이템을 가졌는지 알방법이 없음
@@ -248,6 +254,7 @@ void UEquipmentSystem::SetItemAry(TArray<FItemInstance>& equipSlot)
         {
             continue;
         }
+        
         AddItem(i,equipSlot[i]);
     }
 }
@@ -288,7 +295,6 @@ void UEquipmentSystem::SetStanceNull()
         m_WeaponLeft.SetOccupie(false);
     }
 
-
     m_CurrentStance = EAnimStance::None;
 }
 
@@ -313,7 +319,6 @@ void UEquipmentSystem::SetStanceDual()
     m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
     m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
     //
-
     m_CurrentStance = EAnimStance::DualSword;
 }
 
@@ -344,7 +349,6 @@ void UEquipmentSystem::SetStanceDagger()
 
 void UEquipmentSystem::SetStanceKatana()
 {
-    //
     m_WeaponLeft.SetEquipableType(EItemType::Dagger, false);
     m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, false);
     m_WeaponLeft.SetEquipableType(EItemType::Shield, false);
@@ -355,13 +359,32 @@ void UEquipmentSystem::SetStanceKatana()
 
 void UEquipmentSystem::SetStanceTwoHand()
 {
-    //
     m_WeaponLeft.SetEquipableType(EItemType::Dagger, false);
     m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, false);
     m_WeaponLeft.SetEquipableType(EItemType::Shield, false);
     //
     m_WeaponLeft.SetOccupie(true);
     m_CurrentStance = EAnimStance::TwohandSword;
+}
+
+void UEquipmentSystem::SetStanceBow()
+{
+    m_WeaponLeft.SetEquipableType(EItemType::Dagger, false);
+    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, false);
+    m_WeaponLeft.SetEquipableType(EItemType::Shield, false);
+    //
+    m_WeaponLeft.SetOccupie(true);
+    m_CurrentStance = EAnimStance::Bow;
+}
+
+void UEquipmentSystem::SetStanceStaff()
+{
+    m_WeaponLeft.SetEquipableType(EItemType::Dagger, false);
+    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, false);
+    m_WeaponLeft.SetEquipableType(EItemType::Shield, false);
+    //
+    m_WeaponLeft.SetOccupie(true);
+    m_CurrentStance = EAnimStance::Staff;
 }
 
 
