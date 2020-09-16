@@ -2,6 +2,11 @@
 
 
 #include "EquipmentSystem.h"
+
+
+#include "IDetailTreeNode.h"
+#include "AbilitySystem/DiabloAbilitySystemComp.h"
+#include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Item/ItemManager.h"
 
@@ -10,8 +15,10 @@ UEquipmentSystem::~UEquipmentSystem()
 }
 
 
-void UEquipmentSystem::Init()
+void UEquipmentSystem::Init(UDiabloAbilitySystemComp* abilitySysCompo)
 {
+    m_TargetAbilitySys=abilitySysCompo;
+    
     m_Head.SetEquipableType(EItemType::Helmet, true);
     m_Neck.SetEquipableType(EItemType::Necklace, true);
     m_Torso.SetEquipableType(EItemType::BodyArmor, true);
@@ -214,6 +221,46 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
     //
     m_ArySlots[droppedIndex]->m_Item.m_nGridIndex = droppedIndex;
     m_ArySlots[droppedIndex]->m_Item.m_Holder = this;
+
+
+    //UG
+
+    if(itemWantAdd.m_ItemData->m_Options.Num()<1)
+    {
+        return;
+    }
+    
+
+    for(auto& Option : itemWantAdd.m_ItemData->m_Options)
+    {
+        if(Option.IsNull())
+        {
+            continue;
+        }
+        //
+        auto Context= m_TargetAbilitySys->MakeEffectContext();
+        Context.AddSourceObject(m_TargetAbilitySys->GetOwner());
+        //
+        //
+        FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(itemWantAdd.m_ItemData->GetOption(0).m_OptionGe, 1, Context);
+
+        NewHandle.Data.Get()->SetSetByCallerMagnitude(itemWantAdd.m_ItemData->GetOption(0).m_OptionTag, 999.f);
+        //제거 테스트
+        FActiveGameplayEffectHandle AA = m_TargetAbilitySys->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), m_TargetAbilitySys);
+
+        FGameplayEffectQuery Query;
+        Query.EffectSource = m_TargetAbilitySys->GetOwner();
+
+        if(AA.IsValid())
+        {
+            PRINTF("It is valide");      
+        }
+         if (m_TargetAbilitySys->RemoveActiveEffects(Query))
+         {
+          PRINTF("Erased1");   
+         }
+
+    }
 
     OnItemSlotChanged(droppedIndex);
 }

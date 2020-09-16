@@ -14,6 +14,8 @@
 #include "Navigation/PathFollowingComponent.h"
 //
 #include "Characters/DiabloPlayerController.h"
+#include "Datas/CharacterDataTable.h"
+
 
 
 #include "UnitPawn.generated.h"
@@ -95,7 +97,9 @@ public:
 	}
 
 	// IAbilitySystemInterface을(를) 통해 상속됨
-	virtual UAbilitySystemComponent * GetAbilitySystemComponent() const override;
+	UDiabloAbilitySystemComp * GetDiaAbilitySystem() const;
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	FORCEINLINE int GetLevel()
 	{
@@ -104,6 +108,8 @@ public:
 
 	//
 	void PrintStats();
+	
+	FActiveGameplayEffectHandle ApplyGameEffect(TSubclassOf<UGameplayEffect> gameEffect);
 
 	virtual void SetUnitStat(FName unitID);
 
@@ -126,22 +132,7 @@ public:
 	void GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTags, TArray<UDiabloAbility*>& ActiveAbilities);
 
 	bool GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, float& TimeRemaining, float& CooldownDuration);
-	//
-	//UFUNCTION(BlueprintCallable, Category = "Abilities")
-	//bool ActivateAbilitiesWithItemSlot(FRPGItemSlot ItemSlot, bool bAllowRemoteActivation = true);
-
-	/** Returns a list of active abilities bound to the item slot. This only returns if the ability is currently running */
-//	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	//void GetActiveAbilitiesWithItemSlot(FRPGItemSlot ItemSlot, TArray<URPGGameplayAbility*>& ActiveAbilities);
-
-	//void OnItemSlotChanged(FRPGItemSlot ItemSlot, URPGItem* Item);
-
-	//void RefreshSlottedGameplayAbilities();
-
-	//void AddSlottedGameplayAbilities();
-
-	//void FillSlottedAbilitySpecs(TMap<FRPGItemSlot, FGameplayAbilitySpec>& SlottedAbilitySpecs);
-
+	
 	void RemoveSlottedGameplayAbilities(bool bRemoveAll);
 
 	FDelegateHandle InventoryOldUpdateHandle;

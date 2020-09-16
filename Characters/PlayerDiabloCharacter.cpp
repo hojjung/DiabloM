@@ -40,36 +40,34 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
         TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/ModularBodyParts/Shoe01SK.Shoe01SK'"));
     m_DefaultShoeMesh = FoundMesh3.Object;
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundMesh4(
-            TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/OneMeshCharacters/ApprenticeSK.ApprenticeSK'"));
-    
-    m_SkBody->bCastDynamicShadow=false;
-    m_SkBody->CastShadow=false;
-    m_SkBody->bReceiveMobileCSMShadows=false;
-    
+        TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/OneMeshCharacters/ApprenticeSK.ApprenticeSK'"));
+
+    m_SkBody->bCastDynamicShadow = false;
+    m_SkBody->CastShadow = false;
+    m_SkBody->bReceiveMobileCSMShadows = false;
+
     m_SkShadow->SetSkeletalMesh(FoundMesh4.Object);
-    m_SkShadow->bCastDynamicShadow=true;
-    m_SkShadow->CastShadow=true;
-    m_SkShadow->bCastHiddenShadow=true;
+    m_SkShadow->bCastDynamicShadow = true;
+    m_SkShadow->CastShadow = true;
+    m_SkShadow->bCastHiddenShadow = true;
     m_SkShadow->SetVisibility(false);
 
-    m_AryAnimBP.Init(nullptr,static_cast<int>(EAnimStance::Length));
+    m_AryAnimBP.Init(nullptr, static_cast<int>(EAnimStance::Length));
 
     m_StBackpack = CreateDefaultSubobject<UStaticMeshComponent>("StMeshBackpack");
-    m_StBackpack->CastShadow=false;
+    m_StBackpack->CastShadow = false;
     m_StBackpack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     m_StBackpack->SetupAttachment(m_SkBody, "Backpack");
-    
+
     m_StRightWeapon = CreateDefaultSubobject<UStaticMeshComponent>("StMeshRightHand");
     m_StRightWeapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     m_StRightWeapon->SetupAttachment(m_SkBody, "RightWeaponShield");
-    m_StRightWeapon->CastShadow=true;
-    
+    m_StRightWeapon->CastShadow = true;
+
     m_StLeftWeapon = CreateDefaultSubobject<UStaticMeshComponent>("StMeshLeftHand");
     m_StLeftWeapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     m_StLeftWeapon->SetupAttachment(m_SkBody, "LeftWeaponShield");
-    m_StLeftWeapon->CastShadow=true;
-
-    
+    m_StLeftWeapon->CastShadow = true;
 }
 
 void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSaveData)
@@ -93,7 +91,7 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     m_DefaultFullHairMesh = UPlayerCreateManager::Get->GetHair(loadedSaveData->m_IndexHair, false);
     m_DefaultHalfHairMesh = UPlayerCreateManager::Get->GetHair(loadedSaveData->m_IndexHair, true);
     //
-    m_SkHair->SetSkeletalMesh(m_DefaultFullHairMesh);//later equipment will doit
+    m_SkHair->SetSkeletalMesh(m_DefaultFullHairMesh); //later equipment will doit
     m_TextUnitName = FText::FromString(loadedSaveData->m_TextName);
     //
     SetAnimStance(EAnimStance::None);
@@ -105,7 +103,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlots slotWan
     switch (slotWant)
     {
     case ESlots::Head:
-        if(meshItem)
+        if (meshItem)
         {
             m_SkHeadGear->SetSkeletalMesh(meshItem->m_SkEquipment);
             SetHalfHairMesh();
@@ -117,21 +115,21 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlots slotWan
         }
         break;
     case ESlots::Torso:
-        if(meshItem)
+        if (meshItem)
         {
             m_SkBody->SetSkeletalMesh(meshItem->m_SkEquipment);
         }
         else
         {
-            SetDefaultBodyMesh();    
+            SetDefaultBodyMesh();
         }
         SetAnimStance(GetAnimStance());
         break;
     case ESlots::Waist:
-        m_SkBelt->SetSkeletalMesh(meshItem?meshItem->m_SkEquipment : nullptr);
+        m_SkBelt->SetSkeletalMesh(meshItem ? meshItem->m_SkEquipment : nullptr);
         break;
     case ESlots::Leg:
-        if(meshItem)
+        if (meshItem)
         {
             m_SkShoe->SetSkeletalMesh(meshItem->m_SkEquipment);
         }
@@ -141,7 +139,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlots slotWan
         }
         break;
     case ESlots::Hand:
-        if(meshItem)
+        if (meshItem)
         {
             m_SkGlove->SetSkeletalMesh(meshItem->m_SkEquipment);
         }
@@ -151,17 +149,26 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlots slotWan
         }
         break;
     case ESlots::Shoulder:
-        m_SkShoulderPad->SetSkeletalMesh(meshItem ? meshItem->m_SkEquipment:nullptr);
+        m_SkShoulderPad->SetSkeletalMesh(meshItem ? meshItem->m_SkEquipment : nullptr);
         break;
     case ESlots::WeaponRight:
-        m_StRightWeapon->SetStaticMesh(meshItem?meshItem->m_StEquipment:nullptr);
+        m_StRightWeapon->SetStaticMesh(meshItem ? meshItem->m_StEquipment : nullptr);
         break;
     case ESlots::WeaponLeft:
-        m_StLeftWeapon->SetStaticMesh(meshItem?meshItem->m_StEquipment:nullptr);
+        m_StLeftWeapon->SetStaticMesh(meshItem ? meshItem->m_StEquipment : nullptr);
         break;
     default:
         ;
     }
+}
+
+void APlayerDiabloCharacter::RemoveAllEffect()
+{
+    FGameplayEffectQuery Query;
+    Query.EffectSource = this;
+    GetDiaAbilitySystem()->RemoveActiveEffects(Query);
+
+    PRINTF("RemoveAllEffect");
 }
 
 
@@ -176,24 +183,14 @@ void APlayerDiabloCharacter::SetUnitStat(FName unitID)
 
     const FPlayerEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetPlayerUnitPtr(m_NameUnitID);
 
-    if(!UnitData)
+    if (!UnitData)
     {
         PRINTF("No Unit Data, SetUnit Fail");
         return;
     }
-    
-    FGameplayEffectContextHandle EffectContext = m_AbilitySystemComponent->MakeEffectContext();
-    
-    EffectContext.AddSourceObject(this);
-    
-    FGameplayEffectSpecHandle NewHandle = m_AbilitySystemComponent->MakeOutgoingSpec(UnitData->m_DefaultStatTable, GetLevel(), EffectContext);
-    
-    if (!NewHandle.IsValid())
-    {
-    	PRINTF("Invalid Handle");
-    }
-    
-    FActiveGameplayEffectHandle ActiveGEHandle = m_AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), m_AbilitySystemComponent);
+
+    auto Handle = ApplyGameEffect(UnitData->m_DefaultStatTable);
+
 }
 
 void APlayerDiabloCharacter::SetAnimStance(EAnimStance animStance)
@@ -304,7 +301,8 @@ void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
     m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
     InputComponent->BindAxis("MoveForward", this, &AUnitPawn::MoveForward);
     InputComponent->BindAxis("MoveRight", this, &AUnitPawn::MoveRight);
-    PlayerInputComponent->BindAction("Interaction", EInputEvent::IE_Pressed, this,&APlayerDiabloCharacter::InteractWithTarget);
+    PlayerInputComponent->BindAction("Interaction", EInputEvent::IE_Pressed, this,
+                                     &APlayerDiabloCharacter::InteractWithTarget);
 }
 
 
@@ -321,7 +319,6 @@ void APlayerDiabloCharacter::SetHalfHairMesh()
 void APlayerDiabloCharacter::SetDefaultBodyMesh()
 {
     m_SkBody->SetSkeletalMesh(m_DefaultBodyMesh);
-   
 }
 
 void APlayerDiabloCharacter::SetDefaultShoeMesh()

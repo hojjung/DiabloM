@@ -87,3 +87,10 @@ void UDiabloCheatManager::DeleteAllSlot()
 	USaveLoadManager::Get->DeleteAllSlot();
 }
 
+void UDiabloCheatManager::RemoveAllEffect()
+{
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
+	DiaPl->RemoveAllEffect();
+}
+

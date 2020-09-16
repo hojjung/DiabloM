@@ -61,7 +61,7 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
 		TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
 		TargetCharacter = Cast<AUnitPawn>(TargetActor);
 	}
-	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
+	if (Data.EvaluatedData.Attribute == GetPhysicalDamageAttribute())
 	{
 		// ������
 		AActor* SourceActor = nullptr;
@@ -87,8 +87,7 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
 		}
 
 		// Store a local copy of the amount of damage done and clear the damage attribute
-		const float LocalDamageDone = GetDamage();
-		SetDamage(0.f);
+		const float LocalDamageDone = GetPhysicalDamage() * GetDamagePer();
 
 		if (LocalDamageDone > 0)
 		{
@@ -142,9 +141,12 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
 
 void UBaseDiabloAttribute::PrintStats()
 {
+	PRINTF("MaxHealthPer: %f",GetMaxHealthPer());
 	PRINTF("MaxHealth: %f",GetMaxHealth());
 	PRINTF("Health: %f", GetHealth());
-	PRINTF("AttackPower: %f", GetAttackPower());
-	PRINTF("DefensePower: %f", GetDefensePower());
+	PRINTF("AttackPower: %f", GetPhysicalDamage());
+	PRINTF("AttackPowerPer: %f", GetDamagePer());
+	PRINTF("DefensePower: %f", GetPhysicalDefense());
+	PRINTF("DefensePowerPer: %f", GetDefensePer());
 	PRINTF("MoveSpeed: %f", GetMoveSpeed());
 }

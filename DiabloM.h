@@ -54,7 +54,17 @@
 #include "Components/SceneComponent.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
-
+//
+// #include "AbilitySystemComponent.h"
+// #include "AttributeSet.h"
+// #include "GameplayEffectTypes.h"
+// #include "Abilities/GameplayAbilityTargetTypes.h"
+// #include "Abilities/GameplayAbility.h"
+// #include "GameplayTagContainer.h"
+// #include "GameplayEffectExecutionCalculation.h"
+// #include "Abilities/Tasks/AbilityTask.h"
+// #include "Abilities/GameplayAbilityTypes.h"
+// #include "AbilitySystem/AbilityTypes.h"
 
 
 //

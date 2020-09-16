@@ -3,7 +3,7 @@
 #include "DiabloM.h"
 #include "ItemHolder.h"
 #include "Datas/ItemDataTable.h"
-
+#include  "Datas/OptionDataTable.h"
 
 #include "EquipmentSystem.generated.h"
 
@@ -95,13 +95,15 @@ protected:
     FEquipSlot m_FingerLeft;
     FEquipSlot m_FingerRight;
 
+public:
+    TArray<FEquipSlot*>& GetArySlotPtr();
 protected:
     TArray<FEquipSlot*> m_ArySlots;
 
-public:
-    TArray<FEquipSlot*>& GetArySlotPtr();
+    TMap<FItemInstance*,FActiveGameplayEffectHandle> m_EquipmentEffectContainer;
 
-protected:
+    UDiabloAbilitySystemComp* m_TargetAbilitySys;
+    
     typedef void (UEquipmentSystem::*FPtrForStance)(void);
     FPtrForStance m_StanceFPtr[(int)EItemType::Shield + 1][(int)EItemType::Shield + 1];
 
@@ -123,7 +125,7 @@ public:
     }
 
 public:
-    void Init();
+    void Init(UDiabloAbilitySystemComp* abilitySysCompo);
 
     virtual bool AddItem(int droppedIndex, FItemInstance& itemWantAdd) override;
 
@@ -156,7 +158,7 @@ protected:
 
     void SetStanceStaff();
 
-
+   // FGameplayEffectSpec* MakeGameEffectSpec(const FOptionValue& insTanceValue,const FOptionSpec);
 public:
     bool CheckSlotOccupied(int index);
 

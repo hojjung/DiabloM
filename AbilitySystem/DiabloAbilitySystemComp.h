@@ -27,4 +27,6 @@ public:
 	/** Version of function in AbilitySystemGlobals that returns correct type */
 	static UDiabloAbilitySystemComp* GetAbilitySystemComponentFromActor(const AActor* Actor, bool LookForComponent = false);
 
+
+	FActiveGameplayEffectHandle ApplyGameEffect(TSubclassOf<UGameplayEffect> gameEffect);
 };

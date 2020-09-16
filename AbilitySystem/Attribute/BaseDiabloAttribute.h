@@ -22,30 +22,102 @@ public:
 	UBaseDiabloAttribute();
 
 public:
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
+	UPROPERTY(BlueprintReadOnly, Category = "Defense")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, Health)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Defense")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, MaxHealth)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData AttackPower;
-	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AttackPower)
+	UPROPERTY(BlueprintReadOnly, Category = "Defense")
+	FGameplayAttributeData MaxHealthAbs;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, MaxHealthAbs)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Defense")
+	FGameplayAttributeData MaxHealthPer;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, MaxHealthPer)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData DefensePower;
-	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, DefensePower)
+	FGameplayAttributeData AttackSpeed;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AttackSpeed)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData AttackSpeedPer;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AttackSpeedPer)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData PhysicalDamage;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, PhysicalDamage)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData PhysicalDamagePer;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, PhysicalDamagePer)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Defense")
+	FGameplayAttributeData PhysicalDefense;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, PhysicalDefense)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Defense")
+	FGameplayAttributeData PhysicalDefensePer;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, PhysicalDefensePer)
 
 	UPROPERTY(BlueprintReadOnly, Category = "MoveSpeed")
 	FGameplayAttributeData MoveSpeed;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, MoveSpeed)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Damage", meta = (HideFromLevelInfos))
-	FGameplayAttributeData Damage;
-	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, Damage)
+	UPROPERTY(BlueprintReadOnly, Category = "MoveSpeed")
+	FGameplayAttributeData MoveSpeedPer;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, MoveSpeedPer)
 
+	UPROPERTY(BlueprintReadOnly, Category = "Damage", meta = (HideFromLevelInfos))
+	FGameplayAttributeData DamagePer;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, DamagePer)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Defense", meta = (HideFromLevelInfos))
+	FGameplayAttributeData DefensePer;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, DefensePer)
+	//속성데미지
+	UPROPERTY(BlueprintReadOnly, Category = "Defense", meta = (HideFromLevelInfos))
+	FGameplayAttributeData ResFire;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, ResFire)
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Defense", meta = (HideFromLevelInfos))
+	FGameplayAttributeData ResCold;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, ResCold)
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Defense", meta = (HideFromLevelInfos))
+	FGameplayAttributeData ResPoison;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, ResPoison)
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Defense", meta = (HideFromLevelInfos))
+	FGameplayAttributeData ResElec;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, ResElec)
+	//
+	UPROPERTY(BlueprintReadOnly, Category = "Type", meta = (HideFromLevelInfos))
+	FGameplayAttributeData AtkFire;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AtkFire)
+	UPROPERTY(BlueprintReadOnly, Category = "Type", meta = (HideFromLevelInfos))
+	FGameplayAttributeData AtkCold;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AtkCold)
+	UPROPERTY(BlueprintReadOnly, Category = "Type", meta = (HideFromLevelInfos))
+	FGameplayAttributeData AtkElec;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AtkElec)
+	UPROPERTY(BlueprintReadOnly, Category = "Type", meta = (HideFromLevelInfos))
+	FGameplayAttributeData AtkPoison;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AtkPoison)
+	//
+	UPROPERTY(BlueprintReadOnly, Category = "Defense")
+	FGameplayAttributeData AvoidChance;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AvoidChance)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attack")
+	FGameplayAttributeData Accuracy;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, Accuracy)
+
+	
+
+	
 protected:
 	void AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty);
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;

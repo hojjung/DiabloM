@@ -5,7 +5,7 @@
 
 UDiabloAbilitySystemComp::UDiabloAbilitySystemComp()
 {
-
+	bCachedIsNetSimulated=true;
 }
 
 void UDiabloAbilitySystemComp::GetActiveAbilitiesWithTags(const FGameplayTagContainer & GameplayTagContainer, TArray<UDiabloAbility*>& ActiveAbilities)
@@ -40,4 +40,19 @@ int32 UDiabloAbilitySystemComp::GetDefaultAbilityLevel() const
 UDiabloAbilitySystemComp * UDiabloAbilitySystemComp::GetAbilitySystemComponentFromActor(const AActor * Actor, bool LookForComponent)
 {
 	return Cast<UDiabloAbilitySystemComp>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Actor, LookForComponent));
+}
+
+FActiveGameplayEffectHandle UDiabloAbilitySystemComp::ApplyGameEffect(TSubclassOf<UGameplayEffect> gameEffect)
+{
+	FGameplayEffectContextHandle EffectContext = MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+
+	FGameplayEffectSpecHandle NewHandle = MakeOutgoingSpec(gameEffect,GetDefaultAbilityLevel(), EffectContext);
+
+	if (!NewHandle.IsValid())
+	{
+		PRINTF("Invalid Handle");
+	}
+
+	return ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), this);
 }

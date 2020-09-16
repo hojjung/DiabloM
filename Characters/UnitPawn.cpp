@@ -28,7 +28,7 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit):Super(objInit)
 
 	m_nCharacterLevel = 1;
 	m_AbilitySystemComponent = CreateDefaultSubobject<UDiabloAbilitySystemComp>("AbilitySystemComponent00");
-	m_AbilitySystemComponent->SetIsReplicated(true);
+	m_AbilitySystemComponent->SetIsReplicated(true);//bCachedIsNetSimulated
 	m_AttributeSet = CreateDefaultSubobject<UBaseDiabloAttribute>("AttributeSet00");
 
 	m_PFComp = CreateDefaultSubobject<UPathFollowingComponent>(TEXT("PathFollowingComponent"));
@@ -200,14 +200,25 @@ void AUnitPawn::GetCapsuleSize(float & height, float & radius)
 	radius = m_Capsule->GetScaledCapsuleRadius();
 }
 
-UAbilitySystemComponent * AUnitPawn::GetAbilitySystemComponent() const
+UDiabloAbilitySystemComp* AUnitPawn::GetDiaAbilitySystem() const
 {
 	return m_AbilitySystemComponent;
 }
 
+UAbilitySystemComponent* AUnitPawn::GetAbilitySystemComponent() const
+{
+	return  GetDiaAbilitySystem();
+}
+
+
 void AUnitPawn::PrintStats()
 {
 	m_AttributeSet->PrintStats();
+}
+
+FActiveGameplayEffectHandle AUnitPawn::ApplyGameEffect(TSubclassOf<UGameplayEffect> gameEffect)
+{
+	return m_AbilitySystemComponent->ApplyGameEffect(gameEffect);
 }
 
 void AUnitPawn::SetUnitStat(FName unitID)
@@ -220,17 +231,13 @@ void AUnitPawn::SetUnitStat(FName unitID)
 	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	m_SkBody->SetAnimInstanceClass(UnitData->m_AnimBP);
 
-	FGameplayEffectContextHandle EffectContext = m_AbilitySystemComponent->MakeEffectContext();
-	EffectContext.AddSourceObject(this);
+auto Handle=	ApplyGameEffect(UnitData->m_DefaultStatTable);
 
-	FGameplayEffectSpecHandle NewHandle = m_AbilitySystemComponent->MakeOutgoingSpec(UnitData->m_DefaultStatTable, GetLevel(), EffectContext);
-
-	if (!NewHandle.IsValid())
+	if(Handle.IsValid())
 	{
-		PRINTF("Invalid Handle");
+		PRINTF("IsvAlid");
 	}
-
-	FActiveGameplayEffectHandle ActiveGEHandle = m_AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), m_AbilitySystemComponent);
+	
 
 	//현재 레벨 기본 스텟
 
@@ -366,6 +373,12 @@ void AUnitPawn::AddStartupGameplayAbilities()
 			if (NewHandle.IsValid())
 			{
 				FActiveGameplayEffectHandle ActiveGEHandle = m_AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), m_AbilitySystemComponent);
+
+
+				if(m_AbilitySystemComponent->RemoveActiveGameplayEffect(ActiveGEHandle))
+				{
+					PRINTF("Remove");
+				}
 			}
 		}
 

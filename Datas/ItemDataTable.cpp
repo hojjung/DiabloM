@@ -50,4 +50,12 @@ FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMe
     m_bEquipable = true;
 
     m_ItemID = "NeedName";
+//OnDataTableChangedDelegate
+    if(m_Options.Num()>0)
+    {
+        for(auto Op : m_Options)
+        {
+            Op.DataTable=UOptionDataTable::GetOptionTable;
+        }
+    }
 }

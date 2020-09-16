@@ -7,7 +7,6 @@
 #include "Characters/DiabloPlayerController.h"
 
 
-
 void UItemPopupInfo::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
@@ -33,7 +32,8 @@ void UItemPopupInfo::NativeOnInitialized()
 
     m_SelectedItem = nullptr;
 
-    //NativeOnMouseButtonDoubleClick()
+    GetEquipButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::EquipItem);
+    m_UnequipButton->OnClicked.AddDynamic(this, &UItemPopupInfo::UnequipItem);
 }
 
 FReply UItemPopupInfo::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -82,13 +82,13 @@ void UItemPopupInfo::UnequipItem()
     }
     //inven 에 공간 먼저 확인
 
-    int RemoveWantIndex=m_SelectedItem->m_nGridIndex;
-    
+    int RemoveWantIndex = m_SelectedItem->m_nGridIndex;
+
     if (!UDiaInvenGridPanel::GetInvenWidgetInst->AddItemAuto(*m_SelectedItem))
     {
         return;
     }
-    
+
     //UDiaEquipmentPanel::GetEquipWidgetInst->UnequipItem(RemoveWantIndex);
 }
 
@@ -211,19 +211,19 @@ void UItemPopupInfo::ShowInfoPanel(FItemInstance& itemInst)
 
         IItemHolder* Holder = m_SelectedItem->m_Holder;
 
-        GetEquipButton()->OnClicked.Clear();
+        auto* DiaChar = Cast<ADiabloPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-        auto* DiaChar= Cast<ADiabloPlayerController>( UGameplayStatics::GetPlayerController(GetWorld(),0));
-        
-        if (Cast< UEquipmentSystem>(Holder) ==DiaChar->GetEquipment())
+        if (Cast<UEquipmentSystem>(Holder) == DiaChar->GetEquipment())
         {
             PRINTF("EquipSys");
-            GetEquipButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::UnequipItem);
+            GetEquipButton()->SetVisibility(ESlateVisibility::Hidden);
+            m_UnequipButton->SetVisibility(ESlateVisibility::Visible);
         }
         else if (Cast<UInventory>(Holder) == DiaChar->GetInven())
         {
             PRINTF("Inven");
-            GetEquipButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::EquipItem);
+            GetEquipButton()->SetVisibility(ESlateVisibility::Visible);
+            m_UnequipButton->SetVisibility(ESlateVisibility::Hidden);
         }
         //GetEquipButton()->OnClicked.AddDynamic(this,&UItemPopupInfo::EquipItem);
     }
@@ -271,7 +271,7 @@ float UItemPopupInfo::SetOptionTexts(const FItemInstance& itemInst)
     {
         m_AryOptions[i]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
         m_AryOptions[i]->SetString(
-           itemInst.m_ItemData->GetOption(i).GetOptionFormat(itemInst.m_AryOptions[i].m_fValue));
+            itemInst.m_ItemData->GetOption(i).GetOptionFormat(itemInst.m_AryOptions[i].m_fValue));
         m_AryOptions[i]->ForceLayoutPrepass();
         OptionSizeY += m_AryOptions[i]->GetDesiredSize().Y;
         i++;

@@ -19,10 +19,10 @@ public class DiabloM : ModuleRules
             "GameplayTags",
             "GameplayTasks",
             "AIModule",
-            "NavigationSystem",
-            "DialoguePlugin",
-            "DungeonArchitectRuntime",
-            "TechTree"
+           "DialoguePlugin",
+           "DungeonArchitectRuntime",
+           "TechTree",
+            "NavigationSystem"
            
         });
 

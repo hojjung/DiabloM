@@ -28,11 +28,11 @@ protected:
     FOnItemSlotChanged m_OnItemGroundChanged;
 
 protected:
-    bool CreateRandomOption(int level, const FItemData& itemData, TArray<FOptionValue>& outOption);
+    bool CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption);
 
     void CreateIntAryForShuffle(int maxAryLen, TArray<int>& outIndexAry);
 
-    FOptionValue CreateRandomOptionValue(int indexRandomd, const FItemData& itemData);
+    FOptionSpec CreateRandomOptionValue(int indexRandomd, const FItemData& itemData);
 
 public:
     void Init(UDiabloGameInstance* gameInstance);

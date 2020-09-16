@@ -49,4 +49,6 @@ public:
     void LoadCharStat();
 	UFUNCTION(exec)
 	void DeleteAllSlot();
+	UFUNCTION(exec)
+	void RemoveAllEffect();
 };

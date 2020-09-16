@@ -8,6 +8,7 @@
 #include "ItemDataTable.generated.h"
 
 
+
 UENUM(BlueprintType)
 enum class EItemLocation :uint8 //������ �ν��Ͻ��� ��ġ
 {
@@ -71,7 +72,9 @@ struct FItemData : public FTableRowBase
 
 public:
     FItemData();
+    
 public:
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName m_ItemID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -109,8 +112,6 @@ public:
     UStaticMesh* m_ItemMesh;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     UTexture* m_ItemIcon;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<TSubclassOf<UGameplayEffect>> m_DefaultPassive;
 
 public:
     const FItemTier& GetItemTier() const
@@ -136,7 +137,7 @@ public:
     }
 
     FItemInstance(const FItemData* itemData, int gridIndex, IItemHolder* holder,
-                  TArray<FOptionValue>* aryUseEffect = nullptr)
+                  TArray<FOptionSpec>* aryUseEffect = nullptr)
     {
         m_ItemData = itemData;
         m_ItemID = m_ItemData->m_ItemID;
@@ -156,7 +157,7 @@ public:
     UPROPERTY(EditAnywhere)
     int m_nGridIndex;
     UPROPERTY(EditAnywhere)
-    TArray<FOptionValue> m_AryOptions;
+    TArray<FOptionSpec> m_AryOptions;
     UPROPERTY(EditAnywhere)
     FName m_ItemID = NAME_None;
 
@@ -198,21 +199,24 @@ public:
     }
 };
 
+
+
+
 UCLASS()
 class DIABLOM_API UItemDataTable : public UObject
 {
     GENERATED_BODY()
 
-public:
+    public:
     UItemDataTable();
 
-public:
+    public:
     static  UDataTable* GetTierTable;
 
     static  UDataTable* GetItemTable;
 
 
-public:
+    public:
     static const FItemTier& GetItemTier(FName id);
 
     static const FItemTier* GetItemTierPtr(FName id);
@@ -222,5 +226,3 @@ public:
     static const FItemData* GetItemDataPtr(FName id);
     
 };
-
-

@@ -77,6 +77,8 @@ protected:
 	//
 	TScriptInterface< IInteractable> m_FocusedInteractable;
 
+	
+	
 protected:
 	void SetAnimStance(EAnimStance animStance);
 	
@@ -117,7 +119,9 @@ public:
 
 	void EquipMesh(const FItemData* meshItem,ESlots slotWant);
 
-
+	void RemoveAllEffect();
 	private:
 	EAnimStance GetAnimStance() const;
+
+	
 };

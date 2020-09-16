@@ -3,8 +3,33 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "ObjectMacros.h"
+
 #include "OptionDataTable.generated.h"
 
+
+//옵션부터 다시 만들어야할듯
+//옵션의 상수 데이터
+//랜덤 최소 최대치
+//옵션 게임플레이 태그
+//옵션 게임 이펙트
+
+USTRUCT(BlueprintType) //난이도,티어
+struct FOptionSpec
+{
+    GENERATED_BODY()
+    //It is saving
+    
+public:
+    FOptionSpec(): m_fValue(0),m_nOptionIndex(0)
+    {
+        
+    }
+    UPROPERTY(EditAnywhere)
+    int m_fValue;
+    UPROPERTY(EditAnywhere)
+    int m_nOptionIndex;
+};
 
 USTRUCT(BlueprintType) //난이도,티어
 struct FOption : public FTableRowBase
@@ -15,74 +40,91 @@ public:
     FOption()
     {
         m_bIsPercent = false;
-        m_fMinValue = 10.f;
-        m_fMaxValue = 40.f;
-        m_FormatArguSet = "Ex)+ {0} {1}";
+        
+        m_fMinValue.Init(1,3);
+        m_fMinValue[1] =3;
+        m_fMinValue[2] =5;
+        
+        m_fMaxValue.Init(10,3);
+        m_fMaxValue[1] =25;
+        m_fMaxValue[2] =45;
+        
+        m_FormatArguSet = "{0}{1}{2} {3}";//need open?
         m_FormatEffect = FText::FromString("Ex)Increase Attack");
+        m_OptionTag = FGameplayTag::RequestGameplayTag("Item.Option",true);
     }
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     bool m_bIsPercent;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    float m_fMinValue;
+    TArray<int> m_fMinValue;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    float m_fMaxValue;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TArray<int> m_fMaxValue;
+    //UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FString m_FormatArguSet;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_FormatEffect;
-
-
-    FText GetOptionFormat(int value) const
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FGameplayTag m_OptionTag;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TSubclassOf<UGameplayEffect> m_OptionGe;
+    
+private:
+    char Plus = '+';
+    char Minus = '-';
+    char Percent = '%';
+    char NoPercent = ' ';
+    
+public:
+    FORCEINLINE FText GetOptionFormat(int value) const
     {
         FFormatOrderedArguments Args;
-        Args.Add(value);
-        Args.Add(m_FormatEffect);
 
+        if(value ==0)
+        {
+            PRINTF("WTF - Value Is Zero");
+            Args.Add(Plus);
+        }
+        else if(value<0)
+        {
+            Args.Add(Minus);
+        }
+        else
+        {
+            Args.Add(Plus);
+        }
+
+        Args.Add(value);
+
+        if(m_bIsPercent)
+        {
+            Args.Add(Percent);
+        }
+        {
+            Args.Add(NoPercent);            
+        }
+        
+        Args.Add(m_FormatEffect);
+        
         FTextFormat FormatT = FText::FromString(m_FormatArguSet);
 
         return FText::Format(FormatT, Args);
     }
+
+    FORCEINLINE FOptionSpec MakeOptionInst(int thisIndex) const
+    {
+        FOptionSpec NewOption;
+
+        NewOption.m_fValue = FMath::RandRange(m_fMinValue.GetRandom(),m_fMaxValue.GetRandom());
+
+        NewOption.m_nOptionIndex=thisIndex;
+
+        return NewOption;
+    }
+    
 };
 
-USTRUCT(BlueprintType) //난이도,티어
-struct FOptionInstance
-{
-    GENERATED_BODY()
 
-public:
-    FOptionInstance(): m_fValue(0)
-    {
-        m_OptionData = nullptr;
-    }
-
-    const FOption* m_OptionData; //i should change this for save
-    float m_fValue;
-};
-
-USTRUCT(BlueprintType)
-struct FOptionValue
-{
-    GENERATED_BODY()
-
-public:
-    FOptionValue()
-    {
-        m_nIndex = -1;
-        m_fValue = 0;
-    }
-
-    FOptionValue(int index, float v)
-    {
-        m_nIndex = index;
-        m_fValue = v;
-    }
-
-    UPROPERTY(EditAnywhere)
-    int m_nIndex;
-    UPROPERTY(EditAnywhere)
-    float m_fValue;
-};
 
 UCLASS()
 class DIABLOM_API UOptionDataTable : public UObject
@@ -98,6 +140,7 @@ public:
     static const FOption& GetOption(FName id);
 
     static const FOption* GetOptionPtr(FName id);
+    
 };
 
 
