@@ -17,8 +17,8 @@ UEquipmentSystem::~UEquipmentSystem()
 
 void UEquipmentSystem::Init(UDiabloAbilitySystemComp* abilitySysCompo)
 {
-    m_TargetAbilitySys=abilitySysCompo;
-    
+    m_TargetAbilitySys = abilitySysCompo;
+
     m_Head.SetEquipableType(EItemType::Helmet, true);
     m_Neck.SetEquipableType(EItemType::Necklace, true);
     m_Torso.SetEquipableType(EItemType::BodyArmor, true);
@@ -93,9 +93,9 @@ void UEquipmentSystem::Init(UDiabloAbilitySystemComp* abilitySysCompo)
     m_StanceFPtr[static_cast<int>(EItemType::TwohandSword)][static_cast<int>(EItemType::None)] = &
         UEquipmentSystem::SetStanceTwoHand;
     m_StanceFPtr[static_cast<int>(EItemType::Bow)][static_cast<int>(EItemType::None)] = &
-       UEquipmentSystem::SetStanceBow;
+        UEquipmentSystem::SetStanceBow;
     m_StanceFPtr[static_cast<int>(EItemType::Staff)][static_cast<int>(EItemType::None)] = &
-       UEquipmentSystem::SetStanceStaff;
+        UEquipmentSystem::SetStanceStaff;
 }
 
 bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //drag된 대상이 어떤 아이템을 가졌는지 알방법이 없음
@@ -108,8 +108,8 @@ bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //d
     if (!CheckSlotOccupied(droppedIndex))
     {
         SetItem(droppedIndex, itemWantAdd); //그냥 비어있던 슬롯
-        
-        if(itemWantAdd.m_Holder)
+
+        if (itemWantAdd.m_Holder)
         {
             itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
         }
@@ -225,41 +225,38 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
 
     //UG
 
-    if(itemWantAdd.m_ItemData->m_Options.Num()<1)
+    if (itemWantAdd.m_ItemData->m_Options.Num() < 1)
     {
         return;
     }
-    
 
-    for(auto& Option : itemWantAdd.m_ItemData->m_Options)
+
+    for (auto& Option : itemWantAdd.m_ItemData->m_Options)
     {
-        if(Option.IsNull())
+        if (Option.IsNull())
         {
             continue;
         }
         //
-        auto Context= m_TargetAbilitySys->MakeEffectContext();
+        auto Context = m_TargetAbilitySys->MakeEffectContext();
         Context.AddSourceObject(m_TargetAbilitySys->GetOwner());
         //
         //
-        FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(itemWantAdd.m_ItemData->GetOption(0).m_OptionGe, 1, Context);
+        FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(
+            itemWantAdd.m_ItemData->GetOption(0).m_OptionGe, 1, Context);
 
-        NewHandle.Data.Get()->SetSetByCallerMagnitude(itemWantAdd.m_ItemData->GetOption(0).m_OptionTag, 999.f);
+       NewHandle.Data.Get()->SetSetByCallerMagnitude(itemWantAdd.m_ItemData->GetOption(0).m_OptionTag, 999.f);
         //제거 테스트
-        FActiveGameplayEffectHandle AA = m_TargetAbilitySys->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), m_TargetAbilitySys);
+        FActiveGameplayEffectHandle AA = m_TargetAbilitySys->ApplyGameplayEffectSpecToTarget(
+            *NewHandle.Data.Get(), m_TargetAbilitySys);
 
         FGameplayEffectQuery Query;
         Query.EffectSource = m_TargetAbilitySys->GetOwner();
 
-        if(AA.IsValid())
+       if (m_TargetAbilitySys->RemoveActiveEffects(Query))
         {
-            PRINTF("It is valide");      
+            PRINTF("Erased1");
         }
-         if (m_TargetAbilitySys->RemoveActiveEffects(Query))
-         {
-          PRINTF("Erased1");   
-         }
-
     }
 
     OnItemSlotChanged(droppedIndex);
@@ -297,12 +294,12 @@ void UEquipmentSystem::SetItemAry(TArray<FItemInstance>& equipSlot)
 {
     for (int i = 0; i < m_ArySlots.Num(); i++)
     {
-        if(!equipSlot[i].m_ItemData)
+        if (!equipSlot[i].m_ItemData)
         {
             continue;
         }
-        
-        AddItem(i,equipSlot[i]);
+
+        AddItem(i, equipSlot[i]);
     }
 }
 

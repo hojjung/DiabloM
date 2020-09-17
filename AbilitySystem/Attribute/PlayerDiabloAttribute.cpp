@@ -3,6 +3,8 @@
 
 #include "PlayerDiabloAttribute.h"
 
+#include "GameplayEffectExtension.h"
+
 UPlayerDiabloAttribute::UPlayerDiabloAttribute()
 {
 
@@ -12,7 +14,7 @@ UPlayerDiabloAttribute::UPlayerDiabloAttribute()
 void UPlayerDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	Super::PreAttributeChange(Attribute, NewValue);
-
+	
 	if (NewValue <= 0.f)
 	{
 		return;
@@ -32,6 +34,7 @@ void UPlayerDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attrib
 void UPlayerDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCallbackData & Data)
 {
 	Super::PostGameplayEffectExecute(Data);
+	
 }
 
 void UPlayerDiabloAttribute::PrintStats()
