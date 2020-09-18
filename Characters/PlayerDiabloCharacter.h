@@ -61,8 +61,6 @@ protected:
 	UStaticMeshComponent* m_StRightWeapon;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UStaticMeshComponent* m_StLeftWeapon;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	TArray<TSubclassOf<UDiaAniminstance>> m_AryAnimBP;
 protected:
 	UPROPERTY()
 	USkeletalMesh* m_DefaultFullHairMesh;
@@ -77,11 +75,7 @@ protected:
 	//
 	TScriptInterface< IInteractable> m_FocusedInteractable;
 
-	
-	
 protected:
-	void SetAnimStance(EAnimStance animStance);
-	
 	virtual void BeginPlay() override;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -120,8 +114,6 @@ public:
 	void EquipMesh(const FItemData* meshItem,ESlots slotWant);
 
 	void RemoveAllEffect();
-	private:
-	EAnimStance GetAnimStance() const;
 
-	
+	void SetAnimStance(const FAnimStance* animStance);	
 };

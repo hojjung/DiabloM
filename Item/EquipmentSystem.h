@@ -9,66 +9,35 @@
 
 
 class USaveEquipment;
-UENUM(BlueprintType)
-enum class EAnimStance :uint8 //애니매이션으로 사용될 세트ㅜ
-{
-    None,
-    OneHandSword,
-    TwohandSword,
-    Dagger,
-    Katana,
-    Bow,
-    Staff,
-    Shield,
-    DualSword,
-    Length
-};
+// UENUM(BlueprintType)
+// enum class EAnimStance :uint8 //애니매이션으로 사용될 세트ㅜ
+// {
+//     None,
+//     OneHandSword,
+//     TwohandSword,
+//     Dagger,
+//     Katana,
+//     Bow,
+//     Staff,
+//     Shield,
+//     DualSword,
+//     Length
+// };
 
-UENUM(BlueprintType)
-enum class ESlots:uint8
-{
-    Head,
-    Neck,
-    Torso,
-    Waist,
-    Leg,
-    Hand,
-    Shoulder,
-    WeaponRight,
-    WeaponLeft,
-    FingerRight,
-    FingerLeft,
-    Length
-};
 
 struct FEquipSlot
 {
 public:
-    FEquipSlot()
+    FEquipSlot(): m_Slot(), m_EquippedType(nullptr)
     {
-        m_AbleEquipSlot.Init(false, (int)EItemType::Length);
-        m_bIsOccupied = false;
-        m_EquippedType = EItemType::None;
     }
 
 public:
-    EItemType m_EquippedType;
-
-    TArray<bool> m_AbleEquipSlot;
-
-    bool m_bIsOccupied;
+    ESlots m_Slot;
+    
+    const FItemType* m_EquippedType;
 
     FItemInstance m_Item;
-
-    void SetOccupie(bool v)
-    {
-        m_bIsOccupied = v;
-    }
-
-    void SetEquipableType(EItemType equipableType, bool isAble)
-    {
-        m_AbleEquipSlot[(int)equipableType] = isAble;
-    }
 
     FActiveGameplayEffectHandle m_OptionHandle;
 };
@@ -77,9 +46,6 @@ UCLASS()
 class DIABLOM_API UEquipmentSystem : public UObject, public IItemHolder
 {
     GENERATED_BODY()
-
-public:
-    DECLARE_MULTICAST_DELEGATE_OneParam(FStance, EAnimStance);
 
 public:
     ~UEquipmentSystem();
@@ -97,34 +63,18 @@ protected:
     FEquipSlot m_FingerLeft;
     FEquipSlot m_FingerRight;
 
-public:
-    TArray<FEquipSlot*>& GetArySlotPtr();
-protected:
     TArray<FEquipSlot*> m_ArySlots;
 
     TMap<FItemInstance*,FActiveGameplayEffectHandle> m_EquipmentEffectContainer;
 
     UDiabloAbilitySystemComp* m_TargetAbilitySys;
     
-    typedef void (UEquipmentSystem::*FPtrForStance)(void);
-    FPtrForStance m_StanceFPtr[(int)EItemType::Shield + 1][(int)EItemType::Shield + 1];
-
-    EAnimStance m_CurrentStance;
+    const FAnimStance* m_CurrentStance;
 
     FOnItemSlotChanged m_ItemChanged;
 
-    FStance m_OnStanceChanged;
-
-public:
-    virtual FOnItemSlotChanged& GetItemChangeCallback() override
-    {
-        return m_ItemChanged;
-    }
-
-    FStance& GetStanceChangeCallaback()
-    {
-        return m_OnStanceChanged;
-    }
+protected:
+    void OnItemSlotChanged(int index);
 
 public:
     void Init(UDiabloAbilitySystemComp* abilitySysCompo);
@@ -134,34 +84,7 @@ public:
     virtual void RemoveItem(FItemInstance& itemWantErase) override;
 
     virtual void RemoveItemByIndex(int index) override;
-
-protected:
-    void OnItemSlotChanged(int index);
-
-    void CalculateStance();
-
-    void SetStanceAllNull();
-
-    void SetStanceNull();
-
-    void SetStanceOneHand();
-
-    void SetStanceDual();
-
-    void SetStanceShield();
-
-    void SetStanceDagger();
-
-    void SetStanceKatana();
-
-    void SetStanceTwoHand();
-
-    void SetStanceBow();
-
-    void SetStanceStaff();
-
-   // FGameplayEffectSpec* MakeGameEffectSpec(const FOptionValue& insTanceValue,const FOptionSpec);
-public:
+    
     bool CheckSlotOccupied(int index);
 
     virtual bool SwapMove(FItemInstance& Drop, FItemInstance& Drag) override;
@@ -170,20 +93,27 @@ public:
 
     virtual void SetItem(int droppedIndex, FItemInstance& itemWantAdd) override;
 
-    EAnimStance GetCurrentStance() const
-    {
-        return m_CurrentStance;
-    }
-
     FItemInstance& GetItem(int index);
 
     void PrintEquipStats();
 
-    EItemType GetEquippedItem(ESlots slot);
+    const FItemType* GetEquippedItem(ESlots slot);
 
-    EItemType GetEquippedItem(int slotIndex);
+    const FItemType* GetEquippedItem(int slotIndex);
 
     friend USaveEquipment;
 
     void SetItemAry(TArray<FItemInstance>& equipSlot);
+
+    virtual FOnItemSlotChanged& GetItemChangeCallback() override
+    {
+        return m_ItemChanged;
+    }
+
+    const FAnimStance* GetCurrentStance() const
+    {
+        return m_CurrentStance;
+    }
+
+    TArray<FEquipSlot*>& GetArySlotPtr();
 };

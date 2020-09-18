@@ -21,14 +21,14 @@ struct FOptionSpec
     //It is saving
     
 public:
-    FOptionSpec(): m_fValue(0),m_nOptionIndex(0)
+    FOptionSpec(): m_fValue(0)
     {
         
     }
     UPROPERTY(EditAnywhere)
     int m_fValue;
     UPROPERTY(EditAnywhere)
-    int m_nOptionIndex;
+    FName m_OptionID;
 };
 
 USTRUCT(BlueprintType) //난이도,티어
@@ -52,8 +52,10 @@ public:
         m_FormatArguSet = "{0}{1}{2} {3}";//need open?
         m_FormatEffect = FText::FromString("Ex)Increase Attack");
         m_OptionTag = FGameplayTag::RequestGameplayTag("Item.Option",true);
+        m_OptionID="SetSameWithRowName";
     }
-
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FName m_OptionID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     bool m_bIsPercent;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -109,32 +111,19 @@ public:
         return FText::Format(FormatT, Args);
     }
 
-    FORCEINLINE FOptionSpec MakeOptionInst(int thisIndex) const
+    FORCEINLINE FOptionSpec MakeOptionInst() const
     {
         FOptionSpec NewOption;
 
         NewOption.m_fValue = FMath::RandRange(m_fMinValue.GetRandom(),m_fMaxValue.GetRandom());
 
-        NewOption.m_nOptionIndex=thisIndex;
+        NewOption.m_OptionID=m_OptionID;
 
         return NewOption;
     }
     
 };
 
-
-USTRUCT(BlueprintType) //난이도,티어
-struct FOptionGE : public FTableRowBase
-{
-    GENERATED_BODY()
-
-    //ItemTypes OptinGE
-public:
-    TArray<TSubclassOf<UGameplayEffect>> m_DefaultGameEffect;
-    
-    TArray<TSubclassOf<UGameplayEffect>> m_UniqueGameEffect;
-    
-};
 
 UCLASS()
 class DIABLOM_API UOptionDataTable : public UObject
@@ -146,18 +135,11 @@ public:
 public:
     static UDataTable* GetOptionTable;
 
-public:
-    static UDataTable* GetOptionGETable;
 
 public:
     static const FOption& GetOption(FName id);
 
     static const FOption* GetOptionPtr(FName id);
-
-    static const FOptionGE& GetOptionGE(FName id);
-
-    static const FOptionGE* GetOptionGEPtr(FName id);
-    
 };
 
 

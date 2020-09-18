@@ -84,8 +84,6 @@ void UDiaEquipmentPanel::Init(UEquipmentSystem * equipContainer)
 	
 
 	m_EquipSys->GetItemChangeCallback().AddUObject(this, &UDiaEquipmentPanel::UpdateSlot);
-	m_EquipSys->GetStanceChangeCallaback().AddUObject(this, &UDiaEquipmentPanel::UpdateStance);
-
 
 	UDiaEquipmentPanel::GetEquipWidgetInst = this;
 }
@@ -119,26 +117,6 @@ void UDiaEquipmentPanel::UpdateSlot(int index,  FItemInstance& itemInst)
 	PRINTF("UpdateSlot EquipPanel");
 }
 
-void UDiaEquipmentPanel::UpdateStance(EAnimStance currentStance)
-{
-	if (currentStance == EAnimStance::Katana || currentStance == EAnimStance::TwohandSword)
-	{
-		m_ArySlots[static_cast<int>(ESlots::WeaponLeft)]->UpdateItemVisual(m_EquipSys->GetItem(static_cast<int>(ESlots::WeaponRight)));
-		m_ArySlots[static_cast<int>(ESlots::WeaponLeft)]->SetVisualColorTint(FColor::Red);
-		m_ArySlots[static_cast<int>(ESlots::WeaponLeft)]->SetHighlightColorTint(FColor::Red);
-	}
-	else
-	{
-		m_ArySlots[static_cast<int>(ESlots::WeaponLeft)]->SetVisualColorTint(FColor::White);
-
-		if (m_EquipSys->GetItem(static_cast<int>(ESlots::WeaponLeft)).m_ItemID==NAME_None)
-		{
-			m_ArySlots[static_cast<int>(ESlots::WeaponLeft)]->ClearSlot();
-		}
-
-		PRINTF("ClearSlot EquipPanel");
-	}
-}
 
 void UDiaEquipmentPanel::ShowItemInfo(const FGeometry & theInstigator,  FItemInstance & itemInst)
 {

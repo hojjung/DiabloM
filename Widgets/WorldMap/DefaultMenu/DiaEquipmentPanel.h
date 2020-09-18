@@ -36,7 +36,6 @@ protected:
 	UDiaInvenGridSlot* m_SlotFingerLeft;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaInvenGridSlot* m_SlotFingerRight;
-public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
 	UItemPopupInfo* m_ItemPopup;
 
@@ -66,9 +65,6 @@ protected:
 	bool CheckItemEquipable(int dropIndex, FItemInstance& drag);
 
 	void UpdateSlot(int index,  FItemInstance& itemInst);
-
-	void UpdateStance(EAnimStance currentStance);
-
 
 	void HideItemInfo();
 

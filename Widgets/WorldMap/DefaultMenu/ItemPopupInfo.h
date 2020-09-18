@@ -81,7 +81,7 @@ protected:
 	FItemInstance* m_SelectedItem;
 
 protected:
-	FText GetItemTypeTxt(EItemType typeV) const;
+	FText GetItemTypeTxt(const FItemType*  typeV) const;
 
 	void SetIcon(const FItemInstance& itemInst);
 	void SetColorTier(const FItemInstance& itemInst);

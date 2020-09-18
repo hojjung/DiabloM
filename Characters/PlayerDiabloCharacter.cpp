@@ -52,8 +52,6 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
     m_SkShadow->bCastHiddenShadow = true;
     m_SkShadow->SetVisibility(false);
 
-    m_AryAnimBP.Init(nullptr, static_cast<int>(EAnimStance::Length));
-
     m_StBackpack = CreateDefaultSubobject<UStaticMeshComponent>("StMeshBackpack");
     m_StBackpack->CastShadow = false;
     m_StBackpack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -94,7 +92,6 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     m_SkHair->SetSkeletalMesh(m_DefaultFullHairMesh); //later equipment will doit
     m_TextUnitName = FText::FromString(loadedSaveData->m_TextName);
     //
-    SetAnimStance(EAnimStance::None);
     SetUnitStat("Player");
 }
 
@@ -123,7 +120,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlots slotWan
         {
             SetDefaultBodyMesh();
         }
-        SetAnimStance(GetAnimStance());
+        //SetAnimStance(GetAnimStance());
         break;
     case ESlots::Waist:
         m_SkBelt->SetSkeletalMesh(meshItem ? meshItem->m_SkEquipment : nullptr);
@@ -172,11 +169,6 @@ void APlayerDiabloCharacter::RemoveAllEffect()
 }
 
 
-EAnimStance APlayerDiabloCharacter::GetAnimStance() const
-{
-    return m_PlayerCon->GetEquipment()->GetCurrentStance();
-}
-
 void APlayerDiabloCharacter::SetUnitStat(FName unitID)
 {
     m_NameUnitID = unitID;
@@ -193,10 +185,10 @@ void APlayerDiabloCharacter::SetUnitStat(FName unitID)
 
 }
 
-void APlayerDiabloCharacter::SetAnimStance(EAnimStance animStance)
+void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
 {
     m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-    m_SkBody->SetAnimInstanceClass(m_AryAnimBP[static_cast<int>(animStance)]);
+    m_SkBody->SetAnimInstanceClass(animStance->m_StanceAnimation);
 }
 
 void APlayerDiabloCharacter::BeginPlay()

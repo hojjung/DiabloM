@@ -19,27 +19,6 @@ void UEquipmentSystem::Init(UDiabloAbilitySystemComp* abilitySysCompo)
 {
     m_TargetAbilitySys = abilitySysCompo;
 
-    m_Head.SetEquipableType(EItemType::Helmet, true);
-    m_Neck.SetEquipableType(EItemType::Necklace, true);
-    m_Torso.SetEquipableType(EItemType::BodyArmor, true);
-    m_Waist.SetEquipableType(EItemType::Belt, true);
-    m_Leg.SetEquipableType(EItemType::Leggins, true);
-    m_Hand.SetEquipableType(EItemType::Gauntlets, true);
-    m_Shoulder.SetEquipableType(EItemType::ShoulderArmor, true);
-    m_FingerLeft.SetEquipableType(EItemType::Ring, true);
-    m_FingerRight.SetEquipableType(EItemType::Ring, true);
-
-    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
-    m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
-    m_WeaponLeft.SetEquipableType(EItemType::Dagger, true);
-
-    m_WeaponRight.SetEquipableType(EItemType::OneHandSword, true);
-    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, true);
-    m_WeaponRight.SetEquipableType(EItemType::Katana, true);
-    m_WeaponRight.SetEquipableType(EItemType::Dagger, true);
-    m_WeaponRight.SetEquipableType(EItemType::Bow, true);
-    m_WeaponRight.SetEquipableType(EItemType::Staff, true);
-
     m_ArySlots.Reset(12);
     m_ArySlots.Emplace(&m_Head);
     m_ArySlots.Emplace(&m_Neck);
@@ -53,49 +32,17 @@ void UEquipmentSystem::Init(UDiabloAbilitySystemComp* abilitySysCompo)
     m_ArySlots.Emplace(&m_FingerRight);
     m_ArySlots.Emplace(&m_FingerLeft);
 
-    //right/left
-    m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::None)] = &
-        UEquipmentSystem::SetStanceAllNull;
-    m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::OneHandSword)] = &
-        UEquipmentSystem::SetStanceNull;
-    m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::Dagger)] = &
-        UEquipmentSystem::SetStanceNull;
-    m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::Shield)] = &
-        UEquipmentSystem::SetStanceNull;
-    m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::TwohandSword)] = &
-        UEquipmentSystem::SetStanceNull;
-    m_StanceFPtr[static_cast<int>(EItemType::None)][static_cast<int>(EItemType::Katana)] = &
-        UEquipmentSystem::SetStanceNull;
-    //				  EItemType
-    m_StanceFPtr[static_cast<int>(EItemType::OneHandSword)][static_cast<int>(EItemType::OneHandSword)] = &
-        UEquipmentSystem::SetStanceDual;
-    m_StanceFPtr[static_cast<int>(EItemType::Dagger)][static_cast<int>(EItemType::OneHandSword)] = &
-        UEquipmentSystem::SetStanceDual;
-    m_StanceFPtr[static_cast<int>(EItemType::OneHandSword)][static_cast<int>(EItemType::Dagger)] = &
-        UEquipmentSystem::SetStanceDual;
-    m_StanceFPtr[static_cast<int>(EItemType::Dagger)][static_cast<int>(EItemType::Dagger)] = &
-        UEquipmentSystem::SetStanceDual;
-    //				  EItemType
-    m_StanceFPtr[static_cast<int>(EItemType::OneHandSword)][static_cast<int>(EItemType::Shield)] = &
-        UEquipmentSystem::SetStanceShield;
-    m_StanceFPtr[static_cast<int>(EItemType::Dagger)][static_cast<int>(EItemType::Shield)] = &
-        UEquipmentSystem::SetStanceShield;
-    //				  EItemType
-    m_StanceFPtr[static_cast<int>(EItemType::OneHandSword)][static_cast<int>(EItemType::None)] = &
-        UEquipmentSystem::SetStanceOneHand;
-    //				  EItemType
-    m_StanceFPtr[static_cast<int>(EItemType::Dagger)][static_cast<int>(EItemType::None)] = &
-        UEquipmentSystem::SetStanceDagger;
-    //				  EItemType
-    m_StanceFPtr[static_cast<int>(EItemType::Katana)][static_cast<int>(EItemType::None)] = &
-        UEquipmentSystem::SetStanceKatana;
-    //				  EItemType
-    m_StanceFPtr[static_cast<int>(EItemType::TwohandSword)][static_cast<int>(EItemType::None)] = &
-        UEquipmentSystem::SetStanceTwoHand;
-    m_StanceFPtr[static_cast<int>(EItemType::Bow)][static_cast<int>(EItemType::None)] = &
-        UEquipmentSystem::SetStanceBow;
-    m_StanceFPtr[static_cast<int>(EItemType::Staff)][static_cast<int>(EItemType::None)] = &
-        UEquipmentSystem::SetStanceStaff;
+    m_Head.m_Slot=ESlots::Head;
+    m_Neck.m_Slot=ESlots::Neck;
+    m_Torso.m_Slot=ESlots::Torso;
+    m_Waist.m_Slot=ESlots::Waist;
+    m_Leg.m_Slot=ESlots::Leg;
+    m_Hand.m_Slot=ESlots::Hand;
+    m_Shoulder.m_Slot=ESlots::Shoulder;
+    m_WeaponRight.m_Slot=ESlots::WeaponRight;
+    m_WeaponLeft.m_Slot=ESlots::WeaponLeft;
+    m_FingerRight.m_Slot=ESlots::FingerRight;
+    m_FingerLeft.m_Slot=ESlots::FingerLeft;
 }
 
 bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //drag된 대상이 어떤 아이템을 가졌는지 알방법이 없음
@@ -132,8 +79,7 @@ void UEquipmentSystem::RemoveItem(FItemInstance& itemWantErase)
 
 void UEquipmentSystem::RemoveItemByIndex(int index)
 {
-    m_ArySlots[index]->SetOccupie(false);
-    m_ArySlots[index]->m_EquippedType = EItemType::None;
+    m_ArySlots[index]->m_EquippedType = nullptr;
     m_ArySlots[index]->m_Item.ClearData();
     //
     if (m_ArySlots[index]->m_OptionHandle.IsValid())
@@ -146,25 +92,15 @@ void UEquipmentSystem::RemoveItemByIndex(int index)
 
 void UEquipmentSystem::OnItemSlotChanged(int index)
 {
-    CalculateStance();
     m_ItemChanged.Broadcast(index, GetItem(index));
     //이펙트 부여
     //무기 생성
     //
 }
 
-void UEquipmentSystem::CalculateStance()
-{
-    (this->*m_StanceFPtr[static_cast<int>(GetEquippedItem(ESlots::WeaponRight))][static_cast<int>(GetEquippedItem(
-        ESlots::WeaponLeft))])();
-
-    m_OnStanceChanged.Broadcast(m_CurrentStance);
-}
-
-
 bool UEquipmentSystem::CheckSlotOccupied(int index)
 {
-    return m_ArySlots[index]->m_bIsOccupied;
+    return m_ArySlots[index]->m_EquippedType;
 }
 
 bool UEquipmentSystem::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
@@ -187,58 +123,49 @@ bool UEquipmentSystem::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
 
 bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantAdd)
 {
-    EItemType ItemTypeWantAdd = itemWantAdd.m_ItemData->m_ItemType;
+    const FItemType* ItemTypeWantAdd = itemWantAdd.m_ItemData->m_ItemType.GetRow<FItemType>("");
 
-    if (!m_ArySlots[droppedIndex]->m_AbleEquipSlot[static_cast<int>(ItemTypeWantAdd)]) //못끼는 슬록이면 실패
+    if(!TEST_BIT(static_cast<uint32>(ItemTypeWantAdd->m_EquipableSlot),m_ArySlots[droppedIndex]->m_Slot))
     {
+        PRINTF("BitEquipFail 1");
         return false;
     }
 
+    for(auto Slot:m_ArySlots)
+    {
+        if(TEST_BIT(static_cast<uint32>(ItemTypeWantAdd->m_EquipInterruptSlot),Slot->m_Slot))
+        {
+            PRINTF("Interrupt Slot 2");
+            return false;
+        }
+    }
+    
     if (m_ArySlots[droppedIndex]->m_Item.IsEmpty()) //비어있지않음
     {
         return true;
     }
 
-    if (ItemTypeWantAdd == EItemType::TwohandSword || ItemTypeWantAdd == EItemType::Katana) //낄무기가 양손무기일걍우
-    {
-        EItemType ItemTypeDroppedBefore = m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType;
-        //이미껴진 무기를 가져옴
-        if (ItemTypeDroppedBefore == EItemType::TwohandSword
-            || ItemTypeDroppedBefore == EItemType::Katana) //만일 껴저있는 무기가 양손무기라면 가능 이후 교체로 진행
-        {
-            return true;;
-        }
-
-        if (m_WeaponLeft.m_bIsOccupied) //왼손에 뭔가 껴저있다면 실패
-        {
-            return false;
-        }
-    }
-
+    //장비가 끼워지고 나면, 인터럽팅 슬롯을 빨갛게 칠해줘야하고
+    //장비들을 돌려서 현재 애님스턴스를 반환해야함
     return true;
 }
 
 void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
 {
+    const FItemType* ItemWantAdd =  m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType.GetRow<FItemType>("");
     m_ArySlots[droppedIndex]->m_Item = itemWantAdd;
-    m_ArySlots[droppedIndex]->SetOccupie(true);
-    m_ArySlots[droppedIndex]->m_EquippedType = m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType;
+    m_ArySlots[droppedIndex]->m_EquippedType =ItemWantAdd;
     //
     m_ArySlots[droppedIndex]->m_Item.m_nGridIndex = droppedIndex;
     m_ArySlots[droppedIndex]->m_Item.m_Holder = this;
 
-
     //UG
-
+    TSubclassOf<UGameplayEffect> GameplayEffect = ItemWantAdd->m_OptionGameEffect;
+    
     if (itemWantAdd.m_AryOptions.Num() > 0)
     {
         for (int i = 0; i < itemWantAdd.m_AryOptions.Num(); i++)
         {
-            if (itemWantAdd.m_ItemData->m_Options[i].IsNull())
-            {
-                continue;
-            }
-            //
             auto Context = m_TargetAbilitySys->MakeEffectContext();
             Context.AddSourceObject(m_TargetAbilitySys->GetOwner());
             //
@@ -248,14 +175,16 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
             //장비 종류마다 옵션테이블 로우와 매칭되는 게임이펙트 한개 그리고 모디파이어 태그 존재
             //고유아이템은 if문으로 따로 처리, 지금 은 생략
             //고로 장비 종류에 맞춰서 옵션 테이블에서 선택되게 추가작업필요
-            FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(
-                itemWantAdd.m_ItemData->GetOption(CurrentOption.m_nOptionIndex).m_OptionGe, 1, Context);
-            
-            NewHandle.Data.Get()->SetSetByCallerMagnitude(itemWantAdd.m_ItemData->GetOption(i).m_OptionTag,
-                                                          CurrentOption.m_fValue);
             //
-            m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToTarget(
-                *NewHandle.Data.Get(), m_TargetAbilitySys);
+            //
+            // FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(
+            //     itemWantAdd.m_ItemData->GetOption(CurrentOption.m_nOptionIndex).m_OptionGe, 1, Context);
+            //
+            // NewHandle.Data.Get()->SetSetByCallerMagnitude(itemWantAdd.m_ItemData->GetOption(i).m_OptionTag,
+            //                                               CurrentOption.m_fValue);
+            // //
+            // m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToTarget(
+            //     *NewHandle.Data.Get(), m_TargetAbilitySys);
         }
     }
 
@@ -271,21 +200,16 @@ void UEquipmentSystem::PrintEquipStats()
 {
     PRINTF("----EquipPrint----");
 
-    PRINTF("CurrentStance: %s", *EnumToStr(EAnimStance, m_CurrentStance));
-
-    for (int i = 0; i < static_cast<int>(ESlots::Length); i++)
-    {
-        PRINTF("Slot: %s - EquipItem: %s - Occupied: %hs", *EnumToStr(ESlots, (ESlots)i),
-               *EnumToStr(EItemType, GetEquippedItem(i)), m_ArySlots[i]->m_bIsOccupied ? "Y" : "N");
-    }
+    // PRINTF("CurrentStance: %s", *EnumToStr(EAnimStance, m_CurrentStance));
+    //
+    // for (int i = 0; i < static_cast<int>(ESlots::Length); i++)
+    // {
+    //     PRINTF("Slot: %s - EquipItem: %s - Occupied: %hs", *EnumToStr(ESlots, (ESlots)i),
+    //            *EnumToStr(EItemType, GetEquippedItem(i)), !m_ArySlots[i]->m_Item.IsEmpty() ? "Y" : "N");
+    // }
 }
 
-EItemType UEquipmentSystem::GetEquippedItem(ESlots slot)
-{
-    return m_ArySlots[static_cast<int>(slot)]->m_EquippedType;
-}
-
-EItemType UEquipmentSystem::GetEquippedItem(int slotIndex)
+const FItemType* UEquipmentSystem::GetEquippedItem(int slotIndex)
 {
     return m_ArySlots[slotIndex]->m_EquippedType;
 }
@@ -304,135 +228,6 @@ void UEquipmentSystem::SetItemAry(TArray<FItemInstance>& equipSlot)
 }
 
 
-#pragma region SetFPtr
-
-
-void UEquipmentSystem::SetStanceAllNull()
-{
-    //
-    m_WeaponRight.SetEquipableType(EItemType::Katana, true);
-    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, true);
-    //
-    m_WeaponLeft.SetOccupie(false);
-    m_WeaponLeft.SetEquipableType(EItemType::Dagger, true);
-    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
-    m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
-    //아래랑 똑같아보이지만 아래의 경우는 왼손에 무기가 들려있으나 오른손에 무기가 없어서 공격을 못하는것임
-    m_WeaponRight.SetEquipableType(EItemType::Katana, true);
-    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, true);
-    m_CurrentStance = EAnimStance::None;
-}
-
-void UEquipmentSystem::SetStanceNull()
-{
-    m_WeaponRight.SetEquipableType(EItemType::Katana, false);
-    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, false);
-    //
-    m_WeaponLeft.SetEquipableType(EItemType::Dagger, true);
-    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
-    m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
-    //
-    if (!m_WeaponLeft.m_bIsOccupied) //비어있을때
-    {
-        m_WeaponRight.SetEquipableType(EItemType::Katana, true);
-        m_WeaponRight.SetEquipableType(EItemType::TwohandSword, true);
-        m_WeaponLeft.SetOccupie(false);
-    }
-
-    m_CurrentStance = EAnimStance::None;
-}
-
-void UEquipmentSystem::SetStanceOneHand()
-{
-    m_WeaponLeft.SetEquipableType(EItemType::Dagger, true);
-    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
-    m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
-    //
-    m_WeaponLeft.SetOccupie(false);
-    m_WeaponRight.SetEquipableType(EItemType::Katana, true);
-    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, true);
-    m_CurrentStance = EAnimStance::OneHandSword;
-}
-
-void UEquipmentSystem::SetStanceDual()
-{
-    m_WeaponRight.SetEquipableType(EItemType::Katana, false);
-    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, false);
-    //
-    m_WeaponLeft.SetEquipableType(EItemType::Dagger, true);
-    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
-    m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
-    //
-    m_CurrentStance = EAnimStance::DualSword;
-}
-
-void UEquipmentSystem::SetStanceShield()
-{
-    m_WeaponRight.SetEquipableType(EItemType::Katana, false);
-    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, false);
-    //
-    m_WeaponLeft.SetEquipableType(EItemType::Dagger, true);
-    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
-    m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
-    //
-    m_CurrentStance = EAnimStance::Shield;
-}
-
-void UEquipmentSystem::SetStanceDagger()
-{
-    m_WeaponLeft.SetOccupie(false);
-    m_WeaponRight.SetEquipableType(EItemType::Katana, true);
-    m_WeaponRight.SetEquipableType(EItemType::TwohandSword, true);
-    //
-    m_WeaponLeft.SetEquipableType(EItemType::Dagger, true);
-    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, true);
-    m_WeaponLeft.SetEquipableType(EItemType::Shield, true);
-    //
-    m_CurrentStance = EAnimStance::Dagger;
-}
-
-void UEquipmentSystem::SetStanceKatana()
-{
-    m_WeaponLeft.SetEquipableType(EItemType::Dagger, false);
-    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, false);
-    m_WeaponLeft.SetEquipableType(EItemType::Shield, false);
-    //
-    m_WeaponLeft.SetOccupie(true);
-    m_CurrentStance = EAnimStance::Katana;
-}
-
-void UEquipmentSystem::SetStanceTwoHand()
-{
-    m_WeaponLeft.SetEquipableType(EItemType::Dagger, false);
-    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, false);
-    m_WeaponLeft.SetEquipableType(EItemType::Shield, false);
-    //
-    m_WeaponLeft.SetOccupie(true);
-    m_CurrentStance = EAnimStance::TwohandSword;
-}
-
-void UEquipmentSystem::SetStanceBow()
-{
-    m_WeaponLeft.SetEquipableType(EItemType::Dagger, false);
-    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, false);
-    m_WeaponLeft.SetEquipableType(EItemType::Shield, false);
-    //
-    m_WeaponLeft.SetOccupie(true);
-    m_CurrentStance = EAnimStance::Bow;
-}
-
-void UEquipmentSystem::SetStanceStaff()
-{
-    m_WeaponLeft.SetEquipableType(EItemType::Dagger, false);
-    m_WeaponLeft.SetEquipableType(EItemType::OneHandSword, false);
-    m_WeaponLeft.SetEquipableType(EItemType::Shield, false);
-    //
-    m_WeaponLeft.SetOccupie(true);
-    m_CurrentStance = EAnimStance::Staff;
-}
-
-
-#pragma endregion
 
 TArray<FEquipSlot*>& UEquipmentSystem::GetArySlotPtr()
 {

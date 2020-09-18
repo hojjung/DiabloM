@@ -2,47 +2,65 @@
 
 #include "DiabloM.h"
 #include "AbilitySystem/AbilityTypes.h"
+#include "Animations/DiaAniminstance.h"
 #include "Datas/OptionDataTable.h"
 #include "Item/ItemHolder.h"
 
 #include "ItemDataTable.generated.h"
 
-
-
-UENUM(BlueprintType)
-enum class EItemLocation :uint8 //������ �ν��Ͻ��� ��ġ
+USTRUCT(BlueprintType)
+struct FOptionHandle:public FDataTableRowHandle
 {
-    Void,
-    Ground,
-    Equipment,
-    InventoryOld,
-    Stash,
-    Length
+    GENERATED_BODY()
+public:
+    FOptionHandle()
+    {
+        DataTable=UOptionDataTable::GetOptionTable;
+    }
 };
 
-UENUM(BlueprintType)
-enum class EItemType :uint8 //������ ����� ����
+//UENUM(meta = (Bitflags))
+UENUM(meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
+enum class ESlots: uint32
 {
-    None,
-    Misc,
-    OneHandSword,
-    TwohandSword,
-    Dagger,
-    Katana,
-    Bow,
-    Staff,
-    Shield,
-    Helmet,
-    Necklace,
-    BodyArmor,
-    Belt,
-    Leggins,
-    Gauntlets,
-    ShoulderArmor,
-    Ring,
-    Consumable,
+    Head,
+    Neck,
+    Torso,
+    Waist,
+    Leg,
+    Hand,
+    Shoulder,
+    WeaponRight,
+    WeaponLeft,
+    FingerRight,
+    FingerLeft,
     Length
 };
+ENUM_CLASS_FLAGS(ESlots);
+//
+// UENUM(BlueprintType)
+// enum class EItemType :uint8 //������ ����� ����
+// {
+//     None,
+//     Misc,
+//     OneHandSword,
+//     TwohandSword,
+//     Dagger,
+//     Katana,
+//     Bow,
+//     Staff,
+//     Shield,
+//     Helmet,
+//     Necklace,
+//     BodyArmor,
+//     Belt,
+//     Leggins,
+//     Gauntlets,
+//     ShoulderArmor,
+//     Ring,
+//     Consumable,
+//     Length
+// };
 
 USTRUCT(BlueprintType) //���̵�,Ƽ��
 struct FItemTier : public FTableRowBase
@@ -68,20 +86,36 @@ public:
     int m_nOptionMaxCount;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName m_TierID;
-
 };
 
 
 USTRUCT(BlueprintType)
-struct FOptionHandle:public FDataTableRowHandle
+struct FItemType : public FTableRowBase
 {
     GENERATED_BODY()
 public:
-    FOptionHandle()
+    FItemType(): m_EquipableSlot(), m_EquipInterruptSlot()
     {
-        DataTable=UOptionDataTable::GetOptionTable;
-    }
+        m_TypeID = "SetSameWithRowID";
+        m_ShowingName = FText::FromString("TheShowNameLikeOneHandSword");
+    };
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))
+    ESlots m_EquipableSlot;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))
+    ESlots m_EquipInterruptSlot;//like says twohand sword,LeftHand is interrupt slot
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TSubclassOf<UGameplayEffect> m_OptionGameEffect;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TArray<FOptionHandle> m_Options;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FText m_ShowingName;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FName m_TypeID;
+    //equipable class
 };
+
+
+
 USTRUCT(BlueprintType) //���̵�,Ƽ��
 struct FItemData : public FTableRowBase
 {
@@ -94,17 +128,11 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName m_ItemID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FDataTableRowHandle m_OptionGameEffect;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<FOptionHandle> m_Options;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_ShowingName;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_FlavorText;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    EItemType m_ItemType;
-
+    FDataTableRowHandle m_ItemType;
     //무기 같은건 소켓과 액터
     //무기는 스켈레탈 스태틱 둘다 있지 않나? 미리 박아놓으면 소켓이고 뭐고 할게 없다
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -129,11 +157,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     UTexture* m_ItemIcon;
 
-public:
-    const FOption& GetOption(int index) const
-    {
-        return *m_Options[index].GetRow<FOption>("");
-    }
+
 };
 
 USTRUCT(BlueprintType)
@@ -163,6 +187,7 @@ public:
     FName m_TierID;
 
     int m_nMaxStack;
+    
     bool m_bStackable;
     
     IItemHolder* m_Holder;
@@ -205,6 +230,27 @@ public:
 };
 
 
+USTRUCT(BlueprintType)
+struct FAnimStance: public FTableRowBase
+{
+    GENERATED_BODY()
+public:
+    FAnimStance();
+    //만일 쌍검 요구 1개랑
+    //쌍검 +헬멧 요구가 만나면 어떡할것?
+
+    //무기가 첫번째 비교
+    //이후에 중복가능하면
+    //개수가 많이 충족된것으로 고름
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    float m_fStancePriority;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FDataTableRowHandle m_RightHandNeed;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FDataTableRowHandle m_LeftHandNeed;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TSubclassOf<UDiaAniminstance> m_StanceAnimation;
+};
 
 
 UCLASS()
@@ -215,13 +261,17 @@ class DIABLOM_API UItemDataTable : public UObject
     public:
     UItemDataTable();
 
-    public:
+ public:
     static  UDataTable* GetTierTable;
 
     static  UDataTable* GetItemTable;
 
+    static  UDataTable* GetItemTypeTable;
 
-    public:
+    static  UDataTable* GetAnimStanceTable;
+
+
+ public:
     static const FItemTier& GetItemTier(FName id);
 
     static const FItemTier* GetItemTierPtr(FName id);
@@ -229,5 +279,13 @@ class DIABLOM_API UItemDataTable : public UObject
     static const FItemData& GetItemData(FName id);
 
     static const FItemData* GetItemDataPtr(FName id);
+
+    static const FItemType& GetItemType(FName id);
+
+    static const FItemType* GetItemTypePtr(FName id);
+
+    static const FAnimStance& GetAnimStance(FName id);
+
+    static const FAnimStance* GetAnimStancePtr(FName id);
     
 };

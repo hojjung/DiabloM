@@ -2,6 +2,8 @@
 
 UDataTable* UItemDataTable::GetTierTable = nullptr;
 UDataTable* UItemDataTable::GetItemTable = nullptr;
+UDataTable* UItemDataTable::GetItemTypeTable = nullptr;
+UDataTable* UItemDataTable::GetAnimStanceTable = nullptr;
 
 FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIndex, IItemHolder* holder,
                              TArray<FOptionSpec>& aryUseEffect, const FItemTier* itemTier)
@@ -26,6 +28,8 @@ FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIn
     }
 }
 
+
+
 UItemDataTable::UItemDataTable()
 {
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundTierTable(
@@ -36,6 +40,16 @@ UItemDataTable::UItemDataTable()
         TEXT("DataTable'/Game/DataTables/Items/DefaultItemTable.DefaultItemTable'"));
     UItemDataTable::GetItemTable = FoundItemTable.Object;
 
+
+    static ConstructorHelpers::FObjectFinder<UDataTable> FoundItemTypeTable(
+      TEXT("/DataTable'/Game/DataTables/Items/ItemTypeTable.ItemTypeTable'"));
+    UItemDataTable::GetItemTypeTable = FoundItemTypeTable.Object;
+    
+    static ConstructorHelpers::FObjectFinder<UDataTable> FoundAnimTable(
+      TEXT("DataTable'/Game/DataTables/Items/AnimStanceTable.AnimStanceTable'"));
+    UItemDataTable::GetAnimStanceTable = FoundAnimTable.Object;
+    //DataTable'/Game/DataTables/Items/ItemTypeTable.ItemTypeTable'
+    //DataTable'/Game/DataTables/Items/AnimStanceTable.AnimStanceTable'
 }
 
 const FItemTier& UItemDataTable::GetItemTier(FName id)
@@ -58,11 +72,29 @@ const FItemData* UItemDataTable::GetItemDataPtr(FName id)
     return GetItemTable->FindRow<FItemData>(id, "");
 }
 
+const FItemType& UItemDataTable::GetItemType(FName id)
+{
+    return *GetItemTypeTable->FindRow<FItemType>(id, "");
+}
+
+const FItemType* UItemDataTable::GetItemTypePtr(FName id)
+{
+    return GetItemTypeTable->FindRow<FItemType>(id, "");
+}
+
+const FAnimStance& UItemDataTable::GetAnimStance(FName id)
+{
+    return *GetAnimStanceTable->FindRow<FAnimStance>(id, "");
+}
+
+const FAnimStance* UItemDataTable::GetAnimStancePtr(FName id)
+{
+    return GetAnimStanceTable->FindRow<FAnimStance>(id, "");
+}
+
 
 FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMesh(nullptr), m_ItemIcon(nullptr)
 {
-
-    m_ItemType = EItemType::Misc;
     m_bStackable = true;
     m_nInitStack = 1;
     m_nMaxStack = 99;
@@ -71,5 +103,13 @@ FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMe
     m_bEquipable = true;
 
     m_ItemID = "NeedName";
-    m_OptionGameEffect.DataTable = UOptionDataTable::GetOptionGETable;
+    m_ItemType.DataTable = UItemDataTable::GetItemTypeTable;
 }
+
+FAnimStance::FAnimStance()
+{
+    m_fStancePriority=1.0f;
+    m_RightHandNeed.DataTable = UItemDataTable::GetItemTypeTable;
+    m_LeftHandNeed.DataTable = UItemDataTable::GetItemTypeTable;
+}
+

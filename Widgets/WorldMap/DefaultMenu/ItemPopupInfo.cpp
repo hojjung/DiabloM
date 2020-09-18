@@ -99,9 +99,9 @@ void UItemPopupInfo::NativePreConstruct()
     Super::NativePreConstruct();
 }
 
-FText UItemPopupInfo::GetItemTypeTxt(EItemType typeV) const
+FText UItemPopupInfo::GetItemTypeTxt(const FItemType* typeV) const
 {
-    return FText::FromString(m_ItemTypeString->GetNameStringByIndex(static_cast<uint8>(typeV)));
+    return typeV->m_ShowingName;
 }
 
 void UItemPopupInfo::SetIcon(const FItemInstance& itemInst)
@@ -239,7 +239,7 @@ void UItemPopupInfo::SetItemText(const FItemInstance& itemInst)
 
     FText ItemNameT = itemInst.m_ItemTier->m_ShowingName;
 
-    FText ItemTypeT = GetItemTypeTxt(itemInst.m_ItemData->m_ItemType);
+    FText ItemTypeT = GetItemTypeTxt(itemInst.m_ItemData->m_ItemType.GetRow<FItemType>(""));
 
     FFormatOrderedArguments Args;
     Args.Add(ItemNameT);
@@ -267,11 +267,12 @@ float UItemPopupInfo::SetOptionTexts(const FItemInstance& itemInst)
 
     int i = 0;
 
+     
     while (i < OptionCount)
     {
+        float Value = itemInst.m_AryOptions[i].m_fValue;
         m_AryOptions[i]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-        m_AryOptions[i]->SetString(
-            itemInst.m_ItemData->GetOption(i).GetOptionFormat(itemInst.m_AryOptions[i].m_fValue));
+        m_AryOptions[i]->SetString(UOptionDataTable::GetOption(itemInst.m_AryOptions[i].m_OptionID).GetOptionFormat(Value));
         m_AryOptions[i]->ForceLayoutPrepass();
         OptionSizeY += m_AryOptions[i]->GetDesiredSize().Y;
         i++;

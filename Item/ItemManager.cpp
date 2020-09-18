@@ -12,16 +12,14 @@ void UItemManager::Init(UDiabloGameInstance* gameInstance)
     m_nCurrentIndex = 0;
     m_fTierMaxRate = 0;
 
+    UItemDataTable::GetTierTable->GetAllRows("Error", m_AryItemTier);
+    
     for (auto* ItemTier : m_AryItemTier)
     {
         m_fTierMaxRate += ItemTier->m_fDefaultDropRate;
     }
 
     PRINTF("UItemManager Init");
-
-
-    UOptionDataTable::GetOptionGETable->GetAllRows("Error", m_AryItemTier);
-
 }
 
 FItemInstance UItemManager::CreateItemInstance(FName itemID, int level)
@@ -66,9 +64,7 @@ bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionS
         return false;
     }
 
-    int NumMaxOption = itemData.m_Options.Num();
-
- 
+    int NumMaxOption =  itemData.m_ItemType.GetRow<FItemType>("")->m_Options.Num();
 
     if (NumMaxOption <= 0 || TierMaxOption <= 0)
     {
@@ -125,7 +121,7 @@ void UItemManager::CreateIntAryForShuffle(int maxAryLen, TArray<int>& outIndexAr
 
 FOptionSpec UItemManager::CreateRandomOptionValue(int indexRandomd, const FItemData& itemData)
 {
-    return itemData.GetOption(indexRandomd).MakeOptionInst(indexRandomd);
+    return  itemData.m_ItemType.GetRow<FItemType>("")->m_Options[indexRandomd].GetRow<FOption>("")->MakeOptionInst();
 }
 
 bool UItemManager::AddItem(int droppedIndex, FItemInstance& itemWantAdd)

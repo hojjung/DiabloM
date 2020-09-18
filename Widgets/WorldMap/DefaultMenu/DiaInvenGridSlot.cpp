@@ -58,7 +58,7 @@ void UDiaInvenGridSlot::UpdateEffectBG(const FItemInstance& itemInstance)
 {
 	m_ImgItemEffectBG->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
-	FLinearColor ColorW =itemInstance.m_ItemData->GetItemTier().m_TierColor;
+	FLinearColor ColorW =itemInstance.m_ItemTier->m_TierColor;
 	m_ImgItemEffectBG->SetColorAndOpacity(ColorW);
 	m_ImgItemEffectBG->SetBrushTintColor(FSlateColor(ColorW));
 }
