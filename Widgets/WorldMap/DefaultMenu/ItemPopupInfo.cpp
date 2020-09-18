@@ -116,7 +116,7 @@ void UItemPopupInfo::SetIcon(const FItemInstance& itemInst)
 
 void UItemPopupInfo::SetColorTier(const FItemInstance& itemInst)
 {
-    const auto ColorW = itemInst.m_ItemData->GetItemTier().m_TierColor;
+    const auto ColorW = itemInst.m_ItemTier->m_TierColor;
     m_ImageItemTierColorSmall->SetColorAndOpacity(ColorW);
     m_ImageItemTierColorLarge->SetColorAndOpacity(ColorW);
     m_TextItemName->SetColorAndOpacity(ColorW);
@@ -237,7 +237,7 @@ void UItemPopupInfo::SetItemText(const FItemInstance& itemInst)
     //m_SelectedItem
     m_TextItemName->SetText(itemInst.m_ItemData->m_ShowingName);
 
-    FText ItemNameT = itemInst.m_ItemData->GetItemTier().m_ShowingName;
+    FText ItemNameT = itemInst.m_ItemTier->m_ShowingName;
 
     FText ItemTypeT = GetItemTypeTxt(itemInst.m_ItemData->m_ItemType);
 

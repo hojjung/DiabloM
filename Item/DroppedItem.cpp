@@ -67,39 +67,31 @@ void ADroppedItem::Interact(AActor * instigator)
 	PickupItem(instigator);
 }
 
-void ADroppedItem::SetItemVisual(const FItemData* ItemData)
+void ADroppedItem::SetItemVisual(const FItemInstance& ItemData)
 {
 	UItemNameCard* ItemCard = Cast<UItemNameCard>(m_BillBoard->GetUserWidgetObject());
 
-	ItemCard->SetItemName(ItemData->m_ShowingName);
+	ItemCard->SetItemName(ItemData.m_ItemData->m_ShowingName);
 
-	ItemCard->SetItemColor(ItemData->GetItemTier().m_TierColor);
+	ItemCard->SetItemColor(ItemData.m_ItemTier->m_TierColor);
 
-	m_MeshComp->SetStaticMesh(ItemData->m_ItemMesh);
+	m_MeshComp->SetStaticMesh(ItemData.m_ItemData->m_ItemMesh);
 
 	m_BillBoard->SetDrawSize(m_BillBoard->GetUserWidgetObject()->GetDesiredSize());
 }
 
 void ADroppedItem::SetItem(FName itemID)
 {
-	const FItemData* ItemData = GetGameInstance<UDiabloGameInstance>()->GetItemDataPtr(itemID);
-
-	if(!ItemData)
-	{
-		return;
-	}
-
-	SetItemVisual(ItemData);
-
 	m_ItemInstance = GetGameInstance<UDiabloGameInstance>()->CreateItem(itemID);
-	
+
+	SetItemVisual(m_ItemInstance);
 }
 
 void ADroppedItem::SetItemInstance(FItemInstance& itemInst)
 {
 	m_ItemInstance=itemInst;
 
-	SetItemVisual(m_ItemInstance.m_ItemData);
+	SetItemVisual(m_ItemInstance);
 
 	m_TableID=itemInst.m_ItemID;
 }

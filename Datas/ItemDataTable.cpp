@@ -3,6 +3,29 @@
 UDataTable* UItemDataTable::GetTierTable = nullptr;
 UDataTable* UItemDataTable::GetItemTable = nullptr;
 
+FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIndex, IItemHolder* holder,
+                             TArray<FOptionSpec>& aryUseEffect, const FItemTier* itemTier)
+{
+    m_ItemData = itemData;
+    m_ItemID = m_ItemData->m_ItemID;
+    m_nCurrentStack = m_ItemData->m_nInitStack;
+    m_nGridIndex = gridIndex;
+    m_Holder = holder;
+    m_nMaxStack = m_ItemData->m_nMaxStack;
+    m_bStackable = m_ItemData->m_bStackable;
+    m_AryOptions = aryUseEffect;
+    m_TierID = tierID;
+
+    if (!itemTier)
+    {
+        m_ItemTier = UItemDataTable::GetItemTierPtr(m_TierID);
+    }
+    else
+    {
+        m_ItemTier = itemTier;
+    }
+}
+
 UItemDataTable::UItemDataTable()
 {
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundTierTable(
@@ -38,8 +61,6 @@ const FItemData* UItemDataTable::GetItemDataPtr(FName id)
 
 FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMesh(nullptr), m_ItemIcon(nullptr)
 {
-    m_ItemTier.DataTable = UItemDataTable::GetTierTable;
-    m_ItemTier.RowName = "Normal";
 
     m_ItemType = EItemType::Misc;
     m_bStackable = true;
@@ -50,12 +71,5 @@ FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMe
     m_bEquipable = true;
 
     m_ItemID = "NeedName";
-//OnDataTableChangedDelegate
-    if(m_Options.Num()>0)
-    {
-        for(auto Op : m_Options)
-        {
-            Op.DataTable=UOptionDataTable::GetOptionTable;
-        }
-    }
+    m_OptionGameEffect.DataTable = UOptionDataTable::GetOptionGETable;
 }

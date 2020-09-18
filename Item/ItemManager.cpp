@@ -10,29 +10,33 @@ void UItemManager::Init(UDiabloGameInstance* gameInstance)
 {
     m_GameInstance = gameInstance;
     m_nCurrentIndex = 0;
+    m_fTierMaxRate = 0;
+
+    for (auto* ItemTier : m_AryItemTier)
+    {
+        m_fTierMaxRate += ItemTier->m_fDefaultDropRate;
+    }
 
     PRINTF("UItemManager Init");
+
+
+    UOptionDataTable::GetOptionGETable->GetAllRows("Error", m_AryItemTier);
+
 }
 
 FItemInstance UItemManager::CreateItemInstance(FName itemID, int level)
 {
     const FItemData* ItemData = m_GameInstance->GetItemDataPtr(itemID);
 
-    FItemInstance ItemCreated;
-
+    const FItemTier& TierRolled = GetDefaultTierRoll();
+    
+    int TierMaxOptionCount=TierRolled.m_nOptionMaxCount;
+    
     TArray<FOptionSpec> RandomOptionForItem;
 
-    if (CreateRandomOption(*ItemData, RandomOptionForItem))
-    {
-        ItemCreated = FItemInstance(ItemData, m_nCurrentIndex, this, &RandomOptionForItem);
-    }
-    else
-    {
-        ItemCreated = FItemInstance(ItemData, m_nCurrentIndex, this);
-    }
+    CreateRandomOption(*ItemData, RandomOptionForItem,TierMaxOptionCount);
 
-
-    return ItemCreated;
+    return FItemInstance(ItemData,TierRolled.m_TierID, m_nCurrentIndex, this, RandomOptionForItem,&TierRolled);
 }
 
 ADroppedItem* UItemManager::CreateItemActor(FItemInstance& itemWantAdd, FVector posWant)
@@ -45,12 +49,11 @@ ADroppedItem* UItemManager::CreateItemActor(FItemInstance& itemWantAdd, FVector 
 
     DroppedActor->SetItemInstance(itemWantAdd);
 
-
     return DroppedActor;
 }
 
 
-bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption)
+bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption)
 {
     //등급에 따라 옵션의 개수?
     //레벨에 따라 옵션의 종류 및 강함?
@@ -65,7 +68,7 @@ bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionS
 
     int NumMaxOption = itemData.m_Options.Num();
 
-    int TierMaxOption = itemData.GetItemTier().m_nOptionMaxCount;
+ 
 
     if (NumMaxOption <= 0 || TierMaxOption <= 0)
     {
@@ -132,6 +135,7 @@ bool UItemManager::AddItem(int droppedIndex, FItemInstance& itemWantAdd)
 
 void UItemManager::RemoveItem(FItemInstance& itemWantErase)
 {
+    
 }
 
 void UItemManager::RemoveItemByIndex(int index)
@@ -159,4 +163,27 @@ void UItemManager::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
 bool UItemManager::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
 {
     return true;
+}
+
+const FItemTier& UItemManager::GetDefaultTierRoll() const
+{
+    float RandomValue = FMath::RandRange(0.f, m_fTierMaxRate);
+    //76/100
+    float DropRateCount = 0.f;
+
+    for (auto* TierData : m_AryItemTier)
+    {
+        DropRateCount += TierData->m_fDefaultDropRate;
+
+        if (DropRateCount >= RandomValue)
+        {
+            PRINTF("Rand:%f,DropRate:%f,Tier:%s",RandomValue,DropRateCount,*TierData->m_ShowingName.ToString());
+            
+            return *TierData;
+        }
+    }
+
+    PRINTF("Error? - TierDrop Roll Fucked");
+
+    return *m_AryItemTier[0];
 }

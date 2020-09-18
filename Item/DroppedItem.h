@@ -37,7 +37,7 @@ protected:
 
 public:
 	virtual void Interact(AActor* instigator) override;
-	void SetItemVisual(const FItemData* ItemData);
+	void SetItemVisual(const FItemInstance& ItemData);
 
 	void SetItem(FName itemID);
 

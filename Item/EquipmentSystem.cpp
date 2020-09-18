@@ -135,7 +135,12 @@ void UEquipmentSystem::RemoveItemByIndex(int index)
     m_ArySlots[index]->SetOccupie(false);
     m_ArySlots[index]->m_EquippedType = EItemType::None;
     m_ArySlots[index]->m_Item.ClearData();
-
+    //
+    if (m_ArySlots[index]->m_OptionHandle.IsValid())
+    {
+        m_TargetAbilitySys->RemoveActiveGameplayEffect(m_ArySlots[index]->m_OptionHandle);
+        m_ArySlots[index]->m_OptionHandle.RemoveFromGlobalMap();
+    }
     OnItemSlotChanged(index);
 }
 
@@ -225,37 +230,32 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
 
     //UG
 
-    if (itemWantAdd.m_ItemData->m_Options.Num() < 1)
+    if (itemWantAdd.m_AryOptions.Num() > 0)
     {
-        return;
-    }
-
-
-    for (auto& Option : itemWantAdd.m_ItemData->m_Options)
-    {
-        if (Option.IsNull())
+        for (int i = 0; i < itemWantAdd.m_AryOptions.Num(); i++)
         {
-            continue;
-        }
-        //
-        auto Context = m_TargetAbilitySys->MakeEffectContext();
-        Context.AddSourceObject(m_TargetAbilitySys->GetOwner());
-        //
-        //
-        FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(
-            itemWantAdd.m_ItemData->GetOption(0).m_OptionGe, 1, Context);
-
-       NewHandle.Data.Get()->SetSetByCallerMagnitude(itemWantAdd.m_ItemData->GetOption(0).m_OptionTag, 999.f);
-        //제거 테스트
-        FActiveGameplayEffectHandle AA = m_TargetAbilitySys->ApplyGameplayEffectSpecToTarget(
-            *NewHandle.Data.Get(), m_TargetAbilitySys);
-
-        FGameplayEffectQuery Query;
-        Query.EffectSource = m_TargetAbilitySys->GetOwner();
-
-       if (m_TargetAbilitySys->RemoveActiveEffects(Query))
-        {
-            PRINTF("Erased1");
+            if (itemWantAdd.m_ItemData->m_Options[i].IsNull())
+            {
+                continue;
+            }
+            //
+            auto Context = m_TargetAbilitySys->MakeEffectContext();
+            Context.AddSourceObject(m_TargetAbilitySys->GetOwner());
+            //
+            FOptionSpec CurrentOption = itemWantAdd.m_AryOptions[i];
+            //0918
+            //장비종류마다 옵션 테이블 존제
+            //장비 종류마다 옵션테이블 로우와 매칭되는 게임이펙트 한개 그리고 모디파이어 태그 존재
+            //고유아이템은 if문으로 따로 처리, 지금 은 생략
+            //고로 장비 종류에 맞춰서 옵션 테이블에서 선택되게 추가작업필요
+            FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(
+                itemWantAdd.m_ItemData->GetOption(CurrentOption.m_nOptionIndex).m_OptionGe, 1, Context);
+            
+            NewHandle.Data.Get()->SetSetByCallerMagnitude(itemWantAdd.m_ItemData->GetOption(i).m_OptionTag,
+                                                          CurrentOption.m_fValue);
+            //
+            m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToTarget(
+                *NewHandle.Data.Get(), m_TargetAbilitySys);
         }
     }
 

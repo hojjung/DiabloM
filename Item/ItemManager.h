@@ -22,13 +22,15 @@ protected:
     UPROPERTY()
     UDiabloGameInstance* m_GameInstance;
 
-
     int m_nCurrentIndex;
 
     FOnItemSlotChanged m_OnItemGroundChanged;
 
+    TArray<FItemTier*> m_AryItemTier;
+
+    float m_fTierMaxRate;
 protected:
-    bool CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption);
+    bool CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption);
 
     void CreateIntAryForShuffle(int maxAryLen, TArray<int>& outIndexAry);
 
@@ -55,4 +57,6 @@ public:
     {
         return m_OnItemGroundChanged;
     }
+
+    const FItemTier& GetDefaultTierRoll() const;
 };

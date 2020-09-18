@@ -50,21 +50,38 @@ struct FItemTier : public FTableRowBase
     GENERATED_BODY()
 
 public:
-    FItemTier()
+    FItemTier(): m_fDefaultDropRate(0)
     {
         m_ShowingName = FText::FromString("Normal");
         m_TierColor = FColor(242, 242, 242, 255);
         m_nOptionMaxCount = 0;
+        m_TierID = "SetSameTableID";
     }
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+    float m_fDefaultDropRate;//there is no maximum
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_ShowingName;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FLinearColor m_TierColor;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     int m_nOptionMaxCount;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FName m_TierID;
+
 };
 
+
+USTRUCT(BlueprintType)
+struct FOptionHandle:public FDataTableRowHandle
+{
+    GENERATED_BODY()
+public:
+    FOptionHandle()
+    {
+        DataTable=UOptionDataTable::GetOptionTable;
+    }
+};
 USTRUCT(BlueprintType) //���̵�,Ƽ��
 struct FItemData : public FTableRowBase
 {
@@ -72,15 +89,14 @@ struct FItemData : public FTableRowBase
 
 public:
     FItemData();
-    
+
 public:
-    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName m_ItemID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FDataTableRowHandle m_ItemTier;
+    FDataTableRowHandle m_OptionGameEffect;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<FDataTableRowHandle> m_Options;
+    TArray<FOptionHandle> m_Options;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_ShowingName;
@@ -114,11 +130,6 @@ public:
     UTexture* m_ItemIcon;
 
 public:
-    const FItemTier& GetItemTier() const
-    {
-        return *m_ItemTier.GetRow<FItemTier>("");
-    }
-
     const FOption& GetOption(int index) const
     {
         return *m_Options[index].GetRow<FOption>("");
@@ -136,20 +147,8 @@ public:
         ClearData();
     }
 
-    FItemInstance(const FItemData* itemData, int gridIndex, IItemHolder* holder,
-                  TArray<FOptionSpec>* aryUseEffect = nullptr)
-    {
-        m_ItemData = itemData;
-        m_ItemID = m_ItemData->m_ItemID;
-        m_nCurrentStack = m_ItemData->m_nInitStack;
-        m_nGridIndex = gridIndex;
-        m_Holder = holder;
-        m_nMaxStack = m_ItemData->m_nMaxStack;
-        m_bStackable = m_ItemData->m_bStackable;
-
-        if (aryUseEffect)
-            m_AryOptions = *aryUseEffect;
-    }
+    FItemInstance(const FItemData* itemData, FName tierID, int gridIndex, IItemHolder* holder,
+                  TArray<FOptionSpec>& aryUseEffect, const FItemTier* itemTier = nullptr);//in cpp
 
 public:
     UPROPERTY(EditAnywhere)
@@ -160,6 +159,8 @@ public:
     TArray<FOptionSpec> m_AryOptions;
     UPROPERTY(EditAnywhere)
     FName m_ItemID = NAME_None;
+    UPROPERTY(EditAnywhere)
+    FName m_TierID;
 
     int m_nMaxStack;
     bool m_bStackable;
@@ -167,6 +168,8 @@ public:
     IItemHolder* m_Holder;
 
     const FItemData* m_ItemData;
+
+    const FItemTier* m_ItemTier;
 public:
 
     bool IsEmpty()
@@ -177,16 +180,17 @@ public:
     void SetGridNewIndex(int newIndex)
     {
         m_nGridIndex = newIndex;
-    } //�巡�� ���
+    }
 
     bool CheckCanStack() const
     {
         return m_nCurrentStack < m_nMaxStack;
-    } //���� �Ǵ¾ְ� �ִ�ġ ��������
+    }
+    
     bool GetIsStackable() const
     {
         return m_bStackable;
-    } //�ٺ������� ������ �Ǵ���
+    }
 
     void ClearData()
     {
@@ -196,6 +200,7 @@ public:
         m_nMaxStack = -1;
         m_bStackable = false;
         m_ItemData = nullptr;
+        m_AryOptions.Empty();
     }
 };
 

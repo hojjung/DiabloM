@@ -344,5 +344,6 @@ void USaveLoadManager::LoadItemDataForInstance(TArray<FItemInstance>& itemAry)
             continue;
         }
         ItemInst.m_ItemData = UItemDataTable::GetItemDataPtr(ItemInst.m_ItemID);
+        ItemInst.m_ItemTier = UItemDataTable::GetItemTierPtr(ItemInst.m_TierID);
     }
 }

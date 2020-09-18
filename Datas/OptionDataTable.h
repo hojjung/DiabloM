@@ -66,8 +66,6 @@ public:
     FText m_FormatEffect;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FGameplayTag m_OptionTag;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TSubclassOf<UGameplayEffect> m_OptionGe;
     
 private:
     char Plus = '+';
@@ -125,6 +123,18 @@ public:
 };
 
 
+USTRUCT(BlueprintType) //난이도,티어
+struct FOptionGE : public FTableRowBase
+{
+    GENERATED_BODY()
+
+    //ItemTypes OptinGE
+public:
+    TArray<TSubclassOf<UGameplayEffect>> m_DefaultGameEffect;
+    
+    TArray<TSubclassOf<UGameplayEffect>> m_UniqueGameEffect;
+    
+};
 
 UCLASS()
 class DIABLOM_API UOptionDataTable : public UObject
@@ -137,9 +147,16 @@ public:
     static UDataTable* GetOptionTable;
 
 public:
+    static UDataTable* GetOptionGETable;
+
+public:
     static const FOption& GetOption(FName id);
 
     static const FOption* GetOptionPtr(FName id);
+
+    static const FOptionGE& GetOptionGE(FName id);
+
+    static const FOptionGE* GetOptionGEPtr(FName id);
     
 };
 

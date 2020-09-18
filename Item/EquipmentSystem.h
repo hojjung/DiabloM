@@ -69,6 +69,8 @@ public:
     {
         m_AbleEquipSlot[(int)equipableType] = isAble;
     }
+
+    FActiveGameplayEffectHandle m_OptionHandle;
 };
 
 UCLASS()
