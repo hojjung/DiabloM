@@ -2,65 +2,42 @@
 
 #include "DiabloM.h"
 #include "AbilitySystem/AbilityTypes.h"
+#include "AbilitySystem/ItemOptionGameEffect.h"
 #include "Animations/DiaAniminstance.h"
 #include "Datas/OptionDataTable.h"
 #include "Item/ItemHolder.h"
 
 #include "ItemDataTable.generated.h"
 
+//아예 다시 만들어야한다는데?
 USTRUCT(BlueprintType)
-struct FOptionHandle:public FDataTableRowHandle
+struct FOptionHandle :public FDataTableRowHandle
 {
-    GENERATED_BODY()
-public:
-    FOptionHandle()
-    {
-        DataTable=UOptionDataTable::GetOptionTable;
-    }
+	GENERATED_USTRUCT_BODY()
+	FOptionHandle()
+	{
+		DataTable=UOptionDataTable::GetOptionTable;
+	}
 };
-
-//UENUM(meta = (Bitflags))
+//
 UENUM(meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class ESlots: uint32
 {
-    Head,
-    Neck,
-    Torso,
-    Waist,
-    Leg,
-    Hand,
-    Shoulder,
-    WeaponRight,
-    WeaponLeft,
-    FingerRight,
-    FingerLeft,
+    Head=1,
+    Neck=2,
+    Torso=4,
+    Waist=8,
+    Leg=16,
+    Hand=32,
+    Shoulder=64,
+    WeaponRight=128,
+    WeaponLeft=256,
+    FingerRight=512,
+    FingerLeft=1024,
     Length
 };
 ENUM_CLASS_FLAGS(ESlots);
-//
-// UENUM(BlueprintType)
-// enum class EItemType :uint8 //������ ����� ����
-// {
-//     None,
-//     Misc,
-//     OneHandSword,
-//     TwohandSword,
-//     Dagger,
-//     Katana,
-//     Bow,
-//     Staff,
-//     Shield,
-//     Helmet,
-//     Necklace,
-//     BodyArmor,
-//     Belt,
-//     Leggins,
-//     Gauntlets,
-//     ShoulderArmor,
-//     Ring,
-//     Consumable,
-//     Length
-// };
+
 
 USTRUCT(BlueprintType) //���̵�,Ƽ��
 struct FItemTier : public FTableRowBase
@@ -98,15 +75,27 @@ public:
     {
         m_TypeID = "SetSameWithRowID";
         m_ShowingName = FText::FromString("TheShowNameLikeOneHandSword");
+        //Blueprint'/Game/Blueprints/Abilities/GE_ItemOptionEffect.GE_ItemOptionEffect_C'
+        static ConstructorHelpers::FClassFinder<UItemOptionGameEffect>GameEffectAsset
+        (TEXT("Blueprint'/Game/Blueprints/Abilities/GE_ItemOptionEffect.GE_ItemOptionEffect_C'"));
+
+        if(GameEffectAsset.Succeeded())
+        {
+            m_OptionGameEffect=GameEffectAsset.Class;
+        }
+        
     };
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))
-    ESlots m_EquipableSlot;
+    int32  m_EquipableSlot;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))
-    ESlots m_EquipInterruptSlot;//like says twohand sword,LeftHand is interrupt slot
+    int32  m_EquipInterruptSlot;//like says twohand sword,LeftHand is interrupt slot
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TSubclassOf<UGameplayEffect> m_OptionGameEffect;
+    TSubclassOf<UItemOptionGameEffect> m_OptionGameEffect;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<FOptionHandle> m_Options;
+  
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_ShowingName;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

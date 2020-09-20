@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameplayEffect.h"
-#include "BaseStatEffect.generated.h"
+#include "ItemOptionGameEffect.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UBaseStatEffect : public UGameplayEffect
+class DIABLOM_API UItemOptionGameEffect : public UGameplayEffect
 {
 	GENERATED_BODY()
-	UBaseStatEffect();
+	
 };

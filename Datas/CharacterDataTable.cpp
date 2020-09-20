@@ -17,6 +17,7 @@ UCharacterDataTable::UCharacterDataTable()
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundEntityTable3(
               TEXT("DataTable'/Game/DataTables/Entities/NPCTable.NPCTable'"));
     GetNPCEntityTable=FoundEntityTable3.Object;
+
 }
 
 const FEntityTable& UCharacterDataTable::GetMonster(FName id)
