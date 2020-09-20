@@ -102,7 +102,7 @@ FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMe
 {
     m_bStackable = true;
     m_nInitStack = 1;
-    m_nMaxStack = 99;
+    m_nMaxStack = 99; 
 
     m_nSellValue = 100;
     m_bEquipable = true;
@@ -113,7 +113,7 @@ FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMe
 
 FAnimStance::FAnimStance()
 {
-    m_fStancePriority=1.0f;
+    m_fStancePriority = 1.0f;
     m_AryRightHandNeed.Add(FItemTypeHandle());
     m_AryLeftHandNeed.Add(FItemTypeHandle());
 }

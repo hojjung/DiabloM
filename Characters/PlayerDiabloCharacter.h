@@ -111,7 +111,7 @@ public:
 
 	void SetLoadedData(const USaveCharacterStatus* loadedSaveData);
 
-	void EquipMesh(const FItemData* meshItem,ESlots slotWant);
+	void EquipMesh(const FItemData* meshItem,ESlotsEquipAry slotWant);
 
 	void RemoveAllEffect();
 

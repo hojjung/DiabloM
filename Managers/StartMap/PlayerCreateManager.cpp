@@ -102,16 +102,16 @@ void UPlayerCreateManager::OnDataChanged()
 void UPlayerCreateManager::SetCurrentDataFromSaveFile(const USaveCharacterStatus* char_stat,
     const USaveEquipment* save_equipment)
 {
-    m_CurrentCharData.m_CurrentBody=save_equipment->m_EquipAry[(int)ESlots::Torso].m_ItemData;
-    m_CurrentCharData.m_CurrentHelmet = save_equipment->m_EquipAry[(int)ESlots::Head].m_ItemData;
+    m_CurrentCharData.m_CurrentBody=save_equipment->m_EquipAry[(int)ESlotsEquipAry::Torso].m_ItemData;
+    m_CurrentCharData.m_CurrentHelmet = save_equipment->m_EquipAry[(int)ESlotsEquipAry::Head].m_ItemData;
     m_CurrentCharData.m_CurrentHair=GetHair(char_stat->m_IndexHair,m_CurrentCharData.m_CurrentHelmet);
     m_CurrentCharData.m_CurrentFace=GetFace(char_stat->m_IndexFace);
-    m_CurrentCharData.m_CurrentShoe= save_equipment->m_EquipAry[(int)ESlots::Leg].m_ItemData;
-    m_CurrentCharData.m_CurrentGlove= save_equipment->m_EquipAry[(int)ESlots::Hand].m_ItemData;
-    m_CurrentCharData.m_CurrentShoulder= save_equipment->m_EquipAry[(int)ESlots::Shoulder].m_ItemData;
-    m_CurrentCharData.m_CurrentBelt= save_equipment->m_EquipAry[(int)ESlots::Waist].m_ItemData;
-    m_CurrentCharData.m_CurrentRightWeapon= save_equipment->m_EquipAry[(int)ESlots::WeaponRight].m_ItemData;
-    m_CurrentCharData.m_CurrentLeftWeapon= save_equipment->m_EquipAry[(int)ESlots::WeaponLeft].m_ItemData;
+    m_CurrentCharData.m_CurrentShoe= save_equipment->m_EquipAry[(int)ESlotsEquipAry::Leg].m_ItemData;
+    m_CurrentCharData.m_CurrentGlove= save_equipment->m_EquipAry[(int)ESlotsEquipAry::Hand].m_ItemData;
+    m_CurrentCharData.m_CurrentShoulder= save_equipment->m_EquipAry[(int)ESlotsEquipAry::Shoulder].m_ItemData;
+    m_CurrentCharData.m_CurrentBelt= save_equipment->m_EquipAry[(int)ESlotsEquipAry::Waist].m_ItemData;
+    m_CurrentCharData.m_CurrentRightWeapon= save_equipment->m_EquipAry[(int)ESlotsEquipAry::WeaponRight].m_ItemData;
+    m_CurrentCharData.m_CurrentLeftWeapon= save_equipment->m_EquipAry[(int)ESlotsEquipAry::WeaponLeft].m_ItemData;
 
     OnDataChanged();
 }

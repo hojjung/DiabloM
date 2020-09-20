@@ -26,6 +26,7 @@ struct FItemTypeHandle :public FDataTableRowHandle
     GENERATED_USTRUCT_BODY()
     FItemTypeHandle();
 };
+
 //
 UENUM(meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class ESlots: uint32
@@ -90,9 +91,7 @@ public:
         {
             m_OptionGameEffect=GameEffectAsset.Class;
         }
-        
     };
-    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))
     int32  m_EquipableSlot;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))

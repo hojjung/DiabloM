@@ -26,6 +26,7 @@ void USaveInventory::SetInvenLoadData(UInventory* outInven)
             continue;
         }
         ItemLoad.m_ItemData = UItemDataTable::GetItemDataPtr(ItemLoad.m_ItemID);
+        ItemLoad.m_ItemTier = UItemDataTable::GetItemTierPtr(ItemLoad.m_TierID);
     }
 
     outInven->SetItemAry(m_InvenAry);

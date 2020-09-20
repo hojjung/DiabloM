@@ -26,25 +26,9 @@ public:
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, MaxMana)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Energy")
-	FGameplayAttributeData MaxManaPer;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, MaxManaPer)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Energy")
-	FGameplayAttributeData MaxManaAbs;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, MaxManaAbs)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Energy")
 	FGameplayAttributeData ManaRegen;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, ManaRegen)
 	
-	UPROPERTY(BlueprintReadOnly, Category = "Energy")
-	FGameplayAttributeData ManaRegenPer;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, ManaRegenPer)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Energy")
-	FGameplayAttributeData ManaRegenAbs;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, ManaRegenAbs)
-	//
 	UPROPERTY(BlueprintReadOnly, Category = "Energy")
 	FGameplayAttributeData Stamina;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, Stamina)
@@ -54,25 +38,8 @@ public:
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, MaxStamina)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Energy")
-	FGameplayAttributeData MaxStaminaPer;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, MaxStaminaPer)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Energy")
-	FGameplayAttributeData MaxStaminaAbs;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, MaxStaminaAbs)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Energy")
 	FGameplayAttributeData StaminaRegen;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, StaminaRegen)
-	
-	UPROPERTY(BlueprintReadOnly, Category = "Energy")
-	FGameplayAttributeData StaminaRegenPer;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, StaminaRegenPer)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Energy")
-	FGameplayAttributeData StaminaRegenAbs;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, StaminaRegenAbs)
-	
 	
 	//
 
@@ -88,22 +55,6 @@ public:
 	FGameplayAttributeData RageRegen;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, RageRegen)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Energy")
-	FGameplayAttributeData RageRegenPer;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, RageRegenPer)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Energy")
-	FGameplayAttributeData RageRegenAbs;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, RageRegenAbs)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Energy")
-	FGameplayAttributeData MaxRagePer;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, MaxRagePer)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Energy")
-	FGameplayAttributeData MaxRageAbs;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, MaxRageAbs)
-	//
 	UPROPERTY(BlueprintReadOnly, Category = "CoreStats")
 	FGameplayAttributeData Str;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, Str)

@@ -32,17 +32,17 @@ void UEquipmentSystem::Init(UDiabloAbilitySystemComp* abilitySysCompo)
     m_ArySlots.Emplace(&m_FingerRight);
     m_ArySlots.Emplace(&m_FingerLeft);
 
-    m_Head.m_Slot=ESlots::Head;
-    m_Neck.m_Slot=ESlots::Neck;
-    m_Torso.m_Slot=ESlots::Torso;
-    m_Waist.m_Slot=ESlots::Waist;
-    m_Leg.m_Slot=ESlots::Leg;
-    m_Hand.m_Slot=ESlots::Hand;
-    m_Shoulder.m_Slot=ESlots::Shoulder;
-    m_WeaponRight.m_Slot=ESlots::WeaponRight;
-    m_WeaponLeft.m_Slot=ESlots::WeaponLeft;
-    m_FingerRight.m_Slot=ESlots::FingerRight;
-    m_FingerLeft.m_Slot=ESlots::FingerLeft;
+    m_Head.m_Slot=ESlotsEquipAry::Head;
+    m_Neck.m_Slot=ESlotsEquipAry::Neck;
+    m_Torso.m_Slot=ESlotsEquipAry::Torso;
+    m_Waist.m_Slot=ESlotsEquipAry::Waist;
+    m_Leg.m_Slot=ESlotsEquipAry::Leg;
+    m_Hand.m_Slot=ESlotsEquipAry::Hand;
+    m_Shoulder.m_Slot=ESlotsEquipAry::Shoulder;
+    m_WeaponRight.m_Slot=ESlotsEquipAry::WeaponRight;
+    m_WeaponLeft.m_Slot=ESlotsEquipAry::WeaponLeft;
+    m_FingerRight.m_Slot=ESlotsEquipAry::FingerRight;
+    m_FingerLeft.m_Slot=ESlotsEquipAry::FingerLeft;
 }
 
 bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //drag된 대상이 어떤 아이템을 가졌는지 알방법이 없음
@@ -125,7 +125,7 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
 {
     const FItemType* ItemTypeWantAdd = itemWantAdd.m_ItemData->m_ItemType.GetRow<FItemType>("");
 
-    if(!TEST_BIT(static_cast<uint32>(ItemTypeWantAdd->m_EquipableSlot),m_ArySlots[droppedIndex]->m_Slot))
+    if(!TEST_BIT(ItemTypeWantAdd->m_EquipableSlot,m_ArySlots[droppedIndex]->m_Slot))
     {
         PRINTF("BitEquipFail 1");
         return false;
@@ -133,7 +133,7 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
 
     for(auto Slot:m_ArySlots)
     {
-        if(TEST_BIT(static_cast<uint32>(ItemTypeWantAdd->m_EquipInterruptSlot),Slot->m_Slot))
+        if(TEST_BIT(ItemTypeWantAdd->m_EquipInterruptSlot,Slot->m_Slot))
         {
             PRINTF("Interrupt Slot 2");
             return false;
@@ -152,15 +152,15 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
 
 void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
 {
-    const FItemType* ItemWantAdd =  m_ArySlots[droppedIndex]->m_Item.m_ItemData->m_ItemType.GetRow<FItemType>("");
+    const FItemType* ItemTypeWantAdd =  itemWantAdd.m_ItemData->m_ItemType.GetRow<FItemType>("");
     m_ArySlots[droppedIndex]->m_Item = itemWantAdd;
-    m_ArySlots[droppedIndex]->m_EquippedType =ItemWantAdd;
+    m_ArySlots[droppedIndex]->m_EquippedType =ItemTypeWantAdd;
     //
     m_ArySlots[droppedIndex]->m_Item.m_nGridIndex = droppedIndex;
     m_ArySlots[droppedIndex]->m_Item.m_Holder = this;
 
     //UG
-    TSubclassOf<UGameplayEffect> GameplayEffect = ItemWantAdd->m_OptionGameEffect;
+    TSubclassOf<UGameplayEffect> GameplayEffect = ItemTypeWantAdd->m_OptionGameEffect;
     
     if (itemWantAdd.m_AryOptions.Num() > 0)
     {
@@ -177,14 +177,14 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
             //고로 장비 종류에 맞춰서 옵션 테이블에서 선택되게 추가작업필요
             //
             //
-            // FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(
-            //     itemWantAdd.m_ItemData->GetOption(CurrentOption.m_nOptionIndex).m_OptionGe, 1, Context);
+            FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(
+                GameplayEffect, 1, Context);
+            
+            NewHandle.Data.Get()->SetSetByCallerMagnitude(ItemTypeWantAdd->m_Options[i].GetRow<FOption>("")->m_OptionTag,
+                                                          CurrentOption.m_fValue);
             //
-            // NewHandle.Data.Get()->SetSetByCallerMagnitude(itemWantAdd.m_ItemData->GetOption(i).m_OptionTag,
-            //                                               CurrentOption.m_fValue);
-            // //
-            // m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToTarget(
-            //     *NewHandle.Data.Get(), m_TargetAbilitySys);
+            m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToTarget(
+                *NewHandle.Data.Get(), m_TargetAbilitySys);
         }
     }
 
@@ -207,6 +207,11 @@ void UEquipmentSystem::PrintEquipStats()
     //     PRINTF("Slot: %s - EquipItem: %s - Occupied: %hs", *EnumToStr(ESlots, (ESlots)i),
     //            *EnumToStr(EItemType, GetEquippedItem(i)), !m_ArySlots[i]->m_Item.IsEmpty() ? "Y" : "N");
     // }
+}
+
+const FItemType* UEquipmentSystem::GetEquippedItem(ESlotsEquipAry slot)
+{
+    return m_ArySlots[(int)slot]->m_EquippedType;
 }
 
 const FItemType* UEquipmentSystem::GetEquippedItem(int slotIndex)

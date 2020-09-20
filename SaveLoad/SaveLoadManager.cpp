@@ -137,7 +137,7 @@ void USaveLoadManager::SaveEquipment(int slotIndex, const TArray<FItemInstance>&
     PRINTF("SaveEquipment");
 }
 
-void USaveLoadManager::CreateSetEquipSlotItem(TArray<FItemInstance>& arrayUsing, FName itemId, ESlots slot)
+void USaveLoadManager::CreateSetEquipSlotItem(TArray<FItemInstance>& arrayUsing, FName itemId, ESlotsEquipAry slot)
 {
     TWeakObjectPtr<UItemManager> ItemManager = UDiabloGameInstance::Get->m_ItemManager;
     int GridIndex = static_cast<int>(slot);
@@ -149,28 +149,28 @@ void USaveLoadManager::CreateSetEquipSlotItem(TArray<FItemInstance>& arrayUsing,
 void USaveLoadManager::SetEquipSaveDataFromCreation(const FCurrentCharData& charData,TArray<FItemInstance>& newEquipAry)
 {
     newEquipAry.Reserve(15);
-    newEquipAry.Init(FItemInstance(), static_cast<int>(ESlots::Length));
+    newEquipAry.Init(FItemInstance(), static_cast<int>(ESlotsEquipAry::Length));
     //9
 
     if (charData.m_CurrentHelmet)
     {
-        CreateSetEquipSlotItem(newEquipAry, charData.m_CurrentHelmet->m_ItemID, ESlots::Head);
+        CreateSetEquipSlotItem(newEquipAry, charData.m_CurrentHelmet->m_ItemID, ESlotsEquipAry::Head);
     }
     if (charData.m_CurrentBody)
     {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentBody->m_ItemID, ESlots::Torso);
+        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentBody->m_ItemID, ESlotsEquipAry::Torso);
     }
     if (charData.m_CurrentGlove)
     {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentGlove->m_ItemID, ESlots::Hand);
+        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentGlove->m_ItemID, ESlotsEquipAry::Hand);
     }
     if (charData.m_CurrentShoe)
     {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentShoe->m_ItemID, ESlots::Leg);
+        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentShoe->m_ItemID, ESlotsEquipAry::Leg);
     }
     if (charData.m_CurrentShoulder)
     {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentShoulder->m_ItemID, ESlots::Shoulder);
+        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentShoulder->m_ItemID, ESlotsEquipAry::Shoulder);
     }
     //if(charData.m_CurrentBackpack)
     {
@@ -178,17 +178,17 @@ void USaveLoadManager::SetEquipSaveDataFromCreation(const FCurrentCharData& char
     }
     if (charData.m_CurrentBelt)
     {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentBelt->m_ItemID, ESlots::Waist);
+        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentBelt->m_ItemID, ESlotsEquipAry::Waist);
     }
     
     if (charData.m_CurrentRightWeapon)
     {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentRightWeapon->m_ItemID, ESlots::WeaponRight);
+        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentRightWeapon->m_ItemID, ESlotsEquipAry::WeaponRight);
     }
     
     if (charData.m_CurrentLeftWeapon)
     {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentLeftWeapon->m_ItemID, ESlots::WeaponLeft);
+        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentLeftWeapon->m_ItemID, ESlotsEquipAry::WeaponLeft);
     }
 }
 

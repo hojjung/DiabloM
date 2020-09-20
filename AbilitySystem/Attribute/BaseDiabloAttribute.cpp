@@ -142,19 +142,11 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
             Cast<UUnitMovement>(TargetCharacter->GetMovementComponent())->SetMoveSpeed(GetMoveSpeed());
         }
     }
-    else if (Data.EvaluatedData.Attribute == GetMaxHealthPerAttribute())
-    {
-        // Handle other health changes such as from healing or direct modifiers
-        // First clamp it
-       // SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
 
-        //SetMaxHealth() GetMaxHealthPer()
-    }
 }
 
 void UBaseDiabloAttribute::PrintStats()
 {
-    PRINTF("MaxHealthPer: %f", GetMaxHealthPer());
     PRINTF("MaxHealth: %f", GetMaxHealth());
     PRINTF("Health: %f", GetHealth());
     PRINTF("AttackPower: %f", GetPhysicalDamage());

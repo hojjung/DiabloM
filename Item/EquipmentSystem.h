@@ -3,27 +3,27 @@
 #include "DiabloM.h"
 #include "ItemHolder.h"
 #include "Datas/ItemDataTable.h"
-#include  "Datas/OptionDataTable.h"
 
 #include "EquipmentSystem.generated.h"
 
-
 class USaveEquipment;
-// UENUM(BlueprintType)
-// enum class EAnimStance :uint8 //애니매이션으로 사용될 세트ㅜ
-// {
-//     None,
-//     OneHandSword,
-//     TwohandSword,
-//     Dagger,
-//     Katana,
-//     Bow,
-//     Staff,
-//     Shield,
-//     DualSword,
-//     Length
-// };
 
+UENUM(BlueprintType)
+enum class ESlotsEquipAry: uint8
+{
+    Head,
+    Neck,
+    Torso,
+    Waist,
+    Leg,
+    Hand,
+    Shoulder,
+    WeaponRight,
+    WeaponLeft,
+    FingerRight,
+    FingerLeft,
+    Length
+};
 
 struct FEquipSlot
 {
@@ -33,7 +33,7 @@ public:
     }
 
 public:
-    ESlots m_Slot;
+    ESlotsEquipAry m_Slot;
     
     const FItemType* m_EquippedType;
 
@@ -41,6 +41,7 @@ public:
 
     FActiveGameplayEffectHandle m_OptionHandle;
 };
+
 
 UCLASS()
 class DIABLOM_API UEquipmentSystem : public UObject, public IItemHolder
@@ -97,7 +98,7 @@ public:
 
     void PrintEquipStats();
 
-    const FItemType* GetEquippedItem(ESlots slot);
+    const FItemType* GetEquippedItem(ESlotsEquipAry slot);
 
     const FItemType* GetEquippedItem(int slotIndex);
 

@@ -23,7 +23,8 @@ struct DiabloCharStatStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Int);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Vit);
 
-	DiabloCharStatStatics()
+	DiabloCharStatStatics(): PhysicalDamagePerProperty(nullptr), PhysicalDefensePerProperty(nullptr),
+	                         MaxHealthPerProperty(nullptr)
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Str, Source, true);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Dex, Source, true);
@@ -35,14 +36,9 @@ struct DiabloCharStatStatics
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MaxRage, Source, true);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MaxHealth, Source, true);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MoveSpeed, Source, true);
-		
+
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, PhysicalDamage, Source, true);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, PhysicalDamagePer, Source, true);
-
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, PhysicalDefense, Source, true);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, PhysicalDefensePer, Source, true);
-
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MaxHealthPer, Source, true);
 
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, DamagePer, Source, true);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, DefensePer, Source, true);
@@ -90,8 +86,8 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
 
 	const int AttackerLevel = Cast<AUnitPawn>(SourceActor)->GetLevel();
 
-	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();//¿©±â´Ù
-	//°öÇÏ±â µé¾î°¡´Â ºÎºÐµµ ½ºÅÝÀ¸·Î »©³õÀ¸¸é µÊ.
+	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();//ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½î°¡ï¿½ï¿½ ï¿½ÎºÐµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½.
 	//
 	// Gather the tags from the source and target as that can affect which buffs should be used
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
@@ -101,14 +97,14 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
-	//Á÷¾÷ ±¸ºÐ ÇÊ¿äÇÔ
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½
 
-	//µð¾Æ ½ºÅÝÀÇ ¹®Á¦Á¡?Àº °¢ Ä³¸¯ÅÍÀÇ ÁÖ½ºÅÝ ÀÌ¿ÜÀÇ °ÍÀº ¸ðµÎ ¾²·¹±â ¶ó´Â°ÍÀÓ.
+	//ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Â°ï¿½ï¿½ï¿½.
 
-	//¹ÎÃ¸¿¡°Ô °ø¼ÓÀ» Áà¹ö¸®¸é ¹ÎÄ³¸¸ À¯¸®ÇØÁöÁö ¾ÊÀ½?
+	//ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½?
 
-	//ÁÖ½ºÅÝ ÀÌ¿ÜÀÇ °ÍÀÌ ÀÛ¿ëÇÏ´Â°Ô ÀåÁ¡À¸·Î ÀÛ¿ëÇÏ·Á¸é
-	//°¢ Ä³¸¯ÅÍ°¡ ÀÚ½ÅÀÇ ÁÖ½ºÅÝ¸¸ Âï´Â ÄÉÀÌ½º,ÁÖ½ºÅÝ°ú Ã¼·Â, ÁÖ½ºÅÝ°ú ºÎ½ºÅÝ, ¿ÀÁ÷ ºÎ½ºÅÝ,ºÎ½ºÅÝ°ú Ã¼·ÂÀÌ ÇÊ¿äÇÔ
+	//ï¿½Ö½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Û¿ï¿½ï¿½Ï´Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Û¿ï¿½ï¿½Ï·ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ý¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½,ï¿½Ö½ï¿½ï¿½Ý°ï¿½ Ã¼ï¿½ï¿½, ï¿½Ö½ï¿½ï¿½Ý°ï¿½ ï¿½Î½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½ï¿½,ï¿½Î½ï¿½ï¿½Ý°ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½
 
 	float StatStr = 0.f;
 	float StatDex = 0.f;
@@ -143,7 +139,7 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
 	{
 		HealthRegen = (AttackerLevel-25) * StatVit;
 	}
-	//Ã¼·Â
+	//Ã¼ï¿½ï¿½
 	if (AttackerLevel < 35)
 	{
 		Health = (10 * StatVit) + (AttackerLevel*4 )+ 36;

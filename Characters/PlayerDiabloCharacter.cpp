@@ -95,11 +95,11 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     SetUnitStat("Player");
 }
 
-void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlots slotWant)
+void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlotsEquipAry slotWant)
 {
     switch (slotWant)
     {
-    case ESlots::Head:
+    case ESlotsEquipAry::Head:
         if (meshItem)
         {
             m_SkHeadGear->SetSkeletalMesh(meshItem->m_SkEquipment);
@@ -111,7 +111,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlots slotWan
             SetFullHairMesh();
         }
         break;
-    case ESlots::Torso:
+    case ESlotsEquipAry::Torso:
         if (meshItem)
         {
             m_SkBody->SetSkeletalMesh(meshItem->m_SkEquipment);
@@ -122,10 +122,10 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlots slotWan
         }
         //SetAnimStance(GetAnimStance());
         break;
-    case ESlots::Waist:
+    case ESlotsEquipAry::Waist:
         m_SkBelt->SetSkeletalMesh(meshItem ? meshItem->m_SkEquipment : nullptr);
         break;
-    case ESlots::Leg:
+    case ESlotsEquipAry::Leg:
         if (meshItem)
         {
             m_SkShoe->SetSkeletalMesh(meshItem->m_SkEquipment);
@@ -135,7 +135,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlots slotWan
             SetDefaultShoeMesh();
         }
         break;
-    case ESlots::Hand:
+    case ESlotsEquipAry::Hand:
         if (meshItem)
         {
             m_SkGlove->SetSkeletalMesh(meshItem->m_SkEquipment);
@@ -145,13 +145,13 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlots slotWan
             SetDefaultGloveMesh();
         }
         break;
-    case ESlots::Shoulder:
+    case ESlotsEquipAry::Shoulder:
         m_SkShoulderPad->SetSkeletalMesh(meshItem ? meshItem->m_SkEquipment : nullptr);
         break;
-    case ESlots::WeaponRight:
+    case ESlotsEquipAry::WeaponRight:
         m_StRightWeapon->SetStaticMesh(meshItem ? meshItem->m_StEquipment : nullptr);
         break;
-    case ESlots::WeaponLeft:
+    case ESlotsEquipAry::WeaponLeft:
         m_StLeftWeapon->SetStaticMesh(meshItem ? meshItem->m_StEquipment : nullptr);
         break;
     default:

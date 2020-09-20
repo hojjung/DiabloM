@@ -124,7 +124,7 @@ void ADiabloPlayerController::CloseMainMenu()
 
 void ADiabloPlayerController::PlayerMeshChange(int slot, FItemInstance& item)
 {
-	GetPlayerPawn()->EquipMesh(item.m_ItemData,static_cast<ESlots>(slot));
+	GetPlayerPawn()->EquipMesh(item.m_ItemData,static_cast<ESlotsEquipAry>(slot));
 }
 
 APlayerDiabloCharacter* ADiabloPlayerController::GetPlayerPawn()

@@ -75,7 +75,7 @@ public:
     bool DoesSaveDataExist(int slotIndex);
     //
 private:
-    void CreateSetEquipSlotItem(TArray<FItemInstance>& arrayUsing,FName itemId, ESlots slot);
+    void CreateSetEquipSlotItem(TArray<FItemInstance>& arrayUsing,FName itemId, ESlotsEquipAry slot);
 public:
     int CreateNewCharacter(UPlayerCreateManager* plManager);
     void SetLoadedEquipDataToPlayer(int slotIndex);

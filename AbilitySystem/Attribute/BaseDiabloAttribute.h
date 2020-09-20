@@ -30,45 +30,21 @@ public:
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, MaxHealth)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Defense")
-	FGameplayAttributeData MaxHealthAbs;
-	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, MaxHealthAbs)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Defense")
-	FGameplayAttributeData MaxHealthPer;
-	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, MaxHealthPer)
-
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData AttackSpeed;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AttackSpeed)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData AttackSpeedPer;
-	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AttackSpeedPer)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData PhysicalDamage;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, PhysicalDamage)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData PhysicalDamagePer;
-	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, PhysicalDamagePer)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Defense")
 	FGameplayAttributeData PhysicalDefense;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, PhysicalDefense)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Defense")
-	FGameplayAttributeData PhysicalDefensePer;
-	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, PhysicalDefensePer)
-
 	UPROPERTY(BlueprintReadOnly, Category = "MoveSpeed")
 	FGameplayAttributeData MoveSpeed;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, MoveSpeed)
-
-	UPROPERTY(BlueprintReadOnly, Category = "MoveSpeed")
-	FGameplayAttributeData MoveSpeedPer;
-	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, MoveSpeedPer)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Damage", meta = (HideFromLevelInfos))
 	FGameplayAttributeData DamagePer;
