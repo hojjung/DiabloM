@@ -93,6 +93,11 @@ const FAnimStance* UItemDataTable::GetAnimStancePtr(FName id)
 }
 
 
+FItemTypeHandle::FItemTypeHandle()
+{
+    FDataTableRowHandle::DataTable = UItemDataTable::GetItemTypeTable;
+}
+
 FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMesh(nullptr), m_ItemIcon(nullptr)
 {
     m_bStackable = true;
@@ -109,7 +114,7 @@ FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMe
 FAnimStance::FAnimStance()
 {
     m_fStancePriority=1.0f;
-    m_RightHandNeed.DataTable = UItemDataTable::GetItemTypeTable;
-    m_LeftHandNeed.DataTable = UItemDataTable::GetItemTypeTable;
+    m_AryRightHandNeed.Add(FItemTypeHandle());
+    m_AryLeftHandNeed.Add(FItemTypeHandle());
 }
 

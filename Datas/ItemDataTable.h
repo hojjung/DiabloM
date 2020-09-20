@@ -19,6 +19,13 @@ struct FOptionHandle :public FDataTableRowHandle
 		DataTable=UOptionDataTable::GetOptionTable;
 	}
 };
+
+USTRUCT(BlueprintType)
+struct FItemTypeHandle :public FDataTableRowHandle
+{
+    GENERATED_USTRUCT_BODY()
+    FItemTypeHandle();
+};
 //
 UENUM(meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class ESlots: uint32
@@ -234,9 +241,9 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float m_fStancePriority;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FDataTableRowHandle m_RightHandNeed;
+    TArray<FItemTypeHandle> m_AryRightHandNeed;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FDataTableRowHandle m_LeftHandNeed;
+    TArray<FItemTypeHandle> m_AryLeftHandNeed;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<UDiaAniminstance> m_StanceAnimation;
 };
