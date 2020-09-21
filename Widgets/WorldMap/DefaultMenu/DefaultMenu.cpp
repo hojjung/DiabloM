@@ -31,15 +31,4 @@ void UDefaultMenu::CloseMainMenu()
 	//should close tool tip
 }
 
-void UDefaultMenu::ThrowItem(const FItemInstance& itemThrow)
-{
-	//드랍한순간
-	//아이템을 액터로 생성
-	//플레이어 주위에 랜덤 위치
-	//해당 아이템 인벤에서 삭제
-	FVector RandomPos = m_PlayerChar->GetActorLocation();
-	FItemInstance item =itemThrow;
-	itemThrow.m_Holder->RemoveItemByIndex(itemThrow.m_nGridIndex);
-	GetGameInstance<UDiabloGameInstance>()->m_ItemManager->CreateItemActor(item,RandomPos);
-}
 

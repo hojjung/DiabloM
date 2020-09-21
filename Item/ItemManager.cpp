@@ -80,15 +80,10 @@ bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionS
 
     CreateIntAryForShuffle(OptionRandomCount, optionRandom);
 
-
-    int i = 0;
-    while (i < OptionRandomCount)
+    for(int IndexSelected : optionRandom)
     {
-        outOption.Add(CreateRandomOptionValue(optionRandom[i], itemData));
-
-        i++;
+        outOption.Add(CreateRandomOptionValue(IndexSelected, itemData));
     }
-    //아웃옵션한텐 인덱스를 줘야한다.
 
     return true;
 }

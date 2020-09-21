@@ -92,6 +92,10 @@ public:
             m_OptionGameEffect=GameEffectAsset.Class;
         }
     };
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FName m_TypeID;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FText m_ShowingName;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))
     int32  m_EquipableSlot;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))
@@ -102,10 +106,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<FOptionHandle> m_Options;
   
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FText m_ShowingName;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FName m_TypeID;
+   
     //equipable class
 };
 

@@ -28,11 +28,13 @@ enum class ESlotsEquipAry: uint8
 struct FEquipSlot
 {
 public:
-    FEquipSlot(): m_Slot(), m_EquippedType(nullptr)
+    FEquipSlot(): m_Slot(), m_EquippedType(nullptr),m_bIsOccupied(false)
     {
     }
 
 public:
+    bool m_bIsOccupied;
+    
     ESlotsEquipAry m_Slot;
     
     const FItemType* m_EquippedType;
@@ -40,6 +42,12 @@ public:
     FItemInstance m_Item;
 
     FActiveGameplayEffectHandle m_OptionHandle;
+
+    void ClearSlot()
+    {
+        m_Item.ClearData();
+        m_EquippedType=nullptr;
+    }
 };
 
 

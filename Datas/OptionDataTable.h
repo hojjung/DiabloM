@@ -3,6 +3,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "GenericPlatformMisc.h"
 #include "ObjectMacros.h"
 
 #include "OptionDataTable.generated.h"
@@ -29,6 +30,8 @@ public:
     int m_fValue;
     UPROPERTY(EditAnywhere)
     FName m_OptionID;
+
+    FText GetOptionText() const;
 };
 
 USTRUCT(BlueprintType) //난이도,티어
@@ -39,8 +42,6 @@ struct FOption : public FTableRowBase
 public:
     FOption()
     {
-        m_bIsPercent = false;
-        
         m_fMinValue.Init(1,3);
         m_fMinValue[1] =3;
         m_fMinValue[2] =5;
@@ -49,15 +50,15 @@ public:
         m_fMaxValue[1] =25;
         m_fMaxValue[2] =45;
         
-        m_FormatArguSet = "{0}{1}{2} {3}";//need open?
-        m_FormatEffect = FText::FromString("Ex)Increase Attack");
+        m_FormatArguSet = "{0}{1}{2}";//need open?
+        m_FormatEffect = FText::FromString("Ex)% Attack Bonus");
         m_OptionTag = FGameplayTag::RequestGameplayTag("Item.Option",true);
         m_OptionID="SetSameWithRowName";
     }
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName m_OptionID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    bool m_bIsPercent;
+    FText m_FormatEffect;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<int> m_fMinValue;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -65,27 +66,25 @@ public:
     //UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FString m_FormatArguSet;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FText m_FormatEffect;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FGameplayTag m_OptionTag;
     
 private:
-    char Plus = '+';
-    char Minus = '-';
-    char Percent = '%';
-    char NoPercent = ' ';
+    FText Plus = FText::FromString("+");
+    FText Minus = FText::FromString("-");
+    //char Percent = '%';
+    //char NoPercent = ' ';
     
 public:
-    FORCEINLINE FText GetOptionFormat(int value) const
+    FORCEINLINE FText GetOptionFormat(float optionValue) const
     {
         FFormatOrderedArguments Args;
 
-        if(value ==0)
+        if(optionValue ==0)
         {
             PRINTF("WTF - Value Is Zero");
             Args.Add(Plus);
         }
-        else if(value<0)
+        else if(optionValue<0)
         {
             Args.Add(Minus);
         }
@@ -94,16 +93,8 @@ public:
             Args.Add(Plus);
         }
 
-        Args.Add(value);
+        Args.Add(optionValue);
 
-        if(m_bIsPercent)
-        {
-            Args.Add(Percent);
-        }
-        {
-            Args.Add(NoPercent);            
-        }
-        
         Args.Add(m_FormatEffect);
         
         FTextFormat FormatT = FText::FromString(m_FormatArguSet);
@@ -140,6 +131,8 @@ public:
     static const FOption& GetOption(FName id);
 
     static const FOption* GetOptionPtr(FName id);
+
+    static FText GetOptionText(const FOptionSpec& spec);
 };
 
 

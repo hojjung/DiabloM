@@ -70,4 +70,6 @@ public:
 #pragma endregion 
 	//
 	FItemInstance CreateItem(FName id);
+
+	ADroppedItem* DropItemActor(FItemInstance& myItem);
 };

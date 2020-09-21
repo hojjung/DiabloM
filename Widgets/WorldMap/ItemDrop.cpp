@@ -27,8 +27,8 @@ void UItemDrop::ThrowItem(const FItemInstance& itemThrow)
     //플레이어 주위에 랜덤 위치
     //해당 아이템 인벤에서 삭제
     PRINTF("ThrowItem");
-    FVector RandomPos = UGameplayStatics::GetPlayerPawn(GetWorld(),0)->GetMovementComponent()->GetActorFeetLocation();
-    FItemInstance item =itemThrow;
+
     itemThrow.m_Holder->RemoveItemByIndex(itemThrow.m_nGridIndex);
-    GetGameInstance<UDiabloGameInstance>()->m_ItemManager->CreateItemActor(item,RandomPos);
+    	FItemInstance item =itemThrow;
+    	GetGameInstance<UDiabloGameInstance>()->DropItemActor(item);
 }

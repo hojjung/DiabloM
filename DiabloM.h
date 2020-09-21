@@ -93,3 +93,12 @@ DIABLOM_API DECLARE_LOG_CATEGORY_EXTERN(DiaM, Log, All);
 #define MAXSLOT 7
 
 
+#define stringify(name) #name
+#define EnumToStr(Enum, Val)  EnumToString( (stringify(Enum)) , Val)
+
+template<typename T>
+static FString EnumToString(const FString& enumName, const T value)
+{
+	UEnum* pEnum = FindObject<UEnum>(ANY_PACKAGE, *enumName);
+	return *(pEnum ? pEnum->GetNameStringByIndex(static_cast<uint8>(value)) : "NoEnum-Null");
+}

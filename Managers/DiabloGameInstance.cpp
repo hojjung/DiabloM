@@ -1,4 +1,6 @@
 #include "DiabloGameInstance.h"
+
+#include "NavigationSystem.h"
 #include "StartMap/PlayerCreateManager.h"
 
 
@@ -165,3 +167,18 @@ FItemInstance UDiabloGameInstance::CreateItem(FName id)
 {
     return m_ItemManager->CreateItemInstance(id);
 }
+
+ADroppedItem* UDiabloGameInstance::DropItemActor(FItemInstance& myItem)
+{
+    FVector ActorPos = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetMovementComponent()->GetActorFeetLocation();
+    auto* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+    FNavLocation OutLoc;
+    
+    if(NavSys->GetRandomPointInNavigableRadius(ActorPos,400.f,OutLoc))
+    {
+        ActorPos = OutLoc.Location;
+    }
+
+    return m_ItemManager->CreateItemActor(myItem,ActorPos);
+}
+

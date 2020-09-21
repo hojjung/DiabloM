@@ -272,7 +272,7 @@ float UItemPopupInfo::SetOptionTexts(const FItemInstance& itemInst)
     {
         float Value = itemInst.m_AryOptions[i].m_fValue;
         m_AryOptions[i]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-        m_AryOptions[i]->SetString(UOptionDataTable::GetOption(itemInst.m_AryOptions[i].m_OptionID).GetOptionFormat(Value));
+        m_AryOptions[i]->SetString(itemInst.m_AryOptions[i].GetOptionText());
         m_AryOptions[i]->ForceLayoutPrepass();
         OptionSizeY += m_AryOptions[i]->GetDesiredSize().Y;
         i++;

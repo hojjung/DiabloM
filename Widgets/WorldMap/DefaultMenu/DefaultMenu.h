@@ -46,7 +46,5 @@ public:
 
 	void CloseMainMenu();
 
-	UFUNCTION(BlueprintCallable)
-	void ThrowItem(const FItemInstance& itemThrow);
 
 };

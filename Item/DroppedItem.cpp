@@ -31,6 +31,7 @@ ADroppedItem::ADroppedItem(const FObjectInitializer& objInit):Super(objInit)
 	m_BillBoard->SetRelativeLocation( FVector(0.f, 0.f, 70.f));
 	m_BillBoard->CastShadow = false;
 	//
+	m_TableID=NAME_None;
 }
 
 // Called when the game starts or when spawned
@@ -41,6 +42,16 @@ void ADroppedItem::BeginPlay()
 	if (m_TableID != NAME_None)
 	{
 		SetItem(m_TableID);
+		
+		auto AA = m_ItemInstance.m_AryOptions;
+
+		PRINTF("Ground CreatedItem: %s",*m_ItemInstance.m_ItemData->m_ShowingName.ToString());
+		
+		for(auto BB :AA)
+		{
+			PRINTF("Option:%s", *BB.GetOptionText().ToString());
+		}
+		
 	}
 }
 
