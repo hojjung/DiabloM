@@ -52,7 +52,7 @@ bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //d
         return false; //애초부터 안맞음 혹은 양손검 등으로 빈 오큐파이일때
     }
 
-    if (!CheckSlotOccupied(droppedIndex))
+    if (!CheckSlotOccupied(droppedIndex)) //비어있음
     {
         SetItem(droppedIndex, itemWantAdd); //그냥 비어있던 슬롯
 
@@ -60,15 +60,19 @@ bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //d
         {
             itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
         }
+        
         return true;
     }
 
-    if (m_ArySlots[droppedIndex]->m_Item.m_ItemID == NAME_None)
+    //비어있지 않음?
+
+    if (m_ArySlots[droppedIndex]->m_Item.m_ItemID == NAME_None) //양손등이라 못끼는거
     {
         PRINTF("Probably Katana or Twohandsword left hand blocked");
         return false;
     }
 
+    //스왑
     return SwapMove(GetItem(droppedIndex), itemWantAdd);
 }
 
@@ -80,17 +84,18 @@ void UEquipmentSystem::RemoveItem(FItemInstance& itemWantErase)
 void UEquipmentSystem::RemoveItemByIndex(int index)
 {
     const FItemType* ItemTypeErase = m_ArySlots[index]->m_Item.m_ItemData->m_ItemType.GetRow<FItemType>("");
-    
-    m_ArySlots[index]->m_bIsOccupied=false;
+
+    m_ArySlots[index]->m_bIsOccupied = false;
 
     for (auto* Slot : m_ArySlots)
     {
         if (TEST_BIT(ItemTypeErase->m_EquipInterruptSlot, Slot->m_Slot))
         {
-            Slot->m_bIsOccupied=false;
+            Slot->m_bIsOccupied = false;
+            m_EquipSlotChanged.Broadcast(m_ArySlots[index]->m_Item,*Slot);
         }
     }
-    
+
     m_ArySlots[index]->m_EquippedType = nullptr;
     m_ArySlots[index]->m_Item.ClearData();
     //
@@ -99,17 +104,17 @@ void UEquipmentSystem::RemoveItemByIndex(int index)
         m_TargetAbilitySys->RemoveActiveGameplayEffect(m_ArySlots[index]->m_OptionHandle);
     }
     OnItemSlotChanged(index);
+
 }
 
 void UEquipmentSystem::OnItemSlotChanged(int index)
 {
     m_ItemChanged.Broadcast(index, GetItem(index));
-
 }
 
 bool UEquipmentSystem::CheckSlotOccupied(int index)
 {
-    return m_ArySlots[index]->m_EquippedType;
+    return m_ArySlots[index]->m_bIsOccupied;
 }
 
 bool UEquipmentSystem::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
@@ -123,8 +128,12 @@ bool UEquipmentSystem::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
     }
 
     auto DragBackup = Drag;
-    Drag.m_Holder->SetItem(DragIndex, Drop);
+    auto DropBackup = Drop;
 
+    RemoveItemByIndex(DropIndex);
+    Drag.m_Holder->RemoveItem(Drag);
+
+    Drag.m_Holder->SetItem(DragIndex, DropBackup);
     SetItem(DropIndex, DragBackup);
 
     return true;
@@ -134,11 +143,11 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
 {
     const FItemType* ItemTypeWantAdd = itemWantAdd.m_ItemData->m_ItemType.GetRow<FItemType>("");
 
-    if(m_ArySlots[droppedIndex]->m_bIsOccupied)
-    {
+    if(GetItem(droppedIndex).IsEmpty() &&m_ArySlots[droppedIndex]->m_bIsOccupied)
+    {//양손무기 왼손
         return false;
     }
-    
+
     if (!TEST_BIT(ItemTypeWantAdd->m_EquipableSlot, m_ArySlots[droppedIndex]->m_Slot))
     {
         //PRINTF("BitEquipFail 1");
@@ -149,7 +158,7 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
     {
         if (TEST_BIT(ItemTypeWantAdd->m_EquipInterruptSlot, Slot->m_Slot))
         {
-            if(Slot->m_bIsOccupied)
+            if (Slot->m_bIsOccupied)
             {
                 return false;
             }
@@ -174,13 +183,15 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
     //
     m_ArySlots[droppedIndex]->m_Item.m_nGridIndex = droppedIndex;
     m_ArySlots[droppedIndex]->m_Item.m_Holder = this;
-    m_ArySlots[droppedIndex]->m_bIsOccupied=true;
+    m_ArySlots[droppedIndex]->m_bIsOccupied = true;
+
 
     for (auto* Slot : m_ArySlots)
     {
         if (TEST_BIT(ItemTypeWantAdd->m_EquipInterruptSlot, Slot->m_Slot))
         {
-            Slot->m_bIsOccupied=true;
+            Slot->m_bIsOccupied = true;
+            m_EquipSlotChanged.Broadcast(m_ArySlots[droppedIndex]->m_Item,*Slot);
         }
     }
     //UG
@@ -191,7 +202,7 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
         auto Context = m_TargetAbilitySys->MakeEffectContext();
         Context.AddSourceObject(m_TargetAbilitySys->GetOwner());
         FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(GameplayEffect, 1, Context);
-        
+
         for (int i = 0; i < itemWantAdd.m_AryOptions.Num(); i++)
         {
             FOptionSpec CurrentOption = itemWantAdd.m_AryOptions[i];

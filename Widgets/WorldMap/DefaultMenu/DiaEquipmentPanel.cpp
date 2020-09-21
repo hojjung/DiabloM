@@ -84,6 +84,7 @@ void UDiaEquipmentPanel::Init(UEquipmentSystem * equipContainer)
 	
 
 	m_EquipSys->GetItemChangeCallback().AddUObject(this, &UDiaEquipmentPanel::UpdateSlot);
+	m_EquipSys->GetEquipChanged().AddUObject(this,&UDiaEquipmentPanel::UpdateEquipSlot);
 
 	UDiaEquipmentPanel::GetEquipWidgetInst = this;
 }
@@ -110,13 +111,23 @@ void UDiaEquipmentPanel::UpdateSlot(int index,  FItemInstance& itemInst)
 	if(m_ItemPopup->GetVisibility()==ESlateVisibility::SelfHitTestInvisible)
 	{
 		m_ItemPopup->SetVisibility(ESlateVisibility::Hidden);
-    	
-		//ShowItemInfo(m_ArySlots[index]->GetCachedGeometry(),itemInst);
 	}
+
 	
 	PRINTF("UpdateSlot EquipPanel");
 }
-
+void UDiaEquipmentPanel::UpdateEquipSlot(const FItemInstance& itemInst, const FEquipSlot& slot)
+{
+	if (slot.m_bIsOccupied && slot.m_Item.IsEmpty())
+	{
+		m_ArySlots[(int)slot.m_Slot]->UpdateItemVisual(itemInst);
+		m_ArySlots[(int)slot.m_Slot]->SetVisualColorTint(FLinearColor::Red);
+	}
+	else
+	{
+		m_ArySlots[(int)slot.m_Slot]->ClearSlot();
+	}
+}
 
 void UDiaEquipmentPanel::ShowItemInfo(const FGeometry & theInstigator,  FItemInstance & itemInst)
 {
@@ -137,15 +148,3 @@ void UDiaEquipmentPanel::HideItemInfo()
 	m_ItemPopup->PlayHideInfoAnim();
 }
 
-//void EquipmentSystemOld::ChangeStance()//erase
-//{
-	//auto SkeletalMesh = GetMesh();
-
-	////SkeletalMesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	//SkeletalMesh->SetAnimInstanceClass(m_AnimSets[(int)m_CurrentStance]);
-	//auto AnimInst = Cast<UDGRG_HumanCharacter_AnimInstance>(SkeletalMesh->GetAnimInstance());
-	//SetMaxCombo(AnimInst->m_Motions.Num());
-	//ResetCombo();
-	//m_OnStanceChanged.Broadcast(m_CurrentStance);
-	//PRINTF("Current Stance Index: %s", *GETENUMSTRING("E_STANCE", m_CurrentStance));
-//}

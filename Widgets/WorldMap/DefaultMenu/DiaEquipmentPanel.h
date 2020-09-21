@@ -66,6 +66,8 @@ protected:
 
 	void UpdateSlot(int index,  FItemInstance& itemInst);
 
+	void UpdateEquipSlot(const FItemInstance& itemInst,const FEquipSlot& slot);
+
 	void HideItemInfo();
 
 public:
@@ -74,3 +76,5 @@ public:
 	static UDiaEquipmentPanel* GetEquipWidgetInst;
 	
 };
+
+

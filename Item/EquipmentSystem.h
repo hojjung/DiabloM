@@ -28,7 +28,7 @@ enum class ESlotsEquipAry: uint8
 struct FEquipSlot
 {
 public:
-    FEquipSlot(): m_Slot(), m_EquippedType(nullptr),m_bIsOccupied(false)
+    FEquipSlot(): m_bIsOccupied(false),m_Slot(), m_EquippedType(nullptr)
     {
     }
 
@@ -50,7 +50,7 @@ public:
     }
 };
 
-
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnEquipSlotChanged,const FItemInstance&  ,const FEquipSlot&);
 UCLASS()
 class DIABLOM_API UEquipmentSystem : public UObject, public IItemHolder
 {
@@ -81,6 +81,8 @@ protected:
     const FAnimStance* m_CurrentStance;
 
     FOnItemSlotChanged m_ItemChanged;
+
+    FOnEquipSlotChanged m_EquipSlotChanged;
 
 protected:
     void OnItemSlotChanged(int index);
@@ -117,6 +119,11 @@ public:
     virtual FOnItemSlotChanged& GetItemChangeCallback() override
     {
         return m_ItemChanged;
+    }
+
+    FOnEquipSlotChanged& GetEquipChanged()
+    {
+        return m_EquipSlotChanged;
     }
 
     const FAnimStance* GetCurrentStance() const

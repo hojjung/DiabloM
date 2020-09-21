@@ -62,6 +62,30 @@ void UItemPopupInfo::EquipItem()
     }
     auto& Arys = UDiaEquipmentPanel::GetEquipWidgetInst->GetArySlots();
 
+// //10
+//     //
+//     for(int i = Arys.Num()-1;i >= 0;i--)
+//     {
+//         if (UDiaEquipmentPanel::GetEquipWidgetInst->EquipItem(Arys[i]->GetIndex(), *m_SelectedItem))
+//         {
+//             PlayHideInfoAnim();
+//             //끼운 아이템을 삭제
+//             return;
+//         }
+//     }
+
+    for (auto* EquipSlot : Arys)
+    {
+        if (EquipSlot->IsSlotEmpty())
+        {
+            if (UDiaEquipmentPanel::GetEquipWidgetInst->EquipItem(EquipSlot->GetIndex(), *m_SelectedItem))
+            {
+                PlayHideInfoAnim();
+                //끼운 아이템을 삭제
+                return;
+            }
+        }
+    }
     for (auto* EquipSlot : Arys)
     {
         if (UDiaEquipmentPanel::GetEquipWidgetInst->EquipItem(EquipSlot->GetIndex(), *m_SelectedItem))

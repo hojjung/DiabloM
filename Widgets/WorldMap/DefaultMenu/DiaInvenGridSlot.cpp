@@ -69,6 +69,7 @@ void UDiaInvenGridSlot::UpdateItemVisual(const FItemInstance& itemInstance)
 	FSlateBrush ItemIcon = FSlateBrush();
 	ItemIcon.SetResourceObject(itemInstance.m_ItemData->m_ItemIcon);
 	m_ImgItemVisual->SetBrush(ItemIcon);
+
 }
 
 void UDiaInvenGridSlot::SetIconOpacity(float opacityMaxOne)

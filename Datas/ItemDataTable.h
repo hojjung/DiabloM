@@ -193,7 +193,7 @@ public:
     const FItemTier* m_ItemTier;
 public:
 
-    bool IsEmpty()
+    bool IsEmpty() const
     {
         return m_ItemID == NAME_None && !m_ItemData;
     }
