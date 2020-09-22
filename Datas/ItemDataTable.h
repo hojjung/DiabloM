@@ -215,6 +215,7 @@ public:
 
     void ClearData()
     {
+        m_TierID= NAME_None;
         m_ItemID = NAME_None;
         m_nCurrentStack = -1;
         m_nGridIndex = -1;
@@ -238,6 +239,8 @@ public:
     //무기가 첫번째 비교
     //이후에 중복가능하면
     //개수가 많이 충족된것으로 고름
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FText m_ShowingText;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float m_fStancePriority;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

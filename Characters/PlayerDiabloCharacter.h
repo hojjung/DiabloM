@@ -73,7 +73,7 @@ protected:
 	UPROPERTY()
 	USkeletalMesh* m_DefaultShoeMesh;
 	//
-	TScriptInterface< IInteractable> m_FocusedInteractable;
+	TScriptInterface<IInteractable> m_FocusedInteractable;
 
 protected:
 	virtual void BeginPlay() override;
@@ -87,7 +87,6 @@ protected:
 	void AutoPlayTick();
 
 	virtual void Tick(float DeltaTime) override;
-
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
@@ -106,6 +105,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
+	
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void AttackInput(float pressed);
 

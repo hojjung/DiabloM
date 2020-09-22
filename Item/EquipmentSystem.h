@@ -77,6 +77,8 @@ protected:
     TMap<FItemInstance*,FActiveGameplayEffectHandle> m_EquipmentEffectContainer;
 
     UDiabloAbilitySystemComp* m_TargetAbilitySys;
+
+    TArray<FAnimStance*> m_AryAnimStances;
     
     const FAnimStance* m_CurrentStance;
 
@@ -84,8 +86,6 @@ protected:
 
     FOnEquipSlotChanged m_EquipSlotChanged;
 
-protected:
-    void OnItemSlotChanged(int index);
 
 public:
     void Init(UDiabloAbilitySystemComp* abilitySysCompo);
@@ -116,6 +116,8 @@ public:
 
     void SetItemAry(TArray<FItemInstance>& equipSlot);
 
+    TArray<FEquipSlot*>& GetArySlotPtr();
+    
     virtual FOnItemSlotChanged& GetItemChangeCallback() override
     {
         return m_ItemChanged;
@@ -131,5 +133,10 @@ public:
         return m_CurrentStance;
     }
 
-    TArray<FEquipSlot*>& GetArySlotPtr();
+
+protected:
+    void OnItemSlotChanged(int index);
+    
+    void CalculateAnimStance();
+
 };

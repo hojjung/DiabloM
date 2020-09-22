@@ -43,6 +43,8 @@ void UEquipmentSystem::Init(UDiabloAbilitySystemComp* abilitySysCompo)
     m_WeaponLeft.m_Slot = ESlotsEquipAry::WeaponLeft;
     m_FingerRight.m_Slot = ESlotsEquipAry::FingerRight;
     m_FingerLeft.m_Slot = ESlotsEquipAry::FingerLeft;
+
+    UItemDataTable::GetAnimStanceTable->GetAllRows("NoAnimDataTable", m_AryAnimStances);
 }
 
 bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //drag된 대상이 어떤 아이템을 가졌는지 알방법이 없음
@@ -60,7 +62,7 @@ bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //d
         {
             itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
         }
-        
+
         return true;
     }
 
@@ -92,7 +94,7 @@ void UEquipmentSystem::RemoveItemByIndex(int index)
         if (TEST_BIT(ItemTypeErase->m_EquipInterruptSlot, Slot->m_Slot))
         {
             Slot->m_bIsOccupied = false;
-            m_EquipSlotChanged.Broadcast(m_ArySlots[index]->m_Item,*Slot);
+            m_EquipSlotChanged.Broadcast(m_ArySlots[index]->m_Item, *Slot);
         }
     }
 
@@ -104,11 +106,54 @@ void UEquipmentSystem::RemoveItemByIndex(int index)
         m_TargetAbilitySys->RemoveActiveGameplayEffect(m_ArySlots[index]->m_OptionHandle);
     }
     OnItemSlotChanged(index);
+}
 
+void UEquipmentSystem::CalculateAnimStance()
+{
+    bool RightOk=false, LeftOk = false;
+
+    FItemType* RightType = GetItem(static_cast<int>(ESlotsEquipAry::WeaponRight)).m_ItemData ? GetItem(static_cast<int>(ESlotsEquipAry::WeaponRight)).m_ItemData->m_ItemType.GetRow<FItemType>("") :nullptr;
+    FItemType* LeftType = GetItem(static_cast<int>(ESlotsEquipAry::WeaponLeft)).m_ItemData?GetItem(static_cast<int>(ESlotsEquipAry::WeaponLeft)).m_ItemData->m_ItemType.GetRow<FItemType>(""):nullptr;
+
+    for (auto* AnimS : m_AryAnimStances)
+    {
+        for (auto& RightHandType : AnimS->m_AryRightHandNeed)
+        {
+            //RightHandType.IsNull()
+            if (RightHandType.GetRow<FItemType>("") == RightType)
+            {
+                RightOk=true;
+                PRINTF("Right Ok");
+                break;;
+            }
+        }
+
+        for (auto& LeftHandType : AnimS->m_AryLeftHandNeed)
+        {
+            if (LeftHandType.GetRow<FItemType>("") == LeftType)
+            {
+                LeftOk=true;
+                PRINTF("Left Ok");
+                break;;
+            }
+        }
+
+        if(RightOk&&LeftOk)
+        {
+            m_CurrentStance=AnimS;
+            PRINTF("AnimSet:%s",*m_CurrentStance->m_ShowingText.ToString());
+            ADiabloPlayerController::Get->GetPlayerPawn()->SetAnimStance(m_CurrentStance);
+            break;;
+        }
+
+        RightOk=false;
+        LeftOk=false;
+    }
 }
 
 void UEquipmentSystem::OnItemSlotChanged(int index)
 {
+    CalculateAnimStance();
     m_ItemChanged.Broadcast(index, GetItem(index));
 }
 
@@ -143,8 +188,9 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
 {
     const FItemType* ItemTypeWantAdd = itemWantAdd.m_ItemData->m_ItemType.GetRow<FItemType>("");
 
-    if(GetItem(droppedIndex).IsEmpty() &&m_ArySlots[droppedIndex]->m_bIsOccupied)
-    {//양손무기 왼손
+    if (GetItem(droppedIndex).IsEmpty() && m_ArySlots[droppedIndex]->m_bIsOccupied)
+    {
+        //양손무기 왼손
         return false;
     }
 
@@ -169,7 +215,6 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
     {
         return true;
     }
-
     //장비가 끼워지고 나면, 인터럽팅 슬롯을 빨갛게 칠해줘야하고
     //장비들을 돌려서 현재 애님스턴스를 반환해야함
     return true;
@@ -191,7 +236,7 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
         if (TEST_BIT(ItemTypeWantAdd->m_EquipInterruptSlot, Slot->m_Slot))
         {
             Slot->m_bIsOccupied = true;
-            m_EquipSlotChanged.Broadcast(m_ArySlots[droppedIndex]->m_Item,*Slot);
+            m_EquipSlotChanged.Broadcast(m_ArySlots[droppedIndex]->m_Item, *Slot);
         }
     }
     //UG

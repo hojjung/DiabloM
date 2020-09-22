@@ -27,7 +27,7 @@ public:
         
     }
     UPROPERTY(EditAnywhere)
-    int m_fValue;
+    float m_fValue;
     UPROPERTY(EditAnywhere)
     FName m_OptionID;
 
@@ -54,15 +54,19 @@ public:
         m_FormatEffect = FText::FromString("Ex)% Attack Bonus");
         m_OptionTag = FGameplayTag::RequestGameplayTag("Item.Option",true);
         m_OptionID="SetSameWithRowName";
+        
+        m_bIsPercentValue=false;
     }
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName m_OptionID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_FormatEffect;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<int> m_fMinValue;
+    bool m_bIsPercentValue;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<int> m_fMaxValue;
+    TArray<float> m_fMinValue;//35 -> 35% -> 1.35
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TArray<float> m_fMaxValue;
     //UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FString m_FormatArguSet;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -92,7 +96,14 @@ public:
         {
             Args.Add(Plus);
         }
-
+        
+        if(m_bIsPercentValue)
+        {
+            optionValue-=1.f;
+            optionValue*=100.f;
+            //1.35 -> 0.35 -> 35%
+        }
+        
         Args.Add(optionValue);
 
         Args.Add(m_FormatEffect);
