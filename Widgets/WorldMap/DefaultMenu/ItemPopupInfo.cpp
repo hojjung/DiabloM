@@ -23,13 +23,7 @@ void UItemPopupInfo::NativeOnInitialized()
     m_AryOptions.Emplace(m_SubOption10);
     m_AryOptions.Emplace(m_SubOption11);
 
-    FString ItemTypeName = "EItemType";
-
-    m_ItemTypeString = FindObject<UEnum>(ANY_PACKAGE, *ItemTypeName);
-
     GetUseButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::UseItem);
-    //GetEquipButton()->OnClicked.AddDynamic(this,&UItemPopupInfo::EquipItem);
-
     m_SelectedItem = nullptr;
 
     GetEquipButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::EquipItem);
@@ -62,17 +56,6 @@ void UItemPopupInfo::EquipItem()
     }
     auto& Arys = UDiaEquipmentPanel::GetEquipWidgetInst->GetArySlots();
 
-// //10
-//     //
-//     for(int i = Arys.Num()-1;i >= 0;i--)
-//     {
-//         if (UDiaEquipmentPanel::GetEquipWidgetInst->EquipItem(Arys[i]->GetIndex(), *m_SelectedItem))
-//         {
-//             PlayHideInfoAnim();
-//             //끼운 아이템을 삭제
-//             return;
-//         }
-//     }
 
     for (auto* EquipSlot : Arys)
     {
@@ -112,8 +95,6 @@ void UItemPopupInfo::UnequipItem()
     {
         return;
     }
-
-    //UDiaEquipmentPanel::GetEquipWidgetInst->UnequipItem(RemoveWantIndex);
 }
 
 
@@ -161,7 +142,7 @@ void UItemPopupInfo::HideFlavorText()
     m_TextFlavor->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator)
+void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator,int countSpace)
 {
     //TODO: canvas 에 맞춰 왼쪽 오른쪽 조절
 
@@ -174,7 +155,7 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator)
     auto ClickedItemSlot = CanvasPanelParent->GetCachedGeometry().AbsoluteToLocal(theInstigator.GetAbsolutePosition()) +
         theInstigator.GetLocalSize() / 2.0f;
 
-    ClickedItemSlot.X -= (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f);
+    ClickedItemSlot.X -= (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f) + (GetDesiredSize().X *countSpace);
 
     //CanvasPanelParent->ForceLayoutPrepass();
 
@@ -211,7 +192,7 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator)
     PanelSlot->SetPosition(ClickedItemSlot);
 }
 
-void UItemPopupInfo::ShowInfoPanel(FItemInstance& itemInst)
+void UItemPopupInfo::ShowInfoPanel(EPopupType popupType,FItemInstance& itemInst)
 {
     SetRenderOpacity(1.f);
     m_BGForTouch->SetVisibility(ESlateVisibility::Visible);
@@ -229,29 +210,40 @@ void UItemPopupInfo::ShowInfoPanel(FItemInstance& itemInst)
 
     m_SelectedItem = &itemInst;
 
-    if (m_SelectedItem->m_ItemData->m_bEquipable)
+    switch (popupType)
     {
-        m_EquipButton->SetVisibility(ESlateVisibility::Visible);
-
-        IItemHolder* Holder = m_SelectedItem->m_Holder;
-
-        auto* DiaChar = Cast<ADiabloPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-
-        if (Cast<UEquipmentSystem>(Holder) == DiaChar->GetEquipment())
-        {
-            PRINTF("EquipSys");
-            GetEquipButton()->SetVisibility(ESlateVisibility::Hidden);
-            m_UnequipButton->SetVisibility(ESlateVisibility::Visible);
-        }
-        else if (Cast<UInventory>(Holder) == DiaChar->GetInven())
-        {
-            PRINTF("Inven");
-            GetEquipButton()->SetVisibility(ESlateVisibility::Visible);
-            m_UnequipButton->SetVisibility(ESlateVisibility::Hidden);
-        }
-        //GetEquipButton()->OnClicked.AddDynamic(this,&UItemPopupInfo::EquipItem);
+    case EPopupType::None:
+        GetEquipButton()->SetVisibility(ESlateVisibility::Hidden);
+        m_UnequipButton->SetVisibility(ESlateVisibility::Hidden);
+        m_WithdrawButton->SetVisibility(ESlateVisibility::Hidden);
+        m_DepositeButton->SetVisibility(ESlateVisibility::Hidden);
+        break;
+    case EPopupType::Deposite:
+        GetEquipButton()->SetVisibility(ESlateVisibility::Hidden);
+        m_UnequipButton->SetVisibility(ESlateVisibility::Hidden);
+        m_WithdrawButton->SetVisibility(ESlateVisibility::Hidden);
+        m_DepositeButton->SetVisibility(ESlateVisibility::Visible);
+        break;
+    case EPopupType::Withdraw:
+        GetEquipButton()->SetVisibility(ESlateVisibility::Hidden);
+        m_UnequipButton->SetVisibility(ESlateVisibility::Hidden);
+        m_WithdrawButton->SetVisibility(ESlateVisibility::Visible);
+        m_DepositeButton->SetVisibility(ESlateVisibility::Hidden);
+        break;
+    case EPopupType::Equip:
+        GetEquipButton()->SetVisibility(ESlateVisibility::Visible);
+        m_UnequipButton->SetVisibility(ESlateVisibility::Hidden);
+        m_WithdrawButton->SetVisibility(ESlateVisibility::Hidden);
+        m_DepositeButton->SetVisibility(ESlateVisibility::Hidden);
+        break;
+    case EPopupType::Unequip:
+        GetEquipButton()->SetVisibility(ESlateVisibility::Hidden);
+        m_UnequipButton->SetVisibility(ESlateVisibility::Visible);
+        m_WithdrawButton->SetVisibility(ESlateVisibility::Hidden);
+        m_DepositeButton->SetVisibility(ESlateVisibility::Hidden);
+        break;
     }
-
+    
     ForceLayoutPrepass();
 }
 
@@ -305,18 +297,20 @@ float UItemPopupInfo::SetOptionTexts(const FItemInstance& itemInst)
     return OptionSizeY;
 }
 
-void UItemPopupInfo::PlayHideInfoAnim()
+void UItemPopupInfo::PlayHideInfoAnim(float delay)
 {
     if (!m_SelectedItem)
     {
         return;
     }
+    
+    GetWorld()->GetTimerManager().ClearTimer(m_TimerHandle);
+        
     m_BGForTouch->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_SelectedItem = nullptr;
     PlayAnimationReverse(m_FadeAnimation);
-    FTimerHandle TimerHandle;
-    GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UItemPopupInfo::HideInfoPanel,
-                                           m_FadeAnimation->GetEndTime(), false);
+    GetWorld()->GetTimerManager().SetTimer(m_TimerHandle, this, &UItemPopupInfo::HideInfoPanel,
+                                           m_FadeAnimation->GetEndTime()+delay, false);
 }
 
 void UItemPopupInfo::HideInfoPanel()

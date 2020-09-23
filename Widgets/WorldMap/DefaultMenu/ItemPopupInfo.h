@@ -8,6 +8,18 @@
 #include "Animation/WidgetAnimation.h"
 #include "ItemPopupInfo.generated.h"
 
+
+
+UENUM(BlueprintType)//need string
+enum class EPopupType: uint32
+{
+	None,
+	Deposite,
+	Withdraw,
+	Equip,
+	Unequip
+};
+
 UCLASS()
 class DIABLOM_API UItemPopupInfo : public UUserWidget
 {
@@ -70,15 +82,19 @@ protected:
 	UButton* m_EquipButton;//equip패널은 그냥 unequip만있으면 된다,인벤은 둘다있어야한다
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
 	UButton* m_UnequipButton;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+	UButton* m_WithdrawButton;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+	UButton* m_DepositeButton;
 protected:
 	UPROPERTY()
 	TArray< UImageAndText*> m_AryOptions;
-	UPROPERTY()
-	UEnum* m_ItemTypeString;
 	UPROPERTY(meta = (BindWidgetAnim))
 	UWidgetAnimation* m_FadeAnimation;
 
 	FItemInstance* m_SelectedItem;
+
+	FTimerHandle m_TimerHandle;
 
 protected:
 	FText GetItemTypeTxt(const FItemType*  typeV) const;
@@ -104,12 +120,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Info")
 	void HideFlavorText();
 	UFUNCTION(BlueprintCallable,Category="Info")
-	void SetPanelPosition(const FGeometry & theInstigator);
+	void SetPanelPosition(const FGeometry & theInstigator,int countSpace=0);
 	UFUNCTION(BlueprintCallable,Category="Info")
-	void ShowInfoPanel(FItemInstance& itemInst);
+	void ShowInfoPanel(EPopupType popupType,FItemInstance& itemInst);
 
 	UFUNCTION(BlueprintCallable,Category="Info")
-	void PlayHideInfoAnim();
+	void PlayHideInfoAnim(float delay=0.f);
 
 	UFUNCTION(BlueprintCallable,Category="Info")
 	void HideInfoPanel();

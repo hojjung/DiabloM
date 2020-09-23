@@ -61,16 +61,16 @@ public:
         m_TierID = "SetSameTableID";
     }
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
-    float m_fDefaultDropRate;//there is no maximum
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FName m_TierID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_ShowingName;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+    float m_fDefaultDropRate;//there is no maximum
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FLinearColor m_TierColor;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     int m_nOptionMaxCount;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FName m_TierID;
 };
 
 
@@ -97,9 +97,9 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_ShowingName;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))
-    int32  m_EquipableSlot;
+    int32 m_EquipableSlot;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))
-    int32  m_EquipInterruptSlot;//like says twohand sword,LeftHand is interrupt slot
+    int32 m_EquipInterruptSlot;//like says twohand sword,LeftHand is interrupt slot
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<UItemOptionGameEffect> m_OptionGameEffect;

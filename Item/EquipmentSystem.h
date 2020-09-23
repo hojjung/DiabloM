@@ -106,6 +106,8 @@ public:
 
     FItemInstance& GetItem(int index);
 
+    FItemInstance& GetItem(ESlotsEquipAry index);
+
     void PrintEquipStats();
 
     const FItemType* GetEquippedItem(ESlotsEquipAry slot);

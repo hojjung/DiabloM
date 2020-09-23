@@ -36,8 +36,6 @@ protected:
 	UDiaInvenGridSlot* m_SlotFingerLeft;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaInvenGridSlot* m_SlotFingerRight;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
-	UItemPopupInfo* m_ItemPopup;
 
 protected:
 	UPROPERTY()
@@ -46,7 +44,7 @@ protected:
 	TArray<UDiaInvenGridSlot*> m_ArySlots;
 
 public:
-	FORCEINLINE TArray<UDiaInvenGridSlot*>& GetArySlots()
+	FORCEINLINE const TArray<UDiaInvenGridSlot*>& GetArySlots() const
 	{
 		return m_ArySlots;
 	}
@@ -68,11 +66,7 @@ protected:
 
 	void UpdateEquipSlot(const FItemInstance& itemInst,const FEquipSlot& slot);
 
-	void HideItemInfo();
-
 public:
-	UFUNCTION()
-	void ShowItemInfo(const FGeometry &theInstigator,  FItemInstance& itemInst);
 	static UDiaEquipmentPanel* GetEquipWidgetInst;
 	
 };

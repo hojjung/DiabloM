@@ -26,10 +26,6 @@ protected:
 	UPROPERTY()
 	TArray<UDiaInvenGridSlot*> m_ArySlot;
 
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
-	UItemPopupInfo* m_ItemPopup;
-
 protected:
 	UPROPERTY()
 	UInventory* m_Inven;
@@ -39,13 +35,7 @@ protected:
 public:
 	void Init(UInventory* itemContainer);
 
-protected:
-	void HideItemInfo();
-
 public:
-	
-	UFUNCTION()
-	void ShowItemInfo(const FGeometry & theInstigator,  FItemInstance& itemInst);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void SetGrid(int x,int y);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
@@ -65,6 +55,11 @@ public:
 	FORCEINLINE UInventory* GetInven() const
 	{
 		return m_Inven;
+	}
+
+	FORCEINLINE const TArray<UDiaInvenGridSlot*>& GetArySlots() const
+	{
+		return m_ArySlot;
 	}
 
 public:

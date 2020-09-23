@@ -123,7 +123,6 @@ void UEquipmentSystem::CalculateAnimStance()
             if (RightHandType.GetRow<FItemType>("") == RightType)
             {
                 RightOk=true;
-                PRINTF("Right Ok");
                 break;;
             }
         }
@@ -133,7 +132,6 @@ void UEquipmentSystem::CalculateAnimStance()
             if (LeftHandType.GetRow<FItemType>("") == LeftType)
             {
                 LeftOk=true;
-                PRINTF("Left Ok");
                 break;;
             }
         }
@@ -268,6 +266,11 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
 FItemInstance& UEquipmentSystem::GetItem(int index)
 {
     return m_ArySlots[index]->m_Item;
+}
+
+FItemInstance& UEquipmentSystem::GetItem(ESlotsEquipAry index)
+{
+    return m_ArySlots[(int)index]->m_Item;
 }
 
 void UEquipmentSystem::PrintEquipStats()
