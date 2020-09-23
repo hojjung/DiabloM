@@ -28,8 +28,16 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     m_AryItemPopup.Add(m_ItemPopup2);
     m_AryItemPopup.Add(m_ItemPopup3);
 
+    for(auto* PP : m_AryItemPopup)
+    {
+        PP->GetOnActionEnd().AddUObject(this,&UDefaultMenu::CloseItemPopup);
+    }
+    
+    
     SetPopupDelegate(m_EquipPanel->GetArySlots());
     SetPopupDelegate(m_InvenGridPanel->GetArySlots());
+
+    
 }
 
 
@@ -63,6 +71,7 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
     }
 
     bool IsEquipable = itemInst.m_ItemData->m_bEquipable;
+    //클래스type상 장착 가능해야함
     bool IsStashOpen=false;
     int Count = 0;
     
@@ -85,24 +94,25 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
         {
             m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Equip, itemInst);
             m_AryItemPopup[Count]->SetPanelPosition(geo);
-            
-            FItemInstance RightWeapon = m_Equipment->GetItem(ESlotsEquipAry::WeaponRight);
-            
-            if (!RightWeapon.IsEmpty())
-            {
-                Count++;
-                m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Unequip, RightWeapon);
-                m_AryItemPopup[Count]->SetPanelPosition(geo,Count);
-            }
+            Count++;
+            //오른손 왼손으로 고정될것이 아니라
+            //해당 장비를 끼울수있는 슬롯이 최대2개까지 나와야한다.
+            auto& ArySlots=m_Equipment->GetArySlotPtr();
 
-            FItemInstance LeftWeapon = m_Equipment->GetItem(ESlotsEquipAry::WeaponLeft);
-
-            if (!LeftWeapon.IsEmpty())
+            for(int i=0; i<ArySlots.Num();i++)
             {
-                Count++;
-                m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Unequip, LeftWeapon);
-                m_AryItemPopup[Count]->SetPanelPosition(geo,Count);
+                if(m_Equipment->CheckSlotValid(i,itemInst)&& !ArySlots[i]->m_Item.IsEmpty())
+                {
+                    m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Unequip, m_Equipment->GetItem(i));
+                    m_AryItemPopup[Count]->SetPanelPosition(geo,Count);
+                    Count++;
+                    if(Count>=m_AryItemPopup.Num())
+                    {
+                        break;
+                    }
+                }
             }
+            
         }
     }
     else if (Cast<UEquipmentSystem>(itemInst.m_Holder))

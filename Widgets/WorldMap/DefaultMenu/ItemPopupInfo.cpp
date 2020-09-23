@@ -24,7 +24,7 @@ void UItemPopupInfo::NativeOnInitialized()
     m_AryOptions.Emplace(m_SubOption11);
 
     GetUseButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::UseItem);
-    m_SelectedItem = nullptr;
+    m_SelectedItem.ClearData();
 
     GetEquipButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::EquipItem);
     m_UnequipButton->OnClicked.AddDynamic(this, &UItemPopupInfo::UnequipItem);
@@ -35,7 +35,7 @@ FReply UItemPopupInfo::NativeOnMouseButtonDown(const FGeometry& InGeometry, cons
     auto Rep = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
     PlayHideInfoAnim();
-
+    m_OnActionEnd.Broadcast();
     return Rep;
 }
 
@@ -44,13 +44,15 @@ void UItemPopupInfo::UseItem()
     //item use
     //m_SelectedItem->m_ItemData->
     PRINTF("Use[!");
+    PlayHideInfoAnim();
+    m_OnActionEnd.Broadcast();
 }
 
 void UItemPopupInfo::EquipItem()
 {
     PRINTF("Equip");
 
-    if (!m_SelectedItem)
+    if (m_SelectedItem.IsEmpty())
     {
         return;
     }
@@ -61,9 +63,10 @@ void UItemPopupInfo::EquipItem()
     {
         if (EquipSlot->IsSlotEmpty())
         {
-            if (UDiaEquipmentPanel::GetEquipWidgetInst->EquipItem(EquipSlot->GetIndex(), *m_SelectedItem))
+            if (UDiaEquipmentPanel::GetEquipWidgetInst->EquipItem(EquipSlot->GetIndex(), m_SelectedItem))
             {
                 PlayHideInfoAnim();
+                m_OnActionEnd.Broadcast();
                 //끼운 아이템을 삭제
                 return;
             }
@@ -71,9 +74,10 @@ void UItemPopupInfo::EquipItem()
     }
     for (auto* EquipSlot : Arys)
     {
-        if (UDiaEquipmentPanel::GetEquipWidgetInst->EquipItem(EquipSlot->GetIndex(), *m_SelectedItem))
+        if (UDiaEquipmentPanel::GetEquipWidgetInst->EquipItem(EquipSlot->GetIndex(), m_SelectedItem))
         {
             PlayHideInfoAnim();
+            m_OnActionEnd.Broadcast();
             //끼운 아이템을 삭제
             return;
         }
@@ -83,17 +87,18 @@ void UItemPopupInfo::EquipItem()
 void UItemPopupInfo::UnequipItem()
 {
     PRINTF("UnEquip");
-    if (!m_SelectedItem)
+    if (m_SelectedItem.IsEmpty())
     {
         return;
     }
     //inven 에 공간 먼저 확인
 
-    int RemoveWantIndex = m_SelectedItem->m_nGridIndex;
+    int RemoveWantIndex = m_SelectedItem.m_nGridIndex;
 
-    if (!UDiaInvenGridPanel::GetInvenWidgetInst->AddItemAuto(*m_SelectedItem))
+    if (UDiaInvenGridPanel::GetInvenWidgetInst->AddItemAuto(m_SelectedItem))
     {
-        return;
+        PlayHideInfoAnim();
+        m_OnActionEnd.Broadcast();
     }
 }
 
@@ -208,7 +213,7 @@ void UItemPopupInfo::ShowInfoPanel(EPopupType popupType,FItemInstance& itemInst)
 
     SetFlavorText(itemInst);
 
-    m_SelectedItem = &itemInst;
+    m_SelectedItem = itemInst;
 
     switch (popupType)
     {
@@ -299,7 +304,7 @@ float UItemPopupInfo::SetOptionTexts(const FItemInstance& itemInst)
 
 void UItemPopupInfo::PlayHideInfoAnim(float delay)
 {
-    if (!m_SelectedItem)
+    if (m_SelectedItem.IsEmpty())
     {
         return;
     }
@@ -307,7 +312,7 @@ void UItemPopupInfo::PlayHideInfoAnim(float delay)
     GetWorld()->GetTimerManager().ClearTimer(m_TimerHandle);
         
     m_BGForTouch->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-    m_SelectedItem = nullptr;
+    m_SelectedItem.ClearData();
     PlayAnimationReverse(m_FadeAnimation);
     GetWorld()->GetTimerManager().SetTimer(m_TimerHandle, this, &UItemPopupInfo::HideInfoPanel,
                                            m_FadeAnimation->GetEndTime()+delay, false);
@@ -315,7 +320,7 @@ void UItemPopupInfo::PlayHideInfoAnim(float delay)
 
 void UItemPopupInfo::HideInfoPanel()
 {
-    m_SelectedItem = nullptr;
+    m_SelectedItem.ClearData();
     SetVisibility(ESlateVisibility::Collapsed);
     m_UseButton->SetVisibility(ESlateVisibility::Hidden);
     m_EquipButton->SetVisibility(ESlateVisibility::Hidden);

@@ -20,6 +20,8 @@ enum class EPopupType: uint8
 	Unequip
 };
 
+DECLARE_MULTICAST_DELEGATE(FOnActionEnd);
+
 UCLASS()
 class DIABLOM_API UItemPopupInfo : public UUserWidget
 {
@@ -92,9 +94,11 @@ protected:
 	UPROPERTY(meta = (BindWidgetAnim))
 	UWidgetAnimation* m_FadeAnimation;
 
-	FItemInstance* m_SelectedItem;
+	FItemInstance m_SelectedItem;
 
 	FTimerHandle m_TimerHandle;
+
+	FOnActionEnd m_OnActionEnd;
 
 protected:
 	FText GetItemTypeTxt(const FItemType*  typeV) const;
@@ -109,6 +113,10 @@ protected:
 	virtual FReply NativeOnMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent )override;
 	
 public:
+	FOnActionEnd& GetOnActionEnd()
+	{
+		return m_OnActionEnd;
+	}
 	UFUNCTION()
     void UseItem();
 	UFUNCTION()

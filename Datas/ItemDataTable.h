@@ -14,10 +14,15 @@ USTRUCT(BlueprintType)
 struct FOptionHandle :public FDataTableRowHandle
 {
 	GENERATED_USTRUCT_BODY()
+public:
 	FOptionHandle()
 	{
+	    m_nMinLevel=0;
 		DataTable=UOptionDataTable::GetOptionTable;
 	}
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0"))
+    int m_nMinLevel;
 };
 
 USTRUCT(BlueprintType)
@@ -57,7 +62,10 @@ public:
     {
         m_ShowingName = FText::FromString("Normal");
         m_TierColor = FColor(242, 242, 242, 255);
-        m_nOptionMaxCount = 0;
+        m_AryOptionCount.Reset();
+        m_AryOptionCount.Add(0);
+        m_AryOptionCount.Add(1);
+        m_AryOptionCount.Add(2);
         m_TierID = "SetSameTableID";
     }
 
@@ -70,7 +78,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FLinearColor m_TierColor;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    int m_nOptionMaxCount;
+    TArray<int> m_AryOptionCount;
 };
 
 
@@ -106,7 +114,20 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<FOptionHandle> m_Options;
   
-   
+    FORCEINLINE TArray<FOptionHandle> GetAvailableOptions(int level) const
+    {
+        TArray<FOptionHandle> AryOptions;
+
+        for(auto& OO : m_Options)
+        {
+            if(OO.m_nMinLevel<level)
+            {
+                AryOptions.Add(OO);
+            }
+        }
+
+        return AryOptions;
+    }
     //equipable class
 };
 

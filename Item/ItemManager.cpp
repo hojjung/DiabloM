@@ -13,7 +13,7 @@ void UItemManager::Init(UDiabloGameInstance* gameInstance)
     m_fTierMaxRate = 0;
 
     UItemDataTable::GetTierTable->GetAllRows("Error", m_AryItemTier);
-    
+
     for (auto* ItemTier : m_AryItemTier)
     {
         m_fTierMaxRate += ItemTier->m_fDefaultDropRate;
@@ -27,14 +27,14 @@ FItemInstance UItemManager::CreateItemInstance(FName itemID, int level)
     const FItemData* ItemData = m_GameInstance->GetItemDataPtr(itemID);
 
     const FItemTier& TierRolled = GetDefaultTierRoll();
-    
-    int TierMaxOptionCount=TierRolled.m_nOptionMaxCount;
-    
+
+    int TierMaxOptionCount = TierRolled.m_AryOptionCount.GetRandom();
+
     TArray<FOptionSpec> RandomOptionForItem;
 
-    CreateRandomOption(*ItemData, RandomOptionForItem,TierMaxOptionCount);
+    CreateRandomOption(*ItemData, RandomOptionForItem, TierMaxOptionCount, level);
 
-    return FItemInstance(ItemData,TierRolled.m_TierID, m_nCurrentIndex, this, RandomOptionForItem,&TierRolled);
+    return FItemInstance(ItemData, TierRolled.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, &TierRolled);
 }
 
 ADroppedItem* UItemManager::CreateItemActor(FItemInstance& itemWantAdd, FVector posWant)
@@ -51,20 +51,19 @@ ADroppedItem* UItemManager::CreateItemActor(FItemInstance& itemWantAdd, FVector 
 }
 
 
-bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption)
+bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption, int TierMaxOption,
+                                      int level)
 {
-    //등급에 따라 옵션의 개수?
-    //레벨에 따라 옵션의 종류 및 강함?
-    //생각할게 많지만 지금은 옵션의 개수만 랜덤으로 돌린다.
-    //등급 자체는 정해저있지 않나?
-    //등급이 정해저있는데 옵션의 개수가 무슨 의미인가
-
-    if (itemData.m_bStackable)
+    if (itemData.m_bStackable || !itemData.m_bEquipable)
     {
+        PRINTF("ItemOption - the item is not equipment");
         return false;
     }
 
-    int NumMaxOption =  itemData.m_ItemType.GetRow<FItemType>("")->m_Options.Num();
+    //Class if statement need
+    TArray<FOptionHandle> AryAvailableOptions = itemData.m_ItemType.GetRow<FItemType>("")->GetAvailableOptions(level);
+
+    int NumMaxOption = AryAvailableOptions.Num();
 
     if (NumMaxOption <= 0 || TierMaxOption <= 0)
     {
@@ -75,48 +74,35 @@ bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionS
 
     OptionRandomCount = FMath::Min<int>(OptionRandomCount, NumMaxOption);
 
+    CreateIntAryForShuffle(OptionRandomCount, AryAvailableOptions);
 
-    TArray<int> optionRandom;
-
-    CreateIntAryForShuffle(OptionRandomCount, optionRandom);
-
-    for(int IndexSelected : optionRandom)
+    for (FOptionHandle OO : AryAvailableOptions)
     {
-        outOption.Add(CreateRandomOptionValue(IndexSelected, itemData));
+        outOption.Add(OO.GetRow<FOption>("")->MakeOptionInst());
     }
 
     return true;
 }
 
-void UItemManager::CreateIntAryForShuffle(int maxAryLen, TArray<int>& outIndexAry)
+void UItemManager::CreateIntAryForShuffle(int maxAryLen, TArray<FOptionHandle>& outOptionAry)
 {
-    int NumMaxOption = maxAryLen;
-
-    outIndexAry.Reset();
-
-    int index = 0;
-    while (index < maxAryLen)
+    int RandCount = maxAryLen + 1;
+    
+    for (int k = 0; k < 3; k++)
     {
-        outIndexAry.Add(index++);
-    }
-
-
-    for (int b = 0; b < NumMaxOption; b++)
-        for (int a = 0; a < NumMaxOption; a++)
+        for (int i = 0; i < maxAryLen; i++)
         {
-            int RandIndex = FMath::Rand() % NumMaxOption;
-
-            auto First = outIndexAry[a];
-            auto Second = outIndexAry[RandIndex];
-
-            outIndexAry[a] = Second;
-            outIndexAry[RandIndex] = First;
+            FOptionHandle OO = outOptionAry[i];
+            int index = FMath::Rand() % RandCount;
+            outOptionAry[i] = outOptionAry[index];
+            outOptionAry[index] = OO;
         }
+    }
 }
 
 FOptionSpec UItemManager::CreateRandomOptionValue(int indexRandomd, const FItemData& itemData)
 {
-    return  itemData.m_ItemType.GetRow<FItemType>("")->m_Options[indexRandomd].GetRow<FOption>("")->MakeOptionInst();
+    return itemData.m_ItemType.GetRow<FItemType>("")->m_Options[indexRandomd].GetRow<FOption>("")->MakeOptionInst();
 }
 
 bool UItemManager::AddItem(int droppedIndex, FItemInstance& itemWantAdd)
@@ -126,7 +112,6 @@ bool UItemManager::AddItem(int droppedIndex, FItemInstance& itemWantAdd)
 
 void UItemManager::RemoveItem(FItemInstance& itemWantErase)
 {
-    
 }
 
 void UItemManager::RemoveItemByIndex(int index)
@@ -168,8 +153,8 @@ const FItemTier& UItemManager::GetDefaultTierRoll() const
 
         if (DropRateCount >= RandomValue)
         {
-            PRINTF("Rand:%f,DropRate:%f,Tier:%s",RandomValue,DropRateCount,*TierData->m_ShowingName.ToString());
-            
+            PRINTF("Rand:%f,DropRate:%f,Tier:%s", RandomValue, DropRateCount, *TierData->m_ShowingName.ToString());
+
             return *TierData;
         }
     }

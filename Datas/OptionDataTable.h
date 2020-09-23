@@ -103,8 +103,9 @@ public:
             optionValue*=100.f;
             //1.35 -> 0.35 -> 35%
         }
-        
-        Args.Add(optionValue);
+
+        Args.Add(UKismetTextLibrary::Conv_FloatToText(optionValue,ERoundingMode::FromZero,
+            false,true,1,324,1,1));
 
         Args.Add(m_FormatEffect);
         
