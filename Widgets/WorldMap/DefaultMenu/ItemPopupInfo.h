@@ -11,7 +11,7 @@
 
 
 UENUM(BlueprintType)//need string
-enum class EPopupType: uint32
+enum class EPopupType: uint8
 {
 	None,
 	Deposite,
