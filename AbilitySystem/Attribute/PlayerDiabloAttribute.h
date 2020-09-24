@@ -17,6 +17,11 @@ class DIABLOM_API UPlayerDiabloAttribute : public UBaseDiabloAttribute
 public:
 	UPlayerDiabloAttribute();
 public:
+
+	UPROPERTY(BlueprintReadOnly, Category = "Health")
+	FGameplayAttributeData HealthRegen;
+	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, HealthRegen)
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Energy")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, Mana)

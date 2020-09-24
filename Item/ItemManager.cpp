@@ -51,8 +51,7 @@ ADroppedItem* UItemManager::CreateItemActor(FItemInstance& itemWantAdd, FVector 
 }
 
 
-bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption, int TierMaxOption,
-                                      int level)
+bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption, int TierMaxOption,int level)
 {
     if (itemData.m_bStackable || !itemData.m_bEquipable)
     {

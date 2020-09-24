@@ -22,6 +22,10 @@ public:
 	UBaseDiabloAttribute();
 
 public:
+	UPROPERTY(BlueprintReadOnly, Category = "Damage", meta = (HideFromLevelInfos))
+	FGameplayAttributeData TookDamage;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, TookDamage)
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Defense")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, Health)

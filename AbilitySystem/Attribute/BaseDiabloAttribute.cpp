@@ -8,6 +8,7 @@ UBaseDiabloAttribute::UBaseDiabloAttribute()
 {
 }
 
+//스태미너 등 맥스값 바뀔때 퍼센트로 수치 따라감
 void UBaseDiabloAttribute::AdjustAttributeForMaxChange(
     FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute,
     float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty)
@@ -29,34 +30,33 @@ void UBaseDiabloAttribute::AdjustAttributeForMaxChange(
 void UBaseDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
     Super::PreAttributeChange(Attribute, NewValue);
-
+    
+    if (NewValue <= 0.f)
+    {
+        return;
+    }
+    
     if (Attribute == GetMaxHealthAttribute())
     {
         AdjustAttributeForMaxChange(Health, MaxHealth, NewValue, GetHealthAttribute());
+    }
+    
+    else if (Attribute == GetMoveSpeedAttribute())
+    {
+        NewValue = FMath::Clamp<float>(NewValue, 150, 1000);
     }
 }
 
 void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
     Super::PostGameplayEffectExecute(Data);
-
-    FGameplayEffectContextHandle Context = Data.EffectSpec.GetContext();
-    UAbilitySystemComponent* Source = Context.GetOriginalInstigatorAbilitySystemComponent();
-    const FGameplayTagContainer& SourceTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
-
-    // Compute the delta between old and new, if it is available
-    float DeltaValue = 0;
-    if (Data.EvaluatedData.ModifierOp == EGameplayModOp::Type::Additive)
-    {
-        // If this was additive, store the raw delta value to be passed along later
-        DeltaValue = Data.EvaluatedData.Magnitude;
-    }
-
-
-    // Get the Target actor, which should be our owner
+    
     AActor* TargetActor = nullptr;
     AController* TargetController = nullptr;
     AUnitPawn* TargetCharacter = nullptr;
+    FGameplayEffectContextHandle Context = Data.EffectSpec.GetContext();
+    UAbilitySystemComponent* Source = Context.GetOriginalInstigatorAbilitySystemComponent();
+    const FGameplayTagContainer& SourceTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
 
     if (Data.Target.AbilityActorInfo.IsValid() && Data.Target.AbilityActorInfo->AvatarActor.IsValid())
     {
@@ -64,9 +64,9 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
         TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
         TargetCharacter = Cast<AUnitPawn>(TargetActor);
     }
+    //
     if (Data.EvaluatedData.Attribute == GetPhysicalDamageAttribute())
     {
-        // ������
         AActor* SourceActor = nullptr;
         AUnitPawn* SourceCharacter = nullptr;
         if (Source && Source->AbilityActorInfo.IsValid() && Source->AbilityActorInfo->AvatarActor.IsValid())
@@ -75,26 +75,22 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
 
             SourceCharacter = Cast<AUnitPawn>(SourceActor);
 
-            // Set the causer actor based on context if it's set
             if (Context.GetEffectCauser())
             {
                 SourceActor = Context.GetEffectCauser();
             }
         }
 
-        // Try to extract a hit result
         FHitResult HitResult;
         if (Context.GetHitResult())
         {
             HitResult = *Context.GetHitResult();
         }
 
-        // Store a local copy of the amount of damage done and clear the damage attribute
         const float LocalDamageDone = GetPhysicalDamage() * GetDamagePer();
 
         if (LocalDamageDone > 0)
         {
-            // Apply the health change and then clamp it
             const float OldHealth = GetHealth();
             SetHealth(FMath::Clamp(OldHealth - LocalDamageDone, 0.0f, GetMaxHealth()));
 
@@ -137,8 +133,6 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
     {
         if (TargetCharacter)
         {
-            // Call for all movespeed changes
-            //TargetCharacter->HandleMoveSpeedChanged(DeltaValue, SourceTags);
             Cast<UUnitMovement>(TargetCharacter->GetMovementComponent())->SetMoveSpeed(GetMoveSpeed());
         }
     }

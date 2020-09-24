@@ -15,11 +15,6 @@ void UPlayerDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attrib
 {
 	Super::PreAttributeChange(Attribute, NewValue);
 	
-	if (NewValue <= 0.f)
-	{
-		return;
-	}
-
 	if (Attribute == GetMaxManaAttribute())
 	{
 		AdjustAttributeForMaxChange(Mana, MaxMana, NewValue, GetManaAttribute());
@@ -28,8 +23,16 @@ void UPlayerDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attrib
 	{
 		AdjustAttributeForMaxChange(Stamina, MaxStamina, NewValue, GetMaxStaminaAttribute());
 	}
+	else if (Attribute == GetMaxRageAttribute())
+	{
+		//rage start from 0
+		//AdjustAttributeForMaxChange(Rage, MaxRage, NewValue, GetMaxRageAttribute());
+	}
+	else if (Attribute == GetMoveSpeedAttribute())
+	{
+		NewValue = FMath::Clamp<float>(NewValue, 150, 1000);
+	}
 
-	//rage start from 0
 }
 void UPlayerDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCallbackData & Data)
 {
