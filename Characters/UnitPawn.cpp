@@ -374,41 +374,17 @@ void AUnitPawn::SetLevel(int lv)
 
 void AUnitPawn::AddStartupGameplayAbilities()
 {
-    PRINTF("Effect Level:%d", GetLevel());
-
     FGameplayEffectContextHandle EffectContext = m_AbilitySystemComponent->MakeEffectContext();
     EffectContext.AddSourceObject(this);
 
     FGameplayEffectSpecHandle NewHandle = m_AbilitySystemComponent->MakeOutgoingSpec(
         m_GEUnitStat, GetLevel(), EffectContext);
-    
-    if (NewHandle.IsValid())
-    {
-        FActiveGameplayEffectHandle ActiveGEHandle = m_AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(
-            *NewHandle.Data.Get(), m_AbilitySystemComponent);
-    }
 
+    FActiveGameplayEffectHandle ActiveGEHandle = m_AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(
+        *NewHandle.Data.Get(), m_AbilitySystemComponent);
 }
 
 void AUnitPawn::RemoveStartupGameplayAbilities()
 {
-    TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
-    for (const FGameplayAbilitySpec& Spec : m_AbilitySystemComponent->GetActivatableAbilities())
-    {
-        if ((Spec.SourceObject == this))
-        {
-            AbilitiesToRemove.Add(Spec.Handle);
-        }
-    }
-
-    for (int32 i = 0; i < AbilitiesToRemove.Num(); i++)
-    {
-        m_AbilitySystemComponent->ClearAbility(AbilitiesToRemove[i]);
-    }
-
-   // FGameplayEffectQuery Query;
-   // Query.EffectSource = this;
-   // m_AbilitySystemComponent->RemoveActiveEffects(Query);
-
-    //RemoveSlottedGameplayAbilities(true);
+    
 }

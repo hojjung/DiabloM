@@ -3,6 +3,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "AbilitySystem/Attribute/PlayerDiabloAttribute.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Characters/PlayerDiabloCharacter.h"
@@ -118,9 +119,17 @@ protected:
 protected:
 	FText GetPercentFormat(float v);
 	
+	FText GetFloatToText(float v,int floatCount=1);
+    
+	UPROPERTY()
+	APlayerDiabloCharacter* m_Player;
+	UPROPERTY()
+	UPlayerDiabloAttribute* m_AttributeSet;
 public:
 	void Init(APlayerDiabloCharacter* charPlayer);
-	
+
+	void UpdateAllAttributeText();
+protected:	
 	void UpdateLevel(float v);
     void UpdateRemainExp(float v);
     void UpdateStr(float v);

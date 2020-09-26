@@ -8,6 +8,8 @@
 
 class USaveEquipment;
 
+
+
 UENUM(BlueprintType)
 enum class ESlotsEquipAry: uint8
 {
@@ -50,6 +52,7 @@ public:
     }
 };
 
+DECLARE_MULTICAST_DELEGATE(FOnItemEuipChanged);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnEquipSlotChanged,const FItemInstance&  ,const FEquipSlot&);
 UCLASS()
 class DIABLOM_API UEquipmentSystem : public UObject, public IItemHolder
@@ -88,6 +91,8 @@ protected:
 
 
 public:
+    FOnItemEuipChanged m_OnOptionChanged;
+    
     void Init(UDiabloAbilitySystemComp* abilitySysCompo);
 
     virtual bool AddItem(int droppedIndex, FItemInstance& itemWantAdd) override;

@@ -1,6 +1,7 @@
 #include "DiaStatPanel.h"
 
 #include "AbilitySystem/Attribute/PlayerDiabloAttribute.h"
+#include "Managers/DiabloGameInstance.h"
 
 FText UDiaStatPanel::GetPercentFormat(float v)
 {
@@ -9,7 +10,7 @@ FText UDiaStatPanel::GetPercentFormat(float v)
     if (FMath::IsNearlyZero(v))
     {
         Args.Add(Empty);
-        v=0.f;
+        v = 0.f;
     }
     else if (v > 1.f) //곱했을때 커지는 수
     {
@@ -28,7 +29,7 @@ FText UDiaStatPanel::GetPercentFormat(float v)
 
     //1.35 -> 0.35 -> +35%
     //0.25 -> -0.75 -> -75%
-    Args.Add(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero, false, true, 1, 324, 1, 1));
+    Args.Add(GetFloatToText(v,1));
     Args.Add(Per); //2 
 
     FTextFormat FormatT = FText::FromString(FormatArguSet);
@@ -36,140 +37,114 @@ FText UDiaStatPanel::GetPercentFormat(float v)
     return FText::Format(FormatT, Args);
 }
 
+FText UDiaStatPanel::GetFloatToText(float v,int floatCount)
+{
+    return UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero, false, true, floatCount);
+}
+
 void UDiaStatPanel::Init(APlayerDiabloCharacter* charPlayer)
 {
     UPlayerDiabloAttribute* DiaAttri = Cast<UPlayerDiabloAttribute>(charPlayer->GetAttributeSet());
+    m_Player=charPlayer;
+    m_AttributeSet=Cast<UPlayerDiabloAttribute>( m_Player->GetAttributeSet());
+    m_AttributeSet->m_OnStatChanged.AddUObject(this,&UDiaStatPanel::UpdateAllAttributeText);
+    ADiabloPlayerController::Get->GetEquipment()->m_OnOptionChanged.AddUObject(this,&UDiaStatPanel::UpdateAllAttributeText);
+    m_Player->m_OnAttackPerSecChanged.AddUObject(this, &UDiaStatPanel::UpdateAttackPer);
+    m_Player->m_OnLevelChanged.AddUObject(this, &UDiaStatPanel::UpdateLevel);
+    m_Player->m_OnRemainExpChanged.AddUObject(this, &UDiaStatPanel::UpdateRemainExp); //m_OnChangedExpRamain
+    
+    //UpdateAllAttributeText();
+}
 
-    float v = 0.f;
-    UpdateLevel(v);
-    UpdateRemainExp(v);
-    UpdateStr(v);
-    UpdateDex(v);
-    UpdateInt(v);
-    UpdateVit(v);
-    UpdatePhysDmg(v);
-    UpdateAllDmg(v);
-    UpdateAccuracy(v);
-    UpdateAttackPer(v);
-    UpdateAttackSpeed(v);
-    UpdateCastSpeed(v);
-    UpdateCritical(v);
-    UpdateDoubleAtk(v);
-    UpdateBasher(v);
-    UpdateFireDmg(v);
-    UpdateFrostDmg(v);
-    UpdatePoisonDmg(v);
-    UpdateElecDmg(v);
-    UpdatePhysDef(v);
-    UpdateAllDef(v);
-    UpdateAvoid(v);
-    UpdateBlockChance(v);
-    UpdateFireDef(v);
-    UpdateFrostDef(v);
-    UpdatePoisonDef(v);
-    UpdateElecDef(v);
-    UpdateMaxHp(v);
-    UpdateHpRegen(v);
-    UpdateLifeSteal(v);
-    UpdateMaxMana(v);
-    UpdateManaRegen(v);
-    UpdateMaxStm(v);
-    UpdateStmRegen(v);
-    UpdateMaxRage(v);
-    UpdateRageRegen(v);
-    UpdateAllSkill(v);
-    UpdateCDReduce(v);
-    UpdatePotionCD(v);
-    UpdatePotionHeal(v);
-    UpdateMagicItem(v);
-    UpdateGoldGain(v);
-    UpdateExpGain(v);
-    UpdateMoveSpeed(v);
-
-    charPlayer->m_OnAttackPerSecChanged.AddUObject(this, &UDiaStatPanel::UpdateAttackPer);
-    charPlayer->m_OnLevelChanged.AddUObject(this, &UDiaStatPanel::UpdateLevel);
-    charPlayer->m_OnRemainExpChanged.AddUObject(this, &UDiaStatPanel::UpdateRemainExp); //m_OnChangedExpRamain
-
-    DiaAttri->m_OnChangedResCold.AddUObject(this, &UDiaStatPanel::UpdateFrostDef);
-    DiaAttri->m_OnChangedResElec.AddUObject(this, &UDiaStatPanel::UpdateElecDef);
-    DiaAttri->m_OnChangedDex.AddUObject(this, &UDiaStatPanel::UpdateDex);
-    DiaAttri->m_OnChangedInt.AddUObject(this, &UDiaStatPanel::UpdateInt);
-    DiaAttri->m_OnChangedStr.AddUObject(this, &UDiaStatPanel::UpdateStr);
-    DiaAttri->m_OnChangedVit.AddUObject(this, &UDiaStatPanel::UpdateVit);
-    DiaAttri->m_OnChangedBashChance.AddUObject(this, &UDiaStatPanel::UpdateBasher);
-    DiaAttri->m_OnChangedBlockChance.AddUObject(this, &UDiaStatPanel::UpdateBlockChance);
-    DiaAttri->m_OnChangedCastingSpeed.AddUObject(this, &UDiaStatPanel::UpdateCastSpeed);
-    DiaAttri->m_OnChangedCriticalChance.AddUObject(this, &UDiaStatPanel::UpdateCritical);
-    DiaAttri->m_OnChangedHealthRegen.AddUObject(this, &UDiaStatPanel::UpdateHpRegen);
-    DiaAttri->m_OnChangedLifeSteal.AddUObject(this, &UDiaStatPanel::UpdateLifeSteal);
-    DiaAttri->m_OnChangedManaRegen.AddUObject(this, &UDiaStatPanel::UpdateManaRegen);
-    DiaAttri->m_OnChangedMaxMana.AddUObject(this, &UDiaStatPanel::UpdateMaxMana);
-    DiaAttri->m_OnChangedMaxRage.AddUObject(this, &UDiaStatPanel::UpdateMaxRage);
-    DiaAttri->m_OnChangedMaxStamina.AddUObject(this, &UDiaStatPanel::UpdateMaxStm);
-    DiaAttri->m_OnChangedRageRegen.AddUObject(this, &UDiaStatPanel::UpdateRageRegen);
-    DiaAttri->m_OnChangedStaminaRegen.AddUObject(this, &UDiaStatPanel::UpdateStmRegen);
-    DiaAttri->m_OnChangedAllSkillBonus.AddUObject(this, &UDiaStatPanel::UpdateAllSkill);
-    DiaAttri->m_OnChangedCoolDownReduce.AddUObject(this, &UDiaStatPanel::UpdateCDReduce);
-    DiaAttri->m_OnChangedDoubleAttackChance.AddUObject(this, &UDiaStatPanel::UpdateDoubleAtk);
-    DiaAttri->m_OnChangedExpBonusPer.AddUObject(this, &UDiaStatPanel::UpdateExpGain); //m_OnChangedExpRamain
-
-    DiaAttri->m_OnChangedGoldBonusPer.AddUObject(this, &UDiaStatPanel::UpdateGoldGain);
-    DiaAttri->m_OnChangedPotionBonusPer.AddUObject(this, &UDiaStatPanel::UpdatePotionHeal);
-    DiaAttri->m_OnChangedMagicItemDropBonus.AddUObject(this, &UDiaStatPanel::UpdateMagicItem);
-    DiaAttri->m_OnChangedPotionCoolDownReduce.AddUObject(this, &UDiaStatPanel::UpdatePotionCD);
-    DiaAttri->m_OnChangedAccuracy.AddUObject(this, &UDiaStatPanel::UpdateAccuracy);
-    DiaAttri->m_OnChangedAtkCold.AddUObject(this, &UDiaStatPanel::UpdateFrostDmg);
-    DiaAttri->m_OnChangedAtkElec.AddUObject(this, &UDiaStatPanel::UpdateElecDmg);
-    DiaAttri->m_OnChangedAtkFire.AddUObject(this, &UDiaStatPanel::UpdateFireDmg);
-    DiaAttri->m_OnChangedAtkPoison.AddUObject(this, &UDiaStatPanel::UpdatePoisonDmg);
-    DiaAttri->m_OnChangedAttackSpeed.AddUObject(this, &UDiaStatPanel::UpdateAttackSpeed);
-    DiaAttri->m_OnChangedAvoidChance.AddUObject(this, &UDiaStatPanel::UpdateAvoid);
-    DiaAttri->m_OnChangedDamagePer.AddUObject(this, &UDiaStatPanel::UpdateAttackPer);
-    DiaAttri->m_OnChangedDefensePer.AddUObject(this, &UDiaStatPanel::UpdateAllDef);
-    DiaAttri->m_OnChangedMaxHealth.AddUObject(this, &UDiaStatPanel::UpdateMaxHp);
-    DiaAttri->m_OnChangedMoveSpeed.AddUObject(this, &UDiaStatPanel::UpdateMoveSpeed);
-    DiaAttri->m_OnChangedPhysicalDamage.AddUObject(this, &UDiaStatPanel::UpdatePhysDmg);
-    DiaAttri->m_OnChangedPhysicalDefense.AddUObject(this, &UDiaStatPanel::UpdatePhysDef);
-    DiaAttri->m_OnChangedResFire.AddUObject(this, &UDiaStatPanel::UpdateFireDef);
-    DiaAttri->m_OnChangedResPoison.AddUObject(this, &UDiaStatPanel::UpdatePoisonDef);
-
-    //UpdateAttackPer
+void UDiaStatPanel::UpdateAllAttributeText()
+{
+    UpdateStr(m_AttributeSet->GetStr());
+    UpdateDex(m_AttributeSet->GetDex());
+    UpdateInt(m_AttributeSet->GetInt());
+    UpdateVit(m_AttributeSet->GetVit());
+    //
+    UpdatePhysDmg(m_AttributeSet->GetPhysicalDamage());
+    UpdateAllDmg(m_AttributeSet->GetDamagePer());
+    UpdateAccuracy(m_AttributeSet->GetAccuracy());
+    //UpdateAttackPer(v);
+    UpdateAttackSpeed(m_AttributeSet->GetAttackSpeed());
+    UpdateCastSpeed(m_AttributeSet->GetCastingSpeed());
+    UpdateCritical(m_AttributeSet->GetCriticalChance());
+    UpdateDoubleAtk(m_AttributeSet->GetDoubleAttackChance());
+    UpdateBasher(m_AttributeSet->GetBashChance());
+    
+    UpdateFireDmg(m_AttributeSet->GetAtkFire());
+    UpdateFrostDmg(m_AttributeSet->GetAtkCold());
+    UpdatePoisonDmg(m_AttributeSet->GetAtkPoison());
+    UpdateElecDmg(m_AttributeSet->GetAtkElec());
+    
+    UpdatePhysDef(m_AttributeSet->GetPhysicalDefense());
+    UpdateAllDef(m_AttributeSet->GetDefensePer());
+    UpdateAvoid(m_AttributeSet->GetAvoidChance());
+    UpdateBlockChance(m_AttributeSet->GetBlockChance());
+    
+    UpdateFireDef(m_AttributeSet->GetResFire());
+    UpdateFrostDef(m_AttributeSet->GetResCold());
+    UpdatePoisonDef(m_AttributeSet->GetResPoison());
+    UpdateElecDef(m_AttributeSet->GetResElec());
+    
+    UpdateMaxHp(m_AttributeSet->GetMaxHealth());
+    UpdateHpRegen(m_AttributeSet->GetHealthRegen());
+    UpdateLifeSteal(m_AttributeSet->GetLifeSteal());
+    
+    UpdateMaxMana(m_AttributeSet->GetMaxMana());
+    UpdateManaRegen(m_AttributeSet->GetManaRegen());
+    UpdateMaxStm(m_AttributeSet->GetMaxStamina());
+    UpdateStmRegen(m_AttributeSet->GetStaminaRegen());
+    UpdateMaxRage(m_AttributeSet->GetMaxRage());
+    UpdateRageRegen(m_AttributeSet->GetRageRegen());
+    
+    UpdateAllSkill(m_AttributeSet->GetAllSkillBonus());
+    UpdateCDReduce(m_AttributeSet->GetCoolDownReduce());
+    UpdatePotionCD(m_AttributeSet->GetPotionCoolDownReduce());
+    UpdatePotionHeal(m_AttributeSet->GetPotionBonusPer());
+    UpdateMagicItem(m_AttributeSet->GetMagicItemDropBonus());
+    UpdateGoldGain(m_AttributeSet->GetGoldBonusPer());
+    UpdateExpGain(m_AttributeSet->GetExpBonusPer());
+    //
+    FGameplayAttribute MoveSpd = m_AttributeSet->GetMoveSpeedAttribute();
+    MoveSpd.GetGameplayAttributeData(m_AttributeSet)->GetBaseValue();
+    UpdateMoveSpeed(MoveSpd.GetGameplayAttributeData(m_AttributeSet)->GetCurrentValue()/MoveSpd.GetGameplayAttributeData(m_AttributeSet)->GetBaseValue());
 }
 
 void UDiaStatPanel::UpdateLevel(float v)
 {
-    m_Level->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_Level->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateRemainExp(float v)
 {
-    FText ASD = UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero);
-    m_RemainExp->SetText(ASD);
+    m_RemainExp->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateStr(float v)
 {
-    m_Str->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_Str->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateDex(float v)
 {
-    m_Dex->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_Dex->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateInt(float v)
 {
-    m_Int->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_Int->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateVit(float v)
 {
-    m_Vit->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_Vit->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdatePhysDmg(float v)
 {
-    m_PhysDmg->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_PhysDmg->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateAllDmg(float v)
@@ -186,7 +161,7 @@ void UDiaStatPanel::UpdateAccuracy(float v)
 
 void UDiaStatPanel::UpdateAttackPer(float v)
 {
-    m_AttackPerSec->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_AttackPerSec->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateAttackSpeed(float v)
@@ -245,7 +220,7 @@ void UDiaStatPanel::UpdateElecDmg(float v)
 
 void UDiaStatPanel::UpdatePhysDef(float v)
 {
-    m_PhysDef->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_PhysDef->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateAllDef(float v)
@@ -293,12 +268,12 @@ void UDiaStatPanel::UpdateElecDef(float v)
 
 void UDiaStatPanel::UpdateMaxHp(float v)
 {
-    m_MaxHp->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_MaxHp->SetText(GetFloatToText((int)v,1));
 }
 
 void UDiaStatPanel::UpdateHpRegen(float v)
 {
-    m_HpRegen->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_HpRegen->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateLifeSteal(float v)
@@ -309,37 +284,37 @@ void UDiaStatPanel::UpdateLifeSteal(float v)
 
 void UDiaStatPanel::UpdateMaxMana(float v)
 {
-    m_MaxMana->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_MaxMana->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateManaRegen(float v)
 {
-    m_ManaRegen->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_ManaRegen->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateMaxStm(float v)
 {
-    m_MaxStm->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_MaxStm->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateStmRegen(float v)
 {
-    m_StmRegen->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_StmRegen->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateMaxRage(float v)
 {
-    m_MaxRage->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_MaxRage->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateRageRegen(float v)
 {
-    m_RageRegen->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_RageRegen->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateAllSkill(float v)
 {
-    m_AllSkill->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_AllSkill->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdateCDReduce(float v)
@@ -350,7 +325,7 @@ void UDiaStatPanel::UpdateCDReduce(float v)
 
 void UDiaStatPanel::UpdatePotionCD(float v)
 {
-    m_PotionCD->SetText(UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero));
+    m_PotionCD->SetText(GetFloatToText(v));
 }
 
 void UDiaStatPanel::UpdatePotionHeal(float v)

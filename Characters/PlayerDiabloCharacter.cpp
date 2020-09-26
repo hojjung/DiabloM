@@ -76,6 +76,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 
 void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
 {
+    m_fMaxExp = Cast<UPlayerDiabloAttribute>(m_AttributeSet)->GetMaxExpForLevelUp();
     m_fCurrentExp = loadedSaveData->m_fExp;
     float RemainExp = m_fMaxExp - m_fCurrentExp;
     m_OnRemainExpChanged.Broadcast(RemainExp);
@@ -199,14 +200,11 @@ void APlayerDiabloCharacter::SetUnitStat(FName unitID, int level)
 {
     PRINTF("CharacterLevel:%d", level);
     
-    SetCharacterLevel(level);
-    
     m_NameUnitID = unitID;
     const FPlayerEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetPlayerUnitPtr(m_NameUnitID);
-    
     m_GEUnitStat = UnitData->m_DefaultStatTable;
-
-    auto Handle = ApplyGameEffect(UnitData->m_DefaultStatTable);
+    
+    SetCharacterLevel(level);
 
     SetAttackSpeed(1.0f);
 }

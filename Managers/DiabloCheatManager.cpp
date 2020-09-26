@@ -73,7 +73,7 @@ void UDiabloCheatManager::SaveCharStat()
 	int Hair= DiaPl->m_HairIndex;
 	int Face= DiaPl->m_FaceIndex;
 	
-	USaveLoadManager::Get->SaveCharacterStat(UPlayerCreateManager::Get->m_CurrentSelectSlot,Lev,Name,Face,Hair);
+	USaveLoadManager::Get->SaveCharacterStat(UPlayerCreateManager::Get->m_CurrentSelectSlot,Lev,Name,Face,Hair,DiaPl->m_fCurrentExp);
 }
 
 void UDiabloCheatManager::LoadCharStat()

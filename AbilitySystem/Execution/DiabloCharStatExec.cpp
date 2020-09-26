@@ -307,14 +307,7 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
     //armor
     //Defense = StatStr
     //
-    if (PlayerLevel < 35)
-    {
-        HealthRegen =  Vit;
-    }
-    else
-    {
-        HealthRegen = (PlayerLevel - 25) * Vit;
-    }
+    HealthRegen = Vit+PlayerLevel;
     
     if (PlayerLevel < 35)
     {
@@ -330,14 +323,15 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
         FGameplayModifierEvaluatedData(GetCharStatStatics().MaxHealthProperty, EGameplayModOp::Additive, MaxHealth));
     OutExecutionOutput.AddOutputModifier(
       FGameplayModifierEvaluatedData(GetCharStatStatics().HealthRegenProperty, EGameplayModOp::Additive, HealthRegen));
+    
     //	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(GetCharStatStatics().AttackPowerProperty, EGameplayModOp::Additive, Attack));
     //	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(GetCharStatStatics().DefensePowerProperty, EGameplayModOp::Additive, Defense));
     // OutExecutionOutput.AddOutputModifier(
     //     FGameplayModifierEvaluatedData(GetCharStatStatics().MoveSpeedProperty, EGameplayModOp::Additive, MoveSpeed));
-    OutExecutionOutput.AddOutputModifier(
-        FGameplayModifierEvaluatedData(GetCharStatStatics().MaxManaProperty, EGameplayModOp::Additive, MaxMana));
-    OutExecutionOutput.AddOutputModifier(
-        FGameplayModifierEvaluatedData(GetCharStatStatics().MaxRageProperty, EGameplayModOp::Additive, MaxRage));
-    OutExecutionOutput.AddOutputModifier(
-        FGameplayModifierEvaluatedData(GetCharStatStatics().MaxStaminaProperty, EGameplayModOp::Additive, MaxStamina));
+    // OutExecutionOutput.AddOutputModifier(
+    //     FGameplayModifierEvaluatedData(GetCharStatStatics().MaxManaProperty, EGameplayModOp::Additive, MaxMana));
+    // OutExecutionOutput.AddOutputModifier(
+    //     FGameplayModifierEvaluatedData(GetCharStatStatics().MaxRageProperty, EGameplayModOp::Additive, MaxRage));
+    // OutExecutionOutput.AddOutputModifier(
+    //     FGameplayModifierEvaluatedData(GetCharStatStatics().MaxStaminaProperty, EGameplayModOp::Additive, MaxStamina));
 }

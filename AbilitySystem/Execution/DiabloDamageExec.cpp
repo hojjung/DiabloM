@@ -14,8 +14,8 @@ struct DiabloDamageStatics
 	{
 		//이제 이해했다
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, PhysicalDefense, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, TookDamage, Target, true);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, PhysicalDamage, Source, true);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, TookDamage, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, PhysicalDamage, Source, false);
 	}
 };
 

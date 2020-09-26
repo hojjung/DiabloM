@@ -48,6 +48,11 @@ void UEquipmentSystem::Init(UDiabloAbilitySystemComp* abilitySysCompo)
 
 bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //drag된 대상이 어떤 아이템을 가졌는지 알방법이 없음
 {
+    if(itemWantAdd.m_Holder&&droppedIndex == itemWantAdd.m_nGridIndex && Cast<UEquipmentSystem>( itemWantAdd.m_Holder)==this)
+    {
+        return false;
+    }
+    
     if (!CheckSlotValid(droppedIndex, itemWantAdd))
     {
         return false; //애초부터 안맞음 혹은 양손검 등으로 빈 오큐파이일때
@@ -103,6 +108,7 @@ void UEquipmentSystem::RemoveItemByIndex(int index)
     if (m_ArySlots[index]->m_OptionHandle.IsValid())
     {
         m_TargetAbilitySys->RemoveActiveGameplayEffect(m_ArySlots[index]->m_OptionHandle);
+        m_OnOptionChanged.Broadcast();
     }
     OnItemSlotChanged(index);
 }
@@ -238,7 +244,7 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
     }
     //UG
     TSubclassOf<UGameplayEffect> GameplayEffect = ItemTypeWantAdd->m_OptionGameEffect;
-
+    
     if (itemWantAdd.m_AryOptions.Num() > 0)
     {
         auto Context = m_TargetAbilitySys->MakeEffectContext();
@@ -249,14 +255,20 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
         {
             FOptionSpec CurrentOption = itemWantAdd.m_AryOptions[i];
 
-            NewHandle.Data.Get()->SetSetByCallerMagnitude(
+                NewHandle.Data.Get()->SetSetByCallerMagnitude(
                 ItemTypeWantAdd->m_Options[i].GetRow<FOption>("")->m_OptionTag,
                 CurrentOption.m_fValue);
             //
+
+            
         }
 
         m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToTarget(
             *NewHandle.Data.Get(), m_TargetAbilitySys);
+
+        //수동으로 불러줄것
+        //그렇게 되면 그냥 위젯 전체 업데이트 함수 만들어놓을것
+        m_OnOptionChanged.Broadcast();
     }
 
     OnItemSlotChanged(droppedIndex);

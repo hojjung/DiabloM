@@ -5,6 +5,7 @@
 #include "DiabloM.h"
 #include "Animations/DiaAniminstance.h"
 #include "Characters/UnitPawn.h"
+#include "Managers/DiabloCheatManager.h"
 #include "SaveLoad/SaveCharacterStatus.h"
 
 
@@ -136,4 +137,7 @@ public:
 	void EarnExp(float expEarned);
 
 	virtual bool SetCharacterLevel(int NewLevel)override;
+
+	friend UDiabloCheatManager;
+	friend USaveLoadManager;
 };

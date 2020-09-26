@@ -161,86 +161,68 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
     }
     else if (Data.EvaluatedData.Attribute == GetPhysicalDamageAttribute())
     {
-        m_OnChangedPhysicalDamage.Broadcast(GetPhysicalDamage());
     }
     else if (Data.EvaluatedData.Attribute == GetHealthAttribute())
     {
         Value = FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth());
         SetHealth(Value);
-        m_OnHealthChangePer.Broadcast(GetHealth() / GetMaxHealth());
     }
     else if (Data.EvaluatedData.Attribute == GetMaxHealthAttribute())
     {
-        m_OnChangedMaxHealth.Broadcast(GetMaxHealth());
-        m_OnHealthChangePer.Broadcast(GetHealth() / GetMaxHealth());
     }
     else if (Data.EvaluatedData.Attribute == GetMoveSpeedAttribute())
     {
         if (TargetCharacter)
         {
-            PRINTF("MoveSpeed:%f",GetMoveSpeed());
             Cast<UUnitMovement>(TargetCharacter->GetMovementComponent())->SetMoveSpeed(GetMoveSpeed());
-            m_OnChangedMoveSpeed.Broadcast(GetMoveSpeed() / 600.f); //need get base Movement,//초기값저장?
         }
     }
     else if (Data.EvaluatedData.Attribute == GetAttackSpeedAttribute())
     {
         //float attack speed multiple
         TargetCharacter->SetAttackSpeed(GetAttackSpeed());
-        m_OnChangedAttackSpeed.Broadcast(GetAttackSpeed());
     }
     else if (Data.EvaluatedData.Attribute == GetPhysicalDefenseAttribute())
     {
-        m_OnChangedPhysicalDefense.Broadcast(GetPhysicalDefense());
     }
     else if (Data.EvaluatedData.Attribute == GetAccuracyAttribute())
     {
         float AccuRacy = FMath::Clamp(GetAccuracy(), 0.0f, 99.9f);
         SetAccuracy(AccuRacy);
-        m_OnChangedAccuracy.Broadcast(GetAccuracy());
     }
     else if (Data.EvaluatedData.Attribute == GetAvoidChanceAttribute())
     {
-        m_OnChangedAvoidChance.Broadcast(GetAvoidChance());
     }
     else if (Data.EvaluatedData.Attribute == GetDamagePerAttribute())
     {
-        m_OnChangedDamagePer.Broadcast(GetDamagePer());
     }
     else if (Data.EvaluatedData.Attribute == GetDefensePerAttribute())
     {
-        m_OnChangedDefensePer.Broadcast(GetDefensePer());
     }
     else if (Data.EvaluatedData.Attribute == GetAtkColdAttribute())
     {
-        m_OnChangedAtkCold.Broadcast(GetAtkCold());
     }
     else if (Data.EvaluatedData.Attribute == GetAtkElecAttribute())
     {
-        m_OnChangedAtkElec.Broadcast(GetAtkElec());
     }
     else if (Data.EvaluatedData.Attribute == GetAtkFireAttribute())
     {
-        m_OnChangedAtkFire.Broadcast(GetAtkFire());
     }
     else if (Data.EvaluatedData.Attribute == GetAtkPoisonAttribute())
     {
-        m_OnChangedAtkPoison.Broadcast(GetAtkPoison());
     }
     else if (Data.EvaluatedData.Attribute == GetResColdAttribute())
     {
-        m_OnChangedResCold.Broadcast(GetResCold());
     }
     else if (Data.EvaluatedData.Attribute == GetResElecAttribute())
     {
-        m_OnChangedResElec.Broadcast(GetResElec());
     }
     else if (Data.EvaluatedData.Attribute == GetResFireAttribute())
     {
-        m_OnChangedResFire.Broadcast(GetResFire());
     }
     else if (Data.EvaluatedData.Attribute == GetResPoisonAttribute())
     {
-        m_OnChangedResPoison.Broadcast(GetResPoison());
     }
+    
+    m_OnStatChanged.Broadcast();
 }
