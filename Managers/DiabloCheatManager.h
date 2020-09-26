@@ -51,4 +51,8 @@ public:
 	void DeleteAllSlot();
 	UFUNCTION(exec)
 	void RemoveAllEffect();
+	UFUNCTION(exec)
+    void SetPlayerLevel(int levelWant);
+	UFUNCTION(exec)
+    void AddPlayerExp(float wantV);
 };

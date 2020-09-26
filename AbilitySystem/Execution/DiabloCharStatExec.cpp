@@ -68,47 +68,47 @@ struct DiabloCharStatStatics
 
     DiabloCharStatStatics()
     {
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, PhysicalDamage, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, PhysicalDefense, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MaxHealth, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, HealthRegen, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AttackSpeed, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MoveSpeed, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, DamagePer, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, DefensePer, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, ResFire, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, ResCold, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, ResElec, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, ResPoison, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AtkFire, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AtkCold, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AtkElec, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AtkPoison, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AvoidChance, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Accuracy, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Str, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Dex, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Int, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Vit, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MaxMana, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, ManaRegen, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MaxStamina, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, StaminaRegen, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MaxRage, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, RageRegen, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, BlockChance, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, PotionCoolDownReduce, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, PotionBonusPer, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CoolDownReduce, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CastingSpeed, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AllSkillBonus, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, LifeSteal, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, DoubleAttackChance, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, BashChance, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CriticalChance, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MagicItemDropBonus, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, GoldBonusPer, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, ExpBonusPer, Source, true);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, PhysicalDamage, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, PhysicalDefense, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MaxHealth, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, HealthRegen, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AttackSpeed, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MoveSpeed, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, DamagePer, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, DefensePer, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, ResFire, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, ResCold, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, ResElec, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, ResPoison, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AtkFire, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AtkCold, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AtkElec, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AtkPoison, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AvoidChance, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Accuracy, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Str, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Dex, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Int, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Vit, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MaxMana, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, ManaRegen, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MaxStamina, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, StaminaRegen, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MaxRage, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, RageRegen, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, BlockChance, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, PotionCoolDownReduce, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, PotionBonusPer, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CoolDownReduce, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CastingSpeed, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AllSkillBonus, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, LifeSteal, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, DoubleAttackChance, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, BashChance, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CriticalChance, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MagicItemDropBonus, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, GoldBonusPer, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, ExpBonusPer, Source,  false);
     }
 };
 
@@ -309,7 +309,7 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
     //
     if (PlayerLevel < 35)
     {
-        MaxHealth = 10 * Vit;
+        HealthRegen =  Vit;
     }
     else
     {
@@ -328,10 +328,12 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
     //output
     OutExecutionOutput.AddOutputModifier(
         FGameplayModifierEvaluatedData(GetCharStatStatics().MaxHealthProperty, EGameplayModOp::Additive, MaxHealth));
+    OutExecutionOutput.AddOutputModifier(
+      FGameplayModifierEvaluatedData(GetCharStatStatics().HealthRegenProperty, EGameplayModOp::Additive, HealthRegen));
     //	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(GetCharStatStatics().AttackPowerProperty, EGameplayModOp::Additive, Attack));
     //	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(GetCharStatStatics().DefensePowerProperty, EGameplayModOp::Additive, Defense));
-    OutExecutionOutput.AddOutputModifier(
-        FGameplayModifierEvaluatedData(GetCharStatStatics().MoveSpeedProperty, EGameplayModOp::Additive, MoveSpeed));
+    // OutExecutionOutput.AddOutputModifier(
+    //     FGameplayModifierEvaluatedData(GetCharStatStatics().MoveSpeedProperty, EGameplayModOp::Additive, MoveSpeed));
     OutExecutionOutput.AddOutputModifier(
         FGameplayModifierEvaluatedData(GetCharStatStatics().MaxManaProperty, EGameplayModOp::Additive, MaxMana));
     OutExecutionOutput.AddOutputModifier(

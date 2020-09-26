@@ -29,14 +29,12 @@ public:
     UPROPERTY(EditAnywhere)
     int m_nLevel=1;
     UPROPERTY(EditAnywhere)
+    float m_fExp=0;
+    UPROPERTY(EditAnywhere)
     int m_IndexHair=0;
     UPROPERTY(EditAnywhere)
     int m_IndexFace=0;
 
-public:
-    void SaveCharStatSave(int index,int level,FText playerName);
-
-    void SetCharStatLoad(ADiabloPlayerController* diaPl);
 
     
 };

@@ -16,6 +16,7 @@
 class IInteractable;
 class ADiabloPlayerController;
 class UCameraDissolve;
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
 UCLASS()
 class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 {
@@ -23,6 +24,7 @@ class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 	
 public:
 	APlayerDiabloCharacter(const FObjectInitializer& objInit);
+	void LoadExp(const USaveCharacterStatus* loadedSaveData);
 
 	static const FName RightHandWeaponSocketTop;
 	static const FName RightHandWeaponSocketBottom;
@@ -31,6 +33,12 @@ public:
 	
 	int m_FaceIndex;
 	int m_HairIndex;
+	
+	FOnFloatChange m_OnLevelChanged;
+	FOnFloatChange m_OnAttackPerSecChanged;
+	FOnFloatChange m_OnExpGaugeChanged;
+	FOnFloatChange m_OnRemainExpChanged;
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player")
 	float m_fInteractRange;
@@ -75,6 +83,10 @@ protected:
 	//
 	TScriptInterface<IInteractable> m_FocusedInteractable;
 
+	float m_fCurrentExp;
+	
+	float m_fMaxExp;
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -99,9 +111,12 @@ protected:
 	void SetDefaultShoeMesh();
 
 	void SetDefaultGloveMesh();
+
+	virtual void SetAttackSpeed(float get_attack_speed)override;
+
 	
 public:
-	virtual void SetUnitStat(FName unitID) override;
+	virtual void SetUnitStat(FName unitID,int level) override;
 	
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
@@ -115,5 +130,10 @@ public:
 
 	void RemoveAllEffect();
 
-	void SetAnimStance(const FAnimStance* animStance);	
+	void SetAnimStance(const FAnimStance* animStance);
+	void ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn);
+
+	void EarnExp(float expEarned);
+
+	virtual bool SetCharacterLevel(int NewLevel)override;
 };

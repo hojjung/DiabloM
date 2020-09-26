@@ -48,6 +48,8 @@ protected:
 	float m_fMoveAcceptRadius;
 	UPROPERTY()
 	UNavigationSystemV1* m_NavSys;
+
+	float m_fAttackCoolDown;
 protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Character")
 	UCapsuleComponent* m_Capsule;
@@ -64,10 +66,9 @@ protected:
 	UBaseDiabloAttribute* m_AttributeSet;
 
 public://should go dataTable
-	TArray<TSubclassOf<UDiabloAbility>> m_StartGameplayAbilities;
+	//TArray<TSubclassOf<UDiabloAbility>> m_StartGameplayAbilities;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
-	TArray<TSubclassOf<UGameplayEffect>> m_PassiveGameplayEffects;
+	TSubclassOf<UGameplayEffect> m_GEUnitStat;
 protected:
 	virtual void BeginPlay() override;
 
@@ -111,7 +112,7 @@ public:
 	
 	FActiveGameplayEffectHandle ApplyGameEffect(TSubclassOf<UGameplayEffect> gameEffect);
 
-	virtual void SetUnitStat(FName unitID);
+	virtual void SetUnitStat(FName unitID,int level);
 
 	virtual float GetHealth() const;
 
@@ -134,6 +135,8 @@ public:
 	bool GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, float& TimeRemaining, float& CooldownDuration);
 	
 	void RemoveSlottedGameplayAbilities(bool bRemoveAll);
+	virtual void SetAttackSpeed(float get_attack_speed);
+	bool IsAlive();
 
 	FDelegateHandle InventoryOldUpdateHandle;
 	FDelegateHandle InventoryOldLoadedHandle;
@@ -141,7 +144,7 @@ public:
 	//데이터 테이블로 빼줘야함.
 
 	virtual void HandleDamage(float DamageAmount, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, AUnitPawn* InstigatorCharacter, AActor* DamageCauser);
-	virtual void HandleHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	virtual void HandleHealthChanged(float currentHealth,float maxHealth ,const struct FGameplayTagContainer& EventTags);
 	virtual void HandleManaChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 	virtual void HandleMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 
@@ -157,6 +160,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 
-	
+	FORCEINLINE UBaseDiabloAttribute* GetAttributeSet()
+	{
+		return m_AttributeSet;
+	}
 	
 };

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "DiaStatPanel.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaEquipmentPanel.h"
 #include "Widgets/WorldMap/DefaultMenu/ItemPopupInfo.h"
@@ -30,6 +31,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaEquipmentPanel* m_EquipPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaStatPanel* m_StatPanel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UItemDrop* m_ItemDropPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UItemPopupInfo* m_ItemPopup1;
@@ -54,7 +57,8 @@ protected:
 	
 public:
 	void SetPopupDelegate(const TArray<UDiaInvenGridSlot*>& arySlots);
-	
+
+	void InitPopup();
 	void Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar,  UEquipmentSystem* equipment,UInventory* inven);
 
 	void OpenMainMenu();

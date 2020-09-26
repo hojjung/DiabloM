@@ -33,8 +33,7 @@ public:
 	FText m_UnitDesc;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> m_DefaultStatTable;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<TSubclassOf<UGameplayEffect>> m_DefaultPassive;
+	
 };
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��

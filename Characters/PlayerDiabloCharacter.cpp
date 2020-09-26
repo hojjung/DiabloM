@@ -66,10 +66,24 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
     m_StLeftWeapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     m_StLeftWeapon->SetupAttachment(m_SkBody, "LeftWeaponShield");
     m_StLeftWeapon->CastShadow = true;
+
+    m_fCurrentExp = 0.f;
+
+    m_fMaxExp = 0.f;
+
+    m_fAttackCoolDown = 1.0f;
+}
+
+void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
+{
+    m_fCurrentExp = loadedSaveData->m_fExp;
+    float RemainExp = m_fMaxExp - m_fCurrentExp;
+    m_OnRemainExpChanged.Broadcast(RemainExp);
 }
 
 void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSaveData)
 {
+    //
     m_SkFace->SetMasterPoseComponent(m_SkBody);
     m_SkHair->SetMasterPoseComponent(m_SkBody);
     m_SkGlove->SetMasterPoseComponent(m_SkBody);
@@ -85,6 +99,10 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     SetDefaultShoeMesh();
     //
     m_nCharacterLevel = loadedSaveData->m_nLevel;
+    if (m_nCharacterLevel == 0)
+    {
+        m_nCharacterLevel = 1;
+    }
     m_SkFace->SetSkeletalMesh(UPlayerCreateManager::Get->GetFace(loadedSaveData->m_IndexFace));
     m_DefaultFullHairMesh = UPlayerCreateManager::Get->GetHair(loadedSaveData->m_IndexHair, false);
     m_DefaultHalfHairMesh = UPlayerCreateManager::Get->GetHair(loadedSaveData->m_IndexHair, true);
@@ -92,7 +110,15 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     m_SkHair->SetSkeletalMesh(m_DefaultFullHairMesh); //later equipment will doit
     m_TextUnitName = FText::FromString(loadedSaveData->m_TextName);
     //
-    SetUnitStat("Player");
+    SetUnitStat("Player", m_nCharacterLevel);
+
+    LoadExp(loadedSaveData);
+
+
+    if (m_fMaxExp <= 0.f)
+    {
+        PRINTF("MaxExp Is 0 !");
+    }
 }
 
 void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlotsEquipAry slotWant)
@@ -120,7 +146,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlotsEquipAry
         {
             SetDefaultBodyMesh();
         }
-        //SetAnimStance(GetAnimStance());
+
         break;
     case ESlotsEquipAry::Waist:
         m_SkBelt->SetSkeletalMesh(meshItem ? meshItem->m_SkEquipment : nullptr);
@@ -169,20 +195,20 @@ void APlayerDiabloCharacter::RemoveAllEffect()
 }
 
 
-void APlayerDiabloCharacter::SetUnitStat(FName unitID)
+void APlayerDiabloCharacter::SetUnitStat(FName unitID, int level)
 {
+    PRINTF("CharacterLevel:%d", level);
+    
+    SetCharacterLevel(level);
+    
     m_NameUnitID = unitID;
-
     const FPlayerEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetPlayerUnitPtr(m_NameUnitID);
-
-    if (!UnitData)
-    {
-        PRINTF("No Unit Data, SetUnit Fail");
-        return;
-    }
+    
+    m_GEUnitStat = UnitData->m_DefaultStatTable;
 
     auto Handle = ApplyGameEffect(UnitData->m_DefaultStatTable);
 
+    SetAttackSpeed(1.0f);
 }
 
 void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
@@ -190,6 +216,7 @@ void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
     m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
     m_SkBody->SetAnimInstanceClass(animStance->m_StanceAnimation);
 }
+
 
 void APlayerDiabloCharacter::BeginPlay()
 {
@@ -202,6 +229,52 @@ void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
     Super::EndPlay(EndPlayReason);
 }
 
+void APlayerDiabloCharacter::ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn)
+{
+}
+
+void APlayerDiabloCharacter::EarnExp(float expEarned)
+{
+    m_fCurrentExp += expEarned;
+
+    PRINTF("ExpEarned:%f", expEarned);
+
+    float OverflowExp = m_fMaxExp - m_fCurrentExp;
+
+    if (OverflowExp <= 0.f)
+    {
+        if (!SetCharacterLevel(m_nCharacterLevel + 1))
+        {
+            m_OnRemainExpChanged.Broadcast(0.f);
+            return;
+        }
+
+        m_fCurrentExp = 0.f;
+        m_fMaxExp = Cast<UPlayerDiabloAttribute>(m_AttributeSet)->GetMaxExpForLevelUp();
+        
+        PRINTF("Next Exp Is: %f", m_fMaxExp);
+        
+        EarnExp(FMath::Abs(OverflowExp));
+    }
+    
+    m_OnRemainExpChanged.Broadcast(m_fMaxExp - m_fCurrentExp);
+}
+
+bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)
+{
+    if (NewLevel > MAXLEVEL || NewLevel <= 0)
+    {
+        return false;
+    }
+    
+    PRINTF("LevelUp: %d -> %d", m_nCharacterLevel, NewLevel);
+    RemoveStartupGameplayAbilities();
+    m_nCharacterLevel = NewLevel;
+    AddStartupGameplayAbilities();
+    m_OnLevelChanged.Broadcast(m_nCharacterLevel);
+
+    return true;
+}
 
 void APlayerDiabloCharacter::TryCheckInteractable()
 {
@@ -322,3 +395,11 @@ void APlayerDiabloCharacter::SetDefaultGloveMesh()
 {
     m_SkGlove->SetSkeletalMesh(m_DefaultGloveMesh);
 }
+
+void APlayerDiabloCharacter::SetAttackSpeed(float get_attack_speed)
+{
+    Super::SetAttackSpeed(get_attack_speed);
+
+    m_OnAttackPerSecChanged.Broadcast(1 / m_fAttackCoolDown);
+}
+

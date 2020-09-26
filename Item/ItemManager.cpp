@@ -85,14 +85,12 @@ bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionS
 
 void UItemManager::CreateIntAryForShuffle(int maxAryLen, TArray<FOptionHandle>& outOptionAry)
 {
-    int RandCount = maxAryLen + 1;
-    
     for (int k = 0; k < 3; k++)
     {
         for (int i = 0; i < maxAryLen; i++)
         {
             FOptionHandle OO = outOptionAry[i];
-            int index = FMath::Rand() % RandCount;
+            int index = FMath::Rand() % maxAryLen;
             outOptionAry[i] = outOptionAry[index];
             outOptionAry[index] = OO;
         }

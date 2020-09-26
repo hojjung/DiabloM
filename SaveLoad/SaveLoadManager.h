@@ -66,7 +66,7 @@ public:
     void SaveInventory(int slotIndex, const TArray<FItemInstance>& aryItem);
     void SaveEquipment(int slotIndex,const TArray<FItemInstance>& aryItem);
     void SetEquipSaveDataFromCreation(const FCurrentCharData& charData,TArray<FItemInstance>& newEquipAry);
-    void SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex);
+    void SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex,float exp=0.f);
 //
     void LoadInventory(int slotIndex);
     void LoadEquipment(int slotIndex);

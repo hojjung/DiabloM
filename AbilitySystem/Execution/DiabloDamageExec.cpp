@@ -69,7 +69,7 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
 	float Reduction = DefensePower != 0.0f ? (DefensePower) / (50.f * AttackerLevel + DefensePower) : 1.f;
 
 	float DamageDone = AttackPower * Reduction;
-	//Damage += FMath::Max<float>(Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Data.Damage")), false, -1.0f), 0.0f);
+	Damage += FMath::Max<float>(Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookDamage")), false, -1.0f), 0.0f);
 
 	if (DamageDone > 0.f)
 	{

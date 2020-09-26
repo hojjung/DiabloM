@@ -9,6 +9,7 @@
 #include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
 
 
+
 void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar,
                         UEquipmentSystem* equipment, UInventory* inven)
 {
@@ -20,9 +21,18 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     m_Inven = inven;
 
     m_InvenGridPanel->Init(m_Inven);
+    SetPopupDelegate(m_InvenGridPanel->GetArySlots());
 
     m_EquipPanel->Init(m_Equipment);
+    SetPopupDelegate(m_EquipPanel->GetArySlots());
 
+    InitPopup();
+    
+    m_StatPanel->Init(playerChar);    
+}
+
+void UDefaultMenu::InitPopup()
+{
     m_AryItemPopup.Reset();
     m_AryItemPopup.Add(m_ItemPopup1);
     m_AryItemPopup.Add(m_ItemPopup2);
@@ -32,14 +42,7 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     {
         PP->GetOnActionEnd().AddUObject(this,&UDefaultMenu::CloseItemPopup);
     }
-    
-    
-    SetPopupDelegate(m_EquipPanel->GetArySlots());
-    SetPopupDelegate(m_InvenGridPanel->GetArySlots());
-
-    
 }
-
 
 void UDefaultMenu::SetPopupDelegate(const TArray<UDiaInvenGridSlot*>& arySlots)
 {

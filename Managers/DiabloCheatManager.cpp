@@ -94,3 +94,15 @@ void UDiabloCheatManager::RemoveAllEffect()
 	DiaPl->RemoveAllEffect();
 }
 
+void UDiabloCheatManager::SetPlayerLevel(int levelWant)
+{TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
+	DiaPl->SetCharacterLevel(levelWant);
+}
+
+void UDiabloCheatManager::AddPlayerExp(float wantV)
+{TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
+	DiaPl->EarnExp(wantV);
+}
+

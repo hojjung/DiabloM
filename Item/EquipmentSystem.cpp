@@ -4,7 +4,6 @@
 #include "EquipmentSystem.h"
 
 
-#include "IDetailTreeNode.h"
 #include "AbilitySystem/DiabloAbilitySystemComp.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"

@@ -210,7 +210,7 @@ void USaveLoadManager::LoadEquipment(int slotIndex)
 
     PRINTF("LoadEquipment");
 }
-void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex)
+void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex,float exp)
 {
     USaveCharacterStatus* SaveCharStat = Cast<USaveCharacterStatus>(
         UGameplayStatics::CreateSaveGameObject(USaveCharacterStatus::StaticClass()));
@@ -221,6 +221,7 @@ void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameTex
     SaveCharStat->m_SaveVersion = m_SaveVersion;
     SaveCharStat->m_IndexFace = faceIndex;
     SaveCharStat->m_IndexHair = hairIndex;
+    SaveCharStat->m_fExp=exp;
 
     UGameplayStatics::SaveGameToSlot(SaveCharStat, m_CharSlotName, slotIndex);
 
