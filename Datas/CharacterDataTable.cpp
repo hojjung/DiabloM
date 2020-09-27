@@ -20,14 +20,14 @@ UCharacterDataTable::UCharacterDataTable()
 
 }
 
-const FEntityTable& UCharacterDataTable::GetMonster(FName id)
+const FMonsterTable& UCharacterDataTable::GetMonster(FName id)
 {
-    return  *GetMonsterEntityTable->FindRow<FEntityTable>(id,"");
+    return  *GetMonsterEntityTable->FindRow<FMonsterTable>(id,"");
 }
 
-const FEntityTable* UCharacterDataTable::GetMonsterPtr(FName id)
+const FMonsterTable* UCharacterDataTable::GetMonsterPtr(FName id)
 {
-    return  GetMonsterEntityTable->FindRow<FEntityTable>(id,"");
+    return  GetMonsterEntityTable->FindRow<FMonsterTable>(id,"");
 }
 
 const FPlayerEntityTable& UCharacterDataTable::GetPlayerEntity(FName id)

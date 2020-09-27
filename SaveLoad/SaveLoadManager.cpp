@@ -210,7 +210,8 @@ void USaveLoadManager::LoadEquipment(int slotIndex)
 
     PRINTF("LoadEquipment");
 }
-void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex,float exp)
+
+void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex,FName classID,float exp)
 {
     USaveCharacterStatus* SaveCharStat = Cast<USaveCharacterStatus>(
         UGameplayStatics::CreateSaveGameObject(USaveCharacterStatus::StaticClass()));
@@ -222,6 +223,8 @@ void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameTex
     SaveCharStat->m_IndexFace = faceIndex;
     SaveCharStat->m_IndexHair = hairIndex;
     SaveCharStat->m_fExp=exp;
+    SaveCharStat->m_ClassName=classID;
+    //m_ClassName
 
     UGameplayStatics::SaveGameToSlot(SaveCharStat, m_CharSlotName, slotIndex);
 
@@ -271,7 +274,7 @@ int USaveLoadManager::CreateNewCharacter(UPlayerCreateManager* plManager)
     TArray<FItemInstance> AryEquip;
     SetEquipSaveDataFromCreation(plManager->GetCurrentCharData(),AryEquip);
     SaveEquipment(PlayerIndex,AryEquip);
-    SaveCharacterStat(PlayerIndex,1,plManager->m_CurrentTextName,plManager->m_IndexFace,plManager->m_IndexHair);
+    SaveCharacterStat(PlayerIndex,1,plManager->m_CurrentTextName,plManager->m_IndexFace,plManager->m_IndexHair,plManager->GetCurrentCharData().m_ClassID);
     TArray<FItemInstance> AryInven;
     AryInven.Init(FItemInstance(),40);
     SaveInventory(PlayerIndex,AryInven);
@@ -347,4 +350,9 @@ void USaveLoadManager::LoadItemDataForInstance(TArray<FItemInstance>& itemAry)
         ItemInst.m_ItemData = UItemDataTable::GetItemDataPtr(ItemInst.m_ItemID);
         ItemInst.m_ItemTier = UItemDataTable::GetItemTierPtr(ItemInst.m_TierID);
     }
+}
+
+FName USaveLoadManager::GetCurrentPlayerClassName()
+{
+    return m_AryLoadedCharacters[UPlayerCreateManager::Get->m_CurrentSelectSlot]->m_ClassName;
 }

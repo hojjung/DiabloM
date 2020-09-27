@@ -45,6 +45,8 @@ public:
 
     FActiveGameplayEffectHandle m_OptionHandle;
 
+    TArray<FItemType*> m_AryCantEquipable;
+
     void ClearSlot()
     {
         m_Item.ClearData();
@@ -146,4 +148,7 @@ protected:
     
     void CalculateAnimStance();
 
+    
+    void SetUnequipItemToSlots(TArray<TArray<FItemTypeHandle>> aryAryItemType);
 };
+//TArray<TArray<FItemTypeHandle>>

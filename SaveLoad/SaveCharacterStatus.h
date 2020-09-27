@@ -34,7 +34,8 @@ public:
     int m_IndexHair=0;
     UPROPERTY(EditAnywhere)
     int m_IndexFace=0;
-
+    UPROPERTY(EditAnywhere)
+    FName m_ClassName;
 
     
 };

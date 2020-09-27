@@ -44,15 +44,19 @@ void UEquipmentSystem::Init(UDiabloAbilitySystemComp* abilitySysCompo)
     m_FingerLeft.m_Slot = ESlotsEquipAry::FingerLeft;
 
     UItemDataTable::GetAnimStanceTable->GetAllRows("NoAnimDataTable", m_AryAnimStances);
+
+    SetUnequipItemToSlots(
+        UCharacterDataTable::GetPlayerEntity(USaveLoadManager::Get->GetCurrentPlayerClassName()).GetUnequipableAry());
 }
 
 bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //drag된 대상이 어떤 아이템을 가졌는지 알방법이 없음
 {
-    if(itemWantAdd.m_Holder&&droppedIndex == itemWantAdd.m_nGridIndex && Cast<UEquipmentSystem>( itemWantAdd.m_Holder)==this)
+    if (itemWantAdd.m_Holder && droppedIndex == itemWantAdd.m_nGridIndex && Cast<UEquipmentSystem>(itemWantAdd.m_Holder)
+        == this)
     {
         return false;
     }
-    
+
     if (!CheckSlotValid(droppedIndex, itemWantAdd))
     {
         return false; //애초부터 안맞음 혹은 양손검 등으로 빈 오큐파이일때
@@ -115,10 +119,16 @@ void UEquipmentSystem::RemoveItemByIndex(int index)
 
 void UEquipmentSystem::CalculateAnimStance()
 {
-    bool RightOk=false, LeftOk = false;
+    bool RightOk = false, LeftOk = false;
 
-    FItemType* RightType = GetItem(static_cast<int>(ESlotsEquipAry::WeaponRight)).m_ItemData ? GetItem(static_cast<int>(ESlotsEquipAry::WeaponRight)).m_ItemData->m_ItemType.GetRow<FItemType>("") :nullptr;
-    FItemType* LeftType = GetItem(static_cast<int>(ESlotsEquipAry::WeaponLeft)).m_ItemData?GetItem(static_cast<int>(ESlotsEquipAry::WeaponLeft)).m_ItemData->m_ItemType.GetRow<FItemType>(""):nullptr;
+    FItemType* RightType = GetItem(static_cast<int>(ESlotsEquipAry::WeaponRight)).m_ItemData
+                               ? GetItem(static_cast<int>(ESlotsEquipAry::WeaponRight)).m_ItemData->m_ItemType.GetRow<
+                                   FItemType>("")
+                               : nullptr;
+    FItemType* LeftType = GetItem(static_cast<int>(ESlotsEquipAry::WeaponLeft)).m_ItemData
+                              ? GetItem(static_cast<int>(ESlotsEquipAry::WeaponLeft)).m_ItemData->m_ItemType.GetRow<
+                                  FItemType>("")
+                              : nullptr;
 
     for (auto* AnimS : m_AryAnimStances)
     {
@@ -127,7 +137,7 @@ void UEquipmentSystem::CalculateAnimStance()
             //RightHandType.IsNull()
             if (RightHandType.GetRow<FItemType>("") == RightType)
             {
-                RightOk=true;
+                RightOk = true;
                 break;;
             }
         }
@@ -136,21 +146,40 @@ void UEquipmentSystem::CalculateAnimStance()
         {
             if (LeftHandType.GetRow<FItemType>("") == LeftType)
             {
-                LeftOk=true;
+                LeftOk = true;
                 break;;
             }
         }
 
-        if(RightOk&&LeftOk)
+        if (RightOk && LeftOk)
         {
-            m_CurrentStance=AnimS;
-            PRINTF("AnimSet:%s",*m_CurrentStance->m_ShowingText.ToString());
+            m_CurrentStance = AnimS;
+            PRINTF("AnimSet:%s", *m_CurrentStance->m_ShowingText.ToString());
             ADiabloPlayerController::Get->GetPlayerPawn()->SetAnimStance(m_CurrentStance);
             break;;
         }
 
-        RightOk=false;
-        LeftOk=false;
+        RightOk = false;
+        LeftOk = false;
+    }
+}
+
+void UEquipmentSystem::SetUnequipItemToSlots(TArray<TArray<FItemTypeHandle>> aryAryItemType)
+{
+    for (int i = 0; i < aryAryItemType.Num(); i++)
+    {
+        TArray<FItemType*> UnequipAry;
+
+            for (const FItemTypeHandle& DataTableUnequipHandle : aryAryItemType[i])
+            {
+                if (DataTableUnequipHandle.IsNull())
+                {
+                    continue;
+                }
+                UnequipAry.Add(DataTableUnequipHandle.GetRow<FItemType>(""));
+            }
+
+            m_ArySlots[i]->m_AryCantEquipable = UnequipAry;
     }
 }
 
@@ -199,9 +228,22 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
 
     if (!TEST_BIT(ItemTypeWantAdd->m_EquipableSlot, m_ArySlots[droppedIndex]->m_Slot))
     {
-        //PRINTF("BitEquipFail 1");
         return false;
     }
+
+    if (ItemTypeWantAdd)
+    {
+    }
+
+    for (FItemType* CantEquipType : m_ArySlots[droppedIndex]->m_AryCantEquipable)
+    {
+        if (CantEquipType == ItemTypeWantAdd)
+        {
+            PRINTF("CantEquip Class Type");
+            return false;
+        }
+    }
+
 
     for (auto Slot : m_ArySlots)
     {
@@ -244,7 +286,7 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
     }
     //UG
     TSubclassOf<UGameplayEffect> GameplayEffect = ItemTypeWantAdd->m_OptionGameEffect;
-    
+
     if (itemWantAdd.m_AryOptions.Num() > 0)
     {
         auto Context = m_TargetAbilitySys->MakeEffectContext();
@@ -255,12 +297,10 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
         {
             FOptionSpec CurrentOption = itemWantAdd.m_AryOptions[i];
 
-                NewHandle.Data.Get()->SetSetByCallerMagnitude(
+            NewHandle.Data.Get()->SetSetByCallerMagnitude(
                 ItemTypeWantAdd->m_Options[i].GetRow<FOption>("")->m_OptionTag,
                 CurrentOption.m_fValue);
             //
-
-            
         }
 
         m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToTarget(

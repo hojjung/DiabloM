@@ -43,7 +43,7 @@ public:
 	
 #pragma region DataGetter
 	
-	const FEntityTable* GetMonsterUnitPtr(FName id) const;
+	const FMonsterTable* GetMonsterUnitPtr(FName id) const;
 	const FNPCEntityTable* GetNPCUnitPtr(FName id) const;
 	const FPlayerEntityTable* GetPlayerUnitPtr(FName id) const;
 	const FItemTier* GetItemTierPtr(FName id)const;
@@ -55,7 +55,7 @@ public:
 	const FPlayerItemRow* GetPlayerItemPtr(FName id)const;
 	const FPlayerPerkRow* GetPlayerPerkPtr(FName id)const;
 	//
-	const FEntityTable& GetMonsterUnit(FName id) const;
+	const FMonsterTable& GetMonsterUnit(FName id) const;
 	const FNPCEntityTable& GetNPCUnit(FName id) const;
 	const FPlayerEntityTable& GetPlayerUnit(FName id) const;
 	const FItemTier& GetItemTier(FName id)const;
@@ -72,4 +72,5 @@ public:
 	FItemInstance CreateItem(FName id);
 
 	ADroppedItem* DropItemActor(FItemInstance& myItem);
+	
 };

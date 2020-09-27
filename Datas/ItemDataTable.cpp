@@ -96,6 +96,7 @@ const FAnimStance* UItemDataTable::GetAnimStancePtr(FName id)
 FItemTypeHandle::FItemTypeHandle()
 {
     FDataTableRowHandle::DataTable = UItemDataTable::GetItemTypeTable;
+    FDataTableRowHandle::RowName=NAME_None;
 }
 
 FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMesh(nullptr), m_ItemIcon(nullptr)

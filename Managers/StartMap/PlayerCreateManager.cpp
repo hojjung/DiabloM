@@ -80,7 +80,9 @@ void UPlayerCreateManager::SetHairFromSetting()
 
 void UPlayerCreateManager::SetArmorFromSetting()
 {
-    m_CurrentCharData.m_TextNameArmor = m_AryArmor[m_IndexArmor]->m_ShowingName;
+    FPlayerEntityTable* ClassEntity=m_AryArmor[m_IndexArmor]->m_ClassEntityHandle.GetRow<FPlayerEntityTable>("");
+    m_CurrentCharData.m_ClassID=ClassEntity->m_NameID;
+    m_CurrentCharData.m_TextNameClass = ClassEntity->m_ShowingName;
     m_CurrentCharData.m_CurrentBody=m_AryArmor[m_IndexArmor]->m_BodyArmorHandle.IsNull() ? nullptr : m_AryArmor[m_IndexArmor]->m_BodyArmorHandle.GetRow<FItemData>("");
     m_CurrentCharData.m_CurrentHelmet=m_AryArmor[m_IndexArmor]->m_HelmetHandle.IsNull() ? nullptr : m_AryArmor[m_IndexArmor]->m_HelmetHandle.GetRow<FItemData>("");        
     m_CurrentCharData.m_CurrentShoe=m_AryArmor[m_IndexArmor]->m_ShoeHandle.IsNull() ? nullptr : m_AryArmor[m_IndexArmor]->m_ShoeHandle.GetRow<FItemData>("");         
@@ -90,7 +92,6 @@ void UPlayerCreateManager::SetArmorFromSetting()
     //m_CurrentCharData.m_CurrentBackpack=m_AryArmor[m_IndexArmor]->m_BackpackHandle.IsNull() ? nullptr : m_AryArmor[m_IndexArmor]->m_BackpackHandle.GetRow<FItemData>("");     
     m_CurrentCharData.m_CurrentRightWeapon=m_AryArmor[m_IndexArmor]->m_RightWeaponHandle.IsNull() ? nullptr : m_AryArmor[m_IndexArmor]->m_RightWeaponHandle.GetRow<FItemData>("");  
     m_CurrentCharData.m_CurrentLeftWeapon=m_AryArmor[m_IndexArmor]->m_LeftWeaponHandle.IsNull() ? nullptr : m_AryArmor[m_IndexArmor]->m_LeftWeaponHandle.GetRow<FItemData>("");
-    
   
 }
 //
@@ -102,6 +103,8 @@ void UPlayerCreateManager::OnDataChanged()
 void UPlayerCreateManager::SetCurrentDataFromSaveFile(const USaveCharacterStatus* char_stat,
     const USaveEquipment* save_equipment)
 {
+    m_CurrentCharData.m_TextNameClass = UCharacterDataTable::GetPlayerEntity(char_stat->m_ClassName).m_ShowingName;
+    
     m_CurrentCharData.m_CurrentBody=save_equipment->m_EquipAry[(int)ESlotsEquipAry::Torso].m_ItemData;
     m_CurrentCharData.m_CurrentHelmet = save_equipment->m_EquipAry[(int)ESlotsEquipAry::Head].m_ItemData;
     m_CurrentCharData.m_CurrentHair=GetHair(char_stat->m_IndexHair,m_CurrentCharData.m_CurrentHelmet);

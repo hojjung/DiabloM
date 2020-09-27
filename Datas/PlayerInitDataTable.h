@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CharacterDataTable.h"
 #include "DiabloM.h"
 #include "ItemDataTable.h"
 #include "PlayerInitDataTable.generated.h"
@@ -55,8 +56,9 @@ struct FPlayerArmorRow : public FTableRowBase
     GENERATED_BODY()
 
 public:
-    FPlayerArmorRow()//사실상 시작 아이템 세트
+    FPlayerArmorRow()//사실상 시작 직업 세트
     {
+        m_ClassEntityHandle.DataTable= UCharacterDataTable::GetPlayerEntityTable;
         m_BodyArmorHandle.DataTable = UItemDataTable::GetItemTable;
         m_HelmetHandle.DataTable = UItemDataTable::GetItemTable;
         m_GloveHandle.DataTable = UItemDataTable::GetItemTable;
@@ -69,7 +71,7 @@ public:
       
     }
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-    FText m_ShowingName;
+    FDataTableRowHandle m_ClassEntityHandle;
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
     FDataTableRowHandle m_BodyArmorHandle;
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -183,7 +185,7 @@ public:
     //
     FText m_TextNameHair;
     FText m_TextNameFace;
-    FText m_TextNameArmor;
+    FText m_TextNameClass;
     FText m_TextNameItem;
     FText m_TextNamePerk;
     UPROPERTY()
@@ -199,6 +201,8 @@ public:
     //FItemData*     m_CurrentBackpack;
     const FItemData*     m_CurrentRightWeapon;
     const FItemData*     m_CurrentLeftWeapon;
+
+    FName m_ClassID;
     //
     void Clear()
     {
@@ -213,6 +217,8 @@ public:
         m_CurrentBelt=nullptr;         
         //m_CurrentBackpack=nullptr;     
         m_CurrentRightWeapon=nullptr;  
-        m_CurrentLeftWeapon=nullptr;  
+        m_CurrentLeftWeapon=nullptr;
+
+        m_ClassID=NAME_None;
     }
 };

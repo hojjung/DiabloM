@@ -111,7 +111,7 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     m_SkHair->SetSkeletalMesh(m_DefaultFullHairMesh); //later equipment will doit
     m_TextUnitName = FText::FromString(loadedSaveData->m_TextName);
     //
-    SetUnitStat("Player", m_nCharacterLevel);
+    SetUnitStat(loadedSaveData->m_ClassName, m_nCharacterLevel);
 
     LoadExp(loadedSaveData);
 

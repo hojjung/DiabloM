@@ -49,6 +49,7 @@ public:
     int m_IndexPerk;
 
     int m_CurrentSelectSlot;
+
     //
 public:
     FOnVisualChange m_OnVisualChange;
@@ -72,7 +73,7 @@ public:
     void IncreaseHair();
     void DecreaseFace();
     void IncreaseFace();
-    void DecreaseArmor();
+    void DecreaseArmor();//이게 직업선택이 되야함
     void IncreaseArmor();
     void DecreaseItem();
     void IncreaseItem();

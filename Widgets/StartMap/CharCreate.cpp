@@ -37,7 +37,7 @@ void UCharCreate::OnVisualChanged(const FCurrentCharData& visual_change)
     m_FaceSelect->m_TextTypeName->SetText(visual_change.m_TextNameFace);
     m_FaceSelect->m_TextTypeCount->SetText(GetFormatCount(m_PlManager->m_IndexFace,m_PlManager->m_AryFace.Num()));
     //
-    m_ArmorSelect->m_TextTypeName->SetText(visual_change.m_TextNameArmor);
+    m_ArmorSelect->m_TextTypeName->SetText(visual_change.m_TextNameClass);
     m_ArmorSelect->m_TextTypeCount->SetText(GetFormatCount(m_PlManager->m_IndexArmor,m_PlManager->m_AryArmor.Num()));
     //
     //

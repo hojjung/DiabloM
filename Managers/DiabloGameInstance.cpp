@@ -48,7 +48,7 @@ void UDiabloGameInstance::Shutdown()
 #pragma region  DataGetter
 
 
-const FEntityTable* UDiabloGameInstance::GetMonsterUnitPtr(FName id) const
+const FMonsterTable* UDiabloGameInstance::GetMonsterUnitPtr(FName id) const
 {
     return UCharacterDataTable::GetMonsterPtr(id);
 }
@@ -106,7 +106,7 @@ const FPlayerPerkRow* UDiabloGameInstance::GetPlayerPerkPtr(FName id) const
     return UPlayerInitDataTable::GetPlayerPerkPtr(id);
 }
 
-const FEntityTable& UDiabloGameInstance::GetMonsterUnit(FName id) const
+const FMonsterTable& UDiabloGameInstance::GetMonsterUnit(FName id) const
 {
     return UCharacterDataTable::GetMonster(id);
 }
@@ -181,4 +181,5 @@ ADroppedItem* UDiabloGameInstance::DropItemActor(FItemInstance& myItem)
 
     return m_ItemManager->CreateItemActor(myItem,ActorPos);
 }
+
 
