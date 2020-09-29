@@ -114,6 +114,12 @@ void AUnitPawn::MoveToLocation(FVector goalLocation)
 
 void AUnitPawn::MoveToActor(AActor* goalTarget)
 {
+    if(!goalTarget)
+    {
+        return;
+    }
+    
+    
     const bool bAlreadyAtGoal = m_PFComp->HasReached(*goalTarget, EPathFollowingReachMode::OverlapAgent);
 
     // script source, keep only one move request at time
@@ -365,11 +371,7 @@ void AUnitPawn::HandleManaChanged(float DeltaValue, const FGameplayTagContainer&
 
 void AUnitPawn::HandleMoveSpeedChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
 {
-}
-
-void AUnitPawn::SetLevel(int lv)
-{
-    m_nCharacterLevel = lv;
+    
 }
 
 void AUnitPawn::AddStartupGameplayAbilities()

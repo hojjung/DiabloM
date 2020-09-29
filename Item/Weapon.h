@@ -5,6 +5,8 @@
 #include "DiabloM.h"
 #include "GameFramework/Actor.h"
 #include "GameplayTagContainer.h"
+#include "Datas/ItemDataTable.h"
+
 #include "Weapon.generated.h"
 
 class APlayerDiabloCharacter;
@@ -16,13 +18,12 @@ class DIABLOM_API AWeapon : public AActor
 public:	
 	AWeapon();
 protected:
-	UPROPERTY(VisibleAnywhere,Category="Weapon")
-	UCapsuleComponent* m_Coll;
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	USkeletalMeshComponent* m_WeaponMesh;
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	FName m_Id;
-
+	UPROPERTY(BlueprintReadWrite,VisibleAnywhere)
+	USphereComponent* m_RootSphere;
+	UPROPERTY(BlueprintReadWrite,VisibleAnywhere)
+	USkeletalMeshComponent* m_SkMeshWeapon;
+	UPROPERTY(BlueprintReadWrite,VisibleAnywhere)
+	UStaticMeshComponent* m_StMeshWeapon;
 	UPROPERTY()
 	APlayerDiabloCharacter* m_User;
 
@@ -31,23 +32,11 @@ protected:
 	UPROPERTY()
 	FGameplayTag m_CachedAttackEvent;
 
-	UPROPERTY()
-	TSet<AActor*> m_AlreadyHittenForIgnore;
-
-protected:
-	virtual void BeginPlay() override;
+	const FItemInstance* m_ItemInstPtr;
 
 public:
-	void SetWeapon(FName weaponId, APlayerDiabloCharacter* usingPlayer);
-
-	UFUNCTION(BlueprintCallable)
-	void WeaponAttackBegin(FGameplayTag attackEventTag);
-
-	UFUNCTION(BlueprintCallable)
-	void WeaponAttackEnd();
-
-	UFUNCTION()
-	void WeaponCollBegin(AActor* overlappedActor,AActor* otherActor);
+	virtual void InitWeapon(APlayerDiabloCharacter* pl,const FItemInstance* itemInst);
+	
 
 	FORCEINLINE bool GetIsAttacking()
 	{

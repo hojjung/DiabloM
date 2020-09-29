@@ -6,8 +6,10 @@
 #include "Animations/DiaAniminstance.h"
 #include "Datas/OptionDataTable.h"
 #include "Item/ItemHolder.h"
-
+//#include "Item/Weapon.h"
 #include "ItemDataTable.generated.h"
+
+class AWeapon;
 
 //아예 다시 만들어야한다는데?
 USTRUCT(BlueprintType)
@@ -111,6 +113,8 @@ public:
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<UItemOptionGameEffect> m_OptionGameEffect;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TSubclassOf<AWeapon> m_EquipmentBP;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<FOptionHandle> m_Options;
   
@@ -308,4 +312,17 @@ class DIABLOM_API UItemDataTable : public UObject
 
     static const FAnimStance* GetAnimStancePtr(FName id);
     
+};
+
+
+USTRUCT(BlueprintType)
+struct FItemDataHandle :public FDataTableRowHandle
+{
+    GENERATED_USTRUCT_BODY()
+public:
+    FItemDataHandle()
+    {
+        DataTable=UItemDataTable::GetItemTable;
+    }
+
 };

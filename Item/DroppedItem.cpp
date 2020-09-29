@@ -31,7 +31,7 @@ ADroppedItem::ADroppedItem(const FObjectInitializer& objInit):Super(objInit)
 	m_BillBoard->SetRelativeLocation( FVector(0.f, 0.f, 70.f));
 	m_BillBoard->CastShadow = false;
 	//
-	m_TableID=NAME_None;
+	//m_TableID=NAME_None;
 }
 
 // Called when the game starts or when spawned
@@ -39,9 +39,9 @@ void ADroppedItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (m_TableID != NAME_None)
+	if (!m_TableID.IsNull())
 	{
-		SetItem(m_TableID);
+		SetItem(m_TableID.RowName);
 		
 		auto AA = m_ItemInstance.m_AryOptions;
 
@@ -104,7 +104,7 @@ void ADroppedItem::SetItemInstance(FItemInstance& itemInst)
 
 	SetItemVisual(m_ItemInstance);
 
-	m_TableID=itemInst.m_ItemID;
+	m_TableID.RowName=itemInst.m_ItemID;
 }
 
 FItemInstance  ADroppedItem::GetItemInstance()

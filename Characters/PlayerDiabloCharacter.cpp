@@ -6,7 +6,7 @@
 #include "Camera/CameraDissolve.h"
 #include "Managers/StartMap/PlayerCreateManager.h"
 #include "Objs/Interfaces/Interactable.h"
-
+#include "Item/Weapon.h"
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
     : Super(objInit.SetDefaultSubobjectClass<UPlayerDiabloAttribute>("AttributeSet00"))
 {
@@ -122,14 +122,18 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     }
 }
 
-void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlotsEquipAry slotWant)
+void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEquipAry slotWant)
 {
+    
+    
+    TSubclassOf<AWeapon> ItemBP=nullptr;
     switch (slotWant)
     {
     case ESlotsEquipAry::Head:
         if (meshItem)
         {
-            m_SkHeadGear->SetSkeletalMesh(meshItem->m_SkEquipment);
+            
+            m_SkHeadGear->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
             SetHalfHairMesh();
         }
         else
@@ -141,7 +145,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlotsEquipAry
     case ESlotsEquipAry::Torso:
         if (meshItem)
         {
-            m_SkBody->SetSkeletalMesh(meshItem->m_SkEquipment);
+            m_SkBody->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
         }
         else
         {
@@ -150,12 +154,12 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlotsEquipAry
 
         break;
     case ESlotsEquipAry::Waist:
-        m_SkBelt->SetSkeletalMesh(meshItem ? meshItem->m_SkEquipment : nullptr);
+        m_SkBelt->SetSkeletalMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_SkEquipment : nullptr);
         break;
     case ESlotsEquipAry::Leg:
         if (meshItem)
         {
-            m_SkShoe->SetSkeletalMesh(meshItem->m_SkEquipment);
+            m_SkShoe->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
         }
         else
         {
@@ -165,7 +169,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlotsEquipAry
     case ESlotsEquipAry::Hand:
         if (meshItem)
         {
-            m_SkGlove->SetSkeletalMesh(meshItem->m_SkEquipment);
+            m_SkGlove->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
         }
         else
         {
@@ -173,13 +177,50 @@ void APlayerDiabloCharacter::EquipMesh(const FItemData* meshItem, ESlotsEquipAry
         }
         break;
     case ESlotsEquipAry::Shoulder:
-        m_SkShoulderPad->SetSkeletalMesh(meshItem ? meshItem->m_SkEquipment : nullptr);
+        m_SkShoulderPad->SetSkeletalMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_SkEquipment : nullptr);
         break;
     case ESlotsEquipAry::WeaponRight:
-        m_StRightWeapon->SetStaticMesh(meshItem ? meshItem->m_StEquipment : nullptr);
+        Destroy(m_RightWeapon);
+       ItemBP=!meshItem->IsEmpty()? meshItem->m_ItemData->m_ItemType.GetRow<FItemType>("")->m_EquipmentBP:nullptr;
+        if(ItemBP)
+        {
+            //ItemBP
+            m_StRightWeapon->SetStaticMesh(nullptr);
+            FActorSpawnParameters Params;
+            Params.Template=Cast<AActor>( ItemBP->GetDefaultObject());
+            FTransform Trans;
+            AWeapon* Weapon=Cast<AWeapon>( GetWorld()->SpawnActor(ItemBP,&Trans,Params));
+            FAttachmentTransformRules Rules=FAttachmentTransformRules(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,false);
+            Weapon->InitWeapon(this,meshItem);
+            Weapon->AttachToComponent(m_StRightWeapon,Rules);
+            m_RightWeapon=Weapon;
+        }
+        else
+        {
+            m_StRightWeapon->SetStaticMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_StEquipment : nullptr);
+        }
+        //"RightWeaponShield"
         break;
     case ESlotsEquipAry::WeaponLeft:
-        m_StLeftWeapon->SetStaticMesh(meshItem ? meshItem->m_StEquipment : nullptr);
+        Destroy(m_LeftWeapon);
+       ItemBP=!meshItem->IsEmpty()? meshItem->m_ItemData->m_ItemType.GetRow<FItemType>("")->m_EquipmentBP:nullptr;
+        if(ItemBP)
+        {
+            //ItemBP
+            m_StLeftWeapon->SetStaticMesh(nullptr);
+            FActorSpawnParameters Params;
+            Params.Template=Cast<AActor>( ItemBP->GetDefaultObject());
+            FTransform Trans;
+            AWeapon* Weapon=Cast<AWeapon>( GetWorld()->SpawnActor(ItemBP,&Trans,Params));
+            FAttachmentTransformRules Rules=FAttachmentTransformRules(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,false);
+            Weapon->InitWeapon(this,meshItem);
+            Weapon->AttachToComponent(m_StLeftWeapon,Rules);
+            m_LeftWeapon=Weapon;
+        }
+        else
+        {
+            m_StLeftWeapon->SetStaticMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_StEquipment : nullptr);
+        }
         break;
     default:
         ;
@@ -213,6 +254,9 @@ void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
 {
     m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
     m_SkBody->SetAnimInstanceClass(animStance->m_StanceAnimation);
+    FAttachmentTransformRules Rule=FAttachmentTransformRules(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,false);
+    m_StRightWeapon->AttachToComponent(m_SkBody,Rule,"RightWeaponShield");
+    m_StLeftWeapon->AttachToComponent(m_SkBody,Rule,"LeftWeaponShield");
 }
 
 

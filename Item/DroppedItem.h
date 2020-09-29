@@ -17,7 +17,7 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Item")
-	FName m_TableID;
+	FItemDataHandle m_TableID;
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	UStaticMeshComponent* m_MeshComp;
 	UPROPERTY(VisibleAnywhere, Category = "Item")

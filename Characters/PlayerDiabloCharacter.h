@@ -87,6 +87,11 @@ protected:
 	float m_fCurrentExp;
 	
 	float m_fMaxExp;
+
+	UPROPERTY()
+	AWeapon* m_RightWeapon;
+	UPROPERTY()
+	AWeapon* m_LeftWeapon;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -127,7 +132,7 @@ public:
 
 	void SetLoadedData(const USaveCharacterStatus* loadedSaveData);
 
-	void EquipMesh(const FItemData* meshItem,ESlotsEquipAry slotWant);
+	void EquipMesh(const FItemInstance* meshItem,ESlotsEquipAry slotWant);
 
 	void RemoveAllEffect();
 

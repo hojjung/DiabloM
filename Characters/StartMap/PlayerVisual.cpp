@@ -13,7 +13,7 @@ APlayerVisual::APlayerVisual()
     
     PrimaryActorTick.bCanEverTick = false;
     
-    static ConstructorHelpers::FObjectFinder<UAnimSequence> FoundAnim(TEXT("AnimSequence'/Game/Animations/NoWeaponStance/StandingIdle_noWeaponAnim.StandingIdle_noWeaponAnim'"));
+    static ConstructorHelpers::FObjectFinder<UAnimSequence> FoundAnim(TEXT("AnimSequence'/Game/AnimationBlueprint/BareHand/Idle_noWeaponAnim.Idle_noWeaponAnim'"));
     
     m_AnimSeq = FoundAnim.Object;
 

@@ -220,22 +220,24 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
 {
     const FItemType* ItemTypeWantAdd = itemWantAdd.m_ItemData->m_ItemType.GetRow<FItemType>("");
 
-    if (GetItem(droppedIndex).IsEmpty() && m_ArySlots[droppedIndex]->m_bIsOccupied)
+    if (m_ArySlots[droppedIndex]->m_EquippedType&&ItemTypeWantAdd == m_ArySlots[droppedIndex]->m_EquippedType)
+    {
+        return true;   
+    }
+    
+    
+    if (GetItem(droppedIndex).IsEmpty() && m_ArySlots[droppedIndex]->m_bIsOccupied)//해당슬롯이 비어있는데 할당됐다면,양손무기의 반대손이라면
     {
         //양손무기 왼손
         return false;
     }
 
-    if (!TEST_BIT(ItemTypeWantAdd->m_EquipableSlot, m_ArySlots[droppedIndex]->m_Slot))
+    if (!TEST_BIT(ItemTypeWantAdd->m_EquipableSlot, m_ArySlots[droppedIndex]->m_Slot))//무기의 장착 가능 슬롯인지
     {
         return false;
     }
 
-    if (ItemTypeWantAdd)
-    {
-    }
-
-    for (FItemType* CantEquipType : m_ArySlots[droppedIndex]->m_AryCantEquipable)
+    for (FItemType* CantEquipType : m_ArySlots[droppedIndex]->m_AryCantEquipable)//클래스가 달라서 못낌
     {
         if (CantEquipType == ItemTypeWantAdd)
         {
@@ -247,19 +249,19 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
 
     for (auto Slot : m_ArySlots)
     {
-        if (TEST_BIT(ItemTypeWantAdd->m_EquipInterruptSlot, Slot->m_Slot))
+        if (TEST_BIT(ItemTypeWantAdd->m_EquipInterruptSlot, Slot->m_Slot))//방해 슬롯이 할당되어있다면,
         {
-            if (Slot->m_bIsOccupied)
+            if (!Slot->m_Item.IsEmpty())//&&Slot->m_bIsOccupied
             {
                 return false;
             }
         }
     }
 
-    if (m_ArySlots[droppedIndex]->m_Item.IsEmpty()) //비어있지않음
-    {
-        return true;
-    }
+    // if (m_ArySlots[droppedIndex]->m_Item.IsEmpty()) //비어있지않음
+    // {
+    //     return true;
+    // }
     //장비가 끼워지고 나면, 인터럽팅 슬롯을 빨갛게 칠해줘야하고
     //장비들을 돌려서 현재 애님스턴스를 반환해야함
     return true;
