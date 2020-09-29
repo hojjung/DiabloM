@@ -93,6 +93,7 @@ protected:
 	UPROPERTY()
 	AWeapon* m_LeftWeapon;
 	
+	const FAnimStance* m_AnimStance;
 protected:
 	virtual void BeginPlay() override;
 
@@ -120,15 +121,17 @@ protected:
 
 	virtual void SetAttackSpeed(float get_attack_speed)override;
 
-	
+	bool CreateItemActor(const FItemInstance* itemInst,AWeapon** wantCachePointer,UStaticMeshComponent** attachRoot);
+	//FItemInstance*,AWeapon**,USceneComponent*
 public:
+	
 	virtual void SetUnitStat(FName unitID,int level) override;
 	
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
 	
-	UFUNCTION(BlueprintCallable,Category="Interact")
-	void AttackInput(float pressed);
+
+	virtual void AttackInput(float pressed)override;
 
 	void SetLoadedData(const USaveCharacterStatus* loadedSaveData);
 

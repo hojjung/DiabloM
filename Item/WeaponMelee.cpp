@@ -9,12 +9,13 @@
 AWeaponMelee::AWeaponMelee()
 {
     m_MeleeCollison =CreateDefaultSubobject<UCapsuleComponent>("Coll00");
+    m_MeleeCollison->SetupAttachment(RootComponent);
     m_MeleeCollison->SetCapsuleRadius(22);
     m_MeleeCollison->SetCapsuleHalfHeight(64);
     m_MeleeCollison->AreaClass=UNavArea_Obstacle::StaticClass();
     m_MeleeCollison->SetCollisionProfileName("OverlapOnlyPawn");
     m_MeleeCollison->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    m_MeleeCollison->SetHiddenInGame(true);
+    //m_MeleeCollison->SetHiddenInGame(true);
     m_MeleeCollison->SetCastShadow(false);
 
     m_bIsAttacking=false;

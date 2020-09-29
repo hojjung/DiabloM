@@ -140,6 +140,8 @@ public:
 
 	FDelegateHandle InventoryOldUpdateHandle;
 	FDelegateHandle InventoryOldLoadedHandle;
+
+	
 public:
 	//데이터 테이블로 빼줘야함.
 
@@ -149,6 +151,8 @@ public:
 	virtual void HandleMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 
 public:
+	UFUNCTION(BlueprintCallable,Category="Interact")
+    virtual void AttackInput(float pressed);
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDamaged(float DamageAmount, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags, AUnitPawn* InstigatorCharacter, AActor* DamageCauser);
 	UFUNCTION(BlueprintImplementableEvent)

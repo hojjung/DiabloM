@@ -355,6 +355,11 @@ bool AUnitPawn::IsAlive()
     return GetHealth() > 0.0f;
 }
 
+void AUnitPawn::AttackInput(float pressed)
+{
+    PRINTF("AttackInput Pressed!");
+}
+
 void AUnitPawn::HandleDamage(float DamageAmount, const FHitResult& HitInfo, const FGameplayTagContainer& DamageTags,
                              AUnitPawn* InstigatorCharacter, AActor* DamageCauser)
 {

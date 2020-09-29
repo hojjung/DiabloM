@@ -1,4 +1,6 @@
 #include "PlayerDiabloCharacter.h"
+
+#include "AbilitySystem/PlayMontageAndWaitForEvent.h"
 #include "AbilitySystem/Attribute/PlayerDiabloAttribute.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Datas/CharacterDataTable.h"
@@ -7,6 +9,7 @@
 #include "Managers/StartMap/PlayerCreateManager.h"
 #include "Objs/Interfaces/Interactable.h"
 #include "Item/Weapon.h"
+
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
     : Super(objInit.SetDefaultSubobjectClass<UPlayerDiabloAttribute>("AttributeSet00"))
 {
@@ -124,15 +127,12 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
 
 void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEquipAry slotWant)
 {
-    
-    
-    TSubclassOf<AWeapon> ItemBP=nullptr;
+    TSubclassOf<AWeapon> ItemBP = nullptr;
     switch (slotWant)
     {
     case ESlotsEquipAry::Head:
         if (meshItem)
         {
-            
             m_SkHeadGear->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
             SetHalfHairMesh();
         }
@@ -180,47 +180,24 @@ void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEqui
         m_SkShoulderPad->SetSkeletalMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_SkEquipment : nullptr);
         break;
     case ESlotsEquipAry::WeaponRight:
-        Destroy(m_RightWeapon);
-       ItemBP=!meshItem->IsEmpty()? meshItem->m_ItemData->m_ItemType.GetRow<FItemType>("")->m_EquipmentBP:nullptr;
-        if(ItemBP)
+
+        if (CreateItemActor(meshItem, &m_RightWeapon, &m_StRightWeapon))
         {
-            //ItemBP
-            m_StRightWeapon->SetStaticMesh(nullptr);
-            FActorSpawnParameters Params;
-            Params.Template=Cast<AActor>( ItemBP->GetDefaultObject());
-            FTransform Trans;
-            AWeapon* Weapon=Cast<AWeapon>( GetWorld()->SpawnActor(ItemBP,&Trans,Params));
-            FAttachmentTransformRules Rules=FAttachmentTransformRules(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,false);
-            Weapon->InitWeapon(this,meshItem);
-            Weapon->AttachToComponent(m_StRightWeapon,Rules);
-            m_RightWeapon=Weapon;
+            return;
         }
-        else
-        {
-            m_StRightWeapon->SetStaticMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_StEquipment : nullptr);
-        }
+
+        m_StRightWeapon->SetStaticMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_StEquipment : nullptr);
         //"RightWeaponShield"
         break;
     case ESlotsEquipAry::WeaponLeft:
-        Destroy(m_LeftWeapon);
-       ItemBP=!meshItem->IsEmpty()? meshItem->m_ItemData->m_ItemType.GetRow<FItemType>("")->m_EquipmentBP:nullptr;
-        if(ItemBP)
+
+        if (CreateItemActor(meshItem, &m_LeftWeapon, &m_StLeftWeapon))
         {
-            //ItemBP
-            m_StLeftWeapon->SetStaticMesh(nullptr);
-            FActorSpawnParameters Params;
-            Params.Template=Cast<AActor>( ItemBP->GetDefaultObject());
-            FTransform Trans;
-            AWeapon* Weapon=Cast<AWeapon>( GetWorld()->SpawnActor(ItemBP,&Trans,Params));
-            FAttachmentTransformRules Rules=FAttachmentTransformRules(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,false);
-            Weapon->InitWeapon(this,meshItem);
-            Weapon->AttachToComponent(m_StLeftWeapon,Rules);
-            m_LeftWeapon=Weapon;
+            return;
         }
-        else
-        {
-            m_StLeftWeapon->SetStaticMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_StEquipment : nullptr);
-        }
+
+        m_StLeftWeapon->SetStaticMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_StEquipment : nullptr);
+
         break;
     default:
         ;
@@ -240,11 +217,11 @@ void APlayerDiabloCharacter::RemoveAllEffect()
 void APlayerDiabloCharacter::SetUnitStat(FName unitID, int level)
 {
     PRINTF("CharacterLevel:%d", level);
-    
+
     m_NameUnitID = unitID;
     const FPlayerEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetPlayerUnitPtr(m_NameUnitID);
     m_GEUnitStat = UnitData->m_DefaultStatTable;
-    
+
     SetCharacterLevel(level);
 
     SetAttackSpeed(1.0f);
@@ -252,11 +229,14 @@ void APlayerDiabloCharacter::SetUnitStat(FName unitID, int level)
 
 void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
 {
+    m_AnimStance=animStance;
     m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-    m_SkBody->SetAnimInstanceClass(animStance->m_StanceAnimation);
-    FAttachmentTransformRules Rule=FAttachmentTransformRules(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,false);
-    m_StRightWeapon->AttachToComponent(m_SkBody,Rule,"RightWeaponShield");
-    m_StLeftWeapon->AttachToComponent(m_SkBody,Rule,"LeftWeaponShield");
+    m_SkBody->SetAnimInstanceClass(m_AnimStance->m_StanceAnimation);
+    FAttachmentTransformRules Rule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget,
+                                                               EAttachmentRule::SnapToTarget,
+                                                               EAttachmentRule::SnapToTarget, false);
+    m_StRightWeapon->AttachToComponent(m_SkBody, Rule, "RightWeaponShield");
+    m_StLeftWeapon->AttachToComponent(m_SkBody, Rule, "LeftWeaponShield");
 }
 
 
@@ -293,12 +273,12 @@ void APlayerDiabloCharacter::EarnExp(float expEarned)
 
         m_fCurrentExp = 0.f;
         m_fMaxExp = Cast<UPlayerDiabloAttribute>(m_AttributeSet)->GetMaxExpForLevelUp();
-        
+
         PRINTF("Next Exp Is: %f", m_fMaxExp);
-        
+
         EarnExp(FMath::Abs(OverflowExp));
     }
-    
+
     m_OnRemainExpChanged.Broadcast(m_fMaxExp - m_fCurrentExp);
 }
 
@@ -308,7 +288,7 @@ bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)
     {
         return false;
     }
-    
+
     PRINTF("LevelUp: %d -> %d", m_nCharacterLevel, NewLevel);
     RemoveStartupGameplayAbilities();
     m_nCharacterLevel = NewLevel;
@@ -398,7 +378,11 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 
 void APlayerDiabloCharacter::AttackInput(float pressed)
 {
-    PRINTF("Attacking");
+    Super::AttackInput(pressed);
+    PRINTF("Player Attacking");
+    UPlayMontageAndWaitForEvent* ADS=UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent();
+    ADS->
+    m_SkBody->GetAnimInstance()->Mong
 }
 
 
@@ -406,10 +390,11 @@ void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
     m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
-    InputComponent->BindAxis("MoveForward", this, &AUnitPawn::MoveForward);
-    InputComponent->BindAxis("MoveRight", this, &AUnitPawn::MoveRight);
+    PlayerInputComponent->BindAxis("MoveForward", this, &APlayerDiabloCharacter::MoveForward);
+    PlayerInputComponent->BindAxis("MoveRight", this, &APlayerDiabloCharacter::MoveRight);
     PlayerInputComponent->BindAction("Interaction", EInputEvent::IE_Pressed, this,
                                      &APlayerDiabloCharacter::InteractWithTarget);
+    PlayerInputComponent->BindAxis("Attack", this, &APlayerDiabloCharacter::AttackInput);
 }
 
 
@@ -445,3 +430,38 @@ void APlayerDiabloCharacter::SetAttackSpeed(float get_attack_speed)
     m_OnAttackPerSecChanged.Broadcast(1 / m_fAttackCoolDown);
 }
 
+bool APlayerDiabloCharacter::CreateItemActor(const FItemInstance* itemInst, AWeapon** wantCachePointer,
+                                             UStaticMeshComponent** attachRoot)
+{
+    if ((*wantCachePointer))
+    {
+        Destroy((*wantCachePointer));
+    }
+
+    if (itemInst->IsEmpty())
+    {
+        return false;
+    }
+
+    auto ItemBP = itemInst->m_ItemData->m_ItemType.GetRow<FItemType>("")->m_EquipmentBP;
+
+    if (!ItemBP)
+    {
+        return false;
+    }
+
+    //ItemBP
+    (*attachRoot)->SetStaticMesh(nullptr);
+    FActorSpawnParameters Params;
+    Params.Template = Cast<AActor>(ItemBP->GetDefaultObject());
+    FTransform Trans;
+    AWeapon* Weapon = Cast<AWeapon>(GetWorld()->SpawnActor(ItemBP, &Trans, Params));
+    FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget,
+                                                                EAttachmentRule::SnapToTarget,
+                                                                EAttachmentRule::SnapToTarget, false);
+    Weapon->InitWeapon(this, itemInst);
+    Weapon->AttachToComponent((*attachRoot), Rules);
+    (*wantCachePointer) = Weapon;
+
+    return true;
+}
