@@ -6,7 +6,28 @@
 #include "AbilitySystemComponent.h"
 #include "DiabloAbilitySystemComp.generated.h"
 
+UENUM(BlueprintType)
+enum class EAbilityInputID : uint8
+{
+	// 0 None
+	None			,
+	// 1 Confirm,
+	Confirm			,
+	// 2 Cancel,
+	Cancel			,
+	// 3 LMB,
+	BaseAttack		,
 
+	Ability1        ,
+	// 4 RMB,
+	Ability2		,
+	// 5 Q,
+	Ability3		,
+	// 6 E,
+	Ability4		,
+	// 7 R,
+	Ability5		,
+};
 class UDiabloAbility;
 
 UCLASS()

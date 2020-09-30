@@ -1,5 +1,7 @@
 #include "ItemDataTable.h"
 
+#include "AbilitySystem/Ability/PlayerBaseAttack.h"
+
 UDataTable* UItemDataTable::GetTierTable = nullptr;
 UDataTable* UItemDataTable::GetItemTable = nullptr;
 UDataTable* UItemDataTable::GetItemTypeTable = nullptr;
@@ -114,6 +116,7 @@ FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMe
 
 FAnimStance::FAnimStance()
 {
+    m_BaseAttackAbility = UPlayerBaseAttack::StaticClass();
     m_fStancePriority = 1.0f;
     m_AryRightHandNeed.Add(FItemTypeHandle());
     m_AryLeftHandNeed.Add(FItemTypeHandle());

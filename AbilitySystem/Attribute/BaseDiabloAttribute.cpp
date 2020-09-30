@@ -1,5 +1,5 @@
 #include "AbilitySystem/Attribute/BaseDiabloAttribute.h"
-#include "AbilitySystem/DiabloAbilitySystemComp.h"
+#include "AbilitySystem/Components/DiabloAbilitySystemComp.h"
 #include "Characters/UnitPawn.h"
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
@@ -115,9 +115,6 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
                 {
                     HitResult = *Context.GetHitResult();
                 }
-                TargetCharacter->HandleDamage(LocalDamageDone, HitResult, SourceTags, SourceCharacter, SourceActor);
-
-                TargetCharacter->HandleHealthChanged(GetHealth(), GetMaxHealth(), SourceTags);
             }
 
             APlayerDiabloCharacter* PC = nullptr;

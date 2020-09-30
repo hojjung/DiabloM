@@ -1,5 +1,5 @@
 #include "AbilitySystem/Execution/DiabloDamageExec.h"
-#include "AbilitySystem/DiabloAbilitySystemComp.h"
+#include "AbilitySystem/Components/DiabloAbilitySystemComp.h"
 #include "AbilitySystem/Attribute/BaseDiabloAttribute.h"
 #include "Characters/UnitPawn.h"
 

@@ -6,6 +6,7 @@
 
 #include "EquipmentSystem.generated.h"
 
+class UDiabloAbilitySystemComp;
 class USaveEquipment;
 
 
@@ -81,6 +82,7 @@ protected:
 
     TMap<FItemInstance*,FActiveGameplayEffectHandle> m_EquipmentEffectContainer;
 
+    UPROPERTY()
     UDiabloAbilitySystemComp* m_TargetAbilitySys;
 
     TArray<FAnimStance*> m_AryAnimStances;

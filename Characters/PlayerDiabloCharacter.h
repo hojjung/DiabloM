@@ -17,7 +17,9 @@
 class IInteractable;
 class ADiabloPlayerController;
 class UCameraDissolve;
+
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
+
 UCLASS()
 class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 {
@@ -94,6 +96,8 @@ protected:
 	AWeapon* m_LeftWeapon;
 	
 	const FAnimStance* m_AnimStance;
+
+	FGameplayAbilitySpecHandle m_BaseAttackHandle;
 protected:
 	virtual void BeginPlay() override;
 
@@ -122,14 +126,14 @@ protected:
 	virtual void SetAttackSpeed(float get_attack_speed)override;
 
 	bool CreateItemActor(const FItemInstance* itemInst,AWeapon** wantCachePointer,UStaticMeshComponent** attachRoot);
+
+	void BindASCInput();
 	//FItemInstance*,AWeapon**,USceneComponent*
 public:
-	
 	virtual void SetUnitStat(FName unitID,int level) override;
 	
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
-	
 
 	virtual void AttackInput(float pressed)override;
 
@@ -148,4 +152,5 @@ public:
 
 	friend UDiabloCheatManager;
 	friend USaveLoadManager;
+
 };

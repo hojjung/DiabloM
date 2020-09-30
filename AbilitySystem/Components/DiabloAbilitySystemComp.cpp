@@ -1,6 +1,6 @@
 #include "DiabloAbilitySystemComp.h"
 #include "Characters/UnitPawn.h"
-#include "AbilitySystem/DiabloAbility.h"
+#include "AbilitySystem/Ability/DiabloAbility.h"
 #include "AbilitySystemGlobals.h"
 
 UDiabloAbilitySystemComp::UDiabloAbilitySystemComp()

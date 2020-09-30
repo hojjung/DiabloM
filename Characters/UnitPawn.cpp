@@ -2,6 +2,7 @@
 #include "NavigationPath.h"
 #include "NavigationData.h"
 #include "NavigationSystem.h"
+#include "AbilitySystem/Components/DiabloAbilitySystemComp.h"
 #include "Datas/CharacterDataTable.h"
 #include "Managers/DiabloGameInstance.h"
 
@@ -37,6 +38,9 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 
     m_fMoveAcceptRadius = 100.f;
     m_fAttackCoolDown = 1.f;
+
+    EffectRemoveOnDeathTag= FGameplayTag::RequestGameplayTag(FName("Effect.RemoveOnDeath"));
+    DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
 }
 
 
@@ -223,47 +227,19 @@ void AUnitPawn::PrintStats()
     //m_AttributeSet->PrintStats();
 }
 
-FActiveGameplayEffectHandle AUnitPawn::ApplyGameEffect(TSubclassOf<UGameplayEffect> gameEffect)
-{
-    return m_AbilitySystemComponent->ApplyGameEffect(gameEffect);
-}
 
 void AUnitPawn::SetUnitStat(FName unitID, int level)
 {
     SetCharacterLevel(level);
-
     m_NameUnitID = unitID;
-
     const FMonsterTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetMonsterUnitPtr(m_NameUnitID);
     m_TextUnitName = UnitData->m_ShowingName;
     m_SkBody->SetSkeletalMesh(UnitData->m_Mesh);
     m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
     m_SkBody->SetAnimInstanceClass(UnitData->m_AnimBP);
-    m_GEUnitStat = UnitData->m_DefaultStatTable;
-
+    m_GEUnitStat = UnitData->m_DefaultStatTable;//몬스터 랜덤 데이터가 마치 아이템 옵션처럼 몬스터에게 붙어야한다.
     check(m_GEUnitStat);
-
-    auto Handle = ApplyGameEffect(m_GEUnitStat);
-
-    if (Handle.IsValid())
-    {
-        PRINTF("IsvAlid");
-    }
-
-
-    //현재 레벨 기본 스텟
-
-    //기본 캐릭터 패시브 스킬
-
-    //배운 스킬
-
-    //아이템 옵션
-
-    //기본 차스텟
-
-    //
-
-    //차스텟 보너스를 기본 스탯에
+    SetUnitStatEffect();
 }
 
 float AUnitPawn::GetHealth() const
@@ -294,55 +270,10 @@ bool AUnitPawn::SetCharacterLevel(int NewLevel)
 
     if (m_nCharacterLevel != NewLevel && NewLevel > 0)
     {
-        // Our level changed so we need to refresh abilities
-        //레벨업으로 업데이트시킬 스킬이 있나?
-        //기본스텟있음
-        RemoveStartupGameplayAbilities();
         m_nCharacterLevel = NewLevel;
-        AddStartupGameplayAbilities();
+        SetUnitStatEffect();
     }
     return true;
-}
-
-bool AUnitPawn::ActivateAbilitiesWithTags(FGameplayTagContainer AbilityTags, bool bAllowRemoteActivation)
-{
-    if (m_AbilitySystemComponent)
-    {
-        return m_AbilitySystemComponent->TryActivateAbilitiesByTag(AbilityTags, bAllowRemoteActivation);
-    }
-
-    return false;
-}
-
-void AUnitPawn::GetActiveAbilitiesWithTags(FGameplayTagContainer AbilityTags, TArray<UDiabloAbility*>& ActiveAbilities)
-{
-    //FGameplayAbilitySpecHandle* FoundHandle = SlottedAbilities.Find(ItemSlot);
-
-    //if (FoundHandle && AbilitySystemComponent)
-    //{
-    //	FGameplayAbilitySpec* FoundSpec = AbilitySystemComponent->FindAbilitySpecFromHandle(*FoundHandle);
-
-    //	if (FoundSpec)
-    //	{
-    //		TArray<UGameplayAbility*> AbilityInstances = FoundSpec->GetAbilityInstances();
-
-    //		// Find all ability instances executed from this slot
-    //		for (UGameplayAbility* ActiveAbility : AbilityInstances)
-    //		{
-    //			ActiveAbilities.Add(Cast<URPGGameplayAbility>(ActiveAbility));
-    //		}
-    //	}
-    //}
-}
-
-bool AUnitPawn::GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, float& TimeRemaining,
-                                           float& CooldownDuration)
-{
-    return false;
-}
-
-void AUnitPawn::RemoveSlottedGameplayAbilities(bool bRemoveAll)
-{
 }
 
 void AUnitPawn::SetAttackSpeed(float get_attack_speed) //per?
@@ -357,29 +288,95 @@ bool AUnitPawn::IsAlive()
 
 void AUnitPawn::AttackInput(float pressed)
 {
+    if (FMath::IsNearlyZero(pressed))
+    {
+        return;
+    }
+    
     PRINTF("AttackInput Pressed!");
 }
 
-void AUnitPawn::HandleDamage(float DamageAmount, const FHitResult& HitInfo, const FGameplayTagContainer& DamageTags,
-                             AUnitPawn* InstigatorCharacter, AActor* DamageCauser)
+float AUnitPawn::PlayAnimMontage(UAnimMontage* anim_montage, float InPlayRate, FName StartSectionName)
 {
-}
-
-void AUnitPawn::HandleHealthChanged(float currentHealth, float maxHealth, const FGameplayTagContainer& EventTags)
-{
-}
-
-
-void AUnitPawn::HandleManaChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
-{
-}
-
-void AUnitPawn::HandleMoveSpeedChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
-{
+    auto* AnimInstance=m_SkBody->GetAnimInstance();
     
+    	if( anim_montage && AnimInstance)
+    	{
+    		float const Duration = AnimInstance->Montage_Play(anim_montage, InPlayRate);
+    
+    		if (Duration > 0.f)
+    		{
+    			// Start at a given Section.
+    			if( StartSectionName != NAME_None )
+    			{
+    				AnimInstance->Montage_JumpToSection(StartSectionName, anim_montage);
+    			}
+    
+    			return Duration;
+    		}
+    	}	
+    
+    return 0.f;
 }
 
-void AUnitPawn::AddStartupGameplayAbilities()
+void AUnitPawn::StopAnimMontage(UAnimMontage* AnimMontage)
+{
+    UAnimInstance * AnimInstance =m_SkBody->GetAnimInstance();
+    UAnimMontage * MontageToStop = (AnimMontage)? AnimMontage : GetCurrentMontage();
+    bool bShouldStopMontage =  AnimInstance && MontageToStop && !AnimInstance->Montage_GetIsStopped(MontageToStop);
+
+    if ( bShouldStopMontage )
+    {
+        AnimInstance->Montage_Stop(MontageToStop->BlendOut.GetBlendTime(), MontageToStop);
+    }
+}
+
+UAnimMontage * AUnitPawn::GetCurrentMontage()
+{
+    UAnimInstance * AnimInstance = m_SkBody->GetAnimInstance();
+    if ( AnimInstance )
+    {
+        return AnimInstance->GetCurrentActiveMontage();
+    }
+
+    return nullptr;
+}
+void AUnitPawn::Die()
+{
+    RemoveAllGameplayAbilities();
+ 
+ 	GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    GetMovementComponent()->SetActive(false);
+ 
+ 	OnCharacterDied.Broadcast(this);
+ 
+ 	if (IsValid(GetDiaAbilitySystem()))
+ 	{
+ 		GetDiaAbilitySystem()->CancelAllAbilities();
+ 
+ 		FGameplayTagContainer EffectTagsToRemove;
+ 		EffectTagsToRemove.AddTag(EffectRemoveOnDeathTag);
+ 		int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
+ 
+ 		GetDiaAbilitySystem()->AddLooseGameplayTag(DeadTag);
+ 	}
+ 
+ 	if (m_DeathMontage)
+ 	{
+ 		PlayAnimMontage(m_DeathMontage);
+ 	}
+ 	else
+ 	{
+ 		FinishDying();
+ 	}
+}
+
+void AUnitPawn::FinishDying()
+{
+    Destroy();
+}
+
+void AUnitPawn::SetUnitStatEffect()
 {
     FGameplayEffectContextHandle EffectContext = m_AbilitySystemComponent->MakeEffectContext();
     EffectContext.AddSourceObject(this);
@@ -391,7 +388,25 @@ void AUnitPawn::AddStartupGameplayAbilities()
         *NewHandle.Data.Get(), m_AbilitySystemComponent);
 }
 
-void AUnitPawn::RemoveStartupGameplayAbilities()
+void AUnitPawn::RemoveAllGameplayAbilities()
 {
+    TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
     
+    for (const FGameplayAbilitySpec& Spec : GetDiaAbilitySystem()->GetActivatableAbilities())
+    {
+        bool A =m_GrantedSkillAbilities.Contains(Spec.Ability->GetClass());
+        bool B =m_GrantedMasteryAbilities.Contains(Spec.Ability->GetClass());
+        bool C =m_GrantedItemAbilities.Contains(Spec.Ability->GetClass());
+            
+        if ((Spec.SourceObject == this) &&(A||B||C))
+        {
+            AbilitiesToRemove.Add(Spec.Handle);
+        }
+    }
+
+    for (int32 i = 0; i < AbilitiesToRemove.Num(); i++)
+    {
+        GetDiaAbilitySystem()->ClearAbility(AbilitiesToRemove[i]);
+    }
+
 }

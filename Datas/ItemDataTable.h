@@ -1,8 +1,8 @@
 #pragma once
 
 #include "DiabloM.h"
-#include "AbilitySystem/AbilityTypes.h"
-#include "AbilitySystem/ItemOptionGameEffect.h"
+#include "AbilitySystem/Ability/DiabloAbility.h"
+#include "AbilitySystem/GameEffect/ItemOptionGameEffect.h"
 #include "Animations/DiaAniminstance.h"
 #include "Datas/OptionDataTable.h"
 #include "Item/ItemHolder.h"
@@ -258,12 +258,7 @@ struct FAnimStance: public FTableRowBase
     GENERATED_BODY()
 public:
     FAnimStance();
-    //만일 쌍검 요구 1개랑
-    //쌍검 +헬멧 요구가 만나면 어떡할것?
-
-    //무기가 첫번째 비교
-    //이후에 중복가능하면
-    //개수가 많이 충족된것으로 고름
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_ShowingText;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -274,6 +269,8 @@ public:
     TArray<FItemTypeHandle> m_AryLeftHandNeed;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<UDiaAniminstance> m_StanceAnimation;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TSubclassOf<UDiabloAbility> m_BaseAttackAbility;
 };
 
 

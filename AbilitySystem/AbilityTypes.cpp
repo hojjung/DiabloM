@@ -1,6 +1,6 @@
 #include "AbilityTypes.h"
-#include "AbilitySystem/DiabloAbility.h"
-#include "AbilitySystem/DiabloAbilitySystemComp.h"
+#include "AbilitySystem/Ability/DiabloAbility.h"
+#include "AbilitySystem/Components/DiabloAbilitySystemComp.h"
 #include "AbilitySystemGlobals.h"
 
 

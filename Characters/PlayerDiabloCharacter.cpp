@@ -1,6 +1,6 @@
 #include "PlayerDiabloCharacter.h"
 
-#include "AbilitySystem/PlayMontageAndWaitForEvent.h"
+#include "AbilitySystem/Task/PlayMontageAndWaitForEvent.h"
 #include "AbilitySystem/Attribute/PlayerDiabloAttribute.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Datas/CharacterDataTable.h"
@@ -9,6 +9,7 @@
 #include "Managers/StartMap/PlayerCreateManager.h"
 #include "Objs/Interfaces/Interactable.h"
 #include "Item/Weapon.h"
+#include "AbilitySystem/Ability/DiabloAbility.h"
 
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
     : Super(objInit.SetDefaultSubobjectClass<UPlayerDiabloAttribute>("AttributeSet00"))
@@ -87,7 +88,6 @@ void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
 
 void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSaveData)
 {
-    //
     m_SkFace->SetMasterPoseComponent(m_SkBody);
     m_SkHair->SetMasterPoseComponent(m_SkBody);
     m_SkGlove->SetMasterPoseComponent(m_SkBody);
@@ -103,10 +103,12 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     SetDefaultShoeMesh();
     //
     m_nCharacterLevel = loadedSaveData->m_nLevel;
+    
     if (m_nCharacterLevel == 0)
     {
         m_nCharacterLevel = 1;
     }
+    
     m_SkFace->SetSkeletalMesh(UPlayerCreateManager::Get->GetFace(loadedSaveData->m_IndexFace));
     m_DefaultFullHairMesh = UPlayerCreateManager::Get->GetHair(loadedSaveData->m_IndexHair, false);
     m_DefaultHalfHairMesh = UPlayerCreateManager::Get->GetHair(loadedSaveData->m_IndexHair, true);
@@ -237,13 +239,30 @@ void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
                                                                EAttachmentRule::SnapToTarget, false);
     m_StRightWeapon->AttachToComponent(m_SkBody, Rule, "RightWeaponShield");
     m_StLeftWeapon->AttachToComponent(m_SkBody, Rule, "LeftWeaponShield");
+
+
+    if(m_BaseAttackHandle.IsValid())
+    {
+        GetDiaAbilitySystem()->ClearAbility(m_BaseAttackHandle);
+    }
+
+    if(IsValid(animStance->m_BaseAttackAbility))
+    {
+        m_BaseAttackHandle = GetDiaAbilitySystem()->GiveAbility(
+            FGameplayAbilitySpec(animStance->m_BaseAttackAbility,
+                                 1,
+                                 static_cast<int32>(animStance->m_BaseAttackAbility.GetDefaultObject()->m_AbilityInputID),
+                                 this));
+    }
 }
 
 
 void APlayerDiabloCharacter::BeginPlay()
 {
     Super::BeginPlay();
+    
     m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
+    
 }
 
 void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -251,15 +270,17 @@ void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
     Super::EndPlay(EndPlayReason);
 }
 
-void APlayerDiabloCharacter::ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn)
+void APlayerDiabloCharacter::ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn)//target
 {
+    PRINTF("ShoWDamage:%f",local_damage_done);
+    //it should go controller
 }
 
 void APlayerDiabloCharacter::EarnExp(float expEarned)
 {
-    m_fCurrentExp += expEarned;
-
     PRINTF("ExpEarned:%f", expEarned);
+    
+    m_fCurrentExp += expEarned;
 
     float OverflowExp = m_fMaxExp - m_fCurrentExp;
 
@@ -290,9 +311,9 @@ bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)
     }
 
     PRINTF("LevelUp: %d -> %d", m_nCharacterLevel, NewLevel);
-    RemoveStartupGameplayAbilities();
+    //RemoveAllGameplayAbilities();
     m_nCharacterLevel = NewLevel;
-    AddStartupGameplayAbilities();
+    SetUnitStatEffect();
     m_OnLevelChanged.Broadcast(m_nCharacterLevel);
 
     return true;
@@ -378,11 +399,12 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 
 void APlayerDiabloCharacter::AttackInput(float pressed)
 {
-    Super::AttackInput(pressed);
-    PRINTF("Player Attacking");
-    UPlayMontageAndWaitForEvent* ADS=UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent();
-    ADS->
-    m_SkBody->GetAnimInstance()->Mong
+    if (FMath::IsNearlyZero(pressed))
+    {
+        return;
+    }
+   
+    GetDiaAbilitySystem()->TryActivateAbility(m_BaseAttackHandle);
 }
 
 
@@ -395,6 +417,8 @@ void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
     PlayerInputComponent->BindAction("Interaction", EInputEvent::IE_Pressed, this,
                                      &APlayerDiabloCharacter::InteractWithTarget);
     PlayerInputComponent->BindAxis("Attack", this, &APlayerDiabloCharacter::AttackInput);
+
+    BindASCInput();
 }
 
 
@@ -435,7 +459,7 @@ bool APlayerDiabloCharacter::CreateItemActor(const FItemInstance* itemInst, AWea
 {
     if ((*wantCachePointer))
     {
-        Destroy((*wantCachePointer));
+        (*wantCachePointer)->Destroy();
     }
 
     if (itemInst->IsEmpty())
@@ -450,18 +474,35 @@ bool APlayerDiabloCharacter::CreateItemActor(const FItemInstance* itemInst, AWea
         return false;
     }
 
-    //ItemBP
     (*attachRoot)->SetStaticMesh(nullptr);
+    
     FActorSpawnParameters Params;
+    
     Params.Template = Cast<AActor>(ItemBP->GetDefaultObject());
+    
     FTransform Trans;
+    
     AWeapon* Weapon = Cast<AWeapon>(GetWorld()->SpawnActor(ItemBP, &Trans, Params));
+    
     FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget,
                                                                 EAttachmentRule::SnapToTarget,
                                                                 EAttachmentRule::SnapToTarget, false);
+                                                                
     Weapon->InitWeapon(this, itemInst);
+    
     Weapon->AttachToComponent((*attachRoot), Rules);
+    
     (*wantCachePointer) = Weapon;
 
     return true;
+}
+
+void APlayerDiabloCharacter::BindASCInput()
+{
+    if (GetDiaAbilitySystem() && IsValid(InputComponent))
+    {
+        GetDiaAbilitySystem()->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(FString("ConfirmTarget"),
+            FString("CancelTarget"), FString("EAbilityInputID"), static_cast<int32>(EAbilityInputID::Confirm), static_cast<int32>(EAbilityInputID::Cancel)));
+    }
+    
 }

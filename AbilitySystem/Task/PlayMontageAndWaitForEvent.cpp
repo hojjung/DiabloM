@@ -1,5 +1,5 @@
 #include "PlayMontageAndWaitForEvent.h"
-#include "AbilitySystem/DiabloAbilitySystemComp.h"
+#include "AbilitySystem/Components/DiabloAbilitySystemComp.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
