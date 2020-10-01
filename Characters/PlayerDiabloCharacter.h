@@ -42,8 +42,9 @@ public:
 	FOnFloatChange m_OnRemainExpChanged;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	FPlayerTypeHandle m_PlayerTableHandle; 
-	
+	FPlayerTypeHandle m_PlayerTableHandle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	TArray<TEnumAsByte< EObjectTypeQuery>> m_TargetingObjectType;
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player")
 	float m_fInteractRange;
@@ -100,12 +101,21 @@ protected:
 	const FAnimStance* m_AnimStance;
 
 	FGameplayAbilitySpecHandle m_BaseAttackHandle;
+
+	UPROPERTY()
+	TArray< AActor*> m_IgnoreActors;
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	void TryCheckInteractable();
+
+	void TryFocusTargetMob();
+
+	virtual void FocusTarget(APawn* target) override;
+
+	
 
 	void OnInteractFound();
 
@@ -156,4 +166,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ResetCombo();
+	UFUNCTION()
+    void OnSeeTarget(APawn* target);
 };

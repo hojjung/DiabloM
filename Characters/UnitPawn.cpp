@@ -40,6 +40,14 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 
     m_EffectRemoveOnDeathTag= FGameplayTag::RequestGameplayTag(FName("Effect.RemoveOnDeath"));
     m_DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
+
+
+    m_AISense = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp00");
+    m_AISense->SetPeripheralVisionAngle(90.f);
+    m_AISense->SightRadius = 760.f;
+    m_AISense->HearingThreshold = 700.f;
+    m_AISense->LOSHearingThreshold = 700.f;
+    m_AISense->bOnlySensePlayers = true;
 }
 
 
@@ -377,6 +385,13 @@ void AUnitPawn::Die()
  		FinishDying();
  	}
 }
+
+void AUnitPawn::FocusTarget(APawn* target)
+{
+    m_FocusedTarget=Cast<AUnitPawn>( target);
+    
+}
+
 
 float AUnitPawn::GetAttackSpeed() const
 {

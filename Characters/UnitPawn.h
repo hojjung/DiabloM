@@ -14,6 +14,8 @@
 #include "AbilitySystem/Ability/DiabloAbility.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Datas/CharacterDataTable.h"
+#include "Perception/PawnSensingComponent.h"
+
 
 
 #include "UnitPawn.generated.h"
@@ -78,6 +80,8 @@ protected:
     UDiabloAbilitySystemComp* m_AbilitySystemComponent;
     UPROPERTY(VisibleAnywhere, Category = Abilities)
     UBaseDiabloAttribute* m_AttributeSet;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Unit")
+    UPawnSensingComponent* m_AISense;
     
     FGameplayTag m_DeadTag;
     
@@ -89,6 +93,9 @@ protected:
     
     TArray<TSubclassOf<UDiabloAbility>> m_GrantedItemAbilities;
 
+    UPROPERTY()
+    AUnitPawn* m_FocusedTarget;
+    
 protected:
     virtual void BeginPlay() override;
 
@@ -164,6 +171,9 @@ public:
     UAnimMontage * GetCurrentMontage();
     
     virtual void Die();
+
+    virtual void FocusTarget(APawn* target);
+
 
 public://AttributeGetter
     float GetAttackSpeed()const;

@@ -76,6 +76,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 
     m_fMaxExp = 0.f;
 
+    m_AISense->bOnlySensePlayers = false;
 }
 
 void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
@@ -266,6 +267,8 @@ void APlayerDiabloCharacter::BeginPlay()
     Super::BeginPlay();
     
     m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
+    m_IgnoreActors.Add(this);
+    m_AISense->OnSeePawn.AddDynamic(this,&APlayerDiabloCharacter::OnSeeTarget);
     
 }
 
@@ -337,12 +340,11 @@ void APlayerDiabloCharacter::TryCheckInteractable()
     FVector TraceEnd = TraceStart + GetCapsule()->GetForwardVector() * m_fInteractRange;
 
     FHitResult OutHit;
-    TArray<AActor*> IgnoreActors; //like weapon or ally
 
     if (!UKismetSystemLibrary::SphereTraceSingle(
             GetWorld(),
             TraceStart, TraceEnd, 15.f,
-            ETraceTypeQuery::TraceTypeQuery3, false, IgnoreActors, EDrawDebugTrace::ForOneFrame, OutHit, true)
+            ETraceTypeQuery::TraceTypeQuery3, false, m_IgnoreActors, EDrawDebugTrace::ForOneFrame, OutHit, true)
         || !OutHit.GetActor())
     {
         m_FocusedInteractable.SetInterface(nullptr);
@@ -383,6 +385,63 @@ void APlayerDiabloCharacter::TryCheckInteractable()
     }
 }
 
+void APlayerDiabloCharacter::TryFocusTargetMob()
+{
+    FVector HalfSize = FVector(500,75,150);
+    FVector TraceStart = m_SkBody->GetComponentLocation();
+    TraceStart=TraceStart + GetCapsule()->GetForwardVector() * HalfSize.X;
+    //TraceStart.X += HalfSize.X;
+    
+    FVector TraceEnd =TraceStart;// TraceStart + -GetCapsule()->GetForwardVector() * HalfSize.X;
+    FHitResult OutHit;
+
+    
+    if (!  UKismetSystemLibrary::BoxTraceSingleForObjects(
+            GetWorld(),
+            TraceStart, TraceEnd,HalfSize,GetActorRotation(),
+            m_TargetingObjectType,false,m_IgnoreActors, EDrawDebugTrace::ForOneFrame, OutHit, true,FLinearColor::Blue)
+        || !OutHit.GetActor())
+    {
+        FocusTarget(nullptr);
+        return;
+    }
+    
+    AUnitPawn* FocusedUnit=Cast<AUnitPawn>(OutHit.GetActor());
+
+    if(m_FocusedTarget)
+    {
+        if (FocusedUnit == m_FocusedTarget)
+        {
+            return;
+        }
+        else
+        {
+            FocusTarget(nullptr);
+        }
+    }
+
+    FocusTarget(FocusedUnit);
+}
+
+void APlayerDiabloCharacter::FocusTarget(APawn* target)
+{
+    Super::FocusTarget(target);
+
+    //PRINTF("FocusTarget:%s",*m_FocusedTarget->GetName());
+}
+
+void APlayerDiabloCharacter::OnSeeTarget(APawn* target)
+{
+    if(m_FocusedTarget)
+    {
+        return;
+    }
+    
+    PRINTF("OnSeeTarget");
+
+    FocusTarget(target);
+}
+
 void APlayerDiabloCharacter::InteractWithTarget()
 {
     if (!m_FocusedInteractable)
@@ -406,6 +465,12 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 
     TryCheckInteractable();
+    TryFocusTargetMob();
+
+    if(m_FocusedTarget)
+    {
+        DrawDebugLine(GetWorld(),GetCapsule()->GetComponentLocation(),m_FocusedTarget->GetActorLocation(),FColor::Cyan,false,-1,0,2.f);
+    }
 }
 
 
@@ -467,6 +532,7 @@ bool APlayerDiabloCharacter::CreateItemActor(const FItemInstance* itemInst, AWea
 {
     if ((*wantCachePointer))
     {
+        m_IgnoreActors.Remove((*wantCachePointer));
         (*wantCachePointer)->RemoveWeapon(this);
         (*wantCachePointer)->Destroy();
     }
@@ -503,6 +569,8 @@ bool APlayerDiabloCharacter::CreateItemActor(const FItemInstance* itemInst, AWea
     
     (*wantCachePointer) = Weapon;
 
+    m_IgnoreActors.Add((*wantCachePointer));
+    
     return true;
 }
 
