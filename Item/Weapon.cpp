@@ -26,18 +26,17 @@ AWeapon::AWeapon()
 	m_bIsAttacking = false;
 }
 
-
-void AWeapon::InitWeapon(APlayerDiabloCharacter* pl, const FItemInstance* itemInst)
+void AWeapon::InitWeapon(AUnitPawn* pl, const FItemInstance* itemInst)
 {
 	m_User = pl;
 
 	m_ItemInstPtr=itemInst;
 
-	if(m_ItemInstPtr->m_ItemData->m_ItemMesh)
+	if(m_ItemInstPtr->m_ItemData->m_StEquipment)
 	{
 		m_StMeshWeapon->SetStaticMesh(m_ItemInstPtr->m_ItemData->m_StEquipment);
 	}
-	else if(m_ItemInstPtr->m_ItemData->m_ItemMesh)
+	else if(m_ItemInstPtr->m_ItemData->m_SkEquipment)
 	{
 		m_SkMeshWeapon->SetSkeletalMesh(m_ItemInstPtr->m_ItemData->m_SkEquipment);
 	}
@@ -45,4 +44,9 @@ void AWeapon::InitWeapon(APlayerDiabloCharacter* pl, const FItemInstance* itemIn
 	//addition scale
 
 	//pivot, rotation setting
+}
+
+void AWeapon::RemoveWeapon(AUnitPawn* pl)
+{
+	
 };

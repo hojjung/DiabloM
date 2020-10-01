@@ -95,7 +95,7 @@ public:
         m_ShowingName = FText::FromString("TheShowNameLikeOneHandSword");
         //Blueprint'/Game/Blueprints/Abilities/GE_ItemOptionEffect.GE_ItemOptionEffect_C'
         static ConstructorHelpers::FClassFinder<UItemOptionGameEffect>GameEffectAsset
-        (TEXT("Blueprint'/Game/Blueprints/Abilities/GE_ItemOptionEffect.GE_ItemOptionEffect_C'"));
+        (TEXT("Blueprint'/Game/Blueprints/Abilities/GameEffect/GE_ItemOptionEffect.GE_ItemOptionEffect_C'"));
 
         if(GameEffectAsset.Succeeded())
         {

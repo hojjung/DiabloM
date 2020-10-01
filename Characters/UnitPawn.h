@@ -18,37 +18,40 @@
 
 #include "UnitPawn.generated.h"
 
-
+DECLARE_MULTICAST_DELEGATE(FOnAttack);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, class AUnitPawn*, Character);
 
 class UNavigationSystemV1;
 UCLASS()
 class DIABLOM_API AUnitPawn : public APawn, public IAbilitySystemInterface
 {
-    // Friended to allow access to handle functions above
     friend UBaseDiabloAttribute;
 
     GENERATED_BODY()
 
 public:
     AUnitPawn(const FObjectInitializer& objInit);
-public:
-    UPROPERTY(EditAnywhere, Category = "Widget")
-    FText m_TextUnitName;
-    UPROPERTY(BlueprintAssignable, Category = "GASDocumentation|GDCharacter")
-    FCharacterDiedDelegate OnCharacterDied;
-    FDelegateHandle InventoryOldUpdateHandle;
-    FDelegateHandle InventoryOldLoadedHandle;
     
+public:
+    UPROPERTY(EditAnywhere)
+    FText m_TextUnitName;
+    UPROPERTY(EditAnywhere)
+    FMonsterTypeHandle m_MonsterUnitHandle;
+    UPROPERTY(BlueprintAssignable)
+    FCharacterDiedDelegate m_OnCharacterDied;
+        
+    FDelegateHandle m_InventoryUpdateHandle;
+    
+    FDelegateHandle m_InventoryLoadedHandle;
 
+    FOnAttack m_OnStartAttack;
+
+    FOnAttack m_OnPressedAttack;
+
+    FOnAttack m_OnEndAttack;
 protected:
-    FGameplayTag DeadTag;
-    FGameplayTag EffectRemoveOnDeathTag;
     UPROPERTY()
     UAnimMontage* m_DeathMontage;
-    TArray<TSubclassOf<UDiabloAbility>> m_GrantedSkillAbilities;
-    TArray<TSubclassOf<UDiabloAbility>> m_GrantedMasteryAbilities;
-    TArray<TSubclassOf<UDiabloAbility>> m_GrantedItemAbilities;
     UPROPERTY()
     TSubclassOf<UGameplayEffect> m_GEUnitStat;
     UPROPERTY(EditAnywhere, Category = Unit)
@@ -63,9 +66,6 @@ protected:
     float m_fMoveAcceptRadius;
     UPROPERTY()
     UNavigationSystemV1* m_NavSys;
-
-    float m_fAttackCoolDown;
-
     UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Character")
     UCapsuleComponent* m_Capsule;
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Character")
@@ -74,11 +74,20 @@ protected:
     UUnitMovement* m_Movement;
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "AI")
     UPathFollowingComponent* m_PFComp;
-    //
     UPROPERTY(VisibleAnywhere, Category = Abilities)
     UDiabloAbilitySystemComp* m_AbilitySystemComponent;
     UPROPERTY(VisibleAnywhere, Category = Abilities)
     UBaseDiabloAttribute* m_AttributeSet;
+    
+    FGameplayTag m_DeadTag;
+    
+    FGameplayTag m_EffectRemoveOnDeathTag;
+    
+    TArray<TSubclassOf<UDiabloAbility>> m_GrantedSkillAbilities;
+    
+    TArray<TSubclassOf<UDiabloAbility>> m_GrantedMasteryAbilities;
+    
+    TArray<TSubclassOf<UDiabloAbility>> m_GrantedItemAbilities;
 
 protected:
     virtual void BeginPlay() override;
@@ -88,16 +97,20 @@ protected:
     void CreateSkMeshComponent(USceneComponent* rootWant, USkeletalMeshComponent** refSkComp, FName keyName);
 
 public:
-    UFUNCTION(BlueprintCallable, Category = "GASDocumentation|GDCharacter")
+    UFUNCTION(BlueprintCallable)
     virtual void FinishDying();
     UFUNCTION(BlueprintCallable)
     void MoveToLocation(FVector goalLocation);
     UFUNCTION(BlueprintCallable)
     void MoveToActor(AActor* goalTarget);
     UFUNCTION(BlueprintCallable,Category="Interact")
+    virtual void StartAttack();
+    UFUNCTION(BlueprintCallable,Category="Interact")
+    virtual void EndAttack();
+    UFUNCTION(BlueprintCallable,Category="Interact")
     virtual void AttackInput(float pressed);
 
-    virtual void SetUnitStat(FName unitID, int level);
+    virtual void SetUnitStat(FDataTableRowHandle unitID, int level);
     
     void SetUnitStatEffect();
 
@@ -110,8 +123,6 @@ public:
     void MoveForward(float AxisValue);
 
     void MoveRight(float AxisValue);
-
-    virtual void SetAttackSpeed(float get_attack_speed);
 
     virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
@@ -151,11 +162,10 @@ public:
     void StopAnimMontage(UAnimMontage* AnimMontage);
 
     UAnimMontage * GetCurrentMontage();
-
     
     virtual void Die();
 
-    
-    
+public://AttributeGetter
+    float GetAttackSpeed()const;
 
 };

@@ -46,8 +46,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_Accuracy;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_AttackPerSec;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_AttackSpeed;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_CastSpeed;
@@ -139,7 +137,6 @@ protected:
     void UpdatePhysDmg(float v);
     void UpdateAllDmg(float v);
     void UpdateAccuracy(float v);
-    void UpdateAttackPer(float v);
     void UpdateAttackSpeed(float v);
     void UpdateCastSpeed(float v);
     void UpdateCritical(float v);

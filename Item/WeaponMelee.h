@@ -8,6 +8,7 @@
 /**
  * 
  */
+//(FComponentBeginOverlapSignature, UPrimitiveComponent, OnComponentBeginOverlap, UPrimitiveComponent*, OverlappedComponent, AActor*, OtherActor, UPrimitiveComponent*, OtherComp, int32, OtherBodyIndex, bool, bFromSweep, const FHitResult &, SweepResult);
 UCLASS()
 class DIABLOM_API AWeaponMelee : public AWeapon
 {
@@ -21,16 +22,21 @@ protected:
 	UCapsuleComponent* m_MeleeCollison;
 	UPROPERTY()
 	TSet<AActor*> m_AlreadyHittenForIgnore;
-	
-	FGameplayTag m_CachedAttackEvent;
-	
-public:
-	virtual void InitWeapon(APlayerDiabloCharacter* pl, const FItemInstance* itemInst) override;
 
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	FDelegateHandle m_StartDeleHandle;
+
+	FDelegateHandle m_EndDeleHandle;
+public:
+	virtual void InitWeapon(AUnitPawn* pl, const FItemInstance* itemInst) override;
+
+	UFUNCTION()
+	void OnOverlapWeapon(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	virtual void RemoveWeapon(AUnitPawn* pl) override;
 
 	UFUNCTION(BlueprintCallable)
-	void BeginWeaponAttack(FGameplayTag tag);
+	void BeginWeaponAttack();
 	
 	UFUNCTION(BlueprintCallable)
 	void EndWeaponAttack();

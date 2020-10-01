@@ -17,7 +17,7 @@ struct FEntityTable : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FEntityTable()
+	FEntityTable(): m_DeathMontage(nullptr)
 	{
 	}
 
@@ -30,7 +30,8 @@ public:
 	FText m_UnitDesc;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> m_DefaultStatTable;
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UAnimMontage* m_DeathMontage;
 };
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
@@ -105,6 +106,7 @@ public:
 };
 
 
+
 // m_Head.m_Slot = ESlotsEquipAry::Head;
 // m_Neck.m_Slot = ESlotsEquipAry::Neck;
 // m_Torso.m_Slot = ESlotsEquipAry::Torso;
@@ -159,4 +161,28 @@ public:
 	static const FNPCEntityTable& GetNPC(FName id);
 
 	static const FNPCEntityTable* GetNPCPtr(FName id);
+};
+
+USTRUCT(BlueprintType)
+struct FMonsterTypeHandle :public FDataTableRowHandle
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FMonsterTypeHandle()
+	{
+		DataTable=UCharacterDataTable::GetMonsterEntityTable;
+	}
+
+};
+
+USTRUCT(BlueprintType)
+struct FPlayerTypeHandle :public FDataTableRowHandle
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FPlayerTypeHandle()
+	{
+		DataTable=UCharacterDataTable::GetPlayerEntityTable;
+	}
+
 };

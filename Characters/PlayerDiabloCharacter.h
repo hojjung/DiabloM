@@ -38,9 +38,11 @@ public:
 	int m_HairIndex;
 	
 	FOnFloatChange m_OnLevelChanged;
-	FOnFloatChange m_OnAttackPerSecChanged;
 	FOnFloatChange m_OnExpGaugeChanged;
 	FOnFloatChange m_OnRemainExpChanged;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	FPlayerTypeHandle m_PlayerTableHandle; 
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player")
@@ -123,14 +125,13 @@ protected:
 
 	void SetDefaultGloveMesh();
 
-	virtual void SetAttackSpeed(float get_attack_speed)override;
 
 	bool CreateItemActor(const FItemInstance* itemInst,AWeapon** wantCachePointer,UStaticMeshComponent** attachRoot);
 
 	void BindASCInput();
 	//FItemInstance*,AWeapon**,USceneComponent*
 public:
-	virtual void SetUnitStat(FName unitID,int level) override;
+	virtual void SetUnitStat(FDataTableRowHandle unitID,int level) override;
 	
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
@@ -153,4 +154,6 @@ public:
 	friend UDiabloCheatManager;
 	friend USaveLoadManager;
 
+	UFUNCTION(BlueprintCallable)
+	void ResetCombo();
 };

@@ -37,10 +37,9 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
     m_NavSys = nullptr;
 
     m_fMoveAcceptRadius = 100.f;
-    m_fAttackCoolDown = 1.f;
 
-    EffectRemoveOnDeathTag= FGameplayTag::RequestGameplayTag(FName("Effect.RemoveOnDeath"));
-    DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
+    m_EffectRemoveOnDeathTag= FGameplayTag::RequestGameplayTag(FName("Effect.RemoveOnDeath"));
+    m_DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
 }
 
 
@@ -68,9 +67,9 @@ void AUnitPawn::BeginPlay()
     Super::BeginPlay();
     m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 
-    if (m_NameUnitID != NAME_None)
+    if (!m_MonsterUnitHandle.IsNull())
     {
-        SetUnitStat(m_NameUnitID, 1);
+        SetUnitStat(m_MonsterUnitHandle, 1);
     }
 }
 
@@ -165,10 +164,21 @@ void AUnitPawn::MoveToActor(AActor* goalTarget)
     }
 }
 
+void AUnitPawn::StartAttack()
+{
+    m_OnStartAttack.Broadcast();
+}
+
+void AUnitPawn::EndAttack()
+{
+    m_OnEndAttack.Broadcast();
+}
+
 // Called every frame
 void AUnitPawn::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
 }
 
 
@@ -228,17 +238,18 @@ void AUnitPawn::PrintStats()
 }
 
 
-void AUnitPawn::SetUnitStat(FName unitID, int level)
+void AUnitPawn::SetUnitStat(FDataTableRowHandle unitID, int level)
 {
+    m_NameUnitID = unitID.RowName;
     SetCharacterLevel(level);
-    m_NameUnitID = unitID;
-    const FMonsterTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetMonsterUnitPtr(m_NameUnitID);
+    const FMonsterTable* const UnitData = unitID.GetRow<FMonsterTable>("");
     m_TextUnitName = UnitData->m_ShowingName;
     m_SkBody->SetSkeletalMesh(UnitData->m_Mesh);
     m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
     m_SkBody->SetAnimInstanceClass(UnitData->m_AnimBP);
     m_GEUnitStat = UnitData->m_DefaultStatTable;//몬스터 랜덤 데이터가 마치 아이템 옵션처럼 몬스터에게 붙어야한다.
     check(m_GEUnitStat);
+    m_DeathMontage = UnitData->m_DeathMontage;
     SetUnitStatEffect();
 }
 
@@ -276,11 +287,6 @@ bool AUnitPawn::SetCharacterLevel(int NewLevel)
     return true;
 }
 
-void AUnitPawn::SetAttackSpeed(float get_attack_speed) //per?
-{
-    m_fAttackCoolDown = get_attack_speed;
-}
-
 bool AUnitPawn::IsAlive()
 {
     return GetHealth() > 0.0f;
@@ -292,8 +298,9 @@ void AUnitPawn::AttackInput(float pressed)
     {
         return;
     }
-    
+
     PRINTF("AttackInput Pressed!");
+    m_OnPressedAttack.Broadcast();
 }
 
 float AUnitPawn::PlayAnimMontage(UAnimMontage* anim_montage, float InPlayRate, FName StartSectionName)
@@ -348,17 +355,17 @@ void AUnitPawn::Die()
  	GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMovementComponent()->SetActive(false);
  
- 	OnCharacterDied.Broadcast(this);
+ 	m_OnCharacterDied.Broadcast(this);
  
  	if (IsValid(GetDiaAbilitySystem()))
  	{
  		GetDiaAbilitySystem()->CancelAllAbilities();
  
  		FGameplayTagContainer EffectTagsToRemove;
- 		EffectTagsToRemove.AddTag(EffectRemoveOnDeathTag);
+ 		EffectTagsToRemove.AddTag(m_EffectRemoveOnDeathTag);
  		int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
  
- 		GetDiaAbilitySystem()->AddLooseGameplayTag(DeadTag);
+ 		GetDiaAbilitySystem()->AddLooseGameplayTag(m_DeadTag);
  	}
  
  	if (m_DeathMontage)
@@ -369,6 +376,11 @@ void AUnitPawn::Die()
  	{
  		FinishDying();
  	}
+}
+
+float AUnitPawn::GetAttackSpeed() const
+{
+    return m_AttributeSet->GetAttackSpeed();
 }
 
 void AUnitPawn::FinishDying()

@@ -17,43 +17,59 @@ AWeaponMelee::AWeaponMelee()
     m_MeleeCollison->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     //m_MeleeCollison->SetHiddenInGame(true);
     m_MeleeCollison->SetCastShadow(false);
-
     m_bIsAttacking=false;
+    m_CachedAttackEvent=FGameplayTag::RequestGameplayTag("Ability.BaseAttack");
 }
 
-void AWeaponMelee::InitWeapon(APlayerDiabloCharacter* pl, const FItemInstance* itemInst)
+void AWeaponMelee::InitWeapon(AUnitPawn* pl, const FItemInstance* itemInst)
 {   
     Super::InitWeapon(pl,itemInst);
-    m_MeleeCollison->IgnoreActorWhenMoving(m_User,true);
+    m_MeleeCollison->IgnoreActorWhenMoving(m_User.Get(),true);
+    m_MeleeCollison->IgnoreComponentWhenMoving(m_User.Get()->GetCapsule(),true);
+    
+    m_StartDeleHandle=pl->m_OnStartAttack.AddUObject(this,&AWeaponMelee::BeginWeaponAttack);
+    m_EndDeleHandle=pl->m_OnEndAttack.AddUObject(this,&AWeaponMelee::EndWeaponAttack);
+    m_MeleeCollison->OnComponentBeginOverlap.AddDynamic(this,&AWeaponMelee::OnOverlapWeapon);
 }
 
-void AWeaponMelee::NotifyActorBeginOverlap(AActor* OtherActor)
+void AWeaponMelee::OnOverlapWeapon(
+    UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+    bool bFromSweep, const FHitResult& SweepResult)
 {
-    Super::NotifyActorBeginOverlap(OtherActor);
-    
+    if(m_User.Get() == OtherActor)
+    {
+        return;
+    }
     if (m_AlreadyHittenForIgnore.Contains(OtherActor))
     {
         return;
     }
+    
     m_AlreadyHittenForIgnore.Add(OtherActor);
 
     FGameplayEventData EventData;
-    EventData.Instigator = m_User;
+    EventData.Instigator = m_User.Get();
     EventData.Target = OtherActor;
 
-    UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(m_User,m_CachedAttackEvent,EventData);
+    UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(m_User.Get(),m_CachedAttackEvent,EventData);
 }
 
-void AWeaponMelee::BeginWeaponAttack(FGameplayTag tag)
+void AWeaponMelee::RemoveWeapon(AUnitPawn* pl)
+{
+    pl->m_OnStartAttack.Remove(m_StartDeleHandle);
+    pl->m_OnStartAttack.Remove(m_EndDeleHandle);
+}
+
+void AWeaponMelee::BeginWeaponAttack()
 {
     m_bIsAttacking=true;
     m_MeleeCollison->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-    m_CachedAttackEvent=tag;
 }
 
 void AWeaponMelee::EndWeaponAttack()
 {
     m_bIsAttacking=false;
     m_MeleeCollison->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    //PRINTF("Attack End %d",m_AlreadyHittenForIgnore.Num());
     m_AlreadyHittenForIgnore.Reset();
 }

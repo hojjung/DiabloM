@@ -1,6 +1,7 @@
 #include "PlayerBaseAttack.h"
 
 #include "AbilitySystem/Task/PlayMontageAndWaitForEvent.h"
+#include "Characters/PlayerDiabloCharacter.h"
 
 UPlayerBaseAttack::UPlayerBaseAttack()
 {
@@ -26,7 +27,6 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
     const FGameplayEventData* TriggerEventData)
 {
-    PRINTF("Activated BaseAttack");
     if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
     {
        // m_nSectionIndex=0;
@@ -35,21 +35,18 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
     UAnimMontage* MontageToPlay = m_BaseAttackMotion;
 
+    float AttackSpeed=Cast<APlayerDiabloCharacter>( ActorInfo->AvatarActor.Get())->GetAttackSpeed();
     
-    //if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.AimDownSights"))) &&
-     //   !GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.AimDownSights.Removal"))))
-    {
-        //MontageToPlay = FireIronsightsMontage;
-    }
-
-    // Play fire montage and wait for event telling us to spawn the projectile
-    UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(this,NAME_None, MontageToPlay, FGameplayTagContainer(), 1.0f,  GetSectionName(), false, 1.0f);
+    UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(
+        this,NAME_None, MontageToPlay, FGameplayTagContainer(), AttackSpeed,
+        GetSectionName(), false, 1.0f);
+    
     Task->OnBlendOut.AddDynamic(this, &UPlayerBaseAttack::OnCompleted);
     Task->OnCompleted.AddDynamic(this, &UPlayerBaseAttack::OnCompleted);
     Task->OnInterrupted.AddDynamic(this, &UPlayerBaseAttack::OnCancelled);
     Task->OnCancelled.AddDynamic(this, &UPlayerBaseAttack::OnCancelled);
     Task->EventReceived.AddDynamic(this, &UPlayerBaseAttack::EventReceived);
-    // ReadyForActivation() is how you activate the AbilityTask in C++. Blueprint has magic from K2Node_LatentGameplayTaskCall that will automatically call ReadyForActivation().
+    
     Task->ReadyForActivation();
 }
 
@@ -58,18 +55,23 @@ void UPlayerBaseAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo
     Super::OnGiveAbility(ActorInfo, Spec);
 
     m_AryMontageSections = m_BaseAttackMotion->GetArySections();
+    ResetComboSection();
+}
+
+void UPlayerBaseAttack::ResetComboSection()
+{
     m_nSectionIndex=0;
 }
 
 void UPlayerBaseAttack::OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-  //  m_nSectionIndex=0;
+    ResetComboSection();
     EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
 void UPlayerBaseAttack::OnCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-  //  m_nSectionIndex=0;
+    //Each one base attack
     EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
@@ -77,7 +79,7 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
 {
     if (EventTag == FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility")))
     {
-      //  m_nSectionIndex=0;
+        ResetComboSection();
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
         return;
     }

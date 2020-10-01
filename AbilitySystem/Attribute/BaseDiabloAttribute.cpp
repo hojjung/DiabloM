@@ -45,6 +45,10 @@ void UBaseDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attribut
      {
         NewValue = FMath::Clamp<float>(NewValue, 150, 1000);
      }
+     else if (Attribute == GetAttackSpeedAttribute())
+     {
+         NewValue = FMath::Clamp<float>(NewValue, 0.1, 3);
+     }
 }
 
 void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -177,7 +181,6 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
     else if (Data.EvaluatedData.Attribute == GetAttackSpeedAttribute())
     {
         //float attack speed multiple
-        TargetCharacter->SetAttackSpeed(GetAttackSpeed());
     }
     else if (Data.EvaluatedData.Attribute == GetPhysicalDefenseAttribute())
     {

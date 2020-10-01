@@ -5,6 +5,7 @@
 #include "DiabloM.h"
 #include "GameFramework/Actor.h"
 #include "GameplayTagContainer.h"
+#include "Characters/UnitPawn.h"
 #include "Datas/ItemDataTable.h"
 
 #include "Weapon.generated.h"
@@ -24,22 +25,24 @@ protected:
 	USkeletalMeshComponent* m_SkMeshWeapon;
 	UPROPERTY(BlueprintReadWrite,VisibleAnywhere)
 	UStaticMeshComponent* m_StMeshWeapon;
-	UPROPERTY()
-	APlayerDiabloCharacter* m_User;
+	
+	TWeakObjectPtr< AUnitPawn> m_User;
 
 	bool m_bIsAttacking;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	FGameplayTag m_CachedAttackEvent;
 
 	const FItemInstance* m_ItemInstPtr;
 
 public:
-	virtual void InitWeapon(APlayerDiabloCharacter* pl,const FItemInstance* itemInst);
+	virtual void InitWeapon(AUnitPawn* pl,const FItemInstance* itemInst);
 	
 
 	FORCEINLINE bool GetIsAttacking()
 	{
 		return m_bIsAttacking;
 	}
+
+	virtual  void RemoveWeapon(AUnitPawn* pl);
 };

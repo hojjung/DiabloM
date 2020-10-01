@@ -10,6 +10,7 @@
 #include "Objs/Interfaces/Interactable.h"
 #include "Item/Weapon.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
+#include "AbilitySystem/Ability/PlayerBaseAttack.h"
 
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
     : Super(objInit.SetDefaultSubobjectClass<UPlayerDiabloAttribute>("AttributeSet00"))
@@ -75,7 +76,6 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 
     m_fMaxExp = 0.f;
 
-    m_fAttackCoolDown = 1.0f;
 }
 
 void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
@@ -116,7 +116,8 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     m_SkHair->SetSkeletalMesh(m_DefaultFullHairMesh); //later equipment will doit
     m_TextUnitName = FText::FromString(loadedSaveData->m_TextName);
     //
-    SetUnitStat(loadedSaveData->m_ClassName, m_nCharacterLevel);
+    m_PlayerTableHandle.RowName=loadedSaveData->m_ClassName;
+    SetUnitStat(m_PlayerTableHandle, m_nCharacterLevel);
 
     LoadExp(loadedSaveData);
 
@@ -216,17 +217,20 @@ void APlayerDiabloCharacter::RemoveAllEffect()
 }
 
 
-void APlayerDiabloCharacter::SetUnitStat(FName unitID, int level)
+void APlayerDiabloCharacter::SetUnitStat(FDataTableRowHandle unitID, int level)
 {
     PRINTF("CharacterLevel:%d", level);
 
-    m_NameUnitID = unitID;
-    const FPlayerEntityTable* const UnitData = GetGameInstance<UDiabloGameInstance>()->GetPlayerUnitPtr(m_NameUnitID);
+    m_NameUnitID = unitID.RowName;
+    
+    const FPlayerEntityTable* const UnitData = unitID.GetRow<FPlayerEntityTable>("");
+    
     m_GEUnitStat = UnitData->m_DefaultStatTable;
-
+    
+    m_DeathMontage = UnitData->m_DeathMontage;
+    
     SetCharacterLevel(level);
 
-    SetAttackSpeed(1.0f);
 }
 
 void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
@@ -311,12 +315,20 @@ bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)
     }
 
     PRINTF("LevelUp: %d -> %d", m_nCharacterLevel, NewLevel);
-    //RemoveAllGameplayAbilities();
     m_nCharacterLevel = NewLevel;
     SetUnitStatEffect();
     m_OnLevelChanged.Broadcast(m_nCharacterLevel);
 
     return true;
+}
+
+void APlayerDiabloCharacter::ResetCombo()
+{
+    auto* BaseAbiliSpec =GetDiaAbilitySystem()->FindAbilitySpecFromHandle(m_BaseAttackHandle);
+    if(BaseAbiliSpec)
+    {
+        Cast<UPlayerBaseAttack>(BaseAbiliSpec->GetPrimaryInstance())->ResetComboSection();
+    }
 }
 
 void APlayerDiabloCharacter::TryCheckInteractable()
@@ -403,7 +415,9 @@ void APlayerDiabloCharacter::AttackInput(float pressed)
     {
         return;
     }
-   
+
+    m_OnPressedAttack.Broadcast();
+    
     GetDiaAbilitySystem()->TryActivateAbility(m_BaseAttackHandle);
 }
 
@@ -447,18 +461,13 @@ void APlayerDiabloCharacter::SetDefaultGloveMesh()
     m_SkGlove->SetSkeletalMesh(m_DefaultGloveMesh);
 }
 
-void APlayerDiabloCharacter::SetAttackSpeed(float get_attack_speed)
-{
-    Super::SetAttackSpeed(get_attack_speed);
-
-    m_OnAttackPerSecChanged.Broadcast(1 / m_fAttackCoolDown);
-}
 
 bool APlayerDiabloCharacter::CreateItemActor(const FItemInstance* itemInst, AWeapon** wantCachePointer,
                                              UStaticMeshComponent** attachRoot)
 {
     if ((*wantCachePointer))
     {
+        (*wantCachePointer)->RemoveWeapon(this);
         (*wantCachePointer)->Destroy();
     }
 
