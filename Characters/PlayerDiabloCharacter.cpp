@@ -104,12 +104,12 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     SetDefaultShoeMesh();
     //
     m_nCharacterLevel = loadedSaveData->m_nLevel;
-    
+
     if (m_nCharacterLevel == 0)
     {
         m_nCharacterLevel = 1;
     }
-    
+
     m_SkFace->SetSkeletalMesh(UPlayerCreateManager::Get->GetFace(loadedSaveData->m_IndexFace));
     m_DefaultFullHairMesh = UPlayerCreateManager::Get->GetHair(loadedSaveData->m_IndexHair, false);
     m_DefaultHalfHairMesh = UPlayerCreateManager::Get->GetHair(loadedSaveData->m_IndexHair, true);
@@ -117,7 +117,7 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     m_SkHair->SetSkeletalMesh(m_DefaultFullHairMesh); //later equipment will doit
     m_TextUnitName = FText::FromString(loadedSaveData->m_TextName);
     //
-    m_PlayerTableHandle.RowName=loadedSaveData->m_ClassName;
+    m_PlayerTableHandle.RowName = loadedSaveData->m_ClassName;
     SetUnitStat(m_PlayerTableHandle, m_nCharacterLevel);
 
     LoadExp(loadedSaveData);
@@ -223,20 +223,19 @@ void APlayerDiabloCharacter::SetUnitStat(FDataTableRowHandle unitID, int level)
     PRINTF("CharacterLevel:%d", level);
 
     m_NameUnitID = unitID.RowName;
-    
-    const FPlayerEntityTable* const UnitData = unitID.GetRow<FPlayerEntityTable>("");
-    
-    m_GEUnitStat = UnitData->m_DefaultStatTable;
-    
-    m_DeathMontage = UnitData->m_DeathMontage;
-    
-    SetCharacterLevel(level);
 
+    const FPlayerEntityTable* const UnitData = unitID.GetRow<FPlayerEntityTable>("");
+
+    m_GEUnitStat = UnitData->m_DefaultStatTable;
+
+    m_DeathMontage = UnitData->m_DeathMontage;
+
+    SetCharacterLevel(level);
 }
 
 void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
 {
-    m_AnimStance=animStance;
+    m_AnimStance = animStance;
     m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
     m_SkBody->SetAnimInstanceClass(m_AnimStance->m_StanceAnimation);
     FAttachmentTransformRules Rule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget,
@@ -246,17 +245,18 @@ void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
     m_StLeftWeapon->AttachToComponent(m_SkBody, Rule, "LeftWeaponShield");
 
 
-    if(m_BaseAttackHandle.IsValid())
+    if (m_BaseAttackHandle.IsValid())
     {
         GetDiaAbilitySystem()->ClearAbility(m_BaseAttackHandle);
     }
 
-    if(IsValid(animStance->m_BaseAttackAbility))
+    if (IsValid(animStance->m_BaseAttackAbility))
     {
         m_BaseAttackHandle = GetDiaAbilitySystem()->GiveAbility(
             FGameplayAbilitySpec(animStance->m_BaseAttackAbility,
                                  1,
-                                 static_cast<int32>(animStance->m_BaseAttackAbility.GetDefaultObject()->m_AbilityInputID),
+                                 static_cast<int32>(animStance->m_BaseAttackAbility.GetDefaultObject()->m_AbilityInputID
+                                 ),
                                  this));
     }
 }
@@ -265,11 +265,11 @@ void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
 void APlayerDiabloCharacter::BeginPlay()
 {
     Super::BeginPlay();
-    
+
     m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
     m_IgnoreActors.Add(this);
-    m_AISense->OnSeePawn.AddDynamic(this,&APlayerDiabloCharacter::OnSeeTarget);
-    
+    m_AISense->OnSeePawn.AddDynamic(this, &APlayerDiabloCharacter::OnSeeTarget);
+    m_AISense->OnCantSeePawn.AddDynamic(this, &APlayerDiabloCharacter::OnCantSeeTarget);
 }
 
 void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -277,16 +277,16 @@ void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
     Super::EndPlay(EndPlayReason);
 }
 
-void APlayerDiabloCharacter::ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn)//target
+void APlayerDiabloCharacter::ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn) //target
 {
-    PRINTF("ShoWDamage:%f",local_damage_done);
+    PRINTF("ShoWDamage:%f", local_damage_done);
     //it should go controller
 }
 
 void APlayerDiabloCharacter::EarnExp(float expEarned)
 {
     PRINTF("ExpEarned:%f", expEarned);
-    
+
     m_fCurrentExp += expEarned;
 
     float OverflowExp = m_fMaxExp - m_fCurrentExp;
@@ -327,8 +327,8 @@ bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)
 
 void APlayerDiabloCharacter::ResetCombo()
 {
-    auto* BaseAbiliSpec =GetDiaAbilitySystem()->FindAbilitySpecFromHandle(m_BaseAttackHandle);
-    if(BaseAbiliSpec)
+    auto* BaseAbiliSpec = GetDiaAbilitySystem()->FindAbilitySpecFromHandle(m_BaseAttackHandle);
+    if (BaseAbiliSpec)
     {
         Cast<UPlayerBaseAttack>(BaseAbiliSpec->GetPrimaryInstance())->ResetComboSection();
     }
@@ -387,36 +387,42 @@ void APlayerDiabloCharacter::TryCheckInteractable()
 
 void APlayerDiabloCharacter::TryFocusTargetMob()
 {
-    FVector HalfSize = FVector(500,75,150);
-    FVector TraceStart = m_SkBody->GetComponentLocation();
-    TraceStart=TraceStart + GetCapsule()->GetForwardVector() * HalfSize.X;
-    //TraceStart.X += HalfSize.X;
-    
-    FVector TraceEnd =TraceStart;// TraceStart + -GetCapsule()->GetForwardVector() * HalfSize.X;
-    FHitResult OutHit;
 
-    
-    if (!  UKismetSystemLibrary::BoxTraceSingleForObjects(
-            GetWorld(),
-            TraceStart, TraceEnd,HalfSize,GetActorRotation(),
-            m_TargetingObjectType,false,m_IgnoreActors, EDrawDebugTrace::ForOneFrame, OutHit, true,FLinearColor::Blue)
-        || !OutHit.GetActor())
+    if (!m_FocusedEnemy)
     {
-        FocusTarget(nullptr);
         return;
     }
     
-    AUnitPawn* FocusedUnit=Cast<AUnitPawn>(OutHit.GetActor());
+    FVector HalfSize = FVector(500, 75, 150);
+    FVector TraceStart = m_SkBody->GetComponentLocation();
+    TraceStart = TraceStart + GetCapsule()->GetForwardVector() * HalfSize.X;
 
-    if(m_FocusedTarget)
+    FVector TraceEnd = TraceStart;
+
+    FHitResult OutHit;
+
+    if (! UKismetSystemLibrary::BoxTraceSingleForObjects(
+            GetWorld(),
+            TraceStart, TraceEnd, HalfSize, GetActorRotation(),
+            m_TargetingObjectType, false, m_IgnoreActors, EDrawDebugTrace::ForOneFrame, OutHit, true,
+            FLinearColor::Blue)
+        || !OutHit.GetActor())
     {
-        if (FocusedUnit == m_FocusedTarget)
+       // FocusTarget(nullptr);//부채꼴 캔슬어떻게?
+        return;
+    }
+
+    AUnitPawn* FocusedUnit = Cast<AUnitPawn>(OutHit.GetActor());
+
+    if (m_FocusedEnemy)//이미 있다면
+    {
+        if (FocusedUnit == m_FocusedEnemy)//찾은애랑 이미 있는애랑 같으면 넘어감
         {
             return;
         }
-        else
+        else//다르면?
         {
-            FocusTarget(nullptr);
+            //FocusTarget(nullptr);//포크싱 해제
         }
     }
 
@@ -426,20 +432,33 @@ void APlayerDiabloCharacter::TryFocusTargetMob()
 void APlayerDiabloCharacter::FocusTarget(APawn* target)
 {
     Super::FocusTarget(target);
-
-    //PRINTF("FocusTarget:%s",*m_FocusedTarget->GetName());
 }
 
 void APlayerDiabloCharacter::OnSeeTarget(APawn* target)
 {
-    if(m_FocusedTarget)
+    if (m_FocusedEnemy)
+    {
+        return;
+    }
+
+    PRINTF("OnSeeTarget");
+
+    FocusTarget(target);
+}
+
+void APlayerDiabloCharacter::OnCantSeeTarget(APawn* target)
+{
+    if (!m_FocusedEnemy)
+    {
+        return;
+    }
+
+    if(m_FocusedEnemy!=target)
     {
         return;
     }
     
-    PRINTF("OnSeeTarget");
-
-    FocusTarget(target);
+    FocusTarget(nullptr);
 }
 
 void APlayerDiabloCharacter::InteractWithTarget()
@@ -467,9 +486,10 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
     TryCheckInteractable();
     TryFocusTargetMob();
 
-    if(m_FocusedTarget)
+    if (m_FocusedEnemy)
     {
-        DrawDebugLine(GetWorld(),GetCapsule()->GetComponentLocation(),m_FocusedTarget->GetActorLocation(),FColor::Cyan,false,-1,0,2.f);
+        DrawDebugLine(GetWorld(), GetCapsule()->GetComponentLocation(), m_FocusedEnemy->GetActorLocation(),
+                      FColor::Cyan, false, -1, 0, 2.f);
     }
 }
 
@@ -482,7 +502,7 @@ void APlayerDiabloCharacter::AttackInput(float pressed)
     }
 
     m_OnPressedAttack.Broadcast();
-    
+    HomingRotateToTarget();
     GetDiaAbilitySystem()->TryActivateAbility(m_BaseAttackHandle);
 }
 
@@ -550,27 +570,27 @@ bool APlayerDiabloCharacter::CreateItemActor(const FItemInstance* itemInst, AWea
     }
 
     (*attachRoot)->SetStaticMesh(nullptr);
-    
+
     FActorSpawnParameters Params;
-    
+
     Params.Template = Cast<AActor>(ItemBP->GetDefaultObject());
-    
+
     FTransform Trans;
-    
+
     AWeapon* Weapon = Cast<AWeapon>(GetWorld()->SpawnActor(ItemBP, &Trans, Params));
-    
+
     FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget,
                                                                 EAttachmentRule::SnapToTarget,
                                                                 EAttachmentRule::SnapToTarget, false);
-                                                                
+
     Weapon->InitWeapon(this, itemInst);
-    
+
     Weapon->AttachToComponent((*attachRoot), Rules);
-    
+
     (*wantCachePointer) = Weapon;
 
     m_IgnoreActors.Add((*wantCachePointer));
-    
+
     return true;
 }
 
@@ -578,8 +598,25 @@ void APlayerDiabloCharacter::BindASCInput()
 {
     if (GetDiaAbilitySystem() && IsValid(InputComponent))
     {
-        GetDiaAbilitySystem()->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(FString("ConfirmTarget"),
-            FString("CancelTarget"), FString("EAbilityInputID"), static_cast<int32>(EAbilityInputID::Confirm), static_cast<int32>(EAbilityInputID::Cancel)));
+        GetDiaAbilitySystem()->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(
+                                                                         FString("ConfirmTarget"),
+                                                                         FString("CancelTarget"),
+                                                                         FString("EAbilityInputID"),
+                                                                         static_cast<int32>(EAbilityInputID::Confirm),
+                                                                         static_cast<int32>(EAbilityInputID::Cancel)));
     }
-    
+}
+
+void APlayerDiabloCharacter::HomingRotateToTarget()
+{
+    if (!m_FocusedEnemy)
+    {
+        return;
+    }
+    FRotator NewRot = GetActorRotation();
+
+    NewRot.Yaw = UKismetMathLibrary::RInterpTo(
+        NewRot, UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), m_FocusedEnemy->GetActorLocation()),
+        m_fTickDeltaTime, 5.f).Yaw;
+    SetActorRotation(NewRot);
 }

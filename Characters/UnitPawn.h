@@ -94,7 +94,9 @@ protected:
     TArray<TSubclassOf<UDiabloAbility>> m_GrantedItemAbilities;
 
     UPROPERTY()
-    AUnitPawn* m_FocusedTarget;
+    AUnitPawn* m_FocusedEnemy;
+
+    float m_fTickDeltaTime;
     
 protected:
     virtual void BeginPlay() override;
@@ -175,6 +177,7 @@ public:
     virtual void FocusTarget(APawn* target);
 
 
+   
 public://AttributeGetter
     float GetAttackSpeed()const;
 

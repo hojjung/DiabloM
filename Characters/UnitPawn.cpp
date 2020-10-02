@@ -186,7 +186,7 @@ void AUnitPawn::EndAttack()
 void AUnitPawn::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-
+    m_fTickDeltaTime=DeltaTime;
 }
 
 
@@ -388,9 +388,10 @@ void AUnitPawn::Die()
 
 void AUnitPawn::FocusTarget(APawn* target)
 {
-    m_FocusedTarget=Cast<AUnitPawn>( target);
+    m_FocusedEnemy=Cast<AUnitPawn>( target);
     
 }
+
 
 
 float AUnitPawn::GetAttackSpeed() const

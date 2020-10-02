@@ -168,4 +168,7 @@ public:
 	void ResetCombo();
 	UFUNCTION()
     void OnSeeTarget(APawn* target);
+	UFUNCTION()
+    void OnCantSeeTarget(APawn* target);
+	void HomingRotateToTarget();
 };
