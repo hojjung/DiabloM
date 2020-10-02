@@ -392,9 +392,11 @@ void APlayerDiabloCharacter::TryFocusTargetMob()
         return;
     }
 
-    FVector HalfSize = FVector(500, 75, 150);
-    FVector TraceStart = m_SkBody->GetComponentLocation();
-    TraceStart = TraceStart + GetCapsule()->GetForwardVector() * HalfSize.X;
+    FVector HalfSize = FVector(500, 75, 75);
+    FVector InitPos = m_SkBody->GetComponentLocation();
+    InitPos.Z+=GetCapsule()->GetScaledCapsuleHalfHeight();
+    
+    FVector TraceStart = InitPos + GetCapsule()->GetForwardVector() * HalfSize.X;
 
     FVector TraceEnd = TraceStart;
 
@@ -410,11 +412,9 @@ void APlayerDiabloCharacter::TryFocusTargetMob()
        // FocusTarget(nullptr);//부채꼴 캔슬어떻게?
         return;
     }
-    FVector Pos =m_SkBody->GetComponentLocation();
-    Pos.Z+=GetCapsule()->GetScaledCapsuleHalfHeight();
 
     FHitResult BlockHit;
-    if(UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(),Pos,OutHit.GetActor()->GetActorLocation(),m_BlockingObjectType,false,m_IgnoreActors,EDrawDebugTrace::ForOneFrame,BlockHit,true))
+    if(UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(),InitPos,OutHit.GetActor()->GetActorLocation(),m_BlockingObjectType,false,m_IgnoreActors,EDrawDebugTrace::ForOneFrame,BlockHit,true))
     {
         return;
     }
