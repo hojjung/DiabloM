@@ -16,6 +16,7 @@ UUnitMovement::UUnitMovement()
 	m_AvoidConsiderRadius = 500.f;
 	m_AvoidanceWeight = 0.f;
 	m_fMaxSpeed = 300.f;
+	m_fDashDuration=0.f;
 }
 
 void UUnitMovement::BeginPlay()
@@ -36,26 +37,23 @@ void UUnitMovement::BeginPlay()
 	}
 }
 
-void UUnitMovement::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+void UUnitMovement::CalcVelocity(float DeltaTime)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if (!PawnOwner || !UpdatedComponent || ShouldSkipUpdate(DeltaTime))
-	{
-		return;
-	}
-
 	Velocity = ConsumeInputVector().GetClampedToSize(1.0f,1.0f) *  m_fMaxSpeed;
 
-	m_MoveVector = Velocity*DeltaTime;
+	m_MoveVector = Velocity;
 	
-	float PastMoveSize = m_MoveVector.Size();
-
-	TickRotate(DeltaTime);
-
-	CalcAvoidanceVelocity(DeltaTime);
+	if(m_fDashDuration>0.f)
+	{
+		m_fDashDuration-=DeltaTime;
+		m_MoveVector+=(m_DashDelta);
+	}
 	
+	m_MoveVector *=DeltaTime;
+}
 
+void UUnitMovement::MoveProceed(float PastMoveSize)
+{
 	m_MoveVector = m_MoveVector.GetClampedToMaxSize(PastMoveSize);
 
 	if (!m_MoveVector.IsNearlyZero())
@@ -68,7 +66,27 @@ void UUnitMovement::TickComponent(float DeltaTime, enum ELevelTick TickType, FAc
 			SlideAlongSurface(m_MoveVector, 1.f - Hit.Time, Hit.Normal, Hit);
 		}
 	}
+}
 
+void UUnitMovement::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (!PawnOwner || !UpdatedComponent || ShouldSkipUpdate(DeltaTime))
+	{
+		return;
+	}
+
+	
+	CalcVelocity(DeltaTime);
+	
+	float PastMoveSize = m_MoveVector.Size();
+
+	TickRotate(DeltaTime);
+
+	CalcAvoidanceVelocity(DeltaTime);
+	
+	MoveProceed(PastMoveSize);
 
 	UpdateDefaultRVO();
 };
@@ -91,7 +109,7 @@ void UUnitMovement::TickRotate(float deltaTime)
 			DesiredRotation.Yaw = FMath::FixedTurn(CurrentRotation.Yaw, DesiredRotation.Yaw, DeltaRot.Yaw);
 		}
 
-		MoveUpdatedComponent(FVector::ZeroVector, DesiredRotation, /*bSweep*/ false);
+		MoveUpdatedComponent(FVector::ZeroVector, DesiredRotation,false);
 	}
 }
 
@@ -192,6 +210,12 @@ FRotator UUnitMovement::ComputeOrientToMovementRotation(const FRotator & Current
 void UUnitMovement::SetMoveSpeed(float newSpeed)
 {
 	m_fMaxSpeed=newSpeed;
+}
+
+void UUnitMovement::SetDash(FVector dashDelta, float duration)
+{
+	m_fDashDuration=duration;
+	m_DashDelta=dashDelta;
 }
 
 #pragma region RVO_GETSET

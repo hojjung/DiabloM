@@ -44,6 +44,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	FPlayerTypeHandle m_PlayerTableHandle;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	TArray<TEnumAsByte< EObjectTypeQuery>> m_BlockingObjectType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TArray<TEnumAsByte< EObjectTypeQuery>> m_TargetingObjectType;
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player")

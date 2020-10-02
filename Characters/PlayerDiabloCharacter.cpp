@@ -387,12 +387,11 @@ void APlayerDiabloCharacter::TryCheckInteractable()
 
 void APlayerDiabloCharacter::TryFocusTargetMob()
 {
-
     if (!m_FocusedEnemy)
     {
         return;
     }
-    
+
     FVector HalfSize = FVector(500, 75, 150);
     FVector TraceStart = m_SkBody->GetComponentLocation();
     TraceStart = TraceStart + GetCapsule()->GetForwardVector() * HalfSize.X;
@@ -400,7 +399,7 @@ void APlayerDiabloCharacter::TryFocusTargetMob()
     FVector TraceEnd = TraceStart;
 
     FHitResult OutHit;
-
+    
     if (! UKismetSystemLibrary::BoxTraceSingleForObjects(
             GetWorld(),
             TraceStart, TraceEnd, HalfSize, GetActorRotation(),
@@ -411,6 +410,15 @@ void APlayerDiabloCharacter::TryFocusTargetMob()
        // FocusTarget(nullptr);//부채꼴 캔슬어떻게?
         return;
     }
+    FVector Pos =m_SkBody->GetComponentLocation();
+    Pos.Z+=GetCapsule()->GetScaledCapsuleHalfHeight();
+
+    FHitResult BlockHit;
+    if(UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(),Pos,OutHit.GetActor()->GetActorLocation(),m_BlockingObjectType,false,m_IgnoreActors,EDrawDebugTrace::ForOneFrame,BlockHit,true))
+    {
+        return;
+    }
+
 
     AUnitPawn* FocusedUnit = Cast<AUnitPawn>(OutHit.GetActor());
 

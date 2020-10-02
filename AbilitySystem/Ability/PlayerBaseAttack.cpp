@@ -48,6 +48,13 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     Task->EventReceived.AddDynamic(this, &UPlayerBaseAttack::EventReceived);
     
     Task->ReadyForActivation();
+
+    // test
+    // auto* MM = Cast<APlayerDiabloCharacter>( ActorInfo->AvatarActor.Get())->GetMovementComponent();
+    // auto* AA = Cast<UUnitMovement>(MM);
+    //
+    // FVector TestDelta=ActorInfo->AvatarActor.Get()->GetActorForwardVector() * 1500.f;
+    // AA->SetDash(TestDelta,0.5f);
 }
 
 void UPlayerBaseAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)

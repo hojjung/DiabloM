@@ -52,8 +52,14 @@ protected://pathfollow
 
 	float m_AvoidanceLockTimer;
 
+	float m_fDashDuration;
+
+	FVector m_DashDelta;
+
 public:
 	virtual void BeginPlay() override;
+	void CalcVelocity(float DeltaTime);
+	void MoveProceed(float PastMoveSize);
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
@@ -64,6 +70,8 @@ public:
 	FRotator ComputeOrientToMovementRotation(const FRotator& CurrentRotation) const;
 
 	void SetMoveSpeed(float newSpeed);
+
+	void SetDash(FVector dashDelta,float duration);
 #pragma region RVO
 	// IRVOAvoidanceInterface��(��) ���� ��ӵ�
 	virtual void SetRVOAvoidanceUID(int32 UID) override;
