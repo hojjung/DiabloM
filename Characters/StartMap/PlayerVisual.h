@@ -60,7 +60,7 @@ protected:
 	
 	void CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName);
 	
-	void OnMeshVisualChanged(const FCurrentCharData& charData);
+	void OnMeshVisualChanged(const FCurrentCharData& charData);//TODO Add Slot reader,1003
 
 	void SetBodyAnim();
 

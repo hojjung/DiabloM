@@ -14,6 +14,7 @@ class ADiabloPlayerController;
 class UCameraDissolve;
 class UPlayerSensing;
 class UPlayerBaseAttack;
+class UDefaultFSM;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
 
 UCLASS()
@@ -60,10 +61,14 @@ protected:
 	UStaticMeshComponent* m_StRightWeapon;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UStaticMeshComponent* m_StLeftWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	bool m_bUseAutoPlay;
 	//
 protected:
 	UPROPERTY()
 	UPlayerSensing* m_PlayerSense;
+	UPROPERTY()
+	UDefaultFSM* m_FSM;
 	UPROPERTY()
 	USkeletalMeshComponent* m_FocusRenderer;
 	UPROPERTY()
@@ -124,15 +129,13 @@ protected:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	void TryCheckInteractable();
-
 	void MoveForward(float AxisValue);
 
 	void MoveRight(float AxisValue);
 	
 	virtual void FocusTarget(APawn* target);
 
-	void AutoPlayTick();
+	void AutoPlayTick(bool useAuto);
 
 	virtual void Tick(float DeltaTime) override;
 
@@ -158,7 +161,7 @@ protected:
 	
 	void SetBaseAttackAbility(const FAnimStance* animStance);
 
-	void SetBaseAttackData(float viewAngle,float viewRadius,float focusRange,float rotateSpeed,float dashableRange, float dashTime, float dashDistance);
+	void SetBaseAttackData(float viewAngle,float viewRadius,float focusRange);
 public:
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	virtual void AttackInput(float pressed);
@@ -166,7 +169,9 @@ public:
 	void InteractWithTarget();
 	UFUNCTION(BlueprintCallable)
     void ResetCombo();
-	
+	void ShowOutlineOnTarget(AUnitPawn* Unit);
+	void HideOutlineOnTarget();
+
 	void EquipMesh(const FItemInstance* meshItem,ESlotsEquipAry slotWant);
 	
 	virtual bool SetCharacterLevel(int NewLevel)override;
@@ -213,3 +218,4 @@ public:
 	}
 	
 };
+

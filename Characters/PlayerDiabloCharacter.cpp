@@ -11,6 +11,7 @@
 #include "Item/Weapon.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
 #include "AbilitySystem/Ability/PlayerBaseAttack.h"
+#include "Logic/DefaultFSM.h"
 #include "Logic/PlayerSensing.h"
 
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
@@ -133,6 +134,8 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     SetCharacterLevel(loadedSaveData->m_nLevel);
 
     LoadExp(loadedSaveData);
+
+    
 }
 
 void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEquipAry slotWant)
@@ -242,15 +245,11 @@ void APlayerDiabloCharacter::SetBaseAttackAbility(const FAnimStance* animStance)
     }
 }
 
-void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius, float focusRange, float rotateSpeed,
-    float dashableRange, float dashTime, float dashDistance)
+void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius, float focusRange)
 {
-    //may be need mongtage
     m_PlayerSense->SetPeripheralVisionAngle(viewAngle);
     m_PlayerSense->SetViewRadius(viewRadius);
     m_PlayerSense->SetFocusRange(focusRange);
-    
-    //GetBaseAttackInst()->m_BaseAttackMotion
 }
 
 void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
@@ -266,6 +265,7 @@ void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
 
     //should Seprated
     SetBaseAttackAbility(animStance);
+    SetBaseAttackData(animStance->m_fViewAngle,animStance->m_fViewRadius,animStance->m_fFocusRange);
 }
 
 
@@ -275,14 +275,21 @@ void APlayerDiabloCharacter::BeginPlay()
 
     m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
     m_AryIgnoreActor.Add(this);
+    m_AryIgnoreActor.Add(m_PlayerCon);
+    
     m_FocusRenderer = NewObject<USkeletalMeshComponent>(this, USkeletalMeshComponent::StaticClass());
     m_FocusRenderer->RegisterComponent();
     m_FocusRenderer->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+    m_FocusRenderer->SetHiddenInGame(true);
+    
     m_PlayerSense = NewObject<UPlayerSensing>(this,UPlayerSensing::StaticClass());
     m_PlayerSense->InitSense(this);
     m_PlayerSense->OnSeePawn.BindUObject(this,&APlayerDiabloCharacter::OnSeeTarget);
     m_PlayerSense->OnCantSeePawn.BindUObject(this,&APlayerDiabloCharacter::OnCantSeeTarget);
     m_PlayerSense->OnSeePawnBlocked.BindUObject(this,&APlayerDiabloCharacter::OnCanSeeTargetBlock);
+    
+    m_FSM = NewObject<UDefaultFSM>(this,UDefaultFSM::StaticClass());
+    m_FSM->Init(this);
 }
 
 void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -345,48 +352,9 @@ void APlayerDiabloCharacter::ResetCombo()
     GetBaseAttackInst()->ResetComboSection();
 }
 
-void APlayerDiabloCharacter::TryCheckInteractable()
+void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)
 {
-    FVector TraceStart = m_SkBody->GetComponentLocation();
-    FVector TraceEnd = TraceStart + GetCapsule()->GetForwardVector() * m_fInteractRange;
-    
-    FHitResult OutHit;
-    
-    if (!UKismetSystemLibrary::SphereTraceSingle(
-            GetWorld(),
-            TraceStart, TraceEnd, 15.f,
-            ETraceTypeQuery::TraceTypeQuery3, false, m_AryIgnoreActor, EDrawDebugTrace::ForOneFrame, OutHit, true)
-        || !OutHit.GetActor())
-    {
-        m_FocusedInteractable=nullptr;
-        return;
-    }
-    
-    
-    IInteractable* FoundIntract = Cast<IInteractable>(OutHit.GetActor());
-
-    m_FocusedInteractable=FoundIntract;
-}
-
-void APlayerDiabloCharacter::FocusTarget(APawn* target)
-{
-    if(m_FocusedEnemy&&m_FocusedEnemy!=target)
-    {
-        Cast<ADiabloPlayerController>( GetController())->HideFocusStatusWidget();
-    }
-
-    m_FocusedEnemy=Cast<AUnitPawn>( target);
-
-    m_FocusRenderer->SetSkeletalMesh(nullptr);
-    m_FocusRenderer->GetMaterials().Reset();
-
-    AUnitPawn* Unit=Cast<AUnitPawn>(target);
-
-    if(!Unit||m_FocusedEnemy==target)
-    {
-        return;
-    }
-
+    m_FocusRenderer->SetHiddenInGame(false);
     m_FocusRenderer->SetSkeletalMesh(Unit->GetBodyMesh()->SkeletalMesh);
     m_FocusRenderer->SetMasterPoseComponent(Unit->GetBodyMesh());
     m_FocusRenderer->AttachToComponent(Unit->GetBodyMesh(),FAttachmentTransformRules::KeepRelativeTransform);
@@ -395,11 +363,41 @@ void APlayerDiabloCharacter::FocusTarget(APawn* target)
     {
         m_FocusRenderer->SetMaterial(i,m_OutLineMat);
     }
+}
+
+void APlayerDiabloCharacter::HideOutlineOnTarget()
+{
+    m_FocusRenderer->SetHiddenInGame(true);
+    m_FocusRenderer->SetSkeletalMesh(nullptr);
+    m_FocusRenderer->GetMaterials().Reset();
+    m_FocusRenderer->AttachToComponent(GetBodyMesh(),FAttachmentTransformRules::KeepRelativeTransform);
+}
+
+void APlayerDiabloCharacter::FocusTarget(APawn* target)
+{
+    if(!target)
+    {
+        if(m_FocusedEnemy)
+        {
+            Cast<ADiabloPlayerController>( GetController())->HideFocusStatusWidget();    
+            m_FocusedEnemy=nullptr;
+            HideOutlineOnTarget();
+        }
+        return;
+    }
+
+    AUnitPawn* Unit=Cast<AUnitPawn>(target);
+
+    if(!Unit || target==m_FocusedEnemy)
+    {
+        return;
+    }
+
+    ShowOutlineOnTarget(Unit);
 
     Cast<ADiabloPlayerController>( GetController())->ShowFocusStatusWidget(Unit);
-   // m_FocusRenderer->SetRelativeLocation(FVector(0,0,0));
-    //m_FocusRenderer->SetRelativeRotation(FRotator(0,0,0));
-    //m_OutLineMat
+    
+    m_FocusedEnemy=Cast<AUnitPawn>( target);
 }
 
 void APlayerDiabloCharacter::OnSeeTarget(APawn* target)
@@ -471,15 +469,19 @@ void APlayerDiabloCharacter::InteractWithTarget()
     m_FocusedInteractable = nullptr;
 }
 
-void APlayerDiabloCharacter::AutoPlayTick()
+void APlayerDiabloCharacter::AutoPlayTick(bool useAuto)
 {
+    m_bUseAutoPlay=useAuto;
 }
 
 void APlayerDiabloCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    TryCheckInteractable();
+    if(m_bUseAutoPlay)
+        m_FSM->TickFSM();
+    
+    m_PlayerSense->TickTryFoundInteraction();
 
     if (m_FocusedEnemy)
     {
@@ -634,6 +636,7 @@ void APlayerDiabloCharacter::HomingRotateToTarget()
     {
         return;
     }
+    
     FRotator NewRot = GetActorRotation();
 
     NewRot.Yaw = UKismetMathLibrary::RInterpTo(

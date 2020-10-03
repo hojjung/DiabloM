@@ -271,9 +271,15 @@ public:
     TSubclassOf<UDiaAniminstance> m_StanceAnimation;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<UDiabloAbility> m_BaseAttackAbility;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    float m_fViewAngle;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    float m_fViewRadius;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    float m_fFocusRange;
 };
 
-
+//float viewAngle, float viewRadius, float focusRange
 UCLASS()
 class DIABLOM_API UItemDataTable : public UObject
 {

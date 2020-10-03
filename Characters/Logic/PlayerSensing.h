@@ -41,35 +41,37 @@ protected:
 
     UPROPERTY()
     APlayerDiabloCharacter* m_OwnedPlayer;
-    
+
 public:
     FSeePawnDelegate OnSeePawn;
 
     FSeePawnDelegate OnCantSeePawn;
 
     FSeePawnDelegate OnSeePawnBlocked;
-    
-protected:
-    virtual void SensePawn(AMonsterPawn& Pawn);
 
-    virtual void OnTimer();
+protected:
+    void SensePawn(AMonsterPawn& Pawn);
+
+    void OnTimer();
 
     FTimerHandle TimerHandle_OnTimer;
 
-    virtual void SetTimer(const float TimeDelay);
+    void SetTimer(const float TimeDelay);
 
-    virtual void UpdateAISensing();
+    void UpdateAISensing();
 
 public:
     void InitSense(APlayerDiabloCharacter* player);
 
+    bool TickTryFoundInteraction();
+
     bool TickTryFoundEnemy();
 
-    virtual void SetSensingInterval(const float NewSensingInterval);
+    void SetSensingInterval(const float NewSensingInterval);
 
-    virtual void SetSensingUpdatesEnabled(const bool bEnabled);
+    void SetSensingUpdatesEnabled(const bool bEnabled);
 
-    virtual void SetPeripheralVisionAngle(const float NewPeripheralVisionAngle);
+    void SetPeripheralVisionAngle(const float NewPeripheralVisionAngle);
 
     void SetViewRadius(const float radius);
 
@@ -79,17 +81,17 @@ public:
 
     float GetPeripheralVisionCosine() const;
 
-    virtual bool IsSensorActor(const AActor* Actor) const;
+    bool IsSensorActor(const AActor* Actor) const;
 
-    virtual bool ShouldCheckVisibilityOf(APawn* Pawn) const;
+    bool ShouldCheckVisibilityOf(APawn* Pawn) const;
 
-    virtual bool CouldSeePawn(APawn* Other, bool bMaySkipChecks = false) const;
+    bool CouldSeePawn(APawn* Other, bool bMaySkipChecks = false) const;
 
-    virtual bool HasLineOfSightTo(const AActor* Other) const;
+    bool HasLineOfSightTo(const AActor* Other) const;
 
-    virtual FVector GetSensorLocation() const;
+    FVector GetSensorLocation() const;
 
-    virtual FRotator GetSensorRotation() const;
+    FRotator GetSensorRotation() const;
 
     AActor* GetSensorActor() const; // Get the actor used as the actual sensor location is derived from this actor.
 };

@@ -12,7 +12,7 @@ UPlayerSensing::UPlayerSensing()
     m_SightRadius = 1200.f;
     m_PeripheralVisionAngle = 50.f;
     m_PeripheralVisionCosine = FMath::Cos(FMath::DegreesToRadians(m_PeripheralVisionAngle));
-
+    m_FocusRange=500.f;
     m_SensingInterval = 0.3f;
 }
 
@@ -23,9 +23,34 @@ void UPlayerSensing::InitSense(APlayerDiabloCharacter* player)
     SetSensingUpdatesEnabled(true);
 }
 
+bool UPlayerSensing::TickTryFoundInteraction()
+{
+    FVector TraceStart = m_OwnedPlayer->GetBodyMesh()->GetComponentLocation();
+    FVector TraceEnd = TraceStart + m_OwnedPlayer->GetCapsule()->GetForwardVector() * m_OwnedPlayer->m_fInteractRange;
+    
+    FHitResult OutHit;
+    
+    if (!UKismetSystemLibrary::SphereTraceSingle(
+            GetWorld(),
+            TraceStart, TraceEnd, 15.f,
+            ETraceTypeQuery::TraceTypeQuery3, false, m_OwnedPlayer->m_AryIgnoreActor, EDrawDebugTrace::ForOneFrame, OutHit, true)
+        || !OutHit.GetActor())
+    {
+        m_OwnedPlayer->m_FocusedInteractable=nullptr;
+        return false;
+    }
+    
+    
+    IInteractable* FoundIntract = Cast<IInteractable>(OutHit.GetActor());
+
+    m_OwnedPlayer->m_FocusedInteractable=FoundIntract;
+
+    return true;
+}
+
 bool UPlayerSensing::TickTryFoundEnemy()
 {
-    FVector HalfSize = FVector(500, 75, 75);
+    FVector HalfSize = FVector(m_FocusRange, 75, 75);
     FVector InitPos = m_OwnedPlayer->GetBodyMesh()->GetComponentLocation();
     InitPos.Z += m_OwnedPlayer->GetCapsule()->GetScaledCapsuleHalfHeight();
 

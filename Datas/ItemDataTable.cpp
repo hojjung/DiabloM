@@ -120,5 +120,9 @@ FAnimStance::FAnimStance()
     m_fStancePriority = 1.0f;
     m_AryRightHandNeed.Add(FItemTypeHandle());
     m_AryLeftHandNeed.Add(FItemTypeHandle());
+
+    m_fViewAngle=50.f;
+    m_fViewRadius=1200.f;
+    m_fFocusRange=400.f;
 }
 

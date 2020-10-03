@@ -25,3 +25,8 @@ void AVillageActor::Tick(float DeltaTime)
 
 }
 
+void AVillageActor::Interact(AActor* instigator)
+{
+	
+}
+

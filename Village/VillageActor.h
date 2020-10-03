@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Objs/Interfaces/Interactable.h"
+
 #include "VillageActor.generated.h"
 
 UCLASS()
-class DIABLOM_API AVillageActor : public AActor
+class DIABLOM_API AVillageActor : public AActor,public IInteractable
 {
 	GENERATED_BODY()
 	
@@ -23,4 +25,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
+	virtual void Interact(AActor* instigator)override;
 };
