@@ -90,39 +90,25 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
         return;
     }
+    //Ability.BaseAttack
     PRINTF("EventReceive");
     // Only spawn projectiles on the Server.
     // Predicting projectiles is an advanced topic not covered in this example.
-    // if (GetOwningActorFromActorInfo()->GetLocalRole() == ROLE_Authority && EventTag == FGameplayTag::RequestGameplayTag(FName("Event.Montage.SpawnProjectile")))
-    // {
-    //     AGDHeroCharacter* Hero = Cast<AGDHeroCharacter>(GetAvatarActorFromActorInfo());
-    //     if (!Hero)
-    //     {
-    //         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-    //     }
-    //
-    //     FVector Start = Hero->GetGunComponent()->GetSocketLocation(FName("Muzzle"));
-    //     FVector End = Hero->GetCameraBoom()->GetComponentLocation() + Hero->GetFollowCamera()->GetForwardVector() * Range;
-    //     FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(Start, End);
-    //
-    //     FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageGameplayEffect, GetAbilityLevel());
-		  //
-    //     // Pass the damage to the Damage Execution Calculation through a SetByCaller value on the GameplayEffectSpec
-    //     DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Data.Damage")), Damage);
-    //
-    //     FTransform MuzzleTransform = Hero->GetGunComponent()->GetSocketTransform(FName("Muzzle"));
-    //     MuzzleTransform.SetRotation(Rotation.Quaternion());
-    //     MuzzleTransform.SetScale3D(FVector(1.0f));
-    //
-    //     FActorSpawnParameters SpawnParameters;
-    //     SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-    //
-    //     AGDProjectile* Projectile = GetWorld()->SpawnActorDeferred<AGDProjectile>(ProjectileClass, MuzzleTransform, GetOwningActorFromActorInfo(),
-    //         Hero, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-    //     Projectile->DamageEffectSpecHandle = DamageEffectSpecHandle;
-    //     Projectile->Range = Range;
-    //     Projectile->FinishSpawning(MuzzleTransform);
-    // }
+    if (EventTag == FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack")))
+    {
+        APlayerDiabloCharacter* Hero = Cast<APlayerDiabloCharacter>(GetAvatarActorFromActorInfo());
+        if (!Hero)
+        {
+            EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+        }
+    
+        FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageGameplayEffect, GetAbilityLevel());
+		  
+        // Pass the damage to the Damage Execution Calculation through a SetByCaller value on the GameplayEffectSpec
+        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookDamage")), Damage);
+    
+        Cast<AUnitPawn>(EventData.Target)->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data);
+    }
 }
 
 FName UPlayerBaseAttack::GetSectionName()

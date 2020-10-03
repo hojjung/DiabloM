@@ -1,6 +1,6 @@
 #include "DroppedItem.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Widgets/WorldMap/ItemNameCard.h"
+#include "Widgets/WorldMap/WorldWidget/ItemNameCard.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 

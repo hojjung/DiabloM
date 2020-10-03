@@ -12,9 +12,9 @@
 #include "Navigation/PathFollowingComponent.h"
 //
 #include "AbilitySystem/Ability/DiabloAbility.h"
-#include "Characters/DiabloPlayerController.h"
 #include "Datas/CharacterDataTable.h"
 #include "Perception/PawnSensingComponent.h"
+#include "Widgets/WorldMap/WorldWidget/FloatingStatusBarWidgetCompo.h"
 
 
 
@@ -23,6 +23,7 @@
 DECLARE_MULTICAST_DELEGATE(FOnAttack);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, class AUnitPawn*, Character);
 
+class ADiabloPlayerController;
 class UNavigationSystemV1;
 UCLASS()
 class DIABLOM_API AUnitPawn : public APawn, public IAbilitySystemInterface
@@ -176,8 +177,18 @@ public:
 
     virtual void FocusTarget(APawn* target);
 
+public://need more monster
+    UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+    void ShowStatusBar();
+    UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+    void HideStatusBar();
+    UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+    bool IsStatusBarActive();
 
-   
+    USkeletalMeshComponent* GetBodyMesh() 
+    {
+        return m_SkBody;
+    }
 public://AttributeGetter
     float GetAttackSpeed()const;
 

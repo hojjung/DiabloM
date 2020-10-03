@@ -10,7 +10,8 @@ class UEquipmentSystem;
 class APlayerDiabloCharacter;
 class ADiabloPlayerController;
 class UDefaultMenu;
-
+class AUnitPawn;
+class UDiaMonsterInfo;
 /*
  *
  * 
@@ -32,6 +33,8 @@ protected:
     UButton* m_InteractButton;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UDefaultMenu* m_MainMenu;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+    UDiaMonsterInfo* m_DiaMonInfo;
 protected:
     UPROPERTY()
     ADiabloPlayerController* m_PlayerCon;
@@ -54,7 +57,11 @@ public:
     void OpenSetting();
     UFUNCTION(BlueprintCallable,Category="Menu")
     void CloseSetting();
-
+    
 public:
     void Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven);
+
+    void ShowMonsterInfo(AUnitPawn* monInfo);
+
+    void HideMonsterInfo();
 };

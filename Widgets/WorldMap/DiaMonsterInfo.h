@@ -13,5 +13,13 @@ UCLASS()
 class DIABLOM_API UDiaMonsterInfo : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+public:
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+    void SetHealthPercentage(float HealthPercentage);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+    void SetCharacterName(const FText& NewName);
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetCharacterLevel(int lv);
 };

@@ -44,9 +44,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	FPlayerTypeHandle m_PlayerTableHandle;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	TArray<TEnumAsByte< EObjectTypeQuery>> m_BlockingObjectType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TArray<TEnumAsByte< EObjectTypeQuery>> m_TargetingObjectType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	UMaterialInstance* m_OutLineMat;
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player")
 	float m_fInteractRange;
@@ -77,7 +77,10 @@ protected:
 	UStaticMeshComponent* m_StRightWeapon;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UStaticMeshComponent* m_StLeftWeapon;
+	//
 protected:
+	UPROPERTY()
+	USkeletalMeshComponent* m_FocusRenderer;
 	UPROPERTY()
 	USkeletalMesh* m_DefaultFullHairMesh;
 	UPROPERTY()
@@ -144,7 +147,8 @@ protected:
 	//FItemInstance*,AWeapon**,USceneComponent*
 public:
 	virtual void SetUnitStat(FDataTableRowHandle unitID,int level) override;
-	
+	void SetBaseAttackAbility(const FAnimStance* animStance);
+
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
 
@@ -157,7 +161,6 @@ public:
 	void RemoveAllEffect();
 
 	void SetAnimStance(const FAnimStance* animStance);
-	void ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn);
 
 	void EarnExp(float expEarned);
 
@@ -172,5 +175,8 @@ public:
     void OnSeeTarget(APawn* target);
 	UFUNCTION()
     void OnCantSeeTarget(APawn* target);
+	void OnCanSeeTargetBlock(APawn* target);
 	void HomingRotateToTarget();
+
+	
 };

@@ -55,16 +55,56 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
 {
     Super::PostGameplayEffectExecute(Data);
 
-    AActor* TargetActor = nullptr; //여기서 타겟은 나다.그럼 버프 디버프를 아군 적군이 걸어주는것은?
-    AController* TargetController = nullptr;
-    AUnitPawn* TargetCharacter = nullptr;
-    AActor* SourceActor = nullptr; //여기서 타겟은 나다.그럼 버프 디버프를 아군 적군이 걸어주는것은?
-    AController* SourceController = nullptr;
-    AUnitPawn* SourceCharacter = nullptr;
+    // AActor* TargetActor = nullptr; //여기서 타겟은 나다.그럼 버프 디버프를 아군 적군이 걸어주는것은?
+    // AController* TargetController = nullptr;
+    // AUnitPawn* TargetCharacter = nullptr;
+    // AActor* SourceActor = nullptr; //여기서 타겟은 나다.그럼 버프 디버프를 아군 적군이 걸어주는것은?
+    // AController* SourceController = nullptr;
+    // AUnitPawn* SourceCharacter = nullptr;
+    // FGameplayEffectContextHandle Context = Data.EffectSpec.GetContext();
+    // UAbilitySystemComponent* Source = Context.GetOriginalInstigatorAbilitySystemComponent();
+    // const FGameplayTagContainer& SourceTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+    // float Value = 0.f;
     FGameplayEffectContextHandle Context = Data.EffectSpec.GetContext();
     UAbilitySystemComponent* Source = Context.GetOriginalInstigatorAbilitySystemComponent();
     const FGameplayTagContainer& SourceTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
-    float Value = 0.f;
+    FGameplayTagContainer SpecAssetTags;
+    Data.EffectSpec.GetAllAssetTags(SpecAssetTags);
+
+    AActor* TargetActor = nullptr;
+    AController* TargetController = nullptr;
+    AUnitPawn* TargetCharacter = nullptr;
+    // Get the Source actor
+    AActor* SourceActor = nullptr;
+    AController* SourceController = nullptr;
+    AUnitPawn* SourceCharacter = nullptr;
+
+    if (Source && Source->AbilityActorInfo.IsValid() && Source->AbilityActorInfo->AvatarActor.IsValid())
+    {
+        SourceActor = Source->AbilityActorInfo->AvatarActor.Get();
+        SourceController = Source->AbilityActorInfo->PlayerController.Get();
+        if (SourceController == nullptr && SourceActor != nullptr)
+        {
+            if (APawn* Pawn = Cast<APawn>(SourceActor))
+            {
+                SourceController = Pawn->GetController();
+            }
+        }
+
+        if (SourceController)
+        {
+            SourceCharacter = Cast<AUnitPawn>(SourceController->GetPawn());
+        }
+        else
+        {
+            SourceCharacter = Cast<AUnitPawn>(SourceActor);
+        }
+
+        if (Context.GetEffectCauser())
+        {
+            SourceActor = Context.GetEffectCauser();
+        }
+    }
 
     if (Data.Target.AbilityActorInfo.IsValid() && Data.Target.AbilityActorInfo->AvatarActor.IsValid())
     {
@@ -72,14 +112,7 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
         TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
         TargetCharacter = Cast<AUnitPawn>(TargetActor);
     }
-
-    if (Source && Source->AbilityActorInfo.IsValid() && Source->AbilityActorInfo->AvatarActor.IsValid())
-    {
-        SourceActor = Data.Target.AbilityActorInfo->AvatarActor.Get();
-        SourceController = Data.Target.AbilityActorInfo->PlayerController.Get();
-        SourceCharacter = Cast<AUnitPawn>(SourceActor);
-    }
-
+  
     if (Data.EvaluatedData.Attribute == GetTookDamageAttribute()) //내가 맞았다
     {
         if (Source && Source->AbilityActorInfo.IsValid() && Source->AbilityActorInfo->AvatarActor.IsValid())
@@ -121,10 +154,10 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
                 }
             }
 
-            APlayerDiabloCharacter* PC = nullptr;
+            ADiabloPlayerController* PC = nullptr;
             if (SourceActor != TargetActor)
             {
-                PC = Cast<APlayerDiabloCharacter>(SourceController);
+                PC = Cast<ADiabloPlayerController>(SourceController);
 
                 if (PC)
                 {
@@ -165,8 +198,7 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
     }
     else if (Data.EvaluatedData.Attribute == GetHealthAttribute())
     {
-        Value = FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth());
-        SetHealth(Value);
+        SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
     }
     else if (Data.EvaluatedData.Attribute == GetMaxHealthAttribute())
     {

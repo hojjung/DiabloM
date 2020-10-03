@@ -28,6 +28,8 @@ void ADiabloPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	check( m_ClassDmgText);
+	
 	m_Inven = NewObject<UInventory>();
 	m_Inven->InitInven(m_nInvenX,m_nInvenY);
 
@@ -44,7 +46,7 @@ void ADiabloPlayerController::InitWidget()
 	m_MainMenu = CreateWidget<UMainCanvas>(this, m_ClassMainMenu, "MainMenu00");
 	m_MainMenu->AddToViewport();
 	m_MainMenu->Init(this,Cast<APlayerDiabloCharacter>(GetPawn()),m_EquipSystem,m_Inven);
-
+	
 	CloseMainMenu();
 }
 
@@ -130,4 +132,24 @@ void ADiabloPlayerController::PlayerMeshChange(int slot, FItemInstance& item)
 APlayerDiabloCharacter* ADiabloPlayerController::GetPlayerPawn()
 {
 	return  Cast<APlayerDiabloCharacter>( GetPawn());
+}
+
+void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn) //target
+{
+	//need object pool
+	UDamageTextWidgetComponent* DamageText = NewObject<UDamageTextWidgetComponent>(unit_pawn, m_ClassDmgText);
+	DamageText->RegisterComponent();
+	DamageText->AttachToComponent(unit_pawn->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	DamageText->SetDamageText(local_damage_done);
+
+}
+
+void ADiabloPlayerController::HideFocusStatusWidget()
+{
+	m_MainMenu->HideMonsterInfo();
+}
+
+void ADiabloPlayerController::ShowFocusStatusWidget(AUnitPawn* unit)
+{
+	m_MainMenu->ShowMonsterInfo(unit);
 }

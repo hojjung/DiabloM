@@ -1,5 +1,7 @@
 #include "MainCanvas.h"
 
+
+#include "DiaMonsterInfo.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 
@@ -58,4 +60,17 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
     m_InteractButton->OnClicked.AddDynamic(this,&UMainCanvas::Interaction);
 
     m_AttackButton->OnPressed.AddDynamic(this,&UMainCanvas::Attack);
+}
+
+void UMainCanvas::ShowMonsterInfo(AUnitPawn* monInfo)
+{
+    m_DiaMonInfo->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    m_DiaMonInfo->SetCharacterLevel(monInfo->GetLevel());
+    m_DiaMonInfo->SetCharacterName(monInfo->m_TextUnitName);
+    m_DiaMonInfo->SetHealthPercentage(monInfo->GetHpPercentOne());
+}
+
+void UMainCanvas::HideMonsterInfo()
+{
+    m_DiaMonInfo->SetVisibility(ESlateVisibility::Hidden);
 }

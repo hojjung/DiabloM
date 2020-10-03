@@ -393,7 +393,6 @@ void AUnitPawn::FocusTarget(APawn* target)
 }
 
 
-
 float AUnitPawn::GetAttackSpeed() const
 {
     return m_AttributeSet->GetAttackSpeed();
