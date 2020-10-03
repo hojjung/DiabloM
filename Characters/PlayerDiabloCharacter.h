@@ -7,17 +7,13 @@
 #include "Characters/UnitPawn.h"
 #include "Managers/DiabloCheatManager.h"
 #include "SaveLoad/SaveCharacterStatus.h"
-
-
 #include "PlayerDiabloCharacter.generated.h"
 
-/**
- * 
- */
 class IInteractable;
 class ADiabloPlayerController;
 class UCameraDissolve;
-
+class UPlayerSensing;
+class UPlayerBaseAttack;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
 
 UCLASS()
@@ -25,32 +21,19 @@ class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 {
 	GENERATED_BODY()
 	
+	friend UDiabloCheatManager;
+	friend USaveLoadManager;
+	friend UPlayerSensing;
 public:
 	APlayerDiabloCharacter(const FObjectInitializer& objInit);
-	void LoadExp(const USaveCharacterStatus* loadedSaveData);
 
-	static const FName RightHandWeaponSocketTop;
-	static const FName RightHandWeaponSocketBottom;
-	static const FName LeftHandWeaponSocketTop;
-	static const FName LeftHandWeaponSocketBottom;
-	
-	int m_FaceIndex;
-	int m_HairIndex;
-	
-	FOnFloatChange m_OnLevelChanged;
-	FOnFloatChange m_OnExpGaugeChanged;
-	FOnFloatChange m_OnRemainExpChanged;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	FPlayerTypeHandle m_PlayerTableHandle;
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	TArray<TEnumAsByte< EObjectTypeQuery>> m_TargetingObjectType;
+	TArray<TEnumAsByte< EObjectTypeQuery>> m_AryTargetingObjectType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	UMaterialInstance* m_OutLineMat;
-protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player")
 	float m_fInteractRange;
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UCameraDissolve* m_DissolveCam;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
@@ -80,6 +63,8 @@ protected:
 	//
 protected:
 	UPROPERTY()
+	UPlayerSensing* m_PlayerSense;
+	UPROPERTY()
 	USkeletalMeshComponent* m_FocusRenderer;
 	UPROPERTY()
 	USkeletalMesh* m_DefaultFullHairMesh;
@@ -91,38 +76,61 @@ protected:
 	USkeletalMesh* m_DefaultGloveMesh;
 	UPROPERTY()
 	USkeletalMesh* m_DefaultShoeMesh;
-	//
-	TScriptInterface<IInteractable> m_FocusedInteractable;
+	UPROPERTY()
+	AWeapon* m_RightWeapon;
+	UPROPERTY()
+	AWeapon* m_LeftWeapon;
+	UPROPERTY()
+	TArray< AActor*> m_AryIgnoreActor;
+	UPROPERTY()
+	ADiabloPlayerController* m_PlayerCon;
+	UPROPERTY()
+	TArray<TSubclassOf<UDiabloAbility>> m_GrantedMasteryAbilities;
+	UPROPERTY()
+	TArray<TSubclassOf<UDiabloAbility>> m_GrantedItemAbilities;
+	
+	IInteractable* m_FocusedInteractable;
+	
+	const FAnimStance* m_AnimStance;
+	
+	const FPlayerEntityTable* m_PlayerEntityData;
+
+	FGameplayAbilitySpecHandle m_BaseAttackHandle;
+	
+	FDelegateHandle m_InventoryUpdateHandle;
+    
+	FDelegateHandle m_InventoryLoadedHandle;
+	
+	FVector m_Input;
 
 	float m_fCurrentExp;
 	
 	float m_fMaxExp;
 
-	UPROPERTY()
-	AWeapon* m_RightWeapon;
-	UPROPERTY()
-	AWeapon* m_LeftWeapon;
+	int m_FaceIndex;
 	
-	const FAnimStance* m_AnimStance;
-
-	FGameplayAbilitySpecHandle m_BaseAttackHandle;
-
-	UPROPERTY()
-	TArray< AActor*> m_IgnoreActors;
+	int m_HairIndex;
+	
+	FOnFloatChange m_OnLevelChanged;
+	
+	FOnFloatChange m_OnExpGaugeChanged;
+	
+	FOnFloatChange m_OnRemainExpChanged;
+	//
 protected:
 	virtual void BeginPlay() override;
+
+	void LoadExp(const USaveCharacterStatus* loadedSaveData);
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	void TryCheckInteractable();
 
-	void TryFocusTargetMob();
+	void MoveForward(float AxisValue);
 
-	virtual void FocusTarget(APawn* target) override;
-
+	void MoveRight(float AxisValue);
 	
-
-	void OnInteractFound();
+	virtual void FocusTarget(APawn* target);
 
 	void AutoPlayTick();
 
@@ -140,23 +148,30 @@ protected:
 
 	void SetDefaultGloveMesh();
 
-
 	bool CreateItemActor(const FItemInstance* itemInst,AWeapon** wantCachePointer,UStaticMeshComponent** attachRoot);
 
 	void BindASCInput();
-	//FItemInstance*,AWeapon**,USceneComponent*
-public:
-	virtual void SetUnitStat(FDataTableRowHandle unitID,int level) override;
+
+	void HomingRotateToTarget();
+	
+	void SetLoadedData(const USaveCharacterStatus* loadedSaveData);
+	
 	void SetBaseAttackAbility(const FAnimStance* animStance);
 
+	void SetBaseAttackData(float viewAngle,float viewRadius,float focusRange,float rotateSpeed,float dashableRange, float dashTime, float dashDistance);
+public:
+	UFUNCTION(BlueprintCallable,Category="Interact")
+	virtual void AttackInput(float pressed);
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
-
-	virtual void AttackInput(float pressed)override;
-
-	void SetLoadedData(const USaveCharacterStatus* loadedSaveData);
-
+	UFUNCTION(BlueprintCallable)
+    void ResetCombo();
+	
 	void EquipMesh(const FItemInstance* meshItem,ESlotsEquipAry slotWant);
+	
+	virtual bool SetCharacterLevel(int NewLevel)override;
+	
+	UPlayerBaseAttack* GetBaseAttackInst();
 
 	void RemoveAllEffect();
 
@@ -164,19 +179,37 @@ public:
 
 	void EarnExp(float expEarned);
 
-	virtual bool SetCharacterLevel(int NewLevel)override;
-
-	friend UDiabloCheatManager;
-	friend USaveLoadManager;
-
-	UFUNCTION(BlueprintCallable)
-	void ResetCombo();
-	UFUNCTION()
     void OnSeeTarget(APawn* target);
-	UFUNCTION()
+	
     void OnCantSeeTarget(APawn* target);
+	
 	void OnCanSeeTargetBlock(APawn* target);
-	void HomingRotateToTarget();
+	
+	ADiabloPlayerController* GetDiaController();
 
+	FORCEINLINE FOnFloatChange& GetLevelDele()
+	{
+		return m_OnLevelChanged;
+	}
+
+	FORCEINLINE FOnFloatChange& GetExpGaugeDele()
+	{
+		return m_OnExpGaugeChanged;
+	}
+
+	FORCEINLINE FOnFloatChange& GetRemainExpDele()
+	{
+		return m_OnRemainExpChanged;
+	}
+
+	FORCEINLINE const TArray<TEnumAsByte< EObjectTypeQuery>>& GetAryTarget()
+	{
+		return m_AryTargetingObjectType;
+	}
+
+	FORCEINLINE const TArray<AActor*> GetAryIgnoreActor()
+	{
+		return m_AryIgnoreActor;
+	}
 	
 };

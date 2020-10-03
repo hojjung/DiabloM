@@ -49,8 +49,8 @@ void UDiaStatPanel::Init(APlayerDiabloCharacter* charPlayer)
     m_AttributeSet=Cast<UPlayerDiabloAttribute>( m_Player->GetAttributeSet());
     m_AttributeSet->m_OnStatChanged.AddUObject(this,&UDiaStatPanel::UpdateAllAttributeText);
     ADiabloPlayerController::Get->GetEquipment()->m_OnOptionChanged.AddUObject(this,&UDiaStatPanel::UpdateAllAttributeText);
-    m_Player->m_OnLevelChanged.AddUObject(this, &UDiaStatPanel::UpdateLevel);
-    m_Player->m_OnRemainExpChanged.AddUObject(this, &UDiaStatPanel::UpdateRemainExp); //m_OnChangedExpRamain
+    m_Player->GetLevelDele().AddUObject(this, &UDiaStatPanel::UpdateLevel);
+    m_Player->GetRemainExpDele().AddUObject(this, &UDiaStatPanel::UpdateRemainExp); //m_OnChangedExpRamain
     
     //UpdateAllAttributeText();
 }

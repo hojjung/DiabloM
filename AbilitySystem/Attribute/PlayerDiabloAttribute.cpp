@@ -29,7 +29,10 @@ void UPlayerDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attrib
 		//rage start from 0
 		//AdjustAttributeForMaxChange(Rage, MaxRage, NewValue, GetMaxRageAttribute());
 	}
-
+	else if (Attribute == GetCriticalDamageAttribute())
+	{
+		
+	}
 }
 void UPlayerDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCallbackData & Data)
 {

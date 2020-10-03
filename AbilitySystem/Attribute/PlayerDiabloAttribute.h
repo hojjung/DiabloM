@@ -122,6 +122,10 @@ public:
 	FGameplayAttributeData CriticalChance;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, CriticalChance)
 
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData CriticalDamage;
+	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, CriticalDamage)
+
 	UPROPERTY(BlueprintReadOnly, Category = "Defense")
 	FGameplayAttributeData BlockChance;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, BlockChance)
@@ -129,6 +133,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Grow")
 	FGameplayAttributeData MaxExpForLevelUp;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, MaxExpForLevelUp)
+
 protected:
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;

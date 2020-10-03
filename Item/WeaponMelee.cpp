@@ -27,8 +27,8 @@ void AWeaponMelee::InitWeapon(AUnitPawn* pl, const FItemInstance* itemInst)
     m_MeleeCollison->IgnoreActorWhenMoving(m_User.Get(),true);
     m_MeleeCollison->IgnoreComponentWhenMoving(m_User.Get()->GetCapsule(),true);
     
-    m_StartDeleHandle=pl->m_OnStartAttack.AddUObject(this,&AWeaponMelee::BeginWeaponAttack);
-    m_EndDeleHandle=pl->m_OnEndAttack.AddUObject(this,&AWeaponMelee::EndWeaponAttack);
+    m_StartDeleHandle=pl->GetOnStartAttack().AddUObject(this,&AWeaponMelee::BeginWeaponAttack);
+    m_EndDeleHandle=pl->GetOnEndAttack().AddUObject(this,&AWeaponMelee::EndWeaponAttack);
     m_MeleeCollison->OnComponentBeginOverlap.AddDynamic(this,&AWeaponMelee::OnOverlapWeapon);
 }
 
@@ -56,8 +56,8 @@ void AWeaponMelee::OnOverlapWeapon(
 
 void AWeaponMelee::RemoveWeapon(AUnitPawn* pl)
 {
-    pl->m_OnStartAttack.Remove(m_StartDeleHandle);
-    pl->m_OnStartAttack.Remove(m_EndDeleHandle);
+    pl->GetOnStartAttack().Remove(m_StartDeleHandle);
+    pl->GetOnEndAttack().Remove(m_EndDeleHandle);
 }
 
 void AWeaponMelee::BeginWeaponAttack()

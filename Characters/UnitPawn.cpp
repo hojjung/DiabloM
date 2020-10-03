@@ -3,7 +3,6 @@
 #include "NavigationData.h"
 #include "NavigationSystem.h"
 #include "AbilitySystem/Components/DiabloAbilitySystemComp.h"
-#include "Datas/CharacterDataTable.h"
 #include "Managers/DiabloGameInstance.h"
 
 
@@ -38,16 +37,8 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 
     m_fMoveAcceptRadius = 100.f;
 
-    m_EffectRemoveOnDeathTag= FGameplayTag::RequestGameplayTag(FName("Effect.RemoveOnDeath"));
+    m_EffectRemoveOnDeathTag = FGameplayTag::RequestGameplayTag(FName("Effect.RemoveOnDeath"));
     m_DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
-
-
-    m_AISense = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp00");
-    m_AISense->SetPeripheralVisionAngle(90.f);
-    m_AISense->SightRadius = 760.f;
-    m_AISense->HearingThreshold = 700.f;
-    m_AISense->LOSHearingThreshold = 700.f;
-    m_AISense->bOnlySensePlayers = true;
 }
 
 
@@ -74,11 +65,6 @@ void AUnitPawn::BeginPlay()
 {
     Super::BeginPlay();
     m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-
-    if (!m_MonsterUnitHandle.IsNull())
-    {
-        SetUnitStat(m_MonsterUnitHandle, 1);
-    }
 }
 
 void AUnitPawn::MoveToLocation(FVector goalLocation)
@@ -125,12 +111,12 @@ void AUnitPawn::MoveToLocation(FVector goalLocation)
 
 void AUnitPawn::MoveToActor(AActor* goalTarget)
 {
-    if(!goalTarget)
+    if (!goalTarget)
     {
         return;
     }
-    
-    
+
+
     const bool bAlreadyAtGoal = m_PFComp->HasReached(*goalTarget, EPathFollowingReachMode::OverlapAgent);
 
     // script source, keep only one move request at time
@@ -186,7 +172,7 @@ void AUnitPawn::EndAttack()
 void AUnitPawn::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-    m_fTickDeltaTime=DeltaTime;
+    m_fTickDeltaTime = DeltaTime;
 }
 
 
@@ -195,33 +181,6 @@ UPawnMovementComponent* AUnitPawn::GetMovementComponent() const
     return m_Movement;
 }
 
-void AUnitPawn::MoveForward(float AxisValue)
-{
-    m_Input.X = AxisValue;
-
-    if (m_PlayerCon && (AxisValue != 0.0f))
-    {
-        const FRotator Rotation = m_PlayerCon->GetControlRotation();
-        const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-        const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-        AddMovementInput(Direction, AxisValue);
-    }
-}
-
-void AUnitPawn::MoveRight(float AxisValue)
-{
-    m_Input.Y = AxisValue;
-
-    if (m_PlayerCon && (AxisValue != 0.0f))
-    {
-        const FRotator Rotation = m_PlayerCon->GetControlRotation();
-        const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-        const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-        AddMovementInput(Direction, AxisValue);
-    }
-}
 
 void AUnitPawn::GetCapsuleSize(float& height, float& radius)
 {
@@ -245,21 +204,6 @@ void AUnitPawn::PrintStats()
     //m_AttributeSet->PrintStats();
 }
 
-
-void AUnitPawn::SetUnitStat(FDataTableRowHandle unitID, int level)
-{
-    m_NameUnitID = unitID.RowName;
-    SetCharacterLevel(level);
-    const FMonsterTable* const UnitData = unitID.GetRow<FMonsterTable>("");
-    m_TextUnitName = UnitData->m_ShowingName;
-    m_SkBody->SetSkeletalMesh(UnitData->m_Mesh);
-    m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-    m_SkBody->SetAnimInstanceClass(UnitData->m_AnimBP);
-    m_GEUnitStat = UnitData->m_DefaultStatTable;//몬스터 랜덤 데이터가 마치 아이템 옵션처럼 몬스터에게 붙어야한다.
-    check(m_GEUnitStat);
-    m_DeathMontage = UnitData->m_DeathMontage;
-    SetUnitStatEffect();
-}
 
 float AUnitPawn::GetHealth() const
 {
@@ -300,107 +244,87 @@ bool AUnitPawn::IsAlive()
     return GetHealth() > 0.0f;
 }
 
-void AUnitPawn::AttackInput(float pressed)
-{
-    if (FMath::IsNearlyZero(pressed))
-    {
-        return;
-    }
-
-    PRINTF("AttackInput Pressed!");
-    m_OnPressedAttack.Broadcast();
-}
 
 float AUnitPawn::PlayAnimMontage(UAnimMontage* anim_montage, float InPlayRate, FName StartSectionName)
 {
-    auto* AnimInstance=m_SkBody->GetAnimInstance();
-    
-    	if( anim_montage && AnimInstance)
-    	{
-    		float const Duration = AnimInstance->Montage_Play(anim_montage, InPlayRate);
-    
-    		if (Duration > 0.f)
-    		{
-    			// Start at a given Section.
-    			if( StartSectionName != NAME_None )
-    			{
-    				AnimInstance->Montage_JumpToSection(StartSectionName, anim_montage);
-    			}
-    
-    			return Duration;
-    		}
-    	}	
-    
+    auto* AnimInstance = m_SkBody->GetAnimInstance();
+
+    if (anim_montage && AnimInstance)
+    {
+        float const Duration = AnimInstance->Montage_Play(anim_montage, InPlayRate);
+
+        if (Duration > 0.f)
+        {
+            // Start at a given Section.
+            if (StartSectionName != NAME_None)
+            {
+                AnimInstance->Montage_JumpToSection(StartSectionName, anim_montage);
+            }
+
+            return Duration;
+        }
+    }
+
     return 0.f;
 }
 
 void AUnitPawn::StopAnimMontage(UAnimMontage* AnimMontage)
 {
-    UAnimInstance * AnimInstance =m_SkBody->GetAnimInstance();
-    UAnimMontage * MontageToStop = (AnimMontage)? AnimMontage : GetCurrentMontage();
-    bool bShouldStopMontage =  AnimInstance && MontageToStop && !AnimInstance->Montage_GetIsStopped(MontageToStop);
+    UAnimInstance* AnimInstance = m_SkBody->GetAnimInstance();
+    UAnimMontage* MontageToStop = (AnimMontage) ? AnimMontage : GetCurrentMontage();
+    bool bShouldStopMontage = AnimInstance && MontageToStop && !AnimInstance->Montage_GetIsStopped(MontageToStop);
 
-    if ( bShouldStopMontage )
+    if (bShouldStopMontage)
     {
         AnimInstance->Montage_Stop(MontageToStop->BlendOut.GetBlendTime(), MontageToStop);
     }
 }
 
-UAnimMontage * AUnitPawn::GetCurrentMontage()
+UAnimMontage* AUnitPawn::GetCurrentMontage()
 {
-    UAnimInstance * AnimInstance = m_SkBody->GetAnimInstance();
-    if ( AnimInstance )
+    UAnimInstance* AnimInstance = m_SkBody->GetAnimInstance();
+    if (AnimInstance)
     {
         return AnimInstance->GetCurrentActiveMontage();
     }
 
     return nullptr;
 }
+
 void AUnitPawn::Die()
 {
     RemoveAllGameplayAbilities();
- 
- 	GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    GetMovementComponent()->SetActive(false);
- 
- 	m_OnCharacterDied.Broadcast(this);
- 
- 	if (IsValid(GetDiaAbilitySystem()))
- 	{
- 		GetDiaAbilitySystem()->CancelAllAbilities();
- 
- 		FGameplayTagContainer EffectTagsToRemove;
- 		EffectTagsToRemove.AddTag(m_EffectRemoveOnDeathTag);
- 		int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
- 
- 		GetDiaAbilitySystem()->AddLooseGameplayTag(m_DeadTag);
- 	}
- 
- 	if (m_DeathMontage)
- 	{
- 		PlayAnimMontage(m_DeathMontage);
- 	}
- 	else
- 	{
- 		FinishDying();
- 	}
-}
 
-void AUnitPawn::FocusTarget(APawn* target)
-{
-    m_FocusedEnemy=Cast<AUnitPawn>( target);
-    
+    GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    GetMovementComponent()->SetActive(false);
+
+    m_OnCharacterDied.Broadcast(this);
+
+    if (IsValid(GetDiaAbilitySystem()))
+    {
+        GetDiaAbilitySystem()->CancelAllAbilities();
+
+        FGameplayTagContainer EffectTagsToRemove;
+        EffectTagsToRemove.AddTag(m_EffectRemoveOnDeathTag);
+        int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
+
+        GetDiaAbilitySystem()->AddLooseGameplayTag(m_DeadTag);
+    }
+
+    if (m_DeathMontage)
+    {
+        PlayAnimMontage(m_DeathMontage);
+    }
+    else
+    {
+        Destroy();
+    }
 }
 
 
 float AUnitPawn::GetAttackSpeed() const
 {
     return m_AttributeSet->GetAttackSpeed();
-}
-
-void AUnitPawn::FinishDying()
-{
-    Destroy();
 }
 
 void AUnitPawn::SetUnitStatEffect()
@@ -418,14 +342,14 @@ void AUnitPawn::SetUnitStatEffect()
 void AUnitPawn::RemoveAllGameplayAbilities()
 {
     TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
-    
+
     for (const FGameplayAbilitySpec& Spec : GetDiaAbilitySystem()->GetActivatableAbilities())
     {
-        bool A =m_GrantedSkillAbilities.Contains(Spec.Ability->GetClass());
-        bool B =m_GrantedMasteryAbilities.Contains(Spec.Ability->GetClass());
-        bool C =m_GrantedItemAbilities.Contains(Spec.Ability->GetClass());
-            
-        if ((Spec.SourceObject == this) &&(A||B||C))
+        bool A = m_GrantedSkillAbilities.Contains(Spec.Ability->GetClass());
+        //bool B =m_GrantedMasteryAbilities.Contains(Spec.Ability->GetClass());
+        //  bool C =m_GrantedItemAbilities.Contains(Spec.Ability->GetClass());
+
+        if ((Spec.SourceObject == this) && A)
         {
             AbilitiesToRemove.Add(Spec.Handle);
         }
@@ -435,5 +359,4 @@ void AUnitPawn::RemoveAllGameplayAbilities()
     {
         GetDiaAbilitySystem()->ClearAbility(AbilitiesToRemove[i]);
     }
-
 }
