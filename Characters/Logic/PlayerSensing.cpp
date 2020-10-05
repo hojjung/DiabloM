@@ -36,7 +36,6 @@ bool UPlayerSensing::TickTryFoundInteraction()
             ETraceTypeQuery::TraceTypeQuery3, false, m_OwnedPlayer->m_AryIgnoreActor, EDrawDebugTrace::ForOneFrame, OutHit, true)
         || !OutHit.GetActor())
     {
-        m_OwnedPlayer->m_FocusedInteractable=nullptr;
         return false;
     }
     
@@ -58,6 +57,7 @@ bool UPlayerSensing::TickTryFoundEnemy()
 
     FVector TraceEnd = TraceStart;
 
+    //TArray <FHitResult> AryOutHit;
     FHitResult OutHit;
 
     if (! UKismetSystemLibrary::BoxTraceSingleForObjects(
@@ -66,25 +66,30 @@ bool UPlayerSensing::TickTryFoundEnemy()
             m_OwnedPlayer->GetAryTarget(), false, m_OwnedPlayer->GetAryIgnoreActor(), EDrawDebugTrace::ForOneFrame,
             OutHit, true,
             FLinearColor::Blue)
-        || !OutHit.GetActor())
+        )
     {
         return false;
     }
 
-    AMonsterPawn* FocusedUnit = Cast<AMonsterPawn>(OutHit.GetActor());
+    
 
+    AMonsterPawn* FocusedUnit = Cast<AMonsterPawn>( OutHit.GetActor());//GetCloseMonster(AryOutHit);,프레임저하 심하고 차이가 없음
+
+    if(!FocusedUnit->IsAlive())
+    {
+        return false;
+    }
     if (!HasLineOfSightTo(FocusedUnit))
     {
         return false;
     }
 
-    if (m_OwnedPlayer->m_FocusedEnemy) //이미 있다면
+    if (m_OwnedPlayer->GetFocusedTarget()) //이미 있다면
     {
-        if (FocusedUnit == m_OwnedPlayer->m_FocusedEnemy) //찾은애랑 이미 있는애랑 같으면 넘어감
+        if (FocusedUnit == m_OwnedPlayer->GetFocusedTarget()) //찾은애랑 이미 있는애랑 같으면 넘어감
         {
-            return false;
+            return true;
         }
-        m_OwnedPlayer->FocusTarget(nullptr);
     }
 
     m_OwnedPlayer->FocusTarget(FocusedUnit);
@@ -92,31 +97,7 @@ bool UPlayerSensing::TickTryFoundEnemy()
     return true;
 }
 
-void UPlayerSensing::SetPeripheralVisionAngle(const float NewPeripheralVisionAngle)
-{
-    m_PeripheralVisionAngle = NewPeripheralVisionAngle;
-    m_PeripheralVisionCosine = FMath::Cos(FMath::DegreesToRadians(m_PeripheralVisionAngle));
-}
 
-void UPlayerSensing::SetViewRadius(const float radius)
-{
-    m_SightRadius = radius;
-}
-
-void UPlayerSensing::SetFocusRange(const float range)
-{
-    m_FocusRange=range;
-}
-
-float UPlayerSensing::GetPeripheralVisionAngle() const
-{
-    return m_PeripheralVisionAngle;
-}
-
-float UPlayerSensing::GetPeripheralVisionCosine() const
-{
-    return m_PeripheralVisionCosine;
-}
 
 void UPlayerSensing::SetSensingUpdatesEnabled(const bool bEnabled)
 {
@@ -163,13 +144,10 @@ void UPlayerSensing::SetSensingInterval(const float NewSensingInterval)
 
                 if (CurrentElapsed < m_SensingInterval)
                 {
-                    // Extend lifetime by remaining time.
                     SetTimer(m_SensingInterval - CurrentElapsed);
                 }
                 else if (CurrentElapsed > m_SensingInterval)
                 {
-                    // Basically fire next update, because time has already expired.
-                    // Don't want to fire immediately in case an update tries to change the interval, looping endlessly.
                     SetTimer(KINDA_SMALL_NUMBER);
                 }
             }
@@ -185,12 +163,14 @@ void UPlayerSensing::OnTimer()
         return;
     }
     
-    if (m_OwnedPlayer->GetFocusedTarget())
+    if (m_OwnedPlayer->GetFocusedTarget())//찾았으면?
     {
-        TickTryFoundEnemy();
+        bool CheckMonster= TickTryFoundEnemy();//꼬깔없는 포커싱
         
-        if (!CouldSeePawn(m_OwnedPlayer->GetFocusedTarget(),true))
+        if (!CouldSeePawn(m_OwnedPlayer->GetFocusedTarget(),false)&&!CheckMonster)//연산을 줄이려고 한듯
         {
+            //즉포커싱으론 잡히는 상태인데
+            //꼬깔이 한테 안보이니까 꼬갈한테 보이게 하려고 이러는거?
             m_OwnedPlayer->FocusTarget(nullptr);
             UpdateAISensing();
         }
@@ -203,15 +183,6 @@ void UPlayerSensing::OnTimer()
 };
 
 
-AActor* UPlayerSensing::GetSensorActor() const
-{
-    return m_OwnedPlayer;
-}
-
-bool UPlayerSensing::IsSensorActor(const AActor* Actor) const
-{
-    return (Actor == GetSensorActor());
-}
 
 bool UPlayerSensing::HasLineOfSightTo(const AActor* Other) const
 {
@@ -235,15 +206,13 @@ void UPlayerSensing::UpdateAISensing()
 }
 
 
+
+
 void UPlayerSensing::SensePawn(AMonsterPawn& Pawn)
 {
     if (CouldSeePawn(&Pawn, true))
     {
-        if (m_OwnedPlayer->GetFocusedTarget())
-        {
-            TickTryFoundEnemy();
-        }
-        else if (HasLineOfSightTo(&Pawn))
+        if (HasLineOfSightTo(&Pawn))
         {
             OnSeePawn.ExecuteIfBound(&Pawn);
         }
@@ -265,31 +234,29 @@ bool UPlayerSensing::CouldSeePawn(APawn* Other, bool bMaySkipChecks) const
     {
         return false;
     }
+
+    if(!Cast<AUnitPawn>(Other)->IsAlive())
+    {
+        return false;
+    }
     
     FVector const OtherLoc = Other->GetActorLocation();
     FVector const SensorLoc = GetSensorLocation();
     FVector const SelfToOther = OtherLoc - SensorLoc;
 
-    // check max sight distance
     float const SelfToOtherDistSquared = SelfToOther.SizeSquared();
     if (SelfToOtherDistSquared > FMath::Square(m_SightRadius))
     {
         return false;
     }
 
-    // may skip if more than some fraction of maxdist away (longer time to acquire)
     if (bMaySkipChecks && (FMath::Square(FMath::FRand()) * SelfToOtherDistSquared > FMath::Square(0.4f * m_SightRadius)))
     {
         return false;
     }
-
-    // 	UE_LOG(LogPath, Warning, TEXT("DistanceToOtherSquared = %f, SightRadiusSquared: %f"), SelfToOtherDistSquared, FMath::Square(SightRadius));
-
-    // check field of view
+    
     FVector const SelfToOtherDir = SelfToOther.GetSafeNormal();
     FVector const MyFacingDir = GetSensorRotation().Vector();
-
-    // 	UE_LOG(LogPath, Warning, TEXT("DotProductFacing: %f, PeripheralVisionCosine: %f"), SelfToOtherDir | MyFacingDir, PeripheralVisionCosine);
 
     return ((SelfToOtherDir | MyFacingDir) >= m_PeripheralVisionCosine);
 }
@@ -327,4 +294,65 @@ FRotator UPlayerSensing::GetSensorRotation() const
 bool UPlayerSensing::ShouldCheckVisibilityOf(APawn* Pawn) const
 {
     return !Pawn->IsHidden();
+}
+
+AMonsterPawn* UPlayerSensing::GetCloseMonster(const TArray<FHitResult>& aryMobs)
+{
+    AActor* MinActor=aryMobs[0].GetActor();
+    
+    float MinDist=DistSqr(MinActor);
+    
+    for(int i=1; i<aryMobs.Num();i++)
+    {
+        float Dist=DistSqr(aryMobs[i].GetActor());
+        if(MinDist>Dist)
+        {
+            MinActor=aryMobs[i].GetActor();
+            MinDist=Dist;
+        }
+    }
+
+    return Cast<AMonsterPawn>( MinActor);
+}
+
+float UPlayerSensing::DistSqr(AActor* want)
+{
+    return FVector::DistSquared2D(m_OwnedPlayer->GetActorLocation(),want->GetActorLocation());
+}
+
+void UPlayerSensing::SetPeripheralVisionAngle(const float NewPeripheralVisionAngle)
+{
+    m_PeripheralVisionAngle = NewPeripheralVisionAngle;
+    m_PeripheralVisionCosine = FMath::Cos(FMath::DegreesToRadians(m_PeripheralVisionAngle));
+}
+
+void UPlayerSensing::SetViewRadius(const float radius)
+{
+    m_SightRadius = radius;
+}
+
+void UPlayerSensing::SetFocusRange(const float range)
+{
+    m_FocusRange=range;
+}
+
+float UPlayerSensing::GetPeripheralVisionAngle() const
+{
+    return m_PeripheralVisionAngle;
+}
+
+float UPlayerSensing::GetPeripheralVisionCosine() const
+{
+    return m_PeripheralVisionCosine;
+}
+
+
+AActor* UPlayerSensing::GetSensorActor() const
+{
+    return m_OwnedPlayer;
+}
+
+bool UPlayerSensing::IsSensorActor(const AActor* Actor) const
+{
+    return (Actor == GetSensorActor());
 }

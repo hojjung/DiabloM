@@ -6,6 +6,7 @@
 
 UUnitMovement::UUnitMovement()
 {
+	m_fMoveSpeedRatio=1.0f;
 	m_bUseRVO = false;
 	m_AvoidanceUID = 0;
 	m_AvoidanceLockVelocity = FVector::ZeroVector;
@@ -39,7 +40,7 @@ void UUnitMovement::BeginPlay()
 
 void UUnitMovement::CalcVelocity(float DeltaTime)
 {
-	Velocity = ConsumeInputVector().GetClampedToSize(1.0f,1.0f) *  m_fMaxSpeed;
+	Velocity = ConsumeInputVector().GetClampedToSize(1.0f,1.0f) *  m_fMaxSpeed*m_fMoveSpeedRatio;
 
 	m_MoveVector = Velocity;
 	
@@ -210,6 +211,11 @@ FRotator UUnitMovement::ComputeOrientToMovementRotation(const FRotator & Current
 void UUnitMovement::SetMoveSpeed(float newSpeed)
 {
 	m_fMaxSpeed=newSpeed;
+}
+
+void UUnitMovement::SetMoveSpeedRatio(float newRatioMax1)
+{
+	m_fMoveSpeedRatio=newRatioMax1;
 }
 
 void UUnitMovement::SetDash(FVector dashDelta, float duration)

@@ -138,6 +138,6 @@ void UPlayerDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModC
 	{
 	}
 	
-	m_OnStatChanged.Broadcast();
+	m_OnStatChanged.Broadcast(TargetCharacter);
 }
 

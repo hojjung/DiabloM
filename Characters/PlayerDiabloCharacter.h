@@ -105,6 +105,8 @@ protected:
 	FDelegateHandle m_InventoryUpdateHandle;
     
 	FDelegateHandle m_InventoryLoadedHandle;
+
+	FDelegateHandle m_FocusedTargetDie;
 	
 	FVector m_Input;
 
@@ -121,6 +123,8 @@ protected:
 	FOnFloatChange m_OnExpGaugeChanged;
 	
 	FOnFloatChange m_OnRemainExpChanged;
+
+	
 	//
 protected:
 	virtual void BeginPlay() override;
@@ -216,6 +220,7 @@ public:
 	{
 		return m_AryIgnoreActor;
 	}
-	
+
+	void ClearFocusedTarget(AUnitPawn* target);
 };
 

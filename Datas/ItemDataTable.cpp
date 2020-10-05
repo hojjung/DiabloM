@@ -1,11 +1,13 @@
 #include "ItemDataTable.h"
 
 #include "AbilitySystem/Ability/PlayerBaseAttack.h"
+#include "AbilitySystem/GameEffect/ItemOptionGameEffect.h"
 
 UDataTable* UItemDataTable::GetTierTable = nullptr;
 UDataTable* UItemDataTable::GetItemTable = nullptr;
 UDataTable* UItemDataTable::GetItemTypeTable = nullptr;
 UDataTable* UItemDataTable::GetAnimStanceTable = nullptr;
+TSubclassOf<UItemOptionGameEffect> UItemDataTable::GetItemEffect = nullptr;
 
 FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIndex, IItemHolder* holder,
                              TArray<FOptionSpec>& aryUseEffect, const FItemTier* itemTier)
@@ -50,8 +52,10 @@ UItemDataTable::UItemDataTable()
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundAnimTable(
       TEXT("DataTable'/Game/DataTables/Items/AnimStanceTable.AnimStanceTable'"));
     UItemDataTable::GetAnimStanceTable = FoundAnimTable.Object;
-    //DataTable'/Game/DataTables/Items/ItemTypeTable.ItemTypeTable'
-    //DataTable'/Game/DataTables/Items/AnimStanceTable.AnimStanceTable'
+   // static ConstructorHelpers::FClassFinder<UItemOptionGameEffect>FoundGameEffectAsset(
+    //    TEXT("Blueprint'/Game/Blueprints/Abilities/GameEffect/GE_ItemOptionEffect.GE_ItemOptionEffect_C'"));
+//
+   // UItemDataTable::GetItemEffect=FoundGameEffectAsset.Class;
 }
 
 const FItemTier& UItemDataTable::GetItemTier(FName id)
@@ -99,6 +103,13 @@ FItemTypeHandle::FItemTypeHandle()
 {
     FDataTableRowHandle::DataTable = UItemDataTable::GetItemTypeTable;
     FDataTableRowHandle::RowName=NAME_None;
+}
+
+FItemType::FItemType(): m_EquipableSlot(), m_EquipInterruptSlot()
+{
+    m_TypeID = "SetSameWithRowID";
+    m_ShowingName = FText::FromString("TheShowNameLikeOneHandSword");
+    m_OptionGameEffect = UItemDataTable::GetItemEffect;
 }
 
 FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMesh(nullptr), m_ItemIcon(nullptr)

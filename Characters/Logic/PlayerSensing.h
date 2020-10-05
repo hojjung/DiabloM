@@ -60,6 +60,9 @@ protected:
 
     void UpdateAISensing();
 
+    AMonsterPawn* GetCloseMonster(const TArray<FHitResult>& aryMobs);
+
+    float DistSqr(AActor* want);
 public:
     void InitSense(APlayerDiabloCharacter* player);
 

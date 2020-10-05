@@ -64,13 +64,27 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
 
 void UMainCanvas::ShowMonsterInfo(AUnitPawn* monInfo)
 {
+    UpdateMonsterInfo(monInfo);
+
+    m_MonUpdateHandle=monInfo->GetAttributeSet()->m_OnStatChanged.AddUObject(this,&UMainCanvas::UpdateMonsterInfo);
+}
+
+void UMainCanvas::UpdateMonsterInfo(AUnitPawn* monInfo)
+{
+    if(!monInfo->IsAlive())
+    {
+        HideMonsterInfo();
+        return;
+    }
     m_DiaMonInfo->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_DiaMonInfo->SetCharacterLevel(monInfo->GetLevel());
     m_DiaMonInfo->SetCharacterName(monInfo->GetShowNameText());
     m_DiaMonInfo->SetHealthPercentage(monInfo->GetHpPercentOne());
+    m_DiaMonInfo->SetHealthFormat(monInfo->GetHealth(),monInfo->GetMaxHealth());
 }
 
 void UMainCanvas::HideMonsterInfo()
 {
+    m_MonUpdateHandle.Reset();
     m_DiaMonInfo->SetVisibility(ESlateVisibility::Hidden);
 }

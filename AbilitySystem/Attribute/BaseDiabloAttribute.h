@@ -5,6 +5,7 @@
 #include "DiabloM.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
+
 #include "BaseDiabloAttribute.generated.h"
 
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
@@ -14,7 +15,9 @@
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 
-DECLARE_MULTICAST_DELEGATE(FOnStatChanged);
+class AUnitPawn;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnStatChanged,AUnitPawn*);
 UCLASS()
 class DIABLOM_API UBaseDiabloAttribute : public UAttributeSet
 {
@@ -109,6 +112,7 @@ public:
     UPROPERTY(BlueprintReadOnly, Category = "Gold")
 	FGameplayAttributeData GoldBounty;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, GoldBounty)
+
 protected:
 	void AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty);
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;

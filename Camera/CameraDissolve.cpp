@@ -8,9 +8,9 @@ UCameraDissolve::UCameraDissolve()
     PrimaryComponentTick.TickGroup = TG_PostPhysics;
 
     static ConstructorHelpers::FObjectFinder<UMaterialParameterCollection> FoundCollection(
-        TEXT("MaterialParameterCollection'/Game/MaterialFunc/PC_WallDissolve.PC_WallDissolve'"));
+        TEXT("MaterialParameterCollection'/Game/03_VisualEffect/MaterialFunc/PC_WallDissolve.PC_WallDissolve'"));
 
-    check(FoundCollection.Object);
+    //check(FoundCollection.Object);
 
     m_MatParamAsset = FoundCollection.Object;
 

@@ -89,6 +89,8 @@ void ADroppedItem::SetItemVisual(const FItemInstance& ItemData)
 	m_MeshComp->SetStaticMesh(ItemData.m_ItemData->m_ItemMesh);
 
 	m_BillBoard->SetDrawSize(m_BillBoard->GetUserWidgetObject()->GetDesiredSize());
+
+	OnItemVisualChange(GetItemColor());
 }
 
 void ADroppedItem::SetItem(FName itemID)
@@ -107,9 +109,10 @@ void ADroppedItem::SetItemInstance(FItemInstance& itemInst)
 	m_TableID.RowName=itemInst.m_ItemID;
 }
 
-FItemInstance  ADroppedItem::GetItemInstance()
+
+const FItemInstance& ADroppedItem::GetCurrentItem()const
 {
-	return m_ItemInstance;;
+	return m_ItemInstance;
 }
 
 

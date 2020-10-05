@@ -44,6 +44,8 @@ protected:
     UEquipmentSystem* m_EquipSys;
     UPROPERTY()
     UInventory* m_Inven;
+
+    FDelegateHandle m_MonUpdateHandle;
 public:
     UFUNCTION(BlueprintCallable,Category="Menu")
     void OpenMainMenu();
@@ -63,5 +65,7 @@ public:
 
     void ShowMonsterInfo(AUnitPawn* monInfo);
 
+    void UpdateMonsterInfo(AUnitPawn* monInfo);
+    
     void HideMonsterInfo();
 };

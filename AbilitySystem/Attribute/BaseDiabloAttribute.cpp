@@ -144,6 +144,8 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
 
             SetHealth(FMath::Clamp(OldHealth - LocalDamageDone, 0.0f, GetMaxHealth()));
 
+         
+
             if (TargetCharacter && WasAlive) //데메지가 닳는것은 나임, 여기서 소스는 적군임
             {
                 // This is proper damage
@@ -190,6 +192,8 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
                     //
                     // Source->ApplyGameplayEffectToSelf(GEBounty, 1.0f, Source->MakeEffectContext());
                 }
+
+                TargetCharacter->Die();
             }
         }
     }
@@ -256,5 +260,5 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
     {
     }
     
-    m_OnStatChanged.Broadcast();
+    m_OnStatChanged.Broadcast(TargetCharacter);
 }

@@ -17,6 +17,8 @@ class DIABLOM_API UDiaMonsterInfo : public UUserWidget
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void SetHealthPercentage(float HealthPercentage);
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetHealthFormat(float currentHealth,float maxHealth);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void SetCharacterName(const FText& NewName);

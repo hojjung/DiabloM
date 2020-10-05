@@ -29,7 +29,7 @@ FText UDiaStatPanel::GetPercentFormat(float v)
 
     //1.35 -> 0.35 -> +35%
     //0.25 -> -0.75 -> -75%
-    Args.Add(GetFloatToText(v,1));
+    Args.Add(GetFloatToText(v, 1));
     Args.Add(Per); //2 
 
     FTextFormat FormatT = FText::FromString(FormatArguSet);
@@ -37,7 +37,7 @@ FText UDiaStatPanel::GetPercentFormat(float v)
     return FText::Format(FormatT, Args);
 }
 
-FText UDiaStatPanel::GetFloatToText(float v,int floatCount)
+FText UDiaStatPanel::GetFloatToText(float v, int floatCount)
 {
     return UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero, false, true, floatCount);
 }
@@ -45,17 +45,18 @@ FText UDiaStatPanel::GetFloatToText(float v,int floatCount)
 void UDiaStatPanel::Init(APlayerDiabloCharacter* charPlayer)
 {
     UPlayerDiabloAttribute* DiaAttri = Cast<UPlayerDiabloAttribute>(charPlayer->GetAttributeSet());
-    m_Player=charPlayer;
-    m_AttributeSet=Cast<UPlayerDiabloAttribute>( m_Player->GetAttributeSet());
-    m_AttributeSet->m_OnStatChanged.AddUObject(this,&UDiaStatPanel::UpdateAllAttributeText);
-    ADiabloPlayerController::Get->GetEquipment()->m_OnOptionChanged.AddUObject(this,&UDiaStatPanel::UpdateAllAttributeText);
+    m_Player = charPlayer;
+    m_AttributeSet = Cast<UPlayerDiabloAttribute>(m_Player->GetAttributeSet());
+    m_AttributeSet->m_OnStatChanged.AddUObject(this, &UDiaStatPanel::UpdateAllAttributeText);
+    ADiabloPlayerController::Get->GetEquipment()->m_OnOptionChanged.AddUObject(
+        this, &UDiaStatPanel::UpdateAllAttributeTextWrap);
     m_Player->GetLevelDele().AddUObject(this, &UDiaStatPanel::UpdateLevel);
     m_Player->GetRemainExpDele().AddUObject(this, &UDiaStatPanel::UpdateRemainExp); //m_OnChangedExpRamain
-    
+
     //UpdateAllAttributeText();
 }
 
-void UDiaStatPanel::UpdateAllAttributeText()
+void UDiaStatPanel::UpdateAllAttributeTextWrap()
 {
     UpdateStr(m_AttributeSet->GetStr());
     UpdateDex(m_AttributeSet->GetDex());
@@ -69,36 +70,36 @@ void UDiaStatPanel::UpdateAllAttributeText()
     UpdateAttackSpeed(m_AttributeSet->GetAttackSpeed());
     UpdateCastSpeed(m_AttributeSet->GetCastingSpeed());
     UpdateCritical(m_AttributeSet->GetCriticalChance());
-    UpdateCriticalDmg(m_AttributeSet->GetCriticalDamage());//default 150
+    UpdateCriticalDmg(m_AttributeSet->GetCriticalDamage()); //default 150
     UpdateDoubleAtk(m_AttributeSet->GetDoubleAttackChance());
     UpdateBasher(m_AttributeSet->GetBashChance());
-    
+
     UpdateFireDmg(m_AttributeSet->GetAtkFire());
     UpdateFrostDmg(m_AttributeSet->GetAtkCold());
     UpdatePoisonDmg(m_AttributeSet->GetAtkPoison());
     UpdateElecDmg(m_AttributeSet->GetAtkElec());
-    
+
     UpdatePhysDef(m_AttributeSet->GetPhysicalDefense());
     UpdateAllDef(m_AttributeSet->GetDefensePer());
     UpdateAvoid(m_AttributeSet->GetAvoidChance());
     UpdateBlockChance(m_AttributeSet->GetBlockChance());
-    
+
     UpdateFireDef(m_AttributeSet->GetResFire());
     UpdateFrostDef(m_AttributeSet->GetResCold());
     UpdatePoisonDef(m_AttributeSet->GetResPoison());
     UpdateElecDef(m_AttributeSet->GetResElec());
-    
+
     UpdateMaxHp(m_AttributeSet->GetMaxHealth());
     UpdateHpRegen(m_AttributeSet->GetHealthRegen());
     UpdateLifeSteal(m_AttributeSet->GetLifeSteal());
-    
+
     UpdateMaxMana(m_AttributeSet->GetMaxMana());
     UpdateManaRegen(m_AttributeSet->GetManaRegen());
     UpdateMaxStm(m_AttributeSet->GetMaxStamina());
     UpdateStmRegen(m_AttributeSet->GetStaminaRegen());
     UpdateMaxRage(m_AttributeSet->GetMaxRage());
     UpdateRageRegen(m_AttributeSet->GetRageRegen());
-    
+
     UpdateAllSkill(m_AttributeSet->GetAllSkillBonus());
     UpdateCDReduce(m_AttributeSet->GetCoolDownReduce());
     UpdatePotionCD(m_AttributeSet->GetPotionCoolDownReduce());
@@ -109,7 +110,15 @@ void UDiaStatPanel::UpdateAllAttributeText()
     //
     FGameplayAttribute MoveSpd = m_AttributeSet->GetMoveSpeedAttribute();
     MoveSpd.GetGameplayAttributeData(m_AttributeSet)->GetBaseValue();
-    UpdateMoveSpeed(MoveSpd.GetGameplayAttributeData(m_AttributeSet)->GetCurrentValue()/MoveSpd.GetGameplayAttributeData(m_AttributeSet)->GetBaseValue());
+    UpdateMoveSpeed(
+        MoveSpd.GetGameplayAttributeData(m_AttributeSet)->GetCurrentValue() / MoveSpd.
+                                                                              GetGameplayAttributeData(m_AttributeSet)->
+                                                                              GetBaseValue());
+}
+
+void UDiaStatPanel::UpdateAllAttributeText(AUnitPawn* mobInfo)
+{
+    UpdateAllAttributeTextWrap();
 }
 
 void UDiaStatPanel::UpdateLevel(float v)
@@ -270,7 +279,7 @@ void UDiaStatPanel::UpdateElecDef(float v)
 
 void UDiaStatPanel::UpdateMaxHp(float v)
 {
-    m_MaxHp->SetText(GetFloatToText((int)v,1));
+    m_MaxHp->SetText(GetFloatToText((int)v, 1));
 }
 
 void UDiaStatPanel::UpdateHpRegen(float v)

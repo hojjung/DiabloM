@@ -24,8 +24,10 @@ protected:
 	USphereComponent* m_CollSphere;
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	UWidgetComponent* m_BillBoard;
-
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void OnItemVisualChange(const FLinearColor& colorW);
 protected:
+	UPROPERTY(VisibleAnywhere)
 	FItemInstance m_ItemInstance;
 
 protected:
@@ -37,11 +39,24 @@ protected:
 
 public:
 	virtual void Interact(AActor* instigator) override;
+	
 	void SetItemVisual(const FItemInstance& ItemData);
 
 	void SetItem(FName itemID);
 
 	void SetItemInstance(FItemInstance& itemInst);
 
-	FItemInstance GetItemInstance();
+	UFUNCTION(BlueprintCallable)
+	const FItemInstance& GetCurrentItem()const;
+
+	UFUNCTION(BlueprintCallable)
+	const FItemData& GetCurrentItemData() const
+	{
+		return *(GetCurrentItem().m_ItemData);
+	}
+	UFUNCTION(BlueprintCallable)
+	const FLinearColor& GetItemColor()
+	{
+		return GetCurrentItem().m_ItemTier->m_TierColor;
+	}
 };

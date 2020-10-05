@@ -13,7 +13,7 @@
 #include "UnitPawn.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnAttack);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, class AUnitPawn*, Character);
+DECLARE_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, class AUnitPawn*);
 
 class UNavigationSystemV1;
 UCLASS()
@@ -59,9 +59,9 @@ protected:
     FGameplayTag m_EffectRemoveOnDeathTag;
     UPROPERTY()
     TArray<TSubclassOf<UDiabloAbility>> m_GrantedSkillAbilities;
-    UPROPERTY()
-    AUnitPawn* m_FocusedEnemy;
-    UPROPERTY(BlueprintAssignable)
+    
+    TWeakObjectPtr< AUnitPawn> m_FocusedEnemy;
+    
     FCharacterDiedDelegate m_OnCharacterDied;
 
     FOnAttack m_OnStartAttack;
@@ -163,6 +163,11 @@ public: //AttributeGetter
 
     AUnitPawn* GetFocusedTarget()
     {
-        return m_FocusedEnemy;
+        return m_FocusedEnemy.Get();
+    }
+
+    FCharacterDiedDelegate& GetOnDied()
+    {
+        return  m_OnCharacterDied;
     }
 };

@@ -3,6 +3,8 @@
 #pragma once
 
 #include "AbilitySystem/Ability/DiabloAbility.h"
+#include "Characters/UnitMovement.h"
+
 #include "PlayerBaseAttack.generated.h"
 
 /**
@@ -15,6 +17,7 @@ class DIABLOM_API UPlayerBaseAttack : public UDiabloAbility
 
 public:
 	UPlayerBaseAttack();
+	void PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection,float AttackSpeed);
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	UAnimMontage* m_BaseAttackMotion;
@@ -29,10 +32,10 @@ public:
 	void ResetComboSection();
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float Range;
-
+	float m_fDashTime;
+	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float Damage;
+	float m_fDashLimitRange;
 
 	UFUNCTION()
     void OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData);
@@ -48,6 +51,12 @@ protected:
 	int m_nSectionIndex;
 
 	FName GetSectionName();
+
+	UUnitMovement* GetMovement(AActor* want);
+
+	void DashAttack(AActor* want,FVector dashNormal,float dashLength,float dashTime);
+
+	bool IsDashable( const FGameplayAbilityActorInfo* ActorInfo,float& outDistSqr,FVector& outDashNormal);
 };
 
 

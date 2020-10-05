@@ -2,6 +2,12 @@
 
 
 #include "MonsterPawn.h"
+
+AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit):Super(objInit)
+{
+    
+}
+
 void AMonsterPawn::BeginPlay()
 {
     Super::BeginPlay();
@@ -25,4 +31,12 @@ void AMonsterPawn::SetUnitStat(FDataTableRowHandle unitID, int level)
     check(m_GEUnitStat);
     m_DeathMontage = UnitData->m_DeathMontage;
     SetUnitStatEffect();
+    GetAttributeSet()->m_OnStatChanged.AddUObject(this,&AMonsterPawn::SetHealthPercentage);
+    SetHealthPercentage(this);
+    
+}
+void AMonsterPawn::SetHealthPercentage(AUnitPawn* target)
+{
+   UpdateHealthBar(target->GetHpPercentOne());
+    PRINTF("HealthPer :%f",target->GetHpPercentOne());
 }

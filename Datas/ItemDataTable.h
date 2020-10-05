@@ -89,19 +89,7 @@ struct FItemType : public FTableRowBase
 {
     GENERATED_BODY()
 public:
-    FItemType(): m_EquipableSlot(), m_EquipInterruptSlot()
-    {
-        m_TypeID = "SetSameWithRowID";
-        m_ShowingName = FText::FromString("TheShowNameLikeOneHandSword");
-        //Blueprint'/Game/Blueprints/Abilities/GE_ItemOptionEffect.GE_ItemOptionEffect_C'
-        static ConstructorHelpers::FClassFinder<UItemOptionGameEffect>GameEffectAsset
-        (TEXT("Blueprint'/Game/Blueprints/Abilities/GameEffect/GE_ItemOptionEffect.GE_ItemOptionEffect_C'"));
-
-        if(GameEffectAsset.Succeeded())
-        {
-            m_OptionGameEffect=GameEffectAsset.Class;
-        }
-    };
+    FItemType();;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName m_TypeID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -196,15 +184,15 @@ public:
                   TArray<FOptionSpec>& aryUseEffect, const FItemTier* itemTier = nullptr);//in cpp
 
 public:
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(EditAnywhere,BlueprintReadOnly)
     int m_nCurrentStack;
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(EditAnywhere,BlueprintReadOnly)
     int m_nGridIndex;
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(EditAnywhere,BlueprintReadOnly)
     TArray<FOptionSpec> m_AryOptions;
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(EditAnywhere,BlueprintReadOnly)
     FName m_ItemID = NAME_None;
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(EditAnywhere,BlueprintReadOnly)
     FName m_TierID;
 
     int m_nMaxStack;
@@ -249,6 +237,8 @@ public:
         m_ItemData = nullptr;
         m_AryOptions.Empty();
     }
+
+  
 };
 
 
@@ -297,7 +287,7 @@ class DIABLOM_API UItemDataTable : public UObject
 
     static  UDataTable* GetAnimStanceTable;
 
-
+    static TSubclassOf<UItemOptionGameEffect> GetItemEffect;
  public:
     static const FItemTier& GetItemTier(FName id);
 

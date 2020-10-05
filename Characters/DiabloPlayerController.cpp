@@ -99,7 +99,7 @@ bool ADiabloPlayerController::AddItem(FItemInstance itemInst)
 
 bool ADiabloPlayerController::PickUpItem(ADroppedItem * pickupItem)
 {
-	return AddItem(pickupItem->GetItemInstance());
+	return AddItem(pickupItem->GetCurrentItem());
 	//return true;
 }
 

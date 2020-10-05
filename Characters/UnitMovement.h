@@ -54,6 +54,8 @@ protected://pathfollow
 
 	float m_fDashDuration;
 
+	float m_fMoveSpeedRatio;
+
 	FVector m_DashDelta;
 
 public:
@@ -70,6 +72,8 @@ public:
 	FRotator ComputeOrientToMovementRotation(const FRotator& CurrentRotation) const;
 
 	void SetMoveSpeed(float newSpeed);
+
+	void SetMoveSpeedRatio(float newRatioMax1);
 
 	void SetDash(FVector dashDelta,float duration);
 #pragma region RVO
