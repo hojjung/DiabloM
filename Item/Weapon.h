@@ -26,7 +26,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite,VisibleAnywhere)
 	UStaticMeshComponent* m_StMeshWeapon;
 	
-	TWeakObjectPtr< AUnitPawn> m_User;
+	TWeakObjectPtr< APlayerDiabloCharacter> m_User;
 
 	bool m_bIsAttacking;
 
@@ -36,13 +36,12 @@ protected:
 	const FItemInstance* m_ItemInstPtr;
 
 public:
-	virtual void InitWeapon(AUnitPawn* pl,const FItemInstance* itemInst);
+	virtual void InitWeapon(APlayerDiabloCharacter* pl,const FItemInstance* itemInst);
 	
-
 	FORCEINLINE bool GetIsAttacking()
 	{
 		return m_bIsAttacking;
 	}
 
-	virtual  void RemoveWeapon(AUnitPawn* pl);
+	virtual  void RemoveWeapon(APlayerDiabloCharacter* pl);
 };

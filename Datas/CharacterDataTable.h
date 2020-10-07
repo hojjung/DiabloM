@@ -35,22 +35,25 @@ public:
 };
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
-struct FMonsterTable : public FEntityTable
+struct FMonsterTypeRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
 public:
-	FMonsterTable(): m_Mesh(nullptr)
+	FMonsterTypeRow()
 	{
+		m_ShowingText=FText::FromString("LikeUndead,Animal");
+		
 	}
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USkeletalMesh* m_Mesh;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UAnimInstance> m_AnimBP;
-	
+	FText m_ShowingText;
+	//MoreThings
 };
+
+
+
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
 struct FPlayerEntityTable : public FEntityTable
@@ -132,7 +135,7 @@ public:
 };
 
 
-
+struct FMonsterTable;
 class UGameplayEffect;
 UCLASS()
 class DIABLOM_API UCharacterDataTable : public UObject
@@ -149,10 +152,16 @@ public:
 
 	static  UDataTable* GetNPCEntityTable;
 
+	static  UDataTable* GetMonsterTypeTable;
+
 public:
 	static const FMonsterTable& GetMonster(FName id);
 
 	static const FMonsterTable* GetMonsterPtr(FName id);
+
+	static const FMonsterTypeRow& GetMonsterType(FName id);
+	
+	static const FMonsterTypeRow* GetMonsterTypePtr(FName id);
 
 	static const FPlayerEntityTable& GetPlayerEntity(FName id);
 	
@@ -163,17 +172,6 @@ public:
 	static const FNPCEntityTable* GetNPCPtr(FName id);
 };
 
-USTRUCT(BlueprintType)
-struct FMonsterTypeHandle :public FDataTableRowHandle
-{
-	GENERATED_USTRUCT_BODY()
-public:
-	FMonsterTypeHandle()
-	{
-		DataTable=UCharacterDataTable::GetMonsterEntityTable;
-	}
-
-};
 
 USTRUCT(BlueprintType)
 struct FPlayerTypeHandle :public FDataTableRowHandle
@@ -185,4 +183,51 @@ public:
 		DataTable=UCharacterDataTable::GetPlayerEntityTable;
 	}
 
+};
+
+USTRUCT(BlueprintType)
+struct FMonsterTypeHandle :public FDataTableRowHandle
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	
+	FMonsterTypeHandle()
+	{
+		DataTable = UCharacterDataTable::GetMonsterTypeTable;
+	}
+	
+};
+
+USTRUCT(BlueprintType)
+struct FMonsterEntityHandle :public FDataTableRowHandle
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	
+	FMonsterEntityHandle()
+	{
+		DataTable = UCharacterDataTable::GetMonsterEntityTable;
+	}
+	
+};
+
+USTRUCT(BlueprintType)//���̵�,Ƽ��
+struct FMonsterTable : public FEntityTable
+{
+	GENERATED_BODY()
+
+public:
+	FMonsterTable(): m_Mesh(nullptr), m_DeathAnim(nullptr)
+	{
+	}
+
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USkeletalMesh* m_Mesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UAnimInstance> m_AnimBP;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UAnimMontage* m_DeathAnim;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FMonsterTypeHandle m_TypeHandle;
 };

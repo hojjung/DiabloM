@@ -37,4 +37,26 @@ public:
 		FVector2D Position = Geometry.AbsoluteToLocal(Widget->GetCachedGeometry().GetAbsolutePosition()) + Widget->GetCachedGeometry().GetLocalSize() / 2.0f;
 		return Position;
 	}
+
+	UFUNCTION(BlueprintCallable,Category="Material")
+	static UMaterialInstanceDynamic* CreateSetDynamicMaterial(UMeshComponent* meshComp, int matIndex)
+	{
+		auto* Mat = meshComp->GetMaterial(matIndex);
+		auto* MatInstanceDynamic= UMaterialInstanceDynamic::Create(Mat, meshComp);
+		meshComp->SetMaterial(matIndex, MatInstanceDynamic);
+
+		return MatInstanceDynamic;
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Material")
+    static void SetAudioPlay(UAudioComponent* audioComp, float pitch = 1.f , float volume = 1.f,USoundBase* soundBase = nullptr)
+	{
+		if (soundBase)
+		{
+			audioComp->SetSound(soundBase);
+		}
+		audioComp->SetPitchMultiplier(pitch);
+		audioComp->SetVolumeMultiplier(volume);
+		audioComp->Play();
+	}
 };

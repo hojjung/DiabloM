@@ -2,28 +2,35 @@
 
 
 #include "DiaMonsterInfo.h"
+#include "PlayerStatusBar.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "DefaultMenu/MaterialProgressBar.h"
 #include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 
 
 void UMainCanvas::OpenMainMenu()
 {
+    m_bIsOpened=true;
     m_MainMenu->OpenMainMenu();
-
-    m_InvenButton->SetVisibility(ESlateVisibility::Hidden);
+    
+    m_PlayerStatusBar->SetVisibility(ESlateVisibility::Hidden);
     m_SettingButton->SetVisibility(ESlateVisibility::Hidden);
     m_AttackButton->SetVisibility(ESlateVisibility::Hidden);
     m_InteractButton->SetVisibility(ESlateVisibility::Hidden);
+    UGameplayStatics::SetGamePaused(m_PlayerCon->GetWorld(),true);
 }
 
 void UMainCanvas::CloseMainMenu()
 {
+    m_bIsOpened=false;
     m_MainMenu->CloseMainMenu();
 
-    m_InvenButton->SetVisibility(ESlateVisibility::Visible);
+    m_PlayerStatusBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_SettingButton->SetVisibility(ESlateVisibility::Visible);
     m_AttackButton->SetVisibility(ESlateVisibility::Visible);
     m_InteractButton->SetVisibility(ESlateVisibility::Visible);
+
+    UGameplayStatics::SetGamePaused(m_PlayerCon->GetWorld(),false);
 }
 
 void UMainCanvas::Interaction()
@@ -53,13 +60,17 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
     m_Inven = inven;
     m_MainMenu->Init(m_PlayerCon,m_PlayerPawn,m_EquipSys,m_Inven);
 
-    m_InvenButton->OnClicked.AddDynamic(this,&UMainCanvas::OpenMainMenu);
-
     m_SettingButton->OnClicked.AddDynamic(this,&UMainCanvas::OpenSetting);
 
     m_InteractButton->OnClicked.AddDynamic(this,&UMainCanvas::Interaction);
 
     m_AttackButton->OnPressed.AddDynamic(this,&UMainCanvas::Attack);
+
+    m_PlayerPawn->GetExpGaugeDele().AddUObject(this,&UMainCanvas::UpdateExpGauge);
+
+    m_PlayerStatusBar->Init(m_PlayerCon);
+
+    m_bIsOpened=false;
 }
 
 void UMainCanvas::ShowMonsterInfo(AUnitPawn* monInfo)
@@ -87,4 +98,9 @@ void UMainCanvas::HideMonsterInfo()
 {
     m_MonUpdateHandle.Reset();
     m_DiaMonInfo->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UMainCanvas::UpdateExpGauge(float v)
+{
+    m_ExpBar->SetProgressValue(v);
 }

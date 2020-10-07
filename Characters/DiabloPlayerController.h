@@ -29,6 +29,7 @@ class DIABLOM_API ADiabloPlayerController : public APlayerController
 public:
 	ADiabloPlayerController();
 	 static  ADiabloPlayerController* Get;
+	
 protected:
 	UPROPERTY()
 	UInventory* m_Inven;

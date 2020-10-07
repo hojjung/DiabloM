@@ -26,7 +26,7 @@ AWeapon::AWeapon()
 	m_bIsAttacking = false;
 }
 
-void AWeapon::InitWeapon(AUnitPawn* pl, const FItemInstance* itemInst)
+void AWeapon::InitWeapon(APlayerDiabloCharacter* pl, const FItemInstance* itemInst)
 {
 	m_User = pl;
 
@@ -46,7 +46,8 @@ void AWeapon::InitWeapon(AUnitPawn* pl, const FItemInstance* itemInst)
 	//pivot, rotation setting
 }
 
-void AWeapon::RemoveWeapon(AUnitPawn* pl)
+
+void AWeapon::RemoveWeapon(APlayerDiabloCharacter* pl)
 {
 	
 };

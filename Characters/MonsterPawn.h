@@ -22,7 +22,7 @@ protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UFloatingStatusBarWidgetCompo* m_StatusBar;
 	UPROPERTY(EditAnywhere)
-	FMonsterTypeHandle m_MonsterUnitHandle;
+	FMonsterEntityHandle m_MonsterUnitHandle;
 	
 public: //need more monster
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)

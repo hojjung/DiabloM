@@ -19,6 +19,7 @@
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
     : Super(objInit.SetDefaultSubobjectClass<UPlayerDiabloAttribute>("AttributeSet00"))
 {
+    m_fBonusDamage=1.f;
     m_DissolveCam = CreateDefaultSubobject<UCameraDissolve>("CamDissolve00");
     m_DissolveCam->SetupAttachment(RootComponent);
     m_DissolveCam->SetRelativeRotation(FRotator(-50.f, 0.f, 0.f));
@@ -79,14 +80,6 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
     m_fCurrentExp = 0.f;
 
     m_fMaxExp = 0.f;
-
-    // m_AISense = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp00");
-    // m_AISense->SetPeripheralVisionAngle(90.f);
-    // m_AISense->SightRadius = 760.f;
-    // m_AISense->HearingThreshold = 700.f;
-    // m_AISense->LOSHearingThreshold = 700.f;
-    // m_AISense->bOnlySensePlayers = true;
-    // m_AISense->bOnlySensePlayers = false;
 }
 
 void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
@@ -95,6 +88,7 @@ void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
     m_fCurrentExp = loadedSaveData->m_fExp;
     float RemainExp = m_fMaxExp - m_fCurrentExp;
     m_OnRemainExpChanged.Broadcast(RemainExp);
+    m_OnExpGaugeChanged.Broadcast(m_fCurrentExp/m_fMaxExp);
 }
 
 void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSaveData)
@@ -243,6 +237,8 @@ void APlayerDiabloCharacter::SetBaseAttackAbility(const FAnimStance* animStance)
                                  ),
                                  this));
     }
+
+    m_AlreadyHittenForIgnore.Reset();
 }
 
 void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius, float focusRange)
@@ -250,6 +246,11 @@ void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius
     m_PlayerSense->SetPeripheralVisionAngle(viewAngle);
     m_PlayerSense->SetViewRadius(viewRadius);
     m_PlayerSense->SetFocusRange(focusRange);
+}
+
+void APlayerDiabloCharacter::SetBonusDamage(float v)
+{
+    m_fBonusDamage=v;
 }
 
 void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
@@ -266,6 +267,7 @@ void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
     //should Seprated
     SetBaseAttackAbility(animStance);
     SetBaseAttackData(animStance->m_fViewAngle, animStance->m_fViewRadius, animStance->m_fFocusRange);
+    m_AlreadyHittenForIgnore.Reset();
 }
 
 
@@ -311,6 +313,7 @@ void APlayerDiabloCharacter::EarnExp(float expEarned)
         if (!SetCharacterLevel(m_nCharacterLevel + 1))
         {
             m_OnRemainExpChanged.Broadcast(0.f);
+             m_OnExpGaugeChanged.Broadcast(0.f);
             return;
         }
 
@@ -323,6 +326,7 @@ void APlayerDiabloCharacter::EarnExp(float expEarned)
     }
 
     m_OnRemainExpChanged.Broadcast(m_fMaxExp - m_fCurrentExp);
+     m_OnExpGaugeChanged.Broadcast(m_fCurrentExp/m_fMaxExp);
 }
 
 bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)
@@ -464,6 +468,12 @@ void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target)
     FocusTarget(nullptr);
 }
 
+void APlayerDiabloCharacter::EndAttack()
+{
+    Super::EndAttack();
+    m_fBonusDamage=1.f;
+}
+
 void APlayerDiabloCharacter::InteractWithTarget()
 {
     if (!m_FocusedInteractable)
@@ -582,6 +592,7 @@ bool APlayerDiabloCharacter::CreateItemActor(const FItemInstance* itemInst, AWea
         m_AryIgnoreActor.Remove((*wantCachePointer));
         (*wantCachePointer)->RemoveWeapon(this);
         (*wantCachePointer)->Destroy();
+        (*wantCachePointer)=nullptr;
     }
 
     if (itemInst->IsEmpty())

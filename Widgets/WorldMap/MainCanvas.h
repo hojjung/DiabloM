@@ -5,6 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MainCanvas.generated.h"
 
+class UMaterialProgressBar;
 class UInventory;
 class UEquipmentSystem;
 class APlayerDiabloCharacter;
@@ -16,15 +17,15 @@ class UDiaMonsterInfo;
  *
  * 
  */
- 
+ class UPlayerStatusBar;
 UCLASS()
 class DIABLOM_API UMainCanvas : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+    bool m_bIsOpened=false;
 protected:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
-    UButton* m_InvenButton;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UButton* m_SettingButton;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
@@ -35,6 +36,11 @@ protected:
     UDefaultMenu* m_MainMenu;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UDiaMonsterInfo* m_DiaMonInfo;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+    UMaterialProgressBar* m_ExpBar;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+    UPlayerStatusBar* m_PlayerStatusBar;
+    //PlayerStatus
 protected:
     UPROPERTY()
     ADiabloPlayerController* m_PlayerCon;
@@ -68,4 +74,6 @@ public:
     void UpdateMonsterInfo(AUnitPawn* monInfo);
     
     void HideMonsterInfo();
+    
+    void UpdateExpGauge(float v);
 };

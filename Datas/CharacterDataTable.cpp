@@ -3,6 +3,8 @@
 UDataTable* UCharacterDataTable::GetMonsterEntityTable = nullptr;
 UDataTable* UCharacterDataTable::GetPlayerEntityTable = nullptr;
 UDataTable* UCharacterDataTable::GetNPCEntityTable = nullptr;
+UDataTable* UCharacterDataTable::GetMonsterTypeTable = nullptr;
+//GetMonsterEntityTable
 
 UCharacterDataTable::UCharacterDataTable()
 {
@@ -18,6 +20,10 @@ UCharacterDataTable::UCharacterDataTable()
               TEXT("DataTable'/Game/DataTables/Entities/NPCTable.NPCTable'"));
     GetNPCEntityTable=FoundEntityTable3.Object;
 
+    static ConstructorHelpers::FObjectFinder<UDataTable> FoundEntityTable4(
+              TEXT("DataTable'/Game/DataTables/Entities/MonsterTypeTable.MonsterTypeTable'"));
+    GetMonsterTypeTable=FoundEntityTable4.Object;
+//DataTable'/Game/DataTables/Entities/MonsterTypeTable.MonsterTypeTable'
 }
 
 const FMonsterTable& UCharacterDataTable::GetMonster(FName id)
@@ -28,6 +34,16 @@ const FMonsterTable& UCharacterDataTable::GetMonster(FName id)
 const FMonsterTable* UCharacterDataTable::GetMonsterPtr(FName id)
 {
     return  GetMonsterEntityTable->FindRow<FMonsterTable>(id,"");
+}
+
+const FMonsterTypeRow& UCharacterDataTable::GetMonsterType(FName id)
+{
+    return *GetMonsterTypeTable->FindRow<FMonsterTypeRow>(id,"");
+}
+
+const FMonsterTypeRow* UCharacterDataTable::GetMonsterTypePtr(FName id)
+{
+    return GetMonsterTypeTable->FindRow<FMonsterTypeRow>(id,"");
 }
 
 const FPlayerEntityTable& UCharacterDataTable::GetPlayerEntity(FName id)

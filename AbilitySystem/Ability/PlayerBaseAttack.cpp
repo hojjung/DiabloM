@@ -37,7 +37,6 @@ void UPlayerBaseAttack::PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName 
 
     Task->ReadyForActivation();
 
-
 }
 
 void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -105,10 +104,8 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
         return;
     }
-    //Ability.BaseAttack
     PRINTF("EventReceive");
-    // Only spawn projectiles on the Server.
-    // Predicting projectiles is an advanced topic not covered in this example.
+    
     if (EventTag == FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack")))
     {
         APlayerDiabloCharacter* Hero = Cast<APlayerDiabloCharacter>(GetAvatarActorFromActorInfo());
@@ -120,9 +117,8 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
         FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
             DamageGameplayEffect, GetAbilityLevel());
 
-        // Pass the damage to the Damage Execution Calculation through a SetByCaller value on the GameplayEffectSpec
         DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(
-            FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookDamage")), 33);
+            FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookDamage")), Hero->GetAttributeSet()->GetPhysicalDamage()*Hero->GetBonusDamage());
 
         Cast<AUnitPawn>(EventData.Target)->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
             *DamageEffectSpecHandle.Data);

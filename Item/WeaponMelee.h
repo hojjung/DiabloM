@@ -20,20 +20,21 @@ public:
 protected:
 	UPROPERTY(BlueprintReadWrite,VisibleAnywhere)
 	UCapsuleComponent* m_MeleeCollison;
-	UPROPERTY()
-	TSet<AActor*> m_AlreadyHittenForIgnore;
 
 	FDelegateHandle m_StartDeleHandle;
 
 	FDelegateHandle m_EndDeleHandle;
-public:
-	virtual void InitWeapon(AUnitPawn* pl, const FItemInstance* itemInst) override;
 
+	
+public:
+	virtual void InitWeapon(APlayerDiabloCharacter* pl, const FItemInstance* itemInst) override;
+
+	
 	UFUNCTION()
 	void OnOverlapWeapon(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	virtual void RemoveWeapon(AUnitPawn* pl) override;
+	virtual void RemoveWeapon(APlayerDiabloCharacter* pl) override;
 
 	UFUNCTION(BlueprintCallable)
 	void BeginWeaponAttack();

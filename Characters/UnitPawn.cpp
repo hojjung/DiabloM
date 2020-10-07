@@ -212,7 +212,9 @@ float AUnitPawn::GetHealth() const
 
 float AUnitPawn::GetHpPercentOne() const
 {
-    return GetHealth() / GetMaxHealth();
+    float Per= GetHealth() / GetMaxHealth();
+    Per=FMath::Clamp(Per,0.f,1.f);
+    return Per;
 }
 
 float AUnitPawn::GetMaxHealth() const

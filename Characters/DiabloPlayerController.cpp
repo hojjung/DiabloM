@@ -105,13 +105,12 @@ bool ADiabloPlayerController::PickUpItem(ADroppedItem * pickupItem)
 
 void ADiabloPlayerController::OpenMainMenu()
 {
-	if (m_MainMenu->GetVisibility() != ESlateVisibility::Hidden)
+	if (m_MainMenu->m_bIsOpened)
 	{
 		CloseMainMenu();
 		return;
 	}
 
-	//UWidgetBlueprintLibrary::SetInputMode_UIOnly(this);
 	m_MainMenu->OpenMainMenu();
 
 	APlayerController::SetVirtualJoystickVisibility(false);
@@ -119,7 +118,6 @@ void ADiabloPlayerController::OpenMainMenu()
 
 void ADiabloPlayerController::CloseMainMenu()
 {
-	//UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
 	m_MainMenu->CloseMainMenu();
 	APlayerController::SetVirtualJoystickVisibility(true);
 }

@@ -124,7 +124,10 @@ protected:
 	
 	FOnFloatChange m_OnRemainExpChanged;
 
-	
+	UPROPERTY()
+	TSet<AActor*> m_AlreadyHittenForIgnore;
+
+	float m_fBonusDamage;
 	//
 protected:
 	virtual void BeginPlay() override;
@@ -167,6 +170,8 @@ protected:
 
 	void SetBaseAttackData(float viewAngle,float viewRadius,float focusRange);
 public:
+	UFUNCTION(BlueprintCallable,Category="Interact")
+	void SetBonusDamage(float v);
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	virtual void AttackInput(float pressed);
 	UFUNCTION(BlueprintCallable,Category="Interact")
@@ -222,5 +227,17 @@ public:
 	}
 
 	void ClearFocusedTarget(AUnitPawn* target);
+
+	TSet<AActor*>& GetAlreadyAttacked()
+	{
+		return m_AlreadyHittenForIgnore;
+	}
+
+	 virtual void EndAttack() override;
+
+	FORCEINLINE float GetBonusDamage()
+	{
+		return m_fBonusDamage;
+	}
 };
 

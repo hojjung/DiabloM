@@ -21,7 +21,7 @@ AWeaponMelee::AWeaponMelee()
     m_CachedAttackEvent=FGameplayTag::RequestGameplayTag("Ability.BaseAttack");
 }
 
-void AWeaponMelee::InitWeapon(AUnitPawn* pl, const FItemInstance* itemInst)
+void AWeaponMelee::InitWeapon(APlayerDiabloCharacter* pl, const FItemInstance* itemInst)
 {   
     Super::InitWeapon(pl,itemInst);
     m_MeleeCollison->IgnoreActorWhenMoving(m_User.Get(),true);
@@ -32,6 +32,7 @@ void AWeaponMelee::InitWeapon(AUnitPawn* pl, const FItemInstance* itemInst)
     m_MeleeCollison->OnComponentBeginOverlap.AddDynamic(this,&AWeaponMelee::OnOverlapWeapon);
 }
 
+
 void AWeaponMelee::OnOverlapWeapon(
     UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
     bool bFromSweep, const FHitResult& SweepResult)
@@ -40,12 +41,12 @@ void AWeaponMelee::OnOverlapWeapon(
     {
         return;
     }
-    if (m_AlreadyHittenForIgnore.Contains(OtherActor))
+    if (m_User.Get()->GetAlreadyAttacked().Contains(OtherActor))
     {
         return;
     }
     
-    m_AlreadyHittenForIgnore.Add(OtherActor);
+    m_User.Get()->GetAlreadyAttacked().Add(OtherActor);
 
     FGameplayEventData EventData;
     EventData.Instigator = m_User.Get();
@@ -54,7 +55,7 @@ void AWeaponMelee::OnOverlapWeapon(
     UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(m_User.Get(),m_CachedAttackEvent,EventData);
 }
 
-void AWeaponMelee::RemoveWeapon(AUnitPawn* pl)
+void AWeaponMelee::RemoveWeapon(APlayerDiabloCharacter* pl)
 {
     pl->GetOnStartAttack().Remove(m_StartDeleHandle);
     pl->GetOnEndAttack().Remove(m_EndDeleHandle);
@@ -70,6 +71,5 @@ void AWeaponMelee::EndWeaponAttack()
 {
     m_bIsAttacking=false;
     m_MeleeCollison->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    //PRINTF("Attack End %d",m_AlreadyHittenForIgnore.Num());
-    m_AlreadyHittenForIgnore.Reset();
+    m_User.Get()->GetAlreadyAttacked().Reset();
 }
