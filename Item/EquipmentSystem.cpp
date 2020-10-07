@@ -47,6 +47,9 @@ void UEquipmentSystem::Init(UDiabloAbilitySystemComp* abilitySysCompo)
 
     SetUnequipItemToSlots(
         UCharacterDataTable::GetPlayerEntity(USaveLoadManager::Get->GetCurrentPlayerClassName()).GetUnequipableAry());
+
+
+    CalculateAnimStance();
 }
 
 bool UEquipmentSystem::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //drag된 대상이 어떤 아이템을 가졌는지 알방법이 없음
@@ -300,7 +303,7 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
             FOptionSpec CurrentOption = itemWantAdd.m_AryOptions[i];
 
             NewHandle.Data.Get()->SetSetByCallerMagnitude(
-                ItemTypeWantAdd->m_Options[i].GetRow<FOption>("")->m_OptionTag,
+                itemWantAdd.m_AryOptions[i].m_DataOption->m_OptionTag,
                 CurrentOption.m_fValue);
             //
         }

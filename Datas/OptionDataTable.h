@@ -14,7 +14,7 @@
 //랜덤 최소 최대치
 //옵션 게임플레이 태그
 //옵션 게임 이펙트
-
+struct FOption;
 USTRUCT(BlueprintType) //난이도,티어
 struct FOptionSpec
 {
@@ -22,15 +22,17 @@ struct FOptionSpec
     //It is saving
     
 public:
-    FOptionSpec(): m_fValue(0)
+    FOptionSpec(): m_fValue(0), m_DataOption(nullptr)
     {
-        
     }
+
     UPROPERTY(EditAnywhere)
     float m_fValue;
     UPROPERTY(EditAnywhere)
     FName m_OptionID;
 
+    const FOption* m_DataOption;
+    
     FText GetOptionText() const;
 };
 
@@ -56,7 +58,15 @@ public:
         m_OptionID="SetSameWithRowName";
         
         m_bIsPercentValue=false;
+
+        static ConstructorHelpers::FObjectFinder<UTexture> FoundTexture(
+        TEXT("Texture2D'/Game/Sprite/UI/fg4_iconsSilver_marker.fg4_iconsSilver_marker'"));
+        m_OptionIcon=FoundTexture.Object;
+
+        //
     }
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UTexture* m_OptionIcon;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName m_OptionID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -121,6 +131,8 @@ public:
         NewOption.m_fValue = FMath::RandRange(m_fMinValue.GetRandom(),m_fMaxValue.GetRandom());
 
         NewOption.m_OptionID=m_OptionID;
+
+        NewOption.m_DataOption=this;
 
         return NewOption;
     }

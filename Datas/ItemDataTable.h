@@ -62,6 +62,7 @@ struct FItemTier : public FTableRowBase
 public:
     FItemTier(): m_fDefaultDropRate(0)
     {
+        m_fBonusValue=1.f;
         m_ShowingName = FText::FromString("Normal");
         m_TierColor = FColor(242, 242, 242, 255);
         m_AryOptionCount.Reset();
@@ -81,6 +82,8 @@ public:
     FLinearColor m_TierColor;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<int> m_AryOptionCount;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "1", UIMin = "1"))
+    float m_fBonusValue;
 };
 
 
@@ -89,7 +92,7 @@ struct FItemType : public FTableRowBase
 {
     GENERATED_BODY()
 public:
-    FItemType();;
+    FItemType();
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName m_TypeID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -104,13 +107,17 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<AWeapon> m_EquipmentBP;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<FOptionHandle> m_Options;
+    TArray<float> m_AryMainOptionBonusRand;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FOptionHandle m_MainOption;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TArray<FOptionHandle> m_SubOptions;
   
     FORCEINLINE TArray<FOptionHandle> GetAvailableOptions(int level) const
     {
         TArray<FOptionHandle> AryOptions;
 
-        for(auto& OO : m_Options)
+        for(auto& OO : m_SubOptions)
         {
             if(OO.m_nMinLevel<level)
             {

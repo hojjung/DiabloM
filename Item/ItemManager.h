@@ -30,7 +30,7 @@ protected:
 
     float m_fTierMaxRate;
 protected:
-    bool CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption,int level);
+    bool CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption,float bonus,int level);
 
     void CreateIntAryForShuffle(int maxAryLen, TArray<FOptionHandle>& outOptionAry);
 

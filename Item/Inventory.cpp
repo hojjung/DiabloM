@@ -70,19 +70,15 @@ void UInventory::RemoveItemStack(int index)
 
 bool UInventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //빌드후 여기도
 {
-    //return true;
     if (this == static_cast<UInventory*>(itemWantAdd.m_Holder) && droppedIndex == itemWantAdd.m_nGridIndex)
     {
         PRINTF("Prevent MySelf");
         
         return false;
     }
-    //ㄴsafe
-    //이아래임
     if (CheckSlotValid(droppedIndex, itemWantAdd) && m_ItemAry[droppedIndex].m_ItemID == NAME_None)
     {
         SetItem(droppedIndex, itemWantAdd);
-        //이아래임
         if(itemWantAdd.m_Holder)
         {
             itemWantAdd.m_Holder->RemoveItem(itemWantAdd);

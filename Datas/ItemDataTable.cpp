@@ -107,6 +107,12 @@ FItemTypeHandle::FItemTypeHandle()
 
 FItemType::FItemType(): m_EquipableSlot(), m_EquipInterruptSlot()
 {
+    m_AryMainOptionBonusRand.Add(0.8f);
+    m_AryMainOptionBonusRand.Add(0.9f);
+    m_AryMainOptionBonusRand.Add(1.0f);
+    m_AryMainOptionBonusRand.Add(1.1f);
+    m_AryMainOptionBonusRand.Add(1.2f);
+    
     m_TypeID = "SetSameWithRowID";
     m_ShowingName = FText::FromString("TheShowNameLikeOneHandSword");
     m_OptionGameEffect = UItemDataTable::GetItemEffect;

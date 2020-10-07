@@ -349,6 +349,11 @@ void USaveLoadManager::LoadItemDataForInstance(TArray<FItemInstance>& itemAry)
         }
         ItemInst.m_ItemData = UItemDataTable::GetItemDataPtr(ItemInst.m_ItemID);
         ItemInst.m_ItemTier = UItemDataTable::GetItemTierPtr(ItemInst.m_TierID);
+
+        for(auto& OO: ItemInst.m_AryOptions)
+        {
+            OO.m_DataOption=UOptionDataTable::GetOptionPtr(OO.m_OptionID);
+        }
     }
 }
 

@@ -138,7 +138,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEqui
     switch (slotWant)
     {
     case ESlotsEquipAry::Head:
-        if (meshItem)
+        if (meshItem->m_ItemData)
         {
             m_SkHeadGear->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
             SetHalfHairMesh();
@@ -150,7 +150,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEqui
         }
         break;
     case ESlotsEquipAry::Torso:
-        if (meshItem)
+        if (meshItem->m_ItemData)
         {
             m_SkBody->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
         }
@@ -164,7 +164,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEqui
         m_SkBelt->SetSkeletalMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_SkEquipment : nullptr);
         break;
     case ESlotsEquipAry::Leg:
-        if (meshItem)
+        if (meshItem->m_ItemData)
         {
             m_SkShoe->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
         }
@@ -174,7 +174,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEqui
         }
         break;
     case ESlotsEquipAry::Hand:
-        if (meshItem)
+        if (meshItem->m_ItemData)
         {
             m_SkGlove->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
         }

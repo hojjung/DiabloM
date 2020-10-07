@@ -30,9 +30,11 @@ FItemInstance UItemManager::CreateItemInstance(FName itemID, int level)
 
     int TierMaxOptionCount = TierRolled.m_AryOptionCount.GetRandom();
 
+    float TierBonusValue=TierRolled.m_fBonusValue;
+    
     TArray<FOptionSpec> RandomOptionForItem;
 
-    CreateRandomOption(*ItemData, RandomOptionForItem, TierMaxOptionCount, level);
+    CreateRandomOption(*ItemData, RandomOptionForItem, TierMaxOptionCount,TierBonusValue ,level);
 
     return FItemInstance(ItemData, TierRolled.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, &TierRolled);
 }
@@ -51,7 +53,7 @@ ADroppedItem* UItemManager::CreateItemActor(FItemInstance& itemWantAdd, FVector 
 }
 
 
-bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption, int TierMaxOption,int level)
+bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption, int TierMaxOption,float bonus,int level)
 {
     if (itemData.m_bStackable || !itemData.m_bEquipable)
     {
@@ -59,8 +61,17 @@ bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionS
         return false;
     }
 
-    //Class if statement need
-    TArray<FOptionHandle> AryAvailableOptions = itemData.m_ItemType.GetRow<FItemType>("")->GetAvailableOptions(level);
+    FItemType* ItemTT =itemData.m_ItemType.GetRow<FItemType>("");
+
+    FOptionSpec MainOp=ItemTT->m_MainOption.GetRow<FOption>("")->MakeOptionInst();
+    
+    MainOp.m_fValue*=bonus;
+    
+    MainOp.m_fValue*=ItemTT->m_AryMainOptionBonusRand.GetRandom();
+    
+    outOption.Add(MainOp);
+
+    TArray<FOptionHandle> AryAvailableOptions = ItemTT->GetAvailableOptions(level);
 
     int NumMaxOption = AryAvailableOptions.Num();
 
@@ -74,8 +85,8 @@ bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionS
     OptionRandomCount = FMath::Min<int>(OptionRandomCount, NumMaxOption);
 
     CreateIntAryForShuffle(OptionRandomCount, AryAvailableOptions);
-
-    for (FOptionHandle OO : AryAvailableOptions)
+    //옵션 랜덤이 프라이오리티 및 중복 안되야함
+    for (FOptionHandle OO : AryAvailableOptions)//옵션 랜덤카운트 만큼만 넣어야함? 이대로면 무조건 넣는거아님?
     {
         outOption.Add(OO.GetRow<FOption>("")->MakeOptionInst());
     }
@@ -99,7 +110,7 @@ void UItemManager::CreateIntAryForShuffle(int maxAryLen, TArray<FOptionHandle>& 
 
 FOptionSpec UItemManager::CreateRandomOptionValue(int indexRandomd, const FItemData& itemData)
 {
-    return itemData.m_ItemType.GetRow<FItemType>("")->m_Options[indexRandomd].GetRow<FOption>("")->MakeOptionInst();
+    return itemData.m_ItemType.GetRow<FItemType>("")->m_SubOptions[indexRandomd].GetRow<FOption>("")->MakeOptionInst();
 }
 
 bool UItemManager::AddItem(int droppedIndex, FItemInstance& itemWantAdd)

@@ -44,6 +44,8 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "ImageText")
+	void SetIcon(UTexture* texture);
+	UFUNCTION(BlueprintCallable, Category = "ImageText")
 	void SetString(FText stringWant);
 	UFUNCTION(BlueprintCallable, Category = "ImageText")
 	void SetStringColor(FLinearColor colorWant);

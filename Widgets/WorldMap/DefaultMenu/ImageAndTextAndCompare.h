@@ -35,7 +35,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Compare")
-	void ShowCompare(int preValue, int nxtValue); // show green high red low
+	void ShowCompare(int originalValue, int wantCompare); // show green high red low
 
 	UFUNCTION(BlueprintCallable, Category = "Compare")
 	void SetTextDiffValue(float diff);

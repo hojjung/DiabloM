@@ -25,13 +25,13 @@ void UImageAndTextAndCompare::SetCompareColor(FLinearColor colorWant)
 	m_ImageCompareArrow->SetColorAndOpacity(colorWant);
 }
 
-void UImageAndTextAndCompare::ShowCompare(int preValue, int nxtValue)
+void UImageAndTextAndCompare::ShowCompare(int originalValue, int wantCompare)
 {
 	FSlateBrush BrushWant;
 
 	BrushWant.SetImageSize(FVector2D(64.f, 64.f));
 
-	int Diff = nxtValue - preValue;
+	int Diff = wantCompare - originalValue;
 
 	if (Diff>0)
 	{
@@ -49,7 +49,7 @@ void UImageAndTextAndCompare::ShowCompare(int preValue, int nxtValue)
 		SetCompareColor(FLinearColor::Red);
 	}
 
-	float Percent = (float)preValue / (float)nxtValue;
+	float Percent = (float)originalValue / (float)wantCompare;
 	float PerOne = 1 - Percent;
 	PerOne *= 100.f;
 

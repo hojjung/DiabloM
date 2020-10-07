@@ -45,6 +45,14 @@ void UImageAndText::NativePreConstruct()
 
 }
 
+void UImageAndText::SetIcon(UTexture* texture)
+{
+	FSlateBrush BrushWant;
+	BrushWant.SetImageSize(FVector2D(64.f,64.f));
+	BrushWant.SetResourceObject(texture);
+	m_ImageIcon->SetBrush(BrushWant);
+}
+
 void UImageAndText::SetString(FText stringWant)
 {
 	m_TextStringShow->SetText(stringWant);

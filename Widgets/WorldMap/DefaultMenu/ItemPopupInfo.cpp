@@ -147,7 +147,7 @@ void UItemPopupInfo::HideFlavorText()
     m_TextFlavor->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator,int countSpace)
+void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator, int countSpace)
 {
     //TODO: canvas 에 맞춰 왼쪽 오른쪽 조절
 
@@ -160,7 +160,8 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator,int countSp
     auto ClickedItemSlot = CanvasPanelParent->GetCachedGeometry().AbsoluteToLocal(theInstigator.GetAbsolutePosition()) +
         theInstigator.GetLocalSize() / 2.0f;
 
-    ClickedItemSlot.X -= (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f) + (GetDesiredSize().X *countSpace);
+    ClickedItemSlot.X -= (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f) + (GetDesiredSize().X *
+        countSpace);
 
     //CanvasPanelParent->ForceLayoutPrepass();
 
@@ -197,7 +198,7 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator,int countSp
     PanelSlot->SetPosition(ClickedItemSlot);
 }
 
-void UItemPopupInfo::ShowInfoPanel(EPopupType popupType,FItemInstance& itemInst)
+void UItemPopupInfo::ShowInfoPanel(EPopupType popupType, FItemInstance& itemInst)
 {
     SetRenderOpacity(1.f);
     m_BGForTouch->SetVisibility(ESlateVisibility::Visible);
@@ -248,7 +249,7 @@ void UItemPopupInfo::ShowInfoPanel(EPopupType popupType,FItemInstance& itemInst)
         m_DepositeButton->SetVisibility(ESlateVisibility::Hidden);
         break;
     }
-    
+
     ForceLayoutPrepass();
 }
 
@@ -282,21 +283,29 @@ float UItemPopupInfo::SetFlavorText(const FItemInstance& itemInst)
 
 float UItemPopupInfo::SetOptionTexts(const FItemInstance& itemInst)
 {
+    m_MainOptionAttack->SetIcon(itemInst.m_AryOptions[0].m_DataOption->m_OptionIcon);
+    m_MainOptionAttack->SetString(itemInst.m_AryOptions[0].GetOptionText());
+    //m_MainOptionAttack->ShowCompare()
+    //TODO Set Attribute From Option,and get and compare
+
     float OptionSizeY = 0.f;
 
     int OptionCount = itemInst.m_AryOptions.Num();
 
-    int i = 0;
+    int i = 1;
 
-     
-    while (i < OptionCount)
+    if (OptionCount > 1)
     {
-        float Value = itemInst.m_AryOptions[i].m_fValue;
-        m_AryOptions[i]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-        m_AryOptions[i]->SetString(itemInst.m_AryOptions[i].GetOptionText());
-        m_AryOptions[i]->ForceLayoutPrepass();
-        OptionSizeY += m_AryOptions[i]->GetDesiredSize().Y;
-        i++;
+        while (i < OptionCount)
+        {
+            float Value = itemInst.m_AryOptions[i].m_fValue;
+            m_AryOptions[i]->SetIcon(itemInst.m_AryOptions[i].m_DataOption->m_OptionIcon);
+            m_AryOptions[i]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+            m_AryOptions[i]->SetString(itemInst.m_AryOptions[i].GetOptionText());
+            m_AryOptions[i]->ForceLayoutPrepass();
+            OptionSizeY += m_AryOptions[i]->GetDesiredSize().Y;
+            i++;
+        }
     }
 
     return OptionSizeY;
@@ -308,14 +317,14 @@ void UItemPopupInfo::PlayHideInfoAnim(float delay)
     {
         return;
     }
-    
+
     GetWorld()->GetTimerManager().ClearTimer(m_TimerHandle);
-        
+
     m_BGForTouch->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_SelectedItem.ClearData();
     PlayAnimationReverse(m_FadeAnimation);
     GetWorld()->GetTimerManager().SetTimer(m_TimerHandle, this, &UItemPopupInfo::HideInfoPanel,
-                                           m_FadeAnimation->GetEndTime()+delay, false);
+                                           m_FadeAnimation->GetEndTime() + delay, false);
 }
 
 void UItemPopupInfo::HideInfoPanel()
