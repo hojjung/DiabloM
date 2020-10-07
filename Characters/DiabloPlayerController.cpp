@@ -5,8 +5,9 @@
 #include "Item/Inventory.h"
 #include "Item/EquipmentSystem.h"
 #include "Item/DroppedItem.h"
+#include "Lib/DiaBlueprintFunctionLibrary.h"
 
- 
+
 ADiabloPlayerController*  ADiabloPlayerController::Get=nullptr;
 
 ADiabloPlayerController::ADiabloPlayerController()
@@ -18,7 +19,7 @@ ADiabloPlayerController::ADiabloPlayerController()
 
 	m_nInvenX = 5;
 	m_nInvenY = 8;
-
+	m_DmgIndex=0;
 	bShowMouseCursor=true;
 
 	APlayerController::SetVirtualJoystickVisibility(true);
@@ -46,8 +47,41 @@ void ADiabloPlayerController::InitWidget()
 	m_MainMenu = CreateWidget<UMainCanvas>(this, m_ClassMainMenu, "MainMenu00");
 	m_MainMenu->AddToViewport();
 	m_MainMenu->Init(this,Cast<APlayerDiabloCharacter>(GetPawn()),m_EquipSystem,m_Inven);
-	
+	CreateDmgWC(15);
 	CloseMainMenu();
+}
+
+void ADiabloPlayerController::CreateDmgWC(int count)
+{
+	m_AryDmgWC.Reset();
+	for(int i=0; i<count;i++)
+	{
+		UDamageTextWidgetComponent* DamageText = NewObject<UDamageTextWidgetComponent>(GetPlayerPawn(), m_ClassDmgText);
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(GetPlayerPawn()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		m_AryDmgWC.Add(DamageText);
+		DamageText->Init(GetPlayerPawn());
+		DamageText->m_AttachedActor=GetPlayerPawn();
+		DamageText->SetHiddenInGame(true);
+	}
+}
+
+UDamageTextWidgetComponent* ADiabloPlayerController::GetDmgWC()
+{
+	auto* Dmg=m_AryDmgWC[m_DmgIndex++];
+
+	if(m_DmgIndex>=m_AryDmgWC.Num())
+	{
+		m_DmgIndex=0;
+	}
+	
+	if(Dmg->m_AttachedActor!=this)
+	{
+		Dmg->EndAnimation();
+	}
+	
+	Dmg->SetHiddenInGame(false);
+	return Dmg;
 }
 
 void ADiabloPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -132,14 +166,13 @@ APlayerDiabloCharacter* ADiabloPlayerController::GetPlayerPawn()
 	return  Cast<APlayerDiabloCharacter>( GetPawn());
 }
 
-void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn) //target
+void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn,EDamagePopup dmgPopup) //target
 {
-	//need object pool
-	UDamageTextWidgetComponent* DamageText = NewObject<UDamageTextWidgetComponent>(unit_pawn, m_ClassDmgText);
-	DamageText->RegisterComponent();
+	UDamageTextWidgetComponent* DamageText = GetDmgWC();
 	DamageText->AttachToComponent(unit_pawn->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	DamageText->SetDamageText(local_damage_done);
-
+	DamageText->SetDamageText(UDiaBlueprintFunctionLibrary::GetAlphabetText(local_damage_done));//
+	DamageText->StartAnimation(dmgPopup);
+	DamageText->m_AttachedActor=unit_pawn;
 }
 
 void ADiabloPlayerController::HideFocusStatusWidget()

@@ -59,7 +59,7 @@ void UImageAndTextAndCompare::ShowCompare(int preValue, int nxtValue)
 
 void UImageAndTextAndCompare::SetTextDiffValue(float diff)
 {
-	FText NumbetT = UDiaBlueprintFunctionLibrary::GetFloatAsStringWithPrecision(diff,1);
+	FText NumbetT = UKismetTextLibrary::Conv_FloatToText(diff, ERoundingMode::FromZero, false, true, 1);
 
 	FFormatOrderedArguments Args;
 	Args.Add(NumbetT);

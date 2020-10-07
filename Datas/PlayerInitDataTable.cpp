@@ -18,10 +18,9 @@ UPlayerInitDataTable::UPlayerInitDataTable()
     UPlayerInitDataTable::GetPlayerFaceTable = FoundTable2.Object;
     
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundTable3(
-            TEXT("DataTable'/Game/DataTables/PlayerCreation/PlayerArmorTable.PlayerArmorTable'"));
+            TEXT("DataTable'/Game/DataTables/PlayerCreation/PlayerClassStartArmor.PlayerClassStartArmor'"));
     UPlayerInitDataTable::GetPlayerArmorTable = FoundTable3.Object;
 
-    
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundTable5(
             TEXT("DataTable'/Game/DataTables/PlayerCreation/PlayerItemTable.PlayerItemTable'"));
     UPlayerInitDataTable::GetPlayerItemTable = FoundTable5.Object;

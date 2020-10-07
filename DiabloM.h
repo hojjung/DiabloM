@@ -102,3 +102,4 @@ static FString EnumToString(const FString& enumName, const T value)
 	UEnum* pEnum = FindObject<UEnum>(ANY_PACKAGE, *enumName);
 	return *(pEnum ? pEnum->GetNameStringByIndex(static_cast<uint8>(value)) : "NoEnum-Null");
 }
+

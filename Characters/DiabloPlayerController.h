@@ -49,7 +49,10 @@ protected:
 protected:
 	UPROPERTY()
 	UMainCanvas* m_MainMenu;//실제로 태어난 위젯 메인 메뉴
+	UPROPERTY(VisibleAnywhere, Category = "Widget")
+	TArray<UDamageTextWidgetComponent*> m_AryDmgWC;
 
+	int m_DmgIndex;
 	//able skill tree
 	//learned skill tree
 	//current SkillSlot
@@ -60,6 +63,10 @@ protected:
 	virtual void BeginPlay() override;
 
 	void InitWidget();
+
+	void CreateDmgWC(int count);
+
+	UDamageTextWidgetComponent* GetDmgWC(); 
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
@@ -117,7 +124,7 @@ public:
 
 	APlayerDiabloCharacter* GetPlayerPawn();
 
-	void ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn); //target	
+	void ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target	
 	void HideFocusStatusWidget();
 	void ShowFocusStatusWidget(AUnitPawn* unit);
 };

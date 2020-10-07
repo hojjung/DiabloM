@@ -39,4 +39,6 @@ public: //need more monster
 	void SetUnitStat(FDataTableRowHandle unitID, int level);
 
 	void SetHealthPercentage(AUnitPawn* target );
+
+	virtual bool HasDropItem() override;
 };

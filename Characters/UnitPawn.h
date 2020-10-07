@@ -134,6 +134,8 @@ public: //AttributeGetter
 
     virtual float GetMoveSpeed() const;
 
+    virtual bool HasDropItem();
+
     bool IsAlive();
 
     FORCEINLINE UBaseDiabloAttribute* GetAttributeSet()

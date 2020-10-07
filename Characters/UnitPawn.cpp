@@ -227,6 +227,11 @@ float AUnitPawn::GetMoveSpeed() const
     return m_AttributeSet->GetMoveSpeed();
 }
 
+bool AUnitPawn::HasDropItem()
+{
+    return false;
+}
+
 
 bool AUnitPawn::SetCharacterLevel(int NewLevel)
 {

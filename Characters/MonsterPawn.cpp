@@ -40,3 +40,8 @@ void AMonsterPawn::SetHealthPercentage(AUnitPawn* target)
    UpdateHealthBar(target->GetHpPercentOne());
     PRINTF("HealthPer :%f",target->GetHpPercentOne());
 }
+
+bool AMonsterPawn::HasDropItem()
+{//TODO Drop table make
+    return true;
+}

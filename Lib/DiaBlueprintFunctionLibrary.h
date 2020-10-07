@@ -15,20 +15,27 @@ class DIABLOM_API UDiaBlueprintFunctionLibrary : public UBlueprintFunctionLibrar
 	GENERATED_BODY()
 	
 public:
+	static const FTextFormat FormatT;
+	
+	static const  FText UnitSymbol[9];
+
+	
 	UFUNCTION(BlueprintCallable,Category="DiaLib")
-	static FText GetFloatAsStringWithPrecision(float TheFloat, int32 Precision, bool IncludeLeadingZero = true)
+	static float SetFloatPrecision(float TheFloat, int32 Precision)
 	{
-		float Rounded = roundf(TheFloat);
-		if (FMath::Abs(TheFloat - Rounded) < FMath::Pow(10, -1 * Precision))
+		if(Precision<=0)
 		{
-			TheFloat = Rounded;
+			return roundf(TheFloat);
 		}
-		FNumberFormattingOptions NumberFormat;					//Text.h
-		NumberFormat.MinimumIntegralDigits = (IncludeLeadingZero) ? 1 : 0;
-		NumberFormat.MaximumIntegralDigits = 10000;
-		NumberFormat.MinimumFractionalDigits = Precision;
-		NumberFormat.MaximumFractionalDigits = Precision;
-		return FText::AsNumber(TheFloat, &NumberFormat);
+		
+		Precision = FMath::Clamp(Precision,1,10);
+		
+		int32 PresRounded =round(FMath::Pow(10,Precision));
+
+		float A= round( TheFloat*PresRounded);
+		float B=PresRounded;
+		
+		return A / B;
 	}
 	UFUNCTION(BlueprintCallable, Category = "DiaLib")
 	static FVector2D GetWidgetCenterLocation(FGeometry parentGeo,UWidget * Widget)
@@ -48,7 +55,7 @@ public:
 		return MatInstanceDynamic;
 	}
 
-	UFUNCTION(BlueprintCallable, Category = "Material")
+	UFUNCTION(BlueprintCallable, Category = "Audio")
     static void SetAudioPlay(UAudioComponent* audioComp, float pitch = 1.f , float volume = 1.f,USoundBase* soundBase = nullptr)
 	{
 		if (soundBase)
@@ -59,4 +66,27 @@ public:
 		audioComp->SetVolumeMultiplier(volume);
 		audioComp->Play();
 	}
+
+	UFUNCTION(BlueprintCallable, Category = "Text")
+	static FText GetAlphabetText(float vWant)
+	{
+		
+		float Cache = vWant;
+		float Thous = 1000;
+		int Count=0;
+
+		while (Cache> Thous)//Mile
+			{
+			Cache /= Thous;
+			Count++;
+			}
+
+		Cache=SetFloatPrecision(Cache,1);
+		FFormatOrderedArguments Args;
+		Args.Add(Cache);
+		Args.Add(UnitSymbol[Count]);
+		
+		return FText::Format(FormatT, Args);
+	}
 };
+

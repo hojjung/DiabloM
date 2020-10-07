@@ -157,19 +157,42 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
             }
 
             ADiabloPlayerController* PC = nullptr;
-            if (SourceActor != TargetActor)
+            PC = Cast<ADiabloPlayerController>(TargetController);
+            
+            if(PC)
+            {
+                PC->ShowDamageNumber(LocalDamageDone, TargetCharacter,EDamagePopup::PlayerHurt);
+                PC=nullptr;
+            }
+            else if (SourceActor != TargetActor)
             {
                 PC = Cast<ADiabloPlayerController>(SourceController);
 
                 if (PC)
                 {
-                    PC->ShowDamageNumber(LocalDamageDone, TargetCharacter);
+                    bool IsCritical=false;//TODO :Critical Strike
+                    
+                    EDamagePopup DmgDir=EDamagePopup::NormalLeft;
+                    
+                    bool IsLeft = FMath::RandBool();
+                    
+                    if(IsCritical)
+                    {
+                        DmgDir = IsLeft ? EDamagePopup::CritcalLeft :EDamagePopup::CritcalRight; 
+                    }
+                    else
+                    {
+                        DmgDir = IsLeft ? EDamagePopup::NormalLeft :EDamagePopup::NormalRight;
+                    }
+                    //1.중첩되지 않게 번갈아가며 왼오
+                    //2. 몬스터가 왼쪽이면 왼쪽 오른쪽이면 오른쪽
+                    PC->ShowDamageNumber(LocalDamageDone, TargetCharacter,DmgDir);
                 }
             }
 
             if (!TargetCharacter->IsAlive())
             {
-                if (PC)
+                if (PC && TargetCharacter->HasDropItem())
                 {
                     //?Earn Exp,Gold
                     //
@@ -259,6 +282,7 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
     else if (Data.EvaluatedData.Attribute == GetResPoisonAttribute())
     {
     }
-    
+
+    //속도 측정해볼것
     m_OnStatChanged.Broadcast(TargetCharacter);
 }
