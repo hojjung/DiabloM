@@ -30,6 +30,7 @@ public:
 	FText m_UnitDesc;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> m_DefaultStatTable;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimMontage* m_DeathMontage;
 };
@@ -49,6 +50,7 @@ public:
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText m_ShowingText;
+	
 	//MoreThings
 };
 
@@ -217,7 +219,7 @@ struct FMonsterTable : public FEntityTable
 	GENERATED_BODY()
 
 public:
-	FMonsterTable(): m_Mesh(nullptr), m_DeathAnim(nullptr)
+	FMonsterTable(): m_Mesh(nullptr)
 	{
 	}
 
@@ -227,7 +229,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UAnimInstance> m_AnimBP;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_DeathAnim;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMonsterTypeHandle m_TypeHandle;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UDiabloAbility> m_BaseAttack;
 };

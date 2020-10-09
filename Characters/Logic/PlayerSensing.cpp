@@ -57,14 +57,14 @@ bool UPlayerSensing::TickTryFoundEnemy()
 
     FVector TraceEnd = TraceStart;
 
-    //TArray <FHitResult> AryOutHit;
-    FHitResult OutHit;
+    TArray <FHitResult> AryOutHit;
+    //FHitResult OutHit;
 
-    if (! UKismetSystemLibrary::BoxTraceSingleForObjects(
+    if (! UKismetSystemLibrary::BoxTraceMultiForObjects(
             GetWorld(),
             TraceStart, TraceEnd, HalfSize, m_OwnedPlayer->GetActorRotation(),
             m_OwnedPlayer->GetAryTarget(), false, m_OwnedPlayer->GetAryIgnoreActor(), EDrawDebugTrace::ForOneFrame,
-            OutHit, true,
+            AryOutHit, true,
             FLinearColor::Blue)
         )
     {
@@ -73,7 +73,7 @@ bool UPlayerSensing::TickTryFoundEnemy()
 
     
 
-    AMonsterPawn* FocusedUnit = Cast<AMonsterPawn>( OutHit.GetActor());//GetCloseMonster(AryOutHit);,프레임저하 심하고 차이가 없음
+    AMonsterPawn* FocusedUnit = GetCloseMonster(AryOutHit);//,프레임저하 심하고 차이가 없음//몬스터 많아지니까 돌진이 계속써짐
 
     if(!FocusedUnit->IsAlive())
     {

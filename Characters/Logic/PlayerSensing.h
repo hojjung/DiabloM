@@ -41,6 +41,8 @@ protected:
     UPROPERTY()
     APlayerDiabloCharacter* m_OwnedPlayer;
 
+    FVector m_LastSeenLocation;
+    
 public:
     FSeePawnDelegate OnSeePawn;
 

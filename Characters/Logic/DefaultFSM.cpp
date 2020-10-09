@@ -64,13 +64,34 @@ void UDefaultFSM::OnIdle()
 
 void UDefaultFSM::OnChase()
 {
-	EPathFollowingRequestResult::Type Result = m_OwnerUnit->MoveToActor(m_OwnerUnit->GetFocusedTarget());
+	bool CanSeeTarget =m_OwnerUnit->CanSeeTarget();
 
-	if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
+	if(CanSeeTarget)
 	{
-		m_CurrentState = EFSM::Combat;
-	}
+		EPathFollowingRequestResult::Type Result = m_OwnerUnit->MoveToActor(m_OwnerUnit->GetFocusedTarget());
 
+		if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
+		{
+			m_CurrentState = EFSM::Combat;
+		}
+	}
+	else
+	{
+		if(m_OwnerUnit->GetFocusedTarget())
+		{
+			EPathFollowingRequestResult::Type Result = m_OwnerUnit->MoveToLocation(m_OwnerUnit->GetLastSeenLocation());
+
+			if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
+			{
+				Result = m_OwnerUnit->MoveToActor(m_OwnerUnit->GetFocusedTarget());
+			}
+			//라스티씬이 업데이트가 안된상태로 플레이어를 놓치면?
+			//마지막으로 본곳으로 가고도 놓처버리면?
+		}
+	}
+	
+
+	
 	//계속 도착못하고 쫓아가면
 
 	//그만 쫓음
@@ -102,14 +123,8 @@ void UDefaultFSM::TryAttack()
 	m_OwnerUnit->HomingRotateToTarget();
 
 	PRINTF("FSM-TryAttack");
-	// if (!CanAttack())
-	// {
-	// 	return;
-	// }
-	//
-	// float Dur= PlayAttackMongtage();//평타지속시간 반환필요
-	//
-	// m_fAttackTimer = FMath::Min<float>( 1.f / m_StatDefault.m_AttackSpeed.GetFinalValue(),Dur);
+
+	m_OwnerUnit->DoBaseAttack();
 }
 
 void UDefaultFSM::OnReturn()

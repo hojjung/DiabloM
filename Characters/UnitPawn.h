@@ -77,6 +77,8 @@ protected:
 
     UPROPERTY()
     UDefaultFSM* m_FSM;
+
+    FGameplayAbilitySpecHandle m_BaseAttackHandle;
     
 protected:
     virtual void BeginPlay() override;
@@ -88,14 +90,31 @@ protected:
     void SetUnitStatEffect();
     
     virtual void RemoveAllGameplayAbilities();
+
+    FPathFollowingRequestResult MoveTo(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr* OutPath = nullptr);
+
+    void FindPathForMoveRequest(const FAIMoveRequest& MoveRequest, FPathFindingQuery& Query, FNavPathSharedPtr& OutPath) const;
+
+    bool BuildPathfindingQuery(const FAIMoveRequest& MoveRequest, FPathFindingQuery& Query) const;
+
+    FAIRequestID RequestMove(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr Path);
+
+    float GetAcceptRadiusToOther();
+
+    float GetAcceptRadiusSelfOnly();
+
+    
     
 public:
+    bool virtual CanSeeTarget();
+    
     UFUNCTION(BlueprintCallable)
     virtual void Die();
     UFUNCTION(BlueprintCallable)
     EPathFollowingRequestResult::Type MoveToLocation(FVector goalLocation);
     UFUNCTION(BlueprintCallable)
     EPathFollowingRequestResult::Type MoveToActor(AActor* goalTarget);
+    
     UFUNCTION(BlueprintCallable,Category="Interact")
     virtual void StartAttack();
     UFUNCTION(BlueprintCallable,Category="Interact")
@@ -125,6 +144,8 @@ public:
         return m_Capsule;
     }
 
+    void DoBaseAttack();
+
 public: //AttributeGetter
 
     virtual void HomingRotateToTarget();
@@ -145,7 +166,7 @@ public: //AttributeGetter
 
     virtual bool HasDropItem();
 
-    virtual void FocusTarget(APawn* target);
+    virtual void FocusTarget(AUnitPawn* target);
 
     bool IsAlive();
 
@@ -183,7 +204,12 @@ public: //AttributeGetter
     {
         return  m_OnCharacterDied;
     }
-    
-    
+
+    virtual FVector GetLastSeenLocation()
+    {
+        return FVector::ZeroVector;
+    }
+
+
     friend UDefaultFSM;
 };

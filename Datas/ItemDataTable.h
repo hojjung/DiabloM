@@ -2,6 +2,7 @@
 
 #include "DiabloM.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
+#include "AbilitySystem/Ability/PlayerDiabloAbility.h"
 #include "AbilitySystem/GameEffect/ItemOptionGameEffect.h"
 #include "Animations/DiaAniminstance.h"
 #include "Datas/OptionDataTable.h"
@@ -267,7 +268,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<UDiaAniminstance> m_StanceAnimation;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TSubclassOf<UDiabloAbility> m_BaseAttackAbility;
+    TSubclassOf<UPlayerDiabloAbility> m_BaseAttackAbility;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float m_fViewAngle;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

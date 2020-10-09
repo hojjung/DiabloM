@@ -14,6 +14,11 @@ float UDiaAniminstance::GetVeloPercentOne() const
 {
     AUnitPawn* owner=Cast<AUnitPawn>( TryGetPawnOwner());
 
+    if(!owner)
+    {
+        return 0.f;
+    }
+
     float MaxSpeedSqr = FMath::Square( owner->GetMoveSpeed());
     
     return GetVelocitySqr() / MaxSpeedSqr;

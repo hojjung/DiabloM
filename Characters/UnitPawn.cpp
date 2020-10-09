@@ -10,7 +10,7 @@
 AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 {
     PrimaryActorTick.bCanEverTick = true;
-    m_bUseFSM=false; 
+    m_bUseFSM = false;
     m_Capsule = CreateDefaultSubobject<UCapsuleComponent>("Capsule00");
     m_Capsule->InitCapsuleSize(34.0f, 88.0f);
     m_Capsule->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
@@ -66,126 +66,230 @@ void AUnitPawn::BeginPlay()
 {
     Super::BeginPlay();
     m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+
     m_FSM = NewObject<UDefaultFSM>(this, UDefaultFSM::StaticClass());
     m_FSM->Init(this);
 }
 
 EPathFollowingRequestResult::Type AUnitPawn::MoveToLocation(FVector goalLocation)
 {
-    const bool bAlreadyAtGoal = m_PFComp->HasReached(goalLocation, EPathFollowingReachMode::OverlapAgent);
-
-    FPathFollowingRequestResult ResultData;
-    
-    ResultData.Code = EPathFollowingRequestResult::Failed;
-
-    if (m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
+    if (m_PFComp && m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
     {
-        m_PFComp->AbortMove(*m_NavSys, FPathFollowingResultFlags::ForcedScript | FPathFollowingResultFlags::NewRequest
-                            , FAIRequestID::AnyRequest,
-                            bAlreadyAtGoal ? EPathFollowingVelocityMode::Reset : EPathFollowingVelocityMode::Keep);
-
-        return ResultData;
+        m_PFComp->AbortMove(*this, FPathFollowingResultFlags::ForcedScript | FPathFollowingResultFlags::NewRequest
+                            , FAIRequestID::CurrentRequest, EPathFollowingVelocityMode::Keep);
     }
 
-    if (m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
-    {
-        m_PFComp->AbortMove(*m_NavSys, FPathFollowingResultFlags::ForcedScript | FPathFollowingResultFlags::NewRequest);
+    FAIMoveRequest MoveReq(goalLocation);
+    MoveReq.SetUsePathfinding(true);
+    MoveReq.SetAllowPartialPath(true);
+    MoveReq.SetProjectGoalLocation(false);
+    MoveReq.SetNavigationFilter(UNavigationQueryFilter::StaticClass());
+    MoveReq.SetAcceptanceRadius(GetAcceptRadiusSelfOnly());
+    MoveReq.SetReachTestIncludesAgentRadius(true);
+    MoveReq.SetCanStrafe(true);
 
-        return ResultData;
-    }
-
-    if (bAlreadyAtGoal)
-    {
-        ResultData.MoveId=m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Success);
-        ResultData.Code = EPathFollowingRequestResult::AlreadyAtGoal;
-    }
-    else
-    {
-        const ANavigationData* NavData = m_NavSys->GetNavDataForProps(GetNavAgentPropertiesRef());
-        if (NavData)
-        {
-            FPathFindingQuery Query(this, *NavData, GetNavAgentLocation(), goalLocation);
-            FPathFindingResult Result = m_NavSys->FindPathSync(Query);
-            
-            if (Result.IsSuccessful())
-            {
-                FAIMoveRequest MoveReq(goalLocation);
-                MoveReq.SetAcceptanceRadius(m_fMoveAcceptRadius);
-                ResultData.MoveId=m_PFComp->RequestMove(MoveReq, Result.Path);
-                ResultData.Code = EPathFollowingRequestResult::RequestSuccessful;
-            }
-            else if (m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
-            {
-               ResultData.MoveId= m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Invalid);
-            }
-        }
-    }
-
-    return ResultData;
+    return MoveTo(MoveReq);
 }
 
 EPathFollowingRequestResult::Type AUnitPawn::MoveToActor(AActor* goalTarget)
 {
+    if (m_PFComp && m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
+    {
+        m_PFComp->AbortMove(*this, FPathFollowingResultFlags::ForcedScript | FPathFollowingResultFlags::NewRequest
+                            , FAIRequestID::CurrentRequest, EPathFollowingVelocityMode::Keep);
+    }
+
+    FAIMoveRequest MoveReq(goalTarget);
+    MoveReq.SetUsePathfinding(true);
+    MoveReq.SetAllowPartialPath(true);
+    MoveReq.SetNavigationFilter(UNavigationQueryFilter::StaticClass());
+    MoveReq.SetAcceptanceRadius(GetAcceptRadiusToOther());
+    MoveReq.SetReachTestIncludesAgentRadius(true);
+    MoveReq.SetCanStrafe(true);
+
+    return MoveTo(MoveReq);
+}
+
+
+FPathFollowingRequestResult AUnitPawn::MoveTo(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr* OutPath)
+{
     FPathFollowingRequestResult ResultData;
     ResultData.Code = EPathFollowingRequestResult::Failed;
-    
-    if (!goalTarget)
+
+    if (MoveRequest.IsValid() == false)
     {
+        PRINTF("InvalidRequest");
         return ResultData;
     }
+    bool bCanRequestMove = true;
+    bool bAlreadyAtGoal = false;
 
-    const bool bAlreadyAtGoal = m_PFComp->HasReached(*goalTarget, EPathFollowingReachMode::OverlapAgent);
-
-    if (m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
+    if (!MoveRequest.IsMoveToActorRequest())
     {
-        m_PFComp->AbortMove(*m_NavSys, FPathFollowingResultFlags::ForcedScript | FPathFollowingResultFlags::NewRequest
-                            , FAIRequestID::AnyRequest,
-                            bAlreadyAtGoal ? EPathFollowingVelocityMode::Reset : EPathFollowingVelocityMode::Keep);
+        if (MoveRequest.GetGoalLocation().ContainsNaN() || FAISystem::IsValidLocation(MoveRequest.GetGoalLocation()) ==
+            false)
+        {
+            bCanRequestMove = false;
+        }
 
-        return ResultData;
+        if (bCanRequestMove && MoveRequest.IsProjectingGoal())
+        {
+            UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+            const FNavAgentProperties& AgentProps = GetNavAgentPropertiesRef();
+            FNavLocation ProjectedLocation;
+
+            if (NavSys && !NavSys->ProjectPointToNavigation(MoveRequest.GetGoalLocation(), ProjectedLocation,
+                                                            INVALID_NAVEXTENT, &AgentProps))
+            {
+                bCanRequestMove = false;
+            }
+
+            MoveRequest.UpdateGoalLocation(ProjectedLocation.Location);
+        }
+
+        bAlreadyAtGoal = bCanRequestMove && m_PFComp->HasReached(MoveRequest);
     }
-
-    if (m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
+    else
     {
-        m_PFComp->AbortMove(*m_NavSys, FPathFollowingResultFlags::ForcedScript | FPathFollowingResultFlags::NewRequest);
-        
-        return ResultData;
+        bAlreadyAtGoal = bCanRequestMove && m_PFComp->HasReached(MoveRequest);
     }
 
     if (bAlreadyAtGoal)
     {
-        ResultData.MoveId=m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Success);
-
-        ResultData.Code=EPathFollowingRequestResult::AlreadyAtGoal;
-        
-        return ResultData;
+        ResultData.MoveId = m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Success);
+        ResultData.Code = EPathFollowingRequestResult::AlreadyAtGoal;
     }
-    else
+    else if (bCanRequestMove)
     {
-        const ANavigationData* NavData = m_NavSys->GetNavDataForProps(GetNavAgentPropertiesRef());
-        if (NavData)
+        FPathFindingQuery PFQuery;
+
+        const bool bValidQuery = BuildPathfindingQuery(MoveRequest, PFQuery);
+        if (bValidQuery)
         {
-            FPathFindingQuery Query(this, *NavData, GetNavAgentLocation(), goalTarget->GetActorLocation());
-            FPathFindingResult Result = m_NavSys->FindPathSync(Query);
-            
-            if (Result.IsSuccessful())
+            FNavPathSharedPtr Path;
+            FindPathForMoveRequest(MoveRequest, PFQuery, Path);
+
+            const FAIRequestID RequestID = Path.IsValid()
+                                               ? RequestMove(MoveRequest, Path)
+                                               : FAIRequestID::InvalidRequest;
+            if (RequestID.IsValid())
             {
-                Result.Path->SetGoalActorObservation(*goalTarget, 100.0f);
-                FAIMoveRequest MoveReq(goalTarget);
-                MoveReq.SetAcceptanceRadius(m_fMoveAcceptRadius);
-                ResultData.MoveId=m_PFComp->RequestMove(MoveReq, Result.Path);
+                bool bAllowStrafe = MoveRequest.CanStrafe();
+                ResultData.MoveId = RequestID;
                 ResultData.Code = EPathFollowingRequestResult::RequestSuccessful;
-            }
-            else if (m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
-            {
-                ResultData.MoveId=m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Invalid);
-                ResultData.Code = EPathFollowingRequestResult::Failed;
+
+                if (OutPath)
+                {
+                    *OutPath = Path;
+                }
             }
         }
     }
 
+    if (ResultData.Code == EPathFollowingRequestResult::Failed)
+    {
+        ResultData.MoveId = m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Invalid);
+    }
+
     return ResultData;
 }
+
+void AUnitPawn::FindPathForMoveRequest(const FAIMoveRequest& MoveRequest, FPathFindingQuery& Query,
+                                       FNavPathSharedPtr& OutPath) const
+{
+    if (m_NavSys)
+    {
+        FPathFindingResult PathResult = m_NavSys->FindPathSync(Query);
+        if (PathResult.Result != ENavigationQueryResult::Error)
+        {
+            if (PathResult.IsSuccessful() && PathResult.Path.IsValid())
+            {
+                if (MoveRequest.IsMoveToActorRequest())
+                {
+                    PathResult.Path->SetGoalActorObservation(*MoveRequest.GetGoalActor(), 100.0f);
+                }
+
+                PathResult.Path->EnableRecalculationOnInvalidation(true);
+                OutPath = PathResult.Path;
+            }
+        }
+    }
+}
+
+bool AUnitPawn::BuildPathfindingQuery(const FAIMoveRequest& MoveRequest, FPathFindingQuery& Query) const
+{
+    bool bResult = false;
+
+    UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+    const ANavigationData* NavData = (NavSys == nullptr)
+                                         ? nullptr
+                                         : MoveRequest.IsUsingPathfinding()
+                                         ? NavSys->GetNavDataForProps(GetNavAgentPropertiesRef())
+                                         : NavSys->GetAbstractNavData();
+
+    if (NavData)
+    {
+        FVector GoalLocation = MoveRequest.GetGoalLocation();
+        if (MoveRequest.IsMoveToActorRequest())
+        {
+            const INavAgentInterface* NavGoal = Cast<const INavAgentInterface>(MoveRequest.GetGoalActor());
+            if (NavGoal)
+            {
+                const FVector Offset = NavGoal->GetMoveGoalOffset(this);
+                GoalLocation = FQuatRotationTranslationMatrix(MoveRequest.GetGoalActor()->GetActorQuat(),
+                                                              NavGoal->GetNavAgentLocation()).TransformPosition(Offset);
+            }
+            else
+            {
+                GoalLocation = MoveRequest.GetGoalActor()->GetActorLocation();
+            }
+        }
+
+        FSharedConstNavQueryFilter NavFilter = UNavigationQueryFilter::GetQueryFilter(
+            *NavData, this, MoveRequest.GetNavigationFilter());
+        Query = FPathFindingQuery(*this, *NavData, GetNavAgentLocation(), GoalLocation, NavFilter);
+        Query.SetAllowPartialPaths(MoveRequest.IsUsingPartialPaths());
+
+        if (m_PFComp)
+        {
+            m_PFComp->OnPathfindingQuery(Query);
+        }
+
+        bResult = true;
+    }
+
+    return bResult;
+}
+
+FAIRequestID AUnitPawn::RequestMove(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr Path)
+{
+    uint32 RequestID = FAIRequestID::InvalidRequest;
+    RequestID = m_PFComp->RequestMove(MoveRequest, Path);
+    return RequestID;
+}
+
+float AUnitPawn::GetAcceptRadiusToOther()
+{
+    float MyCapsule =GetCapsule()->GetScaledCapsuleRadius();
+
+    return GetFocusedTarget()? MyCapsule+GetFocusedTarget()->GetCapsule()->GetScaledCapsuleRadius():MyCapsule;
+}
+
+float AUnitPawn::GetAcceptRadiusSelfOnly()
+{
+    return GetCapsule()->GetScaledCapsuleRadius();;
+}
+
+bool AUnitPawn::CanSeeTarget()
+{
+    if(!GetFocusedTarget())
+    {
+        return false;
+    }
+
+    return GetController()->LineOfSightTo(GetFocusedTarget());
+}
+
 
 void AUnitPawn::StartAttack()
 {
@@ -224,6 +328,11 @@ UDiabloAbilitySystemComp* AUnitPawn::GetDiaAbilitySystem() const
     return m_AbilitySystemComponent;
 }
 
+void AUnitPawn::DoBaseAttack()
+{
+    GetDiaAbilitySystem()->TryActivateAbility(m_BaseAttackHandle);
+}
+
 void AUnitPawn::HomingRotateToTarget()
 {
     if (!m_FocusedEnemy.Get())
@@ -258,8 +367,8 @@ float AUnitPawn::GetHealth() const
 
 float AUnitPawn::GetHpPercentOne() const
 {
-    float Per= GetHealth() / GetMaxHealth();
-    Per=FMath::Clamp(Per,0.f,1.f);
+    float Per = GetHealth() / GetMaxHealth();
+    Per = FMath::Clamp(Per, 0.f, 1.f);
     return Per;
 }
 
@@ -297,9 +406,8 @@ bool AUnitPawn::IsAlive()
     return GetHealth() > 0.0f;
 }
 
-void AUnitPawn::FocusTarget(APawn* target)
+void AUnitPawn::FocusTarget(AUnitPawn* target)
 {
-    
 }
 
 
@@ -357,6 +465,8 @@ void AUnitPawn::Die()
     GetMovementComponent()->SetActive(false);
 
     m_OnCharacterDied.Broadcast(this);
+
+    m_bUseFSM=false;
 
     if (IsValid(GetDiaAbilitySystem()))
     {

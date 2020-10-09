@@ -55,16 +55,6 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
 {
     Super::PostGameplayEffectExecute(Data);
 
-    // AActor* TargetActor = nullptr; //여기서 타겟은 나다.그럼 버프 디버프를 아군 적군이 걸어주는것은?
-    // AController* TargetController = nullptr;
-    // AUnitPawn* TargetCharacter = nullptr;
-    // AActor* SourceActor = nullptr; //여기서 타겟은 나다.그럼 버프 디버프를 아군 적군이 걸어주는것은?
-    // AController* SourceController = nullptr;
-    // AUnitPawn* SourceCharacter = nullptr;
-    // FGameplayEffectContextHandle Context = Data.EffectSpec.GetContext();
-    // UAbilitySystemComponent* Source = Context.GetOriginalInstigatorAbilitySystemComponent();
-    // const FGameplayTagContainer& SourceTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
-    // float Value = 0.f;
     FGameplayEffectContextHandle Context = Data.EffectSpec.GetContext();
     UAbilitySystemComponent* Source = Context.GetOriginalInstigatorAbilitySystemComponent();
     const FGameplayTagContainer& SourceTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
@@ -72,9 +62,7 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
     Data.EffectSpec.GetAllAssetTags(SpecAssetTags);
 
     AActor* TargetActor = nullptr;
-    AController* TargetController = nullptr;
     AUnitPawn* TargetCharacter = nullptr;
-    // Get the Source actor
     AActor* SourceActor = nullptr;
     AController* SourceController = nullptr;
     AUnitPawn* SourceCharacter = nullptr;
@@ -109,7 +97,6 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
     if (Data.Target.AbilityActorInfo.IsValid() && Data.Target.AbilityActorInfo->AvatarActor.IsValid())
     {
         TargetActor = Data.Target.AbilityActorInfo->AvatarActor.Get();
-        TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
         TargetCharacter = Cast<AUnitPawn>(TargetActor);
     }
   
@@ -144,8 +131,6 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
 
             SetHealth(FMath::Clamp(OldHealth - LocalDamageDone, 0.0f, GetMaxHealth()));
 
-         
-
             if (TargetCharacter && WasAlive) //데메지가 닳는것은 나임, 여기서 소스는 적군임
             {
                 // This is proper damage
@@ -155,17 +140,14 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
                     HitResult = *Context.GetHitResult();
                 }
             }
-
-            ADiabloPlayerController* PC = nullptr;
-            PC = Cast<ADiabloPlayerController>(TargetController);
             
-            if(PC)
+            if(TargetCharacter==ADiabloPlayerController::Get->GetPlayerPawn())
             {
-                PC->ShowDamageNumber(LocalDamageDone, TargetCharacter,EDamagePopup::PlayerHurt);
-                PC=nullptr;
+                ADiabloPlayerController::Get->ShowDamageNumber(LocalDamageDone, TargetCharacter,EDamagePopup::PlayerHurt);
             }
             else if (SourceActor != TargetActor)
             {
+                ADiabloPlayerController* PC = nullptr;
                 PC = Cast<ADiabloPlayerController>(SourceController);
 
                 if (PC)
@@ -192,7 +174,7 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
 
             if (!TargetCharacter->IsAlive())
             {
-                if (PC && TargetCharacter->HasDropItem())
+                //if (PC && TargetCharacter->HasDropItem())
                 {
                     //?Earn Exp,Gold
                     //

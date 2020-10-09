@@ -18,11 +18,6 @@ class DIABLOM_API UDiabloAbility : public UGameplayAbility
 
 public:
 	UDiabloAbility();
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Ability")
-	EAbilityInputID m_AbilityInputID = EAbilityInputID::None;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Ability")
-	EAbilityInputID m_AbilityID = EAbilityInputID::None;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ability")
 	bool ActivateAbilityOnGranted = false;
 	

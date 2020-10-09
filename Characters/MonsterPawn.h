@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/UnitPawn.h"
+#include "Logic/MonsterSensing.h"
 #include "Widgets/WorldMap/WorldWidget/FloatingStatusBarWidgetCompo.h"
 
 #include "MonsterPawn.generated.h"
@@ -23,7 +24,8 @@ protected:
 	UFloatingStatusBarWidgetCompo* m_StatusBar;
 	UPROPERTY(EditAnywhere)
 	FMonsterEntityHandle m_MonsterUnitHandle;
-	
+	UPROPERTY()
+	UMonsterSensing* m_MonsterSense;
 public: //need more monster
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void ShowStatusBar();
@@ -38,9 +40,15 @@ public: //need more monster
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	void SetUnitStat(FDataTableRowHandle unitID, int level);
+	void InitMonster(FDataTableRowHandle unitID, int level);
 
 	void SetHealthPercentage(AUnitPawn* target );
 
 	virtual bool HasDropItem() override;
+
+	virtual void FocusTarget(AUnitPawn* target) override;
+
+	bool virtual CanSeeTarget() override;
+
+	virtual FVector GetLastSeenLocation() override;
 };

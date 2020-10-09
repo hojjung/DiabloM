@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "PlayerDiabloAbility.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
 #include "Characters/UnitMovement.h"
 
@@ -11,12 +12,14 @@
  * 
  */
 UCLASS()
-class DIABLOM_API UPlayerBaseAttack : public UDiabloAbility
+class DIABLOM_API UPlayerBaseAttack : public UPlayerDiabloAbility
 {
 	GENERATED_BODY()
 
 public:
 	UPlayerBaseAttack();
+
+public:
 	void PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection,float AttackSpeed);
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)

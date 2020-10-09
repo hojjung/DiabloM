@@ -61,8 +61,6 @@ protected:
 	UStaticMeshComponent* m_StRightWeapon;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UStaticMeshComponent* m_StLeftWeapon;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	bool m_bUseAutoPlay;
 	//
 protected:
 	UPROPERTY()
@@ -99,7 +97,7 @@ protected:
 	
 	const FPlayerEntityTable* m_PlayerEntityData;
 
-	FGameplayAbilitySpecHandle m_BaseAttackHandle;
+
 	
 	FDelegateHandle m_InventoryUpdateHandle;
     
@@ -133,13 +131,11 @@ protected:
 
 	void LoadExp(const USaveCharacterStatus* loadedSaveData);
 
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
 	void MoveForward(float AxisValue);
 
 	void MoveRight(float AxisValue);
 	
-	virtual void FocusTarget(APawn* target) override;
+	virtual void FocusTarget(AUnitPawn* target) override;
 
 	void AutoPlayTick(bool useAuto);
 
@@ -238,5 +234,8 @@ public:
 	{
 		return m_fBonusDamage;
 	}
+
+	virtual FVector GetLastSeenLocation() override;
+
 };
 

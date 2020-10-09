@@ -291,11 +291,6 @@ void APlayerDiabloCharacter::BeginPlay()
    
 }
 
-void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-    Super::EndPlay(EndPlayReason);
-}
-
 
 void APlayerDiabloCharacter::EarnExp(float expEarned)
 {
@@ -373,7 +368,7 @@ void APlayerDiabloCharacter::HideOutlineOnTarget()
     m_FocusRenderer->AttachToComponent(GetBodyMesh(), FAttachmentTransformRules::KeepRelativeTransform);
 }
 
-void APlayerDiabloCharacter::FocusTarget(APawn* target)
+void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 {
     Super::FocusTarget(target);
     
@@ -422,7 +417,7 @@ void APlayerDiabloCharacter::OnSeeTarget(APawn* target)
         return;
     }
 
-    FocusTarget(target);
+    FocusTarget(Unit);
 }
 
 void APlayerDiabloCharacter::OnCantSeeTarget(APawn* target)
@@ -473,6 +468,11 @@ void APlayerDiabloCharacter::EndAttack()
     m_fBonusDamage=1.f;
 }
 
+FVector APlayerDiabloCharacter::GetLastSeenLocation()
+{
+    return m_PlayerSense->m_LastSeenLocation;
+}
+
 void APlayerDiabloCharacter::InteractWithTarget()
 {
     if (!m_FocusedInteractable)
@@ -484,7 +484,7 @@ void APlayerDiabloCharacter::InteractWithTarget()
 
 void APlayerDiabloCharacter::AutoPlayTick(bool useAuto)
 {
-    m_bUseAutoPlay = useAuto;
+    m_bUseFSM = useAuto;
 }
 
 void APlayerDiabloCharacter::Tick(float DeltaTime)
@@ -510,7 +510,8 @@ void APlayerDiabloCharacter::AttackInput(float pressed)
         return;
     }
     HomingRotateToTarget();
-    GetDiaAbilitySystem()->TryActivateAbility(m_BaseAttackHandle);
+    DoBaseAttack();
+    
 }
 
 void APlayerDiabloCharacter::MoveForward(float AxisValue)
