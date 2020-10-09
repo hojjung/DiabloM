@@ -64,36 +64,56 @@ void UDefaultMenu::CloseMainMenu()
     CloseItemPopup();
 }
 
+void UDefaultMenu::CompareItem(UItemPopupInfo* wantEquip, UItemPopupInfo* equippedOld)
+{
+    FOptionSpec WantEquipOption= wantEquip->GetSelectedItem().m_AryOptions[0];
+    FOptionSpec EquippedOption = equippedOld->GetSelectedItem().m_AryOptions[0];
+    
+    if(WantEquipOption.m_OptionID!=EquippedOption.m_OptionID)
+    {
+        return;
+    }
+
+    wantEquip->CompareItem(EquippedOption.m_fValue,WantEquipOption.m_fValue);//
+}
+
 void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
 {
     if (m_bIsPopupOpened)
     {
+        if(
+            m_AryItemPopup[0]->GetSelectedItem().m_nGridIndex==itemInst.m_nGridIndex
+            &&m_AryItemPopup[0]->GetSelectedItem().m_Holder==itemInst.m_Holder
+            &&m_AryItemPopup[0]->GetSelectedItem().m_ItemData==itemInst.m_ItemData)
+        {
+            CloseItemPopup();
+            return;
+        }
         CloseItemPopup();
-
-        return;
     }
 
     bool IsEquipable = itemInst.m_ItemData->m_bEquipable;
-    //클래스type상 장착 가능해야함
-    bool IsStashOpen=false;
+    
+    bool IsStashOpen=false;//TODO stash
+    
     int Count = 0;
     
-    if (Cast<UInventory>(itemInst.m_Holder))
+    if (Cast<UInventory>(itemInst.m_Holder))//인벤 클릭일때
     {
-        if (!IsEquipable)
+        if (!IsEquipable)//장착 불가 아이템
         {
-            if(IsStashOpen)
+            if(IsStashOpen)//창고가 열려있으며
             {
                 m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Deposite, itemInst);
                 m_AryItemPopup[Count]->SetPanelPosition(geo);
             }
-            else
+            else//열려있지 않으면
             {
                 m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::None, itemInst);
                 m_AryItemPopup[Count]->SetPanelPosition(geo);
             }
         }
-        else
+        else//장착 가능 아이템
         {
             m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Equip, itemInst);
             m_AryItemPopup[Count]->SetPanelPosition(geo);
@@ -115,19 +135,27 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
                     }
                 }
             }
+
+            
+            if(Count>=2)
+            {
+                CompareItem(m_AryItemPopup[0],m_AryItemPopup[1]);
+            }
+
             
         }
     }
-    else if (Cast<UEquipmentSystem>(itemInst.m_Holder))
+    else if (Cast<UEquipmentSystem>(itemInst.m_Holder))//장비칸 클릭일때
     {
           m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Unequip, itemInst);
           m_AryItemPopup[Count]->SetPanelPosition(geo,Count);
     }
-    else if (Cast<UStash>(itemInst.m_Holder))
+    else if (Cast<UStash>(itemInst.m_Holder))//창고 클릭일때
     {
         m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Withdraw, itemInst);
         m_AryItemPopup[Count]->SetPanelPosition(geo,Count);
     }
+
 
     m_bIsPopupOpened = true;
 }

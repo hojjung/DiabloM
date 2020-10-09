@@ -16,7 +16,7 @@ UImageAndTextAndCompare::UImageAndTextAndCompare(const FObjectInitializer& objIn
 
 	m_IconDownArrow = FoundTexture2.Object;
 
-
+	m_PercentFormat = FText::FromString("{0}%");
 }
 
 void UImageAndTextAndCompare::SetCompareColor(FLinearColor colorWant)
@@ -25,13 +25,16 @@ void UImageAndTextAndCompare::SetCompareColor(FLinearColor colorWant)
 	m_ImageCompareArrow->SetColorAndOpacity(colorWant);
 }
 
-void UImageAndTextAndCompare::ShowCompare(int originalValue, int wantCompare)
+void UImageAndTextAndCompare::ShowCompare(float originalValue, float wantCompare)
 {
+	m_TextCompareResult->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	m_ImageCompareArrow->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	
 	FSlateBrush BrushWant;
 
 	BrushWant.SetImageSize(FVector2D(64.f, 64.f));
 
-	int Diff = wantCompare - originalValue;
+	float Diff = wantCompare - originalValue;
 
 	if (Diff>0)
 	{
@@ -49,24 +52,25 @@ void UImageAndTextAndCompare::ShowCompare(int originalValue, int wantCompare)
 		SetCompareColor(FLinearColor::Red);
 	}
 
-	float Percent = (float)originalValue / (float)wantCompare;
+	float Percent = originalValue / wantCompare;
 	float PerOne = 1 - Percent;
 	PerOne *= 100.f;
 
 	SetTextDiffValue(PerOne);
 	m_ImageCompareArrow->SetBrush(BrushWant);
+
+	
 }
 
 void UImageAndTextAndCompare::SetTextDiffValue(float diff)
 {
-	FText NumbetT = UKismetTextLibrary::Conv_FloatToText(diff, ERoundingMode::FromZero, false, true, 1);
-
+	diff=UDiaBlueprintFunctionLibrary::SetFloatPrecision(diff,1);
+	
 	FFormatOrderedArguments Args;
-	Args.Add(NumbetT);
+	
+	Args.Add(diff);
 
-	FTextFormat PercentFormat = FText::FromString("{0}%");
-
-	m_TextCompareResult->SetText(FText::Format(PercentFormat, Args));
+	m_TextCompareResult->SetText(FText::Format(m_PercentFormat, Args));
 }
 
 void UImageAndTextAndCompare::HideCompare()

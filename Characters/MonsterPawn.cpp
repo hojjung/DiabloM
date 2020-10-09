@@ -5,7 +5,7 @@
 
 AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit):Super(objInit)
 {
-    
+    m_bUseFSM=true;   
 }
 
 void AMonsterPawn::BeginPlay()
@@ -17,6 +17,11 @@ void AMonsterPawn::BeginPlay()
     {
         SetUnitStat(m_MonsterUnitHandle, 1);
     }
+}
+
+void AMonsterPawn::Tick(float DeltaSeconds)
+{
+    Super::Tick(DeltaSeconds);
 }
 
 void AMonsterPawn::SetUnitStat(FDataTableRowHandle unitID, int level)

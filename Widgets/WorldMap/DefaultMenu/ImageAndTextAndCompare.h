@@ -27,7 +27,7 @@ protected:
 	UTexture2D* m_IconUpArrow;
 	UPROPERTY()
 	UTexture2D* m_IconDownArrow;
-
+	FTextFormat m_PercentFormat;
 protected:
 	void SetCompareColor(FLinearColor colorWant);
 
@@ -35,7 +35,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Compare")
-	void ShowCompare(int originalValue, int wantCompare); // show green high red low
+	void ShowCompare(float originalValue, float wantCompare); // show green high red low
 
 	UFUNCTION(BlueprintCallable, Category = "Compare")
 	void SetTextDiffValue(float diff);

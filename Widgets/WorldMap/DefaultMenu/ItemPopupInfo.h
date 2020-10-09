@@ -39,7 +39,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
 	UTextBlock* m_TextItemName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
-	UTextBlock* m_TextItemTierAndType;
+	UTextBlock* m_TextItemTier;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+	UTextBlock* m_TextItemType;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
 	UImage* m_BGForTouch;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
@@ -49,9 +51,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
 	UImage* m_ImageItemVisualIcon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
-	UImageAndTextAndCompare* m_MainOptionAttack;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
-	UImageAndTextAndCompare* m_MainOptionDefense;
+	UImageAndTextAndCompare* m_MainOption;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
 	UImageAndText* m_SubOption1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
@@ -117,6 +117,10 @@ public:
 	{
 		return m_OnActionEnd;
 	}
+	FItemInstance& GetSelectedItem()
+	{
+		return m_SelectedItem;
+	}
 	UFUNCTION()
     void UseItem();
 	UFUNCTION()
@@ -147,6 +151,8 @@ public:
 	{
 		return m_UseButton;
 	}
+
+	void CompareItem(float origin,float wantCompareOther);
 };
 
 

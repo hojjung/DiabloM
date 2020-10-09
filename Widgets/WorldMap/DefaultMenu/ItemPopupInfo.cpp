@@ -118,7 +118,7 @@ void UItemPopupInfo::SetIcon(const FItemInstance& itemInst)
 {
     FSlateBrush BrushWant;
 
-    BrushWant.SetImageSize(FVector2D(64.f, 64.f));
+    BrushWant.SetImageSize(FVector2D(128.f, 128.f));
     BrushWant.SetResourceObject(itemInst.m_ItemData->m_ItemIcon);
 
     m_ImageItemVisualIcon->SetBrush(BrushWant);
@@ -130,7 +130,8 @@ void UItemPopupInfo::SetColorTier(const FItemInstance& itemInst)
     m_ImageItemTierColorSmall->SetColorAndOpacity(ColorW);
     m_ImageItemTierColorLarge->SetColorAndOpacity(ColorW);
     m_TextItemName->SetColorAndOpacity(ColorW);
-    m_TextItemTierAndType->SetColorAndOpacity(ColorW);
+    m_TextItemTier->SetColorAndOpacity(ColorW);
+    m_TextItemType->SetColorAndOpacity(ColorW);
 }
 
 void UItemPopupInfo::HideAllSubOptions()
@@ -259,17 +260,13 @@ void UItemPopupInfo::SetItemText(const FItemInstance& itemInst)
     //m_SelectedItem
     m_TextItemName->SetText(itemInst.m_ItemData->m_ShowingName);
 
-    FText ItemNameT = itemInst.m_ItemTier->m_ShowingName;
+    FText ItemTier = itemInst.m_ItemTier->m_ShowingName;
 
     FText ItemTypeT = GetItemTypeTxt(itemInst.m_ItemData->m_ItemType.GetRow<FItemType>(""));
 
-    FFormatOrderedArguments Args;
-    Args.Add(ItemNameT);
-    Args.Add(ItemTypeT);
+    m_TextItemTier->SetText(ItemTier);
 
-    FTextFormat FormatT = FText::FromString("{0} {1}");
-
-    m_TextItemTierAndType->SetText(FText::Format(FormatT, Args));
+    m_TextItemType->SetText(ItemTypeT);
 
     m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.m_ItemData->m_nSellValue));
 }
@@ -283,8 +280,11 @@ float UItemPopupInfo::SetFlavorText(const FItemInstance& itemInst)
 
 float UItemPopupInfo::SetOptionTexts(const FItemInstance& itemInst)
 {
-    m_MainOptionAttack->SetIcon(itemInst.m_AryOptions[0].m_DataOption->m_OptionIcon);
-    m_MainOptionAttack->SetString(itemInst.m_AryOptions[0].GetOptionText());
+    m_MainOption->HideCompare();
+    m_MainOption->SetIcon(itemInst.m_AryOptions[0].m_DataOption->m_OptionIcon);
+    m_MainOption->SetString(itemInst.m_AryOptions[0].GetOptionText());
+    //옵션의 종류가 같을때만?
+    //미장착이라면 무조건 높게?
     //m_MainOptionAttack->ShowCompare()
     //TODO Set Attribute From Option,and get and compare
 
@@ -333,4 +333,9 @@ void UItemPopupInfo::HideInfoPanel()
     SetVisibility(ESlateVisibility::Collapsed);
     m_UseButton->SetVisibility(ESlateVisibility::Hidden);
     m_EquipButton->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UItemPopupInfo::CompareItem(float origin,float wantCompareOther)
+{
+    m_MainOption->ShowCompare(origin,wantCompareOther);
 }

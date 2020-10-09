@@ -67,6 +67,7 @@ void UDiaInvenGridSlot::UpdateItemVisual(const FItemInstance& itemInstance)
 {
 	m_ImgItemVisual->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	FSlateBrush ItemIcon = FSlateBrush();
+	ItemIcon.SetImageSize(FVector2D(128.f, 128.f));
 	ItemIcon.SetResourceObject(itemInstance.m_ItemData->m_ItemIcon);
 	m_ImgItemVisual->SetBrush(ItemIcon);
 

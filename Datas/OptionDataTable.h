@@ -42,29 +42,31 @@ struct FOption : public FTableRowBase
     GENERATED_BODY()
 
 public:
-    FOption()
+    FOption(): m_OptionIcon(nullptr)
     {
-        m_fMinValue.Init(1,3);
-        m_fMinValue[1] =3;
-        m_fMinValue[2] =5;
-        
-        m_fMaxValue.Init(10,3);
-        m_fMaxValue[1] =25;
-        m_fMaxValue[2] =45;
-        
-        m_FormatArguSet = "{0}{1}{2}";//need open?
-        m_FormatEffect = FText::FromString("Ex)% Attack Bonus");
-        m_OptionTag = FGameplayTag::RequestGameplayTag("Item.Option",true);
-        m_OptionID="SetSameWithRowName";
-        
-        m_bIsPercentValue=false;
+        m_fMinValue.Init(1, 3);
+        m_fMinValue[1] = 3;
+        m_fMinValue[2] = 5;
 
-        static ConstructorHelpers::FObjectFinder<UTexture> FoundTexture(
-        TEXT("Texture2D'/Game/Sprite/UI/fg4_iconsSilver_marker.fg4_iconsSilver_marker'"));
-        m_OptionIcon=FoundTexture.Object;
+        m_fMaxValue.Init(10, 3);
+        m_fMaxValue[1] = 25;
+        m_fMaxValue[2] = 45;
+
+        m_FormatArguSet = "{0}{1}{2}"; //need open?
+        m_FormatEffect = FText::FromString("Ex)% Attack Bonus");
+        m_OptionTag = FGameplayTag::RequestGameplayTag("Item.Option", true);
+        m_OptionID = "SetSameWithRowName";
+
+        m_bIsPercentValue = false;
+
+        // static ConstructorHelpers::FObjectFinder<UTexture> FoundTexture(
+        // TEXT("Texture2D'/Game/Sprite/UI/fg4_iconsSilver_marker.fg4_iconsSilver_marker'"));
+        // m_OptionIcon=FoundTexture.Object;
+
 
         //
     }
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     UTexture* m_OptionIcon;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -81,7 +83,8 @@ public:
     FString m_FormatArguSet;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FGameplayTag m_OptionTag;
-    
+    UPROPERTY(EditDefaultsOnly, Category=GameplayModifier, meta=(FilterMetaTag="HideFromModifiers"))
+    FGameplayAttribute m_Attribute;
 private:
     FText Plus = FText::FromString("+");
     FText Minus = FText::FromString("-");

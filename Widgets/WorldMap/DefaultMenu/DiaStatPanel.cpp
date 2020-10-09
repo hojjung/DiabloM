@@ -1,6 +1,7 @@
 #include "DiaStatPanel.h"
 
 #include "AbilitySystem/Attribute/PlayerDiabloAttribute.h"
+#include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/DiabloGameInstance.h"
 
 FText UDiaStatPanel::GetPercentFormat(float v)
@@ -39,7 +40,12 @@ FText UDiaStatPanel::GetPercentFormat(float v)
 
 FText UDiaStatPanel::GetFloatToText(float v, int floatCount)
 {
-    return UKismetTextLibrary::Conv_FloatToText(v, ERoundingMode::FromZero, false, true, floatCount);
+    return UKismetTextLibrary::Conv_FloatToText(SetFloatPrecision(v,floatCount), ERoundingMode::HalfFromZero, false);
+}
+
+float UDiaStatPanel::SetFloatPrecision(float v, int count)
+{
+    return UDiaBlueprintFunctionLibrary::SetFloatPrecision(v,count);
 }
 
 void UDiaStatPanel::Init(APlayerDiabloCharacter* charPlayer)
@@ -231,6 +237,7 @@ void UDiaStatPanel::UpdateElecDmg(float v)
 
 void UDiaStatPanel::UpdatePhysDef(float v)
 {
+    //v=roundf(v);
     m_PhysDef->SetText(GetFloatToText(v));
 }
 

@@ -70,20 +70,24 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Text")
 	static FText GetAlphabetText(float vWant)
 	{
+		float Cache =roundf( vWant);
 		
-		float Cache = vWant;
 		float Thous = 1000;
+		
 		int Count=0;
 
 		while (Cache> Thous)//Mile
-			{
+		{
 			Cache /= Thous;
 			Count++;
-			}
+		}
 
 		Cache=SetFloatPrecision(Cache,1);
+		
 		FFormatOrderedArguments Args;
+		
 		Args.Add(Cache);
+		
 		Args.Add(UnitSymbol[Count]);
 		
 		return FText::Format(FormatT, Args);

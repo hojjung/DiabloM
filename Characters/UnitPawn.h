@@ -15,6 +15,7 @@
 DECLARE_MULTICAST_DELEGATE(FOnAttack);
 DECLARE_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, class AUnitPawn*);
 
+class UDefaultFSM;
 class UNavigationSystemV1;
 UCLASS()
 class DIABLOM_API AUnitPawn : public APawn, public IAbilitySystemInterface
@@ -27,6 +28,8 @@ public:
     AUnitPawn(const FObjectInitializer& objInit);
 
 protected:
+    UPROPERTY(EditAnywhere)
+    bool m_bUseFSM;
     UPROPERTY(EditAnywhere, Category = Abilities)
     int m_nCharacterLevel;
     UPROPERTY(EditAnywhere, Category = Abilities)
@@ -72,6 +75,9 @@ protected:
     
     float m_fTickDeltaTime;
 
+    UPROPERTY()
+    UDefaultFSM* m_FSM;
+    
 protected:
     virtual void BeginPlay() override;
 
@@ -87,9 +93,9 @@ public:
     UFUNCTION(BlueprintCallable)
     virtual void Die();
     UFUNCTION(BlueprintCallable)
-    void MoveToLocation(FVector goalLocation);
+    EPathFollowingRequestResult::Type MoveToLocation(FVector goalLocation);
     UFUNCTION(BlueprintCallable)
-    void MoveToActor(AActor* goalTarget);
+    EPathFollowingRequestResult::Type MoveToActor(AActor* goalTarget);
     UFUNCTION(BlueprintCallable,Category="Interact")
     virtual void StartAttack();
     UFUNCTION(BlueprintCallable,Category="Interact")
@@ -120,6 +126,9 @@ public:
     }
 
 public: //AttributeGetter
+
+    virtual void HomingRotateToTarget();
+    
     virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
     
     UDiabloAbilitySystemComp* GetDiaAbilitySystem() const;
@@ -135,6 +144,8 @@ public: //AttributeGetter
     virtual float GetMoveSpeed() const;
 
     virtual bool HasDropItem();
+
+    virtual void FocusTarget(APawn* target);
 
     bool IsAlive();
 
@@ -172,4 +183,7 @@ public: //AttributeGetter
     {
         return  m_OnCharacterDied;
     }
+    
+    
+    friend UDefaultFSM;
 };

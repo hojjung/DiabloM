@@ -11,7 +11,6 @@
 #include "Item/Weapon.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
 #include "AbilitySystem/Ability/PlayerBaseAttack.h"
-#include "Logic/DefaultFSM.h"
 #include "Logic/PlayerSensing.h"
 #include "Characters/MonsterPawn.h"
 
@@ -289,9 +288,7 @@ void APlayerDiabloCharacter::BeginPlay()
     m_PlayerSense->OnSeePawn.BindUObject(this, &APlayerDiabloCharacter::OnSeeTarget);
     m_PlayerSense->OnCantSeePawn.BindUObject(this, &APlayerDiabloCharacter::OnCantSeeTarget);
     m_PlayerSense->OnSeePawnBlocked.BindUObject(this, &APlayerDiabloCharacter::OnCanSeeTargetBlock);
-
-    m_FSM = NewObject<UDefaultFSM>(this, UDefaultFSM::StaticClass());
-    m_FSM->Init(this);
+   
 }
 
 void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -378,6 +375,8 @@ void APlayerDiabloCharacter::HideOutlineOnTarget()
 
 void APlayerDiabloCharacter::FocusTarget(APawn* target)
 {
+    Super::FocusTarget(target);
+    
     if (!target)
     {
         Cast<ADiabloPlayerController>(GetController())->HideFocusStatusWidget();
@@ -463,7 +462,7 @@ ADiabloPlayerController* APlayerDiabloCharacter::GetDiaController()
     return m_PlayerCon;
 }
 
-void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target)
+void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target)//wrapper
 {
     FocusTarget(nullptr);
 }
@@ -492,8 +491,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    if (m_bUseAutoPlay)
-        m_FSM->TickFSM();
+  
 
     m_PlayerSense->TickTryFoundInteraction();
 
@@ -645,17 +643,3 @@ void APlayerDiabloCharacter::BindASCInput()
     }
 }
 
-void APlayerDiabloCharacter::HomingRotateToTarget()
-{
-    if (!m_FocusedEnemy.Get())
-    {
-        return;
-    }
-
-    FRotator NewRot = GetActorRotation();
-
-    NewRot.Yaw = UKismetMathLibrary::RInterpTo(
-        NewRot, UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), m_FocusedEnemy->GetActorLocation()),
-        m_fTickDeltaTime, 5.f).Yaw;
-    SetActorRotation(NewRot);
-}

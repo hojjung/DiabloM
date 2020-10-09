@@ -67,8 +67,7 @@ protected:
 protected:
 	UPROPERTY()
 	UPlayerSensing* m_PlayerSense;
-	UPROPERTY()
-	UDefaultFSM* m_FSM;
+	
 	UPROPERTY()
 	USkeletalMeshComponent* m_FocusRenderer;
 	UPROPERTY()
@@ -140,7 +139,7 @@ protected:
 
 	void MoveRight(float AxisValue);
 	
-	virtual void FocusTarget(APawn* target);
+	virtual void FocusTarget(APawn* target) override;
 
 	void AutoPlayTick(bool useAuto);
 
@@ -162,7 +161,7 @@ protected:
 
 	void BindASCInput();
 
-	void HomingRotateToTarget();
+	
 	
 	void SetLoadedData(const USaveCharacterStatus* loadedSaveData);
 	

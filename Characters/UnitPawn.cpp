@@ -3,13 +3,14 @@
 #include "NavigationData.h"
 #include "NavigationSystem.h"
 #include "AbilitySystem/Components/DiabloAbilitySystemComp.h"
+#include "Logic/DefaultFSM.h"
 #include "Managers/DiabloGameInstance.h"
 
 
 AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 {
     PrimaryActorTick.bCanEverTick = true;
-
+    m_bUseFSM=false; 
     m_Capsule = CreateDefaultSubobject<UCapsuleComponent>("Capsule00");
     m_Capsule->InitCapsuleSize(34.0f, 88.0f);
     m_Capsule->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
@@ -65,28 +66,38 @@ void AUnitPawn::BeginPlay()
 {
     Super::BeginPlay();
     m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+    m_FSM = NewObject<UDefaultFSM>(this, UDefaultFSM::StaticClass());
+    m_FSM->Init(this);
 }
 
-void AUnitPawn::MoveToLocation(FVector goalLocation)
+EPathFollowingRequestResult::Type AUnitPawn::MoveToLocation(FVector goalLocation)
 {
     const bool bAlreadyAtGoal = m_PFComp->HasReached(goalLocation, EPathFollowingReachMode::OverlapAgent);
 
-    // script source, keep only one move request at time
+    FPathFollowingRequestResult ResultData;
+    
+    ResultData.Code = EPathFollowingRequestResult::Failed;
+
     if (m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
     {
         m_PFComp->AbortMove(*m_NavSys, FPathFollowingResultFlags::ForcedScript | FPathFollowingResultFlags::NewRequest
                             , FAIRequestID::AnyRequest,
                             bAlreadyAtGoal ? EPathFollowingVelocityMode::Reset : EPathFollowingVelocityMode::Keep);
+
+        return ResultData;
     }
 
     if (m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
     {
         m_PFComp->AbortMove(*m_NavSys, FPathFollowingResultFlags::ForcedScript | FPathFollowingResultFlags::NewRequest);
+
+        return ResultData;
     }
 
     if (bAlreadyAtGoal)
     {
-        m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Success);
+        ResultData.MoveId=m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Success);
+        ResultData.Code = EPathFollowingRequestResult::AlreadyAtGoal;
     }
     else
     {
@@ -95,46 +106,59 @@ void AUnitPawn::MoveToLocation(FVector goalLocation)
         {
             FPathFindingQuery Query(this, *NavData, GetNavAgentLocation(), goalLocation);
             FPathFindingResult Result = m_NavSys->FindPathSync(Query);
+            
             if (Result.IsSuccessful())
             {
                 FAIMoveRequest MoveReq(goalLocation);
                 MoveReq.SetAcceptanceRadius(m_fMoveAcceptRadius);
-                m_PFComp->RequestMove(MoveReq, Result.Path);
+                ResultData.MoveId=m_PFComp->RequestMove(MoveReq, Result.Path);
+                ResultData.Code = EPathFollowingRequestResult::RequestSuccessful;
             }
             else if (m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
             {
-                m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Invalid);
+               ResultData.MoveId= m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Invalid);
             }
         }
     }
+
+    return ResultData;
 }
 
-void AUnitPawn::MoveToActor(AActor* goalTarget)
+EPathFollowingRequestResult::Type AUnitPawn::MoveToActor(AActor* goalTarget)
 {
+    FPathFollowingRequestResult ResultData;
+    ResultData.Code = EPathFollowingRequestResult::Failed;
+    
     if (!goalTarget)
     {
-        return;
+        return ResultData;
     }
-
 
     const bool bAlreadyAtGoal = m_PFComp->HasReached(*goalTarget, EPathFollowingReachMode::OverlapAgent);
 
-    // script source, keep only one move request at time
     if (m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
     {
         m_PFComp->AbortMove(*m_NavSys, FPathFollowingResultFlags::ForcedScript | FPathFollowingResultFlags::NewRequest
                             , FAIRequestID::AnyRequest,
                             bAlreadyAtGoal ? EPathFollowingVelocityMode::Reset : EPathFollowingVelocityMode::Keep);
+
+        return ResultData;
     }
 
     if (m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
     {
         m_PFComp->AbortMove(*m_NavSys, FPathFollowingResultFlags::ForcedScript | FPathFollowingResultFlags::NewRequest);
+        
+        return ResultData;
     }
 
     if (bAlreadyAtGoal)
     {
-        m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Success);
+        ResultData.MoveId=m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Success);
+
+        ResultData.Code=EPathFollowingRequestResult::AlreadyAtGoal;
+        
+        return ResultData;
     }
     else
     {
@@ -143,19 +167,24 @@ void AUnitPawn::MoveToActor(AActor* goalTarget)
         {
             FPathFindingQuery Query(this, *NavData, GetNavAgentLocation(), goalTarget->GetActorLocation());
             FPathFindingResult Result = m_NavSys->FindPathSync(Query);
+            
             if (Result.IsSuccessful())
             {
                 Result.Path->SetGoalActorObservation(*goalTarget, 100.0f);
                 FAIMoveRequest MoveReq(goalTarget);
                 MoveReq.SetAcceptanceRadius(m_fMoveAcceptRadius);
-                m_PFComp->RequestMove(MoveReq, Result.Path);
+                ResultData.MoveId=m_PFComp->RequestMove(MoveReq, Result.Path);
+                ResultData.Code = EPathFollowingRequestResult::RequestSuccessful;
             }
             else if (m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
             {
-                m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Invalid);
+                ResultData.MoveId=m_PFComp->RequestMoveWithImmediateFinish(EPathFollowingResult::Invalid);
+                ResultData.Code = EPathFollowingRequestResult::Failed;
             }
         }
     }
+
+    return ResultData;
 }
 
 void AUnitPawn::StartAttack()
@@ -173,6 +202,8 @@ void AUnitPawn::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
     m_fTickDeltaTime = DeltaTime;
+    if (m_bUseFSM)
+        m_FSM->TickFSM();
 }
 
 
@@ -191,6 +222,21 @@ void AUnitPawn::GetCapsuleSize(float& height, float& radius)
 UDiabloAbilitySystemComp* AUnitPawn::GetDiaAbilitySystem() const
 {
     return m_AbilitySystemComponent;
+}
+
+void AUnitPawn::HomingRotateToTarget()
+{
+    if (!m_FocusedEnemy.Get())
+    {
+        return;
+    }
+
+    FRotator NewRot = GetActorRotation();
+
+    NewRot.Yaw = UKismetMathLibrary::RInterpTo(
+        NewRot, UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), m_FocusedEnemy->GetActorLocation()),
+        m_fTickDeltaTime, 5.f).Yaw;
+    SetActorRotation(NewRot);
 }
 
 UAbilitySystemComponent* AUnitPawn::GetAbilitySystemComponent() const
@@ -249,6 +295,11 @@ bool AUnitPawn::SetCharacterLevel(int NewLevel)
 bool AUnitPawn::IsAlive()
 {
     return GetHealth() > 0.0f;
+}
+
+void AUnitPawn::FocusTarget(APawn* target)
+{
+    
 }
 
 

@@ -36,6 +36,8 @@ public: //need more monster
 
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	void SetUnitStat(FDataTableRowHandle unitID, int level);
 
 	void SetHealthPercentage(AUnitPawn* target );

@@ -7,7 +7,6 @@
 
 #include "Characters/DiabloPlayerController.h"
 #include "Engine/EngineTypes.h"
-#include "UObject/NoExportTypes.h"
 #include "PlayerSensing.generated.h"
 
 /**

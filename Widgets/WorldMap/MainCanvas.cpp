@@ -5,6 +5,7 @@
 #include "PlayerStatusBar.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "DefaultMenu/MaterialProgressBar.h"
+#include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 
 
@@ -91,7 +92,15 @@ void UMainCanvas::UpdateMonsterInfo(AUnitPawn* monInfo)
     m_DiaMonInfo->SetCharacterLevel(monInfo->GetLevel());
     m_DiaMonInfo->SetCharacterName(monInfo->GetShowNameText());
     m_DiaMonInfo->SetHealthPercentage(monInfo->GetHpPercentOne());
-    m_DiaMonInfo->SetHealthFormat(monInfo->GetHealth(),monInfo->GetMaxHealth());
+
+    
+    FTextFormat Formatt=FTextFormat::FromString("{0}/{1}");
+    FFormatOrderedArguments Args;
+    float CH=monInfo->GetHealth();
+    float MH=monInfo->GetMaxHealth();
+    Args.Add(UDiaBlueprintFunctionLibrary::GetAlphabetText(CH));
+    Args.Add(UDiaBlueprintFunctionLibrary::GetAlphabetText(MH));
+    m_DiaMonInfo->SetHealthFormat(FText::Format(Formatt,Args));
 }
 
 void UMainCanvas::HideMonsterInfo()

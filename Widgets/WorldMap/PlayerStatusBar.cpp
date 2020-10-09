@@ -52,6 +52,5 @@ void UPlayerStatusBar::SetResourceBarProgressV(AUnitPawn* pawn)
 {
     float Per=m_SelectedCurAttribute->GetCurrentValue()/m_SelectedMaxAttribute->GetCurrentValue();
     Per=FMath::Clamp(Per,0.f,1.f);
-    PRINTF("Per:%f",Per);
     m_SelectedBar->SetProgressValue(Per);
 }

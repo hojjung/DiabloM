@@ -120,6 +120,8 @@ protected:
 	FText GetPercentFormat(float v);
 	
 	FText GetFloatToText(float v,int floatCount=1);
+
+	float SetFloatPrecision(float v,int count=1);
     
 	UPROPERTY()
 	APlayerDiabloCharacter* m_Player;

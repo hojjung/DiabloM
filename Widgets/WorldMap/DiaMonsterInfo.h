@@ -18,8 +18,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void SetHealthPercentage(float HealthPercentage);
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetHealthFormat(float currentHealth,float maxHealth);
-
+	void SetHealthFormat(const FText& healthFormatted);
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void SetCharacterName(const FText& NewName);
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
