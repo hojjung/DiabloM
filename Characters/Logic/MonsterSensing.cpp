@@ -15,16 +15,12 @@ UMonsterSensing::UMonsterSensing()
 {
     m_OwnedMob=nullptr;
     m_SightRadius = 1200.f;
-    m_AttackableAngle = 50.f;
-    m_AttackableAngleCosine = FMath::Cos(FMath::DegreesToRadians(m_AttackableAngle));
     m_SensingInterval = 0.3f;
 }
 
 void UMonsterSensing::InitSense(AMonsterPawn* mobs)
 {
     m_OwnedMob = mobs;
-    
-    SetPeripheralVisionAngle(m_AttackableAngle);
     
     SetSensingUpdatesEnabled(true);
 }
@@ -138,20 +134,6 @@ void UMonsterSensing::SensePawn(APlayerDiabloCharacter& player)
     }
 }
 
-
-bool UMonsterSensing::CheckAngle(const AActor* other) const
-{
-    FVector const OtherLoc = other->GetActorLocation();
-    FVector const SensorLoc = GetSensorLocation();
-    FVector const SelfToOther = OtherLoc - SensorLoc;
-    FVector const SelfToOtherDir = SelfToOther.GetSafeNormal();
-    FVector const MyFacingDir = GetSensorRotation().Vector();
-
-    return ((SelfToOtherDir | MyFacingDir) >= m_AttackableAngleCosine);//벡터의 내적
-}
-
-
-
 bool UMonsterSensing::CouldSeePawn(APlayerDiabloCharacter* Other, bool bMaySkipChecks) const
 {
     if(!ShouldCheckVisibilityOf(Other))
@@ -228,12 +210,6 @@ void UMonsterSensing::Tick()
     if(GetPlayer())
     DrawDebugLine(GetPlayer()->GetWorld(),m_OwnedMob->GetActorLocation(),m_LastPlayerSeen,FColor::Red);
     
-}
-
-void UMonsterSensing::SetPeripheralVisionAngle(const float NewPeripheralVisionAngle)
-{
-    m_AttackableAngle = NewPeripheralVisionAngle;
-    m_AttackableAngleCosine = FMath::Cos(FMath::DegreesToRadians(m_AttackableAngle));
 }
 
 void UMonsterSensing::SetViewRadius(const float radius)

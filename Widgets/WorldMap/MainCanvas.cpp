@@ -9,6 +9,11 @@
 #include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 
 
+UMainCanvas::UMainCanvas(const FObjectInitializer& objInit):Super(objInit)
+{
+    m_HpFormat=FTextFormat::FromString("{0}/{1}");
+}
+
 void UMainCanvas::OpenMainMenu()
 {
     m_bIsOpened=true;
@@ -94,13 +99,13 @@ void UMainCanvas::UpdateMonsterInfo(AUnitPawn* monInfo)
     m_DiaMonInfo->SetHealthPercentage(monInfo->GetHpPercentOne());
 
     
-    FTextFormat Formatt=FTextFormat::FromString("{0}/{1}");
+    
     FFormatOrderedArguments Args;
     float CH=monInfo->GetHealth();
     float MH=monInfo->GetMaxHealth();
     Args.Add(UDiaBlueprintFunctionLibrary::GetAlphabetText(CH));
     Args.Add(UDiaBlueprintFunctionLibrary::GetAlphabetText(MH));
-    m_DiaMonInfo->SetHealthFormat(FText::Format(Formatt,Args));
+    m_DiaMonInfo->SetHealthFormat(FText::Format(m_HpFormat,Args));
 }
 
 void UMainCanvas::HideMonsterInfo()

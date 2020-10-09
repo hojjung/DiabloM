@@ -24,6 +24,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_InvenOpenButton;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextHp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMaterialProgressBar* m_HpBar;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMaterialProgressBar* m_StaminaBar;
@@ -37,10 +39,13 @@ protected:
 	FGameplayAttributeData* m_SelectedCurAttribute;
 	
 	FGameplayAttributeData* m_SelectedMaxAttribute;
+	
+	FTextFormat m_HpFormat;
 public:
 	void Init(ADiabloPlayerController* diaCon);
 
 	void SetHealthBarProgressV(AUnitPawn* pawn);
 
 	void SetResourceBarProgressV(AUnitPawn* pawn);
+
 };

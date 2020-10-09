@@ -68,8 +68,6 @@ public:
 
 	void SetSensingUpdatesEnabled(const bool bEnabled);
 
-	void SetPeripheralVisionAngle(const float NewPeripheralVisionAngle);
-
 	void SetViewRadius(const float radius);
 
 	float GetPeripheralVisionAngle() const;

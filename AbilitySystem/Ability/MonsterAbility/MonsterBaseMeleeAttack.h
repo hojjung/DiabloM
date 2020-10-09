@@ -14,7 +14,16 @@ class DIABLOM_API UMonsterBaseMeleeAttack : public UDiabloAbility
 	
 public:
 	UMonsterBaseMeleeAttack();
+	
 	void PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection,float AttackSpeed);
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float m_fAttackRange;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float m_fAttackAngle;
+
+	float m_fAttackRangeSqr;
+	float m_fAttackAngleCos;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	UAnimMontage* m_BaseAttackMotion;
@@ -27,6 +36,8 @@ public:
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 
 protected:
+	bool CheckAttackRange(const AActor* other) const;
+	
 	UFUNCTION()
     void OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData);
 

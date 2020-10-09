@@ -10,6 +10,31 @@ UMonsterBaseMeleeAttack::UMonsterBaseMeleeAttack()
     AbilityTags.AddTag(Ability1Tag);
     ActivationOwnedTags.AddTag(Ability1Tag);
     ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Skill")));
+
+    m_fAttackRange=150.f;
+    m_fAttackAngle=50.f;
+   
+}
+bool UMonsterBaseMeleeAttack::CheckAttackRange(const AActor* other) const
+{
+    if(!GetAvatarActorFromActorInfo())
+    {
+        PRINTF("Monster Avatr NULL");
+        return false;
+    }
+    
+    FVector const OtherLoc = other->GetActorLocation();
+    FVector const MyLoc = GetAvatarActorFromActorInfo()->GetActorLocation();
+    FVector const SelfToOther = OtherLoc - MyLoc;
+    FVector const SelfToOtherDir = SelfToOther.GetSafeNormal();
+    FVector const MyFacingDir = GetAvatarActorFromActorInfo()->GetActorRotation().Vector();
+
+    bool bAngle= (SelfToOtherDir | MyFacingDir) >= m_fAttackAngleCos;//벡터의 내적
+
+    float DistSqr=FVector::DistSquared2D(OtherLoc,MyLoc);
+    bool bDist =  DistSqr< m_fAttackRangeSqr;
+
+    return bAngle&&bDist;
 }
 
 void UMonsterBaseMeleeAttack::PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection, float AttackSpeed)
@@ -44,7 +69,8 @@ void UMonsterBaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle H
 void UMonsterBaseMeleeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
     Super::OnGiveAbility(ActorInfo, Spec);
-
+    m_fAttackRangeSqr=m_fAttackRange*m_fAttackRange;
+    m_fAttackAngleCos=FMath::Cos(FMath::DegreesToRadians(m_fAttackAngle));
 }
 
 void UMonsterBaseMeleeAttack::OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -68,9 +94,10 @@ void UMonsterBaseMeleeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
     if (EventTag == FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack")))
     {
         AMonsterPawn* MonsterAttacker = Cast<AMonsterPawn>(GetAvatarActorFromActorInfo());
-        if (!MonsterAttacker)
+        if (!MonsterAttacker ||!EventData.Target||!CheckAttackRange(EventData.Target))
         {
             EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+            return;
         }
 
         FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(

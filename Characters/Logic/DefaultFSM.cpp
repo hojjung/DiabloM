@@ -122,8 +122,6 @@ void UDefaultFSM::TryAttack()
 {
 	m_OwnerUnit->HomingRotateToTarget();
 
-	PRINTF("FSM-TryAttack");
-
 	m_OwnerUnit->DoBaseAttack();
 }
 

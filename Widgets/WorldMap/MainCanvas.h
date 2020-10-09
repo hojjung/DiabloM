@@ -25,6 +25,8 @@ class DIABLOM_API UMainCanvas : public UUserWidget
 
 public:
     bool m_bIsOpened=false;
+
+    UMainCanvas(const FObjectInitializer& objInit);
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UButton* m_SettingButton;
@@ -52,6 +54,8 @@ protected:
     UInventory* m_Inven;
 
     FDelegateHandle m_MonUpdateHandle;
+    
+    FTextFormat m_HpFormat;
 public:
     UFUNCTION(BlueprintCallable,Category="Menu")
     void OpenMainMenu();
