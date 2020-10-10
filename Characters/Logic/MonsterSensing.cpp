@@ -93,19 +93,9 @@ void UMonsterSensing::OnTimer()
     }
     else
     {
-        if (!HasLineOfSightTo(GetPlayer()))
-        {
-            EPathFollowingRequestResult::Type Result = m_OwnedMob->MoveToLocation(m_LastPlayerSeen);
-
-            if(Result==EPathFollowingRequestResult::Type::AlreadyAtGoal)
-            {
-                m_OwnedMob->MoveToActor(GetPlayer());
-            }
-        }
-        else
+        if (HasLineOfSightTo(GetPlayer()))
         {
             m_LastPlayerSeen=GetPlayer()->GetActorLocation();//보임 ㅇㅇ
-
         }
     }
           
@@ -207,24 +197,15 @@ float UMonsterSensing::DistSqr(AActor* want)
 
 void UMonsterSensing::Tick()
 {
-    if(GetPlayer())
-    DrawDebugLine(GetPlayer()->GetWorld(),m_OwnedMob->GetActorLocation(),m_LastPlayerSeen,FColor::Red);
+    
+    //if(ADiabloPlayerController::Get&&GetPlayer())
+   // DrawDebugLine(GetPlayer()->GetWorld(),m_OwnedMob->GetActorLocation(),m_LastPlayerSeen,FColor::Red);
     
 }
 
 void UMonsterSensing::SetViewRadius(const float radius)
 {
     m_SightRadius = radius;
-}
-
-float UMonsterSensing::GetPeripheralVisionAngle() const
-{
-    return m_AttackableAngle;
-}
-
-float UMonsterSensing::GetPeripheralVisionCosine() const
-{
-    return m_AttackableAngleCosine;
 }
 
 AActor* UMonsterSensing::GetSensorActor() const

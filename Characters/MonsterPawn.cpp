@@ -1,5 +1,7 @@
 #include "MonsterPawn.h"
 
+#include "Logic/DefaultFSM.h"
+
 AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit): Super(objInit)
 {
     m_bUseFSM = true;
@@ -32,7 +34,10 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
 
     m_MonsterSense = NewObject<UMonsterSensing>(this, UMonsterSensing::StaticClass());
     m_MonsterSense->InitSense(this);
-
+    
+    m_FSM = NewObject<UDefaultFSM>(this, UDefaultFSM::StaticClass());
+    m_FSM->Init(this);
+    
     if(UnitData->m_BaseAttack)
     {
         FGameplayAbilitySpec BaseAttackHandle(UnitData->m_BaseAttack,level,INDEX_NONE,this);
@@ -43,7 +48,11 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
 void AMonsterPawn::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
-    m_MonsterSense->Tick();
+    if(m_bUseFSM)
+    {
+        m_MonsterSense->Tick();
+        m_FSM->TickFSM();
+    }
 }
 
 void AMonsterPawn::SetHealthPercentage(AUnitPawn* target)

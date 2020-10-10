@@ -25,6 +25,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	FMonsterEntityHandle m_MonsterUnitHandle;
 	UPROPERTY()
+	UDefaultFSM* m_FSM;
+	UPROPERTY()
 	UMonsterSensing* m_MonsterSense;
 public: //need more monster
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)

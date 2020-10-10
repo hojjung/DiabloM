@@ -38,6 +38,8 @@ protected:
 
     float m_fIdleTimer;
 
+    float m_fChaseFindTimer;
+
     float m_fAttackRange; //from startPos
     
     float m_fAttackRangeSqr; //from startPos

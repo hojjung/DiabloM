@@ -127,7 +127,7 @@ protected:
 	float m_fBonusDamage;
 	//
 protected:
-	virtual void BeginPlay() override;
+	
 
 	void LoadExp(const USaveCharacterStatus* loadedSaveData);
 
@@ -165,6 +165,8 @@ protected:
 
 	void SetBaseAttackData(float viewAngle,float viewRadius,float focusRange);
 public:
+	void Init();
+	
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void SetBonusDamage(float v);
 	UFUNCTION(BlueprintCallable,Category="Interact")

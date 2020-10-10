@@ -40,7 +40,7 @@ protected:
 	int32 m_AvoidanceUID;
 
 protected://pathfollow
-	FVector m_MoveVector;
+	//FVector m_MoveVector;
 
 	bool m_bWasAvoidanceUpdated;
 
@@ -60,8 +60,10 @@ protected://pathfollow
 
 public:
 	virtual void BeginPlay() override;
+	
 	void CalcVelocity(float DeltaTime);
-	void MoveProceed(float PastMoveSize);
+	
+	void MoveProceed(float DeltaTime);
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
@@ -76,6 +78,7 @@ public:
 	void SetMoveSpeedRatio(float newRatioMax1);
 
 	void SetDash(FVector dashDelta,float duration);
+	
 #pragma region RVO
 	// IRVOAvoidanceInterface��(��) ���� ��ӵ�
 	virtual void SetRVOAvoidanceUID(int32 UID) override;

@@ -1,11 +1,16 @@
 
 #include "DefaultFSM.h"
 
+#include <xkeycheck.h>
+
+
 #include "NavigationSystem.h"
 
 
 void UDefaultFSM::Init(AUnitPawn* pawnUnit)
 {
+	m_fIdleTimer=-1.f;
+	m_fChaseFindTimer=-1.f;
     m_OwnerUnit=pawnUnit;
 	m_fAttackRange = 100.f;
 	m_CurrentState = EFSM::Idle;
@@ -30,8 +35,10 @@ void UDefaultFSM::TickFSM()
 
 void UDefaultFSM::OnIdle()
 {
+	PRINTF("Idle");
 	if (m_OwnerUnit->GetFocusedTarget())
 	{
+		m_StartPoint=m_OwnerUnit->GetActorLocation();
 		m_CurrentState = EFSM::Chase;
 		return;
 	}
@@ -64,11 +71,15 @@ void UDefaultFSM::OnIdle()
 
 void UDefaultFSM::OnChase()
 {
+	PRINTF("Chase");
 	bool CanSeeTarget =m_OwnerUnit->CanSeeTarget();
+	
+	EPathFollowingRequestResult::Type Result=EPathFollowingRequestResult::Failed;
 
 	if(CanSeeTarget)
 	{
-		EPathFollowingRequestResult::Type Result = m_OwnerUnit->MoveToActor(m_OwnerUnit->GetFocusedTarget());
+		PRINTF("CanSeeTarget");
+		Result = m_OwnerUnit->MoveToActor(m_OwnerUnit->GetFocusedTarget());
 
 		if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
 		{
@@ -79,26 +90,36 @@ void UDefaultFSM::OnChase()
 	{
 		if(m_OwnerUnit->GetFocusedTarget())
 		{
-			EPathFollowingRequestResult::Type Result = m_OwnerUnit->MoveToLocation(m_OwnerUnit->GetLastSeenLocation());
 
+			EPathFollowingStatus::Type Status = m_OwnerUnit->m_PFComp->GetStatus();
+
+			if(m_fChaseFindTimer>0.f)
+			{
+				m_fChaseFindTimer -= m_OwnerUnit->m_fTickDeltaTime;
+
+				if(m_fChaseFindTimer<=0.f)
+				{
+					m_OwnerUnit->FocusTarget(nullptr);
+					m_CurrentState = EFSM::Return;
+					m_fChaseFindTimer=-1.f;
+				}
+
+				return;
+			}
+			
+			Result = m_OwnerUnit->MoveToLocation(m_OwnerUnit->GetLastSeenLocation());
+			
 			if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
 			{
-				Result = m_OwnerUnit->MoveToActor(m_OwnerUnit->GetFocusedTarget());
+				m_fChaseFindTimer = FMath::FRandRange(2.f,6.f);
 			}
-			//라스티씬이 업데이트가 안된상태로 플레이어를 놓치면?
-			//마지막으로 본곳으로 가고도 놓처버리면?
 		}
 	}
-	
-
-	
-	//계속 도착못하고 쫓아가면
-
-	//그만 쫓음
 }
 
 void UDefaultFSM::OnCombat()
 {
+	PRINTF("Combat");
 	TryAttack();
 
 	if (!m_OwnerUnit->GetFocusedTarget() ||m_OwnerUnit->GetFocusedTarget()->IsAlive())
@@ -127,6 +148,7 @@ void UDefaultFSM::TryAttack()
 
 void UDefaultFSM::OnReturn()
 {
+	PRINTF("Return");
 	if (m_OwnerUnit->GetFocusedTarget())
 	{
 		m_CurrentState = EFSM::Chase;

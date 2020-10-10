@@ -81,17 +81,24 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
     m_fMaxExp = 0.f;
 }
 
-void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
-{
-    m_fMaxExp = Cast<UPlayerDiabloAttribute>(m_AttributeSet)->GetMaxExpForLevelUp();
-    m_fCurrentExp = loadedSaveData->m_fExp;
-    float RemainExp = m_fMaxExp - m_fCurrentExp;
-    m_OnRemainExpChanged.Broadcast(RemainExp);
-    m_OnExpGaugeChanged.Broadcast(m_fCurrentExp/m_fMaxExp);
-}
 
-void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSaveData)
+void APlayerDiabloCharacter::Init()
 {
+    m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
+    m_AryIgnoreActor.Add(this);
+    m_AryIgnoreActor.Add(m_PlayerCon);
+
+    m_FocusRenderer = NewObject<USkeletalMeshComponent>(this, USkeletalMeshComponent::StaticClass());
+    m_FocusRenderer->RegisterComponent();
+    m_FocusRenderer->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+    m_FocusRenderer->SetHiddenInGame(true);
+    //
+    m_PlayerSense = NewObject<UPlayerSensing>(this, UPlayerSensing::StaticClass());
+    m_PlayerSense->InitSense(this);
+    m_PlayerSense->OnSeePawn.BindUObject(this, &APlayerDiabloCharacter::OnSeeTarget);
+    m_PlayerSense->OnCantSeePawn.BindUObject(this, &APlayerDiabloCharacter::OnCantSeeTarget);
+    m_PlayerSense->OnSeePawnBlocked.BindUObject(this, &APlayerDiabloCharacter::OnCanSeeTargetBlock);
+    //
     m_SkFace->SetMasterPoseComponent(m_SkBody);
     m_SkHair->SetMasterPoseComponent(m_SkBody);
     m_SkGlove->SetMasterPoseComponent(m_SkBody);
@@ -105,6 +112,11 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     SetDefaultGloveMesh();
     SetFullHairMesh();
     SetDefaultShoeMesh();
+}
+
+
+void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSaveData)
+{
     //
     m_nCharacterLevel = loadedSaveData->m_nLevel;
 
@@ -129,6 +141,14 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     SetCharacterLevel(loadedSaveData->m_nLevel);
 
     LoadExp(loadedSaveData);
+}
+void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
+{
+    m_fMaxExp = Cast<UPlayerDiabloAttribute>(m_AttributeSet)->GetMaxExpForLevelUp();
+    m_fCurrentExp = loadedSaveData->m_fExp;
+    float RemainExp = m_fMaxExp - m_fCurrentExp;
+    m_OnRemainExpChanged.Broadcast(RemainExp);
+    m_OnExpGaugeChanged.Broadcast(m_fCurrentExp/m_fMaxExp);
 }
 
 void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEquipAry slotWant)
@@ -270,26 +290,6 @@ void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
 }
 
 
-void APlayerDiabloCharacter::BeginPlay()
-{
-    Super::BeginPlay();
-
-    m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
-    m_AryIgnoreActor.Add(this);
-    m_AryIgnoreActor.Add(m_PlayerCon);
-
-    m_FocusRenderer = NewObject<USkeletalMeshComponent>(this, USkeletalMeshComponent::StaticClass());
-    m_FocusRenderer->RegisterComponent();
-    m_FocusRenderer->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-    m_FocusRenderer->SetHiddenInGame(true);
-
-    m_PlayerSense = NewObject<UPlayerSensing>(this, UPlayerSensing::StaticClass());
-    m_PlayerSense->InitSense(this);
-    m_PlayerSense->OnSeePawn.BindUObject(this, &APlayerDiabloCharacter::OnSeeTarget);
-    m_PlayerSense->OnCantSeePawn.BindUObject(this, &APlayerDiabloCharacter::OnCantSeeTarget);
-    m_PlayerSense->OnSeePawnBlocked.BindUObject(this, &APlayerDiabloCharacter::OnCanSeeTargetBlock);
-   
-}
 
 
 void APlayerDiabloCharacter::EarnExp(float expEarned)
@@ -491,9 +491,13 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-  
-
     m_PlayerSense->TickTryFoundInteraction();
+    
+    if(m_bUseFSM)
+    {
+     //   m_MonsterSense->Tick();
+       // m_FSM->TickFSM();
+    }
 
     if (m_FocusedEnemy.Get())
     {

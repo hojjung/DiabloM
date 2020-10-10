@@ -30,7 +30,7 @@ void ADiabloPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	check( m_ClassDmgText);
-	
+	GetPlayerPawn()->Init();
 	m_Inven = NewObject<UInventory>();
 	m_Inven->InitInven(m_nInvenX,m_nInvenY);
 

@@ -26,10 +26,6 @@ public:
 	UMonsterSensing();
 	
 protected:
-	float m_AttackableAngle;
-
-	float m_AttackableAngleCosine;
-
 	float m_SightRadius;
 
 	float m_SensingInterval;
@@ -70,10 +66,6 @@ public:
 
 	void SetViewRadius(const float radius);
 
-	float GetPeripheralVisionAngle() const;
-
-	float GetPeripheralVisionCosine() const;
-
 	bool IsSensorActor(const AActor* Actor) const;
 
 	bool ShouldCheckVisibilityOf(APlayerDiabloCharacter* Pawn) const;
@@ -93,8 +85,6 @@ public:
 	void GetActorEyesViewPoint( FVector& out_Location, FRotator& out_Rotation ) const;
 
 	APlayerDiabloCharacter* GetPlayer();
-
-	bool CheckAngle(const AActor* other) const;
 
 	
 };

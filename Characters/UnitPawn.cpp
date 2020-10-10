@@ -67,11 +67,10 @@ void AUnitPawn::BeginPlay()
     Super::BeginPlay();
     m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 
-    m_FSM = NewObject<UDefaultFSM>(this, UDefaultFSM::StaticClass());
-    m_FSM->Init(this);
+    
 }
 
-EPathFollowingRequestResult::Type AUnitPawn::MoveToLocation(FVector goalLocation)
+FPathFollowingRequestResult AUnitPawn::MoveToLocation(FVector goalLocation)
 {
     if (m_PFComp && m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
     {
@@ -84,14 +83,14 @@ EPathFollowingRequestResult::Type AUnitPawn::MoveToLocation(FVector goalLocation
     MoveReq.SetAllowPartialPath(true);
     MoveReq.SetProjectGoalLocation(false);
     MoveReq.SetNavigationFilter(UNavigationQueryFilter::StaticClass());
-    MoveReq.SetAcceptanceRadius(GetAcceptRadiusSelfOnly());
+    MoveReq.SetAcceptanceRadius(GetAcceptRadiusSelfOnly()+10.f);
     MoveReq.SetReachTestIncludesAgentRadius(true);
     MoveReq.SetCanStrafe(true);
 
     return MoveTo(MoveReq);
 }
 
-EPathFollowingRequestResult::Type AUnitPawn::MoveToActor(AActor* goalTarget)
+FPathFollowingRequestResult AUnitPawn::MoveToActor(AActor* goalTarget)
 {
     if (m_PFComp && m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
     {
@@ -108,6 +107,16 @@ EPathFollowingRequestResult::Type AUnitPawn::MoveToActor(AActor* goalTarget)
     MoveReq.SetCanStrafe(true);
 
     return MoveTo(MoveReq);
+}
+
+void AUnitPawn::PauseNavMove()
+{
+    
+}
+
+void AUnitPawn::TestMoveToActor(AActor* goalTarget)
+{
+    MoveToActor(goalTarget);
 }
 
 
@@ -306,8 +315,7 @@ void AUnitPawn::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
     m_fTickDeltaTime = DeltaTime;
-    if (m_bUseFSM)
-        m_FSM->TickFSM();
+ 
 }
 
 
@@ -404,6 +412,11 @@ bool AUnitPawn::SetCharacterLevel(int NewLevel)
 bool AUnitPawn::IsAlive()
 {
     return GetHealth() > 0.0f;
+}
+
+FVector AUnitPawn::GetVelocity() const
+{
+    return GetMovementComponent()->Velocity;
 }
 
 void AUnitPawn::FocusTarget(AUnitPawn* target)

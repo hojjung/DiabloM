@@ -10,6 +10,8 @@
 #include "Navigation/PathFollowingComponent.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
 #include "Datas/CharacterDataTable.h"
+#include "Logic/MonsterSensing.h"
+
 #include "UnitPawn.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnAttack);
@@ -75,8 +77,7 @@ protected:
     
     float m_fTickDeltaTime;
 
-    UPROPERTY()
-    UDefaultFSM* m_FSM;
+   
 
     FGameplayAbilitySpecHandle m_BaseAttackHandle;
     
@@ -110,11 +111,14 @@ public:
     
     UFUNCTION(BlueprintCallable)
     virtual void Die();
-    UFUNCTION(BlueprintCallable)
-    EPathFollowingRequestResult::Type MoveToLocation(FVector goalLocation);
-    UFUNCTION(BlueprintCallable)
-    EPathFollowingRequestResult::Type MoveToActor(AActor* goalTarget);
     
+    FPathFollowingRequestResult MoveToLocation(FVector goalLocation);
+    
+    FPathFollowingRequestResult MoveToActor(AActor* goalTarget);
+
+    void PauseNavMove();
+    UFUNCTION(BlueprintCallable,Category="Interact")
+    void TestMoveToActor(AActor* goalTarget);
     UFUNCTION(BlueprintCallable,Category="Interact")
     virtual void StartAttack();
     UFUNCTION(BlueprintCallable,Category="Interact")
@@ -212,4 +216,6 @@ public: //AttributeGetter
 
 
     friend UDefaultFSM;
+
+    virtual FVector GetVelocity() const override;
 };
