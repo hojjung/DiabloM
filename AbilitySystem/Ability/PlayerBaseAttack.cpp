@@ -60,7 +60,7 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     {
         PlayAbilityAnimation(m_BaseAttackMotion,"DashAttack" ,2);
 
-        DashAttack(ActorInfo->AvatarActor.Get(),DashNormal,FMath::Sqrt(DistSqred-250)/m_fDashTime,m_fDashTime);
+        DashAttack(ActorInfo->AvatarActor.Get(),DashNormal,FMath::Sqrt(DistSqred-5400),m_fDashTime);
     }
     else
     {
@@ -104,7 +104,6 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
         return;
     }
-    PRINTF("EventReceive");
     
     if (EventTag == FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack")))
     {
@@ -147,10 +146,7 @@ UUnitMovement* UPlayerBaseAttack::GetMovement(AActor* want)
 void UPlayerBaseAttack::DashAttack(AActor* want,FVector dashNormal, float dashLength, float dashTime)
 {
     auto* PlayerChar =Cast<APlayerDiabloCharacter>(want);
-    FVector Location1 = PlayerChar->GetActorLocation();
-    FVector Location2 = PlayerChar->GetFocusedTarget()->GetActorLocation();
-    
-    FVector DeltaDash=dashNormal * dashLength;
+    FVector DeltaDash=dashNormal * (dashLength/m_fDashTime);
     GetMovement(want)->SetDash(DeltaDash,dashTime);
 }
 
@@ -162,6 +158,7 @@ bool UPlayerBaseAttack::IsDashable(const FGameplayAbilityActorInfo* ActorInfo,fl
     {
         return false;
     }
+    float AcceptRadius=70.f;
     
     FVector Location1 = PlayerChar->GetActorLocation();
     FVector Location2 = PlayerChar->GetFocusedTarget()->GetActorLocation();

@@ -2,25 +2,16 @@
 
 #pragma once
 
-#include "DiabloM.h"
-#include "Characters/UnitPawn.h"
-#include "DefaultFSM.generated.h"
-
+#include "MobFSMBase.h"
+#include "MobFSM_Swamer.generated.h"
 
 UCLASS()
-class DIABLOM_API UDefaultFSM : public UObject
+class DIABLOM_API UMobFSM_Swamer : public UMobFSMBase
 {
     GENERATED_BODY()
 
 public:
-    enum EFSM
-    {
-        Idle,
-        Chase,
-        Combat,
-        Return,
-        Length
-    };
+ 
 
    
 
@@ -29,12 +20,6 @@ protected:
     AUnitPawn* m_OwnerUnit;
 
     FVector m_StartPoint;
-
-    EFSM m_CurrentState;
-    
-    typedef void (UDefaultFSM::*FPtrState)(void);
-
-    FPtrState m_AryStateFunction[static_cast<int>(EFSM::Length)];
 
     float m_fIdleTimer;
 
@@ -46,23 +31,25 @@ protected:
 
     float m_fChaseRange;
 
+    typedef void (UMobFSM_Swamer::*FPtrState)(void);
+	
+    FPtrState m_AryStateFunction[static_cast<int>(EFSM::Length)];
 protected:
-    virtual void OnIdle();
+    virtual void OnIdle() override;
 
-    virtual void OnChase();
+    virtual void OnChase() override;
 
-    virtual void OnCombat();
+    virtual void OnCombat() override;
 
-    virtual void TryAttack();
+    virtual void TryAttack() override;
 
-    virtual void OnReturn();
+    virtual void OnReturn() override;
 
-    virtual void OnFlee();
+    virtual void OnFlee() override;
 
-public:
-    void Init(AUnitPawn* pawnUnit);
+    virtual void Init(AUnitPawn* pawnUnit) override;
 
-    void TickFSM();
+    virtual void TickFSM() override;
     
 public:
     FORCEINLINE float GetAttackRange()

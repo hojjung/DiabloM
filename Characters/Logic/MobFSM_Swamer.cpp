@@ -1,13 +1,8 @@
-
-#include "DefaultFSM.h"
-
-#include <xkeycheck.h>
-
-
+#include "MobFSM_Swamer.h"
+#include "Characters/UnitPawn.h"
 #include "NavigationSystem.h"
 
-
-void UDefaultFSM::Init(AUnitPawn* pawnUnit)
+void UMobFSM_Swamer::Init(AUnitPawn* pawnUnit)
 {
 	m_fIdleTimer=-1.f;
 	m_fChaseFindTimer=-1.f;
@@ -15,15 +10,15 @@ void UDefaultFSM::Init(AUnitPawn* pawnUnit)
 	m_fAttackRange = 100.f;
 	m_CurrentState = EFSM::Idle;
 	//
-	m_AryStateFunction[static_cast<int>(EFSM::Idle)] = &UDefaultFSM::OnIdle;
-	m_AryStateFunction[static_cast<int>(EFSM::Chase)] = &UDefaultFSM::OnChase;
-	m_AryStateFunction[static_cast<int>(EFSM::Combat)] = &UDefaultFSM::OnCombat;
-	m_AryStateFunction[static_cast<int>(EFSM::Return)] = &UDefaultFSM::OnReturn;
+	m_AryStateFunction[static_cast<int>(EFSM::Idle)] = &UMobFSM_Swamer::OnIdle;
+	m_AryStateFunction[static_cast<int>(EFSM::Chase)] = &UMobFSM_Swamer::OnChase;
+	m_AryStateFunction[static_cast<int>(EFSM::Combat)] = &UMobFSM_Swamer::OnCombat;
+	m_AryStateFunction[static_cast<int>(EFSM::Return)] = &UMobFSM_Swamer::OnReturn;
 
 	m_StartPoint=m_OwnerUnit->GetActorLocation();
 }
 
-void UDefaultFSM::TickFSM()
+void UMobFSM_Swamer::TickFSM()
 {
     if (!m_OwnerUnit->m_NavSys)
     {
@@ -33,9 +28,8 @@ void UDefaultFSM::TickFSM()
 	(this->*m_AryStateFunction[static_cast<int>(m_CurrentState)])();
 }
 
-void UDefaultFSM::OnIdle()
+void UMobFSM_Swamer::OnIdle()
 {
-	PRINTF("Idle");
 	if (m_OwnerUnit->GetFocusedTarget())
 	{
 		m_StartPoint=m_OwnerUnit->GetActorLocation();
@@ -69,16 +63,14 @@ void UDefaultFSM::OnIdle()
 	}
 }
 
-void UDefaultFSM::OnChase()
+void UMobFSM_Swamer::OnChase()
 {
-	PRINTF("Chase");
 	bool CanSeeTarget =m_OwnerUnit->CanSeeTarget();
 	
 	EPathFollowingRequestResult::Type Result=EPathFollowingRequestResult::Failed;
 
 	if(CanSeeTarget)
 	{
-		PRINTF("CanSeeTarget");
 		Result = m_OwnerUnit->MoveToActor(m_OwnerUnit->GetFocusedTarget());
 
 		if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
@@ -117,9 +109,8 @@ void UDefaultFSM::OnChase()
 	}
 }
 
-void UDefaultFSM::OnCombat()
+void UMobFSM_Swamer::OnCombat()
 {
-	PRINTF("Combat");
 	TryAttack();
 
 	if (!m_OwnerUnit->GetFocusedTarget() ||m_OwnerUnit->GetFocusedTarget()->IsAlive())
@@ -139,16 +130,15 @@ void UDefaultFSM::OnCombat()
 	}
 }
 
-void UDefaultFSM::TryAttack()
+void UMobFSM_Swamer::TryAttack()
 {
 	m_OwnerUnit->HomingRotateToTarget();
 
 	m_OwnerUnit->DoBaseAttack();
 }
 
-void UDefaultFSM::OnReturn()
+void UMobFSM_Swamer::OnReturn()
 {
-	PRINTF("Return");
 	if (m_OwnerUnit->GetFocusedTarget())
 	{
 		m_CurrentState = EFSM::Chase;
@@ -162,6 +152,6 @@ void UDefaultFSM::OnReturn()
 	}
 }
 
-void UDefaultFSM::OnFlee()
+void UMobFSM_Swamer::OnFlee()
 {
 }

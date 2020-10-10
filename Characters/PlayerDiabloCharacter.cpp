@@ -318,7 +318,7 @@ void APlayerDiabloCharacter::EarnExp(float expEarned)
     }
 
     m_OnRemainExpChanged.Broadcast(m_fMaxExp - m_fCurrentExp);
-     m_OnExpGaugeChanged.Broadcast(m_fCurrentExp/m_fMaxExp);
+    m_OnExpGaugeChanged.Broadcast(m_fCurrentExp/m_fMaxExp);
 }
 
 bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)

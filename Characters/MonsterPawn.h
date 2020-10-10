@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/UnitPawn.h"
-#include "Logic/MonsterSensing.h"
+
 #include "Widgets/WorldMap/WorldWidget/FloatingStatusBarWidgetCompo.h"
 
 #include "MonsterPawn.generated.h"
@@ -12,6 +12,8 @@
 /**
  * 
  */
+class UMobFSMBase;
+class UMonsterSensing;
 UCLASS()
 class DIABLOM_API AMonsterPawn : public AUnitPawn
 {
@@ -25,7 +27,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	FMonsterEntityHandle m_MonsterUnitHandle;
 	UPROPERTY()
-	UDefaultFSM* m_FSM;
+	UMobFSMBase* m_FSM;
 	UPROPERTY()
 	UMonsterSensing* m_MonsterSense;
 public: //need more monster

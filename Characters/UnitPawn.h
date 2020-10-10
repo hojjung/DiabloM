@@ -10,14 +10,14 @@
 #include "Navigation/PathFollowingComponent.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
 #include "Datas/CharacterDataTable.h"
-#include "Logic/MonsterSensing.h"
+#include "Logic/MobFSM_Swamer.h"
+
 
 #include "UnitPawn.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnAttack);
 DECLARE_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, class AUnitPawn*);
 
-class UDefaultFSM;
 class UNavigationSystemV1;
 UCLASS()
 class DIABLOM_API AUnitPawn : public APawn, public IAbilitySystemInterface
@@ -215,7 +215,7 @@ public: //AttributeGetter
     }
 
 
-    friend UDefaultFSM;
+    friend UMobFSM_Swamer;
 
     virtual FVector GetVelocity() const override;
 };

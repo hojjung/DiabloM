@@ -1,10 +1,11 @@
 #include "MonsterPawn.h"
-
-#include "Logic/DefaultFSM.h"
+#include "Logic/MonsterSensing.h"
+#include "Logic/MobFSMBase.h"
 
 AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit): Super(objInit)
 {
-    m_bUseFSM = true;
+    m_bUseFSM = false;
+    m_Movement->m_bUseRVO=true;
 }
 
 void AMonsterPawn::BeginPlay()
@@ -32,11 +33,16 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
     GetAttributeSet()->m_OnStatChanged.AddUObject(this, &AMonsterPawn::SetHealthPercentage);
     SetHealthPercentage(this);
 
-    m_MonsterSense = NewObject<UMonsterSensing>(this, UMonsterSensing::StaticClass());
+    m_MonsterSense = NewObject<UMonsterSensing>(this,UMonsterSensing::StaticClass());
     m_MonsterSense->InitSense(this);
-    
-    m_FSM = NewObject<UDefaultFSM>(this, UDefaultFSM::StaticClass());
-    m_FSM->Init(this);
+
+    if(UnitData->m_MobFSM !=nullptr)
+    {
+        m_FSM = NewObject<UMobFSMBase>(this, UnitData->m_MobFSM,
+        UnitData->m_MobFSM->GetFName(),RF_NoFlags,UnitData->m_MobFSM->GetDefaultObject());
+        m_FSM->Init(this);
+        m_bUseFSM = true;
+    }
     
     if(UnitData->m_BaseAttack)
     {
@@ -48,6 +54,7 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
 void AMonsterPawn::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+    
     if(m_bUseFSM)
     {
         m_MonsterSense->Tick();

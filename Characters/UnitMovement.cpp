@@ -18,6 +18,7 @@ UUnitMovement::UUnitMovement()
     m_AvoidanceWeight = 0.4f;
     m_fMaxSpeed = 300.f;
     m_fDashDuration = 0.f;
+    bUseAccelerationForPaths=true;
 }
 
 void UUnitMovement::BeginPlay()

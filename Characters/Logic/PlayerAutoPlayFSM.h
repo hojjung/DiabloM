@@ -2,15 +2,14 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Characters/Logic/DefaultFSM.h"
+#include "DiabloM.h"
 #include "PlayerAutoPlayFSM.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UPlayerAutoPlayFSM : public UDefaultFSM
+class DIABLOM_API UPlayerAutoPlayFSM : public UObject
 {
 	GENERATED_BODY()
 	

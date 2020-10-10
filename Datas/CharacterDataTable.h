@@ -5,6 +5,8 @@
 #include "DiabloM.h"
 #include "ItemDataTable.h"
 #include "AbilitySystem/AbilityTypes.h"
+#include "Characters/Logic/MobFSMBase.h"
+
 #include "CharacterDataTable.generated.h"
 
 
@@ -232,4 +234,6 @@ public:
 	FMonsterTypeHandle m_TypeHandle;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UDiabloAbility> m_BaseAttack;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UMobFSMBase> m_MobFSM;
 };

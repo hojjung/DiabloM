@@ -33,11 +33,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	FRotator m_RotateSpeed;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
-	bool m_bUseRVO;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float m_AvoidConsiderRadius;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	int32 m_AvoidanceUID;
+
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
+	bool m_bUseRVO;
 
 protected://pathfollow
 	//FVector m_MoveVector;
