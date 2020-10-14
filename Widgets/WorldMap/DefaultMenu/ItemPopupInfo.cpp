@@ -183,7 +183,6 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator, int countS
 
         ClickedItemSlot.Y += Diff * ReverseScale;
         ClickedItemSlot.Y -= 50.f;
-        PRINTF("Popup 1");
     }
     else if (ScreenBottomToItem < PopupSizeY) //아래 공간이 팝업창보다 작을때
     {
@@ -192,7 +191,6 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator, int countS
         ClickedItemSlot.Y -= Diff * ReverseScale;
 
         //	ClickedItemSlot.Y -= 50.f;
-        PRINTF("Popup 2");
     }
 
 

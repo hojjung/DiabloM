@@ -49,7 +49,8 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
     }
 
-    float AttackSpeed = Cast<APlayerDiabloCharacter>(ActorInfo->AvatarActor.Get())->GetAttackSpeed();
+    APlayerDiabloCharacter* Player=Cast<APlayerDiabloCharacter>(ActorInfo->AvatarActor.Get());
+    float AttackSpeed = Player->GetAttackSpeed();
 
     GetMovement(ActorInfo->AvatarActor.Get())->SetMoveSpeedRatio(0.2f);
 
@@ -60,7 +61,9 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     {
         PlayAbilityAnimation(m_BaseAttackMotion,"DashAttack" ,2);
 
-        DashAttack(ActorInfo->AvatarActor.Get(),DashNormal,FMath::Sqrt(DistSqred-5400),m_fDashTime);
+        float Accept=Player->GetAcceptRadiusToOther();
+        float AcceptSqr=Accept*Accept;
+        DashAttack(GetMovement(ActorInfo->AvatarActor.Get()),DashNormal,FMath::Sqrt(DistSqred-AcceptSqr),m_fDashTime);
     }
     else
     {
@@ -143,11 +146,10 @@ UUnitMovement* UPlayerBaseAttack::GetMovement(AActor* want)
     return AA;
 }
 
-void UPlayerBaseAttack::DashAttack(AActor* want,FVector dashNormal, float dashLength, float dashTime)
+void UPlayerBaseAttack::DashAttack(UUnitMovement* movementComp,FVector dashNormal, float dashLength, float dashTime)
 {
-    auto* PlayerChar =Cast<APlayerDiabloCharacter>(want);
     FVector DeltaDash=dashNormal * (dashLength/m_fDashTime);
-    GetMovement(want)->SetDash(DeltaDash,dashTime);
+    movementComp->SetDash(DeltaDash,dashTime);
 }
 
 bool UPlayerBaseAttack::IsDashable(const FGameplayAbilityActorInfo* ActorInfo,float& outDistSqr,FVector& outDashNormal)

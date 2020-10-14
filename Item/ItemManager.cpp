@@ -24,7 +24,7 @@ void UItemManager::Init(UDiabloGameInstance* gameInstance)
 
 FItemInstance UItemManager::CreateItemInstance(FName itemID, int level)
 {
-    const FItemData* ItemData = m_GameInstance->GetItemDataPtr(itemID);
+    const FItemData* ItemData = UItemDataTable::GetItemDataPtr(itemID);
 
     const FItemTier& TierRolled = GetDefaultTierRoll();
 
@@ -36,7 +36,7 @@ FItemInstance UItemManager::CreateItemInstance(FName itemID, int level)
 
     CreateRandomOption(*ItemData, RandomOptionForItem, TierMaxOptionCount,TierBonusValue ,level);
 
-    return FItemInstance(ItemData, TierRolled.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, &TierRolled);
+    return FItemInstance(ItemData, TierRolled.m_TierID, m_nCurrentIndex, this, RandomOptionForItem,level, &TierRolled);
 }
 
 ADroppedItem* UItemManager::CreateItemActor(FItemInstance& itemWantAdd, FVector posWant)

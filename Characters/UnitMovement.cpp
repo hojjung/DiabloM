@@ -19,6 +19,8 @@ UUnitMovement::UUnitMovement()
     m_fMaxSpeed = 300.f;
     m_fDashDuration = 0.f;
     bUseAccelerationForPaths=true;
+    m_AvoidanceWeight=0.3f;
+    m_RotateSpeed=FRotator(0,240.f,0);
 }
 
 void UUnitMovement::BeginPlay()

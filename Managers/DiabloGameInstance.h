@@ -1,16 +1,17 @@
 #pragma once
 
-
 #include "DiabloM.h"
-
-#include "Datas/CharacterDataTable.h"
 #include "Datas/ItemDataTable.h"
-#include "Datas/PlayerInitDataTable.h"
 #include "Item/ItemManager.h"
 #include "SaveLoad/SaveLoadManager.h"
 #include "DiabloGameInstance.generated.h"
 
+
+class APlayerVisual;
+class UStartMenuCanvas;
 class UPlayerCreateManager;
+class UMonsterSpawnManager;
+class UDungeonManager;
 struct FItemInstance;
 struct FItemTier;
 struct FItemTier;
@@ -26,51 +27,46 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ADroppedItem> m_DropItemClass;
 	
-public:
+protected:
 	UPROPERTY()
 	UItemManager* m_ItemManager;
 	UPROPERTY()
 	USaveLoadManager* m_SaveLoadManager;
 	UPROPERTY()
 	UPlayerCreateManager* m_PlCreateManager;
-
+	UPROPERTY()
+	UMonsterSpawnManager* m_MonsterSpawn;
+	UPROPERTY()
+	UDungeonManager* m_DungeonManager;
+	
 protected:
 	virtual void Init() override;
 	
 	virtual void Shutdown()override;
 
 public:
-	
-#pragma region DataGetter
-	
-	const FMonsterTable* GetMonsterUnitPtr(FName id) const;
-	const FNPCEntityTable* GetNPCUnitPtr(FName id) const;
-	const FPlayerEntityTable* GetPlayerUnitPtr(FName id) const;
-	const FItemTier* GetItemTierPtr(FName id)const;
-	const FItemData* GetItemDataPtr(FName id)const;
-	const FOption* GetOptionPtr(FName id)const;
-	const FPlayerHairRow* GetPlayerHairPtr(FName id)const;
-	const FPlayerFaceRow* GetPlayerFacePtr(FName id)const;
-	const FPlayerArmorRow* GetPlayerArmorPtr(FName id)const;
-	const FPlayerItemRow* GetPlayerItemPtr(FName id)const;
-	const FPlayerPerkRow* GetPlayerPerkPtr(FName id)const;
-	//
-	const FMonsterTable& GetMonsterUnit(FName id) const;
-	const FNPCEntityTable& GetNPCUnit(FName id) const;
-	const FPlayerEntityTable& GetPlayerUnit(FName id) const;
-	const FItemTier& GetItemTier(FName id)const;
-	const FItemData& GetItemData(FName id)const;
-	const FOption& GetOption(FName id)const;
-	const FPlayerHairRow  & GetPlayerHair(FName id)const;
-	const FPlayerFaceRow  & GetPlayerFace(FName id)const;
-	const FPlayerArmorRow & GetPlayerArmor(FName id)const;
-	const FPlayerItemRow  & GetPlayerItem(FName id)const;
-	const FPlayerPerkRow  & GetPlayerPerk(FName id)const;
-	
-#pragma endregion 
-	//
 	FItemInstance CreateItem(FName id);
 
 	ADroppedItem* DropItemActor(FItemInstance& myItem);
-	
+
+	FORCEINLINE UItemManager* GetItemManager()
+	{
+		return m_ItemManager;
+	}
+	FORCEINLINE USaveLoadManager* GetSaveLoadManager()
+	{
+		return m_SaveLoadManager;
+	}
+	FORCEINLINE UPlayerCreateManager* GetPlCreateManager()
+	{
+		return    m_PlCreateManager;
+	}
+	FORCEINLINE UMonsterSpawnManager* GetMonsterSpawn()
+	{
+		return   m_MonsterSpawn;
+	}
+	FORCEINLINE UDungeonManager* GetDungeonManager()
+	{
+		return   m_DungeonManager;
+	}
 };

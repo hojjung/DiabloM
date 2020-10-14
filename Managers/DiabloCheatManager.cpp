@@ -1,4 +1,6 @@
 #include "DiabloCheatManager.h"
+
+#include "DungeonManager.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Item/Inventory.h"
@@ -101,8 +103,14 @@ void UDiabloCheatManager::SetPlayerLevel(int levelWant)
 }
 
 void UDiabloCheatManager::AddPlayerExp(float wantV)
-{TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+{
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
 	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
 	DiaPl->EarnExp(wantV);
+}
+
+void UDiabloCheatManager::CreateDungeon(int stageLevel)
+{
+	UDiabloGameInstance::Get->GetDungeonManager()->CreateDefaultInfinityDungeon(stageLevel);
 }
 

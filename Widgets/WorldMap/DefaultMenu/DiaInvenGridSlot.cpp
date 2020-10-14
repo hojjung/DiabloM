@@ -8,7 +8,7 @@ UDiaDragDrop* UDiaInvenGridSlot::GetDDOInst = nullptr;
 void UDiaInvenGridSlot::InitSlot(int indexFromGrid)
 {
 	m_nIndex = indexFromGrid;
-	
+	m_LevelFormat=FText::FromString("Lv {0}");
 	ClearSlot();
 }
 
@@ -63,6 +63,23 @@ void UDiaInvenGridSlot::UpdateEffectBG(const FItemInstance& itemInstance)
 	m_ImgItemEffectBG->SetBrushTintColor(FSlateColor(ColorW));
 }
 
+void UDiaInvenGridSlot::SetLevelText(const FItemInstance& itemInstance)
+{
+	if(itemInstance.m_nItemLevel>0)
+	{
+		m_TextItemLevel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		FFormatOrderedArguments Args;
+
+		Args.Add(itemInstance.m_nItemLevel);
+		
+		m_TextItemLevel->SetText(FText::Format(m_LevelFormat,Args));
+	}
+	else
+	{
+		m_TextItemLevel->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void UDiaInvenGridSlot::UpdateItemVisual(const FItemInstance& itemInstance)
 {
 	m_ImgItemVisual->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -71,6 +88,7 @@ void UDiaInvenGridSlot::UpdateItemVisual(const FItemInstance& itemInstance)
 	ItemIcon.SetResourceObject(itemInstance.m_ItemData->m_ItemIcon);
 	m_ImgItemVisual->SetBrush(ItemIcon);
 
+	SetLevelText(itemInstance);
 }
 
 void UDiaInvenGridSlot::SetIconOpacity(float opacityMaxOne)

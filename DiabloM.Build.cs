@@ -38,7 +38,11 @@ public class DiabloM : ModuleRules
             "OnlineSubsystem"
            
         });
-
+        if (Target.Platform == UnrealTargetPlatform.Android)
+        {
+            PrivateDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "OnlineSubsystem" });
+            DynamicallyLoadedModuleNames.Add("OnlineSubsystemGooglePlay");
+        }
     }
 
 }

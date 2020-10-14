@@ -87,12 +87,16 @@ void UMonsterSensing::OnTimer()
         return;
     }
     
-    if (!m_OwnedMob->GetFocusedTarget())//찾았으면?
+    if (!m_OwnedMob->GetFocusedTarget())
     {
         UpdateAISensing();
     }
-    else
+    else//찾았으면?
     {
+        if(!GetPlayer()->IsAlive())
+        {
+            m_OwnedMob->FocusTarget(nullptr);
+        }
         if (HasLineOfSightTo(GetPlayer()))
         {
             m_LastPlayerSeen=GetPlayer()->GetActorLocation();//보임 ㅇㅇ
@@ -195,13 +199,6 @@ float UMonsterSensing::DistSqr(AActor* want)
     return FVector::DistSquared2D(m_OwnedMob->GetActorLocation(),want->GetActorLocation());
 }
 
-void UMonsterSensing::Tick()
-{
-    
-    //if(ADiabloPlayerController::Get&&GetPlayer())
-   // DrawDebugLine(GetPlayer()->GetWorld(),m_OwnedMob->GetActorLocation(),m_LastPlayerSeen,FColor::Red);
-    
-}
 
 void UMonsterSensing::SetViewRadius(const float radius)
 {

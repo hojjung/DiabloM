@@ -304,7 +304,7 @@ void APlayerDiabloCharacter::EarnExp(float expEarned)
     {
         if (!SetCharacterLevel(m_nCharacterLevel + 1))
         {
-            m_OnRemainExpChanged.Broadcast(0.f);
+             m_OnRemainExpChanged.Broadcast(0.f);
              m_OnExpGaugeChanged.Broadcast(0.f);
             return;
         }
@@ -457,6 +457,70 @@ ADiabloPlayerController* APlayerDiabloCharacter::GetDiaController()
     return m_PlayerCon;
 }
 
+void APlayerDiabloCharacter::Die()
+{
+    m_bUseFSM=false;
+    
+    RemoveAllGameplayAbilities();
+
+    GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    GetMovementComponent()->SetActive(false);
+    SetActorTickEnabled(false);
+    m_OnCharacterDied.Broadcast(this);
+    m_PlayerSense->SetSensingUpdatesEnabled(false);
+
+    if (IsValid(GetDiaAbilitySystem()))
+    {
+        GetDiaAbilitySystem()->CancelAllAbilities();
+
+        FGameplayTagContainer EffectTagsToRemove;
+        EffectTagsToRemove.AddTag(m_EffectRemoveOnDeathTag);
+        int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
+
+        GetDiaAbilitySystem()->AddLooseGameplayTag(m_DeadTag);
+    }
+
+    if (m_DeathMontage)
+    {
+        float AnimLength = PlayAnimMontage(m_DeathMontage) - 0.2f;
+        
+        if (GEngine->GetNetMode(GetWorld()) < NM_Client)
+        {
+            FTimerHandle TimerHandle_OnTimer;
+            
+            GetWorldTimerManager().SetTimer(TimerHandle_OnTimer, this, &APlayerDiabloCharacter::OnDeathAnimEnd,
+                                                           AnimLength,
+                                                           false);
+        }
+    }
+    else
+    {
+        OnDeathAnimEnd();
+        //Destroy();
+    }
+}
+
+void APlayerDiabloCharacter::Revive()
+{
+    //TODO Get All Ability Again
+    //BaseAttack
+    ////Item Ability
+    ///Skill Ability
+    //Misc Buff
+    GetCapsule()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    GetMovementComponent()->SetActive(true);
+    SetActorTickEnabled(true);
+    m_PlayerSense->SetSensingUpdatesEnabled(true);
+}
+
+
+void APlayerDiabloCharacter::OnDeathAnimEnd()
+{
+    PRINTF("Game Over!");
+
+    //HideUI? it can be broad cast
+}
+
 void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target)//wrapper
 {
     FocusTarget(nullptr);
@@ -472,6 +536,7 @@ FVector APlayerDiabloCharacter::GetLastSeenLocation()
 {
     return m_PlayerSense->m_LastSeenLocation;
 }
+
 
 void APlayerDiabloCharacter::InteractWithTarget()
 {

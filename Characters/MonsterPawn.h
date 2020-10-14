@@ -55,4 +55,6 @@ public: //need more monster
 	bool virtual CanSeeTarget() override;
 
 	virtual FVector GetLastSeenLocation() override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

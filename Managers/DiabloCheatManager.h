@@ -55,4 +55,6 @@ public:
     void SetPlayerLevel(int levelWant);
 	UFUNCTION(exec)
     void AddPlayerExp(float wantV);
+	UFUNCTION(exec)
+	void CreateDungeon(int stageLevel=1);
 };

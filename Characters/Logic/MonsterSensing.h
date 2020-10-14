@@ -56,8 +56,6 @@ protected:
 
 	float DistSqr(AActor* want);
 public:
-	void Tick();
-	
 	void InitSense(AMonsterPawn* mobs);
 
 	void SetSensingInterval(const float newSensingInterval);

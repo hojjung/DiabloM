@@ -189,7 +189,7 @@ public:
     }
 
     FItemInstance(const FItemData* itemData, FName tierID, int gridIndex, IItemHolder* holder,
-                  TArray<FOptionSpec>& aryUseEffect, const FItemTier* itemTier = nullptr);//in cpp
+                  TArray<FOptionSpec>& aryUseEffect, int lv=0,const FItemTier* itemTier = nullptr);//in cpp
 
 public:
     UPROPERTY(EditAnywhere,BlueprintReadOnly)
@@ -202,7 +202,9 @@ public:
     FName m_ItemID = NAME_None;
     UPROPERTY(EditAnywhere,BlueprintReadOnly)
     FName m_TierID;
-
+    UPROPERTY(EditAnywhere,BlueprintReadOnly)
+    int m_nItemLevel;
+    
     int m_nMaxStack;
     
     bool m_bStackable;
@@ -212,6 +214,8 @@ public:
     const FItemData* m_ItemData;
 
     const FItemTier* m_ItemTier;
+
+    
 public:
 
     bool IsEmpty() const
@@ -244,6 +248,7 @@ public:
         m_bStackable = false;
         m_ItemData = nullptr;
         m_AryOptions.Empty();
+        m_nItemLevel=-1;
     }
 
   

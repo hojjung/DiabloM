@@ -77,8 +77,6 @@ protected:
     
     float m_fTickDeltaTime;
 
-   
-
     FGameplayAbilitySpecHandle m_BaseAttackHandle;
     
 protected:
@@ -100,13 +98,12 @@ protected:
 
     FAIRequestID RequestMove(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr Path);
 
+    virtual void OnDeathAnimEnd();
+public:
     float GetAcceptRadiusToOther();
 
     float GetAcceptRadiusSelfOnly();
-
     
-    
-public:
     bool virtual CanSeeTarget();
     
     UFUNCTION(BlueprintCallable)
@@ -116,9 +113,6 @@ public:
     
     FPathFollowingRequestResult MoveToActor(AActor* goalTarget);
 
-    void PauseNavMove();
-    UFUNCTION(BlueprintCallable,Category="Interact")
-    void TestMoveToActor(AActor* goalTarget);
     UFUNCTION(BlueprintCallable,Category="Interact")
     virtual void StartAttack();
     UFUNCTION(BlueprintCallable,Category="Interact")

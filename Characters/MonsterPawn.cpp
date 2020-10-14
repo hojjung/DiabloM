@@ -6,6 +6,13 @@ AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit): Super(objInit)
 {
     m_bUseFSM = false;
     m_Movement->m_bUseRVO=true;
+    SetActorTickEnabled(true);
+    SetActorTickInterval(0.2f);
+    GetCapsule()->SetCapsuleRadius(24.f);
+    m_SkBody->SetRelativeLocation(FVector( 0,0,-90.f));
+    m_SkBody->SetRelativeRotation(FRotator(0,-90.f,0));
+    
+    
 }
 
 void AMonsterPawn::BeginPlay()
@@ -57,7 +64,6 @@ void AMonsterPawn::Tick(float DeltaSeconds)
     
     if(m_bUseFSM)
     {
-        m_MonsterSense->Tick();
         m_FSM->TickFSM();
     }
 }
@@ -92,4 +98,20 @@ bool AMonsterPawn::CanSeeTarget()
 FVector AMonsterPawn::GetLastSeenLocation()
 {
     return m_MonsterSense->m_LastPlayerSeen;
+}
+
+void AMonsterPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    Super::EndPlay(EndPlayReason);
+    PRINTF("End - Mobs");
+    switch (EndPlayReason)
+    {
+    case EEndPlayReason::Destroyed: PRINTF("Destroyed"); break;
+    case EEndPlayReason::LevelTransition: PRINTF("LevelTrans"); break;
+    case EEndPlayReason::EndPlayInEditor: PRINTF("Editor End"); break;
+    case EEndPlayReason::RemovedFromWorld: PRINTF("RemoveWorld"); break;
+    case EEndPlayReason::Quit: PRINTF("Quit"); break;
+    default: ;
+    }
+   
 }

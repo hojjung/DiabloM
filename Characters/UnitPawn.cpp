@@ -108,16 +108,6 @@ FPathFollowingRequestResult AUnitPawn::MoveToActor(AActor* goalTarget)
     return MoveTo(MoveReq);
 }
 
-void AUnitPawn::PauseNavMove()
-{
-    
-}
-
-void AUnitPawn::TestMoveToActor(AActor* goalTarget)
-{
-    MoveToActor(goalTarget);
-}
-
 
 FPathFollowingRequestResult AUnitPawn::MoveTo(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr* OutPath)
 {
@@ -276,11 +266,16 @@ FAIRequestID AUnitPawn::RequestMove(const FAIMoveRequest& MoveRequest, FNavPathS
     return RequestID;
 }
 
+void AUnitPawn::OnDeathAnimEnd()
+{
+    Destroy();
+}
+
 float AUnitPawn::GetAcceptRadiusToOther()
 {
     float MyCapsule =GetCapsule()->GetScaledCapsuleRadius();
 
-    return GetFocusedTarget()? MyCapsule+GetFocusedTarget()->GetCapsule()->GetScaledCapsuleRadius():MyCapsule;
+    return GetFocusedTarget()? 75.f+MyCapsule+GetFocusedTarget()->GetCapsule()->GetScaledCapsuleRadius():MyCapsule;
 }
 
 float AUnitPawn::GetAcceptRadiusSelfOnly()
@@ -473,6 +468,7 @@ void AUnitPawn::Die()
 {
     RemoveAllGameplayAbilities();
 
+    SetActorTickEnabled(false);
     GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMovementComponent()->SetActive(false);
 
@@ -493,11 +489,20 @@ void AUnitPawn::Die()
 
     if (m_DeathMontage)
     {
-        PlayAnimMontage(m_DeathMontage);
+        float AnimLength = PlayAnimMontage(m_DeathMontage) - 0.2f;
+        
+        if (GEngine->GetNetMode(GetWorld()) < NM_Client)
+        {
+            FTimerHandle TimerHandle_OnTimer;
+            
+            GetWorldTimerManager().SetTimer(TimerHandle_OnTimer, this, &AUnitPawn::OnDeathAnimEnd,
+                                                           AnimLength,
+                                                           false);
+        }
     }
     else
     {
-        Destroy();
+        OnDeathAnimEnd();
     }
 }
 

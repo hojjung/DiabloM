@@ -139,7 +139,7 @@ void USaveLoadManager::SaveEquipment(int slotIndex, const TArray<FItemInstance>&
 
 void USaveLoadManager::CreateSetEquipSlotItem(TArray<FItemInstance>& arrayUsing, FName itemId, ESlotsEquipAry slot)
 {
-    TWeakObjectPtr<UItemManager> ItemManager = UDiabloGameInstance::Get->m_ItemManager;
+    TWeakObjectPtr<UItemManager> ItemManager = UDiabloGameInstance::Get->GetItemManager();
     int GridIndex = static_cast<int>(slot);
     arrayUsing[GridIndex] = ItemManager->CreateItemInstance(itemId, 1);
     arrayUsing[GridIndex].m_nGridIndex = GridIndex;

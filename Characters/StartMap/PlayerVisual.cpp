@@ -85,7 +85,7 @@ void APlayerVisual::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp, FN
 void APlayerVisual::BeginPlay()
 {
     Super::BeginPlay();
-    m_PlCreateManager = GetGameInstance<UDiabloGameInstance>()->m_PlCreateManager;
+    m_PlCreateManager = GetGameInstance<UDiabloGameInstance>()->GetPlCreateManager();
     m_PlCreateManager->m_OnVisualChange.AddUObject(this, &APlayerVisual::OnMeshVisualChanged);
     m_PlCreateManager->m_OnStartCreation.BindUObject(this, &APlayerVisual::ShowMesh);
     

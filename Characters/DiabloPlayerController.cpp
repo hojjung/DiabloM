@@ -87,7 +87,16 @@ UDamageTextWidgetComponent* ADiabloPlayerController::GetDmgWC()
 void ADiabloPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-
+	PRINTF("End - Pl Con");
+	switch (EndPlayReason)
+	{
+	case EEndPlayReason::Destroyed: PRINTF("Destroyed"); break;
+	case EEndPlayReason::LevelTransition: PRINTF("LevelTrans"); break;
+	case EEndPlayReason::EndPlayInEditor: PRINTF("Editor End"); break;
+	case EEndPlayReason::RemovedFromWorld: PRINTF("RemoveWorld"); break;
+	case EEndPlayReason::Quit: PRINTF("Quit"); break;
+	default: ;
+	}
 }
 
 void ADiabloPlayerController::SetupInputComponent()

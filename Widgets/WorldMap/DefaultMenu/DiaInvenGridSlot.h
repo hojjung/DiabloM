@@ -37,11 +37,16 @@ protected:
 	UImage* m_ImgSlotBG;//normal BG
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextItemStackCount;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextItemLevel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImage* m_ImgTypeIcon;
 protected:
 	int m_nIndex;
 
 	FItemInstance m_CopiedItemData;
+
+	FTextFormat m_LevelFormat;
 
 public:
 	static UDiaDragDrop* GetDDOInst;
@@ -78,6 +83,7 @@ protected:
 	void UpdateText(const FItemInstance& itemInstance);
 
 	void UpdateEffectBG(const FItemInstance& itemInstance);
+	void SetLevelText(const FItemInstance& itemInstance);
 
 
 	void SetSlotFocus(UDiaDragDrop* ddo);

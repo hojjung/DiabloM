@@ -5,12 +5,13 @@
 #include "DiabloM.h"
 #include "ItemDataTable.h"
 #include "AbilitySystem/AbilityTypes.h"
+
 #include "Characters/Logic/MobFSMBase.h"
 
 #include "CharacterDataTable.generated.h"
 
 
-
+class AMonsterPawn;
 
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
@@ -158,6 +159,7 @@ public:
 
 	static  UDataTable* GetMonsterTypeTable;
 
+	static TSubclassOf<AMonsterPawn> ClassMonsterPawn;
 public:
 	static const FMonsterTable& GetMonster(FName id);
 
@@ -236,4 +238,5 @@ public:
 	TSubclassOf<UDiabloAbility> m_BaseAttack;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UMobFSMBase> m_MobFSM;
+	
 };

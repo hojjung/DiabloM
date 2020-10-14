@@ -1,9 +1,12 @@
 #include "CharacterDataTable.h"
+#include "Characters/MonsterPawn.h"
+
 
 UDataTable* UCharacterDataTable::GetMonsterEntityTable = nullptr;
 UDataTable* UCharacterDataTable::GetPlayerEntityTable = nullptr;
 UDataTable* UCharacterDataTable::GetNPCEntityTable = nullptr;
 UDataTable* UCharacterDataTable::GetMonsterTypeTable = nullptr;
+TSubclassOf<AMonsterPawn> UCharacterDataTable::ClassMonsterPawn = nullptr;
 //GetMonsterEntityTable
 
 UCharacterDataTable::UCharacterDataTable()
@@ -23,7 +26,10 @@ UCharacterDataTable::UCharacterDataTable()
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundEntityTable4(
               TEXT("DataTable'/Game/DataTables/Entities/MonsterTypeTable.MonsterTypeTable'"));
     GetMonsterTypeTable=FoundEntityTable4.Object;
-//DataTable'/Game/DataTables/Entities/MonsterTypeTable.MonsterTypeTable'
+//
+    static ConstructorHelpers::FClassFinder<AMonsterPawn> FoundMonster(TEXT("Blueprint'/Game/Blueprints/Pawns/BP_Monster.BP_Monster_C'"));
+    //
+    ClassMonsterPawn=FoundMonster.Class;
 }
 
 const FMonsterTable& UCharacterDataTable::GetMonster(FName id)

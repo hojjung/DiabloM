@@ -8,8 +8,8 @@
 void UStartMenuCanvas::InitStartMenu()
 {
     PRINTF("InitStartMenu");
-    m_CharCreate->Init(GetGameInstance<UDiabloGameInstance>()->m_PlCreateManager);
-    m_CharSelect->Init(GetGameInstance<UDiabloGameInstance>()->m_SaveLoadManager);
+    m_CharCreate->Init(GetGameInstance<UDiabloGameInstance>()->GetPlCreateManager());
+    m_CharSelect->Init(GetGameInstance<UDiabloGameInstance>()->GetSaveLoadManager());
     m_CharSelect->m_BtnCreateNewChar->OnClicked.AddDynamic(this,&UStartMenuCanvas::CreationStart);
     m_CharCreate->m_BtnContinue->OnClicked.AddDynamic(this,&UStartMenuCanvas::CreationEnd);
     m_CharCreate->m_CharSelect=m_CharSelect;

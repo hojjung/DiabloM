@@ -10,7 +10,7 @@ UDataTable* UItemDataTable::GetAnimStanceTable = nullptr;
 TSubclassOf<UItemOptionGameEffect> UItemDataTable::GetItemEffect = nullptr;
 
 FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIndex, IItemHolder* holder,
-                             TArray<FOptionSpec>& aryUseEffect, const FItemTier* itemTier)
+                             TArray<FOptionSpec>& aryUseEffect, int lv, const FItemTier* itemTier)
 {
     m_ItemData = itemData;
     m_ItemID = m_ItemData->m_ItemID;
@@ -21,6 +21,7 @@ FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIn
     m_bStackable = m_ItemData->m_bStackable;
     m_AryOptions = aryUseEffect;
     m_TierID = tierID;
+    m_nItemLevel=lv;
 
     if (!itemTier)
     {

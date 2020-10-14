@@ -111,7 +111,6 @@ public:
 	//생성할때 옵션과 공격력 방어력 추가
 	//이 변수값을 어빌리티로 올려줘야함
 
-
 public:
 	FORCEINLINE UInventory* GetInven() const
 	{

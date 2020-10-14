@@ -166,7 +166,8 @@ protected:
 	void SetBaseAttackData(float viewAngle,float viewRadius,float focusRange);
 public:
 	void Init();
-	
+	UFUNCTION(BlueprintCallable)
+    void Revive();
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void SetBonusDamage(float v);
 	UFUNCTION(BlueprintCallable,Category="Interact")
@@ -198,6 +199,9 @@ public:
 	
 	ADiabloPlayerController* GetDiaController();
 
+	virtual void Die()override;
+	virtual void OnDeathAnimEnd()override;
+	
 	FORCEINLINE FOnFloatChange& GetLevelDele()
 	{
 		return m_OnLevelChanged;
@@ -239,5 +243,6 @@ public:
 
 	virtual FVector GetLastSeenLocation() override;
 
+	
 };
 

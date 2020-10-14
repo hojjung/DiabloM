@@ -14,17 +14,12 @@ void UMobFSM_Swamer::Init(AUnitPawn* pawnUnit)
 	m_AryStateFunction[static_cast<int>(EFSM::Chase)] = &UMobFSM_Swamer::OnChase;
 	m_AryStateFunction[static_cast<int>(EFSM::Combat)] = &UMobFSM_Swamer::OnCombat;
 	m_AryStateFunction[static_cast<int>(EFSM::Return)] = &UMobFSM_Swamer::OnReturn;
-
+	//
 	m_StartPoint=m_OwnerUnit->GetActorLocation();
 }
 
 void UMobFSM_Swamer::TickFSM()
 {
-    if (!m_OwnerUnit->m_NavSys)
-    {
-        return;
-    }
-
 	(this->*m_AryStateFunction[static_cast<int>(m_CurrentState)])();
 }
 
@@ -45,7 +40,9 @@ void UMobFSM_Swamer::OnIdle()
 	}
 
 	EPathFollowingStatus::Type Status = m_OwnerUnit->m_PFComp->GetStatus();
+	
 	FNavLocation Result;
+	
 	switch (Status)
 	{
 	case EPathFollowingStatus::Idle:
@@ -58,6 +55,7 @@ void UMobFSM_Swamer::OnIdle()
 		m_OwnerUnit->MoveToLocation(Result);
 
 		m_fIdleTimer = FMath::FRandRange(3.f,7.f);
+		
 		break;
 	default: ;
 	}
@@ -65,8 +63,16 @@ void UMobFSM_Swamer::OnIdle()
 
 void UMobFSM_Swamer::OnChase()
 {
-	bool CanSeeTarget =m_OwnerUnit->CanSeeTarget();
+	if(!m_OwnerUnit->GetFocusedTarget()->IsAlive())
+	{
+		m_OwnerUnit->FocusTarget(nullptr);
+		m_CurrentState = EFSM::Return;
+
+		return;
+	}
 	
+	bool CanSeeTarget = m_OwnerUnit->CanSeeTarget();
+
 	EPathFollowingRequestResult::Type Result=EPathFollowingRequestResult::Failed;
 
 	if(CanSeeTarget)
@@ -78,13 +84,10 @@ void UMobFSM_Swamer::OnChase()
 			m_CurrentState = EFSM::Combat;
 		}
 	}
-	else
+	else//안보일때,안보이는채로 시간이 너무길면
 	{
 		if(m_OwnerUnit->GetFocusedTarget())
 		{
-
-			EPathFollowingStatus::Type Status = m_OwnerUnit->m_PFComp->GetStatus();
-
 			if(m_fChaseFindTimer>0.f)
 			{
 				m_fChaseFindTimer -= m_OwnerUnit->m_fTickDeltaTime;
@@ -95,15 +98,17 @@ void UMobFSM_Swamer::OnChase()
 					m_CurrentState = EFSM::Return;
 					m_fChaseFindTimer=-1.f;
 				}
-
 				return;
 			}
-			
-			Result = m_OwnerUnit->MoveToLocation(m_OwnerUnit->GetLastSeenLocation());
-			
-			if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
+
+			if(FMath::RandBool())
 			{
-				m_fChaseFindTimer = FMath::FRandRange(2.f,6.f);
+				Result = m_OwnerUnit->MoveToLocation(m_OwnerUnit->GetLastSeenLocation());
+			}
+			
+			//if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
+			{
+				m_fChaseFindTimer = FMath::FRandRange(6.f,12.f);//길게 뽑힌애는 계속 쫓아가고 짧은애는 중도 포기함
 			}
 		}
 	}
@@ -113,7 +118,7 @@ void UMobFSM_Swamer::OnCombat()
 {
 	TryAttack();
 
-	if (!m_OwnerUnit->GetFocusedTarget() ||m_OwnerUnit->GetFocusedTarget()->IsAlive())
+	if (!m_OwnerUnit->GetFocusedTarget() ||!m_OwnerUnit->GetFocusedTarget()->IsAlive())
 	{
 		m_CurrentState = EFSM::Return;
 		

@@ -57,7 +57,7 @@ protected:
 
 	UUnitMovement* GetMovement(AActor* want);
 
-	void DashAttack(AActor* want,FVector dashNormal,float dashLength,float dashTime);
+	void DashAttack(UUnitMovement* movementComp,FVector dashNormal,float dashLength,float dashTime);
 
 	bool IsDashable( const FGameplayAbilityActorInfo* ActorInfo,float& outDistSqr,FVector& outDashNormal);
 };

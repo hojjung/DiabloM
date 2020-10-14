@@ -52,10 +52,13 @@ void UImageAndTextAndCompare::ShowCompare(float originalValue, float wantCompare
 		SetCompareColor(FLinearColor::Red);
 	}
 
+	PRINTF("O Value:%f",originalValue);
+	PRINTF("W Value:%f",wantCompare);
 	float Percent = originalValue / wantCompare;
+	PRINTF("PercentOne:%f",Percent);
 	float PerOne = 1 - Percent;
 	PerOne *= 100.f;
-
+	PRINTF("Percent100:%f",PerOne);
 	SetTextDiffValue(PerOne);
 	m_ImageCompareArrow->SetBrush(BrushWant);
 

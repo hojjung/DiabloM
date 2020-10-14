@@ -1,0 +1,67 @@
+#include "MonsterSpawnManager.h"
+
+#include "DiabloGameInstance.h"
+#include "EngineUtils.h"
+#include "Characters/DiabloPlayerController.h"
+#include "Objs/Actor/DgMobSpawnPoint.h"
+
+UMonsterSpawnManager::UMonsterSpawnManager()
+{
+    m_CurrentWorld = nullptr;
+    m_NavSys = nullptr;
+    m_fSpawnRadius = 1200.f;
+}
+
+void UMonsterSpawnManager::UpdateWorld(UWorld* world)
+{
+    m_CurrentWorld = world;
+    m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(m_CurrentWorld);
+}
+
+bool UMonsterSpawnManager::SpawnIter(const FVector& centerSpawnLoc,const FMonsterHordeRow& selectedHorde, TArray<AMonsterPawn*>& outMobAry,
+                                      int level)
+{
+    for (const FMonsterSelect& MobSelected : selectedHorde.m_AryMonsterEntity) //호드의 개수가 스폰포인트보다 많아야함
+    {
+        for (int MobCount = 0; MobCount < MobSelected.m_nCount; MobCount++)
+        {
+            FVector PointSpawn = GetRandomPoint(centerSpawnLoc, m_fSpawnRadius);
+
+            AMonsterPawn* SpawnedMob = SpawnMob(PointSpawn);
+
+            if (!SpawnedMob)
+            {
+                continue;
+            }
+
+            outMobAry.Add(SpawnedMob);
+
+            SpawnedMob->InitMonster(MobSelected.m_MonsterEntity, level);
+        }
+    }
+
+    return true;
+}
+
+FVector UMonsterSpawnManager::GetRandomPoint(const FVector& loc, const float& radius)
+{
+    FNavLocation ResultLoc;
+
+    if (!m_NavSys->GetRandomReachablePointInRadius(loc, radius, ResultLoc))
+    {
+        //FAIL
+        return loc;
+    }
+
+    return ResultLoc;
+}
+
+AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
+{
+    FActorSpawnParameters Param;
+
+    Param.bNoFail = true;
+    loc.Z += 88.f;
+    //88
+    return m_CurrentWorld->SpawnActor<AMonsterPawn>(UCharacterDataTable::ClassMonsterPawn, loc, FRotator(), Param);
+}

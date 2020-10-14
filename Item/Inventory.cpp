@@ -176,7 +176,7 @@ void UInventory::PrintInven()
             continue;
         };
         PRINTF("ItemName: %s,Index: %d, Stack:%d",
-               *UDiabloGameInstance::Get->GetItemData(Item.m_ItemID).m_ShowingName.ToString(), Item.m_nGridIndex,
+               *UItemDataTable::GetItemData(Item.m_ItemID).m_ShowingName.ToString(), Item.m_nGridIndex,
                Item.m_nCurrentStack);
     }
 }
@@ -201,6 +201,11 @@ void UInventory::SetItemAry(TArray<FItemInstance>& loadedAry)
 {
     for (int i = 0; i < m_ItemAry.Num(); i++)
     {
+        if(loadedAry.Num()<=i)
+        {
+            //inven size changed
+            return;
+        }
         if(!loadedAry[i].m_ItemData)
         {
             continue;
