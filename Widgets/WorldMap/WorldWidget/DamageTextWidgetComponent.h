@@ -18,6 +18,7 @@ enum class EDamagePopup: uint8
     CritcalLeft,
     CritcalRight,
     PlayerHurt,
+    Miss,
     Length
 };
 UCLASS()
@@ -28,7 +29,7 @@ public:
     UPROPERTY()
     AActor* m_Base;
     UPROPERTY()
-    AActor* m_AttachedActor;
+    const AActor* m_AttachedActor;
     void Init(AActor* base);
     UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void SetDamageText(const FText& Damage);

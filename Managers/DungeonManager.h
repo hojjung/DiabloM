@@ -28,6 +28,9 @@ protected:
 	ADiaDungeon* m_CurrentDungeon;
 
 	int m_nPointIndex;
+
+	FVector m_RecentDungeonFeetLoc;
+
 protected:
 	int StageLevelToDungeonLevel(int stageLevel);
 	
@@ -39,7 +42,15 @@ protected:
 	
 public:
 	void Init();
+	
 	UFUNCTION(BlueprintCallable)
 	void CreateDefaultInfinityDungeon(int level=1);
-
+	UFUNCTION(BlueprintCallable)
+	void ShowSpawnedMonster();
+	UFUNCTION(BlueprintCallable)
+	void HideSpawnedMonster();
+	UFUNCTION(BlueprintCallable)
+	void PortalToVillage();
+	UFUNCTION(BlueprintCallable)
+	void PortalToRecentDungeon();
 };

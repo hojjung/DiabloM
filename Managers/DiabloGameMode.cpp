@@ -22,6 +22,10 @@ void ADiabloGameMode::StartPlay()
 
 	InitDungeonInstances();//이방식의 문제점은 메모리 사용량 증가 //생각보다 적을지도 모른다
 
+	for (APlayerSpawnPoint* PlayerSpawnFind : TActorRange<APlayerSpawnPoint>(GetWorld()))
+	{
+		m_PlayerVillageSpawn=PlayerSpawnFind;
+	}
 	//ㄴBeginPlay Before
 	
 	Super::StartPlay();
@@ -79,6 +83,10 @@ void ADiabloGameMode::InitSpawnManager()
 	SpawnManager->UpdateWorld(GetWorld());
 }
 
+APlayerSpawnPoint* ADiabloGameMode::GetSpawnPoint()
+{
+	return m_PlayerVillageSpawn;
+}
 
 
 ADiaDungeon* ADiabloGameMode::GetDungeon(FName id)

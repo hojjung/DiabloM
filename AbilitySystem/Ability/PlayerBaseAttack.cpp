@@ -52,7 +52,8 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     APlayerDiabloCharacter* Player=Cast<APlayerDiabloCharacter>(ActorInfo->AvatarActor.Get());
     float AttackSpeed = Player->GetAttackSpeed();
 
-    GetMovement(ActorInfo->AvatarActor.Get())->SetMoveSpeedRatio(0.2f);
+    auto* Movement=GetMovement(Player);
+    Movement->SetMoveSpeedRatio(0.2f);
 
     float DistSqred;
     FVector DashNormal;
@@ -63,7 +64,7 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
         float Accept=Player->GetAcceptRadiusToOther();
         float AcceptSqr=Accept*Accept;
-        DashAttack(GetMovement(ActorInfo->AvatarActor.Get()),DashNormal,FMath::Sqrt(DistSqred-AcceptSqr),m_fDashTime);
+        DashAttack(Movement,DashNormal,FMath::Sqrt(DistSqred-AcceptSqr),m_fDashTime);
     }
     else
     {
@@ -87,42 +88,54 @@ void UPlayerBaseAttack::ResetComboSection()
 void UPlayerBaseAttack::OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
     ResetComboSection();
-    GetMovement(CurrentActorInfo->AvatarActor.Get())->SetMoveSpeedRatio(1.f);
+    GetMovement(Cast<APawn>(CurrentActorInfo->AvatarActor.Get()))->SetMoveSpeedRatio(1.f);
     EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
 void UPlayerBaseAttack::OnCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
     //Each one base attack
-    GetMovement(CurrentActorInfo->AvatarActor.Get())->SetMoveSpeedRatio(1.f);
+    GetMovement(Cast<APawn>( CurrentActorInfo->AvatarActor.Get()))->SetMoveSpeedRatio(1.f);
     EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+    const AUnitPawn* TargetChar=Cast<AUnitPawn>( EventData.Target);
+    APlayerDiabloCharacter* PlayerChar=Cast<APlayerDiabloCharacter>(GetAvatarActorFromActorInfo());
+    
     if (EventTag == FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility")))
     {
         ResetComboSection();
-        GetMovement(CurrentActorInfo->AvatarActor.Get())->SetMoveSpeedRatio(1.f);
+        GetMovement(PlayerChar)->SetMoveSpeedRatio(1.f);
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
         return;
     }
     
     if (EventTag == FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack")))
     {
-        APlayerDiabloCharacter* Hero = Cast<APlayerDiabloCharacter>(GetAvatarActorFromActorInfo());
-        if (!Hero)
+       
+        if (!PlayerChar)
         {
             EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+        }
+
+        if(!UBaseDiabloAttribute::CanHitBaseAttack(TargetChar,PlayerChar))
+        {
+            float SuccessPer100 = UBaseDiabloAttribute::CalcuSameLevelAvgAccuracy(TargetChar->GetAttributeSet()->GetAvoid(),PlayerChar);
+            PRINTF("PlBaseAttackMissed, Accuracy was :%f",SuccessPer100);
+            ADiabloPlayerController::Get->ShowDamageNumber(100.f-SuccessPer100,TargetChar,EDamagePopup::Miss);
+            return;
         }
 
         FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
             DamageGameplayEffect, GetAbilityLevel());
 
+        PRINTF("Dmg:%f",PlayerChar->GetAttributeSet()->GetPhysicalDamage()*PlayerChar->GetBonusDamage());
         DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(
-            FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookDamage")), Hero->GetAttributeSet()->GetPhysicalDamage()*Hero->GetBonusDamage());
+            FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookDamage")), PlayerChar->GetAttributeSet()->GetPhysicalDamage()*PlayerChar->GetBonusDamage());
 
-        Cast<AUnitPawn>(EventData.Target)->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
+       TargetChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
             *DamageEffectSpecHandle.Data);
     }
 }
@@ -139,11 +152,9 @@ FName UPlayerBaseAttack::GetSectionName()
     return WantReturn;
 }
 
-UUnitMovement* UPlayerBaseAttack::GetMovement(AActor* want)
+UUnitMovement* UPlayerBaseAttack::GetMovement(APawn* want)
 {
-    auto* MM = Cast<APlayerDiabloCharacter>(want)->GetMovementComponent();
-    auto* AA = Cast<UUnitMovement>(MM);
-    return AA;
+    return Cast<UUnitMovement>(want->GetMovementComponent());
 }
 
 void UPlayerBaseAttack::DashAttack(UUnitMovement* movementComp,FVector dashNormal, float dashLength, float dashTime)

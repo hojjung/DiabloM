@@ -39,6 +39,7 @@ void UDiaInvenGridSlot::ClearSlot()
 	m_CopiedItemData.ClearData();
 	SetVisualColorTint(FColor::White);
 	ClearSlotFocus();
+	m_TextItemLevel->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UDiaInvenGridSlot::UpdateText(const FItemInstance& itemInstance)
@@ -63,14 +64,14 @@ void UDiaInvenGridSlot::UpdateEffectBG(const FItemInstance& itemInstance)
 	m_ImgItemEffectBG->SetBrushTintColor(FSlateColor(ColorW));
 }
 
-void UDiaInvenGridSlot::SetLevelText(const FItemInstance& itemInstance)
+void UDiaInvenGridSlot::SetLevelText(int itemLevel)
 {
-	if(itemInstance.m_nItemLevel>0)
+	if(itemLevel>0)
 	{
 		m_TextItemLevel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		FFormatOrderedArguments Args;
 
-		Args.Add(itemInstance.m_nItemLevel);
+		Args.Add(itemLevel);
 		
 		m_TextItemLevel->SetText(FText::Format(m_LevelFormat,Args));
 	}
@@ -88,7 +89,7 @@ void UDiaInvenGridSlot::UpdateItemVisual(const FItemInstance& itemInstance)
 	ItemIcon.SetResourceObject(itemInstance.m_ItemData->m_ItemIcon);
 	m_ImgItemVisual->SetBrush(ItemIcon);
 
-	SetLevelText(itemInstance);
+	SetLevelText(itemInstance.m_nItemLevel);
 }
 
 void UDiaInvenGridSlot::SetIconOpacity(float opacityMaxOne)

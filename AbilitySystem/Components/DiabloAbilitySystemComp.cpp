@@ -32,7 +32,7 @@ int32 UDiabloAbilitySystemComp::GetDefaultAbilityLevel() const
 
 	if (OwningCharacter)
 	{
-		return OwningCharacter->GetLevel();
+		return OwningCharacter->GetCharacterLevel();
 	}
 	return 1;
 }

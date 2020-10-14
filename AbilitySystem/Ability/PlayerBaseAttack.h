@@ -55,7 +55,7 @@ protected:
 
 	FName GetSectionName();
 
-	UUnitMovement* GetMovement(AActor* want);
+	UUnitMovement* GetMovement(APawn* want);
 
 	void DashAttack(UUnitMovement* movementComp,FVector dashNormal,float dashLength,float dashTime);
 

@@ -36,9 +36,9 @@ protected:
 
 	TWeakObjectPtr<UMaterialProgressBar> m_SelectedBar;
 
-	FGameplayAttributeData* m_SelectedCurAttribute;
+	const FGameplayAttributeData* m_SelectedCurAttribute;
 	
-	FGameplayAttributeData* m_SelectedMaxAttribute;
+	const FGameplayAttributeData* m_SelectedMaxAttribute;
 	
 	FTextFormat m_HpFormat;
 public:

@@ -36,7 +36,7 @@ protected:
 	UPROPERTY()
 	UEquipmentSystem* m_EquipSystem;
 
-	
+	FTextFormat m_FormatMiss;
 protected:
 	UPROPERTY(EditDefaultsOnly,Category="Widget")
 	TSubclassOf<UMainCanvas> m_ClassMainMenu; // 태어나게 할 설계도 위젯 ㅇㅇ
@@ -123,7 +123,7 @@ public:
 
 	APlayerDiabloCharacter* GetPlayerPawn();
 
-	void ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target	
+	void ShowDamageNumber(const float local_damage_done,const AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target	
 	void HideFocusStatusWidget();
 	void ShowFocusStatusWidget(AUnitPawn* unit);
 };

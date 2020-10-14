@@ -40,7 +40,7 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
 	AActor* SourceActor = SourceAbilitySystemComponent ? SourceAbilitySystemComponent->AvatarActor : nullptr;
 	AActor* TargetActor = TargetAbilitySystemComponent ? TargetAbilitySystemComponent->AvatarActor : nullptr;
 
-	const int AttackerLevel = Cast<AUnitPawn>(SourceActor)->GetLevel();
+	const int AttackerLevel = Cast<AUnitPawn>(SourceActor)->GetCharacterLevel();
 
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 

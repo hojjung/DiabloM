@@ -94,7 +94,7 @@ void UMainCanvas::UpdateMonsterInfo(AUnitPawn* monInfo)
         return;
     }
     m_DiaMonInfo->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-    m_DiaMonInfo->SetCharacterLevel(monInfo->GetLevel());
+    m_DiaMonInfo->SetCharacterLevel(monInfo->GetCharacterLevel());
     m_DiaMonInfo->SetCharacterName(monInfo->GetShowNameText());
     m_DiaMonInfo->SetHealthPercentage(monInfo->GetHpPercentOne());
 

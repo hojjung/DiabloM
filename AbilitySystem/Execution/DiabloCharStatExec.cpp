@@ -30,7 +30,7 @@ struct DiabloCharStatStatics
     DECLARE_ATTRIBUTE_CAPTUREDEF(AtkElec);
     DECLARE_ATTRIBUTE_CAPTUREDEF(AtkPoison);
 
-    DECLARE_ATTRIBUTE_CAPTUREDEF(AvoidChance);
+    DECLARE_ATTRIBUTE_CAPTUREDEF(Avoid);
     DECLARE_ATTRIBUTE_CAPTUREDEF(Accuracy);
     //
     DECLARE_ATTRIBUTE_CAPTUREDEF(Str);
@@ -84,7 +84,7 @@ struct DiabloCharStatStatics
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AtkCold, Source, false);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AtkElec, Source, false);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AtkPoison, Source, false);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AvoidChance, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Avoid, Source, false);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Accuracy, Source, false);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Str, Source, false);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, Dex, Source, false);
@@ -136,7 +136,7 @@ UDiabloCharStatExec::UDiabloCharStatExec()
     RelevantAttributesToCapture.Add(GetCharStatStatics().AtkColdDef);
     RelevantAttributesToCapture.Add(GetCharStatStatics().AtkElecDef);
     RelevantAttributesToCapture.Add(GetCharStatStatics().AtkPoisonDef);
-    RelevantAttributesToCapture.Add(GetCharStatStatics().AvoidChanceDef);
+    RelevantAttributesToCapture.Add(GetCharStatStatics().AvoidDef);
     RelevantAttributesToCapture.Add(GetCharStatStatics().AccuracyDef);
     RelevantAttributesToCapture.Add(GetCharStatStatics().StrDef);
     RelevantAttributesToCapture.Add(GetCharStatStatics().DexDef);
@@ -177,7 +177,7 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
     AActor* SourceActor = SourceAbilitySystemComponent ? SourceAbilitySystemComponent->AvatarActor : nullptr;
     AActor* TargetActor = TargetAbilitySystemComponent ? TargetAbilitySystemComponent->AvatarActor : nullptr;
 
-    const int PlayerLevel = Cast<AUnitPawn>(SourceActor)->GetLevel();
+    const int PlayerLevel = Cast<AUnitPawn>(SourceActor)->GetCharacterLevel();
 
     //
     float PhysicalDamage=0.f;
@@ -255,7 +255,7 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
                                                                AtkElec);
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetCharStatStatics().AtkPoisonDef, EvaluationParameters,
                                                                AtkPoison);
-    ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetCharStatStatics().AvoidChanceDef,
+    ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetCharStatStatics().AvoidDef,
                                                                EvaluationParameters, AvoidChance);
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetCharStatStatics().AccuracyDef, EvaluationParameters,
                                                                Accuracy);

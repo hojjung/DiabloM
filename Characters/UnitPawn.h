@@ -168,12 +168,9 @@ public: //AttributeGetter
 
     bool IsAlive();
 
-    FORCEINLINE UBaseDiabloAttribute* GetAttributeSet()
-    {
-        return m_AttributeSet;
-    }
+    UBaseDiabloAttribute* GetAttributeSet() const;
 
-    FORCEINLINE int GetLevel()
+    FORCEINLINE int GetCharacterLevel() const
     {
         return m_nCharacterLevel;
     }

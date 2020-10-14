@@ -98,8 +98,8 @@ public:
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AtkPoison)
 	//
 	UPROPERTY(BlueprintReadOnly, Category = "Defense")
-	FGameplayAttributeData AvoidChance;
-	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AvoidChance)
+	FGameplayAttributeData Avoid;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, Avoid)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Attack")
 	FGameplayAttributeData Accuracy;
@@ -117,5 +117,10 @@ protected:
 	void AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty);
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
+public:
+	static bool CanHitBaseAttack(const AUnitPawn* target,const AUnitPawn* instigator);
+
+	static float CalcuSameLevelAvgAccuracy(float targetAvoidChance, AUnitPawn* instigator);
 
 };

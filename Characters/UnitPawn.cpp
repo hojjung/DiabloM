@@ -408,6 +408,11 @@ bool AUnitPawn::IsAlive()
     return GetHealth() > 0.0f;
 }
 
+UBaseDiabloAttribute* AUnitPawn::GetAttributeSet() const
+{
+    return m_AttributeSet;
+}
+
 FVector AUnitPawn::GetVelocity() const
 {
     return GetMovementComponent()->Velocity;
@@ -518,7 +523,7 @@ void AUnitPawn::SetUnitStatEffect()
     EffectContext.AddSourceObject(this);
 
     FGameplayEffectSpecHandle NewHandle = m_AbilitySystemComponent->MakeOutgoingSpec(
-        m_GEUnitStat, GetLevel(), EffectContext);
+        m_GEUnitStat, GetCharacterLevel(), EffectContext);
 
     FActiveGameplayEffectHandle ActiveGEHandle = m_AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(
         *NewHandle.Data.Get(), m_AbilitySystemComponent);

@@ -83,7 +83,7 @@ protected:
 	void UpdateText(const FItemInstance& itemInstance);
 
 	void UpdateEffectBG(const FItemInstance& itemInstance);
-	void SetLevelText(const FItemInstance& itemInstance);
+	void SetLevelText(int itemLevel);
 
 
 	void SetSlotFocus(UDiaDragDrop* ddo);

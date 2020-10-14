@@ -87,7 +87,7 @@ void UDiaStatPanel::UpdateAllAttributeTextWrap()
 
     UpdatePhysDef(m_AttributeSet->GetPhysicalDefense());
     UpdateAllDef(m_AttributeSet->GetDefensePer());
-    UpdateAvoid(m_AttributeSet->GetAvoidChance());
+    UpdateAvoid(m_AttributeSet->GetAvoid());
     UpdateBlockChance(m_AttributeSet->GetBlockChance());
 
     UpdateFireDef(m_AttributeSet->GetResFire());

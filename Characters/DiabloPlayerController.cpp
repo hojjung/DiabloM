@@ -23,6 +23,8 @@ ADiabloPlayerController::ADiabloPlayerController()
 	bShowMouseCursor=true;
 
 	APlayerController::SetVirtualJoystickVisibility(true);
+
+	m_FormatMiss=FTextFormat::FromString("Miss-{0}%");
 }
 
 void ADiabloPlayerController::BeginPlay()
@@ -175,11 +177,20 @@ APlayerDiabloCharacter* ADiabloPlayerController::GetPlayerPawn()
 	return  Cast<APlayerDiabloCharacter>( GetPawn());
 }
 
-void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done, AUnitPawn* unit_pawn,EDamagePopup dmgPopup) //target
+void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done,const AUnitPawn* unit_pawn,EDamagePopup dmgPopup) //target
 {
 	UDamageTextWidgetComponent* DamageText = GetDmgWC();
 	DamageText->AttachToComponent(unit_pawn->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	DamageText->SetDamageText(UDiaBlueprintFunctionLibrary::GetAlphabetText(local_damage_done));//
+	if(dmgPopup==EDamagePopup::Miss)
+	{
+		FFormatOrderedArguments Args;
+		Args.Add(local_damage_done);
+		DamageText->SetDamageText(FText::Format(m_FormatMiss,Args));//
+	}
+	else
+	{
+		DamageText->SetDamageText(UDiaBlueprintFunctionLibrary::GetAlphabetText(local_damage_done));//
+	}
 	DamageText->StartAnimation(dmgPopup);
 	DamageText->m_AttachedActor=unit_pawn;
 }

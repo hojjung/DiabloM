@@ -71,7 +71,7 @@ void UDiabloCheatManager::SaveCharStat()
 	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
 	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
 	FText Name = DiaPl->m_TextUnitName;
-	int Lev= DiaPl->GetLevel();
+	int Lev= DiaPl->GetCharacterLevel();
 	int Hair= DiaPl->m_HairIndex;
 	int Face= DiaPl->m_FaceIndex;
 	
@@ -112,5 +112,15 @@ void UDiabloCheatManager::AddPlayerExp(float wantV)
 void UDiabloCheatManager::CreateDungeon(int stageLevel)
 {
 	UDiabloGameInstance::Get->GetDungeonManager()->CreateDefaultInfinityDungeon(stageLevel);
+}
+
+void UDiabloCheatManager::PortalToDungeon()
+{
+	UDiabloGameInstance::Get->GetDungeonManager()->PortalToRecentDungeon();
+}
+
+void UDiabloCheatManager::PortalToVillage()
+{
+	UDiabloGameInstance::Get->GetDungeonManager()->PortalToVillage();
 }
 

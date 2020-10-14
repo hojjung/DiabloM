@@ -57,4 +57,8 @@ public:
     void AddPlayerExp(float wantV);
 	UFUNCTION(exec)
 	void CreateDungeon(int stageLevel=1);
+	UFUNCTION(exec)
+    void PortalToDungeon();
+	UFUNCTION(exec)
+    void PortalToVillage();
 };
