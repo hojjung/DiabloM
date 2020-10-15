@@ -11,6 +11,7 @@
 /**
  * 
  */
+class AUnitPawn;
 UCLASS()
 class DIABLOM_API UDiabloAbility : public UGameplayAbility
 {
@@ -18,8 +19,14 @@ class DIABLOM_API UDiabloAbility : public UGameplayAbility
 
 public:
 	UDiabloAbility();
+protected:	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ability")
-	bool ActivateAbilityOnGranted = false;
-	
+	bool m_bActivateAbilityOnGranted;
+
+	UPROPERTY()
+	AUnitPawn* m_OwnerUnit;
+protected:
+
+	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 	virtual void OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 };

@@ -87,7 +87,7 @@ protected:
     void CreateSkMeshComponent(USceneComponent* rootWant, USkeletalMeshComponent** refSkComp, FName keyName);
 
     void SetUnitStatEffect();
-    
+
     virtual void RemoveAllGameplayAbilities();
 
     FPathFollowingRequestResult MoveTo(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr* OutPath = nullptr);

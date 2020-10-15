@@ -15,6 +15,8 @@ class UCameraDissolve;
 class UPlayerSensing;
 class UPlayerBaseAttack;
 class UDefaultFSM;
+
+
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
 
 UCLASS()
@@ -29,6 +31,9 @@ public:
 	APlayerDiabloCharacter(const FObjectInitializer& objInit);
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	TSubclassOf<UDiabloAbility> m_GAPlayerHealthRegen;
+	//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TArray<TEnumAsByte< EObjectTypeQuery>> m_AryTargetingObjectType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
@@ -243,6 +248,5 @@ public:
 
 	virtual FVector GetLastSeenLocation() override;
 
-	
 };
 

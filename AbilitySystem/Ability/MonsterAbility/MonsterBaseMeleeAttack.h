@@ -4,6 +4,7 @@
 
 #include "DiabloM.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
+#include "Characters/MonsterPawn.h"
 #include "Characters/UnitMovement.h"
 #include "MonsterBaseMeleeAttack.generated.h"
 
@@ -31,10 +32,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TSubclassOf<UGameplayEffect> DamageGameplayEffect;
 
+	UPROPERTY()
+	AMonsterPawn* m_MonsterPawn;
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 
+	virtual void OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 protected:
 	bool CheckAttackRange(const AActor* other) const;
 	

@@ -117,7 +117,6 @@ void APlayerDiabloCharacter::Init()
 
 void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSaveData)
 {
-    //
     m_nCharacterLevel = loadedSaveData->m_nLevel;
 
     if (m_nCharacterLevel == 0)
@@ -141,7 +140,10 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     SetCharacterLevel(loadedSaveData->m_nLevel);
 
     LoadExp(loadedSaveData);
+
+    GetDiaAbilitySystem()->GiveAbility(FGameplayAbilitySpec(m_GAPlayerHealthRegen,GetCharacterLevel(),INDEX_NONE,this));
 }
+
 void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
 {
     m_fMaxExp = Cast<UPlayerDiabloAttribute>(m_AttributeSet)->GetMaxExpForLevelUp();

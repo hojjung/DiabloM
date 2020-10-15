@@ -48,7 +48,7 @@ protected:
 
 	void OnTimer();
 
-	FTimerHandle TimerHandle_OnTimer;
+	FTimerHandle m_TimerHandle_OnTimer;
 
 	void SetTimer(const float TimeDelay);
 

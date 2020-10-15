@@ -346,7 +346,7 @@ void AUnitPawn::HomingRotateToTarget()
 
     NewRot.Yaw = UKismetMathLibrary::RInterpTo(
         NewRot, UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), m_FocusedEnemy->GetActorLocation()),
-        m_fTickDeltaTime, 5.f).Yaw;
+        m_fTickDeltaTime, 5.5f).Yaw;
     SetActorRotation(NewRot);
 }
 

@@ -50,10 +50,11 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     }
 
     APlayerDiabloCharacter* Player=Cast<APlayerDiabloCharacter>(ActorInfo->AvatarActor.Get());
+    
     float AttackSpeed = Player->GetAttackSpeed();
 
     auto* Movement=GetMovement(Player);
-    Movement->SetMoveSpeedRatio(0.2f);
+    Movement->SetMoveSpeedRatio(0.25f);
 
     float DistSqred;
     FVector DashNormal;

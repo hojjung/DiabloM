@@ -73,6 +73,12 @@ void UMonsterBaseMeleeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* Act
     m_fAttackAngleCos=FMath::Cos(FMath::DegreesToRadians(m_fAttackAngle));
 }
 
+void UMonsterBaseMeleeAttack::OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
+{
+    Super::OnAvatarSet(ActorInfo, Spec);
+    m_MonsterPawn=Cast<AMonsterPawn>(m_OwnerUnit);
+}
+
 void UMonsterBaseMeleeAttack::OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
     EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
@@ -96,7 +102,7 @@ void UMonsterBaseMeleeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
         AMonsterPawn* MonsterAttacker = Cast<AMonsterPawn>(GetAvatarActorFromActorInfo());
         if (!MonsterAttacker ||!EventData.Target||!CheckAttackRange(EventData.Target))
         {
-            EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+            //EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
             return;
         }
 

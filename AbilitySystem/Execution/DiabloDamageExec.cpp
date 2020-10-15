@@ -7,7 +7,6 @@
 struct DiabloDamageStatics
 {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalDefense);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalDamage);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(TookDamage);
 
 	DiabloDamageStatics()
@@ -15,7 +14,6 @@ struct DiabloDamageStatics
 		//이제 이해했다
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, PhysicalDefense, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, TookDamage, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, PhysicalDamage, Source, false);
 	}
 };
 
@@ -28,12 +26,12 @@ static const DiabloDamageStatics& GetDamageStatics()
 UDiabloDamageExec::UDiabloDamageExec()
 {
 	RelevantAttributesToCapture.Add(GetDamageStatics().PhysicalDefenseDef);
-	RelevantAttributesToCapture.Add(GetDamageStatics().PhysicalDamageDef);
 	RelevantAttributesToCapture.Add(GetDamageStatics().TookDamageDef);
 }
 
 void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecutionParameters & ExecutionParams, OUT FGameplayEffectCustomExecutionOutput & OutExecutionOutput) const
 {
+	//어트리뷰트에서 하자
 	UAbilitySystemComponent* TargetAbilitySystemComponent = ExecutionParams.GetTargetAbilitySystemComponent();
 	UAbilitySystemComponent* SourceAbilitySystemComponent = ExecutionParams.GetSourceAbilitySystemComponent();
 
@@ -52,25 +50,21 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
+	float TookDamage = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetDamageStatics().TookDamageDef, EvaluationParameters, TookDamage);
 
-	float AttackPower = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetDamageStatics().PhysicalDamageDef, EvaluationParameters, AttackPower);
-
-	float Damage = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetDamageStatics().TookDamageDef, EvaluationParameters, Damage);
-
-
-	AttackPower*=Damage;
-
-	
+	PRINTF("TookDmg!:%f",TookDamage);
 	float DefensePower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetDamageStatics().PhysicalDefenseDef, EvaluationParameters, DefensePower);
 
 	float Reduction = DefensePower != 0.0f ? (DefensePower) / (50.f * AttackerLevel + DefensePower) : 1.f;
 
-	float DamageDone = AttackPower * Reduction;
-	Damage += FMath::Max<float>(Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookDamage")), false, -1.0f), 0.0f);
-
+	TookDamage += FMath::Max<float>(Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookDamage")), false, -1.0f), 0.0f);
+	
+	float DamageDone = TookDamage * Reduction;
+	
+	PRINTF("TookDmg!:%f",DamageDone);
+	
 	if (DamageDone > 0.f)
 	{
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(GetDamageStatics().TookDamageProperty, EGameplayModOp::Additive, DamageDone));

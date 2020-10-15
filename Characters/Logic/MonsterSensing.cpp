@@ -43,7 +43,7 @@ void UMonsterSensing::SetTimer(const float TimeInterval)
 {
     if (m_OwnedMob && GEngine->GetNetMode(GetWorld()) < NM_Client)
     {
-        m_OwnedMob->GetWorldTimerManager().SetTimer(TimerHandle_OnTimer, this, &UMonsterSensing::OnTimer,
+        m_OwnedMob->GetWorldTimerManager().SetTimer(m_TimerHandle_OnTimer, this, &UMonsterSensing::OnTimer,
                                                        TimeInterval,
                                                        false);
     }
@@ -63,7 +63,7 @@ void UMonsterSensing::SetSensingInterval(const float newSensingInterval)
             }
             else
             {
-                float CurrentElapsed = m_OwnedMob->GetWorldTimerManager().GetTimerElapsed(TimerHandle_OnTimer);
+                float CurrentElapsed = m_OwnedMob->GetWorldTimerManager().GetTimerElapsed(m_TimerHandle_OnTimer);
 
                 CurrentElapsed = FMath::Max(0.f, CurrentElapsed);
 
