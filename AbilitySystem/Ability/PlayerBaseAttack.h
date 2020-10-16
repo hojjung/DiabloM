@@ -18,7 +18,22 @@ class DIABLOM_API UPlayerBaseAttack : public UPlayerDiabloAbility
 
 public:
 	UPlayerBaseAttack();
+protected:
+	FGameplayTag m_TagTookDamage;
+	FGameplayTag m_TagEventEndAbility;
+	FGameplayTag m_TagEventBaseAttack;
+ 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float m_fDashTime;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float m_fDashLimitRange;
 
+	TArray<FCompositeSection> m_AryMontageSections;
+
+	int m_nSectionIndex;
+
+	FName GetSectionName();
 public:
 	void PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection,float AttackSpeed);
 
@@ -33,13 +48,8 @@ public:
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 
 	void ResetComboSection();
-protected:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float m_fDashTime;
 	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float m_fDashLimitRange;
-
+protected:
 	UFUNCTION()
     void OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData);
 
@@ -48,12 +58,6 @@ protected:
 
 	UFUNCTION()
     void EventReceived(FGameplayTag EventTag, FGameplayEventData EventData);
-
-	TArray<FCompositeSection> m_AryMontageSections;
-
-	int m_nSectionIndex;
-
-	FName GetSectionName();
 
 	UUnitMovement* GetMovement(APawn* want);
 

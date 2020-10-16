@@ -8,10 +8,13 @@ UPlayerBaseAttack::UPlayerBaseAttack()
     m_nSectionIndex = -1;
 
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-
-    FGameplayTag Ability1Tag = FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack"));
-    AbilityTags.AddTag(Ability1Tag);
-    ActivationOwnedTags.AddTag(Ability1Tag);
+    
+    m_TagTookDamage= FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookFireDmg"));
+    m_TagEventEndAbility= FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
+    m_TagEventBaseAttack= FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack"));
+    
+    AbilityTags.AddTag(m_TagEventBaseAttack);
+    ActivationOwnedTags.AddTag(m_TagEventBaseAttack);
 
     ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Skill")));
 
@@ -20,7 +23,8 @@ UPlayerBaseAttack::UPlayerBaseAttack()
     m_AbilityInputID = EAbilityInputID::BaseAttack;
 
     m_AbilityID = EAbilityInputID::BaseAttack;
-
+    
+    
 }
 
 void UPlayerBaseAttack::PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection, float AttackSpeed)
@@ -105,7 +109,7 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
     const AUnitPawn* TargetChar=Cast<AUnitPawn>( EventData.Target);
     APlayerDiabloCharacter* PlayerChar=Cast<APlayerDiabloCharacter>(GetAvatarActorFromActorInfo());
     
-    if (EventTag == FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility")))
+    if (EventTag == m_TagEventEndAbility)
     {
         ResetComboSection();
         GetMovement(PlayerChar)->SetMoveSpeedRatio(1.f);
@@ -113,7 +117,7 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
         return;
     }
     
-    if (EventTag == FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack")))
+    if (EventTag == m_TagEventBaseAttack)
     {
        
         if (!PlayerChar)
@@ -124,7 +128,6 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
         if(!UBaseDiabloAttribute::CanHitBaseAttack(TargetChar,PlayerChar))
         {
             float SuccessPer100 = UBaseDiabloAttribute::CalcuSameLevelAvgAccuracy(TargetChar->GetAttributeSet()->GetAvoid(),PlayerChar);
-            PRINTF("PlBaseAttackMissed, Accuracy was :%f",SuccessPer100);
             ADiabloPlayerController::Get->ShowDamageNumber(100.f-SuccessPer100,TargetChar,EDamagePopup::Miss);
             return;
         }
@@ -132,9 +135,9 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
         FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
             DamageGameplayEffect, GetAbilityLevel());
 
-        PRINTF("Dmg:%f",PlayerChar->GetAttributeSet()->GetPhysicalDamage()*PlayerChar->GetBonusDamage());
-        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(
-            FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookDamage")), PlayerChar->GetAttributeSet()->GetPhysicalDamage()*PlayerChar->GetBonusDamage());
+        float Dmg=PlayerChar->GetAttributeSet()->GetPhysicalDamage()*PlayerChar->GetBonusDamage()*PlayerChar->GetAttributeSet()->GetDamagePer();
+        
+        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookDamage,Dmg);
 
        TargetChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
             *DamageEffectSpecHandle.Data);

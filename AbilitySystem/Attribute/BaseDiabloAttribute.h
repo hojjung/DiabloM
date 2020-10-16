@@ -30,8 +30,24 @@ public:
 	FOnStatChanged m_OnStatChanged;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData TookDamage;
-	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, TookDamage)
+	FGameplayAttributeData TookPhysDamage;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, TookPhysDamage)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData TookFireDamage;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, TookFireDamage)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData TookPoisonDamage;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, TookPoisonDamage)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData TookElecDamage;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, TookElecDamage)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData TookIceDamage;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, TookIceDamage)
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Defense")
 	FGameplayAttributeData Health;
@@ -116,6 +132,12 @@ public:
 protected:
 	void AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty);
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+	void HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* SourceUnit,
+	                  AController* SourceController,
+	                  float TookDamageCache);
+	void GetTargetSourceActors(const FGameplayEffectModCallbackData& Data, FGameplayEffectContextHandle& Context,
+	                           UAbilitySystemComponent* Source, AActor*& TargetActor, AUnitPawn*& TargetCharacter,
+	                           AActor*& SourceActor, AController*& SourceController, AUnitPawn*& SourceCharacter);
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 public:

@@ -6,10 +6,15 @@
 UMonsterBaseMeleeAttack::UMonsterBaseMeleeAttack()
 {
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-    FGameplayTag Ability1Tag = FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack"));
-    AbilityTags.AddTag(Ability1Tag);
-    ActivationOwnedTags.AddTag(Ability1Tag);
+    m_TagTookDamage= FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookPhysDmg"));
+    m_TagEventEndAbility= FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
+    m_TagEventBaseAttack= FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack"));
+    
+    AbilityTags.AddTag(m_TagEventBaseAttack);
+    ActivationOwnedTags.AddTag(m_TagEventBaseAttack);
+
     ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Skill")));
+
 
     m_fAttackRange=150.f;
     m_fAttackAngle=50.f;
@@ -91,13 +96,13 @@ void UMonsterBaseMeleeAttack::OnCompleted(FGameplayTag EventTag, FGameplayEventD
 
 void UMonsterBaseMeleeAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-    if (EventTag == FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility")))
+    if (EventTag == m_TagEventEndAbility)
     {
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
         return;
     }
     
-    if (EventTag == FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack")))
+    if (EventTag == m_TagEventBaseAttack)
     {
         AMonsterPawn* MonsterAttacker = Cast<AMonsterPawn>(GetAvatarActorFromActorInfo());
         if (!MonsterAttacker ||!EventData.Target||!CheckAttackRange(EventData.Target))
@@ -110,7 +115,7 @@ void UMonsterBaseMeleeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
             DamageGameplayEffect, GetAbilityLevel());
 
         DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(
-            FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookDamage")), MonsterAttacker->GetAttributeSet()->GetPhysicalDamage());
+            m_TagTookDamage, MonsterAttacker->GetAttributeSet()->GetPhysicalDamage());
 
         Cast<AUnitPawn>(EventData.Target)->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
             *DamageEffectSpecHandle.Data);

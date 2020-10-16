@@ -307,7 +307,7 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
     //armor
     //Defense = StatStr
     //
-    HealthRegen = Vit+PlayerLevel;
+    HealthRegen = (Vit+PlayerLevel)/2.f;
     
     if (PlayerLevel < 35)
     {

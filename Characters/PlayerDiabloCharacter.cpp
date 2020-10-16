@@ -141,7 +141,10 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
 
     LoadExp(loadedSaveData);
 
-    GetDiaAbilitySystem()->GiveAbility(FGameplayAbilitySpec(m_GAPlayerHealthRegen,GetCharacterLevel(),INDEX_NONE,this));
+    if(m_GAPlayerHealthRegen)
+    {
+        GetDiaAbilitySystem()->GiveAbility(FGameplayAbilitySpec(m_GAPlayerHealthRegen,GetCharacterLevel(),INDEX_NONE,this));
+    }
 }
 
 void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)

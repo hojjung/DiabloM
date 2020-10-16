@@ -15,9 +15,11 @@ class DIABLOM_API UMonsterBaseMeleeAttack : public UDiabloAbility
 	
 public:
 	UMonsterBaseMeleeAttack();
+protected:
+	FGameplayTag m_TagTookDamage;
+	FGameplayTag m_TagEventEndAbility;
+	FGameplayTag m_TagEventBaseAttack;
 	
-	void PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection,float AttackSpeed);
-
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float m_fAttackRange;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -35,12 +37,15 @@ public:
 	UPROPERTY()
 	AMonsterPawn* m_MonsterPawn;
 
+protected:
+	void PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection,float AttackSpeed);
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 
 	virtual void OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
-protected:
+	
 	bool CheckAttackRange(const AActor* other) const;
 	
 	UFUNCTION()
