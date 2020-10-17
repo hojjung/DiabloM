@@ -69,4 +69,12 @@ public:
 	{
 		return   m_DungeonManager;
 	}
+	//TEST 1017
+	bool m_bTestIsDungeonOpen=false;
+	UFUNCTION(BlueprintCallable)
+	void TestCreateDungeon();
+	UFUNCTION(BlueprintCallable)
+    void TestBackToDungeon();
+	UFUNCTION(BlueprintCallable)
+	void TestSaveAll();
 };

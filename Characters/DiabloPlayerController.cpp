@@ -40,7 +40,6 @@ void ADiabloPlayerController::BeginPlay()
 	m_EquipSystem->Init(GetPlayerPawn()->GetDiaAbilitySystem());
 	m_EquipSystem->GetItemChangeCallback().AddUObject(this,&ADiabloPlayerController::PlayerMeshChange);
 	InitWidget();
-
 	USaveLoadManager::Get->CreateSetPlayerCharacter();
 }
 

@@ -6,6 +6,7 @@
 #include "Characters/PlayerDiabloCharacter.h"
 #include "DefaultMenu/MaterialProgressBar.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
+#include "Managers/DiabloGameInstance.h"
 #include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 
 
@@ -44,10 +45,16 @@ void UMainCanvas::Interaction()
     m_PlayerPawn->InteractWithTarget();
 }
 
-void UMainCanvas::Attack()
+void UMainCanvas::OnAttackPressStart()
 {
-    m_PlayerPawn->AttackInput(1.f);
+    m_PlayerPawn->OnAttackPressed();
 }
+
+void UMainCanvas::OnAttackPressEnd()
+{
+    m_PlayerPawn->OnAttackRelease();
+}
+
 
 void UMainCanvas::OpenSetting()
 {
@@ -56,6 +63,21 @@ void UMainCanvas::OpenSetting()
 void UMainCanvas::CloseSetting()
 {
     
+}
+
+void UMainCanvas::TestOpenDungeon()
+{
+    UDiabloGameInstance::Get->TestCreateDungeon();
+}
+
+void UMainCanvas::TestPortalBack()
+{
+    UDiabloGameInstance::Get->TestBackToDungeon();
+}
+
+void UMainCanvas::TestSaveAll()
+{
+    UDiabloGameInstance::Get->TestSaveAll();
 }
 
 void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven)
@@ -70,7 +92,8 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
 
     m_InteractButton->OnClicked.AddDynamic(this,&UMainCanvas::Interaction);
 
-    m_AttackButton->OnPressed.AddDynamic(this,&UMainCanvas::Attack);
+    m_AttackButton->OnPressed.AddDynamic(this,&UMainCanvas::OnAttackPressStart);
+    m_AttackButton->OnReleased.AddDynamic(this,&UMainCanvas::OnAttackPressEnd);
 
     m_PlayerPawn->GetExpGaugeDele().AddUObject(this,&UMainCanvas::UpdateExpGauge);
 

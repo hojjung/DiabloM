@@ -15,6 +15,7 @@
 
 #include "UnitPawn.generated.h"
 
+class UDiabloGameInstance;
 DECLARE_MULTICAST_DELEGATE(FOnAttack);
 DECLARE_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, class AUnitPawn*);
 
@@ -207,6 +208,7 @@ public: //AttributeGetter
 
 
     friend UMobFSM_Swamer;
+    friend UDiabloGameInstance;
 
     virtual FVector GetVelocity() const override;
 };

@@ -19,7 +19,7 @@ public:
 	DECLARE_ATTRIBUTE_CAPTUREDEF(ResCold);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(TookIceDamage);
 	
-
+//스킬들은 데미지를 매그니튜드로 보내ㄱ[
 	DiabloDamageStatics()
 	{
 		//이제 이해했다

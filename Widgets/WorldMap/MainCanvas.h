@@ -64,12 +64,19 @@ public:
     UFUNCTION(BlueprintCallable,Category="Menu")
     void Interaction();
     UFUNCTION(BlueprintCallable,Category="Menu")
-    void Attack();
+    void OnAttackPressStart();
+    UFUNCTION(BlueprintCallable,Category="Menu")
+    void OnAttackPressEnd();
     UFUNCTION(BlueprintCallable,Category="Menu")
     void OpenSetting();
     UFUNCTION(BlueprintCallable,Category="Menu")
     void CloseSetting();
-    
+    UFUNCTION(BlueprintCallable,Category="Menu")
+    void TestOpenDungeon();
+    UFUNCTION(BlueprintCallable,Category="Menu")
+    void TestPortalBack();
+    UFUNCTION(BlueprintCallable,Category="Menu")
+    void TestSaveAll();
 public:
     void Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven);
 

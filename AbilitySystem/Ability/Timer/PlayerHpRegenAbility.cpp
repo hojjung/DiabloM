@@ -14,11 +14,6 @@ UPlayerHpRegenAbility::UPlayerHpRegenAbility()
     ActivationOwnedTags.AddTag(Ability1Tag);
 }
 
-void UPlayerHpRegenAbility::OnTimer()
-{
-    Super::OnTimer();
-}
-
 float UPlayerHpRegenAbility::GetAttributeWantFrom()
 {
     return Cast<UPlayerDiabloAttribute>( Cast<APlayerDiabloCharacter>( m_OwnerUnit)->GetAttributeSet())->GetHealthRegen()*m_fInterval;

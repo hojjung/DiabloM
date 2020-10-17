@@ -3,6 +3,8 @@
 #include "StartMap/PlayerCreateManager.h"
 #include "MonsterSpawnManager.h"
 #include "DungeonManager.h"
+#include "Characters/PlayerDiabloCharacter.h"
+#include "Item/Inventory.h"
 
 
 UDiabloGameInstance* UDiabloGameInstance::Get = nullptr;
@@ -79,6 +81,52 @@ ADroppedItem* UDiabloGameInstance::DropItemActor(FItemInstance& myItem)
     }
 
     return m_ItemManager->CreateItemActor(myItem,ActorPos);
+}
+
+void UDiabloGameInstance::TestCreateDungeon()
+{
+    UDiabloGameInstance::Get->GetDungeonManager()->CreateDefaultInfinityDungeon(1);
+    m_bTestIsDungeonOpen=true;
+}
+
+void UDiabloGameInstance::TestBackToDungeon()
+{
+    if(m_bTestIsDungeonOpen)
+    {
+        UDiabloGameInstance::Get->GetDungeonManager()->PortalToVillage();
+        m_bTestIsDungeonOpen=false;
+    }
+    else
+    {
+        UDiabloGameInstance::Get->GetDungeonManager()->PortalToRecentDungeon();
+        m_bTestIsDungeonOpen=true;
+    }
+}
+
+void UDiabloGameInstance::TestSaveAll()
+{
+    TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+    TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
+    
+    USaveLoadManager::Get->SaveInventory(UPlayerCreateManager::Get->m_CurrentSelectSlot,DiaPC->GetInven()->GetItemAry());
+
+    TArray<FItemInstance> AryEquip;
+
+    for(FEquipSlot* Slot : ADiabloPlayerController::Get->GetEquipment()->GetArySlotPtr())
+    {
+        AryEquip.Emplace(Slot->m_Item);
+    }
+	
+    USaveLoadManager::Get->SaveEquipment(UPlayerCreateManager::Get->m_CurrentSelectSlot,AryEquip);
+
+  
+    FText Name = DiaPl->m_TextUnitName;
+    int Lev= DiaPl->GetCharacterLevel();
+    int Hair= DiaPl->m_HairIndex;
+    int Face= DiaPl->m_FaceIndex;
+	
+    USaveLoadManager::Get->SaveCharacterStat(UPlayerCreateManager::Get->m_CurrentSelectSlot,Lev,Name,Face,Hair,USaveLoadManager::Get->GetCurrentPlayerClassName(),DiaPl->m_fCurrentExp);
+
 }
 
 

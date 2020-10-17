@@ -17,8 +17,6 @@ class DIABLOM_API UPlayerHpRegenAbility : public UDiaTimerAbility
 	public:
 	UPlayerHpRegenAbility();
 protected:
-	virtual void OnTimer()override;
-	
 	virtual float GetAttributeWantFrom() override;
 	
 };

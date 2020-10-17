@@ -277,6 +277,16 @@ void APlayerDiabloCharacter::SetBonusDamage(float v)
     m_fBonusDamage=v;
 }
 
+void APlayerDiabloCharacter::OnAttackPressed()
+{
+    m_bIsAttackInputPressed=true;
+}
+
+void APlayerDiabloCharacter::OnAttackRelease()
+{
+    m_bIsAttackInputPressed=false;
+}
+
 void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
 {
     m_AnimStance = animStance;
@@ -574,18 +584,20 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
         DrawDebugLine(GetWorld(), GetCapsule()->GetComponentLocation(), m_FocusedEnemy->GetActorLocation(),
                       FColor::Cyan, false, -1, 0, 2.f);
     }
+
+    TickAttack();
 }
 
 
-void APlayerDiabloCharacter::AttackInput(float pressed)
+void APlayerDiabloCharacter::TickAttack()
 {
-    if (FMath::IsNearlyZero(pressed))
+    if(!m_bIsAttackInputPressed)
     {
         return;
     }
+    
     HomingRotateToTarget();
     DoBaseAttack();
-    
 }
 
 void APlayerDiabloCharacter::MoveForward(float AxisValue)
@@ -625,7 +637,8 @@ void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
     PlayerInputComponent->BindAxis("MoveRight", this, &APlayerDiabloCharacter::MoveRight);
     PlayerInputComponent->BindAction("Interaction", EInputEvent::IE_Pressed, this,
                                      &APlayerDiabloCharacter::InteractWithTarget);
-    PlayerInputComponent->BindAxis("Attack", this, &APlayerDiabloCharacter::AttackInput);
+    PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed, this, &APlayerDiabloCharacter::OnAttackPressed);
+    PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Released, this, &APlayerDiabloCharacter::OnAttackRelease);
 
     BindASCInput();
 }

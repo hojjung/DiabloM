@@ -130,6 +130,8 @@ protected:
 	TSet<AActor*> m_AlreadyHittenForIgnore;
 
 	float m_fBonusDamage;
+
+	bool m_bIsAttackInputPressed;
 	//
 protected:
 	
@@ -145,6 +147,7 @@ protected:
 	void AutoPlayTick(bool useAuto);
 
 	virtual void Tick(float DeltaTime) override;
+	void TickAttack();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
@@ -176,7 +179,9 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void SetBonusDamage(float v);
 	UFUNCTION(BlueprintCallable,Category="Interact")
-	virtual void AttackInput(float pressed);
+	void OnAttackPressed();
+	UFUNCTION(BlueprintCallable,Category="Interact")
+    void OnAttackRelease();
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
 	UFUNCTION(BlueprintCallable)
@@ -248,5 +253,6 @@ public:
 
 	virtual FVector GetLastSeenLocation() override;
 
+	friend UDiabloGameInstance;
 };
 
