@@ -104,7 +104,7 @@ protected:
 	
 	const FPlayerEntityTable* m_PlayerEntityData;
 
-
+	FGameplayAbilitySpecHandle m_HpRegenHandle;
 	
 	FDelegateHandle m_InventoryUpdateHandle;
     

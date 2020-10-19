@@ -63,8 +63,6 @@ protected:
     FGameplayTag m_DeadTag;
     UPROPERTY(VisibleAnywhere, Category = "Character")
     FGameplayTag m_EffectRemoveOnDeathTag;
-    UPROPERTY()
-    TArray<TSubclassOf<UDiabloAbility>> m_GrantedSkillAbilities;
     
     TWeakObjectPtr< AUnitPawn> m_FocusedEnemy;
     

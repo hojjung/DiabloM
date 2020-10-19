@@ -123,8 +123,7 @@ void APlayerDiabloCharacter::GrantHpRegenAbility()
 {
     if(m_GAPlayerHealthRegen)
     {
-        GetDiaAbilitySystem()->GiveAbility(FGameplayAbilitySpec(m_GAPlayerHealthRegen,GetCharacterLevel(),INDEX_NONE,this));
-        m_GrantedSkillAbilities.Add(m_GAPlayerHealthRegen);
+        m_HpRegenHandle=GetDiaAbilitySystem()->GiveAbility(FGameplayAbilitySpec(m_GAPlayerHealthRegen,GetCharacterLevel(),INDEX_NONE,this));
     }
 }
 
@@ -371,6 +370,13 @@ bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)
     PRINTF("LevelUp: %d -> %d", m_nCharacterLevel, NewLevel);
     m_nCharacterLevel = NewLevel;
     SetUnitStatEffect();
+    
+    if(m_HpRegenHandle.IsValid())
+    {
+        GetDiaAbilitySystem()->ClearAbility(m_HpRegenHandle);
+        GrantHpRegenAbility();
+    }
+    
     m_OnLevelChanged.Broadcast(m_nCharacterLevel);
 
     return true;

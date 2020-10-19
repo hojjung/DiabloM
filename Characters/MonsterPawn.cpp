@@ -64,7 +64,12 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
 void AMonsterPawn::OnDeathAnimEnd()
 {
     // 경험치 증가
-    ADiabloPlayerController::Get->GetPlayerPawn()->GetDiaAbilitySystem()->ApplyGameEffect(m_GEExpReward);
+    FGameplayEffectContextHandle Context = GetDiaAbilitySystem()->MakeEffectContext();
+    FGameplayEffectSpecHandle ExpSpecHandle = GetDiaAbilitySystem()->MakeOutgoingSpec(m_GEExpReward, GetCharacterLevel(),Context);
+
+    GetDiaAbilitySystem()->ApplyGameplayEffectSpecToTarget(*ExpSpecHandle.Data,
+        ADiabloPlayerController::Get->GetPlayerPawn()->GetDiaAbilitySystem());
+
     // 골드 액터 드랍
     //n개만큼 분산
     // 아이템 액터 드랍
@@ -72,6 +77,8 @@ void AMonsterPawn::OnDeathAnimEnd()
     //디졸브
 
     //삭제
+
+    Destroy();
 }
 
 void AMonsterPawn::Tick(float DeltaSeconds)
