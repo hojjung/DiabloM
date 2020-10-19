@@ -25,7 +25,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
     //
     m_TopCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera00");
     m_TopCamera->SetupAttachment(m_DissolveCam);
-
+   
     m_FocusedInteractable = nullptr;
 
     m_fInteractRange = 300.f;
@@ -79,6 +79,8 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
     m_fCurrentExp = 0.f;
 
     m_fMaxExp = 0.f;
+
+    m_bIsDead=false;
 }
 
 
@@ -112,8 +114,19 @@ void APlayerDiabloCharacter::Init()
     SetDefaultGloveMesh();
     SetFullHairMesh();
     SetDefaultShoeMesh();
+    //
+    m_DissolveCam->Init(m_TopCamera);
 }
 
+
+void APlayerDiabloCharacter::GrantHpRegenAbility()
+{
+    if(m_GAPlayerHealthRegen)
+    {
+        GetDiaAbilitySystem()->GiveAbility(FGameplayAbilitySpec(m_GAPlayerHealthRegen,GetCharacterLevel(),INDEX_NONE,this));
+        m_GrantedSkillAbilities.Add(m_GAPlayerHealthRegen);
+    }
+}
 
 void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSaveData)
 {
@@ -141,10 +154,7 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
 
     LoadExp(loadedSaveData);
 
-    if(m_GAPlayerHealthRegen)
-    {
-        GetDiaAbilitySystem()->GiveAbility(FGameplayAbilitySpec(m_GAPlayerHealthRegen,GetCharacterLevel(),INDEX_NONE,this));
-    }
+    GrantHpRegenAbility();
 }
 
 void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
@@ -245,21 +255,30 @@ void APlayerDiabloCharacter::RemoveAllEffect()
 }
 
 
+void APlayerDiabloCharacter::GrantBaseAttackAbility()
+{
+    m_BaseAttackHandle = GetDiaAbilitySystem()->GiveAbility(
+        FGameplayAbilitySpec(m_PlayerBaseAttack,
+                             1,
+                             static_cast<int32>(m_PlayerBaseAttack.GetDefaultObject()->m_AbilityInputID
+                             ),
+                             this));
+}
+
 void APlayerDiabloCharacter::SetBaseAttackAbility(const FAnimStance* animStance)
 {
     if (m_BaseAttackHandle.IsValid())
     {
         GetDiaAbilitySystem()->ClearAbility(m_BaseAttackHandle);
+        m_PlayerBaseAttack=nullptr;
     }
 
     if (IsValid(animStance->m_BaseAttackAbility))
     {
-        m_BaseAttackHandle = GetDiaAbilitySystem()->GiveAbility(
-            FGameplayAbilitySpec(animStance->m_BaseAttackAbility,
-                                 1,
-                                 static_cast<int32>(animStance->m_BaseAttackAbility.GetDefaultObject()->m_AbilityInputID
-                                 ),
-                                 this));
+        m_PlayerBaseAttack=animStance->m_BaseAttackAbility;
+        
+        GrantBaseAttackAbility();
+        
     }
 
     m_AlreadyHittenForIgnore.Reset();
@@ -334,6 +353,12 @@ void APlayerDiabloCharacter::EarnExp(float expEarned)
 
     m_OnRemainExpChanged.Broadcast(m_fMaxExp - m_fCurrentExp);
     m_OnExpGaugeChanged.Broadcast(m_fCurrentExp/m_fMaxExp);
+}
+
+void APlayerDiabloCharacter::EarnGold(float goldEarned)
+{
+    m_fCurrentExp += goldEarned;
+    m_fCurrentExp = FMath::Clamp(m_fCurrentExp,m_fCurrentExp,MAXVALUE);
 }
 
 bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)
@@ -474,26 +499,36 @@ ADiabloPlayerController* APlayerDiabloCharacter::GetDiaController()
 
 void APlayerDiabloCharacter::Die()
 {
+    if(m_bIsDead)
+    {
+        return;
+    }
+    m_bIsDead=true;
+    
     m_bUseFSM=false;
     
-    RemoveAllGameplayAbilities();
-
-    GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    GetMovementComponent()->SetActive(false);
     SetActorTickEnabled(false);
-    m_OnCharacterDied.Broadcast(this);
+    
+    m_AttributeSet->SetHealth(0.f);
+    
+    GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    
+    GetMovementComponent()->SetActive(false);
+    
     m_PlayerSense->SetSensingUpdatesEnabled(false);
 
     if (IsValid(GetDiaAbilitySystem()))
     {
         GetDiaAbilitySystem()->CancelAllAbilities();
-
         FGameplayTagContainer EffectTagsToRemove;
         EffectTagsToRemove.AddTag(m_EffectRemoveOnDeathTag);
         int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
 
         GetDiaAbilitySystem()->AddLooseGameplayTag(m_DeadTag);
+        
     }
+
+    m_OnCharacterDied.Broadcast(this);
 
     if (m_DeathMontage)
     {
@@ -517,15 +552,19 @@ void APlayerDiabloCharacter::Die()
 
 void APlayerDiabloCharacter::Revive()
 {
-    //TODO Get All Ability Again
-    //BaseAttack
-    ////Item Ability
-    ///Skill Ability
-    //Misc Buff
+    GetDiaAbilitySystem()->RemoveLooseGameplayTag(m_DeadTag);
+    //
+    GrantHpRegenAbility();
+    GrantBaseAttackAbility();
+    //
     GetCapsule()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     GetMovementComponent()->SetActive(true);
     SetActorTickEnabled(true);
     m_PlayerSense->SetSensingUpdatesEnabled(true);
+    m_bIsDead=false;
+    m_AttributeSet->SetHealth(m_AttributeSet->GetMaxHealth());
+    m_OnRevived.Broadcast(this);
+    m_AttributeSet->m_OnStatChanged.Broadcast(this);
 }
 
 
@@ -550,6 +589,11 @@ void APlayerDiabloCharacter::EndAttack()
 FVector APlayerDiabloCharacter::GetLastSeenLocation()
 {
     return m_PlayerSense->m_LastSeenLocation;
+}
+
+bool APlayerDiabloCharacter::IsAlive()
+{
+    return !m_bIsDead || Super::IsAlive();
 }
 
 

@@ -70,6 +70,7 @@ UDiabloDamageExec::UDiabloDamageExec()
 	RelevantAttributesToCapture.Add(GetDamageStatics().TookIceDamageDef);
 }
 
+
 void UDiabloDamageExec::GetTookPhysDmg(const FGameplayEffectCustomExecutionParameters& ExecutionParams, const FGameplayEffectSpec& Spec, FAggregatorEvaluateParameters EvaluationParameters, float& TookPhysDmg) const
 {
 	TookPhysDmg = FMath::Max<float>(Spec.GetSetByCallerMagnitude(GetDamageStatics().TagTookPhysDamage, false, -1.0f), 0.0f);

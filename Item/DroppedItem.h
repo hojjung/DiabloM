@@ -24,8 +24,8 @@ protected:
 	USphereComponent* m_CollSphere;
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	UWidgetComponent* m_BillBoard;
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void OnItemVisualChange(const FLinearColor& colorW);
+	
+	
 protected:
 	UPROPERTY(VisibleAnywhere)
 	FItemInstance m_ItemInstance;
@@ -36,7 +36,8 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	void PickupItem(AActor* interactCaster);
-
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+    void OnItemVisualChange(const FLinearColor& colorW);
 public:
 	virtual void Interact(AActor* instigator) override;
 	

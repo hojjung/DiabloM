@@ -124,3 +124,22 @@ void UDiabloCheatManager::PortalToVillage()
 	UDiabloGameInstance::Get->GetDungeonManager()->PortalToVillage();
 }
 
+void UDiabloCheatManager::DamageToPlayer(float wantV)
+{
+	// FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
+ //        DamageGameplayEffect, GetAbilityLevel());
+ //
+	// DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(
+ //        m_TagTookDamage, MonsterAttacker->GetAttributeSet()->GetPhysicalDamage());
+ //
+	// Cast<AUnitPawn>(EventData.Target)->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
+ //        *DamageEffectSpecHandle.Data);
+}
+
+void UDiabloCheatManager::KillPlayer()
+{
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
+	DiaPl->Die();
+}
+

@@ -112,9 +112,7 @@ void UMobFSM_Swamer::OnChase()
 
 void UMobFSM_Swamer::OnCombat()
 {
-	TryAttack();
-
-	if (!m_OwnerUnit->GetFocusedTarget() ||!m_OwnerUnit->GetFocusedTarget()->IsAlive())
+	if(!m_OwnerUnit->GetFocusedTarget() ||!m_OwnerUnit->GetFocusedTarget()->IsAlive())
 	{
 		m_CurrentState = EFSM::Return;
 		
@@ -122,6 +120,10 @@ void UMobFSM_Swamer::OnCombat()
 		
 		return;
 	}
+	
+	TryAttack();
+
+	
 
 	float DistSqr = FVector::DistSquared(m_OwnerUnit->GetActorLocation(), m_OwnerUnit->GetFocusedTarget()->GetActorLocation());
 

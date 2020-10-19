@@ -9,13 +9,14 @@
 #include "UObject/UObjectGlobals.h"
 #include "Serialization/AsyncPackageLoader.h"
 
-UDungeonManager::UDungeonManager()
-{
-    m_CurrentDungeon=nullptr;
-}
-
 void UDungeonManager::Init()
 {
+    m_CurrentDungeon=nullptr;
+    m_CurrentDungeonData=nullptr;
+    m_nMonsterLevel=-1;
+    m_nDungeonType=-1;
+    m_nPointIndex=-1;
+    
     UDungeonDataTable::GetDungeonTable->GetAllRows("DgManager-NoDungeonData",m_AryDungeonData);
 }
 
@@ -23,15 +24,15 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 {
     m_nPointIndex=0;
     
-    int MonsterLevel = StageLevelToDungeonLevel(level);
+    m_nMonsterLevel = StageLevelToDungeonLevel(level);
 
-    int DungeonType = StageLevelToDungeonType(level);
+    m_nDungeonType = StageLevelToDungeonType(level);
     
-    FDungeonDataRow* SelectedDungeonData =m_AryDungeonData[DungeonType];
+    m_CurrentDungeonData = m_AryDungeonData[m_nDungeonType];
     
-    LoadDungeonLevel(SelectedDungeonData);
+    LoadDungeonLevel(m_CurrentDungeonData);
 
-    SpawnMonstersToDungeon(MonsterLevel, SelectedDungeonData);
+    SpawnMonstersToDungeon(m_nMonsterLevel, m_CurrentDungeonData);
 
     PortalToRecentDungeon();
 }
@@ -70,17 +71,43 @@ void UDungeonManager::PortalToVillage()
     PlayerPawn->SetActorLocation(Loc,false,nullptr,ETeleportType::None);
     
     HideSpawnedMonster();
+    m_CurrentDungeon->HideDungeon();
 }
 
 void UDungeonManager::PortalToRecentDungeon()
 {
     PRINTF("Dgm - Portal Dungeon");
+    m_CurrentDungeon->ShowDungeon();
     ShowSpawnedMonster();
-    
     APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
     FVector Loc=m_RecentDungeonFeetLoc;
     Loc.Z+=PlayerPawn->GetCapsule()->GetScaledCapsuleHalfHeight();
     PlayerPawn->SetActorLocation(Loc,false,nullptr,ETeleportType::None);
+}
+
+void UDungeonManager::ClearDungeon()
+{
+    for (AMonsterPawn* Pawn : m_AryMonsterSpawnedCurrently)
+    {
+        if(Pawn)
+        {
+            Pawn->Destroy();
+        }
+    }
+    m_CurrentDungeon->HideDungeon();
+}
+
+void UDungeonManager::RestartDungeon()
+{
+    ClearDungeon();
+    m_RecentDungeonFeetLoc=m_CurrentDungeon->GetActorLocation();
+    SpawnMonstersToDungeon(m_nMonsterLevel, m_CurrentDungeonData);
+    PortalToRecentDungeon();
+}
+
+bool UDungeonManager::IsDungeonOpened()
+{
+    return m_CurrentDungeon.Get() != nullptr;
 }
 
 int UDungeonManager::StageLevelToDungeonLevel(int stageLevel)

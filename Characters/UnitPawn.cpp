@@ -275,7 +275,7 @@ float AUnitPawn::GetAcceptRadiusToOther()
 {
     float MyCapsule =GetCapsule()->GetScaledCapsuleRadius();
 
-    return GetFocusedTarget()? 75.f+MyCapsule+GetFocusedTarget()->GetCapsule()->GetScaledCapsuleRadius():MyCapsule;
+    return GetFocusedTarget()? MyCapsule+GetFocusedTarget()->GetCapsule()->GetScaledCapsuleRadius():MyCapsule;
 }
 
 float AUnitPawn::GetAcceptRadiusSelfOnly()
@@ -471,8 +471,6 @@ UAnimMontage* AUnitPawn::GetCurrentMontage()
 
 void AUnitPawn::Die()
 {
-    RemoveAllGameplayAbilities();
-
     SetActorTickEnabled(false);
     GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMovementComponent()->SetActive(false);
@@ -529,24 +527,3 @@ void AUnitPawn::SetUnitStatEffect()
         *NewHandle.Data.Get(), m_AbilitySystemComponent);
 }
 
-void AUnitPawn::RemoveAllGameplayAbilities()
-{
-    TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
-
-    for (const FGameplayAbilitySpec& Spec : GetDiaAbilitySystem()->GetActivatableAbilities())
-    {
-        bool A = m_GrantedSkillAbilities.Contains(Spec.Ability->GetClass());
-        //bool B =m_GrantedMasteryAbilities.Contains(Spec.Ability->GetClass());
-        //  bool C =m_GrantedItemAbilities.Contains(Spec.Ability->GetClass());
-
-        if ((Spec.SourceObject == this) && A)
-        {
-            AbilitiesToRemove.Add(Spec.Handle);
-        }
-    }
-
-    for (int32 i = 0; i < AbilitiesToRemove.Num(); i++)
-    {
-        GetDiaAbilitySystem()->ClearAbility(AbilitiesToRemove[i]);
-    }
-}

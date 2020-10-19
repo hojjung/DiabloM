@@ -24,8 +24,10 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UFloatingStatusBarWidgetCompo* m_StatusBar;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FMonsterEntityHandle m_MonsterUnitHandle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> m_GEExpReward;
 	UPROPERTY()
 	UMobFSMBase* m_FSM;
 	UPROPERTY()
@@ -45,6 +47,8 @@ public: //need more monster
 	virtual void Tick(float DeltaSeconds) override;
 
 	void InitMonster(FDataTableRowHandle unitID, int level);
+
+	virtual void OnDeathAnimEnd() override;
 
 	void SetHealthPercentage(AUnitPawn* target );
 

@@ -95,6 +95,8 @@ protected:
 	TArray<TSubclassOf<UDiabloAbility>> m_GrantedMasteryAbilities;
 	UPROPERTY()
 	TArray<TSubclassOf<UDiabloAbility>> m_GrantedItemAbilities;
+	UPROPERTY()
+	TSubclassOf<UPlayerBaseAttack> m_PlayerBaseAttack;
 	
 	IInteractable* m_FocusedInteractable;
 	
@@ -116,6 +118,8 @@ protected:
 	
 	float m_fMaxExp;
 
+	float m_fCurrentGold;
+
 	int m_FaceIndex;
 	
 	int m_HairIndex;
@@ -126,16 +130,18 @@ protected:
 	
 	FOnFloatChange m_OnRemainExpChanged;
 
+	FCharacterDiedDelegate m_OnRevived;
+
 	UPROPERTY()
 	TSet<AActor*> m_AlreadyHittenForIgnore;
 
 	float m_fBonusDamage;
 
 	bool m_bIsAttackInputPressed;
+
+	bool m_bIsDead;
 	//
 protected:
-	
-
 	void LoadExp(const USaveCharacterStatus* loadedSaveData);
 
 	void MoveForward(float AxisValue);
@@ -147,6 +153,7 @@ protected:
 	void AutoPlayTick(bool useAuto);
 
 	virtual void Tick(float DeltaTime) override;
+	
 	void TickAttack();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -165,8 +172,6 @@ protected:
 
 	void BindASCInput();
 
-	
-	
 	void SetLoadedData(const USaveCharacterStatus* loadedSaveData);
 	
 	void SetBaseAttackAbility(const FAnimStance* animStance);
@@ -174,6 +179,7 @@ protected:
 	void SetBaseAttackData(float viewAngle,float viewRadius,float focusRange);
 public:
 	void Init();
+	void GrantHpRegenAbility();
 	UFUNCTION(BlueprintCallable)
     void Revive();
 	UFUNCTION(BlueprintCallable,Category="Interact")
@@ -196,10 +202,13 @@ public:
 	UPlayerBaseAttack* GetBaseAttackInst();
 
 	void RemoveAllEffect();
+	void GrantBaseAttackAbility();
 
 	void SetAnimStance(const FAnimStance* animStance);
 
 	void EarnExp(float expEarned);
+
+	void EarnGold(float goldEarned);
 
     void OnSeeTarget(APawn* target);
 	
@@ -254,5 +263,12 @@ public:
 	virtual FVector GetLastSeenLocation() override;
 
 	friend UDiabloGameInstance;
+
+	FORCEINLINE FCharacterDiedDelegate& GetOnRevived()
+	{
+		return m_OnRevived;
+	}
+
+	virtual bool IsAlive() override;
 };
 

@@ -61,4 +61,8 @@ public:
     void PortalToDungeon();
 	UFUNCTION(exec)
     void PortalToVillage();
+	UFUNCTION(exec)
+	void DamageToPlayer(float wantV);
+	UFUNCTION(exec)
+    void KillPlayer();
 };

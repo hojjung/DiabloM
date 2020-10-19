@@ -4,6 +4,7 @@
 #include "MonsterSpawnManager.h"
 #include "DungeonManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "GameFramework/GameUserSettings.h"
 #include "Item/Inventory.h"
 
 
@@ -55,6 +56,10 @@ void UDiabloGameInstance::Init()
         m_DungeonManager=NewObject<UDungeonManager>();
         m_DungeonManager->Init();
     }
+
+    //
+    UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(45.f);
+    UGameUserSettings::GetGameUserSettings()->ApplySettings(true);
 }
 
 void UDiabloGameInstance::Shutdown()
@@ -83,13 +88,13 @@ ADroppedItem* UDiabloGameInstance::DropItemActor(FItemInstance& myItem)
     return m_ItemManager->CreateItemActor(myItem,ActorPos);
 }
 
-void UDiabloGameInstance::TestCreateDungeon()
+void UDiabloGameInstance::CreateDungeon()
 {
     UDiabloGameInstance::Get->GetDungeonManager()->CreateDefaultInfinityDungeon(1);
     m_bTestIsDungeonOpen=true;
 }
 
-void UDiabloGameInstance::TestBackToDungeon()
+void UDiabloGameInstance::BackToDungeon()
 {
     if(m_bTestIsDungeonOpen)
     {
@@ -103,7 +108,7 @@ void UDiabloGameInstance::TestBackToDungeon()
     }
 }
 
-void UDiabloGameInstance::TestSaveAll()
+void UDiabloGameInstance::SaveAllPlayerInfo()
 {
     TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
     TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
@@ -127,6 +132,11 @@ void UDiabloGameInstance::TestSaveAll()
 	
     USaveLoadManager::Get->SaveCharacterStat(UPlayerCreateManager::Get->m_CurrentSelectSlot,Lev,Name,Face,Hair,USaveLoadManager::Get->GetCurrentPlayerClassName(),DiaPl->m_fCurrentExp);
 
+}
+
+bool UDiabloGameInstance::IsDungeonOpened()
+{
+    return GetDungeonManager()->IsDungeonOpened();
 }
 
 

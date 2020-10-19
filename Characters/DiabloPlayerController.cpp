@@ -45,9 +45,18 @@ void ADiabloPlayerController::BeginPlay()
 
 void ADiabloPlayerController::InitWidget()
 {
+	APlayerDiabloCharacter* PlayerPawb=Cast<APlayerDiabloCharacter>(GetPawn());
 	m_MainMenu = CreateWidget<UMainCanvas>(this, m_ClassMainMenu, "MainMenu00");
 	m_MainMenu->AddToViewport();
-	m_MainMenu->Init(this,Cast<APlayerDiabloCharacter>(GetPawn()),m_EquipSystem,m_Inven);
+	m_MainMenu->Init(this,PlayerPawb,m_EquipSystem,m_Inven);
+	m_GameOverScreen= CreateWidget<UDiaGameOverScreen>(this, m_ClassGameOver, "GameOverScreen00");
+	m_GameOverScreen->AddToViewport();
+	m_GameOverScreen->Init(this,PlayerPawb);
+	m_GameOverScreen->SetVisibility(ESlateVisibility::Hidden);
+	PlayerPawb->GetOnDied().AddUObject(this,&ADiabloPlayerController::OnPlayerDied);
+	PlayerPawb->GetOnRevived().AddUObject(this,&ADiabloPlayerController::OnPlayerRevived);
+
+	
 	CreateDmgWC(15);
 	CloseMainMenu();
 }
@@ -105,6 +114,7 @@ void ADiabloPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	InputComponent->BindAction("Exit", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::ExitGame);
 	InputComponent->BindAction("OpenMainMenu", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::OpenMainMenu);
+	InputComponent->BindAction("AndroidBack", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::OnDeviceBackKey);
 }
 
 void ADiabloPlayerController::ExitGame()
@@ -113,12 +123,18 @@ void ADiabloPlayerController::ExitGame()
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
 }
 
-void ADiabloPlayerController::MonsterTargetIn(AUnitPawn * targetPawn)
+void ADiabloPlayerController::OnPlayerDied(AUnitPawn* player)
 {
+	m_MainMenu->SetVisibility(ESlateVisibility::Hidden);
+	m_GameOverScreen->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	APlayerController::SetVirtualJoystickVisibility(false);
 }
 
-void ADiabloPlayerController::MonsterTargetOut(AUnitPawn * targetPawn)
+void ADiabloPlayerController::OnPlayerRevived(AUnitPawn* player)
 {
+	m_MainMenu->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	m_GameOverScreen->SetVisibility(ESlateVisibility::Hidden);
+	APlayerController::SetVirtualJoystickVisibility(true);
 }
 
 void ADiabloPlayerController::PrintStat()
@@ -164,6 +180,18 @@ void ADiabloPlayerController::CloseMainMenu()
 {
 	m_MainMenu->CloseMainMenu();
 	APlayerController::SetVirtualJoystickVisibility(true);
+}
+
+void ADiabloPlayerController::OnDeviceBackKey()
+{
+	if(m_MainMenu->IsOpened())
+	{
+		CloseMainMenu();
+
+		return;
+	}
+
+	ExitGame();
 }
 
 void ADiabloPlayerController::PlayerMeshChange(int slot, FItemInstance& item)

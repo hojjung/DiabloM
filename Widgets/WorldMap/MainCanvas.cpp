@@ -67,17 +67,17 @@ void UMainCanvas::CloseSetting()
 
 void UMainCanvas::TestOpenDungeon()
 {
-    UDiabloGameInstance::Get->TestCreateDungeon();
+    UDiabloGameInstance::Get->CreateDungeon();
 }
 
 void UMainCanvas::TestPortalBack()
 {
-    UDiabloGameInstance::Get->TestBackToDungeon();
+    UDiabloGameInstance::Get->BackToDungeon();
 }
 
 void UMainCanvas::TestSaveAll()
 {
-    UDiabloGameInstance::Get->TestSaveAll();
+    UDiabloGameInstance::Get->SaveAllPlayerInfo();
 }
 
 void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven)

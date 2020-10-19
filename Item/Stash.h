@@ -17,6 +17,8 @@ class DIABLOM_API UStash : public UObject, public IItemHolder
 
 protected:
 	FOnItemSlotChanged m_ItemSlotChanged;
+
+	float m_fCurrentGold;
 	
 public:
 	virtual void RemoveItem(FItemInstance& itemWantErase) override;

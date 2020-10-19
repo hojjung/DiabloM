@@ -1,4 +1,7 @@
 #include "MonsterPawn.h"
+
+#include "DiabloPlayerController.h"
+#include "PlayerDiabloCharacter.h"
 #include "Logic/MonsterSensing.h"
 #include "Logic/MobFSMBase.h"
 
@@ -56,6 +59,19 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
         FGameplayAbilitySpec BaseAttackHandle(UnitData->m_BaseAttack,level,INDEX_NONE,this);
         m_BaseAttackHandle = GetDiaAbilitySystem()->GiveAbility(BaseAttackHandle);
     }
+}
+
+void AMonsterPawn::OnDeathAnimEnd()
+{
+    // 경험치 증가
+    ADiabloPlayerController::Get->GetPlayerPawn()->GetDiaAbilitySystem()->ApplyGameEffect(m_GEExpReward);
+    // 골드 액터 드랍
+    //n개만큼 분산
+    // 아이템 액터 드랍
+
+    //디졸브
+
+    //삭제
 }
 
 void AMonsterPawn::Tick(float DeltaSeconds)

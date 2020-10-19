@@ -87,4 +87,9 @@ public:
     void HideMonsterInfo();
     
     void UpdateExpGauge(float v);
+
+    FORCEINLINE bool IsOpened() const
+    {
+        return m_bIsOpened;
+    }
 };

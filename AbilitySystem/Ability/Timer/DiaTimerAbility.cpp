@@ -1,5 +1,6 @@
 #include "DiaTimerAbility.h"
 #include "Characters/UnitPawn.h"
+#include "Perception/PawnSensingComponent.h"
 
 
 UDiaTimerAbility::UDiaTimerAbility()
@@ -22,7 +23,8 @@ void UDiaTimerAbility::SetSensingUpdatesEnabled(const bool bEnabled)
     }
     else
     {
-        SetTimer(0.f);
+        m_OwnerUnit->GetWorldTimerManager().ClearTimer(m_TimerHandle_OnTimer);
+        //SetTimer(0.f);
     }
 }
 
@@ -58,6 +60,7 @@ void UDiaTimerAbility::SetTimer(const float TimeDelay)
                                                                        m_fInterval,
                                                                        false);
     }
+
 }
 
 void UDiaTimerAbility::SetSensingInterval(const float newSensingInterval)
@@ -108,5 +111,14 @@ void UDiaTimerAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,
                                   const FGameplayAbilityActivationInfo ActivationInfo,
                                   bool bReplicateEndAbility, bool bWasCancelled)
 {
+   // Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);    
+    SetSensingUpdatesEnabled(false);
+}
+
+void UDiaTimerAbility::CancelAbility(const FGameplayAbilitySpecHandle Handle,
+    const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
+    bool bReplicateCancelAbility)
+{
+   // Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
     SetSensingUpdatesEnabled(false);
 }

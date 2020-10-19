@@ -72,9 +72,11 @@ public:
 	//TEST 1017
 	bool m_bTestIsDungeonOpen=false;
 	UFUNCTION(BlueprintCallable)
-	void TestCreateDungeon();
+	void CreateDungeon();
 	UFUNCTION(BlueprintCallable)
-    void TestBackToDungeon();
+    void BackToDungeon();
 	UFUNCTION(BlueprintCallable)
-	void TestSaveAll();
+	void SaveAllPlayerInfo();
+	UFUNCTION(BlueprintCallable)
+	bool IsDungeonOpened();
 };

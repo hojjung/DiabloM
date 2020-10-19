@@ -4,6 +4,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Widgets/WorldMap/DiaMonsterInfo.h"
 #include "Widgets/WorldMap/MainCanvas.h"
+#include "Widgets/WorldMap/DefaultMenu/DiaGameOverScreen.h"
 #include "Widgets/WorldMap/WorldWidget/DamageTextWidgetComponent.h"
 
 #include "DiabloPlayerController.generated.h"
@@ -40,6 +41,8 @@ protected:
 protected:
 	UPROPERTY(EditDefaultsOnly,Category="Widget")
 	TSubclassOf<UMainCanvas> m_ClassMainMenu; // 태어나게 할 설계도 위젯 ㅇㅇ
+	UPROPERTY(EditDefaultsOnly,Category="Widget")
+	TSubclassOf<UDiaGameOverScreen> m_ClassGameOver; // 
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	int m_nInvenX;
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
@@ -49,6 +52,8 @@ protected:
 protected:
 	UPROPERTY()
 	UMainCanvas* m_MainMenu;//실제로 태어난 위젯 메인 메뉴
+	UPROPERTY()
+	UDiaGameOverScreen* m_GameOverScreen;
 	UPROPERTY(VisibleAnywhere, Category = "Widget")
 	TArray<UDamageTextWidgetComponent*> m_AryDmgWC;
 
@@ -74,11 +79,11 @@ protected:
 
 	void ExitGame();
 
+	void OnPlayerDied(AUnitPawn* player);
+
+	void OnPlayerRevived(AUnitPawn* player);
+
 public:
-	void MonsterTargetIn(AUnitPawn* targetPawn);
-
-	void MonsterTargetOut(AUnitPawn* targetPawn);
-
 	void PrintStat();
 
 	void PrintInven();
@@ -93,6 +98,8 @@ public:
 	void OpenMainMenu();
 	UFUNCTION(BlueprintCallable)
 	void CloseMainMenu();
+	UFUNCTION(BlueprintCallable)
+	void OnDeviceBackKey();
 
 	void PlayerMeshChange(int slot,FItemInstance& item);
 	//

@@ -17,19 +17,23 @@ class DIABLOM_API UDungeonManager : public UObject
 {
 	GENERATED_BODY()
 
-public:
-	UDungeonManager();
-	
 protected:
 	TArray<FDungeonDataRow*> m_AryDungeonData;//던전 데이터는 돌려쓰면 됨
 	UPROPERTY()
 	TArray<AMonsterPawn*> m_AryMonsterSpawnedCurrently;
-	UPROPERTY()
-	ADiaDungeon* m_CurrentDungeon;
+	
+	TWeakObjectPtr<ADiaDungeon> m_CurrentDungeon;
 
+	FDungeonDataRow* m_CurrentDungeonData;
+
+	int m_nMonsterLevel;
+
+	int m_nDungeonType;
+	
 	int m_nPointIndex;
 
 	FVector m_RecentDungeonFeetLoc;
+
 
 protected:
 	int StageLevelToDungeonLevel(int stageLevel);
@@ -39,6 +43,8 @@ protected:
 	void LoadDungeonLevel(FDungeonDataRow* SelectedDungeonData);
 	
 	void SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData);
+	
+	void ClearDungeon();
 	
 public:
 	void Init();
@@ -53,4 +59,8 @@ public:
 	void PortalToVillage();
 	UFUNCTION(BlueprintCallable)
 	void PortalToRecentDungeon();
+	UFUNCTION(BlueprintCallable)
+    void RestartDungeon();
+
+	bool IsDungeonOpened();
 };

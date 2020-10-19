@@ -89,8 +89,6 @@ protected:
 
     void SetUnitStatEffect();
 
-    virtual void RemoveAllGameplayAbilities();
-
     FPathFollowingRequestResult MoveTo(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr* OutPath = nullptr);
 
     void FindPathForMoveRequest(const FAIMoveRequest& MoveRequest, FPathFindingQuery& Query, FNavPathSharedPtr& OutPath) const;
@@ -167,7 +165,7 @@ public: //AttributeGetter
 
     virtual void FocusTarget(AUnitPawn* target);
 
-    bool IsAlive();
+    virtual bool IsAlive();
 
     UBaseDiabloAttribute* GetAttributeSet() const;
 

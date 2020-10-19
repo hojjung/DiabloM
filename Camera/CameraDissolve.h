@@ -31,10 +31,11 @@ protected:
 
 	float m_fDissloveAmount;
 
-	float m_fDissolveMaxAmount;
-
 	float m_fDissolveHoleRadius;
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
+	float m_fDissolveMaxAmount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 	float m_fDissolveHoleMaxRadius;
 
 protected:
