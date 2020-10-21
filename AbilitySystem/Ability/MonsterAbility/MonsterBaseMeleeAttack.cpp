@@ -6,14 +6,14 @@
 UMonsterBaseMeleeAttack::UMonsterBaseMeleeAttack()
 {
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-    m_TagTookDamage= FGameplayTag::RequestGameplayTag(FName("Combat.TookPhysDmg"));
+    m_TagTookDamage= FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPhysDmg"));
     m_TagEventEndAbility= FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
-    m_TagEventBaseAttack= FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack"));
+    m_TagEventBaseAttack= FGameplayTag::RequestGameplayTag(FName("Combat.Ability.BaseAttack"));
     
     AbilityTags.AddTag(m_TagEventBaseAttack);
     ActivationOwnedTags.AddTag(m_TagEventBaseAttack);
 
-    ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Skill")));
+    ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Combat.Ability.Skill")));
 
 
     m_fAttackRange=150.f;

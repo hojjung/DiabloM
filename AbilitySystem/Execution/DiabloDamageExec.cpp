@@ -1,7 +1,4 @@
 #include "AbilitySystem/Execution/DiabloDamageExec.h"
-
-#include <xkeycheck.h>
-
 #include "AbilitySystem/Components/DiabloAbilitySystemComp.h"
 #include "AbilitySystem/Attribute/BaseDiabloAttribute.h"
 #include "AbilitySystem/Attribute/PlayerDiabloAttribute.h"
@@ -13,7 +10,6 @@
 struct DiabloDamageStatics
 {
 public:
-    DECLARE_ATTRIBUTE_CAPTUREDEF(Health); //AttackerHealth
     DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePer);
     DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalDefense);
     DECLARE_ATTRIBUTE_CAPTUREDEF(ResFire);
@@ -50,7 +46,6 @@ public:
     DiabloDamageStatics()
     {
         //이제 이해했다
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, Health, Source, false);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, DefensePer, Target, false);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, PhysicalDefense, Target, false);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, ResFire, Target, false);
@@ -80,11 +75,11 @@ public:
         //5
     }
 
-    FGameplayTag TagTookPhysDamage = FGameplayTag::RequestGameplayTag(FName("Combat.TookPhysDmg"));
-    FGameplayTag TagTookFireDamage = FGameplayTag::RequestGameplayTag(FName("Combat.TookFireDmg"));
-    FGameplayTag TagTookElecDamage = FGameplayTag::RequestGameplayTag(FName("Combat.TookElecDmg"));
-    FGameplayTag TagTookIceDamage = FGameplayTag::RequestGameplayTag(FName("Combat.TookIceDmg"));
-    FGameplayTag TagTookPoisonDamage = FGameplayTag::RequestGameplayTag(FName("Combat.TookPoisonDmg"));
+    FGameplayTag TagTookPhysDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPhysDmg"));
+    FGameplayTag TagTookFireDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookFireDmg"));
+    FGameplayTag TagTookElecDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookElecDmg"));
+    FGameplayTag TagTookIceDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookIceDmg"));
+    FGameplayTag TagTookPoisonDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPoisonDmg"));
 
     //이방식의 문제점은 무엇인가
     //스킬의 상수가 문제다.
@@ -110,7 +105,6 @@ static const DiabloDamageStatics& GetDamageStatics()
 
 UDiabloDamageExec::UDiabloDamageExec()
 {
-    RelevantAttributesToCapture.Add(GetDamageStatics().HealthDef);
     RelevantAttributesToCapture.Add(GetDamageStatics().DefensePerDef);
     RelevantAttributesToCapture.Add(GetDamageStatics().PhysicalDefenseDef);
     RelevantAttributesToCapture.Add(GetDamageStatics().ResFireDef);
@@ -297,14 +291,14 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
     if (LTookPhysDamage>0.f&&CheckOnerPercentRand(LBashChance))
     {
         PRINTF("BaSher! Stun!");
+        //Basher Need
     }
 
     if (LTookPhysDamage>0.f&&LLifeSteal > 0.f)
     {
         float HealthGain = LTookPhysDamage * LLifeSteal;
         PRINTF("LifeSteal:%f", HealthGain);
-        OutExecutionOutput.AddOutputModifier(
-            FGameplayModifierEvaluatedData(GetDamageStatics().HealthProperty, EGameplayModOp::Additive, HealthGain));
+        //LifeStealEffect Need
     }
 
     //
@@ -327,6 +321,7 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
     if (CheckOnerPercentRand(LDoubleAttackChance))
     {
         PRINTF("DoubleAttack!");
+        //DoubleAttack Need
     }
 }
 

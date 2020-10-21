@@ -18,7 +18,7 @@ AWeaponMelee::AWeaponMelee()
     //m_MeleeCollison->SetHiddenInGame(true);
     m_MeleeCollison->SetCastShadow(false);
     m_bIsAttacking=false;
-    m_CachedAttackEvent=FGameplayTag::RequestGameplayTag("Ability.BaseAttack");
+    m_CachedAttackEvent=FGameplayTag::RequestGameplayTag("Combat.Ability.BaseAttack");
 }
 
 void AWeaponMelee::InitWeapon(APlayerDiabloCharacter* pl, const FItemInstance* itemInst)

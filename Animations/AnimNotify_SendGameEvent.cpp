@@ -4,7 +4,7 @@
 
 UAnimNotify_SendGameEvent::UAnimNotify_SendGameEvent()
 {
-    m_CachedAttackEvent=FGameplayTag::RequestGameplayTag("Ability.BaseAttack");//for spawn projectile
+    m_CachedAttackEvent=FGameplayTag::RequestGameplayTag("Combat.Ability.BaseAttack");//for spawn projectile
 }
 
 void UAnimNotify_SendGameEvent::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)

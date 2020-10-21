@@ -9,20 +9,20 @@ UPlayerBaseAttack::UPlayerBaseAttack()
 
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
     
-    m_TagTookPhysDamage  = FGameplayTag::RequestGameplayTag(FName("Combat.TookPhysDmg"));
-    m_TagTookFireDamage  = FGameplayTag::RequestGameplayTag(FName("Combat.TookFireDmg"));
-    m_TagTookElecDamage  = FGameplayTag::RequestGameplayTag(FName("Combat.TookElecDmg"));
-    m_TagTookIceDamage   = FGameplayTag::RequestGameplayTag(FName("Combat.TookIceDmg"));
-    m_TagTookPoisonDamage= FGameplayTag::RequestGameplayTag(FName("Combat.TookPoisonDmg"));
+    m_TagTookPhysDamage  = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPhysDmg"));
+    m_TagTookFireDamage  = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookFireDmg"));
+    m_TagTookElecDamage  = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookElecDmg"));
+    m_TagTookIceDamage   = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookIceDmg"));
+    m_TagTookPoisonDamage= FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPoisonDmg"));
     
     m_TagEventEndAbility= FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
-    m_TagEventBaseAttack= FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack"));
+    m_TagEventBaseAttack= FGameplayTag::RequestGameplayTag(FName("Combat.Ability.BaseAttack"));
     
     AbilityTags.AddTag(m_TagEventBaseAttack);
     
     ActivationOwnedTags.AddTag(m_TagEventBaseAttack);
 
-    ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Skill")));
+    ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Combat.Ability.Skill")));
 
     m_fDashLimitRange = 700.0f;
     

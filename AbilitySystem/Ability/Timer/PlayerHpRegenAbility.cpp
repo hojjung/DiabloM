@@ -16,6 +16,7 @@ UPlayerHpRegenAbility::UPlayerHpRegenAbility()
 
 float UPlayerHpRegenAbility::GetAttributeWantFrom()
 {
+    
     return Cast<UPlayerDiabloAttribute>( Cast<APlayerDiabloCharacter>( m_OwnerUnit)->GetAttributeSet())->GetHealthRegen()*m_fInterval;
 }
 

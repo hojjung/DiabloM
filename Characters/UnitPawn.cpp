@@ -37,7 +37,7 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 
     m_fMoveAcceptRadius = 100.f;
 
-    m_EffectRemoveOnDeathTag = FGameplayTag::RequestGameplayTag(FName("Effect.RemoveOnDeath"));
+    m_EffectRemoveOnDeathTag = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.RemoveOnDeath"));
     m_DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
 }
 

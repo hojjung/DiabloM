@@ -36,6 +36,7 @@ void UDiaTimerAbility::SetGameEffectSpec()
     float Value=GetAttributeWantFrom();
    m_TimerEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(
    m_GamePlayTagSetByCaller,Value);
+    PRINTF("Timer Value:%f",Value);
 }
 
 void UDiaTimerAbility::OnTimer()
