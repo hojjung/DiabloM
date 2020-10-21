@@ -34,7 +34,7 @@ void UPlayerDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attrib
 		
 	}
 }
-void UPlayerDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCallbackData & Data)
+void UPlayerDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCallbackData & Data)//Instant가 아니면 원래 안불림
 {
 	Super::PostGameplayEffectExecute(Data);
 

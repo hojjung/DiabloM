@@ -48,7 +48,6 @@ void UDiabloGameInstance::Init()
     if(!m_MonsterSpawn)
     {
         m_MonsterSpawn=NewObject<UMonsterSpawnManager>();
-        //m_MonsterSpawn->UpdateWorld(GetWorld());
     }
 
     if(!m_DungeonManager)

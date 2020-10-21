@@ -69,4 +69,5 @@ public:
 	void OpenItemPopup(const FGeometry& geo,FItemInstance& itemInst);//장착된게 어딘지 파악필요
 
 	void CloseItemPopup();
+
 };

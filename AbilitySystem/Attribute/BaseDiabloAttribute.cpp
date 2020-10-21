@@ -51,29 +51,28 @@ void UBaseDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attribut
     }
     else if (Attribute == GetDamagePerAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 1.f, 3.f);
+        NewValue = FMath::Clamp<float>(NewValue, 0.f, 3.f);
     }
     else if (Attribute == GetDefensePerAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.99f);
-    }
+        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.90f);
+    }//마이너스 저항력으로 추가 데미지 받을수 있어야함
     else if (Attribute == GetResColdAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.99f);
+        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.90f);
     }
     else if (Attribute == GetResPoisonAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.99f);
+        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.90f);
     }
     else if (Attribute == GetResFireAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.99f);
+        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.90f);
     }
     else if (Attribute == GetResElecAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.99f);
+        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.90f);
     }
-    
 }
 
 void UBaseDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* SourceUnit,
@@ -83,7 +82,7 @@ void UBaseDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* Source
     float RandDmg = FMath::RandRange(0.95f, 1.05f);
     const float LocalDamageDone = TookDamageCache * RandDmg;
 
-    if (LocalDamageDone > 0)
+    if (LocalDamageDone > 0.f)
     {
         bool WasAlive = true;
 
@@ -95,7 +94,6 @@ void UBaseDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* Source
         const float OldHealth = GetHealth();
 
         SetHealth(FMath::Clamp(OldHealth - LocalDamageDone, 0.0f, GetMaxHealth()));
-
         if (TargetUnit == ADiabloPlayerController::Get->GetPlayerPawn())
         {
             ADiabloPlayerController::Get->ShowDamageNumber(LocalDamageDone, TargetUnit, EDamagePopup::PlayerHurt);
@@ -129,30 +127,6 @@ void UBaseDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* Source
 
         if (!TargetUnit->IsAlive())
         {
-            //if (PC && TargetCharacter->HasDropItem())
-            {
-                //?Earn Exp,Gold
-                //
-                // Create a dynamic instant Gameplay Effect to give the bounties
-                // UGameplayEffect* GEBounty = NewObject<UGameplayEffect>(GetTransientPackage(), FName(TEXT("Bounty")));
-                // GEBounty->DurationPolicy = EGameplayEffectDurationType::Instant;
-                //
-                // int32 Idx = GEBounty->Modifiers.Num();
-                // GEBounty->Modifiers.SetNum(Idx + 2);
-                //
-                // FGameplayModifierInfo& InfoXP = GEBounty->Modifiers[Idx];
-                // InfoXP.ModifierMagnitude = FScalableFloat(GetXPBounty());
-                // InfoXP.ModifierOp = EGameplayModOp::Additive;
-                // InfoXP.Attribute = UBaseDiabloAttribute::GetXPAttribute();
-                //
-                // FGameplayModifierInfo& InfoGold = GEBounty->Modifiers[Idx + 1];
-                // InfoGold.ModifierMagnitude = FScalableFloat(GetGoldBounty());
-                // InfoGold.ModifierOp = EGameplayModOp::Additive;
-                // InfoGold.Attribute = UBaseDiabloAttribute::GetGoldAttribute();
-                //
-                // Source->ApplyGameplayEffectToSelf(GEBounty, 1.0f, Source->MakeEffectContext());
-            }
-
             TargetUnit->Die();
         }
     }
@@ -201,28 +175,26 @@ void UBaseDiabloAttribute::GetTargetSourceActors(const FGameplayEffectModCallbac
 void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
     Super::PostGameplayEffectExecute(Data);
-
+    //
     FGameplayEffectContextHandle Context = Data.EffectSpec.GetContext();
     UAbilitySystemComponent* Source = Context.GetOriginalInstigatorAbilitySystemComponent();
     const FGameplayTagContainer& SourceTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
     FGameplayTagContainer SpecAssetTags;
     Data.EffectSpec.GetAllAssetTags(SpecAssetTags);
-
+    //
     AActor* TargetActor = nullptr;
     AUnitPawn* TargetCharacter = nullptr;
     AActor* SourceActor = nullptr;
     AController* SourceController = nullptr;
     AUnitPawn* SourceCharacter = nullptr;
-
-    GetTargetSourceActors(Data, Context, Source, TargetActor, TargetCharacter, SourceActor, SourceController,
-                          SourceCharacter);
-
-    /////////////////////////////
-    /////치명타 등 연산 처리 모두 여기서 하는게 맞다 생각한다.
+    //
+    GetTargetSourceActors(Data, Context, Source, TargetActor,
+                          TargetCharacter, SourceActor, SourceController, SourceCharacter);
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (Data.EvaluatedData.Attribute == GetTookPhysDamageAttribute()) //내가 맞았다
     {
-        
         float TookDamageCache = GetTookPhysDamage();
         SetTookPhysDamage(0.f);
         HandleDamage(TargetCharacter, SourceCharacter, SourceController, TookDamageCache);
@@ -237,22 +209,18 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
     {
         float TookDamageCache = GetTookIceDamage();
         SetTookIceDamage(0.f);
-
+        HandleDamage(TargetCharacter, SourceCharacter, SourceController, TookDamageCache);
+    }
+    else if (Data.EvaluatedData.Attribute == GetTookElecDamageAttribute()) //내가 맞았다
+    {
+        float TookDamageCache = GetTookElecDamage();
+        SetTookElecDamage(0.f);
         HandleDamage(TargetCharacter, SourceCharacter, SourceController, TookDamageCache);
     }
     else if (Data.EvaluatedData.Attribute == GetTookPoisonDamageAttribute()) //내가 맞았다
     {
         float TookDamageCache = GetTookPoisonDamage();
         SetTookPoisonDamage(0.f);
-
-        HandleDamage(TargetCharacter, SourceCharacter, SourceController, TookDamageCache);
-    }
-
-    else if (Data.EvaluatedData.Attribute == GetTookElecDamageAttribute()) //내가 맞았다
-    {
-        float TookDamageCache = GetTookElecDamage();
-        SetTookElecDamage(0.f);
-
         HandleDamage(TargetCharacter, SourceCharacter, SourceController, TookDamageCache);
     }
     else if (Data.EvaluatedData.Attribute == GetHealthAttribute())
@@ -271,44 +239,6 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
     m_OnStatChanged.Broadcast(TargetCharacter);
 }
 
-bool UBaseDiabloAttribute::CanHitBaseAttack(const AUnitPawn* target, const AUnitPawn* instigator)
-{
-    float TargetAvoid = target->GetAttributeSet()->GetAvoid();
-    float BlockRate = FMath::RandRange(1.f, TargetAvoid); //21을 높이면 회피확률이 는다.
-    float InstigatorAccuracy = instigator->GetAttributeSet()->GetAccuracy();
-    float HitRate = (10.f + instigator->GetCharacterLevel() + FMath::RandRange(0.f, InstigatorAccuracy)) -
-        FMath::RandRange(1.f, TargetAvoid + 1.f); //여기서 방관 적용 가능
 
-    if (BlockRate < HitRate)
-    {
-        //아무리 높아도 5%확률로 빗나감
-        return 1 != FMath::RandRange(1, 20);
-    }
-
-    //아무리 낮아도 5%확률로 맞음
-    return 1 == FMath::RandRange(1, 20);
-}
-
-float UBaseDiabloAttribute::CalcuSameLevelAvgAccuracy(float targetAvoidChance, AUnitPawn* instigator) //맞을 확률
-{
-    //스텟에 표기되는건? 평균적 동레벨 상대 얘기
-    //MinBlock
-    float TargetAvoid = targetAvoidChance;
-    float A0 = (10 + instigator->GetCharacterLevel()) - TargetAvoid; //10
-    float A1 = (9 + instigator->GetCharacterLevel()) + instigator->GetAttributeSet()->GetAccuracy(); //9
-    float B0 = 1.f; //1
-    float B1 = 20.f + TargetAvoid; //20
-
-    float OuterRight = FMath::Max(B1, A1);
-    float OuterLeft = FMath::Min(B0, A0);
-    float InnerRight = FMath::Min(B1, A1);
-    float InnerLeft = FMath::Max(B0, A0);
-    float Percentage = FMath::Max(0.f, FMath::Min(
-                                      1.f, (InnerLeft - B0 + (InnerRight - InnerLeft) * 0.5f + OuterRight - B1) / (
-                                          OuterRight - OuterLeft)));
-
-    float Result = UDiaBlueprintFunctionLibrary::SetFloatPrecision((Percentage * 100), 1);
-    return FMath::Clamp(Result, 5.f, 95.f);
-}
 
 //계산들도 다 여기서 해야하는거아닌가

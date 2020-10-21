@@ -356,8 +356,11 @@ void APlayerDiabloCharacter::EarnExp(float expEarned)
 
 void APlayerDiabloCharacter::EarnGold(float goldEarned)
 {
-    m_fCurrentExp += goldEarned;
-    m_fCurrentExp = FMath::Clamp(m_fCurrentExp,m_fCurrentExp,MAXVALUE);
+    m_fCurrentGold += goldEarned;
+    m_fCurrentGold = FMath::Clamp(m_fCurrentGold,m_fCurrentGold,MAXVALUE);
+
+    PRINTF("GoldGained:%f",goldEarned);
+    PRINTF("TotalGold:%f",m_fCurrentGold);
 }
 
 bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)
@@ -397,7 +400,7 @@ void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)
 {
     m_FocusRenderer->SetHiddenInGame(false);
     m_FocusRenderer->SetSkeletalMesh(Unit->GetBodyMesh()->SkeletalMesh);
-    m_FocusRenderer->SetMasterPoseComponent(Unit->GetBodyMesh());
+    m_FocusRenderer->SetMasterPoseComponent(Unit->GetBodyMesh(),true);
     m_FocusRenderer->AttachToComponent(Unit->GetBodyMesh(), FAttachmentTransformRules::KeepRelativeTransform);
 
     for (int i = 0; i < m_FocusRenderer->GetMaterials().Num(); i++)

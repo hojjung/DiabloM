@@ -4,37 +4,6 @@
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 
-
-// Sets default values
-ADroppedItem::ADroppedItem(const FObjectInitializer& objInit):Super(objInit)
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
-	m_CollSphere = CreateDefaultSubobject<USphereComponent>("Coll00");
-	m_CollSphere->SetCollisionProfileName("PickupItem");
-	m_CollSphere->SetupAttachment(m_MeshComp);
-	m_CollSphere->SetSphereRadius(70.f);
-	RootComponent = m_CollSphere;
-	//
-	m_MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Mesh02");
-	m_MeshComp->SetCollisionProfileName("NoCollision");
-	m_MeshComp->SetGenerateOverlapEvents(true);
-	m_MeshComp->CastShadow = false;
-	m_MeshComp->SetupAttachment(RootComponent);
-	//
-	m_BillBoard = CreateDefaultSubobject<UWidgetComponent>("Billboard03");
-	m_BillBoard->SetWidgetSpace(EWidgetSpace::Screen);
-	m_BillBoard->SetWidgetClass(UItemNameCard::StaticClass());
-	m_BillBoard->SetDrawAtDesiredSize(false);
-	m_BillBoard->SetGenerateOverlapEvents(false);
-	m_BillBoard->SetupAttachment(RootComponent);
-	m_BillBoard->SetRelativeLocation( FVector(0.f, 0.f, 70.f));
-	m_BillBoard->CastShadow = false;
-	//
-	//m_TableID=NAME_None;
-}
-
-// Called when the game starts or when spawned
 void ADroppedItem::BeginPlay()
 {
 	Super::BeginPlay();
@@ -55,27 +24,28 @@ void ADroppedItem::BeginPlay()
 	}
 }
 
-void ADroppedItem::EndPlay(const EEndPlayReason::Type EndPlayReason)
+
+void ADroppedItem::Interact(AActor * instigator)
 {
-	Super::EndPlay(EndPlayReason);
-
-}
-
-
-void ADroppedItem::PickupItem(AActor * interactCaster)
-{
-	if (!Cast<ADiabloPlayerController>(Cast<APlayerDiabloCharacter>(interactCaster)->GetController())->PickUpItem(this))
+	if (!Cast<ADiabloPlayerController>(Cast<APlayerDiabloCharacter>(instigator)->GetController())->PickUpItem(this))
 	{
 		return;
 	}
+	
 	m_ItemInstance.SetGridNewIndex(-2);
 	SetActorHiddenInGame(true);
 	Destroy();
 }
 
-void ADroppedItem::Interact(AActor * instigator)
+void ADroppedItem::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	PickupItem(instigator);
+	FName Tier=GetCurrentItem().m_ItemTier->m_TierID;
+	
+	if(Tier=="Set"||Tier=="Immortal"||Tier=="Legendary"||Tier=="Epic")
+	{
+		Interact(OtherActor);
+	}
 }
 
 void ADroppedItem::SetItemVisual(const FItemInstance& ItemData)

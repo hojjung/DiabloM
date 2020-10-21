@@ -19,8 +19,15 @@ class DIABLOM_API UPlayerBaseAttack : public UPlayerDiabloAbility
 public:
 	UPlayerBaseAttack();
 protected:
-	FGameplayTag m_TagTookDamage;
+	FGameplayTag m_TagTookPhysDamage;
+	FGameplayTag m_TagTookFireDamage;
+	FGameplayTag m_TagTookIceDamage;
+	FGameplayTag m_TagTookElecDamage;
+	FGameplayTag m_TagTookPoisonDamage;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FGameplayTag m_TagEventEndAbility;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FGameplayTag m_TagEventBaseAttack;
  
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)

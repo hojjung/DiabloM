@@ -4,8 +4,7 @@
 #include "Managers/DiabloGameInstance.h"
 #include "Item/EquipmentSystem.h"
 #include "Item/Inventory.h"
-#include "Components/CanvasPanel.h"
-#include "Item/Stash.h"
+#include "Village/Storage.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
 
 
@@ -28,7 +27,8 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
 
     InitPopup();
     
-    m_StatPanel->Init(playerChar);    
+    m_StatPanel->Init(playerChar);
+
 }
 
 void UDefaultMenu::InitPopup()
@@ -150,7 +150,7 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
           m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Unequip, itemInst);
           m_AryItemPopup[Count]->SetPanelPosition(geo,Count);
     }
-    else if (Cast<UStash>(itemInst.m_Holder))//창고 클릭일때
+    else if (Cast<AStorage>(itemInst.m_Holder))//창고 클릭일때
     {
         m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Withdraw, itemInst);
         m_AryItemPopup[Count]->SetPanelPosition(geo,Count);
@@ -178,3 +178,4 @@ void UDefaultMenu::CloseItemPopup()
         Delay += 0.1f;
     }
 }
+

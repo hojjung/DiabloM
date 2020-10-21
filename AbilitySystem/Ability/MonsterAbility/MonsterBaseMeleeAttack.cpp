@@ -6,7 +6,7 @@
 UMonsterBaseMeleeAttack::UMonsterBaseMeleeAttack()
 {
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-    m_TagTookDamage= FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookPhysDmg"));
+    m_TagTookDamage= FGameplayTag::RequestGameplayTag(FName("Combat.TookPhysDmg"));
     m_TagEventEndAbility= FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
     m_TagEventBaseAttack= FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack"));
     
@@ -108,7 +108,7 @@ void UMonsterBaseMeleeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
         if (!MonsterAttacker ||!EventData.Target||!CheckAttackRange(EventData.Target))
         {
             //EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-            return;
+            return;    
         }
 
         FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
@@ -117,7 +117,9 @@ void UMonsterBaseMeleeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
         DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(
             m_TagTookDamage, MonsterAttacker->GetAttributeSet()->GetPhysicalDamage());
 
-        Cast<AUnitPawn>(EventData.Target)->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
-            *DamageEffectSpecHandle.Data);
+        auto* SourceAbili=Cast<AUnitPawn>(EventData.Instigator)->GetDiaAbilitySystem();
+        auto* TargetAbili=Cast<AUnitPawn>(EventData.Target)->GetDiaAbilitySystem();
+        
+        SourceAbili->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data,TargetAbili);
     }
 }

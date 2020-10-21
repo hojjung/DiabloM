@@ -59,7 +59,4 @@ void UDiabloMobRewardExec::Execute_Implementation(const FGameplayEffectCustomExe
 
 	ADiabloPlayerController::Get->GetPlayerPawn()->EarnExp(XpResult);
 
-	PRINTF("XpBounty:%f",XpBounty);
-	PRINTF("XpBonus:%f",XpBonus);
-	PRINTF("XpResult:%f",XpResult);
 }

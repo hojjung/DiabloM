@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "GameFramework/Actor.h"
 #include "Objs/Interfaces/Interactable.h"
 

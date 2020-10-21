@@ -126,14 +126,21 @@ void UDiabloCheatManager::PortalToVillage()
 
 void UDiabloCheatManager::DamageToPlayer(float wantV)
 {
-	// FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
- //        DamageGameplayEffect, GetAbilityLevel());
- //
-	// DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(
- //        m_TagTookDamage, MonsterAttacker->GetAttributeSet()->GetPhysicalDamage());
- //
-	// Cast<AUnitPawn>(EventData.Target)->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
- //        *DamageEffectSpecHandle.Data);
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
+	
+	auto DamageEffectSpecHandle =DiaPl->GetDiaAbilitySystem()->MakeEffectContext();
+	UGameplayEffect* GEBounty = NewObject<UGameplayEffect>(GetTransientPackage(), FName(TEXT("SelfDmg")));
+	GEBounty->DurationPolicy = EGameplayEffectDurationType::Instant;
+	
+	int32 Idx = GEBounty->Modifiers.Num();
+	GEBounty->Modifiers.SetNum(Idx + 1);
+	FGameplayModifierInfo& InfoXP = GEBounty->Modifiers[Idx];
+	InfoXP.ModifierMagnitude = FScalableFloat(wantV);
+	InfoXP.ModifierOp = EGameplayModOp::Additive;
+	InfoXP.Attribute = UBaseDiabloAttribute::GetTookPhysDamageAttribute();
+
+	DiaPl->GetDiaAbilitySystem()->ApplyGameplayEffectToSelf(GEBounty, 1.0f, DamageEffectSpecHandle);
 }
 
 void UDiabloCheatManager::KillPlayer()

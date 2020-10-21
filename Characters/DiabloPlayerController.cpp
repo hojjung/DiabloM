@@ -45,17 +45,16 @@ void ADiabloPlayerController::BeginPlay()
 
 void ADiabloPlayerController::InitWidget()
 {
-	APlayerDiabloCharacter* PlayerPawb=Cast<APlayerDiabloCharacter>(GetPawn());
+	APlayerDiabloCharacter* PlayerPawn=Cast<APlayerDiabloCharacter>(GetPawn());
 	m_MainMenu = CreateWidget<UMainCanvas>(this, m_ClassMainMenu, "MainMenu00");
 	m_MainMenu->AddToViewport();
-	m_MainMenu->Init(this,PlayerPawb,m_EquipSystem,m_Inven);
-	m_GameOverScreen= CreateWidget<UDiaGameOverScreen>(this, m_ClassGameOver, "GameOverScreen00");
+	m_MainMenu->Init(this,PlayerPawn,m_EquipSystem,m_Inven);
+	m_GameOverScreen = CreateWidget<UDiaGameOverScreen>(this, m_ClassGameOver, "GameOverScreen00");
 	m_GameOverScreen->AddToViewport();
-	m_GameOverScreen->Init(this,PlayerPawb);
+	m_GameOverScreen->Init(this,PlayerPawn);
 	m_GameOverScreen->SetVisibility(ESlateVisibility::Hidden);
-	PlayerPawb->GetOnDied().AddUObject(this,&ADiabloPlayerController::OnPlayerDied);
-	PlayerPawb->GetOnRevived().AddUObject(this,&ADiabloPlayerController::OnPlayerRevived);
-
+	PlayerPawn->GetOnDied().AddUObject(this,&ADiabloPlayerController::OnPlayerDied);
+	PlayerPawn->GetOnRevived().AddUObject(this,&ADiabloPlayerController::OnPlayerRevived);
 	
 	CreateDmgWC(15);
 	CloseMainMenu();

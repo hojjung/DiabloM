@@ -88,6 +88,8 @@ public:
     
     void UpdateExpGauge(float v);
 
+    void UpdateHpBar();
+
     FORCEINLINE bool IsOpened() const
     {
         return m_bIsOpened;

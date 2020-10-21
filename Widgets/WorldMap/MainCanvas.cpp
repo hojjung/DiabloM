@@ -100,6 +100,8 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
     m_PlayerStatusBar->Init(m_PlayerCon);
 
     m_bIsOpened=false;
+    //
+    m_EquipSys->m_OnOptionChanged.AddUObject(this,&UMainCanvas::UpdateHpBar);
 }
 
 void UMainCanvas::ShowMonsterInfo(AUnitPawn* monInfo)
@@ -140,4 +142,9 @@ void UMainCanvas::HideMonsterInfo()
 void UMainCanvas::UpdateExpGauge(float v)
 {
     m_ExpBar->SetProgressValue(v);
+}
+
+void UMainCanvas::UpdateHpBar()
+{
+    m_PlayerStatusBar->SetHealthBarProgressV(m_PlayerPawn);
 }

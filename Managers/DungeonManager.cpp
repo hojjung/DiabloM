@@ -72,6 +72,8 @@ void UDungeonManager::PortalToVillage()
     
     HideSpawnedMonster();
     m_CurrentDungeon->HideDungeon();
+
+    ADiabloPlayerController::Get->ClientForceGarbageCollection();
 }
 
 void UDungeonManager::PortalToRecentDungeon()
@@ -95,6 +97,7 @@ void UDungeonManager::ClearDungeon()
         }
     }
     m_CurrentDungeon->HideDungeon();
+    ADiabloPlayerController::Get->ClientForceGarbageCollection();
 }
 
 void UDungeonManager::RestartDungeon()

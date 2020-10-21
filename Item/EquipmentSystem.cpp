@@ -308,8 +308,8 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
             //
         }
 
-        m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToTarget(
-            *NewHandle.Data.Get(), m_TargetAbilitySys);
+        m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToSelf(
+            *NewHandle.Data.Get());
 
         //수동으로 불러줄것
         //그렇게 되면 그냥 위젯 전체 업데이트 함수 만들어놓을것

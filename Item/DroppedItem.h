@@ -1,45 +1,30 @@
 #pragma once
 
 #include "DiabloM.h"
-#include "GameFramework/Actor.h"
 #include "Engine/DataTable.h"
 #include "Datas/ItemDataTable.h"
-#include "Objs/Interfaces/Interactable.h"
+#include "Objs/Actor/CollisionInteract.h"
 #include "DroppedItem.generated.h"
 
 UCLASS()
-class DIABLOM_API ADroppedItem : public AActor,public IInteractable
+class DIABLOM_API ADroppedItem : public ACollisionInteract
 {
 	GENERATED_BODY()
 	
-public:
-	ADroppedItem(const FObjectInitializer& objInit);
-
 protected:
 	UPROPERTY(EditAnywhere, Category = "Item")
 	FItemDataHandle m_TableID;
-	UPROPERTY(VisibleAnywhere, Category = "Item")
-	UStaticMeshComponent* m_MeshComp;
-	UPROPERTY(VisibleAnywhere, Category = "Item")
-	USphereComponent* m_CollSphere;
-	UPROPERTY(VisibleAnywhere, Category = "Item")
-	UWidgetComponent* m_BillBoard;
-	
-	
-protected:
 	UPROPERTY(VisibleAnywhere)
 	FItemInstance m_ItemInstance;
 
 protected:
 	virtual void BeginPlay() override;
-
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
-	void PickupItem(AActor* interactCaster);
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void OnItemVisualChange(const FLinearColor& colorW);
 public:
 	virtual void Interact(AActor* instigator) override;
+
+	virtual void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 	
 	void SetItemVisual(const FItemInstance& ItemData);
 

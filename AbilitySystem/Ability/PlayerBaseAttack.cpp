@@ -9,21 +9,28 @@ UPlayerBaseAttack::UPlayerBaseAttack()
 
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
     
-    m_TagTookDamage= FGameplayTag::RequestGameplayTag(FName("Data.Combat.TookFireDmg"));
+    m_TagTookPhysDamage  = FGameplayTag::RequestGameplayTag(FName("Combat.TookPhysDmg"));
+    m_TagTookFireDamage  = FGameplayTag::RequestGameplayTag(FName("Combat.TookFireDmg"));
+    m_TagTookElecDamage  = FGameplayTag::RequestGameplayTag(FName("Combat.TookElecDmg"));
+    m_TagTookIceDamage   = FGameplayTag::RequestGameplayTag(FName("Combat.TookIceDmg"));
+    m_TagTookPoisonDamage= FGameplayTag::RequestGameplayTag(FName("Combat.TookPoisonDmg"));
+    
     m_TagEventEndAbility= FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
     m_TagEventBaseAttack= FGameplayTag::RequestGameplayTag(FName("Ability.BaseAttack"));
     
     AbilityTags.AddTag(m_TagEventBaseAttack);
+    
     ActivationOwnedTags.AddTag(m_TagEventBaseAttack);
 
     ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Skill")));
 
     m_fDashLimitRange = 700.0f;
+    
     m_fDashTime=0.5f;
+    
     m_AbilityInputID = EAbilityInputID::BaseAttack;
 
     m_AbilityID = EAbilityInputID::BaseAttack;
-    
     
 }
 
@@ -125,22 +132,25 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
             EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
         }
 
-        if(!UBaseDiabloAttribute::CanHitBaseAttack(TargetChar,PlayerChar))
-        {
-            float SuccessPer100 = UBaseDiabloAttribute::CalcuSameLevelAvgAccuracy(TargetChar->GetAttributeSet()->GetAvoid(),PlayerChar);
-            ADiabloPlayerController::Get->ShowDamageNumber(100.f-SuccessPer100,TargetChar,EDamagePopup::Miss);
-            return;
-        }
-
         FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
             DamageGameplayEffect, GetAbilityLevel());
 
-        float Dmg=PlayerChar->GetAttributeSet()->GetPhysicalDamage()*PlayerChar->GetBonusDamage()*PlayerChar->GetAttributeSet()->GetDamagePer();
-        
-        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookDamage,Dmg);
+        float PhysDmg=PlayerChar->GetAttributeSet()->GetPhysicalDamage()*PlayerChar->GetBonusDamage();
+        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPhysDamage,PhysDmg);
 
-       TargetChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
-            *DamageEffectSpecHandle.Data);
+        float FireDmg=PlayerChar->GetAttributeSet()->GetAtkFire()*PlayerChar->GetBonusDamage();
+        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookFireDamage,FireDmg);
+
+        float ElecDmg=PlayerChar->GetAttributeSet()->GetAtkElec()*PlayerChar->GetBonusDamage();
+        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookElecDamage,ElecDmg);
+
+        float PoisonDmg=PlayerChar->GetAttributeSet()->GetAtkPoison()*PlayerChar->GetBonusDamage();
+        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPoisonDamage,PoisonDmg);
+
+        float IceDmg=PlayerChar->GetAttributeSet()->GetAtkCold()*PlayerChar->GetBonusDamage();
+        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookIceDamage,IceDmg);
+
+        PlayerChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data,TargetChar->GetDiaAbilitySystem());
     }
 }
 

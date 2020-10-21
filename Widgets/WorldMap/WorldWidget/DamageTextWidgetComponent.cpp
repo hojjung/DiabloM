@@ -1,8 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "DamageTextWidgetComponent.h"
-
 #include "DiabloM.h"
 
 void UDamageTextWidgetComponent::Init(AActor* base)
