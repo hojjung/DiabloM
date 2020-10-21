@@ -6,40 +6,44 @@
 UMonsterBaseMeleeAttack::UMonsterBaseMeleeAttack()
 {
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-    m_TagTookDamage= FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPhysDmg"));
-    m_TagEventEndAbility= FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
-    m_TagEventBaseAttack= FGameplayTag::RequestGameplayTag(FName("Combat.Ability.BaseAttack"));
-    
+    m_TagTookPhysDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPhysDmg"));
+    m_TagTookFireDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookFireDmg"));
+    m_TagTookElecDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookElecDmg"));
+    m_TagTookIceDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookIceDmg"));
+    m_TagTookPoisonDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPoisonDmg"));
+    m_TagEventEndAbility = FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
+    m_TagEventBaseAttack = FGameplayTag::RequestGameplayTag(FName("Combat.Ability.BaseAttack"));
+
     AbilityTags.AddTag(m_TagEventBaseAttack);
     ActivationOwnedTags.AddTag(m_TagEventBaseAttack);
 
     ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Combat.Ability.Skill")));
 
 
-    m_fAttackRange=150.f;
-    m_fAttackAngle=50.f;
-   
+    m_fAttackRange = 150.f;
+    m_fAttackAngle = 50.f;
 }
+
 bool UMonsterBaseMeleeAttack::CheckAttackRange(const AActor* other) const
 {
-    if(!GetAvatarActorFromActorInfo())
+    if (!GetAvatarActorFromActorInfo())
     {
         PRINTF("Monster Avatr NULL");
         return false;
     }
-    
+
     FVector const OtherLoc = other->GetActorLocation();
     FVector const MyLoc = GetAvatarActorFromActorInfo()->GetActorLocation();
     FVector const SelfToOther = OtherLoc - MyLoc;
     FVector const SelfToOtherDir = SelfToOther.GetSafeNormal();
     FVector const MyFacingDir = GetAvatarActorFromActorInfo()->GetActorRotation().Vector();
 
-    bool bAngle= (SelfToOtherDir | MyFacingDir) >= m_fAttackAngleCos;//벡터의 내적
+    bool bAngle = (SelfToOtherDir | MyFacingDir) >= m_fAttackAngleCos; //벡터의 내적
 
-    float DistSqr=FVector::DistSquared2D(OtherLoc,MyLoc);
-    bool bDist =  DistSqr< m_fAttackRangeSqr;
+    float DistSqr = FVector::DistSquared2D(OtherLoc, MyLoc);
+    bool bDist = DistSqr < m_fAttackRangeSqr;
 
-    return bAngle&&bDist;
+    return bAngle && bDist;
 }
 
 void UMonsterBaseMeleeAttack::PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection, float AttackSpeed)
@@ -55,33 +59,33 @@ void UMonsterBaseMeleeAttack::PlayAbilityAnimation(UAnimMontage* MontageToPlay, 
     Task->EventReceived.AddDynamic(this, &UMonsterBaseMeleeAttack::EventReceived);
 
     Task->ReadyForActivation();
-
 }
 
 void UMonsterBaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-                                        const FGameplayAbilityActorInfo* ActorInfo,
-                                        const FGameplayAbilityActivationInfo ActivationInfo,
-                                        const FGameplayEventData* TriggerEventData)
+                                              const FGameplayAbilityActorInfo* ActorInfo,
+                                              const FGameplayAbilityActivationInfo ActivationInfo,
+                                              const FGameplayEventData* TriggerEventData)
 {
     if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
     {
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
     }
 
-    PlayAbilityAnimation(m_BaseAttackMotion,NAME_None ,1);
+    PlayAbilityAnimation(m_BaseAttackMotion, NAME_None, 1);
 }
 
-void UMonsterBaseMeleeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
+void UMonsterBaseMeleeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo,
+                                            const FGameplayAbilitySpec& Spec)
 {
     Super::OnGiveAbility(ActorInfo, Spec);
-    m_fAttackRangeSqr=m_fAttackRange*m_fAttackRange;
-    m_fAttackAngleCos=FMath::Cos(FMath::DegreesToRadians(m_fAttackAngle));
+    m_fAttackRangeSqr = m_fAttackRange * m_fAttackRange;
+    m_fAttackAngleCos = FMath::Cos(FMath::DegreesToRadians(m_fAttackAngle));
 }
 
 void UMonsterBaseMeleeAttack::OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
     Super::OnAvatarSet(ActorInfo, Spec);
-    m_MonsterPawn=Cast<AMonsterPawn>(m_OwnerUnit);
+    m_MonsterPawn = Cast<AMonsterPawn>(m_OwnerUnit);
 }
 
 void UMonsterBaseMeleeAttack::OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -101,25 +105,38 @@ void UMonsterBaseMeleeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
         return;
     }
-    
+
     if (EventTag == m_TagEventBaseAttack)
     {
         AMonsterPawn* MonsterAttacker = Cast<AMonsterPawn>(GetAvatarActorFromActorInfo());
-        if (!MonsterAttacker ||!EventData.Target||!CheckAttackRange(EventData.Target))
+        if (!MonsterAttacker || !EventData.Target || !CheckAttackRange(EventData.Target))
         {
             //EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-            return;    
+            return;
         }
 
         FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
             DamageGameplayEffect, GetAbilityLevel());
 
-        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(
-            m_TagTookDamage, MonsterAttacker->GetAttributeSet()->GetPhysicalDamage());
 
-        auto* SourceAbili=Cast<AUnitPawn>(EventData.Instigator)->GetDiaAbilitySystem();
-        auto* TargetAbili=Cast<AUnitPawn>(EventData.Target)->GetDiaAbilitySystem();
-        
-        SourceAbili->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data,TargetAbili);
+        float PhysDmg = MonsterAttacker->GetAttributeSet()->GetPhysicalDamage();
+        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPhysDamage, PhysDmg);
+
+        float FireDmg = MonsterAttacker->GetAttributeSet()->GetAtkFire();
+        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookFireDamage, FireDmg);
+
+        float ElecDmg = MonsterAttacker->GetAttributeSet()->GetAtkElec();
+        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookElecDamage, ElecDmg);
+
+        float PoisonDmg = MonsterAttacker->GetAttributeSet()->GetAtkPoison();
+        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPoisonDamage, PoisonDmg);
+
+        float IceDmg = MonsterAttacker->GetAttributeSet()->GetAtkCold();
+        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookIceDamage, IceDmg);
+
+        auto* SourceAbili = Cast<AUnitPawn>(EventData.Instigator)->GetDiaAbilitySystem();
+        auto* TargetAbili = Cast<AUnitPawn>(EventData.Target)->GetDiaAbilitySystem();
+
+        SourceAbili->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data, TargetAbili);
     }
 }

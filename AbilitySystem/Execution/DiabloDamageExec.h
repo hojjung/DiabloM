@@ -18,6 +18,14 @@ class DIABLOM_API UDiabloDamageExec : public UGameplayEffectExecutionCalculation
 	
 public:
 	UDiabloDamageExec();
+	
+protected:
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> m_GELifeSteal;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> m_GEDoubleAttack;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> m_GEBasherStun;
 protected:
 	float CalcPhysReduction(int DefenseTargetLevel,int AttackerLevel, float PhysDefense) const;
 

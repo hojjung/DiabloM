@@ -49,6 +49,7 @@ bool UPlayerSensing::TickTryFoundInteraction()
 
 bool UPlayerSensing::TickTryFoundEnemy()
 {
+    
     FVector HalfSize = FVector(m_FocusRange, 75, 75);
     FVector InitPos = m_OwnedPlayer->GetBodyMesh()->GetComponentLocation();
     InitPos.Z += m_OwnedPlayer->GetCapsule()->GetScaledCapsuleHalfHeight();

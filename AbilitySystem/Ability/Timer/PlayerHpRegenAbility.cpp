@@ -9,7 +9,7 @@
 
 UPlayerHpRegenAbility::UPlayerHpRegenAbility()
 {
-    FGameplayTag Ability1Tag = FGameplayTag::RequestGameplayTag(FName("Item.Option.Attribute.Health+"));
+    FGameplayTag Ability1Tag = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.HpHeal"));
     AbilityTags.AddTag(Ability1Tag);
     ActivationOwnedTags.AddTag(Ability1Tag);
 }

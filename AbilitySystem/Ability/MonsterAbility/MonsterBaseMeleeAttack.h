@@ -16,7 +16,11 @@ class DIABLOM_API UMonsterBaseMeleeAttack : public UDiabloAbility
 public:
 	UMonsterBaseMeleeAttack();
 protected:
-	FGameplayTag m_TagTookDamage;
+	FGameplayTag m_TagTookPhysDamage;
+	FGameplayTag m_TagTookFireDamage;
+	FGameplayTag m_TagTookIceDamage;
+	FGameplayTag m_TagTookElecDamage;
+	FGameplayTag m_TagTookPoisonDamage;
 	FGameplayTag m_TagEventEndAbility;
 	FGameplayTag m_TagEventBaseAttack;
 	

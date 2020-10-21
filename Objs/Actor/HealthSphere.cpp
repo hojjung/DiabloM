@@ -9,7 +9,7 @@
 AHealthSphere::AHealthSphere(const FObjectInitializer& objInit):Super(objInit)
 {
     m_BillBoard->SetVisibility(false);
-    m_TagMagnitude = FGameplayTag::RequestGameplayTag(FName("Ground.HpSphere"));
+    m_TagMagnitude = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.HpHeal"));
 }
 
 void AHealthSphere::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

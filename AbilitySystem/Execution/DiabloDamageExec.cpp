@@ -80,6 +80,7 @@ public:
     FGameplayTag TagTookElecDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookElecDmg"));
     FGameplayTag TagTookIceDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookIceDmg"));
     FGameplayTag TagTookPoisonDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPoisonDmg"));
+    FGameplayTag TagLifeStealHeal = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.HpHeal"));
 
     //이방식의 문제점은 무엇인가
     //스킬의 상수가 문제다.
@@ -131,6 +132,8 @@ UDiabloDamageExec::UDiabloDamageExec()
     RelevantAttributesToCapture.Add(GetDamageStatics().BashChanceDef);
     RelevantAttributesToCapture.Add(GetDamageStatics().CriticalChanceDef);
     RelevantAttributesToCapture.Add(GetDamageStatics().CriticalDamageDef);
+    //
+    
 }
 
 void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -148,6 +151,11 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
     FAggregatorEvaluateParameters EvaluationParameters;
     EvaluationParameters.SourceTags = SourceTags;
     EvaluationParameters.TargetTags = TargetTags;
+
+    if(SourceUnit==nullptr ||TargetUnit==nullptr)
+    {
+        return;
+    }
 
     const int AttackerLevel = SourceUnit->GetCharacterLevel();
     const int DefenseTargetLevel = TargetUnit->GetCharacterLevel();
@@ -231,6 +239,12 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
     LTookElecDamage   = Spec.GetSetByCallerMagnitude(GetDamageStatics().TagTookElecDamage, false, 0.0f);
     LTookPoisonDamage = Spec.GetSetByCallerMagnitude(GetDamageStatics().TagTookPoisonDamage, false, 0.0f);
     //
+    float LTookPhysDamageCache   =LTookPhysDamage;  
+    float LTookFireDamageCache   =LTookFireDamage;  
+    float LTookIceDamageCache    =LTookIceDamage;   
+    float LTookElecDamageCache   =LTookElecDamage;  
+    float LTookPoisonDamageCache =LTookPoisonDamage;
+    //
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetDamageStatics().DefensePerDef, EvaluationParameters,
                                                                LDefensePer);
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetDamageStatics().PhysicalDefenseDef,
@@ -291,6 +305,10 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
     if (LTookPhysDamage>0.f&&CheckOnerPercentRand(LBashChance))
     {
         PRINTF("BaSher! Stun!");
+        FGameplayEffectContextHandle Context = SourceAbilitySystemComponent->MakeEffectContext();
+        FGameplayEffectSpecHandle EffectSpecHandle =SourceAbilitySystemComponent->MakeOutgoingSpec(
+          m_GEBasherStun, SourceUnit->GetCharacterLevel(),Context);
+        SourceAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*EffectSpecHandle.Data, TargetAbilitySystemComponent);
         //Basher Need
     }
 
@@ -298,6 +316,11 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
     {
         float HealthGain = LTookPhysDamage * LLifeSteal;
         PRINTF("LifeSteal:%f", HealthGain);
+        FGameplayEffectContextHandle Context = SourceAbilitySystemComponent->MakeEffectContext();
+        FGameplayEffectSpecHandle EffectSpecHandle =SourceAbilitySystemComponent->MakeOutgoingSpec(
+          m_GELifeSteal, SourceUnit->GetCharacterLevel(),Context);
+        EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GetDamageStatics().TagLifeStealHeal, HealthGain);
+        SourceAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*EffectSpecHandle.Data, SourceAbilitySystemComponent);
         //LifeStealEffect Need
     }
 
@@ -320,8 +343,31 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
 
     if (CheckOnerPercentRand(LDoubleAttackChance))
     {
-        PRINTF("DoubleAttack!");
-        //DoubleAttack Need
+        static int DoubleAttackCount=0;
+        PRINTF("DoubleAttack!:%d",++DoubleAttackCount);
+
+        if(DoubleAttackCount>5)
+        {
+            DoubleAttackCount=0;
+
+            return;
+        }
+        FGameplayEffectContextHandle Context = SourceAbilitySystemComponent->MakeEffectContext();
+        FGameplayEffectSpecHandle EffectSpecHandle =SourceAbilitySystemComponent->MakeOutgoingSpec(
+          m_GEDoubleAttack, SourceUnit->GetCharacterLevel(),Context);
+        //
+        EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GetDamageStatics().TagTookPhysDamage, LTookPhysDamage);
+
+        EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GetDamageStatics().TagTookFireDamage, LTookFireDamage);
+
+        EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GetDamageStatics().TagTookElecDamage, LTookElecDamage);
+
+        EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GetDamageStatics().TagTookPoisonDamage, LTookPoisonDamage);
+
+        EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(GetDamageStatics().TagTookIceDamage, LTookIceDamage);
+        //
+        SourceAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*EffectSpecHandle.Data, TargetAbilitySystemComponent);
+        //호출 순서때문에 문제 생길수도 있을듯
     }
 }
 

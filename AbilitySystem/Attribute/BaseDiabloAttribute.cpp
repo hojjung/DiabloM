@@ -4,7 +4,6 @@
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
 #include "Characters/PlayerDiabloCharacter.h"
-#include "Lib/DiaBlueprintFunctionLibrary.h"
 
 UBaseDiabloAttribute::UBaseDiabloAttribute()
 {
@@ -86,11 +85,8 @@ void UBaseDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* Source
     {
         bool WasAlive = true;
 
-        if (TargetUnit)
-        {
-            WasAlive = TargetUnit->IsAlive();
-        }
-
+        WasAlive = TargetUnit->IsAlive();
+        
         const float OldHealth = GetHealth();
 
         SetHealth(FMath::Clamp(OldHealth - LocalDamageDone, 0.0f, GetMaxHealth()));
@@ -190,6 +186,11 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
     //
     GetTargetSourceActors(Data, Context, Source, TargetActor,
                           TargetCharacter, SourceActor, SourceController, SourceCharacter);
+
+    if(TargetCharacter==nullptr || SourceCharacter==nullptr)
+    {
+        return;
+    }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

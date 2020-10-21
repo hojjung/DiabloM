@@ -624,6 +624,14 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    if (m_FocusedEnemy.Get())
+    {
+        if(!m_FocusedEnemy.Get()->IsAlive() || !m_PlayerSense->HasLineOfSightTo(m_FocusedEnemy.Get()))
+        {
+            FocusTarget(nullptr);
+        }
+    }
+
     m_PlayerSense->TickTryFoundInteraction();
     
     if(m_bUseFSM)
@@ -632,11 +640,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
        // m_FSM->TickFSM();
     }
 
-    if (m_FocusedEnemy.Get())
-    {
-        DrawDebugLine(GetWorld(), GetCapsule()->GetComponentLocation(), m_FocusedEnemy->GetActorLocation(),
-                      FColor::Cyan, false, -1, 0, 2.f);
-    }
+  
 
     TickAttack();
 }
