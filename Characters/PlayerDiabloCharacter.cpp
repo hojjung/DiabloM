@@ -11,6 +11,7 @@
 #include "Item/Weapon.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
 #include "AbilitySystem/Ability/PlayerBaseAttack.h"
+#include "AbilitySystem/Ability/PlayerHealthPotion.h"
 #include "Logic/PlayerSensing.h"
 #include "Characters/MonsterPawn.h"
 
@@ -18,14 +19,14 @@
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
     : Super(objInit.SetDefaultSubobjectClass<UPlayerDiabloAttribute>("AttributeSet00"))
 {
-    m_fBonusDamage=1.f;
+    m_fBonusDamage = 1.f;
     m_DissolveCam = CreateDefaultSubobject<UCameraDissolve>("CamDissolve00");
     m_DissolveCam->SetupAttachment(RootComponent);
     m_DissolveCam->SetRelativeRotation(FRotator(-50.f, 0.f, 0.f));
     //
     m_TopCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera00");
     m_TopCamera->SetupAttachment(m_DissolveCam);
-   
+
     m_FocusedInteractable = nullptr;
 
     m_fInteractRange = 300.f;
@@ -75,12 +76,12 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
     m_StLeftWeapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     m_StLeftWeapon->SetupAttachment(m_SkBody, "LeftWeaponShield");
     m_StLeftWeapon->CastShadow = true;
-
     m_fCurrentExp = 0.f;
 
     m_fMaxExp = 0.f;
 
-    m_bIsDead=false;
+    m_bIsDead = false;
+
 }
 
 
@@ -121,9 +122,10 @@ void APlayerDiabloCharacter::Init()
 
 void APlayerDiabloCharacter::GrantHpRegenAbility()
 {
-    if(m_GAPlayerHealthRegen)
+    if (m_GAPlayerHealthRegen)
     {
-        m_HpRegenHandle=GetDiaAbilitySystem()->GiveAbility(FGameplayAbilitySpec(m_GAPlayerHealthRegen,GetCharacterLevel(),INDEX_NONE,this));
+        m_HpRegenHandle = GetDiaAbilitySystem()->GiveAbility(
+            FGameplayAbilitySpec(m_GAPlayerHealthRegen, GetCharacterLevel(), INDEX_NONE, this));
     }
 }
 
@@ -154,15 +156,16 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     LoadExp(loadedSaveData);
 
     GrantHpRegenAbility();
+    GrantHealthPotion();
 }
 
 void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
 {
-    m_fMaxExp = Cast<UPlayerDiabloAttribute>(m_AttributeSet)->GetMaxExpForLevelUp();
+    m_fMaxExp = GetPlayerAttribute()->GetMaxExpForLevelUp();
     m_fCurrentExp = loadedSaveData->m_fExp;
     float RemainExp = m_fMaxExp - m_fCurrentExp;
     m_OnRemainExpChanged.Broadcast(RemainExp);
-    m_OnExpGaugeChanged.Broadcast(m_fCurrentExp/m_fMaxExp);
+    m_OnExpGaugeChanged.Broadcast(m_fCurrentExp / m_fMaxExp);
 }
 
 void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEquipAry slotWant)
@@ -257,10 +260,7 @@ void APlayerDiabloCharacter::RemoveAllEffect()
 void APlayerDiabloCharacter::GrantBaseAttackAbility()
 {
     m_BaseAttackHandle = GetDiaAbilitySystem()->GiveAbility(
-        FGameplayAbilitySpec(m_PlayerBaseAttack,
-                             1,
-                             static_cast<int32>(m_PlayerBaseAttack.GetDefaultObject()->m_AbilityInputID
-                             ),
+        FGameplayAbilitySpec(m_PlayerBaseAttack,GetCharacterLevel(),static_cast<int32>(m_PlayerBaseAttack.GetDefaultObject()->m_AbilityInputID),
                              this));
 }
 
@@ -269,15 +269,14 @@ void APlayerDiabloCharacter::SetBaseAttackAbility(const FAnimStance* animStance)
     if (m_BaseAttackHandle.IsValid())
     {
         GetDiaAbilitySystem()->ClearAbility(m_BaseAttackHandle);
-        m_PlayerBaseAttack=nullptr;
+        m_PlayerBaseAttack = nullptr;
     }
 
     if (IsValid(animStance->m_BaseAttackAbility))
     {
-        m_PlayerBaseAttack=animStance->m_BaseAttackAbility;
-        
+        m_PlayerBaseAttack = animStance->m_BaseAttackAbility;
+
         GrantBaseAttackAbility();
-        
     }
 
     m_AlreadyHittenForIgnore.Reset();
@@ -292,17 +291,17 @@ void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius
 
 void APlayerDiabloCharacter::SetBonusDamage(float v)
 {
-    m_fBonusDamage=v;
+    m_fBonusDamage = v;
 }
 
 void APlayerDiabloCharacter::OnAttackPressed()
 {
-    m_bIsAttackInputPressed=true;
+    m_bIsAttackInputPressed = true;
 }
 
 void APlayerDiabloCharacter::OnAttackRelease()
 {
-    m_bIsAttackInputPressed=false;
+    m_bIsAttackInputPressed = false;
 }
 
 void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
@@ -323,8 +322,6 @@ void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
 }
 
 
-
-
 void APlayerDiabloCharacter::EarnExp(float expEarned)
 {
     PRINTF("ExpEarned:%f", expEarned);
@@ -337,13 +334,13 @@ void APlayerDiabloCharacter::EarnExp(float expEarned)
     {
         if (!SetCharacterLevel(m_nCharacterLevel + 1))
         {
-             m_OnRemainExpChanged.Broadcast(0.f);
-             m_OnExpGaugeChanged.Broadcast(0.f);
+            m_OnRemainExpChanged.Broadcast(0.f);
+            m_OnExpGaugeChanged.Broadcast(0.f);
             return;
         }
 
         m_fCurrentExp = 0.f;
-        m_fMaxExp = Cast<UPlayerDiabloAttribute>(m_AttributeSet)->GetMaxExpForLevelUp();
+        m_fMaxExp =GetPlayerAttribute()->GetMaxExpForLevelUp();
 
         PRINTF("Next Exp Is: %f", m_fMaxExp);
 
@@ -351,16 +348,16 @@ void APlayerDiabloCharacter::EarnExp(float expEarned)
     }
 
     m_OnRemainExpChanged.Broadcast(m_fMaxExp - m_fCurrentExp);
-    m_OnExpGaugeChanged.Broadcast(m_fCurrentExp/m_fMaxExp);
+    m_OnExpGaugeChanged.Broadcast(m_fCurrentExp / m_fMaxExp);
 }
 
 void APlayerDiabloCharacter::EarnGold(float goldEarned)
 {
     m_fCurrentGold += goldEarned;
-    m_fCurrentGold = FMath::Clamp(m_fCurrentGold,m_fCurrentGold,MAXVALUE);
+    m_fCurrentGold = FMath::Clamp(m_fCurrentGold, m_fCurrentGold,MAXVALUE);
 
-    PRINTF("GoldGained:%f",goldEarned);
-    PRINTF("TotalGold:%f",m_fCurrentGold);
+    PRINTF("GoldGained:%f", goldEarned);
+    PRINTF("TotalGold:%f", m_fCurrentGold);
 }
 
 bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)
@@ -373,13 +370,13 @@ bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)
     PRINTF("LevelUp: %d -> %d", m_nCharacterLevel, NewLevel);
     m_nCharacterLevel = NewLevel;
     SetUnitStatEffect();
-    
-    if(m_HpRegenHandle.IsValid())
+
+    if (m_HpRegenHandle.IsValid())
     {
         GetDiaAbilitySystem()->ClearAbility(m_HpRegenHandle);
         GrantHpRegenAbility();
     }
-    
+
     m_OnLevelChanged.Broadcast(m_nCharacterLevel);
 
     return true;
@@ -400,7 +397,7 @@ void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)
 {
     m_FocusRenderer->SetHiddenInGame(false);
     m_FocusRenderer->SetSkeletalMesh(Unit->GetBodyMesh()->SkeletalMesh);
-    m_FocusRenderer->SetMasterPoseComponent(Unit->GetBodyMesh(),true);
+    m_FocusRenderer->SetMasterPoseComponent(Unit->GetBodyMesh(), true);
     m_FocusRenderer->AttachToComponent(Unit->GetBodyMesh(), FAttachmentTransformRules::KeepRelativeTransform);
 
     for (int i = 0; i < m_FocusRenderer->GetMaterials().Num(); i++)
@@ -420,7 +417,7 @@ void APlayerDiabloCharacter::HideOutlineOnTarget()
 void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 {
     Super::FocusTarget(target);
-    
+
     if (!target)
     {
         Cast<ADiabloPlayerController>(GetController())->HideFocusStatusWidget();
@@ -508,22 +505,22 @@ ADiabloPlayerController* APlayerDiabloCharacter::GetDiaController()
 
 void APlayerDiabloCharacter::Die()
 {
-    if(m_bIsDead)
+    if (m_bIsDead)
     {
         return;
     }
-    m_bIsDead=true;
-    
-    m_bUseFSM=false;
-    
+    m_bIsDead = true;
+
+    m_bUseFSM = false;
+
     SetActorTickEnabled(false);
-    
+
     m_AttributeSet->SetHealth(0.f);
-    
+
     GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    
+
     GetMovementComponent()->SetActive(false);
-    
+
     m_PlayerSense->SetSensingUpdatesEnabled(false);
 
     if (IsValid(GetDiaAbilitySystem()))
@@ -534,7 +531,6 @@ void APlayerDiabloCharacter::Die()
         int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
 
         GetDiaAbilitySystem()->AddLooseGameplayTag(m_DeadTag);
-        
     }
 
     m_OnCharacterDied.Broadcast(this);
@@ -542,14 +538,14 @@ void APlayerDiabloCharacter::Die()
     if (m_DeathMontage)
     {
         float AnimLength = PlayAnimMontage(m_DeathMontage) - 0.2f;
-        
+
         if (GEngine->GetNetMode(GetWorld()) < NM_Client)
         {
             FTimerHandle TimerHandle_OnTimer;
-            
+
             GetWorldTimerManager().SetTimer(TimerHandle_OnTimer, this, &APlayerDiabloCharacter::OnDeathAnimEnd,
-                                                           AnimLength,
-                                                           false);
+                                            AnimLength,
+                                            false);
         }
     }
     else
@@ -565,12 +561,13 @@ void APlayerDiabloCharacter::Revive()
     //
     GrantHpRegenAbility();
     GrantBaseAttackAbility();
+    GrantHealthPotion();
     //
     GetCapsule()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     GetMovementComponent()->SetActive(true);
     SetActorTickEnabled(true);
     m_PlayerSense->SetSensingUpdatesEnabled(true);
-    m_bIsDead=false;
+    m_bIsDead = false;
     m_AttributeSet->SetHealth(m_AttributeSet->GetMaxHealth());
     m_OnRevived.Broadcast(this);
     m_AttributeSet->m_OnStatChanged.Broadcast(this);
@@ -584,7 +581,7 @@ void APlayerDiabloCharacter::OnDeathAnimEnd()
     //HideUI? it can be broad cast
 }
 
-void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target)//wrapper
+void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target) //wrapper
 {
     FocusTarget(nullptr);
 }
@@ -592,7 +589,7 @@ void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target)//wrapper
 void APlayerDiabloCharacter::EndAttack()
 {
     Super::EndAttack();
-    m_fBonusDamage=1.f;
+    m_fBonusDamage = 1.f;
 }
 
 FVector APlayerDiabloCharacter::GetLastSeenLocation()
@@ -603,6 +600,28 @@ FVector APlayerDiabloCharacter::GetLastSeenLocation()
 bool APlayerDiabloCharacter::IsAlive()
 {
     return !m_bIsDead || Super::IsAlive();
+}
+
+void APlayerDiabloCharacter::GrantHealthPotion()
+{
+    if (m_GAPlayerHealthPotion)
+    {
+        FGameplayAbilitySpec Spec= FGameplayAbilitySpec(m_GAPlayerHealthPotion,GetCharacterLevel(),static_cast<int32>(m_GAPlayerHealthPotion.GetDefaultObject()->m_AbilityInputID),this);
+        m_PotionHandle = GetDiaAbilitySystem()->GiveAbility(Spec);
+    }
+}
+
+void APlayerDiabloCharacter::DrinkPotion()
+{
+  
+
+    GetDiaAbilitySystem()->TryActivateAbility(m_PotionHandle);
+    //
+}
+
+float APlayerDiabloCharacter::GetCastSpeed() const
+{
+    return GetPlayerAttribute()->GetCastingSpeed();
 }
 
 
@@ -626,21 +645,20 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 
     if (m_FocusedEnemy.Get())
     {
-        if(!m_FocusedEnemy.Get()->IsAlive() || !m_PlayerSense->HasLineOfSightTo(m_FocusedEnemy.Get()))
+        if (!m_FocusedEnemy.Get()->IsAlive() || !m_PlayerSense->HasLineOfSightTo(m_FocusedEnemy.Get()))
         {
             FocusTarget(nullptr);
         }
     }
 
     m_PlayerSense->TickTryFoundInteraction();
-    
-    if(m_bUseFSM)
+
+    if (m_bUseFSM)
     {
-     //   m_MonsterSense->Tick();
-       // m_FSM->TickFSM();
+        //   m_MonsterSense->Tick();
+        // m_FSM->TickFSM();
     }
 
-  
 
     TickAttack();
 }
@@ -648,11 +666,11 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 
 void APlayerDiabloCharacter::TickAttack()
 {
-    if(!m_bIsAttackInputPressed)
+    if (!m_bIsAttackInputPressed)
     {
         return;
     }
-    
+
     HomingRotateToTarget();
     DoBaseAttack();
 }
@@ -695,7 +713,8 @@ void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
     PlayerInputComponent->BindAction("Interaction", EInputEvent::IE_Pressed, this,
                                      &APlayerDiabloCharacter::InteractWithTarget);
     PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed, this, &APlayerDiabloCharacter::OnAttackPressed);
-    PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Released, this, &APlayerDiabloCharacter::OnAttackRelease);
+    PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Released, this,
+                                     &APlayerDiabloCharacter::OnAttackRelease);
 
     BindASCInput();
 }
@@ -735,7 +754,7 @@ bool APlayerDiabloCharacter::CreateItemActor(const FItemInstance* itemInst, AWea
         m_AryIgnoreActor.Remove((*wantCachePointer));
         (*wantCachePointer)->RemoveWeapon(this);
         (*wantCachePointer)->Destroy();
-        (*wantCachePointer)=nullptr;
+        (*wantCachePointer) = nullptr;
     }
 
     if (itemInst->IsEmpty())
@@ -787,4 +806,3 @@ void APlayerDiabloCharacter::BindASCInput()
                                                                          static_cast<int32>(EAbilityInputID::Cancel)));
     }
 }
-

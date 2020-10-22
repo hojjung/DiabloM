@@ -60,11 +60,10 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
     }
 
-    APlayerDiabloCharacter* Player=Cast<APlayerDiabloCharacter>(ActorInfo->AvatarActor.Get());
     
-    float AttackSpeed = Player->GetAttackSpeed();
+    float AttackSpeed = m_PlayerPawn->GetAttackSpeed();
 
-    auto* Movement=GetMovement(Player);
+    auto* Movement=GetMovement(m_PlayerPawn);
     Movement->SetMoveSpeedRatio(0.25f);
 
     float DistSqred;
@@ -74,7 +73,7 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     {
         PlayAbilityAnimation(m_BaseAttackMotion,"DashAttack" ,2);
 
-        float Accept=Player->GetAcceptRadiusToOther();
+        float Accept=m_PlayerPawn->GetAcceptRadiusToOther();
         float AcceptSqr=Accept*Accept;
         DashAttack(Movement,DashNormal,FMath::Sqrt(DistSqred-AcceptSqr),m_fDashTime);
     }

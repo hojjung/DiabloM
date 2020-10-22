@@ -18,6 +18,8 @@ enum class EAbilityInputID : uint8
 	// 3 LMB,
 	BaseAttack		,
 
+	DrinkHpPotion   ,
+
 	Ability1        ,
 	// 4 RMB,
 	Ability2		,

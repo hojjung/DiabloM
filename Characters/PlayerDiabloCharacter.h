@@ -15,8 +15,10 @@ class UCameraDissolve;
 class UPlayerSensing;
 class UPlayerBaseAttack;
 class UDefaultFSM;
+class UPlayerDiabloAttribute;
 
-
+class UPlayerHealthPotion;
+class UPlayerHpRegenAbility;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
 
 UCLASS()
@@ -32,7 +34,10 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	TSubclassOf<UDiabloAbility> m_GAPlayerHealthRegen;
+	TSubclassOf<UPlayerHpRegenAbility> m_GAPlayerHealthRegen;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	TSubclassOf<UPlayerHealthPotion> m_GAPlayerHealthPotion;
+	
 	//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TArray<TEnumAsByte< EObjectTypeQuery>> m_AryTargetingObjectType;
@@ -105,6 +110,8 @@ protected:
 	const FPlayerEntityTable* m_PlayerEntityData;
 
 	FGameplayAbilitySpecHandle m_HpRegenHandle;
+
+	FGameplayAbilitySpecHandle m_PotionHandle;
 	
 	FDelegateHandle m_InventoryUpdateHandle;
     
@@ -179,6 +186,7 @@ protected:
 	void SetBaseAttackData(float viewAngle,float viewRadius,float focusRange);
 public:
 	void Init();
+	
 	void GrantHpRegenAbility();
 	UFUNCTION(BlueprintCallable)
     void Revive();
@@ -192,7 +200,9 @@ public:
 	void InteractWithTarget();
 	UFUNCTION(BlueprintCallable)
     void ResetCombo();
+	
 	void ShowOutlineOnTarget(AUnitPawn* Unit);
+	
 	void HideOutlineOnTarget();
 
 	void EquipMesh(const FItemInstance* meshItem,ESlotsEquipAry slotWant);
@@ -202,6 +212,7 @@ public:
 	UPlayerBaseAttack* GetBaseAttackInst();
 
 	void RemoveAllEffect();
+	
 	void GrantBaseAttackAbility();
 
 	void SetAnimStance(const FAnimStance* animStance);
@@ -219,6 +230,7 @@ public:
 	ADiabloPlayerController* GetDiaController();
 
 	virtual void Die()override;
+	
 	virtual void OnDeathAnimEnd()override;
 	
 	FORCEINLINE FOnFloatChange& GetLevelDele()
@@ -270,5 +282,16 @@ public:
 	}
 
 	virtual bool IsAlive() override;
+	
+	void GrantHealthPotion();
+
+	void DrinkPotion();
+
+	float GetCastSpeed() const;
+
+	FORCEINLINE UPlayerDiabloAttribute* GetPlayerAttribute() const
+	{
+		return Cast<UPlayerDiabloAttribute>(GetAttributeSet());
+	}
 };
 

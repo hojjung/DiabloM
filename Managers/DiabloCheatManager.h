@@ -17,7 +17,9 @@ UCLASS()
 class DIABLOM_API UDiabloCheatManager : public UCheatManager
 {
 	GENERATED_BODY()
-	
+
+	public:
+	UDiabloCheatManager();
 protected:
 	UPROPERTY()
 	ADiabloPlayerController* m_PlayerController;
@@ -25,6 +27,8 @@ protected:
 	APlayerDiabloCharacter* m_Player;
 	UPROPERTY()
 	UDiabloGameInstance* m_GameManager;
+	UPROPERTY()
+	TSubclassOf<UGameplayEffect> m_StunEffect;
 protected:
 	virtual void InitCheatManager() override;
 public:
@@ -65,4 +69,6 @@ public:
 	void DamageToPlayer(float wantV);
 	UFUNCTION(exec)
     void KillPlayer();
+	UFUNCTION(exec)
+    void StunPlayer();
 };

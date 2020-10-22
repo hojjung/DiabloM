@@ -11,7 +11,7 @@ void UAnimNotify_SendGameEvent::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 {
     AUnitPawn* Unit=Cast<AUnitPawn>( MeshComp->GetOwner());
 
-    if(!Unit||!Unit->GetFocusedTarget())
+    if(!Unit)
     {
         return;
     }
@@ -19,7 +19,7 @@ void UAnimNotify_SendGameEvent::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
     FGameplayEventData EventData;
     
     EventData.Instigator = Unit;
-    EventData.Target = Unit->GetFocusedTarget();
+    EventData.Target = Unit->GetFocusedTarget();//?
 
     UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Unit,m_CachedAttackEvent,EventData);
 }

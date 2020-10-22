@@ -28,6 +28,11 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
     m_nCharacterLevel = 1;
     m_AbilitySystemComponent = CreateDefaultSubobject<UDiabloAbilitySystemComp>("AbilitySystemComponent00");
     m_AbilitySystemComponent->SetIsReplicated(true); //bCachedIsNetSimulated
+    m_AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("State.Debuff.Stun")),
+        EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AUnitPawn::StunTagChanged);
+
+
+    
     m_AttributeSet = CreateDefaultSubobject<UBaseDiabloAttribute>("AttributeSet00");
 
     m_PFComp = CreateDefaultSubobject<UPathFollowingComponent>(TEXT("PathFollowingComponent"));
@@ -416,6 +421,12 @@ UBaseDiabloAttribute* AUnitPawn::GetAttributeSet() const
 FVector AUnitPawn::GetVelocity() const
 {
     return GetMovementComponent()->Velocity;
+}
+
+void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+    GetDiaAbilitySystem()->CancelAbilities();
+    PRINTF("OnStun");
 }
 
 void AUnitPawn::FocusTarget(AUnitPawn* target)

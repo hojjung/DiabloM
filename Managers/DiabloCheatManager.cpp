@@ -9,6 +9,14 @@
 #include "Managers/StartMap/PlayerCreateManager.h"
 
 
+UDiabloCheatManager::UDiabloCheatManager()
+{
+	static ConstructorHelpers::FClassFinder<UGameplayEffect> FoundEffect(
+      TEXT("Blueprint'/Game/Blueprints/Abilities/GameEffect/GE_Stun.GE_Stun_C'"));
+	m_StunEffect=FoundEffect.Class;
+	//Blueprint'/Game/Blueprints/Abilities/GameEffect/GE_Stun.GE_Stun'
+}
+
 void UDiabloCheatManager::InitCheatManager()
 {
 	Super::InitCheatManager();
@@ -139,6 +147,7 @@ void UDiabloCheatManager::DamageToPlayer(float wantV)
 	InfoXP.ModifierMagnitude = FScalableFloat(wantV);
 	InfoXP.ModifierOp = EGameplayModOp::Additive;
 	InfoXP.Attribute = UBaseDiabloAttribute::GetTookPhysDamageAttribute();
+	
 
 	DiaPl->GetDiaAbilitySystem()->ApplyGameplayEffectToSelf(GEBounty, 1.0f, DamageEffectSpecHandle);
 }
@@ -148,5 +157,13 @@ void UDiabloCheatManager::KillPlayer()
 	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
 	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
 	DiaPl->Die();
+}
+
+void UDiabloCheatManager::StunPlayer()
+{
+	PRINTF("Apply Stun");
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
+	DiaPl->GetDiaAbilitySystem()->ApplyGameEffect(m_StunEffect);
 }
 

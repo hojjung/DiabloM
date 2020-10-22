@@ -77,6 +77,8 @@ protected:
     float m_fTickDeltaTime;
 
     FGameplayAbilitySpecHandle m_BaseAttackHandle;
+
+    
     
 protected:
     virtual void BeginPlay() override;
@@ -150,6 +152,8 @@ public: //AttributeGetter
     UDiabloAbilitySystemComp* GetDiaAbilitySystem() const;
 
     float GetAttackSpeed() const;
+
+    
     
     virtual float GetHealth() const;
 
@@ -207,4 +211,6 @@ public: //AttributeGetter
     friend UDiabloGameInstance;
 
     virtual FVector GetVelocity() const override;
+
+    virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 };

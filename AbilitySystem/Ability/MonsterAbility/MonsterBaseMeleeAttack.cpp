@@ -108,8 +108,7 @@ void UMonsterBaseMeleeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
 
     if (EventTag == m_TagEventBaseAttack)
     {
-        AMonsterPawn* MonsterAttacker = Cast<AMonsterPawn>(GetAvatarActorFromActorInfo());
-        if (!MonsterAttacker || !EventData.Target || !CheckAttackRange(EventData.Target))
+        if (!m_OwnerUnit || !EventData.Target || !CheckAttackRange(EventData.Target))
         {
             //EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
             return;
@@ -119,22 +118,22 @@ void UMonsterBaseMeleeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
             DamageGameplayEffect, GetAbilityLevel());
 
 
-        float PhysDmg = MonsterAttacker->GetAttributeSet()->GetPhysicalDamage();
+        float PhysDmg = m_OwnerUnit->GetAttributeSet()->GetPhysicalDamage();
         DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPhysDamage, PhysDmg);
 
-        float FireDmg = MonsterAttacker->GetAttributeSet()->GetAtkFire();
+        float FireDmg = m_OwnerUnit->GetAttributeSet()->GetAtkFire();
         DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookFireDamage, FireDmg);
 
-        float ElecDmg = MonsterAttacker->GetAttributeSet()->GetAtkElec();
+        float ElecDmg = m_OwnerUnit->GetAttributeSet()->GetAtkElec();
         DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookElecDamage, ElecDmg);
 
-        float PoisonDmg = MonsterAttacker->GetAttributeSet()->GetAtkPoison();
+        float PoisonDmg = m_OwnerUnit->GetAttributeSet()->GetAtkPoison();
         DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPoisonDamage, PoisonDmg);
 
-        float IceDmg = MonsterAttacker->GetAttributeSet()->GetAtkCold();
+        float IceDmg = m_OwnerUnit->GetAttributeSet()->GetAtkCold();
         DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookIceDamage, IceDmg);
 
-        auto* SourceAbili = Cast<AUnitPawn>(EventData.Instigator)->GetDiaAbilitySystem();
+        auto* SourceAbili = m_OwnerUnit->GetDiaAbilitySystem();
         auto* TargetAbili = Cast<AUnitPawn>(EventData.Target)->GetDiaAbilitySystem();
 
         SourceAbili->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data, TargetAbili);
