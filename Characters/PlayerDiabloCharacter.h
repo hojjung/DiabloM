@@ -283,7 +283,7 @@ public:
 
 	virtual bool IsAlive() override;
 	
-	void GrantHealthPotion();
+	void GrantHpPotionAbility();
 
 	void DrinkPotion();
 

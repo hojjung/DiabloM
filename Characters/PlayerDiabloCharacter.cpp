@@ -90,7 +90,7 @@ void APlayerDiabloCharacter::Init()
     m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
     m_AryIgnoreActor.Add(this);
     m_AryIgnoreActor.Add(m_PlayerCon);
-
+    //
     m_FocusRenderer = NewObject<USkeletalMeshComponent>(this, USkeletalMeshComponent::StaticClass());
     m_FocusRenderer->RegisterComponent();
     m_FocusRenderer->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
@@ -156,7 +156,7 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     LoadExp(loadedSaveData);
 
     GrantHpRegenAbility();
-    GrantHealthPotion();
+    GrantHpPotionAbility();
 }
 
 void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
@@ -561,7 +561,7 @@ void APlayerDiabloCharacter::Revive()
     //
     GrantHpRegenAbility();
     GrantBaseAttackAbility();
-    GrantHealthPotion();
+    GrantHpPotionAbility();
     //
     GetCapsule()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     GetMovementComponent()->SetActive(true);
@@ -602,7 +602,7 @@ bool APlayerDiabloCharacter::IsAlive()
     return !m_bIsDead || Super::IsAlive();
 }
 
-void APlayerDiabloCharacter::GrantHealthPotion()
+void APlayerDiabloCharacter::GrantHpPotionAbility()
 {
     if (m_GAPlayerHealthPotion)
     {
@@ -613,10 +613,7 @@ void APlayerDiabloCharacter::GrantHealthPotion()
 
 void APlayerDiabloCharacter::DrinkPotion()
 {
-  
-
     GetDiaAbilitySystem()->TryActivateAbility(m_PotionHandle);
-    //
 }
 
 float APlayerDiabloCharacter::GetCastSpeed() const

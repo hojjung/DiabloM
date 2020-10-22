@@ -159,11 +159,16 @@ void UDiabloCheatManager::KillPlayer()
 	DiaPl->Die();
 }
 
-void UDiabloCheatManager::StunPlayer()
+void UDiabloCheatManager::StunPlayer(float duration)
 {
 	PRINTF("Apply Stun");
 	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
 	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
-	DiaPl->GetDiaAbilitySystem()->ApplyGameEffect(m_StunEffect);
+
+	auto ASD=DiaPl->GetDiaAbilitySystem()->MakeOutgoingSpec(m_StunEffect,1,DiaPl->GetDiaAbilitySystem()->MakeEffectContext());
+
+	ASD.Data->Duration=duration;//효과없음
+	
+	DiaPl->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(*ASD.Data);
 }
 

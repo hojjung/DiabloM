@@ -70,5 +70,5 @@ public:
 	UFUNCTION(exec)
     void KillPlayer();
 	UFUNCTION(exec)
-    void StunPlayer();
+    void StunPlayer(float duration= 2.f);
 };

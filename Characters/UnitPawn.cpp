@@ -31,8 +31,6 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
     m_AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("State.Debuff.Stun")),
         EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AUnitPawn::StunTagChanged);
 
-
-    
     m_AttributeSet = CreateDefaultSubobject<UBaseDiabloAttribute>("AttributeSet00");
 
     m_PFComp = CreateDefaultSubobject<UPathFollowingComponent>(TEXT("PathFollowingComponent"));
@@ -425,8 +423,25 @@ FVector AUnitPawn::GetVelocity() const
 
 void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
-    GetDiaAbilitySystem()->CancelAbilities();
-    PRINTF("OnStun");
+    if(NewCount>0)
+    {
+        GetDiaAbilitySystem()->CancelAbilities();
+        Cast<UUnitMovement>( GetMovementComponent())->SetMoveSpeed(0.f);
+        
+        if(m_StunMontage)
+        {
+            PlayAnimMontage(m_StunMontage);
+        }
+        
+        return;
+    }
+    
+    if(m_StunMontage)
+    {
+        StopAnimMontage(m_StunMontage);
+    }
+    
+    Cast<UUnitMovement>( GetMovementComponent())->SetMoveSpeed(GetAttributeSet()->GetMoveSpeed());
 }
 
 void AUnitPawn::FocusTarget(AUnitPawn* target)

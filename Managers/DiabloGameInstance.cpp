@@ -1,4 +1,6 @@
 #include "DiabloGameInstance.h"
+
+#include "AbilitySystemGlobals.h"
 #include "NavigationSystem.h"
 #include "StartMap/PlayerCreateManager.h"
 #include "MonsterSpawnManager.h"
@@ -28,6 +30,7 @@ UDiabloGameInstance::UDiabloGameInstance()
 void UDiabloGameInstance::Init()
 {
     Super::Init();
+    UAbilitySystemGlobals::Get().InitGlobalData();
     
     if (!m_ItemManager)
     {
