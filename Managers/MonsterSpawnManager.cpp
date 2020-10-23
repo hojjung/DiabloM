@@ -28,7 +28,7 @@ bool UMonsterSpawnManager::SpawnIter(const FVector& centerSpawnLoc,const FMonste
             FVector PointSpawn = GetRandomPoint(centerSpawnLoc, m_fSpawnRadius);
 
             AMonsterPawn* SpawnedMob = SpawnMob(PointSpawn);
-
+        
             if (!SpawnedMob)
             {
                 continue;
@@ -36,6 +36,7 @@ bool UMonsterSpawnManager::SpawnIter(const FVector& centerSpawnLoc,const FMonste
 
             outMobAry.Add(SpawnedMob);
 
+            PRINTF("MonsterManualSpawn Init");
             SpawnedMob->InitMonster(MobSelected.m_MonsterEntity, level);
         }
     }
@@ -63,5 +64,7 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
     Param.bNoFail = true;
     loc.Z += 88.f;
     //88
-    return m_CurrentWorld->SpawnActor<AMonsterPawn>(UCharacterDataTable::ClassMonsterPawn, loc, FRotator(), Param);
+    FRotator Rot;
+    Rot.Yaw=FMath::RandRange(0.f,360.f);
+    return m_CurrentWorld->SpawnActor<AMonsterPawn>(UCharacterDataTable::ClassMonsterPawn, loc, Rot, Param);
 }

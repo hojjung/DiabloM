@@ -14,15 +14,15 @@ AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit): Super(objInit)
     GetCapsule()->SetCapsuleRadius(24.f);
     m_SkBody->SetRelativeLocation(FVector( 0,0,-90.f));
     m_SkBody->SetRelativeRotation(FRotator(0,-90.f,0));
-    
-    
+    m_bIsPlaced=false;
+    PRINTF("MonsterCons");
 }
 
 void AMonsterPawn::BeginPlay()
 {
     Super::BeginPlay();
-
-    if (!m_MonsterUnitHandle.IsNull())
+    PRINTF("MonsterBeginPlay");
+    if (m_bIsPlaced&&!m_MonsterUnitHandle.IsNull())
     {
         InitMonster(m_MonsterUnitHandle, m_nCharacterLevel);
     }
@@ -31,6 +31,7 @@ void AMonsterPawn::BeginPlay()
 void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
 {
     SetCharacterLevel(level);
+    m_MonsterUnitHandle.RowName=unitID.RowName;
     const FMonsterTable* const UnitData = unitID.GetRow<FMonsterTable>("");
     m_TextUnitName = UnitData->m_ShowingName;
     m_SkBody->SetSkeletalMesh(UnitData->m_Mesh);

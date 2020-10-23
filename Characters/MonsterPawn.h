@@ -32,6 +32,8 @@ protected:
 	UMobFSMBase* m_FSM;
 	UPROPERTY()
 	UMonsterSensing* m_MonsterSense;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool m_bIsPlaced;
 public: //need more monster
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void ShowStatusBar();
