@@ -8,6 +8,10 @@
 
 AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 {
+    m_TagStun= FGameplayTag::RequestGameplayTag(FName("State.Debuff.Stun"));
+    m_TagEffectRemoveOnDeath = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.RemoveOnDeath"));
+    m_TagDead = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
+    //
     m_AttachedTextPopup=nullptr;
     PrimaryActorTick.bCanEverTick = true;
     m_bUseFSM = false;
@@ -29,7 +33,7 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
     m_nCharacterLevel = 1;
     m_AbilitySystemComponent = CreateDefaultSubobject<UDiabloAbilitySystemComp>("AbilitySystemComponent00");
     m_AbilitySystemComponent->SetIsReplicated(true); //bCachedIsNetSimulated
-    m_AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("State.Debuff.Stun")),
+    m_AbilitySystemComponent->RegisterGameplayTagEvent(m_TagStun,
         EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AUnitPawn::StunTagChanged);
 
     m_AttributeSet = CreateDefaultSubobject<UBaseDiabloAttribute>("AttributeSet00");
@@ -40,9 +44,9 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
     m_NavSys = nullptr;
 
     m_fMoveAcceptRadius = 100.f;
+   
 
-    m_EffectRemoveOnDeathTag = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.RemoveOnDeath"));
-    m_DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
+    //Test
 }
 
 
@@ -407,7 +411,7 @@ bool AUnitPawn::SetCharacterLevel(int NewLevel)
     return true;
 }
 
-bool AUnitPawn::IsAlive()
+bool AUnitPawn::IsAlive() const
 {
     return GetHealth() > 0.0f;
 }
@@ -443,6 +447,14 @@ void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
     }
     
     Cast<UUnitMovement>( GetMovementComponent())->SetMoveSpeed(GetAttributeSet()->GetMoveSpeed());
+}
+
+void AUnitPawn::PlayTookHitMontage()
+{
+    if(m_TookHitMontage)
+    {
+        PlayAnimMontage(m_TookHitMontage);
+    }
 }
 
 void AUnitPawn::FocusTarget(AUnitPawn* target)
@@ -503,11 +515,12 @@ void AUnitPawn::Die()
         m_AttachedTextPopup->EndAnimation();
         m_AttachedTextPopup=nullptr;
     }
+    m_OnCharacterDied.Broadcast(this);
+    
     SetActorTickEnabled(false);
     GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMovementComponent()->SetActive(false);
 
-    m_OnCharacterDied.Broadcast(this);
 
     m_bUseFSM=false;
 
@@ -516,15 +529,17 @@ void AUnitPawn::Die()
         GetDiaAbilitySystem()->CancelAllAbilities();
 
         FGameplayTagContainer EffectTagsToRemove;
-        EffectTagsToRemove.AddTag(m_EffectRemoveOnDeathTag);
+        EffectTagsToRemove.AddTag(m_TagEffectRemoveOnDeath);
         int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
 
-        GetDiaAbilitySystem()->AddLooseGameplayTag(m_DeadTag);
+        GetDiaAbilitySystem()->AddLooseGameplayTag(m_TagDead);
+
+        GetDiaAbilitySystem()->RemoveGameplayCue(m_TagStun);
     }
 
     if (m_DeathMontage)
     {
-        float AnimLength = PlayAnimMontage(m_DeathMontage) - 0.2f;
+        float AnimLength = PlayAnimMontage(m_DeathMontage) ;//- 0.2f;
         
         if (GEngine->GetNetMode(GetWorld()) < NM_Client)
         {

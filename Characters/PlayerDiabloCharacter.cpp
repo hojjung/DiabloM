@@ -12,6 +12,9 @@
 #include "AbilitySystem/Ability/DiabloAbility.h"
 #include "AbilitySystem/Ability/PlayerBaseAttack.h"
 #include "AbilitySystem/Ability/PlayerHealthPotion.h"
+#include "AbilitySystem/Ability/Timer/PlayerHpRegenAbility.h"
+#include "AbilitySystem/Ability/Timer/PlayerManaRegenAbility.h"
+#include "AbilitySystem/Ability/Timer/PlayerStaminaRegenAbility.h"
 #include "Logic/PlayerSensing.h"
 #include "Characters/MonsterPawn.h"
 
@@ -124,8 +127,8 @@ void APlayerDiabloCharacter::GrantHpRegenAbility()
 {
     if (m_GAPlayerHealthRegen)
     {
-        m_HpRegenHandle = GetDiaAbilitySystem()->GiveAbility(
-            FGameplayAbilitySpec(m_GAPlayerHealthRegen, GetCharacterLevel(), INDEX_NONE, this));
+        FGameplayAbilitySpec Spec=FGameplayAbilitySpec(m_GAPlayerHealthRegen, GetCharacterLevel(), -1, this);
+        m_HpRegenHandle = GetDiaAbilitySystem()->GiveAbility(Spec);
     }
 }
 
@@ -150,6 +153,8 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     m_GEUnitStat = m_PlayerEntityData->m_DefaultStatTable;
 
     m_DeathMontage = m_PlayerEntityData->m_DeathMontage;
+    m_StunMontage = m_PlayerEntityData->m_StunMontage;
+    m_TookHitMontage= m_PlayerEntityData->m_TookHitMontage;
 
     SetCharacterLevel(loadedSaveData->m_nLevel);
 
@@ -527,10 +532,10 @@ void APlayerDiabloCharacter::Die()
     {
         GetDiaAbilitySystem()->CancelAllAbilities();
         FGameplayTagContainer EffectTagsToRemove;
-        EffectTagsToRemove.AddTag(m_EffectRemoveOnDeathTag);
+        EffectTagsToRemove.AddTag(m_TagEffectRemoveOnDeath);
         int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
 
-        GetDiaAbilitySystem()->AddLooseGameplayTag(m_DeadTag);
+        GetDiaAbilitySystem()->AddLooseGameplayTag(m_TagDead);
     }
 
     m_OnCharacterDied.Broadcast(this);
@@ -557,7 +562,8 @@ void APlayerDiabloCharacter::Die()
 
 void APlayerDiabloCharacter::Revive()
 {
-    GetDiaAbilitySystem()->RemoveLooseGameplayTag(m_DeadTag);
+    m_SkBody->GetAnimInstance()->StopSlotAnimation();
+    GetDiaAbilitySystem()->RemoveLooseGameplayTag(m_TagDead);
     //
     GrantHpRegenAbility();
     GrantBaseAttackAbility();
@@ -597,7 +603,7 @@ FVector APlayerDiabloCharacter::GetLastSeenLocation()
     return m_PlayerSense->m_LastSeenLocation;
 }
 
-bool APlayerDiabloCharacter::IsAlive()
+bool APlayerDiabloCharacter::IsAlive() const
 {
     return !m_bIsDead || Super::IsAlive();
 }

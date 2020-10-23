@@ -42,7 +42,7 @@ void ADroppedItem::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 {
 	FName Tier=GetCurrentItem().m_ItemTier->m_TierID;
 	
-	if(Tier=="Set"||Tier=="Immortal"||Tier=="Legendary"||Tier=="Epic")
+	if(Tier=="Set"||Tier=="Immortal"||Tier=="Legend"||Tier=="Epic")
 	{
 		Interact(OtherActor);
 	}

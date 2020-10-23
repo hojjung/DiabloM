@@ -91,6 +91,9 @@ void UBaseDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* Source
         const float OldHealth = GetHealth();
 
         SetHealth(FMath::Clamp(OldHealth - LocalDamageDone, 0.0f, GetMaxHealth()));
+
+        TargetUnit->PlayTookHitMontage();
+        
         if (TargetUnit == ADiabloPlayerController::Get->GetPlayerPawn())
         {
             ADiabloPlayerController::Get->ShowDamageNumber(LocalDamageDone, TargetUnit, EDamagePopup::PlayerHurt);

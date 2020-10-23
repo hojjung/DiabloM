@@ -38,10 +38,12 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
     m_SkBody->SetAnimInstanceClass(UnitData->m_AnimBP);
     m_GEUnitStat = UnitData->m_DefaultStatTable; //몬스터 랜덤 데이터가 마치 아이템 옵션처럼 몬스터에게 붙어야한다.
     check(m_GEUnitStat);
-    m_DeathMontage = UnitData->m_DeathMontage;
     SetUnitStatEffect();
-    GetAttributeSet()->m_OnStatChanged.AddUObject(this, &AMonsterPawn::SetHealthPercentage);
-    SetHealthPercentage(this);
+    
+    GetDiaAbilitySystem()->GetGameplayAttributeValueChangeDelegate(GetAttributeSet()->GetHealthAttribute()).AddUObject(this, &AMonsterPawn::SetHealthPercentage);
+    
+    FOnAttributeChangeData NotUse;
+    SetHealthPercentage(NotUse);
 
     m_MonsterSense = NewObject<UMonsterSensing>(this,UMonsterSensing::StaticClass());
     m_MonsterSense->InitSense(this);
@@ -53,12 +55,20 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
         m_FSM->Init(this);
         m_bUseFSM = true;
     }
+    else
+    {
+        SetActorTickEnabled(false);//Anim?
+    }
     
     if(UnitData->m_BaseAttack)
     {
         FGameplayAbilitySpec BaseAttackHandle(UnitData->m_BaseAttack,level,INDEX_NONE,this);
         m_BaseAttackHandle = GetDiaAbilitySystem()->GiveAbility(BaseAttackHandle);
     }
+
+    m_DeathMontage = UnitData->m_DeathMontage;
+    m_StunMontage = UnitData->m_StunMontage;
+    m_TookHitMontage= UnitData->m_TookHitMontage;
 }
 
 void AMonsterPawn::OnDeathAnimEnd()
@@ -70,14 +80,7 @@ void AMonsterPawn::OnDeathAnimEnd()
     GetDiaAbilitySystem()->ApplyGameplayEffectSpecToTarget(*ExpSpecHandle.Data,
         ADiabloPlayerController::Get->GetPlayerPawn()->GetDiaAbilitySystem());
 
-    // 골드 액터 드랍
-    //n개만큼 분산
-    // 아이템 액터 드랍
-
-    //디졸브
-
-    //삭제
-
+//Item?
     Destroy();
 }
 
@@ -91,10 +94,10 @@ void AMonsterPawn::Tick(float DeltaSeconds)
     }
 }
 
-void AMonsterPawn::SetHealthPercentage(AUnitPawn* target)
+void AMonsterPawn::SetHealthPercentage(const FOnAttributeChangeData& data)
 {
-    UpdateHealthBar(target->GetHpPercentOne());
-    PRINTF("HealthPer :%f", target->GetHpPercentOne());
+    UpdateHealthBar(GetHpPercentOne());
+    PRINTF("HealthPer :%f", GetHpPercentOne());
 }
 
 bool AMonsterPawn::HasDropItem()

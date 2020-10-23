@@ -37,6 +37,11 @@ void AWeaponMelee::OnOverlapWeapon(
     UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
     bool bFromSweep, const FHitResult& SweepResult)
 {
+    if(OtherActor->IsPendingKillPending())
+    {
+        return;
+    }
+    
     if(m_User.Get() == OtherActor)
     {
         return;
@@ -45,7 +50,8 @@ void AWeaponMelee::OnOverlapWeapon(
     {
         return;
     }
-    
+
+
     m_User.Get()->GetAlreadyAttacked().Add(OtherActor);
 
     FGameplayEventData EventData;

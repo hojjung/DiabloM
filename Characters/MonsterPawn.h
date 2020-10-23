@@ -50,7 +50,7 @@ public: //need more monster
 
 	virtual void OnDeathAnimEnd() override;
 
-	void SetHealthPercentage(AUnitPawn* target );
+	void SetHealthPercentage(const FOnAttributeChangeData& data);
 
 	virtual bool HasDropItem() override;
 

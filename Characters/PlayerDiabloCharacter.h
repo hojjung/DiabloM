@@ -281,7 +281,7 @@ public:
 		return m_OnRevived;
 	}
 
-	virtual bool IsAlive() override;
+	virtual bool IsAlive() const override;
 	
 	void GrantHpPotionAbility();
 

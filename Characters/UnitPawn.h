@@ -57,15 +57,19 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "Character")
     UAnimMontage* m_StunMontage;
     UPROPERTY(VisibleAnywhere, Category = "Character")
+    UAnimMontage* m_TookHitMontage;
+    UPROPERTY(VisibleAnywhere, Category = "Character")
     TSubclassOf<UGameplayEffect> m_GEUnitStat;
     UPROPERTY(VisibleAnywhere, Category = "Character")
     UNavigationSystemV1* m_NavSys;
     UPROPERTY(VisibleAnywhere, Category = "Character")
     FText m_TextUnitName;
     UPROPERTY(VisibleAnywhere, Category = "Character")
-    FGameplayTag m_DeadTag;
+    FGameplayTag m_TagDead;
     UPROPERTY(VisibleAnywhere, Category = "Character")
-    FGameplayTag m_EffectRemoveOnDeathTag;
+    FGameplayTag m_TagStun;
+    UPROPERTY(VisibleAnywhere, Category = "Character")
+    FGameplayTag m_TagEffectRemoveOnDeath;
     
     TWeakObjectPtr<AUnitPawn> m_FocusedEnemy;
 
@@ -174,7 +178,7 @@ public: //AttributeGetter
 
     virtual void FocusTarget(AUnitPawn* target);
 
-    virtual bool IsAlive();
+    virtual bool IsAlive() const;
 
     UBaseDiabloAttribute* GetAttributeSet() const;
 
@@ -220,4 +224,6 @@ public: //AttributeGetter
     virtual FVector GetVelocity() const override;
 
     virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+
+    void PlayTookHitMontage();
 };

@@ -2,6 +2,7 @@
 
 #include "AbilitySystem/Task/PlayMontageAndWaitForEvent.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Characters/UnitPawn.h"
 
 UPlayerBaseAttack::UPlayerBaseAttack()
 {
@@ -126,10 +127,12 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
     if (EventTag == m_TagEventBaseAttack)
     {
        
-        if (!PlayerChar)
+        if (!PlayerChar||!TargetChar||!TargetChar->IsAlive())
         {
             EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+            return;
         }
+        
 
         FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
             DamageGameplayEffect, GetAbilityLevel());

@@ -35,7 +35,11 @@ public:
 	TSubclassOf<UGameplayEffect> m_DefaultStatTable;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UAnimMontage* m_StunMontage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimMontage* m_DeathMontage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UAnimMontage* m_TookHitMontage;
 };
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
