@@ -107,15 +107,8 @@ void USaveLoadManager::LoadInventory(int slotIndex)
         UGameplayStatics::LoadGameFromSlot(m_InvenSlotName, slotIndex));
 
 
-    switch (LoadInven->m_SaveVersion)
-    {
-    case ESaveVersion::Init:
-        break;
-
-    default: ;
-    }
-
-    LoadItemDataForInstance(LoadInven->m_InvenAry);
+    
+    LoadItemDataForInstance(LoadInven->m_InvenAry,LoadInven->m_SaveVersion);
     
     m_AryLoadedInventory[slotIndex] = LoadInven;
 
@@ -196,15 +189,7 @@ void USaveLoadManager::LoadEquipment(int slotIndex)
 {
     USaveEquipment* LoadEquip = Cast<USaveEquipment>(UGameplayStatics::LoadGameFromSlot(m_EquipSlotName, slotIndex));
 
-    switch (LoadEquip->m_SaveVersion)
-    {
-    case ESaveVersion::Init:
-        break;
-
-    default: ;
-    }
-
-    LoadItemDataForInstance(LoadEquip->m_EquipAry);
+    LoadItemDataForInstance(LoadEquip->m_EquipAry,LoadEquip->m_SaveVersion);
     
     m_AryLoadedEquipments[slotIndex] = LoadEquip;
 
@@ -339,7 +324,7 @@ int USaveLoadManager::GetEmptyIndex()
     return -1;
 }
 
-void USaveLoadManager::LoadItemDataForInstance(TArray<FItemInstance>& itemAry)
+void USaveLoadManager::LoadItemDataForInstance(TArray<FItemInstance>& itemAry,ESaveVersion version)
 {
     for (auto& ItemInst : itemAry)
     {
@@ -347,8 +332,25 @@ void USaveLoadManager::LoadItemDataForInstance(TArray<FItemInstance>& itemAry)
         {
             continue;
         }
+
         ItemInst.m_ItemData = UItemDataTable::GetItemDataPtr(ItemInst.m_ItemID);
         ItemInst.m_ItemTier = UItemDataTable::GetItemTierPtr(ItemInst.m_TierID);
+
+        if(ItemInst.m_ItemTier==nullptr)
+        {
+            switch (version)
+            {
+            case ESaveVersion::Init:
+
+                if(ItemInst.m_TierID=="Legendary")
+                {
+                    ItemInst.m_TierID="Legend";
+                    ItemInst.m_ItemTier = UItemDataTable::GetItemTierPtr(ItemInst.m_TierID);
+                }
+            default: ;
+            }
+
+        }
 
         for(auto& OO: ItemInst.m_AryOptions)
         {

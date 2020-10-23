@@ -12,7 +12,7 @@
 UDiabloCheatManager::UDiabloCheatManager()
 {
 	static ConstructorHelpers::FClassFinder<UGameplayEffect> FoundEffect(
-      TEXT("Blueprint'/Game/Blueprints/Abilities/GameEffect/GE_Stun.GE_Stun_C'"));
+      TEXT("Blueprint'/Game/Blueprints/Abilities/GameEffect/GE_BasherStun.GE_BasherStun_C'"));
 	m_StunEffect=FoundEffect.Class;
 	//Blueprint'/Game/Blueprints/Abilities/GameEffect/GE_Stun.GE_Stun'
 }

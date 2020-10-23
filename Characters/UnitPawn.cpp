@@ -8,6 +8,7 @@
 
 AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 {
+    m_AttachedTextPopup=nullptr;
     PrimaryActorTick.bCanEverTick = true;
     m_bUseFSM = false;
     m_Capsule = CreateDefaultSubobject<UCapsuleComponent>("Capsule00");
@@ -489,7 +490,7 @@ UAnimMontage* AUnitPawn::GetCurrentMontage()
     UAnimInstance* AnimInstance = m_SkBody->GetAnimInstance();
     if (AnimInstance)
     {
-        return AnimInstance->GetCurrentActiveMontage();
+        return AnimInstance->GetCurrentActiveMontage();    
     }
 
     return nullptr;
@@ -497,6 +498,11 @@ UAnimMontage* AUnitPawn::GetCurrentMontage()
 
 void AUnitPawn::Die()
 {
+    if(m_AttachedTextPopup)
+    {
+        m_AttachedTextPopup->EndAnimation();
+        m_AttachedTextPopup=nullptr;
+    }
     SetActorTickEnabled(false);
     GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMovementComponent()->SetActive(false);

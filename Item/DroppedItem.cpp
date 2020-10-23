@@ -14,11 +14,11 @@ void ADroppedItem::BeginPlay()
 		
 		auto AA = m_ItemInstance.m_AryOptions;
 
-		PRINTF("Ground CreatedItem: %s",*m_ItemInstance.m_ItemData->m_ShowingName.ToString());
+		//PRINTF("Ground CreatedItem: %s",*m_ItemInstance.m_ItemData->m_ShowingName.ToString());
 		
 		for(auto BB :AA)
 		{
-			PRINTF("Option:%s", *BB.GetOptionText().ToString());
+			//PRINTF("Option:%s", *BB.GetOptionText().ToString());
 		}
 		
 	}

@@ -161,8 +161,6 @@ const FItemTier& UItemManager::GetDefaultTierRoll() const
 
         if (DropRateCount >= RandomValue)
         {
-            PRINTF("Rand:%f,DropRate:%f,Tier:%s", RandomValue, DropRateCount, *TierData->m_ShowingName.ToString());
-
             return *TierData;
         }
     }

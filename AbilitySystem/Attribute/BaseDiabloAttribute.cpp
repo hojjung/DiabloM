@@ -79,9 +79,10 @@ void UBaseDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* Source
                                         float TookDamageCache)
 {
     float RandDmg = FMath::RandRange(0.95f, 1.05f);
+    
     const float LocalDamageDone = TookDamageCache * RandDmg;
 
-    if (LocalDamageDone > 0.f)
+    if (LocalDamageDone > 1.f)
     {
         bool WasAlive = true;
 

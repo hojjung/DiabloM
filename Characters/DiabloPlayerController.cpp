@@ -67,10 +67,9 @@ void ADiabloPlayerController::CreateDmgWC(int count)
 	{
 		UDamageTextWidgetComponent* DamageText = NewObject<UDamageTextWidgetComponent>(GetPlayerPawn(), m_ClassDmgText);
 		DamageText->RegisterComponent();
-		DamageText->AttachToComponent(GetPlayerPawn()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		DamageText->AttachToActor(GetPlayerPawn());
 		m_AryDmgWC.Add(DamageText);
 		DamageText->Init(GetPlayerPawn());
-		DamageText->m_AttachedActor=GetPlayerPawn();
 		DamageText->SetHiddenInGame(true);
 	}
 }
@@ -84,7 +83,7 @@ UDamageTextWidgetComponent* ADiabloPlayerController::GetDmgWC()
 		m_DmgIndex=0;
 	}
 	
-	if(Dmg->m_AttachedActor!=this)
+	if(Dmg->GetAttachedActor()!=this)
 	{
 		Dmg->EndAnimation();
 	}
@@ -203,10 +202,12 @@ APlayerDiabloCharacter* ADiabloPlayerController::GetPlayerPawn()
 	return  Cast<APlayerDiabloCharacter>( GetPawn());
 }
 
-void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done,const AUnitPawn* unit_pawn,EDamagePopup dmgPopup) //target
+void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup) //target
 {
 	UDamageTextWidgetComponent* DamageText = GetDmgWC();
-	DamageText->AttachToComponent(unit_pawn->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	
+	DamageText->AttachToActor(unit_pawn);
+	
 	if(dmgPopup==EDamagePopup::Miss)
 	{
 		FFormatOrderedArguments Args;
@@ -218,7 +219,6 @@ void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done,con
 		DamageText->SetDamageText(UDiaBlueprintFunctionLibrary::GetAlphabetText(local_damage_done));//
 	}
 	DamageText->StartAnimation(dmgPopup);
-	DamageText->m_AttachedActor=unit_pawn;
 }
 
 void ADiabloPlayerController::HideFocusStatusWidget()

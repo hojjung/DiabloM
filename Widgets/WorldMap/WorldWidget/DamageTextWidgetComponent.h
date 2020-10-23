@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "Characters/UnitPawn.h"
 #include "Components/WidgetComponent.h"
 #include "DamageTextWidgetComponent.generated.h"
 
@@ -25,12 +27,15 @@ UCLASS()
 class DIABLOM_API UDamageTextWidgetComponent : public UWidgetComponent
 {
 	GENERATED_BODY()
-public:
+   protected:
     UPROPERTY()
-    AActor* m_Base;
+    const AActor* m_Base;
     UPROPERTY()
     const AActor* m_AttachedActor;
+public:
     void Init(AActor* base);
+    void AttachToActor(AUnitPawn* newRoot);
+    
     UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void SetDamageText(const FText& Damage);
     UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
@@ -38,4 +43,9 @@ public:
 
     UFUNCTION(BlueprintCallable)
     void EndAnimation();
+
+    FORCEINLINE const AActor* GetAttachedActor() const
+    {
+        return m_AttachedActor;
+    }
 };

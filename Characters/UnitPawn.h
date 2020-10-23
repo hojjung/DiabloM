@@ -15,6 +15,7 @@
 
 #include "UnitPawn.generated.h"
 
+class UDamageTextWidgetComponent;
 class UDiabloGameInstance;
 DECLARE_MULTICAST_DELEGATE(FOnAttack);
 DECLARE_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, class AUnitPawn*);
@@ -66,7 +67,9 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "Character")
     FGameplayTag m_EffectRemoveOnDeathTag;
     
-    TWeakObjectPtr< AUnitPawn> m_FocusedEnemy;
+    TWeakObjectPtr<AUnitPawn> m_FocusedEnemy;
+
+    
     
     FCharacterDiedDelegate m_OnCharacterDied;
 
@@ -80,8 +83,10 @@ protected:
 
     FGameplayAbilitySpecHandle m_BaseAttackHandle;
 
-    
-    
+public:
+    UPROPERTY()
+    UDamageTextWidgetComponent* m_AttachedTextPopup;
+
 protected:
     virtual void BeginPlay() override;
 

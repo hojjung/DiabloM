@@ -90,7 +90,7 @@ public:
     
     int GetEmptyIndex();
     //Focus Character need
-    void LoadItemDataForInstance(TArray<FItemInstance>& itemAry);
+    void LoadItemDataForInstance(TArray<FItemInstance>& itemAry,ESaveVersion version);
 
     FName GetCurrentPlayerClassName();
 };
