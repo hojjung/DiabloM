@@ -68,7 +68,6 @@ public:
         //DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, 	AtkPoison		    		, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, Accuracy, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, LifeSteal, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, DoubleAttackChance, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, BashChance, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CriticalChance, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CriticalDamage, Source, true);

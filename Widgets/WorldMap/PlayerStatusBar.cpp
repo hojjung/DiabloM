@@ -24,18 +24,20 @@ void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon)
     m_SelectedBar = m_RageBar;
     m_SelectedCurAttribute = &DiaAttri->Rage;
     m_SelectedMaxAttribute = &DiaAttri->MaxRage;
-
+    PRINTF("RageSet");
     if (DiaAttri->GetMaxMana() > 0)
     {
         m_SelectedBar = m_ManaBar;
         m_SelectedCurAttribute = &DiaAttri->Mana;
         m_SelectedMaxAttribute = &DiaAttri->MaxMana;
+        PRINTF("Nope Mana Set");
     }
     else if (DiaAttri->GetMaxStamina() > 0)
     {
         m_SelectedBar = m_StaminaBar;
         m_SelectedCurAttribute = &DiaAttri->Stamina;
         m_SelectedMaxAttribute = &DiaAttri->MaxStamina;
+        PRINTF("Nope Stamina Set");
     }
 
     m_SelectedBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -44,6 +46,9 @@ void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon)
     DiaAttri->m_OnStatChanged.AddUObject(this, &UPlayerStatusBar::SetResourceBarProgressV);
 
     m_InvenOpenButton->OnClicked.AddDynamic(diaCon, &ADiabloPlayerController::OpenMainMenu);
+
+    SetHealthBarProgressV(diaCon->GetPlayerPawn());
+    SetResourceBarProgressV(diaCon->GetPlayerPawn());
 }
 
 void UPlayerStatusBar::SetHealthBarProgressV(AUnitPawn* pawn)

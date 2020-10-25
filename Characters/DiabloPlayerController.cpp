@@ -35,12 +35,11 @@ void ADiabloPlayerController::BeginPlay()
 	GetPlayerPawn()->Init();
 	m_Inven = NewObject<UInventory>();
 	m_Inven->InitInven(m_nInvenX,m_nInvenY);
-
 	m_EquipSystem = NewObject<UEquipmentSystem>();
 	m_EquipSystem->Init(GetPlayerPawn()->GetDiaAbilitySystem());
 	m_EquipSystem->GetItemChangeCallback().AddUObject(this,&ADiabloPlayerController::PlayerMeshChange);
-	InitWidget();
 	USaveLoadManager::Get->CreateSetPlayerCharacter();
+	InitWidget();
 }
 
 void ADiabloPlayerController::InitWidget()

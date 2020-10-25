@@ -96,7 +96,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Item")
 	FGameplayAttributeData PotionCoolDownReduce;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, PotionCoolDownReduce)
+	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, PotionCoolDownReduce)//Max 1
 
 	UPROPERTY(BlueprintReadOnly, Category = "Item")
 	FGameplayAttributeData GoldBonusPer;
@@ -111,16 +111,12 @@ public:
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, LifeSteal)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData DoubleAttackChance;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, DoubleAttackChance)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData BashChance;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, BashChance)
+	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, BashChance)//Max 0.65
 
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData CriticalChance;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, CriticalChance)
+	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, CriticalChance)//Max 95%
 
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData CriticalDamage;
@@ -128,7 +124,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Defense")
 	FGameplayAttributeData BlockChance;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, BlockChance)
+	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, BlockChance)//Max 95%
 
 	UPROPERTY(BlueprintReadOnly, Category = "Grow")
 	FGameplayAttributeData MaxExpForLevelUp;

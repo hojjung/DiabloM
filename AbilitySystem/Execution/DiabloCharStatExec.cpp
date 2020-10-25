@@ -57,7 +57,7 @@ struct DiabloCharStatStatics
     DECLARE_ATTRIBUTE_CAPTUREDEF(AllSkillBonus);
 
     DECLARE_ATTRIBUTE_CAPTUREDEF(LifeSteal);
-    DECLARE_ATTRIBUTE_CAPTUREDEF(DoubleAttackChance);
+   
     DECLARE_ATTRIBUTE_CAPTUREDEF(BashChance);
     DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalChance);
 
@@ -103,7 +103,7 @@ struct DiabloCharStatStatics
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CastingSpeed, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AllSkillBonus, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, LifeSteal, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, DoubleAttackChance, Source, true);
+      
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, BashChance, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CriticalChance, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MagicItemDropBonus, Source, true);
@@ -155,7 +155,7 @@ UDiabloCharStatExec::UDiabloCharStatExec()
     RelevantAttributesToCapture.Add(GetCharStatStatics().CastingSpeedDef);
     RelevantAttributesToCapture.Add(GetCharStatStatics().AllSkillBonusDef);
     RelevantAttributesToCapture.Add(GetCharStatStatics().LifeStealDef);
-    RelevantAttributesToCapture.Add(GetCharStatStatics().DoubleAttackChanceDef);
+  
     RelevantAttributesToCapture.Add(GetCharStatStatics().BashChanceDef);
     RelevantAttributesToCapture.Add(GetCharStatStatics().CriticalChanceDef);
     RelevantAttributesToCapture.Add(GetCharStatStatics().MagicItemDropBonusDef);
@@ -215,7 +215,7 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
     float CastingSpeed=1.0f;
     float AllSkillBonus=0.f;
     float LifeSteal=1.0f;
-    float DoubleAttackChance=1.0f;
+   
     float BashChance=1.0f;
     float CriticalChance=1.0f;
     float MagicItemDropBonus=1.0f;
@@ -289,8 +289,7 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
                                                                EvaluationParameters, AllSkillBonus);
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetCharStatStatics().LifeStealDef, EvaluationParameters,
                                                                LifeSteal);
-    ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetCharStatStatics().DoubleAttackChanceDef,
-                                                               EvaluationParameters, DoubleAttackChance);
+ 
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetCharStatStatics().BashChanceDef, EvaluationParameters,
                                                                BashChance);
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetCharStatStatics().CriticalChanceDef,

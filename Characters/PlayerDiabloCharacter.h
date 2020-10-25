@@ -36,6 +36,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TSubclassOf<UPlayerHpRegenAbility> m_GAPlayerHealthRegen;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	TSubclassOf<UPlayerHpRegenAbility> m_GAPlayerManaRegen;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TSubclassOf<UPlayerHealthPotion> m_GAPlayerHealthPotion;
 	
 	//

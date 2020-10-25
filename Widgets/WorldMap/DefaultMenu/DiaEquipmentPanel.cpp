@@ -64,6 +64,17 @@ void UDiaEquipmentPanel::Init(UEquipmentSystem * equipContainer)
 	m_EquipSys->GetEquipChanged().AddUObject(this,&UDiaEquipmentPanel::UpdateEquipSlot);
 
 	UDiaEquipmentPanel::GetEquipWidgetInst = this;
+
+
+	for(int i=0; i<m_EquipSys->GetArySlotPtr().Num();i++)
+	{
+		if(m_EquipSys->GetItem(i).IsEmpty())
+		{
+			continue;
+		}
+		UpdateEquipSlot(m_EquipSys->GetItem(i),*m_EquipSys->GetArySlotPtr()[i]);
+		UpdateSlot(i,m_EquipSys->GetItem(i));
+	}
 }
 
 bool UDiaEquipmentPanel::EquipItem(int dropIndex, FItemInstance& drag)

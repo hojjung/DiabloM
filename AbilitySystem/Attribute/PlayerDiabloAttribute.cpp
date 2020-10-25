@@ -125,9 +125,6 @@ void UPlayerDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModC
 	else if (Data.EvaluatedData.Attribute == GetLifeStealAttribute())
 	{
 	}
-	else if (Data.EvaluatedData.Attribute == GetDoubleAttackChanceAttribute())
-	{
-	}
 	else if (Data.EvaluatedData.Attribute == GetBashChanceAttribute())
 	{
 	}

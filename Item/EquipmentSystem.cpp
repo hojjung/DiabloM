@@ -337,17 +337,17 @@ void UEquipmentSystem::PrintEquipStats()
 
     for (int i = 0; i < static_cast<int>(ESlotsEquipAry::Length); i++)
     {
-        PRINTF("Slot: %s - EquipItem: %s - Occupied: %hs", *EnumToStr(ESlotsEquipAry, (ESlotsEquipAry)i),
-               *GetEquippedItem(i)->m_ShowingName.ToString(), !m_ArySlots[i]->m_Item.IsEmpty() ? "Y" : "N");
+        // PRINTF("Slot: %s - EquipItem: %s - Occupied: %hs", *EnumToStr(ESlotsEquipAry, (ESlotsEquipAry)i),
+        //        *GetEquippedItem(i)->m_ShowingName.ToString(), !m_ArySlots[i]->m_Item.IsEmpty() ? "Y" : "N");
     }
 }
 
-const FItemType* UEquipmentSystem::GetEquippedItem(ESlotsEquipAry slot)
+const FItemType* UEquipmentSystem::GetEquippedItemType(ESlotsEquipAry slot)
 {
     return m_ArySlots[(int)slot]->m_EquippedType;
 }
 
-const FItemType* UEquipmentSystem::GetEquippedItem(int slotIndex)
+const FItemType* UEquipmentSystem::GetEquippedItemType(int slotIndex)
 {
     return m_ArySlots[slotIndex]->m_EquippedType;
 }

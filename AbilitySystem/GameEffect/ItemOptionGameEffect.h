@@ -13,5 +13,5 @@ UCLASS()
 class DIABLOM_API UItemOptionGameEffect : public UGameplayEffect
 {
 	GENERATED_BODY()
-	
+
 };

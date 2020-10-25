@@ -23,6 +23,11 @@ void UDiaInvenGridPanel::Init(UInventory* itemContainer )
 	SetGrid(X, Y);
 
 	UDiaInvenGridPanel::GetInvenWidgetInst=this;
+
+	for(int i=0; i<m_Inven->GetItemAry().Num();i++)
+	{
+		UpdateSlot(i,m_Inven->GetItemRef(i));
+	}
 }
 
 

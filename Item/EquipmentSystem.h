@@ -119,9 +119,9 @@ public:
 
     void PrintEquipStats();
 
-    const FItemType* GetEquippedItem(ESlotsEquipAry slot);
+    const FItemType* GetEquippedItemType(ESlotsEquipAry slot);
 
-    const FItemType* GetEquippedItem(int slotIndex);
+    const FItemType* GetEquippedItemType(int slotIndex);
 
     friend USaveEquipment;
 
