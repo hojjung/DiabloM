@@ -40,7 +40,8 @@ public:
     void SetDamageText(const FText& Damage);
     UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void StartAnimation(EDamagePopup dmg);
-
+    UFUNCTION(BlueprintCallable)
+    void PlaceTempArea();
     UFUNCTION(BlueprintCallable)
     void EndAnimation();
 

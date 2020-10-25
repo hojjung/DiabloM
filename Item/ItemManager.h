@@ -15,9 +15,6 @@ class DIABLOM_API UItemManager : public UObject, public IItemHolder
 {
     GENERATED_BODY()
 
-public:
-    ~UItemManager();
-
 protected:
     UPROPERTY()
     UDiabloGameInstance* m_GameInstance;

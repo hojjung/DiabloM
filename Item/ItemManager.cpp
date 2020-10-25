@@ -1,10 +1,6 @@
 #include "ItemManager.h"
 #include "Managers/DiabloGameInstance.h"
 
-UItemManager::~UItemManager()
-{
-}
-
 
 void UItemManager::Init(UDiabloGameInstance* gameInstance)
 {
@@ -41,8 +37,13 @@ FItemInstance UItemManager::CreateItemInstance(FName itemID, int level)
 
 ADroppedItem* UItemManager::CreateItemActor(FItemInstance& itemWantAdd, FVector posWant)
 {
+    FRotator Rot;
+    Rot.Yaw=FMath::RandRange(0.f,360.f);
+    FActorSpawnParameters Param;
+    Param.bNoFail=true;
+    
     ADroppedItem* DroppedActor = Cast<ADroppedItem>(
-        m_GameInstance->GetWorld()->SpawnActor(m_GameInstance->m_DropItemClass, &posWant));
+        m_GameInstance->GetWorld()->SpawnActor(m_GameInstance->m_DropItemClass, &posWant,&Rot,Param));
 
     itemWantAdd.m_Holder = this;
     itemWantAdd.m_nGridIndex = -2;

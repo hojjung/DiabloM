@@ -9,7 +9,7 @@
 
 UPlayerManaRegenAbility::UPlayerManaRegenAbility()
 {
-    FGameplayTag Ability1Tag = FGameplayTag::RequestGameplayTag(FName("Item.Option.Attribute.Mana+"));
+    FGameplayTag Ability1Tag = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.MpHeal"));
     AbilityTags.AddTag(Ability1Tag);
     ActivationOwnedTags.AddTag(Ability1Tag);
 }

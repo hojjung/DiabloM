@@ -22,7 +22,8 @@ public class DiabloM : ModuleRules
            "DialoguePlugin",
            "DungeonArchitectRuntime",
            "TechTree",
-            "NavigationSystem"
+            "NavigationSystem",
+            "EasyActionPlugin"
            
         });
 
@@ -30,17 +31,19 @@ public class DiabloM : ModuleRules
 
         PrivateDependencyModuleNames.AddRange(new string[] { 
             "Slate", "SlateCore","UMG",
+            "Core", "CoreUObject", "Engine",
             "AIModule",
             "NavigationSystem",
             "DialoguePlugin",
             "DungeonArchitectRuntime",
             "TechTree",
-            "OnlineSubsystem"
+            "OnlineSubsystem",
+            "EasyActionPlugin"
            
         });
         if (Target.Platform == UnrealTargetPlatform.Android)
         {
-            PrivateDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "OnlineSubsystem" });
+            //PrivateDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "OnlineSubsystem" });
             DynamicallyLoadedModuleNames.Add("OnlineSubsystemGooglePlay");
         }
     }

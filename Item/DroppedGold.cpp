@@ -12,8 +12,10 @@
 
 ADroppedGold::ADroppedGold(const FObjectInitializer& objInit):Super(objInit)
 {
-    m_fGoldAmount=10.f;
+    m_fGoldAmount=12.f;
     m_Format=FTextFormat::FromString("{0} Gold");
+    m_BillBoard->SetHiddenInGame(true);
+    m_CollSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ADroppedGold::SetRandScale()
@@ -25,6 +27,9 @@ void ADroppedGold::SetRandScale()
 
 void ADroppedGold::SetGoldAmount(float amount)
 {
+    m_BillBoard->SetHiddenInGame(false);
+    m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    
     m_fGoldAmount=amount;
 
     UItemNameCard* ItemCard = Cast<UItemNameCard>(m_BillBoard->GetUserWidgetObject());
@@ -44,6 +49,7 @@ void ADroppedGold::BeginPlay()
     
     if(m_fGoldAmount>0.f)
     {
+     
         SetGoldAmount(m_fGoldAmount);
     }
 }
@@ -51,6 +57,7 @@ void ADroppedGold::BeginPlay()
 void ADroppedGold::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                              UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+
     APlayerDiabloCharacter* Char = Cast<APlayerDiabloCharacter>(OtherActor);
 
     if (!Char)

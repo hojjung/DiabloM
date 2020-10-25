@@ -14,6 +14,8 @@ ADiabloGameMode::ADiabloGameMode()
 	Get=this;
 	PlayerControllerClass = ADiabloPlayerController::StaticClass();
 	DefaultPawnClass = APlayerDiabloCharacter::StaticClass();
+
+	m_ActionManager=CreateDefaultSubobject<UActionManagerComponent>("ActionManager");
 }
 
 void ADiabloGameMode::StartPlay()

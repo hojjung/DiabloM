@@ -84,7 +84,6 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
     m_fMaxExp = 0.f;
 
     m_bIsDead = false;
-
 }
 
 
@@ -127,8 +126,24 @@ void APlayerDiabloCharacter::GrantHpRegenAbility()
 {
     if (m_GAPlayerHealthRegen)
     {
-        FGameplayAbilitySpec Spec=FGameplayAbilitySpec(m_GAPlayerHealthRegen, GetCharacterLevel(), -1, this);
+        FGameplayAbilitySpec Spec = FGameplayAbilitySpec(m_GAPlayerHealthRegen, GetCharacterLevel(), -1, this);
         m_HpRegenHandle = GetDiaAbilitySystem()->GiveAbility(Spec);
+    }
+}
+
+void APlayerDiabloCharacter::GrantResourceRegenAbility()
+{
+    auto* DiaAttri = GetPlayerAttribute();
+
+    if (DiaAttri->GetMaxMana()&&m_GAPlayerManaRegen)
+    {
+        FGameplayAbilitySpec Spec = FGameplayAbilitySpec(m_GAPlayerManaRegen, GetCharacterLevel(), -1, this);
+        m_ResourceRegenHandle = GetDiaAbilitySystem()->GiveAbility(Spec);
+    }
+    else if (DiaAttri->GetMaxStamina()&&m_GAPlayerStaminaRegen)
+    {
+        FGameplayAbilitySpec Spec = FGameplayAbilitySpec(m_GAPlayerStaminaRegen, GetCharacterLevel(), -1, this);
+        m_ResourceRegenHandle = GetDiaAbilitySystem()->GiveAbility(Spec);
     }
 }
 
@@ -154,14 +169,15 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
 
     m_DeathMontage = m_PlayerEntityData->m_DeathMontage;
     m_StunMontage = m_PlayerEntityData->m_StunMontage;
-    m_TookHitMontage= m_PlayerEntityData->m_TookHitMontage;
+    m_TookHitMontage = m_PlayerEntityData->m_TookHitMontage;
 
     SetCharacterLevel(loadedSaveData->m_nLevel);
-
     LoadExp(loadedSaveData);
+
 
     GrantHpRegenAbility();
     GrantHpPotionAbility();
+    GrantResourceRegenAbility();
 }
 
 void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
@@ -265,7 +281,8 @@ void APlayerDiabloCharacter::RemoveAllEffect()
 void APlayerDiabloCharacter::GrantBaseAttackAbility()
 {
     m_BaseAttackHandle = GetDiaAbilitySystem()->GiveAbility(
-        FGameplayAbilitySpec(m_PlayerBaseAttack,GetCharacterLevel(),static_cast<int32>(m_PlayerBaseAttack.GetDefaultObject()->m_AbilityInputID),
+        FGameplayAbilitySpec(m_PlayerBaseAttack, GetCharacterLevel(),
+                             static_cast<int32>(m_PlayerBaseAttack.GetDefaultObject()->m_AbilityInputID),
                              this));
 }
 
@@ -345,7 +362,7 @@ void APlayerDiabloCharacter::EarnExp(float expEarned)
         }
 
         m_fCurrentExp = 0.f;
-        m_fMaxExp =GetPlayerAttribute()->GetMaxExpForLevelUp();
+        m_fMaxExp = GetPlayerAttribute()->GetMaxExpForLevelUp();
 
         PRINTF("Next Exp Is: %f", m_fMaxExp);
 
@@ -568,6 +585,7 @@ void APlayerDiabloCharacter::Revive()
     GrantHpRegenAbility();
     GrantBaseAttackAbility();
     GrantHpPotionAbility();
+    GrantResourceRegenAbility();
     //
     GetCapsule()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     GetMovementComponent()->SetActive(true);
@@ -612,7 +630,9 @@ void APlayerDiabloCharacter::GrantHpPotionAbility()
 {
     if (m_GAPlayerHealthPotion)
     {
-        FGameplayAbilitySpec Spec= FGameplayAbilitySpec(m_GAPlayerHealthPotion,GetCharacterLevel(),static_cast<int32>(m_GAPlayerHealthPotion.GetDefaultObject()->m_AbilityInputID),this);
+        FGameplayAbilitySpec Spec = FGameplayAbilitySpec(m_GAPlayerHealthPotion, GetCharacterLevel(),
+                                                         static_cast<int32>(m_GAPlayerHealthPotion.GetDefaultObject()->
+                                                             m_AbilityInputID), this);
         m_PotionHandle = GetDiaAbilitySystem()->GiveAbility(Spec);
     }
 }

@@ -2,7 +2,9 @@
 
 #include "DiabloM.h"
 #include "Datas/ItemDataTable.h"
+#include "Item/DroppedGold.h"
 #include "Item/ItemManager.h"
+#include "Objs/Actor/HealthSphere.h"
 #include "SaveLoad/SaveLoadManager.h"
 #include "DiabloGameInstance.generated.h"
 
@@ -26,6 +28,10 @@ public:
 	static UDiabloGameInstance* Get;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ADroppedItem> m_DropItemClass;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ADroppedGold> m_DropGoldClass;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AHealthSphere> m_DropHpSphereClass;
 	
 protected:
 	UPROPERTY()
@@ -44,11 +50,20 @@ protected:
 	
 	virtual void Shutdown()override;
 
+	ACollisionInteract* SpawnDropCollInteract(TSubclassOf<ACollisionInteract> classWant,FVector posWant);
 public:
 	FItemInstance CreateItem(FName id);
 
-	ADroppedItem* DropItemActor(FItemInstance& myItem);
+	ADroppedItem* DropItemActor(APawn* dropCenterActor,float dropRadius,FItemInstance& myItem);
 
+	ADroppedItem* DropItemActor(FVector dropCenterPos,UNavigationSystemV1* nav,float dropRadius,FItemInstance& myItem);
+
+	ADroppedGold* DropGoldActor(APawn* dropCenterActor,float dropRadius);
+
+	AHealthSphere* DropHpSphereActor(APawn* dropCenterActor,float dropRadius);
+	
+
+	
 	FORCEINLINE UItemManager* GetItemManager()
 	{
 		return m_ItemManager;

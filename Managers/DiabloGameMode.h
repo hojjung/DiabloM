@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "ActionManagerComponent.h"
 #include "DiabloM.h"
 #include "GameFramework/GameMode.h"
 #include "Objs/Actor/PlayerSpawnPoint.h"
@@ -19,21 +20,29 @@ public:
 	ADiabloGameMode();
 	
 	static ADiabloGameMode* Get;
-
 protected:
-	TMap<FName,ADiaDungeon*> m_MapDungeonActors;
-
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	UActionManagerComponent* m_ActionManager;
 	UPROPERTY(VisibleAnywhere)
 	APlayerSpawnPoint* m_PlayerVillageSpawn;
+	
+	TMap<FName,ADiaDungeon*> m_MapDungeonActors;
+	
 public:
-
 	virtual void StartPlay() override;
 
 	ADiaDungeon* GetDungeon(FName id);
 
 	void SetDungeonInstanceToMap();
+	
 	void InitDungeonInstances();
+	
 	void InitSpawnManager();
 
 	APlayerSpawnPoint* GetSpawnPoint();
+
+	FORCEINLINE UActionManagerComponent* GetActionManager()
+	{
+		return m_ActionManager;
+	}
 };

@@ -3,6 +3,8 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "AbilitySystem/Ability/Timer/PlayerManaRegenAbility.h"
+#include "AbilitySystem/Ability/Timer/PlayerStaminaRegenAbility.h"
 #include "Animations/DiaAniminstance.h"
 #include "Characters/UnitPawn.h"
 #include "Managers/DiabloCheatManager.h"
@@ -36,7 +38,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TSubclassOf<UPlayerHpRegenAbility> m_GAPlayerHealthRegen;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	TSubclassOf<UPlayerHpRegenAbility> m_GAPlayerManaRegen;
+	TSubclassOf<UPlayerManaRegenAbility> m_GAPlayerManaRegen;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	TSubclassOf<UPlayerStaminaRegenAbility> m_GAPlayerStaminaRegen;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	//TSubclassOf<UPlayerManaRegenAbility> m_GAPlayerRageRegen;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TSubclassOf<UPlayerHealthPotion> m_GAPlayerHealthPotion;
 	
@@ -112,6 +118,8 @@ protected:
 	const FPlayerEntityTable* m_PlayerEntityData;
 
 	FGameplayAbilitySpecHandle m_HpRegenHandle;
+
+	FGameplayAbilitySpecHandle m_ResourceRegenHandle;
 
 	FGameplayAbilitySpecHandle m_PotionHandle;
 	
@@ -190,6 +198,7 @@ public:
 	void Init();
 	
 	void GrantHpRegenAbility();
+	void GrantResourceRegenAbility();
 	UFUNCTION(BlueprintCallable)
     void Revive();
 	UFUNCTION(BlueprintCallable,Category="Interact")

@@ -21,7 +21,7 @@ public:
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	float m_fGoldAmount;
-
+	
 	FTextFormat m_Format;
 protected:
 	virtual void BeginPlay() override;

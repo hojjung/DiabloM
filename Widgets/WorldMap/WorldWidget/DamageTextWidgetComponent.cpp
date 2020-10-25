@@ -14,6 +14,12 @@ void UDamageTextWidgetComponent::AttachToActor(AUnitPawn* newRoot)
     m_AttachedActor=newRoot;
 }
 
+void UDamageTextWidgetComponent::PlaceTempArea()
+{
+    AttachToComponent(m_Base->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+    m_AttachedActor=m_Base;
+}
+
 void UDamageTextWidgetComponent::EndAnimation()
 {
     AttachToComponent(m_Base->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);

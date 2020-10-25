@@ -392,11 +392,6 @@ float AUnitPawn::GetMoveSpeed() const
     return m_AttributeSet->GetMoveSpeed();
 }
 
-bool AUnitPawn::HasDropItem()
-{
-    return false;
-}
-
 
 bool AUnitPawn::SetCharacterLevel(int NewLevel)
 {
@@ -510,50 +505,7 @@ UAnimMontage* AUnitPawn::GetCurrentMontage()
 
 void AUnitPawn::Die()
 {
-    if(m_AttachedTextPopup)
-    {
-        m_AttachedTextPopup->EndAnimation();
-        m_AttachedTextPopup=nullptr;
-    }
-    m_OnCharacterDied.Broadcast(this);
-    
-    SetActorTickEnabled(false);
-    GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    GetMovementComponent()->SetActive(false);
-
-
-    m_bUseFSM=false;
-
-    if (IsValid(GetDiaAbilitySystem()))
-    {
-        GetDiaAbilitySystem()->CancelAllAbilities();
-
-        FGameplayTagContainer EffectTagsToRemove;
-        EffectTagsToRemove.AddTag(m_TagEffectRemoveOnDeath);
-        int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
-
-        GetDiaAbilitySystem()->AddLooseGameplayTag(m_TagDead);
-
-        GetDiaAbilitySystem()->RemoveGameplayCue(m_TagStun);
-    }
-
-    if (m_DeathMontage)
-    {
-        float AnimLength = PlayAnimMontage(m_DeathMontage) ;//- 0.2f;
-        
-        if (GEngine->GetNetMode(GetWorld()) < NM_Client)
-        {
-            FTimerHandle TimerHandle_OnTimer;
-            
-            GetWorldTimerManager().SetTimer(TimerHandle_OnTimer, this, &AUnitPawn::OnDeathAnimEnd,
-                                                           AnimLength,
-                                                           false);
-        }
-    }
-    else
-    {
-        OnDeathAnimEnd();
-    }
+   
 }
 
 

@@ -34,6 +34,8 @@ protected:
 	UMonsterSensing* m_MonsterSense;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool m_bIsPlaced;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float m_fDropRadius;
 public: //need more monster
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void ShowStatusBar();
@@ -50,11 +52,20 @@ public: //need more monster
 
 	void InitMonster(FDataTableRowHandle unitID, int level);
 
+	void DropGoldActor();
+	
+	void DropItemActor();
+	
+	void DropHpSphereActor();
+	void GiveExpToPlayer();
+
+	virtual void Die() override;
+	void RequestDropRewards();
 	virtual void OnDeathAnimEnd() override;
 
 	void SetHealthPercentage(const FOnAttributeChangeData& data);
 
-	virtual bool HasDropItem() override;
+	bool HasDropItem();
 
 	virtual void FocusTarget(AUnitPawn* target) override;
 

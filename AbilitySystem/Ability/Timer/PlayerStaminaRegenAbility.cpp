@@ -9,7 +9,7 @@
 
 UPlayerStaminaRegenAbility::UPlayerStaminaRegenAbility()
 {
-    FGameplayTag Ability1Tag = FGameplayTag::RequestGameplayTag(FName("Item.Option.Attribute.Stamina+"));
+    FGameplayTag Ability1Tag = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.StaminaHeal"));
     AbilityTags.AddTag(Ability1Tag);
     ActivationOwnedTags.AddTag(Ability1Tag);
 }

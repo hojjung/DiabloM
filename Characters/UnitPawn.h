@@ -174,8 +174,6 @@ public: //AttributeGetter
 
     virtual float GetMoveSpeed() const;
 
-    virtual bool HasDropItem();
-
     virtual void FocusTarget(AUnitPawn* target);
 
     virtual bool IsAlive() const;
