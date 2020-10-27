@@ -104,3 +104,5 @@ static FString EnumToString(const FString& enumName, const T value)
 	return *(pEnum ? pEnum->GetNameStringByIndex(static_cast<uint8>(value)) : "NoEnum-Null");
 }
 
+//#define LOCTEXT_NAMESPACE "FMyEditorExtensionModule"
+//#undef LOCTEXT_NAMESPACE

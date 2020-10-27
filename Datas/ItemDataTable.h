@@ -177,6 +177,22 @@ public:
 
 };
 
+USTRUCT(BlueprintType) //���̵�,Ƽ��
+struct FUniqueEquipItemDataRow : public FItemData
+{
+    GENERATED_BODY()
+
+public:
+    FUniqueEquipItemDataRow();
+
+public:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FItemTypeHandle m_UniqueItemType;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TArray<FOptionHandle> m_UniqueOptions;//세트 아이템은 옵션 이펙트로 세트 구현할것
+    
+};
+
 USTRUCT(BlueprintType)
 struct FItemInstance
 {
@@ -298,10 +314,14 @@ class DIABLOM_API UItemDataTable : public UObject
 
     static  UDataTable* GetItemTypeTable;
 
+    static  UDataTable* GetUniqueItemTypeTable;
+
     static  UDataTable* GetAnimStanceTable;
 
     static TSubclassOf<UItemOptionGameEffect> GetItemEffect;
+    
  public:
+    
     static const FItemTier& GetItemTier(FName id);
 
     static const FItemTier* GetItemTierPtr(FName id);
@@ -329,6 +349,18 @@ public:
     FItemDataHandle()
     {
         DataTable=UItemDataTable::GetItemTable;
+    }
+
+};
+
+USTRUCT(BlueprintType)
+struct FUniqueItemDataHandle :public FDataTableRowHandle
+{
+    GENERATED_USTRUCT_BODY()
+public:
+    FUniqueItemDataHandle()
+    {
+        DataTable=UItemDataTable::GetUniqueItemTypeTable;
     }
 
 };

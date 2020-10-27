@@ -10,6 +10,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "CollisionInteract.generated.h"
 
+class ACollisionInteract;
+DECLARE_MULTICAST_DELEGATE_OneParam(FCollTaskEnd,ACollisionInteract*);
 UCLASS()
 class DIABLOM_API ACollisionInteract : public AActor,public IInteractable
 {
@@ -26,7 +28,8 @@ protected:
 	USphereComponent* m_CollSphere;
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	UWidgetComponent* m_BillBoard;
-	
+
+	FCollTaskEnd m_OnTaskEnd;
 protected:
 	virtual void BeginPlay() override;
 
@@ -36,6 +39,11 @@ public:
 	UFUNCTION()
 	virtual void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	FORCEINLINE FCollTaskEnd& GetOnTaskEnd()
+	{
+		return m_OnTaskEnd;
+	}
 };
 
 

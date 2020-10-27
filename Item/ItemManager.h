@@ -38,8 +38,17 @@ public:
 
     FItemInstance CreateItemInstance(FName itemID, int level = 1);
 
-    ADroppedItem* CreateItemActor(FItemInstance& itemWantAdd, FVector posWant);
 
+ 
+
+    virtual FOnItemSlotChanged& GetItemChangeCallback() override
+    {
+        return m_OnItemGroundChanged;
+    }
+
+    const FItemTier& GetDefaultTierRoll() const;
+
+private:
     virtual bool AddItem(int droppedIndex, FItemInstance& itemWantAdd) override;
     virtual void RemoveItem(FItemInstance& itemWantErase) override;
     virtual void RemoveItemByIndex(int index) override;
@@ -49,11 +58,4 @@ public:
     virtual void SetItem(int droppedIndex, FItemInstance& itemWantAdd) override;
 
     virtual bool SwapMove(FItemInstance& Drop, FItemInstance& Drag) override;
-
-    virtual FOnItemSlotChanged& GetItemChangeCallback() override
-    {
-        return m_OnItemGroundChanged;
-    }
-
-    const FItemTier& GetDefaultTierRoll() const;
 };

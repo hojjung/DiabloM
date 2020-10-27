@@ -83,11 +83,13 @@ void UDiaInvenGridPanel::AddItemStack(int index )
 
 void UDiaInvenGridPanel::RemoveItem(int index)
 {
-	//m_Inven->RemoveItem(index);
+	PRINTF("InvenGridPanel RemoveItem");
+	//m_Inven->RemoveItem(index);//Why????
 }
 
 void UDiaInvenGridPanel::RemoveItemStack(int index )
 {
-	//m_Inven->RemoveItemStack(index );
+	PRINTF("InvenGridPanel RemoveItemStack");
+	//m_Inven->RemoveItemStack(index);
 }
 

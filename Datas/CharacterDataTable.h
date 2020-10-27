@@ -4,6 +4,7 @@
 
 #include "DiabloM.h"
 #include "ItemDataTable.h"
+#include "MonsterItemDropTable.h"
 #include "AbilitySystem/AbilityTypes.h"
 
 #include "Characters/Logic/MobFSMBase.h"
@@ -238,6 +239,8 @@ public:
 	TSubclassOf<UAnimInstance> m_AnimBP;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMonsterTypeHandle m_TypeHandle;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FMonsterItemDropRowHandle m_RewardDropTableHandle;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UDiabloAbility> m_BaseAttack;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

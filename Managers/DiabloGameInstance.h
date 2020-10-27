@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "RewardManager.h"
 #include "Datas/ItemDataTable.h"
 #include "Item/DroppedGold.h"
 #include "Item/ItemManager.h"
@@ -26,12 +27,6 @@ class DIABLOM_API UDiabloGameInstance : public UGameInstance
 public:
 	UDiabloGameInstance();//
 	static UDiabloGameInstance* Get;
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<ADroppedItem> m_DropItemClass;
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<ADroppedGold> m_DropGoldClass;
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AHealthSphere> m_DropHpSphereClass;
 	
 protected:
 	UPROPERTY()
@@ -44,26 +39,19 @@ protected:
 	UMonsterSpawnManager* m_MonsterSpawn;
 	UPROPERTY()
 	UDungeonManager* m_DungeonManager;
+	UPROPERTY()
+	URewardManager* m_RewardManager;
 	
 protected:
 	virtual void Init() override;
 	
 	virtual void Shutdown()override;
 
-	ACollisionInteract* SpawnDropCollInteract(TSubclassOf<ACollisionInteract> classWant,FVector posWant);
 public:
 	FItemInstance CreateItem(FName id);
 
 	ADroppedItem* DropItemActor(APawn* dropCenterActor,float dropRadius,FItemInstance& myItem);
 
-	ADroppedItem* DropItemActor(FVector dropCenterPos,UNavigationSystemV1* nav,float dropRadius,FItemInstance& myItem);
-
-	ADroppedGold* DropGoldActor(APawn* dropCenterActor,float dropRadius);
-
-	AHealthSphere* DropHpSphereActor(APawn* dropCenterActor,float dropRadius);
-	
-
-	
 	FORCEINLINE UItemManager* GetItemManager()
 	{
 		return m_ItemManager;
@@ -83,6 +71,10 @@ public:
 	FORCEINLINE UDungeonManager* GetDungeonManager()
 	{
 		return   m_DungeonManager;
+	}
+	FORCEINLINE URewardManager* GetRewardManager()
+	{
+		return   m_RewardManager;
 	}
 	//TEST 1017
 	bool m_bTestIsDungeonOpen=false;

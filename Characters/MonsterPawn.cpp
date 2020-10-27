@@ -17,13 +17,13 @@ AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit): Super(objInit)
     m_SkBody->SetRelativeLocation(FVector(0, 0, -90.f));
     m_SkBody->SetRelativeRotation(FRotator(0, -90.f, 0));
     m_bIsPlaced = false;
-    PRINTF("MonsterCons");
+    m_DropDataRow = nullptr;
 }
 
 void AMonsterPawn::BeginPlay()
 {
     Super::BeginPlay();
-    PRINTF("MonsterBeginPlay");
+
     if (m_bIsPlaced && !m_MonsterUnitHandle.IsNull())
     {
         InitMonster(m_MonsterUnitHandle, m_nCharacterLevel);
@@ -35,6 +35,7 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
     SetCharacterLevel(level);
     m_MonsterUnitHandle.RowName = unitID.RowName;
     const FMonsterTable* const UnitData = unitID.GetRow<FMonsterTable>("");
+    m_DropDataRow = UnitData->m_RewardDropTableHandle.GetRow<FMonsterItemDropRow>("");
     m_TextUnitName = UnitData->m_ShowingName;
     m_SkBody->SetSkeletalMesh(UnitData->m_Mesh);
     m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -76,23 +77,6 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
     m_TookHitMontage = UnitData->m_TookHitMontage;
 }
 
-void AMonsterPawn::DropGoldActor()
-{
-    ADroppedGold* GoldACtor = UDiabloGameInstance::Get->DropGoldActor(this, m_fDropRadius);
-    //GoldACtor->SetGoldAmount()
-}
-
-void AMonsterPawn::DropItemActor()
-{
-    //TODO ItemTier Priority 에 플레이어 스텟 보너스 곱해줄것
-    //UDiabloGameInstance::Get->DropItemActor(this,300.f,UDiabloGameInstance::Get->CreateItem());
-}
-
-void AMonsterPawn::DropHpSphereActor()
-{
-    AHealthSphere* HpActor = UDiabloGameInstance::Get->DropHpSphereActor(this, m_fDropRadius);
-    //기타 필요 없음
-}
 
 void AMonsterPawn::GiveExpToPlayer()
 {
@@ -109,10 +93,10 @@ void AMonsterPawn::Die()
 {
     if (m_AttachedTextPopup)
     {
-        m_AttachedTextPopup->PlaceTempArea();//몬스터가 죽으면 자리를 거기로 세팅하고 애니매이션 끝까지 실행
+        m_AttachedTextPopup->PlaceTempArea(); //몬스터가 죽으면 자리를 거기로 세팅하고 애니매이션 끝까지 실행
         m_AttachedTextPopup = nullptr;
     }
-    
+
     m_OnCharacterDied.Broadcast(this);
 
     SetActorTickEnabled(false);
@@ -159,17 +143,12 @@ void AMonsterPawn::Die()
 
 void AMonsterPawn::RequestDropRewards()
 {
-    //몬스터의 레벨과 정보만 매니저에 넘기고 매니저가 알아서하게
-    //풀링 되야하고 스폰후 포물선 떨어지기
-    //포물선 종료후 아이템 팝업
-    DropGoldActor();
-
-    if (HasDropItem())
+    if (!m_DropDataRow)
     {
-        DropItemActor();
+        return;
     }
 
-    DropHpSphereActor();
+    UDiabloGameInstance::Get->GetRewardManager()->RequestMonsterDropItem(this,*m_DropDataRow,GetCharacterLevel());
 }
 
 void AMonsterPawn::OnDeathAnimEnd()
@@ -193,11 +172,6 @@ void AMonsterPawn::SetHealthPercentage(const FOnAttributeChangeData& data)
     PRINTF("HealthPer :%f", GetHpPercentOne());
 }
 
-bool AMonsterPawn::HasDropItem()
-{
-    //TODO Drop table make
-    return true;
-}
 
 void AMonsterPawn::FocusTarget(AUnitPawn* target)
 {

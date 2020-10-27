@@ -10,8 +10,13 @@ UCLASS()
 class DIABLOM_API ADroppedItem : public ACollisionInteract
 {
 	GENERATED_BODY()
+
+public:
+	ADroppedItem(const FObjectInitializer& objInit);
 	
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Item")
+	UParticleSystemComponent* m_ParticleEffect;
 	UPROPERTY(EditAnywhere, Category = "Item")
 	FItemDataHandle m_TableID;
 	UPROPERTY(VisibleAnywhere)
@@ -45,4 +50,6 @@ public:
 	{
 		return GetCurrentItem().m_ItemTier->m_TierColor;
 	}
+
+	void DropEnd();
 };

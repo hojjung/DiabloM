@@ -4,6 +4,14 @@
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 
+ADroppedItem::ADroppedItem(const FObjectInitializer& objInit):Super(objInit)
+{
+	m_ParticleEffect=CreateDefaultSubobject<UParticleSystemComponent>("ParticleEffect00");
+	m_ParticleEffect->SetupAttachment(RootComponent);
+	m_BillBoard->SetHiddenInGame(true);
+	m_CollSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
 void ADroppedItem::BeginPlay()
 {
 	Super::BeginPlay();
@@ -12,14 +20,7 @@ void ADroppedItem::BeginPlay()
 	{
 		SetItem(m_TableID.RowName);
 		
-		auto AA = m_ItemInstance.m_AryOptions;
-
-		//PRINTF("Ground CreatedItem: %s",*m_ItemInstance.m_ItemData->m_ShowingName.ToString());
-		
-		for(auto BB :AA)
-		{
-			//PRINTF("Option:%s", *BB.GetOptionText().ToString());
-		}
+		DropEnd();
 		
 	}
 }
@@ -27,14 +28,32 @@ void ADroppedItem::BeginPlay()
 
 void ADroppedItem::Interact(AActor * instigator)
 {
-	if (!Cast<ADiabloPlayerController>(Cast<APlayerDiabloCharacter>(instigator)->GetController())->PickUpItem(this))
+	APlayerDiabloCharacter* Player =Cast<APlayerDiabloCharacter>(instigator);
+
+	if(!Player)//Monster Coll
 	{
 		return;
 	}
 	
+	if (!Cast<ADiabloPlayerController>(Player->GetController())->PickUpItem(this))
+	{
+		return;
+	}
+	
+	m_ItemInstance.ClearData();//
 	m_ItemInstance.SetGridNewIndex(-2);
-	SetActorHiddenInGame(true);
-	Destroy();
+
+	m_BillBoard->SetHiddenInGame(true);
+	m_CollSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	if(m_OnTaskEnd.IsBound())
+	{
+		m_OnTaskEnd.Broadcast(this);
+	}
+	else
+	{
+		Destroy();
+	}
 }
 
 void ADroppedItem::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -83,6 +102,14 @@ void ADroppedItem::SetItemInstance(FItemInstance& itemInst)
 const FItemInstance& ADroppedItem::GetCurrentItem()const
 {
 	return m_ItemInstance;
+}
+
+void ADroppedItem::DropEnd()
+{
+	SetActorHiddenInGame(false);
+	m_ParticleEffect->Activate(true);
+	m_BillBoard->SetHiddenInGame(false);
+	m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 

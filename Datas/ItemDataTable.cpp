@@ -8,6 +8,8 @@ UDataTable* UItemDataTable::GetItemTable = nullptr;
 UDataTable* UItemDataTable::GetItemTypeTable = nullptr;
 UDataTable* UItemDataTable::GetAnimStanceTable = nullptr;
 TSubclassOf<UItemOptionGameEffect> UItemDataTable::GetItemEffect = nullptr;
+UDataTable* UItemDataTable::GetUniqueItemTypeTable = nullptr;
+//GetUniqueItemTypeTable
 
 FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIndex, IItemHolder* holder,
                              TArray<FOptionSpec>& aryUseEffect, int lv, const FItemTier* itemTier)
@@ -53,10 +55,14 @@ UItemDataTable::UItemDataTable()
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundAnimTable(
       TEXT("DataTable'/Game/DataTables/Items/AnimStanceTable.AnimStanceTable'"));
     UItemDataTable::GetAnimStanceTable = FoundAnimTable.Object;
-   // static ConstructorHelpers::FClassFinder<UItemOptionGameEffect>FoundGameEffectAsset(
-    //    TEXT("Blueprint'/Game/Blueprints/Abilities/GameEffect/GE_ItemOptionEffect.GE_ItemOptionEffect_C'"));
-//
-   // UItemDataTable::GetItemEffect=FoundGameEffectAsset.Class;
+
+    static ConstructorHelpers::FObjectFinder<UDataTable> FoundUnique(
+      TEXT("DataTable'/Game/DataTables/Items/UniqueItemTable.UniqueItemTable'"));
+    UItemDataTable::GetUniqueItemTypeTable=FoundUnique.Object;
+   static ConstructorHelpers::FClassFinder<UItemOptionGameEffect>FoundGameEffectAsset(
+       TEXT("Blueprint'/Game/Blueprints/Abilities/Item/GE_ItemOptionEffect.GE_ItemOptionEffect_C'"));
+
+   UItemDataTable::GetItemEffect=FoundGameEffectAsset.Class;
 }
 
 const FItemTier& UItemDataTable::GetItemTier(FName id)
@@ -130,6 +136,13 @@ FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMe
 
     m_ItemID = "NeedName";
     m_ItemType.DataTable = UItemDataTable::GetItemTypeTable;
+}
+
+FUniqueEquipItemDataRow::FUniqueEquipItemDataRow()
+{
+    m_bEquipable=true;
+    m_bStackable=false;
+    
 }
 
 FAnimStance::FAnimStance()

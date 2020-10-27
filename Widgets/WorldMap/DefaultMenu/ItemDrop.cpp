@@ -28,5 +28,5 @@ void UItemDrop::ThrowItem(const FItemInstance& itemThrow)
 
     itemThrow.m_Holder->RemoveItemByIndex(itemThrow.m_nGridIndex);
     	FItemInstance item =itemThrow;
-    	GetGameInstance<UDiabloGameInstance>()->DropItemActor(ADiabloPlayerController::Get->GetPlayerPawn(),400.f,item);
+    	GetGameInstance<UDiabloGameInstance>()->DropItemActor(ADiabloPlayerController::Get->GetPlayerPawn(),250.f,item);
 }

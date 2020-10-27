@@ -27,20 +27,22 @@ void ADroppedGold::SetRandScale()
 
 void ADroppedGold::SetGoldAmount(float amount)
 {
+    m_fGoldAmount=amount;
+    SetRandScale();
+}
+
+void ADroppedGold::DropEnd()
+{
+    PRINTF("DropEnd");
     m_BillBoard->SetHiddenInGame(false);
     m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     
-    m_fGoldAmount=amount;
-
     UItemNameCard* ItemCard = Cast<UItemNameCard>(m_BillBoard->GetUserWidgetObject());
     FText GoldText=UDiaBlueprintFunctionLibrary::GetAlphabetText(m_fGoldAmount);
     FFormatOrderedArguments Args;
     Args.Add(GoldText);
     ItemCard->SetItemName(FText::Format(m_Format,Args));
-
     m_BillBoard->SetDrawSize(m_BillBoard->GetUserWidgetObject()->GetDesiredSize());
-
-    SetRandScale();
 }
 
 void ADroppedGold::BeginPlay()
@@ -49,8 +51,8 @@ void ADroppedGold::BeginPlay()
     
     if(m_fGoldAmount>0.f)
     {
-     
         SetGoldAmount(m_fGoldAmount);
+        DropEnd();
     }
 }
 
@@ -75,6 +77,15 @@ void ADroppedGold::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
     
     Char->EarnGold(m_fGoldAmount*AmountBounus);
 
-    SetActorHiddenInGame(true);
-    Destroy();
+    m_BillBoard->SetHiddenInGame(true);
+    m_CollSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    
+    if(m_OnTaskEnd.IsBound())
+    {
+        m_OnTaskEnd.Broadcast(this);
+    }
+    else
+    {
+        Destroy();
+    }
 }

@@ -34,7 +34,15 @@ void AHealthSphere::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
    Char->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
         *EffectSpecHandle.Data);
 
+    m_CollSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-    SetActorHiddenInGame(true);
-    Destroy();
+    if(m_OnTaskEnd.IsBound())
+    {
+        m_OnTaskEnd.Broadcast(this);
+    }
+    else
+    {
+        Destroy();
+    }
 }
+
