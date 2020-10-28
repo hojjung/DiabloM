@@ -337,6 +337,10 @@ class DIABLOM_API UItemDataTable : public UObject
     static const FAnimStance& GetAnimStance(FName id);
 
     static const FAnimStance* GetAnimStancePtr(FName id);
+
+    static const FUniqueEquipItemDataRow& GetUniqueItem(FName id);
+
+    static const FUniqueEquipItemDataRow* GetUniqueItemPtr(FName id);
     
 };
 
@@ -349,8 +353,11 @@ public:
     FItemDataHandle()
     {
         DataTable=UItemDataTable::GetItemTable;
+        m_fDropRatePriority=0.f;
     }
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+    float m_fDropRatePriority;//There is no max
 };
 
 USTRUCT(BlueprintType)
@@ -361,6 +368,9 @@ public:
     FUniqueItemDataHandle()
     {
         DataTable=UItemDataTable::GetUniqueItemTypeTable;
+        m_fDropRateOnePerMax=0.f;
     }
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0",ClampMax = "1", UIMax = "1"))
+    float m_fDropRateOnePerMax;
 };

@@ -105,6 +105,16 @@ const FAnimStance* UItemDataTable::GetAnimStancePtr(FName id)
     return GetAnimStanceTable->FindRow<FAnimStance>(id, "");
 }
 
+const FUniqueEquipItemDataRow& UItemDataTable::GetUniqueItem(FName id)
+{
+    return *GetUniqueItemTypeTable->FindRow<FUniqueEquipItemDataRow>(id, "");
+}
+
+const FUniqueEquipItemDataRow* UItemDataTable::GetUniqueItemPtr(FName id)
+{
+    return GetUniqueItemTypeTable->FindRow<FUniqueEquipItemDataRow>(id, "");
+}
+
 
 FItemTypeHandle::FItemTypeHandle()
 {

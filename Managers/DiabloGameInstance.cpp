@@ -58,6 +58,11 @@ FItemInstance UDiabloGameInstance::CreateItem(FName id)
     return m_ItemManager->CreateItemInstance(id);
 }
 
+FItemInstance UDiabloGameInstance::CreateUniqueItem(const FUniqueEquipItemDataRow* uniqueItem)
+{
+    
+}
+
 ADroppedItem* UDiabloGameInstance::DropItemActor(APawn* dropCenterActor, float dropRadius, FItemInstance& myItem)
 {
     return m_RewardManager->DropItemActor(dropCenterActor,dropRadius,myItem);

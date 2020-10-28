@@ -31,7 +31,7 @@ protected:
 public:
 	void Init();
 	
-	void RequestMonsterDropItem(APawn* dropActor,const FMonsterItemDropRow& dropData, int level);
+	void RequestMonsterDropItem(AMonsterPawn* dropActor,const FMonsterItemDropRow& dropData, int level);
 
 	ADroppedItem* DropItemActor(APawn* dropCenterActor,float dropRadius,FItemInstance& myItem);
 

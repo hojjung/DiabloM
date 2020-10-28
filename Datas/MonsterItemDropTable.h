@@ -26,6 +26,8 @@ public:
 	TArray<FUniqueItemDataHandle> m_AropDropUniqueItems;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<int> m_AryHpDropRand;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<int> m_AryItemDropRand;
 };
 
 UCLASS()

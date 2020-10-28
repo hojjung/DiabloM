@@ -50,6 +50,8 @@ protected:
 public:
 	FItemInstance CreateItem(FName id);
 
+	FItemInstance CreateUniqueItem(const FUniqueEquipItemDataRow* uniqueItem);
+
 	ADroppedItem* DropItemActor(APawn* dropCenterActor,float dropRadius,FItemInstance& myItem);
 
 	FORCEINLINE UItemManager* GetItemManager()

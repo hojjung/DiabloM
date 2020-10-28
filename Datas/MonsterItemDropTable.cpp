@@ -15,6 +15,13 @@ FMonsterItemDropRow::FMonsterItemDropRow()
     m_AryHpDropRand.Add(1);
     m_AryHpDropRand.Add(2);
 
+    m_AryItemDropRand.Reset();
+    m_AryItemDropRand.Add(0);
+    m_AryItemDropRand.Add(1);
+    m_AryItemDropRand.Add(1);
+    m_AryItemDropRand.Add(2);
+    m_AryItemDropRand.Add(2);
+    m_AryItemDropRand.Add(3);
     //ㄴ그냥 이걸 랜덤으로 돌려서 액터 소환
 }
 
