@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "PlayerDiabloAbility.h"
+#include "AbilitySystem/Ability/PlayerAbility/PlayerDiabloAbility.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
 #include "Characters/UnitMovement.h"
 

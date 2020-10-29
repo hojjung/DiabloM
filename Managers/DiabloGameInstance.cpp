@@ -53,14 +53,14 @@ void UDiabloGameInstance::Shutdown()
     Super::Shutdown();
 }
 
-FItemInstance UDiabloGameInstance::CreateItem(FName id)
+FItemInstance UDiabloGameInstance::CreateItem(FName id,float magicItemBonus,float rareItemBonus,float epicItemBonus,int itemLevel)
 {
-    return m_ItemManager->CreateItemInstance(id);
+    return m_ItemManager->CreateItemInstance(id,magicItemBonus,rareItemBonus,epicItemBonus,itemLevel);
 }
 
-FItemInstance UDiabloGameInstance::CreateUniqueItem(const FUniqueEquipItemDataRow* uniqueItem)
+FItemInstance UDiabloGameInstance::CreateUniqueItem(const FUniqueEquipItemDataRow* uniqueItem,int itemLevel)
 {
-    
+    return m_ItemManager->CreateUniqueItem(uniqueItem,itemLevel);
 }
 
 ADroppedItem* UDiabloGameInstance::DropItemActor(APawn* dropCenterActor, float dropRadius, FItemInstance& myItem)

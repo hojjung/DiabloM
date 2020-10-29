@@ -9,6 +9,39 @@
 #include "MonsterItemDropTable.generated.h"
 
 
+
+USTRUCT(BlueprintType)
+struct FItemDropData 
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FItemDropData()
+	{
+		m_fDropRatePriority=0.f;
+	}
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FItemDataHandle m_DropHandle;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+	float m_fDropRatePriority;//There is no max
+};
+
+USTRUCT(BlueprintType)
+struct FUniqueItemDropData 
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	FUniqueItemDropData()
+	{
+		m_fDropRateOnePerMax=0.f;
+	}
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FUniqueItemDataHandle m_DropHandle;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0",ClampMax = "1", UIMax = "1"))
+	float m_fDropRateOnePerMax;
+};
+
+
 USTRUCT(BlueprintType)
 struct FMonsterItemDropRow: public FTableRowBase
 {
@@ -21,9 +54,9 @@ public:
 	//TODO 드랍 확률
 	//TODO 드랍개수
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FItemDataHandle> m_AryDropItems;
+	TArray<FItemDropData> m_AryDropItems;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FUniqueItemDataHandle> m_AropDropUniqueItems;
+	TArray<FUniqueItemDropData> m_AropDropUniqueItems;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<int> m_AryHpDropRand;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

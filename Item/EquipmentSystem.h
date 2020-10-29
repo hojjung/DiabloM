@@ -144,7 +144,7 @@ public:
         return m_CurrentStance;
     }
 
-
+    UGameplayEffect* CreateItemOptionEffect(FItemInstance& itemInstance);
 protected:
     void OnItemSlotChanged(int index);
     

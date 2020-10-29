@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystem/Ability/PlayerDiabloAbility.h"
+#include "AbilitySystem/Ability/PlayerAbility/PlayerDiabloAbility.h"
 #include "PlayerHealthPotion.generated.h"
 
 /**

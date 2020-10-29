@@ -14,7 +14,7 @@ UPlayerBaseAttack::UPlayerBaseAttack()
     m_TagTookFireDamage  = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookFireDmg"));
     m_TagTookElecDamage  = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookElecDmg"));
     m_TagTookIceDamage   = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookIceDmg"));
-    m_TagTookPoisonDamage= FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPoisonDmg"));
+    m_TagTookPoisonDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPoisonDmg"));
     
     m_TagEventEndAbility= FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
     m_TagEventBaseAttack= FGameplayTag::RequestGameplayTag(FName("Combat.Ability.BaseAttack"));

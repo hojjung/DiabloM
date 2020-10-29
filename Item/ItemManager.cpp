@@ -18,42 +18,61 @@ void UItemManager::Init(UDiabloGameInstance* gameInstance)
     PRINTF("UItemManager Init");
 }
 
-FItemInstance UItemManager::CreateItemInstance(FName itemID, int level)
+FItemInstance UItemManager::CreateItemInstance(FName id, float magicItemBonus, float rareItemBonus, float epicItemBonus,
+                                               int itemLevel)
 {
-    const FItemData* ItemData = UItemDataTable::GetItemDataPtr(itemID);
+    const FItemData* ItemData = UItemDataTable::GetItemDataPtr(id);
 
     const FItemTier& TierRolled = GetDefaultTierRoll();
 
     int TierMaxOptionCount = TierRolled.m_AryOptionCount.GetRandom();
 
-    float TierBonusValue=TierRolled.m_fBonusValue;
-    
+    float TierBonusValue = TierRolled.m_fBonusValue;
+
     TArray<FOptionSpec> RandomOptionForItem;
 
-    CreateRandomOption(*ItemData, RandomOptionForItem, TierMaxOptionCount,TierBonusValue ,level);
+    CreateRandomOption(*ItemData, RandomOptionForItem, TierMaxOptionCount, TierBonusValue, itemLevel);
 
-    return FItemInstance(ItemData, TierRolled.m_TierID, m_nCurrentIndex, this, RandomOptionForItem,level, &TierRolled);
+    return FItemInstance(ItemData, TierRolled.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, itemLevel,
+                         &TierRolled);
+}
+
+FItemInstance UItemManager::CreateUniqueItem(const FUniqueEquipItemDataRow* unique_item, int item_level)
+{
+    const FItemTier& Tier = *unique_item->m_UniqueItemTierHandle.GetRow<FItemTier>("");
+
+    int TierMaxOptionCount = Tier.m_AryOptionCount.GetRandom();
+
+    float TierBonusValue = Tier.m_fBonusValue;
+
+    TArray<FOptionSpec> RandomOptionForItem;
+
+    CreateRandomOptionWithUnique(*unique_item, RandomOptionForItem, TierMaxOptionCount, TierBonusValue, item_level);
+
+    return FItemInstance(unique_item, Tier.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, item_level, &Tier);
 }
 
 
-bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption, int TierMaxOption,float bonus,int level)
+bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption, int TierMaxOption,
+                                      float bonus, int level)
 {
     if (itemData.m_bStackable || !itemData.m_bEquipable)
     {
         PRINTF("ItemOption - the item is not equipment");
         return false;
     }
+    
 
-    FItemType* ItemTT =itemData.m_ItemType.GetRow<FItemType>("");
+    FItemType* ItemTT = itemData.m_ItemType.GetRow<FItemType>("");
 
-    FOptionSpec MainOp=ItemTT->m_MainOption.GetRow<FOption>("")->MakeOptionInst();
+    FOptionSpec MainOp = ItemTT->m_MainOption.GetRow<FOption>("")->MakeOptionInst(level);
     
-    MainOp.m_fValue*=bonus;
-    
-    MainOp.m_fValue*=ItemTT->m_AryMainOptionBonusRand.GetRandom();
-    
+    MainOp.m_fValue *= ItemTT->m_MainOptionBonusRate;
+
+    MainOp.m_fValue *= bonus;
+
     outOption.Add(MainOp);
-
+    //
     TArray<FOptionHandle> AryAvailableOptions = ItemTT->GetAvailableOptions(level);
 
     int NumMaxOption = AryAvailableOptions.Num();
@@ -69,9 +88,58 @@ bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionS
 
     CreateIntAryForShuffle(OptionRandomCount, AryAvailableOptions);
     //옵션 랜덤이 프라이오리티 및 중복 안되야함
-    for (FOptionHandle OO : AryAvailableOptions)//옵션 랜덤카운트 만큼만 넣어야함? 이대로면 무조건 넣는거아님?
+    for (FOptionHandle OO : AryAvailableOptions) //옵션 랜덤카운트 만큼만 넣어야함? 이대로면 무조건 넣는거아님?
     {
-        outOption.Add(OO.GetRow<FOption>("")->MakeOptionInst());
+        outOption.Add(OO.GetRow<FOption>("")->MakeOptionInst(level));
+    }
+
+    return true;
+}
+
+bool UItemManager::CreateRandomOptionWithUnique(const FUniqueEquipItemDataRow& itemData, TArray<FOptionSpec>& outOption,
+                                                int TierMaxOption, float bonus, int level)
+{
+    if (itemData.m_bStackable || !itemData.m_bEquipable)
+    {
+        PRINTF("ItemOption - the item is not equipment");
+        return false;
+    }
+
+    FItemType* ItemTT = itemData.m_ItemType.GetRow<FItemType>("");
+
+    FOptionSpec MainOp = ItemTT->m_MainOption.GetRow<FOption>("")->MakeOptionInst(level);
+
+    MainOp.m_fValue *= ItemTT->m_MainOptionBonusRate;
+
+    MainOp.m_fValue *= bonus;
+
+    outOption.Add(MainOp);
+    //
+    for (const FOptionHandle& UniqueOps : itemData.m_UniqueOptions)
+    {
+        FOptionSpec UniqueOptionSpec = UniqueOps.GetRow<FOption>("")->MakeOptionInst(level);
+
+        outOption.Add(UniqueOptionSpec); //유니크 옵션 표시 어떻게?
+    }
+    //
+    TArray<FOptionHandle> AryAvailableOptions = ItemTT->GetAvailableOptions(level);
+
+    int NumMaxOption = AryAvailableOptions.Num();
+
+    if (NumMaxOption <= 0 || TierMaxOption <= 0)
+    {
+        return false;
+    }
+
+    int OptionRandomCount = FMath::Rand() % TierMaxOption; //생성할 옵션의 개수는 등급과 옵션의 개수에 따라 상이하다.
+
+    OptionRandomCount = FMath::Min<int>(OptionRandomCount, NumMaxOption);
+
+    CreateIntAryForShuffle(OptionRandomCount, AryAvailableOptions);
+    //옵션 랜덤이 프라이오리티 및 중복 안되야함
+    for (FOptionHandle OO : AryAvailableOptions) //옵션 랜덤카운트 만큼만 넣어야함? 이대로면 무조건 넣는거아님?
+    {
+        outOption.Add(OO.GetRow<FOption>("")->MakeOptionInst(level));
     }
 
     return true;
@@ -91,10 +159,6 @@ void UItemManager::CreateIntAryForShuffle(int maxAryLen, TArray<FOptionHandle>& 
     }
 }
 
-FOptionSpec UItemManager::CreateRandomOptionValue(int indexRandomd, const FItemData& itemData)
-{
-    return itemData.m_ItemType.GetRow<FItemType>("")->m_SubOptions[indexRandomd].GetRow<FOption>("")->MakeOptionInst();
-}
 
 bool UItemManager::AddItem(int droppedIndex, FItemInstance& itemWantAdd)
 {

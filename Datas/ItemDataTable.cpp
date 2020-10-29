@@ -1,6 +1,5 @@
 #include "ItemDataTable.h"
-
-#include "AbilitySystem/Ability/PlayerBaseAttack.h"
+#include "AbilitySystem/Ability/PlayerAbility/BaseAttack/PlayerBaseAttack.h"
 #include "AbilitySystem/GameEffect/ItemOptionGameEffect.h"
 
 UDataTable* UItemDataTable::GetTierTable = nullptr;
@@ -122,17 +121,15 @@ FItemTypeHandle::FItemTypeHandle()
     FDataTableRowHandle::RowName=NAME_None;
 }
 
-FItemType::FItemType(): m_EquipableSlot(), m_EquipInterruptSlot()
+FItemTierHandle::FItemTierHandle()
 {
-    m_AryMainOptionBonusRand.Add(0.8f);
-    m_AryMainOptionBonusRand.Add(0.9f);
-    m_AryMainOptionBonusRand.Add(1.0f);
-    m_AryMainOptionBonusRand.Add(1.1f);
-    m_AryMainOptionBonusRand.Add(1.2f);
-    
+    DataTable = UItemDataTable::GetTierTable;
+}
+
+FItemType::FItemType(): m_EquipableSlot(), m_EquipInterruptSlot(), m_MainOptionBonusRate(1.f)
+{
     m_TypeID = "SetSameWithRowID";
     m_ShowingName = FText::FromString("TheShowNameLikeOneHandSword");
-    m_OptionGameEffect = UItemDataTable::GetItemEffect;
 }
 
 FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMesh(nullptr), m_ItemIcon(nullptr)

@@ -29,24 +29,24 @@ protected:
 protected:
     bool CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption,float bonus,int level);
 
-    void CreateIntAryForShuffle(int maxAryLen, TArray<FOptionHandle>& outOptionAry);
+    bool CreateRandomOptionWithUnique(const FUniqueEquipItemDataRow& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption,float bonus,int level);    
 
-    FOptionSpec CreateRandomOptionValue(int indexRandomd, const FItemData& itemData);
+    void CreateIntAryForShuffle(int maxAryLen, TArray<FOptionHandle>& outOptionAry);
 
 public:
     void Init(UDiabloGameInstance* gameInstance);
 
-    FItemInstance CreateItemInstance(FName itemID, int level = 1);
+    FItemInstance CreateItemInstance(FName id,float magicItemBonus=0.f,float rareItemBonus=0.f,float epicItemBonus=0.f,int itemLevel=1);
 
-
- 
-
+    FItemInstance CreateUniqueItem(const FUniqueEquipItemDataRow* unique_item, int item_level);
+    
     virtual FOnItemSlotChanged& GetItemChangeCallback() override
     {
         return m_OnItemGroundChanged;
     }
 
     const FItemTier& GetDefaultTierRoll() const;
+    
 
 private:
     virtual bool AddItem(int droppedIndex, FItemInstance& itemWantAdd) override;

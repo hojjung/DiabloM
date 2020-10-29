@@ -173,17 +173,114 @@ void UEquipmentSystem::SetUnequipItemToSlots(TArray<TArray<FItemTypeHandle>> ary
     {
         TArray<FItemType*> UnequipAry;
 
-            for (const FItemTypeHandle& DataTableUnequipHandle : aryAryItemType[i])
+        for (const FItemTypeHandle& DataTableUnequipHandle : aryAryItemType[i])
+        {
+            if (DataTableUnequipHandle.IsNull())
             {
-                if (DataTableUnequipHandle.IsNull())
-                {
-                    continue;
-                }
-                UnequipAry.Add(DataTableUnequipHandle.GetRow<FItemType>(""));
+                continue;
+            }
+            UnequipAry.Add(DataTableUnequipHandle.GetRow<FItemType>(""));
+        }
+
+        m_ArySlots[i]->m_AryCantEquipable = UnequipAry;
+    }
+}
+
+UGameplayEffect* UEquipmentSystem::CreateItemOptionEffect(FItemInstance& itemInstance)
+{
+    UGameplayEffect* GEItemOption = NewObject<UGameplayEffect>(GetTransientPackage(), "ItemOptionCreated");
+
+    GEItemOption->DurationPolicy = EGameplayEffectDurationType::Infinite;
+
+    for (int i = 0; i < itemInstance.m_AryOptions.Num(); i++)
+    {
+        FOptionSpec& CurrentOptionSpec = itemInstance.m_AryOptions[i];
+
+        const FOption& CurrentOption = *CurrentOptionSpec.m_DataOption;
+
+        bool HasCondition = CurrentOption.m_ConditionalRequiredSourceTags.Num() > 0;
+
+        bool HasGrantAbility = CurrentOption.m_GrantAbility != nullptr;
+
+        FGameplayModifierInfo OptionMod;
+
+        FConditionalGameplayEffect CondGe;
+        
+        if (HasGrantAbility)
+        {
+        }
+        else
+        {
+            OptionMod.Attribute = CurrentOption.m_AttributeWant;
+            OptionMod.Magnitude = CurrentOptionSpec.m_fValue;
+
+            if (CurrentOption.m_bIsPercentValue)
+            {
+                OptionMod.ModifierOp = EGameplayModOp::Multiplicitive;
+            }
+            else
+            {
+                OptionMod.ModifierOp = EGameplayModOp::Additive;
             }
 
-            m_ArySlots[i]->m_AryCantEquipable = UnequipAry;
+            if (HasCondition)
+            {
+                UGameplayEffect* GEConditionalItemOption = NewObject<UGameplayEffect>(
+                    GetTransientPackage(), "ConditionalItemOptionCreated");
+
+                GEConditionalItemOption->DurationPolicy = EGameplayEffectDurationType::Infinite;
+
+                CondGe.RequiredSourceTags = CurrentOption.m_ConditionalRequiredSourceTags;
+                CondGe.EffectClass=GEConditionalItemOption->GetClass();
+
+                GEItemOption->ConditionalGameplayEffects.Add(CondGe);
+            }
+        }
+
+        if (HasCondition)
+        {
+            FConditionalGameplayEffect CondGe;
+
+            UGameplayEffect* GEConditionalItemOption = NewObject<UGameplayEffect>(
+                GetTransientPackage(), "ConditionalItemOptionCreated");
+
+            GEConditionalItemOption->DurationPolicy = EGameplayEffectDurationType::Infinite;
+
+            CondGe.RequiredSourceTags = CurrentOption.m_ConditionalRequiredSourceTags;
+
+            if (HasGrantAbility)
+            {
+            }
+            else
+            {
+                //Conditional effect can remove?//Condi Normal Stat
+                OptionMod.Attribute = CurrentOption.m_AttributeWant;
+                OptionMod.Magnitude = CurrentOptionSpec.m_fValue;
+
+                if (CurrentOption.m_bIsPercentValue)
+                {
+                    OptionMod.ModifierOp = EGameplayModOp::Multiplicitive;
+                }
+                else
+                {
+                    OptionMod.ModifierOp = EGameplayModOp::Additive;
+                }
+            }
+
+            GEConditionalItemOption->ConditionalGameplayEffects.Add(CondGe);
+        }
+        else
+        {
+            if (HasGrantAbility)
+            {
+            }
+            else //Normal Stat
+            {
+            }
+        }
     }
+
+    return GEItemOption;
 }
 
 void UEquipmentSystem::OnItemSlotChanged(int index)
@@ -223,24 +320,24 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
 {
     const FItemType* ItemTypeWantAdd = itemWantAdd.m_ItemData->m_ItemType.GetRow<FItemType>("");
 
-    if (m_ArySlots[droppedIndex]->m_EquippedType&&ItemTypeWantAdd == m_ArySlots[droppedIndex]->m_EquippedType)
+    if (m_ArySlots[droppedIndex]->m_EquippedType && ItemTypeWantAdd == m_ArySlots[droppedIndex]->m_EquippedType)
     {
-        return true;   
+        return true;
     }
-    
-    
-    if (GetItem(droppedIndex).IsEmpty() && m_ArySlots[droppedIndex]->m_bIsOccupied)//해당슬롯이 비어있는데 할당됐다면,양손무기의 반대손이라면
+
+
+    if (GetItem(droppedIndex).IsEmpty() && m_ArySlots[droppedIndex]->m_bIsOccupied) //해당슬롯이 비어있는데 할당됐다면,양손무기의 반대손이라면
     {
         //양손무기 왼손
         return false;
     }
 
-    if (!TEST_BIT(ItemTypeWantAdd->m_EquipableSlot, m_ArySlots[droppedIndex]->m_Slot))//무기의 장착 가능 슬롯인지
+    if (!TEST_BIT(ItemTypeWantAdd->m_EquipableSlot, m_ArySlots[droppedIndex]->m_Slot)) //무기의 장착 가능 슬롯인지
     {
         return false;
     }
 
-    for (FItemType* CantEquipType : m_ArySlots[droppedIndex]->m_AryCantEquipable)//클래스가 달라서 못낌
+    for (FItemType* CantEquipType : m_ArySlots[droppedIndex]->m_AryCantEquipable) //클래스가 달라서 못낌
     {
         if (CantEquipType == ItemTypeWantAdd)
         {
@@ -252,9 +349,9 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
 
     for (auto Slot : m_ArySlots)
     {
-        if (TEST_BIT(ItemTypeWantAdd->m_EquipInterruptSlot, Slot->m_Slot))//방해 슬롯이 할당되어있다면,
+        if (TEST_BIT(ItemTypeWantAdd->m_EquipInterruptSlot, Slot->m_Slot)) //방해 슬롯이 할당되어있다면,
         {
-            if (!Slot->m_Item.IsEmpty())//&&Slot->m_bIsOccupied
+            if (!Slot->m_Item.IsEmpty()) //&&Slot->m_bIsOccupied
             {
                 return false;
             }
@@ -290,26 +387,28 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
         }
     }
     //UG
-    TSubclassOf<UGameplayEffect> GameplayEffect = ItemTypeWantAdd->m_OptionGameEffect;
 
     if (itemWantAdd.m_AryOptions.Num() > 0)
     {
         auto Context = m_TargetAbilitySys->MakeEffectContext();
         Context.AddSourceObject(m_TargetAbilitySys->GetOwner());
-        FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(GameplayEffect, 1, Context);
 
-        for (int i = 0; i < itemWantAdd.m_AryOptions.Num(); i++)
-        {
-            FOptionSpec CurrentOption = itemWantAdd.m_AryOptions[i];
-
-            NewHandle.Data.Get()->SetSetByCallerMagnitude(
-                itemWantAdd.m_AryOptions[i].m_DataOption->m_OptionTag,
-                CurrentOption.m_fValue);
-            //
-        }
-
-        m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToSelf(
-            *NewHandle.Data.Get());
+        // UGameplayEffect* ItemOptionEffect=
+        //
+        // FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(ItemOptionEffect, itemWantAdd.m_nItemLevel, Context);
+        //
+        // for (int i = 0; i < itemWantAdd.m_AryOptions.Num(); i++)
+        // {
+        //     FOptionSpec CurrentOption = itemWantAdd.m_AryOptions[i];
+        //
+        //     NewHandle.Data.Get()->SetSetByCallerMagnitude(
+        //         itemWantAdd.m_AryOptions[i].m_DataOption->m_OptionTag,
+        //         CurrentOption.m_fValue);
+        //     //
+        // }
+        // m_TargetAbilitySys->ApplyGameplayEffectToSelf(
+        // m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToSelf(
+        //     *NewHandle.Data.Get());
 
         //수동으로 불러줄것
         //그렇게 되면 그냥 위젯 전체 업데이트 함수 만들어놓을것

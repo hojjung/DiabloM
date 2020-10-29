@@ -2,7 +2,7 @@
 
 #include "DiabloM.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
-#include "AbilitySystem/Ability/PlayerDiabloAbility.h"
+#include "AbilitySystem/Ability/PlayerAbility/PlayerDiabloAbility.h"
 #include "AbilitySystem/GameEffect/ItemOptionGameEffect.h"
 #include "Animations/DiaAniminstance.h"
 #include "Datas/OptionDataTable.h"
@@ -20,12 +20,27 @@ struct FOptionHandle :public FDataTableRowHandle
 public:
 	FOptionHandle()
 	{
-	    m_nMinLevel=0;
 		DataTable=UOptionDataTable::GetOptionTable;
 	}
+};
+
+USTRUCT(BlueprintType)
+struct FOptionRollData 
+{
+    GENERATED_USTRUCT_BODY()
+public:
+    FOptionRollData()
+    {
+        m_nMinLevel=0;
+        m_fRollPriorityRate=0.f;
+    }
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0"))
+    FOptionHandle m_OptionHandle;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0"))
     int m_nMinLevel;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0"))
+    float m_fRollPriorityRate;
 };
 
 USTRUCT(BlueprintType)
@@ -87,6 +102,15 @@ public:
     float m_fBonusValue;
 };
 
+USTRUCT(BlueprintType)
+struct FItemTierHandle :public FDataTableRowHandle
+{
+    GENERATED_USTRUCT_BODY()
+public:
+    FItemTierHandle();
+};
+
+
 
 USTRUCT(BlueprintType)
 struct FItemType : public FTableRowBase
@@ -102,17 +126,14 @@ public:
     int32 m_EquipableSlot;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))
     int32 m_EquipInterruptSlot;//like says twohand sword,LeftHand is interrupt slot
-    
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TSubclassOf<UItemOptionGameEffect> m_OptionGameEffect;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<AWeapon> m_EquipmentBP;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<float> m_AryMainOptionBonusRand;
+    float m_MainOptionBonusRate;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FOptionHandle m_MainOption;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<FOptionHandle> m_SubOptions;
+    TArray<FOptionRollData> m_SubOptions;
   
     FORCEINLINE TArray<FOptionHandle> GetAvailableOptions(int level) const
     {
@@ -122,7 +143,7 @@ public:
         {
             if(OO.m_nMinLevel<level)
             {
-                AryOptions.Add(OO);
+                AryOptions.Add(OO.m_OptionHandle);
             }
         }
 
@@ -187,7 +208,7 @@ public:
 
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FItemTypeHandle m_UniqueItemType;
+    FItemTierHandle m_UniqueItemTierHandle;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<FOptionHandle> m_UniqueOptions;//세트 아이템은 옵션 이펙트로 세트 구현할것
     
@@ -353,11 +374,8 @@ public:
     FItemDataHandle()
     {
         DataTable=UItemDataTable::GetItemTable;
-        m_fDropRatePriority=0.f;
     }
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
-    float m_fDropRatePriority;//There is no max
 };
 
 USTRUCT(BlueprintType)
@@ -368,9 +386,6 @@ public:
     FUniqueItemDataHandle()
     {
         DataTable=UItemDataTable::GetUniqueItemTypeTable;
-        m_fDropRateOnePerMax=0.f;
     }
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0",ClampMax = "1", UIMax = "1"))
-    float m_fDropRateOnePerMax;
 };
+

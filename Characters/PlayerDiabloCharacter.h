@@ -3,8 +3,8 @@
 #pragma once
 
 #include "DiabloM.h"
-#include "AbilitySystem/Ability/Timer/PlayerManaRegenAbility.h"
-#include "AbilitySystem/Ability/Timer/PlayerStaminaRegenAbility.h"
+#include "AbilitySystem/Ability/PlayerAbility/Regen/PlayerManaRegenAbility.h"
+#include "AbilitySystem/Ability/PlayerAbility/Regen/PlayerStaminaRegenAbility.h"
 #include "Animations/DiaAniminstance.h"
 #include "Characters/UnitPawn.h"
 #include "Managers/DiabloCheatManager.h"

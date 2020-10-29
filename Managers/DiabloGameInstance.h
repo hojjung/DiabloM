@@ -48,9 +48,9 @@ protected:
 	virtual void Shutdown()override;
 
 public:
-	FItemInstance CreateItem(FName id);
+	FItemInstance CreateItem(FName id,float magicItemBonus=0.f,float rareItemBonus=0.f,float epicItemBonus=0.f,int itemLevel=1.f);
 
-	FItemInstance CreateUniqueItem(const FUniqueEquipItemDataRow* uniqueItem);
+	FItemInstance CreateUniqueItem(const FUniqueEquipItemDataRow* uniqueItem,int itemLevel=1);
 
 	ADroppedItem* DropItemActor(APawn* dropCenterActor,float dropRadius,FItemInstance& myItem);
 

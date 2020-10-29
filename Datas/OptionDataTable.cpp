@@ -2,6 +2,9 @@
 
 UDataTable* UOptionDataTable::GetOptionTable = nullptr;
 
+FText FOption::Plus = FText::FromString("+");
+
+FText FOption::Minus = FText::FromString("-");
 
 
 UOptionDataTable::UOptionDataTable()
@@ -9,7 +12,6 @@ UOptionDataTable::UOptionDataTable()
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundOptionTable(
               TEXT("DataTable'/Game/DataTables/Options/EquipOptionTable.EquipOptionTable'"));
     UOptionDataTable::GetOptionTable = FoundOptionTable.Object;
-
 }
 
 const FOption& UOptionDataTable::GetOption(FName id)

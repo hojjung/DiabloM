@@ -12,6 +12,24 @@ void URewardManager::Init()
 
 void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMonsterItemDropRow& dropData, int level)
 {
+    int MinItemLevel = level-2;
+                    
+    MinItemLevel=FMath::Max(MinItemLevel,1);
+                    
+    int MaxItemLevel= level+2;
+
+    MaxItemLevel=FMath::Min(MaxItemLevel,MAXLEVEL);
+
+    float MagicItemBonus=0.f;
+                    
+    float RareItemBonus=0.f;
+                    
+    float EpicItemBonus=0.f;
+
+    float UniqueItemBonus=0.f;
+
+    //
+    
     int CountHp = dropData.m_AryHpDropRand.GetRandom();
 
     int IterHp = 0;
@@ -61,50 +79,33 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMons
 
             float RandomValue = FMath::RandRange(0.f, MaxRate);
             
-            for (const FItemDataHandle& ItemDataFromTable : dropData.m_AryDropItems)
+            for (const FItemDropData& ItemDataFromTable : dropData.m_AryDropItems)
             {
                 DropRateCount += ItemDataFromTable.m_fDropRatePriority;
 
                 if (DropRateCount >= RandomValue)
                 {
-                    //Spawn
-                    //Player And Monster TierBonus Need
-                    FItemData* ItemData=ItemDataFromTable.GetRow<FItemData>("");
-                    //비 장비 아이템도 티어를 갖고 있나?
-                    ////ㄴ랜덤 티어가 아니잔아, 티어는 가질수 있어도
-                    //상수이더라도 그냥 티어만큼 나눠놓자
-                    //레벨도 들어가야함
-                    //레벨도 쁠마?
-                    int MinItemLevel = level-2;
-                    MinItemLevel=FMath::Max(MinItemLevel,1);
+                    int RandItemLevel = FMath::RandRange(MinItemLevel,MaxItemLevel);
                     
-                    int MaxItemLevel= level+2;
-                    MaxItemLevel=FMath::Min(MaxItemLevel,MAXLEVEL);
+                    FItemInstance CreatedItem = UDiabloGameInstance::Get->CreateItem(ItemDataFromTable.m_DropHandle.RowName,MagicItemBonus,RareItemBonus,EpicItemBonus,RandItemLevel);
                     
-                    int ItemLevel = FMath::RandRange(MinItemLevel,MaxItemLevel);
-                    
-                    FItemInstance CreatedItem = UDiabloGameInstance::Get->CreateItem(EpicItemBonus,UniqueItemBonus,ItemLevel);
                     DropItemActor(dropActor,400.f,CreatedItem);
                 }
             }    
         }
-
-
-
-        
-
-
-
-        
     }
     //
     //Spawn Unique Item
     int CountUniqueItem = dropData.m_AropDropUniqueItems.Num();
+    
     int IterUnique = 0;
-
+    
     while (IterUnique < CountUniqueItem)
     {
         float DropPercentMaxOne = dropData.m_AropDropUniqueItems[IterUnique].m_fDropRateOnePerMax;
+        
+        DropPercentMaxOne*=(1.f+UniqueItemBonus);
+        
         float RandPercent = FMath::RandRange(0.f, 1.f);
 
         if (DropPercentMaxOne < RandPercent)
@@ -112,10 +113,11 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMons
             continue;
         }
 
-        const FUniqueEquipItemDataRow* UniqueData = dropData.m_AropDropUniqueItems[IterUnique].GetRow<
-            FUniqueEquipItemDataRow>("");
+        const FUniqueEquipItemDataRow* UniqueData = dropData.m_AropDropUniqueItems[IterUnique].m_DropHandle.GetRow<FUniqueEquipItemDataRow>("");
 
-        FItemInstance CreatedUniqueItem = UDiabloGameInstance::Get->CreateUniqueItem(UniqueData);
+        int RandItemLevel = FMath::RandRange(MinItemLevel,MaxItemLevel);
+
+        FItemInstance CreatedUniqueItem = UDiabloGameInstance::Get->CreateUniqueItem(UniqueData,RandItemLevel);
 
         DropItemActor(dropActor, 300.f, CreatedUniqueItem);
 
