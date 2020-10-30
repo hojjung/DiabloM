@@ -21,6 +21,4 @@ public:
 	
     void SetEquipSaveData(const TArray<FItemInstance>& equip);//
 	
-    void SetEquipLoadData(UEquipmentSystem** outEquip);
-
 };

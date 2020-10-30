@@ -546,11 +546,19 @@ void APlayerDiabloCharacter::Die()
 
     if (IsValid(GetDiaAbilitySystem()))
     {
-        GetDiaAbilitySystem()->CancelAllAbilities();
+        GetDiaAbilitySystem()->CancelAbilityHandle(m_PotionHandle);
+        GetDiaAbilitySystem()->CancelAbilityHandle(m_HpRegenHandle);
+        GetDiaAbilitySystem()->CancelAbilityHandle(m_BaseAttackHandle);
+        
+        if(m_ResourceRegenHandle.IsValid())
+        {
+            GetDiaAbilitySystem()->CancelAbilityHandle(m_ResourceRegenHandle);
+        }
+
         FGameplayTagContainer EffectTagsToRemove;
         EffectTagsToRemove.AddTag(m_TagEffectRemoveOnDeath);
         int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
-
+        
         GetDiaAbilitySystem()->AddLooseGameplayTag(m_TagDead);
     }
 

@@ -27,5 +27,4 @@ public:
 public:
 	void SetSaveData(const TArray<FItemInstance>& inven);//
 	
-	void SetInvenLoadData(UInventory* outInven);
 };

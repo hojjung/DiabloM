@@ -15,22 +15,3 @@ void USaveInventory::SetSaveData(const TArray<FItemInstance>& inven)
     PRINTF("m_nCount:%d", m_nCount);
 }
 
-void USaveInventory::SetInvenLoadData(UInventory* outInven)
-{
-    //m_SaveVersion
-
-    for (FItemInstance& ItemLoad : m_InvenAry)
-    {
-        if (ItemLoad.m_ItemID == NAME_None)
-        {
-            continue;
-        }
-        ItemLoad.m_ItemData = UItemDataTable::GetItemDataPtr(ItemLoad.m_ItemID);
-        ItemLoad.m_ItemTier = UItemDataTable::GetItemTierPtr(ItemLoad.m_TierID);
-    }
-
-    outInven->SetItemAry(m_InvenAry);
-
-
-    PRINTF("m_nCount:%d", m_nCount);
-}

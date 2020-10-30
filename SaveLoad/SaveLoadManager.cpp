@@ -106,8 +106,6 @@ void USaveLoadManager::LoadInventory(int slotIndex)
     USaveInventory* LoadInven = Cast<USaveInventory>(
         UGameplayStatics::LoadGameFromSlot(m_InvenSlotName, slotIndex));
 
-
-    
     LoadItemDataForInstance(LoadInven->m_InvenAry,LoadInven->m_SaveVersion);
     
     m_AryLoadedInventory[slotIndex] = LoadInven;
@@ -334,23 +332,21 @@ void USaveLoadManager::LoadItemDataForInstance(TArray<FItemInstance>& itemAry,ES
         }
 
         ItemInst.m_ItemData = UItemDataTable::GetItemDataPtr(ItemInst.m_ItemID);
+
+        if(ItemInst.m_ItemData==nullptr)
+        {
+            ItemInst.m_ItemData = UItemDataTable::GetUniqueItemPtr(ItemInst.m_ItemID);    
+        }
+        
         ItemInst.m_ItemTier = UItemDataTable::GetItemTierPtr(ItemInst.m_TierID);
 
-        if(ItemInst.m_ItemTier==nullptr)
-        {
-            switch (version)
-            {
-            case ESaveVersion::Init:
-
-                if(ItemInst.m_TierID=="Legendary")
-                {
-                    ItemInst.m_TierID="Legend";
-                    ItemInst.m_ItemTier = UItemDataTable::GetItemTierPtr(ItemInst.m_TierID);
-                }
-            default: ;
-            }
-
-        }
+        // if(ItemInst.m_ItemTier==nullptr)
+        // {
+        //     switch (version)
+        //     {
+        //         
+        //     }
+        // }
 
         for(auto& OO: ItemInst.m_AryOptions)
         {

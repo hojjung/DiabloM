@@ -251,7 +251,7 @@ ACollisionInteract* URewardManager::DropRandomPoint(APawn* dropCenterActor, floa
     FVector PosWant = dropCenterActor->GetMovementComponent()->GetActorFeetLocation();
 
     FRotator Rot;
-    Rot.Yaw = FMath::RandRange(0.f, 360.f);
+    Rot.Yaw = FMath::RandRange(0, 360);
 
     targetActorToDrop->SetActorLocation(PosWant);
     targetActorToDrop->SetActorRotation(Rot);

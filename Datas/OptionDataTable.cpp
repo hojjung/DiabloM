@@ -2,16 +2,21 @@
 
 UDataTable* UOptionDataTable::GetOptionTable = nullptr;
 
+TSubclassOf<UItemOptionGameEffect> UOptionDataTable::GetGEItemOption = nullptr;
+
 FText FOption::Plus = FText::FromString("+");
 
 FText FOption::Minus = FText::FromString("-");
-
 
 UOptionDataTable::UOptionDataTable()
 {
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundOptionTable(
               TEXT("DataTable'/Game/DataTables/Options/EquipOptionTable.EquipOptionTable'"));
     UOptionDataTable::GetOptionTable = FoundOptionTable.Object;
+    
+    static ConstructorHelpers::FClassFinder<UItemOptionGameEffect> FoundItemGE(
+    TEXT("Blueprint'/Game/Blueprints/Abilities/Item/GE_ItemOptionEffect.GE_ItemOptionEffect_C'"));
+    UOptionDataTable::GetGEItemOption=FoundItemGE.Class;
 }
 
 const FOption& UOptionDataTable::GetOption(FName id)

@@ -6,7 +6,6 @@ UDataTable* UItemDataTable::GetTierTable = nullptr;
 UDataTable* UItemDataTable::GetItemTable = nullptr;
 UDataTable* UItemDataTable::GetItemTypeTable = nullptr;
 UDataTable* UItemDataTable::GetAnimStanceTable = nullptr;
-TSubclassOf<UItemOptionGameEffect> UItemDataTable::GetItemEffect = nullptr;
 UDataTable* UItemDataTable::GetUniqueItemTypeTable = nullptr;
 //GetUniqueItemTypeTable
 
@@ -58,10 +57,8 @@ UItemDataTable::UItemDataTable()
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundUnique(
       TEXT("DataTable'/Game/DataTables/Items/UniqueItemTable.UniqueItemTable'"));
     UItemDataTable::GetUniqueItemTypeTable=FoundUnique.Object;
-   static ConstructorHelpers::FClassFinder<UItemOptionGameEffect>FoundGameEffectAsset(
-       TEXT("Blueprint'/Game/Blueprints/Abilities/Item/GE_ItemOptionEffect.GE_ItemOptionEffect_C'"));
 
-   UItemDataTable::GetItemEffect=FoundGameEffectAsset.Class;
+    
 }
 
 const FItemTier& UItemDataTable::GetItemTier(FName id)

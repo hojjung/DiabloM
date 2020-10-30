@@ -77,16 +77,13 @@ public:
     FString m_FormatArguSet;
     //
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-    FGameplayTagContainer m_ConditionalRequiredSourceTags;//Conditon Tag
-    //
+    FGameplayTag m_TagAttribute;
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
     FScalableFloat m_fLevelPerValue;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float m_fMinValue;//35 -> 35% -> 1.35
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float m_fMaxValue;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FGameplayAttribute m_AttributeWant;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     bool m_bIsPercentValue;
     //
@@ -162,6 +159,8 @@ public:
 
 public:
     static UDataTable* GetOptionTable;
+
+    static TSubclassOf<UItemOptionGameEffect> GetGEItemOption;
 
 public:
     static const FOption& GetOption(FName id);

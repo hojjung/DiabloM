@@ -115,8 +115,18 @@ void UEquipmentSystem::RemoveItemByIndex(int index)
     if (m_ArySlots[index]->m_OptionHandle.IsValid())
     {
         m_TargetAbilitySys->RemoveActiveGameplayEffect(m_ArySlots[index]->m_OptionHandle);
-        m_OnOptionChanged.Broadcast();
     }
+    if(m_ArySlots[index]->m_AryAbilitySpec.Num()>0)
+    {
+        for(FGameplayAbilitySpecHandle AbilSpec : m_ArySlots[index]->m_AryAbilitySpec)
+        {
+            m_TargetAbilitySys->CancelAbilityHandle(AbilSpec);
+        }
+        
+        m_ArySlots[index]->m_AryAbilitySpec.Reset();
+    }
+    m_OnOptionChanged.Broadcast();
+    
     OnItemSlotChanged(index);
 }
 
@@ -167,7 +177,7 @@ void UEquipmentSystem::CalculateAnimStance()
     }
 }
 
-void UEquipmentSystem::SetUnequipItemToSlots(TArray<TArray<FItemTypeHandle>> aryAryItemType)
+void UEquipmentSystem::SetUnequipItemToSlots(TArray<TArray<FItemTypeHandle>>&& aryAryItemType)
 {
     for (int i = 0; i < aryAryItemType.Num(); i++)
     {
@@ -186,102 +196,29 @@ void UEquipmentSystem::SetUnequipItemToSlots(TArray<TArray<FItemTypeHandle>> ary
     }
 }
 
-UGameplayEffect* UEquipmentSystem::CreateItemOptionEffect(FItemInstance& itemInstance)
-{
-    UGameplayEffect* GEItemOption = NewObject<UGameplayEffect>(GetTransientPackage(), "ItemOptionCreated");
+//이펙트 한개가 아니라
+//어빌리티 한개로 핸들
+//그냥 이펙트한개로 해볼것?
 
-    GEItemOption->DurationPolicy = EGameplayEffectDurationType::Infinite;
+//한개의 어빌리티에게 어트리뷰트 옵션을 모아서 이펙트로 만들고 적용
+//그 어빌리티에게 다른 옵션 어빌리티를 적용
 
-    for (int i = 0; i < itemInstance.m_AryOptions.Num(); i++)
-    {
-        FOptionSpec& CurrentOptionSpec = itemInstance.m_AryOptions[i];
 
-        const FOption& CurrentOption = *CurrentOptionSpec.m_DataOption;
+//제약조건
+//1.태그 조건부는 GE가 없고 GA가 가지고 있다.
+//2.단순스텟옵션은 데이터 테이블에서 끝내고싶다 일일히 블프를 만드는게 아니라
+//3.어떤 방법을 쓰든 장비 해제시 해제를 위해 핸들은 한개만 나와야한다.
 
-        bool HasCondition = CurrentOption.m_ConditionalRequiredSourceTags.Num() > 0;
+//모든 옵션을 GA로 만들면 전부 동적할당 필요함
 
-        bool HasGrantAbility = CurrentOption.m_GrantAbility != nullptr;
+//GE가 GA의 인스턴스를 끼워줄 방법?
+//GA의 배열을 가진 GA로 만들것?
 
-        FGameplayModifierInfo OptionMod;
+//GA기능만 상수 블프로 만들면되지 않나?
+//이 체제의 문제점은 조건부 옵션,여기서 이펙트 만들때 수동으로 체크?
+//조건부 시발 만들지마 졷같네
 
-        FConditionalGameplayEffect CondGe;
-        
-        if (HasGrantAbility)
-        {
-        }
-        else
-        {
-            OptionMod.Attribute = CurrentOption.m_AttributeWant;
-            OptionMod.Magnitude = CurrentOptionSpec.m_fValue;
 
-            if (CurrentOption.m_bIsPercentValue)
-            {
-                OptionMod.ModifierOp = EGameplayModOp::Multiplicitive;
-            }
-            else
-            {
-                OptionMod.ModifierOp = EGameplayModOp::Additive;
-            }
-
-            if (HasCondition)
-            {
-                UGameplayEffect* GEConditionalItemOption = NewObject<UGameplayEffect>(
-                    GetTransientPackage(), "ConditionalItemOptionCreated");
-
-                GEConditionalItemOption->DurationPolicy = EGameplayEffectDurationType::Infinite;
-
-                CondGe.RequiredSourceTags = CurrentOption.m_ConditionalRequiredSourceTags;
-                CondGe.EffectClass=GEConditionalItemOption->GetClass();
-
-                GEItemOption->ConditionalGameplayEffects.Add(CondGe);
-            }
-        }
-
-        if (HasCondition)
-        {
-            FConditionalGameplayEffect CondGe;
-
-            UGameplayEffect* GEConditionalItemOption = NewObject<UGameplayEffect>(
-                GetTransientPackage(), "ConditionalItemOptionCreated");
-
-            GEConditionalItemOption->DurationPolicy = EGameplayEffectDurationType::Infinite;
-
-            CondGe.RequiredSourceTags = CurrentOption.m_ConditionalRequiredSourceTags;
-
-            if (HasGrantAbility)
-            {
-            }
-            else
-            {
-                //Conditional effect can remove?//Condi Normal Stat
-                OptionMod.Attribute = CurrentOption.m_AttributeWant;
-                OptionMod.Magnitude = CurrentOptionSpec.m_fValue;
-
-                if (CurrentOption.m_bIsPercentValue)
-                {
-                    OptionMod.ModifierOp = EGameplayModOp::Multiplicitive;
-                }
-                else
-                {
-                    OptionMod.ModifierOp = EGameplayModOp::Additive;
-                }
-            }
-
-            GEConditionalItemOption->ConditionalGameplayEffects.Add(CondGe);
-        }
-        else
-        {
-            if (HasGrantAbility)
-            {
-            }
-            else //Normal Stat
-            {
-            }
-        }
-    }
-
-    return GEItemOption;
-}
 
 void UEquipmentSystem::OnItemSlotChanged(int index)
 {
@@ -358,18 +295,15 @@ bool UEquipmentSystem::CheckSlotValid(int droppedIndex, FItemInstance& itemWantA
         }
     }
 
-    // if (m_ArySlots[droppedIndex]->m_Item.IsEmpty()) //비어있지않음
-    // {
-    //     return true;
-    // }
-    //장비가 끼워지고 나면, 인터럽팅 슬롯을 빨갛게 칠해줘야하고
-    //장비들을 돌려서 현재 애님스턴스를 반환해야함
     return true;
 }
 
 void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
 {
+    int ItemLevel = itemWantAdd.m_nItemLevel;
+    
     const FItemType* ItemTypeWantAdd = itemWantAdd.m_ItemData->m_ItemType.GetRow<FItemType>("");
+    
     m_ArySlots[droppedIndex]->m_Item = itemWantAdd;
     m_ArySlots[droppedIndex]->m_EquippedType = ItemTypeWantAdd;
     //
@@ -387,33 +321,42 @@ void UEquipmentSystem::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
         }
     }
     //UG
-
-    if (itemWantAdd.m_AryOptions.Num() > 0)
+    if (itemWantAdd.m_AryOptions.Num() < 1)//No Option
     {
-        auto Context = m_TargetAbilitySys->MakeEffectContext();
-        Context.AddSourceObject(m_TargetAbilitySys->GetOwner());
-
-        // UGameplayEffect* ItemOptionEffect=
-        //
-        // FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(ItemOptionEffect, itemWantAdd.m_nItemLevel, Context);
-        //
-        // for (int i = 0; i < itemWantAdd.m_AryOptions.Num(); i++)
-        // {
-        //     FOptionSpec CurrentOption = itemWantAdd.m_AryOptions[i];
-        //
-        //     NewHandle.Data.Get()->SetSetByCallerMagnitude(
-        //         itemWantAdd.m_AryOptions[i].m_DataOption->m_OptionTag,
-        //         CurrentOption.m_fValue);
-        //     //
-        // }
-        // m_TargetAbilitySys->ApplyGameplayEffectToSelf(
-        // m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToSelf(
-        //     *NewHandle.Data.Get());
-
-        //수동으로 불러줄것
-        //그렇게 되면 그냥 위젯 전체 업데이트 함수 만들어놓을것
-        m_OnOptionChanged.Broadcast();
+        OnItemSlotChanged(droppedIndex);//JustEnd
+        return;
     }
+
+    FGameplayEffectContextHandle Context = m_TargetAbilitySys->MakeEffectContext();
+
+    Context.AddSourceObject(m_TargetAbilitySys->GetOwner());
+
+    FGameplayEffectSpecHandle NewHandle = m_TargetAbilitySys->MakeOutgoingSpec(UOptionDataTable::GetGEItemOption,ItemLevel,Context);
+    
+    for(FOptionSpec& OP : itemWantAdd.m_AryOptions)
+    {
+        if(OP.m_DataOption->m_GrantAbility)//Ability OO
+        {
+            FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(OP.m_DataOption->m_GrantAbility,ItemLevel,INDEX_NONE,
+                m_TargetAbilitySys->GetOwner());
+            
+            FGameplayAbilitySpecHandle AbilityHandle = m_TargetAbilitySys->GiveAbility(AbilitySpec);
+            
+            m_ArySlots[droppedIndex]->m_AryAbilitySpec.Emplace(AbilityHandle);
+        }
+        else
+        {
+            NewHandle.Data.Get()->SetSetByCallerMagnitude(
+                OP.m_DataOption->m_TagAttribute,
+                OP.m_fValue);
+        }
+    }
+    if(NewHandle.Data.Get()->SetByCallerTagMagnitudes.Num()>0)
+    {
+        m_ArySlots[droppedIndex]->m_OptionHandle = m_TargetAbilitySys->ApplyGameplayEffectSpecToSelf(*NewHandle.Data.Get());
+    }
+    
+    m_OnOptionChanged.Broadcast();
 
     OnItemSlotChanged(droppedIndex);
 }

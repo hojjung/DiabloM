@@ -6,4 +6,5 @@ void UPlayerDiabloAbility::OnAvatarSet(const FGameplayAbilityActorInfo* ActorInf
 {
     UDiabloAbility::OnAvatarSet(ActorInfo,Spec);
     m_PlayerPawn=Cast<APlayerDiabloCharacter>( m_OwnerUnit);
+    PRINTF("Ability AvatarSet");
 }

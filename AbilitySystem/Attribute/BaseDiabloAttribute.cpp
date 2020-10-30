@@ -72,6 +72,18 @@ void UBaseDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attribut
     {
         NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.90f);
     }
+    else if (Attribute == GetPhysicalDamageAttribute())
+    {
+        PRINTF("NewPhysDmg:%f",NewValue);
+
+    }
+    else if (Attribute == GetPhysicalDefenseAttribute())
+    {
+        PRINTF("NewPhysDef:%f",NewValue);
+    }
+
+
+    
 }
 
 void UBaseDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* SourceUnit,
@@ -238,6 +250,15 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
         {
             Cast<UUnitMovement>(TargetCharacter->GetMovementComponent())->SetMoveSpeed(GetMoveSpeed());
         }
+    }
+
+    else if (Data.EvaluatedData.Attribute == GetPhysicalDamageAttribute())
+    {
+      PRINTF("PhysDmg:%f",GetPhysicalDamage());
+    }
+    else if (Data.EvaluatedData.Attribute == GetPhysicalDefenseAttribute())
+    {
+        PRINTF("PhysDEf:%f",GetPhysicalDefense());
     }
 
     //속도 측정해볼것

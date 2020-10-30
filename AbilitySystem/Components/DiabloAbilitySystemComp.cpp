@@ -12,7 +12,7 @@ void UDiabloAbilitySystemComp::GetActiveAbilitiesWithTags(const FGameplayTagCont
 {
 	TArray<FGameplayAbilitySpec*> AbilitiesToActivate;
 	GetActivatableGameplayAbilitySpecsByAllMatchingTags(GameplayTagContainer, AbilitiesToActivate, false);
-
+	
 	// Iterate the list of all ability specs
 	for (FGameplayAbilitySpec* Spec : AbilitiesToActivate)
 	{

@@ -339,8 +339,6 @@ class DIABLOM_API UItemDataTable : public UObject
 
     static  UDataTable* GetAnimStanceTable;
 
-    static TSubclassOf<UItemOptionGameEffect> GetItemEffect;
-    
  public:
     
     static const FItemTier& GetItemTier(FName id);

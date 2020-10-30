@@ -44,10 +44,12 @@ public:
 
     FItemInstance m_Item;
 
-    FActiveGameplayEffectHandle m_OptionHandle;
-
     TArray<FItemType*> m_AryCantEquipable;
 
+    FActiveGameplayEffectHandle m_OptionHandle;
+
+    TArray<FGameplayAbilitySpecHandle> m_AryAbilitySpec;
+    
     void ClearSlot()
     {
         m_Item.ClearData();
@@ -144,13 +146,12 @@ public:
         return m_CurrentStance;
     }
 
-    UGameplayEffect* CreateItemOptionEffect(FItemInstance& itemInstance);
 protected:
     void OnItemSlotChanged(int index);
     
     void CalculateAnimStance();
 
     
-    void SetUnequipItemToSlots(TArray<TArray<FItemTypeHandle>> aryAryItemType);
+    void SetUnequipItemToSlots(TArray<TArray<FItemTypeHandle>>&& aryAryItemType);
 };
 //TArray<TArray<FItemTypeHandle>>
