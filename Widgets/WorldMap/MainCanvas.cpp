@@ -148,3 +148,8 @@ void UMainCanvas::UpdateHpBar()
 {
     m_PlayerStatusBar->SetHealthBarProgressV(m_PlayerPawn);
 }
+
+void UMainCanvas::UpdateMinimap(UMaterialInterface* mapMat)
+{
+    m_PlayerStatusBar->UpdateMinimap(mapMat);
+}

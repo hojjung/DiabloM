@@ -94,4 +94,7 @@ public:
     {
         return m_bIsOpened;
     }
+
+    
+    void UpdateMinimap(UMaterialInterface* mapMat);
 };

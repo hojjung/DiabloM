@@ -133,4 +133,5 @@ public:
 	void ShowDamageNumber(const float local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target	
 	void HideFocusStatusWidget();
 	void ShowFocusStatusWidget(AUnitPawn* unit);
+	void UpdateMinimap(UMaterialInterface* mapMat);
 };

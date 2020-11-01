@@ -10,6 +10,7 @@
 
 class ADiaDungeon;
 class APortal;
+class UGridFlowMiniMap;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDelta,float);
 UCLASS()
@@ -23,11 +24,15 @@ public:
 
 	static ADiabloGameMode* Get;
 
+	
+
 protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UActionManagerComponent* m_ActionManager;
 	UPROPERTY(VisibleAnywhere)
 	APortal* m_PlayerVillageSpawn;
+	UPROPERTY()
+	UGridFlowMiniMap* m_MiniMap;
 	
 	TArray<FDungeonMiniMapOverlayIcon> m_AryOverlayMinimap;
 
