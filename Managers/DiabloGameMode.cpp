@@ -38,6 +38,19 @@ void ADiabloGameMode::FindSpawnPoint()
 	}
 }
 
+void ADiabloGameMode::InitMinimap()
+{
+	m_MiniMap = NewObject<UGridFlowMiniMap>();
+	m_MiniMap->m_World = ADiabloPlayerController::Get->GetWorld();
+	m_MiniMap->OverlayIcons=m_AryOverlayMinimap;
+	FDungeonMiniMapOverlayTracking TrackingInfo;
+	TrackingInfo.TrackedActor = ADiabloPlayerController::Get->GetPlayerPawn();
+	TrackingInfo.Id = "player";
+	TrackingInfo.IconName = "player";
+	TrackingInfo.bOrientToRotation = true;
+	m_MiniMap->DynamicTracking.Add(TrackingInfo);
+}
+
 void ADiabloGameMode::StartPlay()
 {
 	SetDungeonInstanceToMap();
@@ -48,17 +61,17 @@ void ADiabloGameMode::StartPlay()
 
 	InitRewardManager();
 	
+	
+	
 	//ㄴBeginPlay Before
-	
-	m_MiniMap = NewObject<UGridFlowMiniMap>();
-	UGridFlowMiniMap::Get =m_MiniMap;
-	m_MiniMap->m_World = GetWorld();
-	m_MiniMap->OverlayIcons=m_AryOverlayMinimap;
-	
 	Super::StartPlay();
 
 	InitSpawnManager();
 
+	InitMinimap();
+	//
+
+	
 }
 
 void ADiabloGameMode::SetDungeonInstanceToMap()

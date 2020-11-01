@@ -24,4 +24,6 @@ protected:
 	
 public:
 	void UpdateMinimap(UMaterialInterface* material_interface);
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 };

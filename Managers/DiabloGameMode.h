@@ -21,6 +21,7 @@ public:
 	ADiabloGameMode();
 	void InitRewardManager();
 	void FindSpawnPoint();
+	void InitMinimap();
 
 	static ADiabloGameMode* Get;
 
@@ -63,5 +64,11 @@ public:
 	FORCEINLINE FDelta GetOnDeltaTick()
 	{
 		return m_OnTick;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	UGridFlowMiniMap* GetMinimapManager()
+	{
+		return m_MiniMap;
 	}
 };

@@ -1,10 +1,13 @@
 #include "MonsterPawn.h"
 
 #include "DiabloPlayerController.h"
+#include "DungeonMiniMap.h"
+#include "GridFlowMiniMap.h"
 #include "PlayerDiabloCharacter.h"
 #include "Logic/MonsterSensing.h"
 #include "Logic/MobFSMBase.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/DiabloGameMode.h"
 
 AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit): Super(objInit)
 {
@@ -75,6 +78,17 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
     m_DeathMontage = UnitData->m_DeathMontage;
     m_StunMontage = UnitData->m_StunMontage;
     m_TookHitMontage = UnitData->m_TookHitMontage;
+
+    UGridFlowMiniMap* Map = ADiabloGameMode::Get->GetMinimapManager();
+    if (Map)
+    {
+        FDungeonMiniMapOverlayTracking TrackingInfo;
+        TrackingInfo.TrackedActor = this;
+        TrackingInfo.Id = "enemy";
+        TrackingInfo.IconName = "enemy";
+        TrackingInfo.bOrientToRotation = false;
+        Map->DynamicTracking.Add(TrackingInfo);
+    }
 }
 
 
@@ -148,7 +162,7 @@ void AMonsterPawn::RequestDropRewards()
         return;
     }
 
-    UDiabloGameInstance::Get->GetRewardManager()->RequestMonsterDropItem(this,*m_DropDataRow,GetCharacterLevel());
+    UDiabloGameInstance::Get->GetRewardManager()->RequestMonsterDropItem(this, *m_DropDataRow, GetCharacterLevel());
 }
 
 void AMonsterPawn::OnDeathAnimEnd()
@@ -196,19 +210,19 @@ FVector AMonsterPawn::GetLastSeenLocation()
 void AMonsterPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     Super::EndPlay(EndPlayReason);
-    PRINTF("End - Mobs");
-    switch (EndPlayReason)
-    {
-    case EEndPlayReason::Destroyed: PRINTF("Destroyed");
-        break;
-    case EEndPlayReason::LevelTransition: PRINTF("LevelTrans");
-        break;
-    case EEndPlayReason::EndPlayInEditor: PRINTF("Editor End");
-        break;
-    case EEndPlayReason::RemovedFromWorld: PRINTF("RemoveWorld");
-        break;
-    case EEndPlayReason::Quit: PRINTF("Quit");
-        break;
-    default: ;
-    }
+    // PRINTF("End - Mobs");
+    // switch (EndPlayReason)
+    // {
+    // case EEndPlayReason::Destroyed: PRINTF("Destroyed");
+    //     break;
+    // case EEndPlayReason::LevelTransition: PRINTF("LevelTrans");
+    //     break;
+    // case EEndPlayReason::EndPlayInEditor: PRINTF("Editor End");
+    //     break;
+    // case EEndPlayReason::RemovedFromWorld: PRINTF("RemoveWorld");
+    //     break;
+    // case EEndPlayReason::Quit: PRINTF("Quit");
+    //     break;
+    // default: ;
+    // }
 }

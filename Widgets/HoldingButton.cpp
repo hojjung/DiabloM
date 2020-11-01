@@ -11,7 +11,7 @@ UHoldingButton::UHoldingButton(): m_fDeltaTimer(0), m_fHoldingTime(0)
 
     OnReleased.AddDynamic(this,&UHoldingButton::OnReleaseHold);
 
-    UseHoldEvent(m_fHoldingTime);
+    //UseHoldEvent(m_fHoldingTime);
 }
 
 void UHoldingButton::UseHoldEvent(float holdTime)

@@ -8,6 +8,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Characters/DiabloPlayerController.h"
 #include "DefaultMenu/MaterialProgressBar.h"
+#include "Widgets/HoldingButton.h"
+
 
 #include "PlayerStatusBar.generated.h"
 
@@ -37,6 +39,8 @@ protected:
 	UMaterialProgressBar* m_RageBar;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMinimapWidget* m_Minimap;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UHoldingButton* m_PortalBtn;
 
 	TWeakObjectPtr<UMaterialProgressBar> m_SelectedBar;
 
