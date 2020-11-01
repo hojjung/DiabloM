@@ -1,6 +1,8 @@
 #include "DiabloGameMode.h"
 #include "DiabloGameInstance.h"
+#include "DungeonMiniMap.h"
 #include "EngineUtils.h"
+#include "GridFlowMiniMap.h"
 #include "MonsterSpawnManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Characters/DiabloPlayerController.h"
@@ -17,6 +19,8 @@ ADiabloGameMode::ADiabloGameMode()
 	DefaultPawnClass = APlayerDiabloCharacter::StaticClass();
 
 	m_ActionManager=CreateDefaultSubobject<UActionManagerComponent>("ActionManager");
+
+	
 }
 
 void ADiabloGameMode::InitRewardManager()
@@ -49,6 +53,8 @@ void ADiabloGameMode::StartPlay()
 	Super::StartPlay();
 
 	InitSpawnManager();
+
+	m_MiniMap = NewObject<UGridFlowMiniMap>();
 }
 
 void ADiabloGameMode::SetDungeonInstanceToMap()
@@ -110,6 +116,7 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	m_OnTick.Broadcast(DeltaSeconds);
+	m_MiniMap->CustomTick(DeltaSeconds);
 }
 
 

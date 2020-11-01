@@ -229,3 +229,8 @@ void ADiabloPlayerController::ShowFocusStatusWidget(AUnitPawn* unit)
 {
 	m_MainMenu->ShowMonsterInfo(unit);
 }
+
+void ADiabloPlayerController::UpdateMinimap(UMaterialInterface* mapMat)
+{
+	
+}

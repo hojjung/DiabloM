@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "MinimapWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/DiabloPlayerController.h"
 #include "DefaultMenu/MaterialProgressBar.h"
@@ -33,6 +35,8 @@ protected:
 	UMaterialProgressBar* m_ManaBar;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMaterialProgressBar* m_RageBar;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UMinimapWidget* m_Minimap;
 
 	TWeakObjectPtr<UMaterialProgressBar> m_SelectedBar;
 
@@ -47,5 +51,6 @@ public:
 	void SetHealthBarProgressV(AUnitPawn* pawn);
 
 	void SetResourceBarProgressV(AUnitPawn* pawn);
-
+	
+	void UpdateMinimap(UMaterialInterface* material_interface);
 };

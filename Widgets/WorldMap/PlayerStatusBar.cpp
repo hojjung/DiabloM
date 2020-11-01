@@ -70,3 +70,8 @@ void UPlayerStatusBar::SetResourceBarProgressV(AUnitPawn* pawn)
     Per = FMath::Clamp(Per, 0.f, 1.f);
     m_SelectedBar->SetProgressValue(Per);
 }
+
+void UPlayerStatusBar::UpdateMinimap(UMaterialInterface* material_interface)
+{
+    m_Minimap->UpdateMinimap(material_interface);
+}

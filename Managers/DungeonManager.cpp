@@ -1,6 +1,7 @@
 #include "DungeonManager.h"
 #include "DiabloGameInstance.h"
 #include "DiabloGameMode.h"
+#include "DungeonMiniMap.h"
 #include "MonsterSpawnManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Datas/DungeonDataTable.h"
@@ -8,6 +9,7 @@
 #include "Objs/Actor/DgMobSpawnPoint.h"
 #include "UObject/UObjectGlobals.h"
 #include "Serialization/AsyncPackageLoader.h"
+#include "Village/Portal.h"
 
 void UDungeonManager::Init()
 {
@@ -37,6 +39,11 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
     PortalToRecentDungeon();
 
     m_OnPortalCreate.Broadcast(true);
+
+    UDungeonMiniMap::Get->BuildLayout(m_CurrentDungeon->GetModel(),m_CurrentDungeon->GetConfig());
+    m_MatMinimap = UDungeonMiniMap::Get->CreateMaterialInstance();
+    ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);
+    
 }
 
 void UDungeonManager::ShowSpawnedMonster()

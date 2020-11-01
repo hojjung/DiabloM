@@ -37,8 +37,8 @@ protected:
 	FVector m_RecentDungeonFeetLoc;
 
 	FDungeonCreate m_OnPortalCreate;
-
-
+	UPROPERTY()
+	UMaterialInterface* m_MatMinimap;
 protected:
 	int StageLevelToDungeonLevel(int stageLevel);
 	
