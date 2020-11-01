@@ -4,6 +4,7 @@
 
 #include "ActionManagerComponent.h"
 #include "DiabloM.h"
+#include "DungeonMiniMap.h"
 #include "GameFramework/GameMode.h"
 #include "DiabloGameMode.generated.h"
 
@@ -28,6 +29,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	APortal* m_PlayerVillageSpawn;
 	
+	TArray<FDungeonMiniMapOverlayIcon> m_AryOverlayMinimap;
+
+	UPROPERTY()
 	TMap<FName,ADiaDungeon*> m_MapDungeonActors;
 	
 	FDelta m_OnTick;

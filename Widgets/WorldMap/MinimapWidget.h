@@ -14,4 +14,6 @@ class DIABLOM_API UMinimapWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	
 };
