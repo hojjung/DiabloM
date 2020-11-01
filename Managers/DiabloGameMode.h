@@ -5,29 +5,32 @@
 #include "ActionManagerComponent.h"
 #include "DiabloM.h"
 #include "GameFramework/GameMode.h"
-#include "Objs/Actor/PlayerSpawnPoint.h"
-
 #include "DiabloGameMode.generated.h"
 
 class ADiaDungeon;
+class APortal;
 
-
+DECLARE_MULTICAST_DELEGATE_OneParam(FDelta,float);
 UCLASS()
 class DIABLOM_API ADiabloGameMode : public AGameMode
 {
 	GENERATED_BODY()
 public:
 	ADiabloGameMode();
-	
+	void InitRewardManager();
+	void FindSpawnPoint();
+
 	static ADiabloGameMode* Get;
+
 protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UActionManagerComponent* m_ActionManager;
 	UPROPERTY(VisibleAnywhere)
-	APlayerSpawnPoint* m_PlayerVillageSpawn;
+	APortal* m_PlayerVillageSpawn;
 	
 	TMap<FName,ADiaDungeon*> m_MapDungeonActors;
 	
+	FDelta m_OnTick;
 public:
 	virtual void StartPlay() override;
 
@@ -39,10 +42,17 @@ public:
 	
 	void InitSpawnManager();
 
-	APlayerSpawnPoint* GetSpawnPoint();
+	APortal* GetSpawnPoint();
 
 	FORCEINLINE UActionManagerComponent* GetActionManager()
 	{
 		return m_ActionManager;
+	}
+
+	virtual void Tick(float DeltaSeconds) override;
+
+	FORCEINLINE FDelta GetOnDeltaTick()
+	{
+		return m_OnTick;
 	}
 };

@@ -38,13 +38,12 @@ FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIn
 UItemDataTable::UItemDataTable()
 {
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundTierTable(
-        TEXT("DataTable'/Game/DataTables/Items/TierTable.TierTable'"));
+        TEXT("DataTable'/Game/DataTables/Items/ItemTierTable.ItemTierTable'"));
     UItemDataTable::GetTierTable = FoundTierTable.Object;
 
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundItemTable(
         TEXT("DataTable'/Game/DataTables/Items/DefaultItemTable.DefaultItemTable'"));
     UItemDataTable::GetItemTable = FoundItemTable.Object;
-
 
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundItemTypeTable(
       TEXT("/DataTable'/Game/DataTables/Items/ItemTypeTable.ItemTypeTable'"));
@@ -101,14 +100,14 @@ const FAnimStance* UItemDataTable::GetAnimStancePtr(FName id)
     return GetAnimStanceTable->FindRow<FAnimStance>(id, "");
 }
 
-const FUniqueEquipItemDataRow& UItemDataTable::GetUniqueItem(FName id)
+const FUniqueEquipData& UItemDataTable::GetUniqueItem(FName id)
 {
-    return *GetUniqueItemTypeTable->FindRow<FUniqueEquipItemDataRow>(id, "");
+    return *GetUniqueItemTypeTable->FindRow<FUniqueEquipData>(id, "");
 }
 
-const FUniqueEquipItemDataRow* UItemDataTable::GetUniqueItemPtr(FName id)
+const FUniqueEquipData* UItemDataTable::GetUniqueItemPtr(FName id)
 {
-    return GetUniqueItemTypeTable->FindRow<FUniqueEquipItemDataRow>(id, "");
+    return GetUniqueItemTypeTable->FindRow<FUniqueEquipData>(id, "");
 }
 
 
@@ -126,7 +125,7 @@ FItemTierHandle::FItemTierHandle()
 FItemType::FItemType(): m_EquipableSlot(), m_EquipInterruptSlot(), m_MainOptionBonusRate(1.f)
 {
     m_TypeID = "SetSameWithRowID";
-    m_ShowingName = FText::FromString("TheShowNameLikeOneHandSword");
+    m_ShowingName = FText::FromString("ShowNameExOneHandSword");
 }
 
 FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMesh(nullptr), m_ItemIcon(nullptr)
@@ -142,7 +141,7 @@ FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMe
     m_ItemType.DataTable = UItemDataTable::GetItemTypeTable;
 }
 
-FUniqueEquipItemDataRow::FUniqueEquipItemDataRow()
+FUniqueEquipData::FUniqueEquipData()
 {
     m_bEquipable=true;
     m_bStackable=false;

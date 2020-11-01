@@ -29,7 +29,7 @@ protected:
 protected:
     bool CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption,float bonus,int level);
 
-    bool CreateRandomOptionWithUnique(const FUniqueEquipItemDataRow& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption,float bonus,int level);    
+    bool CreateRandomOptionWithUnique(const FUniqueEquipData& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption,float bonus,int level);    
 
     void CreateIntAryForShuffle(int maxAryLen, TArray<FOptionHandle>& outOptionAry);
 
@@ -38,7 +38,7 @@ public:
 
     FItemInstance CreateItemInstance(FName id,float magicItemBonus=0.f,float rareItemBonus=0.f,float epicItemBonus=0.f,int itemLevel=1);
 
-    FItemInstance CreateUniqueItem(const FUniqueEquipItemDataRow* unique_item, int item_level);
+    FItemInstance CreateUniqueItem(const FUniqueEquipData* unique_item, int item_level);
     
     virtual FOnItemSlotChanged& GetItemChangeCallback() override
     {

@@ -109,11 +109,6 @@ void UItemPopupInfo::NativePreConstruct()
     Super::NativePreConstruct();
 }
 
-FText UItemPopupInfo::GetItemTypeTxt(const FItemType* typeV) const
-{
-    return typeV->m_ShowingName;
-}
-
 void UItemPopupInfo::SetIcon(const FItemInstance& itemInst)
 {
     FSlateBrush BrushWant;
@@ -260,7 +255,17 @@ void UItemPopupInfo::SetItemText(const FItemInstance& itemInst)
 
     FText ItemTier = itemInst.m_ItemTier->m_ShowingName;
 
-    FText ItemTypeT = GetItemTypeTxt(itemInst.m_ItemData->m_ItemType.GetRow<FItemType>(""));
+    FText ItemTypeT;
+
+    ItemTypeT =itemInst.m_ItemData->m_ItemType.GetRow<FItemType>("")->m_ShowingName;
+    // if(itemInst.m_ItemData->m_bEquipable)
+    // {
+    //     
+    // }
+    // else
+    // {
+    //     ItemTypeT = GetItemTypeTxt(itemInst.m_ItemData->m_ItemType.GetRow<FItemType>(""));
+    // }
 
     m_TextItemTier->SetText(ItemTier);
 

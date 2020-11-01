@@ -39,6 +39,7 @@ USaveLoadManager::~USaveLoadManager()
 
 void USaveLoadManager::TryLoadAllCharacter()
 {
+  
     for (int i = 0; i < m_nCurrentSlotCount; i++)
     {
         if (!DoesSaveDataExist(i))

@@ -35,6 +35,8 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
     SpawnMonstersToDungeon(m_nMonsterLevel, m_CurrentDungeonData);
 
     PortalToRecentDungeon();
+
+    m_OnPortalCreate.Broadcast(true);
 }
 
 void UDungeonManager::ShowSpawnedMonster()
@@ -98,12 +100,14 @@ void UDungeonManager::ClearDungeon()
     }
     m_CurrentDungeon->HideDungeon();
     ADiabloPlayerController::Get->ClientForceGarbageCollection();
+    m_RecentDungeonFeetLoc=m_CurrentDungeon->GetActorLocation();
+    
+    m_OnPortalCreate.Broadcast(false);
 }
 
 void UDungeonManager::RestartDungeon()
 {
     ClearDungeon();
-    m_RecentDungeonFeetLoc=m_CurrentDungeon->GetActorLocation();
     SpawnMonstersToDungeon(m_nMonsterLevel, m_CurrentDungeonData);
     PortalToRecentDungeon();
 }

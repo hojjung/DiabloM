@@ -83,6 +83,8 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
     m_fMaxExp = 0.f;
 
     m_bIsDead = false;
+
+
 }
 
 
@@ -416,23 +418,38 @@ void APlayerDiabloCharacter::ResetCombo()
 
 void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)
 {
+    if(m_FocusOutlinePawn.Get())
+    {
+        if(Unit == m_FocusOutlinePawn.Get())
+        {
+            return;
+        }
+    }
+    m_FocusOutlinePawn=Unit;
+
     m_FocusRenderer->SetHiddenInGame(false);
-    m_FocusRenderer->SetSkeletalMesh(Unit->GetBodyMesh()->SkeletalMesh);
-    m_FocusRenderer->SetMasterPoseComponent(Unit->GetBodyMesh(), true);
     m_FocusRenderer->AttachToComponent(Unit->GetBodyMesh(), FAttachmentTransformRules::KeepRelativeTransform);
 
+    m_FocusRenderer->SetSkeletalMesh(Unit->GetBodyMesh()->SkeletalMesh);
+    
     for (int i = 0; i < m_FocusRenderer->GetMaterials().Num(); i++)
     {
         m_FocusRenderer->SetMaterial(i, m_OutLineMat);
     }
+    
+    m_FocusRenderer->SetMasterPoseComponent(Unit->GetBodyMesh(), true);
+    PRINTF("ShowOutlineOnTarget");
 }
 
 void APlayerDiabloCharacter::HideOutlineOnTarget()
 {
+    m_FocusOutlinePawn=nullptr;
+    
     m_FocusRenderer->SetHiddenInGame(true);
     m_FocusRenderer->SetSkeletalMesh(nullptr);
     m_FocusRenderer->GetMaterials().Reset();
     m_FocusRenderer->AttachToComponent(GetBodyMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+    PRINTF("HideOutlineOnTarget");
 }
 
 void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)

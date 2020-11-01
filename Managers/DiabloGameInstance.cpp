@@ -41,7 +41,7 @@ void UDiabloGameInstance::Init()
     m_DungeonManager = NewObject<UDungeonManager>();
     m_DungeonManager->Init();
     m_RewardManager = NewObject<URewardManager>();
-    m_RewardManager->Init();
+    
     
     //
     UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(45.f);
@@ -58,7 +58,7 @@ FItemInstance UDiabloGameInstance::CreateItem(FName id,float magicItemBonus,floa
     return m_ItemManager->CreateItemInstance(id,magicItemBonus,rareItemBonus,epicItemBonus,itemLevel);
 }
 
-FItemInstance UDiabloGameInstance::CreateUniqueItem(const FUniqueEquipItemDataRow* uniqueItem,int itemLevel)
+FItemInstance UDiabloGameInstance::CreateUniqueItem(const FUniqueEquipData* uniqueItem,int itemLevel)
 {
     return m_ItemManager->CreateUniqueItem(uniqueItem,itemLevel);
 }

@@ -101,8 +101,6 @@ protected:
 	FOnActionEnd m_OnActionEnd;
 
 protected:
-	FText GetItemTypeTxt(const FItemType*  typeV) const;
-
 	void SetIcon(const FItemInstance& itemInst);
 	void SetColorTier(const FItemInstance& itemInst);
 	void SetItemText(const FItemInstance& itemInst);

@@ -6,6 +6,7 @@
 #include "Characters/DiabloPlayerController.h"
 #include "Objs/Actor/DiaDungeon.h"
 #include "Objs/Actor/DgMobSpawnPoint.h"
+#include "Village/Portal.h"
 
 ADiabloGameMode* ADiabloGameMode::Get=nullptr;
 
@@ -18,16 +19,31 @@ ADiabloGameMode::ADiabloGameMode()
 	m_ActionManager=CreateDefaultSubobject<UActionManagerComponent>("ActionManager");
 }
 
+void ADiabloGameMode::InitRewardManager()
+{
+	URewardManager* RewardManager = UDiabloGameInstance::Get->GetRewardManager();
+
+	RewardManager->CreateActorPool();
+}
+
+void ADiabloGameMode::FindSpawnPoint()
+{
+	for (APortal* PlayerSpawnFind : TActorRange<APortal>(GetWorld()))
+	{
+		m_PlayerVillageSpawn=PlayerSpawnFind;
+	}
+}
+
 void ADiabloGameMode::StartPlay()
 {
 	SetDungeonInstanceToMap();
 
 	InitDungeonInstances();//이방식의 문제점은 메모리 사용량 증가 //생각보다 적을지도 모른다
 
-	for (APlayerSpawnPoint* PlayerSpawnFind : TActorRange<APlayerSpawnPoint>(GetWorld()))
-	{
-		m_PlayerVillageSpawn=PlayerSpawnFind;
-	}
+	FindSpawnPoint();
+
+	InitRewardManager();
+	
 	//ㄴBeginPlay Before
 	
 	Super::StartPlay();
@@ -85,9 +101,15 @@ void ADiabloGameMode::InitSpawnManager()
 	SpawnManager->UpdateWorld(GetWorld());
 }
 
-APlayerSpawnPoint* ADiabloGameMode::GetSpawnPoint()
+APortal* ADiabloGameMode::GetSpawnPoint()
 {
 	return m_PlayerVillageSpawn;
+}
+
+void ADiabloGameMode::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	m_OnTick.Broadcast(DeltaSeconds);
 }
 
 

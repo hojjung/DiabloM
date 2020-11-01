@@ -9,13 +9,14 @@ ADroppedItem::ADroppedItem(const FObjectInitializer& objInit):Super(objInit)
 	m_ParticleEffect=CreateDefaultSubobject<UParticleSystemComponent>("ParticleEffect00");
 	m_ParticleEffect->SetupAttachment(RootComponent);
 	m_BillBoard->SetHiddenInGame(true);
+	
 	m_CollSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ADroppedItem::BeginPlay()
 {
 	Super::BeginPlay();
-
+	m_BillBoard->InitWidget();
 	if (!m_TableID.IsNull())
 	{
 		SetItem(m_TableID.RowName);
@@ -95,7 +96,7 @@ void ADroppedItem::SetItemInstance(FItemInstance& itemInst)
 
 	SetItemVisual(m_ItemInstance);
 
-	m_TableID.RowName=itemInst.m_ItemID;
+	m_TableID.RowName = itemInst.m_ItemID;
 }
 
 
@@ -110,6 +111,14 @@ void ADroppedItem::DropEnd()
 	m_ParticleEffect->Activate(true);
 	m_BillBoard->SetHiddenInGame(false);
 	m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	
+	FRotator Rot;
+	
+	Rot.Yaw = FMath::RandRange(0, 360);
+	Rot.Roll=0.f;
+	Rot.Pitch=0.f;
+	
+	SetActorRelativeRotation(Rot);
 }
 
 

@@ -37,7 +37,7 @@ FItemInstance UItemManager::CreateItemInstance(FName id, float magicItemBonus, f
                          &TierRolled);
 }
 
-FItemInstance UItemManager::CreateUniqueItem(const FUniqueEquipItemDataRow* unique_item, int item_level)
+FItemInstance UItemManager::CreateUniqueItem(const FUniqueEquipData* unique_item, int item_level)
 {
     const FItemTier& Tier = *unique_item->m_UniqueItemTierHandle.GetRow<FItemTier>("");
 
@@ -46,7 +46,7 @@ FItemInstance UItemManager::CreateUniqueItem(const FUniqueEquipItemDataRow* uniq
     float TierBonusValue = Tier.m_fBonusValue;
 
     TArray<FOptionSpec> RandomOptionForItem;
-
+ 
     CreateRandomOptionWithUnique(*unique_item, RandomOptionForItem, TierMaxOptionCount, TierBonusValue, item_level);
 
     return FItemInstance(unique_item, Tier.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, item_level, &Tier);
@@ -96,7 +96,7 @@ bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionS
     return true;
 }
 
-bool UItemManager::CreateRandomOptionWithUnique(const FUniqueEquipItemDataRow& itemData, TArray<FOptionSpec>& outOption,
+bool UItemManager::CreateRandomOptionWithUnique(const FUniqueEquipData& itemData, TArray<FOptionSpec>& outOption,
                                                 int TierMaxOption, float bonus, int level)
 {
     if (itemData.m_bStackable || !itemData.m_bEquipable)

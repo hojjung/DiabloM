@@ -27,9 +27,12 @@ protected:
 	TQueue<ADroppedGold*> m_PoolGold;
 	TQueue<AHealthSphere*> m_PoolHp;
 
+	UPROPERTY()
+	TArray<ACollisionInteract*> m_AryPreventGarbage;
+
 	FVector m_HidingPoint;
 public:
-	void Init();
+	void CreateActorPool();
 	
 	void RequestMonsterDropItem(AMonsterPawn* dropActor,const FMonsterItemDropRow& dropData, int level);
 

@@ -4,7 +4,7 @@
 #include "DiabloGameMode.h"
 #include "Datas/MonsterItemDropTable.h"
 
-void URewardManager::Init()
+void URewardManager::CreateActorPool()
 {
     m_HidingPoint = FVector(100000, 100000, 100000);
     CreateAllItemPool(100, 150, 50);
@@ -113,7 +113,7 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMons
             continue;
         }
 
-        const FUniqueEquipItemDataRow* UniqueData = dropData.m_AropDropUniqueItems[IterUnique].m_DropHandle.GetRow<FUniqueEquipItemDataRow>("");
+        const FUniqueEquipData* UniqueData = dropData.m_AropDropUniqueItems[IterUnique].m_DropHandle.GetRow<FUniqueEquipData>("");
 
         int RandItemLevel = FMath::RandRange(MinItemLevel,MaxItemLevel);
 
@@ -127,12 +127,13 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMons
 
 ADroppedItem* URewardManager::DropItemActor(APawn* dropCenterActor, float dropRadius, FItemInstance& myItem)
 {
-    ADroppedItem* DropItem;
+    ADroppedItem* DropItem=nullptr;
 
     if (!m_PoolItem.Dequeue(DropItem))
     {
         DropItem = Cast<ADroppedItem>(SpawnInteractActor(UMonsterItemDropTable::ClassDropItemActor));
         DropItem->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueItemActor);
+        m_AryPreventGarbage.Emplace(DropItem);
     }
 
     myItem.m_Holder = UDiabloGameInstance::Get->GetItemManager();
@@ -145,19 +146,20 @@ ADroppedItem* URewardManager::DropItemActor(APawn* dropCenterActor, float dropRa
 
     OnDropEnd.AddUObject(DropItem, &ADroppedItem::DropEnd);
 
-    DropRandomPoint(dropCenterActor, dropRadius, DropItem, 450.f, &OnDropEnd);
+    DropRandomPoint(dropCenterActor, dropRadius, DropItem, 700.f, &OnDropEnd);
 
     return DropItem;
 }
 
 ADroppedGold* URewardManager::DropGoldActor(APawn* dropCenterActor, float dropRadius, float goldAmount)
 {
-    ADroppedGold* DropGold;
+    ADroppedGold* DropGold=nullptr;
 
     if (!m_PoolGold.Dequeue(DropGold))
     {
         DropGold = Cast<ADroppedGold>(SpawnInteractActor(UMonsterItemDropTable::ClassDropGoldActor));
         DropGold->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueGoldActor);
+        m_AryPreventGarbage.Emplace(DropGold);
     }
 
     DropGold->SetGoldAmount(goldAmount);
@@ -174,12 +176,13 @@ ADroppedGold* URewardManager::DropGoldActor(APawn* dropCenterActor, float dropRa
 
 AHealthSphere* URewardManager::DropHpSphereActor(APawn* dropCenterActor, float dropRadius)
 {
-    AHealthSphere* DropHp;
+    AHealthSphere* DropHp=nullptr;
 
     if (!m_PoolHp.Dequeue(DropHp))
     {
         DropHp = Cast<AHealthSphere>(SpawnInteractActor(UMonsterItemDropTable::ClassDropHealthSphere));
         DropHp->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueHpSphereActor);
+        m_AryPreventGarbage.Emplace(DropHp);
     }
 
     DropHp->SetActorHiddenInGame(false);
@@ -194,14 +197,18 @@ void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int
     m_PoolItem.Empty();
     m_PoolGold.Empty();
     m_PoolHp.Empty();
-
+    m_AryPreventGarbage.Empty(itemPoolCount+goldPoolCount+hpPoolCount);
+    
+    
     int i = 0;
+    
     while (i++ < itemPoolCount)
     {
         ADroppedItem* Created = Cast<ADroppedItem>(SpawnInteractActor(UMonsterItemDropTable::ClassDropItemActor));
         Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueItemActor);
         Created->SetActorHiddenInGame(true);
         m_PoolItem.Enqueue(Created);
+        m_AryPreventGarbage.Emplace(Created);
     }
 
     i = 0;
@@ -211,6 +218,7 @@ void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int
         Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueGoldActor);
         Created->SetActorHiddenInGame(true);
         m_PoolGold.Enqueue(Created);
+        m_AryPreventGarbage.Emplace(Created);
     }
 
     i = 0;
@@ -220,6 +228,7 @@ void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int
         Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueHpSphereActor);
         Created->SetActorHiddenInGame(true);
         m_PoolHp.Enqueue(Created);
+        m_AryPreventGarbage.Emplace(Created);
     }
 }
 
@@ -250,11 +259,7 @@ ACollisionInteract* URewardManager::DropRandomPoint(APawn* dropCenterActor, floa
 
     FVector PosWant = dropCenterActor->GetMovementComponent()->GetActorFeetLocation();
 
-    FRotator Rot;
-    Rot.Yaw = FMath::RandRange(0, 360);
-
     targetActorToDrop->SetActorLocation(PosWant);
-    targetActorToDrop->SetActorRotation(Rot);
 
     FVector NewPos = PosWant;
 
@@ -277,7 +282,7 @@ void URewardManager::BezierCurveMove(AActor* target, float height, FVector desti
     FVector ControlPoint = GetQuadControlPoint(StartPoint, destination, height);
     Curve->InitializeQuad(StartPoint, ControlPoint, destination);
 
-    UCFollowBezierCurvePathAction* PathAction = UCActionFactory::MakeFollowBezierPathAction(target, Curve, 3.f);
+    UCFollowBezierCurvePathAction* PathAction = UCActionFactory::MakeFollowBezierPathAction(target, Curve, 0.75f);
 
     if (endCallback)
     {

@@ -157,6 +157,8 @@ protected:
 	bool m_bIsAttackInputPressed;
 
 	bool m_bIsDead;
+
+	TWeakObjectPtr<AUnitPawn> m_FocusOutlinePawn;;
 	//
 protected:
 	void LoadExp(const USaveCharacterStatus* loadedSaveData);

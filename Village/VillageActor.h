@@ -14,11 +14,13 @@ class DIABLOM_API AVillageActor : public AActor,public IInteractable
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AVillageActor();
 
 protected:
-	// Called when the game starts or when spawned
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Item")
+	UCapsuleComponent* m_Capsule;
+
+protected:
 	virtual void BeginPlay() override;
 
 public:	

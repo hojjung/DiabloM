@@ -199,12 +199,12 @@ public:
 };
 
 USTRUCT(BlueprintType) //���̵�,Ƽ��
-struct FUniqueEquipItemDataRow : public FItemData
+struct FUniqueEquipData : public FItemData
 {
     GENERATED_BODY()
 
 public:
-    FUniqueEquipItemDataRow();
+    FUniqueEquipData();
 
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -357,9 +357,9 @@ class DIABLOM_API UItemDataTable : public UObject
 
     static const FAnimStance* GetAnimStancePtr(FName id);
 
-    static const FUniqueEquipItemDataRow& GetUniqueItem(FName id);
+    static const FUniqueEquipData& GetUniqueItem(FName id);
 
-    static const FUniqueEquipItemDataRow* GetUniqueItemPtr(FName id);
+    static const FUniqueEquipData* GetUniqueItemPtr(FName id);
     
 };
 

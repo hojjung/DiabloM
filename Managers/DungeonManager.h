@@ -12,6 +12,8 @@
 class AMonsterPawn;
 struct FDungeonDataRow;
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FDungeonCreate,bool);
+
 UCLASS()
 class DIABLOM_API UDungeonManager : public UObject
 {
@@ -34,6 +36,8 @@ protected:
 
 	FVector m_RecentDungeonFeetLoc;
 
+	FDungeonCreate m_OnPortalCreate;
+
 
 protected:
 	int StageLevelToDungeonLevel(int stageLevel);
@@ -44,7 +48,7 @@ protected:
 	
 	void SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData);
 	
-	void ClearDungeon();
+	
 	
 public:
 	void Init();
@@ -61,6 +65,13 @@ public:
 	void PortalToRecentDungeon();
 	UFUNCTION(BlueprintCallable)
     void RestartDungeon();
-
+	UFUNCTION(BlueprintCallable)
+	void ClearDungeon();
+	
 	bool IsDungeonOpened();
+
+	FORCEINLINE FDungeonCreate& GetOnDungeonCreate()
+	{
+		return m_OnPortalCreate;
+	}
 };
