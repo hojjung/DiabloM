@@ -50,11 +50,15 @@ void ADiabloGameMode::StartPlay()
 	
 	//ㄴBeginPlay Before
 	
+	m_MiniMap = NewObject<UGridFlowMiniMap>();
+	UGridFlowMiniMap::Get =m_MiniMap;
+	m_MiniMap->m_World = GetWorld();
+	m_MiniMap->OverlayIcons=m_AryOverlayMinimap;
+	
 	Super::StartPlay();
 
 	InitSpawnManager();
 
-	m_MiniMap = NewObject<UGridFlowMiniMap>();
 }
 
 void ADiabloGameMode::SetDungeonInstanceToMap()

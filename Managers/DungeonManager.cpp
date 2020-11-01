@@ -2,6 +2,7 @@
 #include "DiabloGameInstance.h"
 #include "DiabloGameMode.h"
 #include "DungeonMiniMap.h"
+#include "GridFlowMiniMap.h"
 #include "MonsterSpawnManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Datas/DungeonDataTable.h"
@@ -40,9 +41,9 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 
     m_OnPortalCreate.Broadcast(true);
 
-    UDungeonMiniMap::Get->BuildLayout(m_CurrentDungeon->GetModel(),m_CurrentDungeon->GetConfig());
-    m_MatMinimap = UDungeonMiniMap::Get->CreateMaterialInstance();
-    ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);
+    UGridFlowMiniMap::Get->BuildLayout(m_CurrentDungeon->GetModel(),m_CurrentDungeon->GetConfig());
+    m_MatMinimap = UGridFlowMiniMap::Get->CreateMaterialInstance();
+    ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);//UI Set Brush Tick add
     
 }
 

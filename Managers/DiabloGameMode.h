@@ -33,7 +33,7 @@ protected:
 	APortal* m_PlayerVillageSpawn;
 	UPROPERTY()
 	UGridFlowMiniMap* m_MiniMap;
-	
+	UPROPERTY(EditAnywhere)
 	TArray<FDungeonMiniMapOverlayIcon> m_AryOverlayMinimap;
 
 	UPROPERTY()

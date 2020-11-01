@@ -15,9 +15,13 @@ UCLASS()
 class DIABLOM_API UMinimapWidget : public UUserWidget
 {
 	GENERATED_BODY()
-protected:
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	//UDungeonMiniMap
+
+protected:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UMaterialInterface* m_MatMinimapInst;
+	
 public:
 	void UpdateMinimap(UMaterialInterface* material_interface);
 };

@@ -232,5 +232,5 @@ void ADiabloPlayerController::ShowFocusStatusWidget(AUnitPawn* unit)
 
 void ADiabloPlayerController::UpdateMinimap(UMaterialInterface* mapMat)
 {
-	
+	m_MainMenu->UpdateMinimap(mapMat);
 }

@@ -5,5 +5,5 @@
 
 void UMinimapWidget::UpdateMinimap(UMaterialInterface* material_interface)
 {
-    
+    m_MatMinimapInst=material_interface;
 }
