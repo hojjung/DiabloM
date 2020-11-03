@@ -181,6 +181,16 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     GrantResourceRegenAbility();
 }
 
+void APlayerDiabloCharacter::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if(m_bIsManualInit)
+    {
+        Init();
+    }
+}
+
 void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
 {
     m_fMaxExp = GetPlayerAttribute()->GetMaxExpForLevelUp();

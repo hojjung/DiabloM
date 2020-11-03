@@ -48,6 +48,8 @@ protected:
 	
 	//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	bool m_bIsManualInit=false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TArray<TEnumAsByte< EObjectTypeQuery>> m_AryTargetingObjectType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	UMaterialInstance* m_OutLineMat;
@@ -161,6 +163,8 @@ protected:
 	TWeakObjectPtr<AUnitPawn> m_FocusOutlinePawn;;
 	//
 protected:
+
+	virtual void BeginPlay() override;
 	void LoadExp(const USaveCharacterStatus* loadedSaveData);
 
 	void MoveForward(float AxisValue);

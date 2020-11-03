@@ -32,7 +32,7 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
     m_nDungeonType = StageLevelToDungeonType(level);
     
     m_CurrentDungeonData = m_AryDungeonData[m_nDungeonType];
-    
+
     LoadDungeonLevel(m_CurrentDungeonData);
 
     SpawnMonstersToDungeon(m_nMonsterLevel, m_CurrentDungeonData);
@@ -41,9 +41,9 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 
     m_OnPortalCreate.Broadcast(true);
 
-    ADiabloGameMode::Get->GetMinimapManager()->BuildLayout(m_CurrentDungeon->GetModel(),m_CurrentDungeon->GetConfig());
-    m_MatMinimap = ADiabloGameMode::Get->GetMinimapManager()->CreateMaterialInstance();
-    ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);//UI Set Brush Tick add
+    ADiabloGameMode::Get->m_OnDgCreated.Broadcast(m_CurrentDungeon.Get());
+    // m_MatMinimap = ADiabloGameMode::Get->GetMinimapManager()->CreateMaterialInstance();
+    // ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);//UI Set Brush Tick add
     
 }
 
@@ -88,6 +88,10 @@ void UDungeonManager::PortalToVillage()
 
 void UDungeonManager::PortalToRecentDungeon()
 {
+    if(!IsDungeonOpened())
+    {
+        return;
+    }
     PRINTF("Dgm - Portal Dungeon");
     m_CurrentDungeon->ShowDungeon();
     ShowSpawnedMonster();
@@ -150,6 +154,11 @@ void UDungeonManager::LoadDungeonLevel(FDungeonDataRow* SelectedDungeonData)
 void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData)
 {
     m_AryMonsterSpawnedCurrently.Reset();
+
+    if(m_CurrentDungeon->GetArySpawnPoints().Num()<1)
+    {
+        return;
+    }
     
     UMonsterSpawnManager* SpawnManager = UDiabloGameInstance::Get->GetMonsterSpawn();
     

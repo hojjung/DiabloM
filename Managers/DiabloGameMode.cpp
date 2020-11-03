@@ -40,15 +40,15 @@ void ADiabloGameMode::FindSpawnPoint()
 
 void ADiabloGameMode::InitMinimap()
 {
-	m_MiniMap = NewObject<UGridFlowMiniMap>();
-	m_MiniMap->m_World = ADiabloPlayerController::Get->GetWorld();
-	m_MiniMap->OverlayIcons=m_AryOverlayMinimap;
-	FDungeonMiniMapOverlayTracking TrackingInfo;
-	TrackingInfo.TrackedActor = ADiabloPlayerController::Get->GetPlayerPawn();
-	TrackingInfo.Id = "player";
-	TrackingInfo.IconName = "player";
-	TrackingInfo.bOrientToRotation = true;
-	m_MiniMap->DynamicTracking.Add(TrackingInfo);
+	m_MiniMap = NewObject<AGridFlowMiniMap>();
+	// m_MiniMap->m_World = ADiabloPlayerController::Get->GetWorld();
+	// m_MiniMap->OverlayIcons=m_AryOverlayMinimap;
+	// FDungeonMiniMapOverlayTracking TrackingInfo;
+	// TrackingInfo.TrackedActor = ADiabloPlayerController::Get->GetPlayerPawn();
+	// TrackingInfo.Id = "player";
+	// TrackingInfo.IconName = "player";
+	// TrackingInfo.bOrientToRotation = true;
+	// m_MiniMap->DynamicTracking.Add(TrackingInfo);
 }
 
 void ADiabloGameMode::StartPlay()
@@ -133,7 +133,7 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	m_OnTick.Broadcast(DeltaSeconds);
-	m_MiniMap->CustomTick(DeltaSeconds);
+	//m_MiniMap->CustomTick(DeltaSeconds);
 }
 
 

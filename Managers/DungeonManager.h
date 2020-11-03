@@ -74,4 +74,6 @@ public:
 	{
 		return m_OnPortalCreate;
 	}
+
+
 };

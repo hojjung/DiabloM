@@ -79,16 +79,16 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
     m_StunMontage = UnitData->m_StunMontage;
     m_TookHitMontage = UnitData->m_TookHitMontage;
 
-    UGridFlowMiniMap* Map = ADiabloGameMode::Get->GetMinimapManager();
-    if (Map)
-    {
-        FDungeonMiniMapOverlayTracking TrackingInfo;
-        TrackingInfo.TrackedActor = this;
-        TrackingInfo.Id = "enemy";
-        TrackingInfo.IconName = "enemy";
-        TrackingInfo.bOrientToRotation = false;
-        Map->DynamicTracking.Add(TrackingInfo);
-    }
+    // UGridFlowMiniMap* Map = ADiabloGameMode::Get->GetMinimapManager();
+    // if (Map)
+    // {
+    //     FDungeonMiniMapOverlayTracking TrackingInfo;
+    //     TrackingInfo.TrackedActor = this;
+    //     TrackingInfo.Id = "enemy";
+    //     TrackingInfo.IconName = "enemy";
+    //     TrackingInfo.bOrientToRotation = false;
+    //     Map->DynamicTracking.Add(TrackingInfo);
+    // }
 }
 
 

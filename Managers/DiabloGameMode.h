@@ -10,9 +10,9 @@
 
 class ADiaDungeon;
 class APortal;
-class UGridFlowMiniMap;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDelta,float);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDungeonCreateBP,ADiaDungeon*,dg);
 UCLASS()
 class DIABLOM_API ADiabloGameMode : public AGameMode
 {
@@ -26,14 +26,15 @@ public:
 	static ADiabloGameMode* Get;
 
 	
-
+	UPROPERTY(BlueprintAssignable)
+	FDungeonCreateBP m_OnDgCreated;
 protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UActionManagerComponent* m_ActionManager;
 	UPROPERTY(VisibleAnywhere)
 	APortal* m_PlayerVillageSpawn;
-	UPROPERTY()
-	UGridFlowMiniMap* m_MiniMap;
+	//UPROPERTY()
+	//UGridFlowMiniMap* m_MiniMap;
 	UPROPERTY(EditAnywhere)
 	TArray<FDungeonMiniMapOverlayIcon> m_AryOverlayMinimap;
 
@@ -66,9 +67,9 @@ public:
 		return m_OnTick;
 	}
 
-	UFUNCTION(BlueprintCallable)
-	UGridFlowMiniMap* GetMinimapManager()
-	{
-		return m_MiniMap;
-	}
+	//UFUNCTION(BlueprintCallable)
+	//UGridFlowMiniMap* GetMinimapManager()
+	//{
+	//	return m_MiniMap;
+	//}
 };
