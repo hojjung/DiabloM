@@ -8,11 +8,11 @@
 #include "GameFramework/GameMode.h"
 #include "DiabloGameMode.generated.h"
 
+class UGridFlowMiniMap;
 class ADiaDungeon;
 class APortal;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDelta,float);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDungeonCreateBP,ADiaDungeon*,dg);
 UCLASS()
 class DIABLOM_API ADiabloGameMode : public AGameMode
 {
@@ -26,18 +26,48 @@ public:
 	static ADiabloGameMode* Get;
 
 	
-	UPROPERTY(BlueprintAssignable)
-	FDungeonCreateBP m_OnDgCreated;
 protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UActionManagerComponent* m_ActionManager;
 	UPROPERTY(VisibleAnywhere)
 	APortal* m_PlayerVillageSpawn;
-	//UPROPERTY()
-	//UGridFlowMiniMap* m_MiniMap;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
+	UGridFlowMiniMap* m_MiniMap;
+	UPROPERTY(EditAnywhere, Category = "MiniMap")
 	TArray<FDungeonMiniMapOverlayIcon> m_AryOverlayMinimap;
+	UPROPERTY(EditAnywhere, Category = "MiniMap")
+	int32 m_MinimapTextureSize;
 
+	UPROPERTY(EditAnywhere, Category = "MiniMap")
+	float m_MinimapOutlineThickness;
+
+	UPROPERTY(EditAnywhere, Category = "MiniMap")
+	float m_MinimapDoorThickness;
+
+	UPROPERTY(EditAnywhere, Category = "MiniMap")
+	UMaterialInterface* m_MinimapMaterialTemplate;
+
+	UPROPERTY(EditAnywhere, Category = "MiniMap")
+	float m_MinimapBlurRadius;
+
+	UPROPERTY(EditAnywhere, Category = "MiniMap")
+	int32 m_MinimapBlurIterations;
+
+	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War")
+	bool m_MinimapbEnableFogOfWar;
+
+	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = bEnableFogOfWar))
+	float m_MinimapFogOfWarTextureScale;
+
+	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = bEnableFogOfWar))
+	FName m_MinimapFogOfWarTrackingItem;
+
+	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = bEnableFogOfWar))
+	UTexture2D* m_MinimapFogOfWarExploreTexture;
+
+	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = bEnableFogOfWar))
+	float m_MinimapFogOfWarVisiblityDistance;
+	
 	UPROPERTY()
 	TMap<FName,ADiaDungeon*> m_MapDungeonActors;
 	

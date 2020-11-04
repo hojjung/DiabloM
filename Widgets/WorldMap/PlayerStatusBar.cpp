@@ -75,5 +75,5 @@ void UPlayerStatusBar::SetResourceBarProgressV(AUnitPawn* pawn)
 
 void UPlayerStatusBar::UpdateMinimap(UMaterialInterface* material_interface)
 {
-    m_Minimap->UpdateMinimap(material_interface);
+    m_Minimap->SetMinimapMat(material_interface);
 }

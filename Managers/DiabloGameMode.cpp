@@ -1,7 +1,7 @@
 #include "DiabloGameMode.h"
 #include "DiabloGameInstance.h"
-#include "DungeonMiniMap.h"
 #include "EngineUtils.h"
+#include "DungeonMiniMap.h"
 #include "GridFlowMiniMap.h"
 #include "MonsterSpawnManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
@@ -20,6 +20,22 @@ ADiabloGameMode::ADiabloGameMode()
 
 	m_ActionManager=CreateDefaultSubobject<UActionManagerComponent>("ActionManager");
 
+	m_MinimapTextureSize=1024.f;
+	m_MinimapOutlineThickness=4.0f;
+	m_MinimapDoorThickness=8.0f;
+	m_MinimapBlurRadius =5.0f;
+	m_MinimapBlurIterations = 3;
+	m_MinimapbEnableFogOfWar = false;
+	m_MinimapFogOfWarTextureScale=0.25f;
+	m_MinimapFogOfWarTrackingItem="player";
+	m_MinimapFogOfWarVisiblityDistance=6000.f;
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> FoundMapMat(
+	TEXT("MaterialInstanceConstant'/Game/03_VisualEffect/Minimap/Materials/M_MMGridFlow_Template_Inst.M_MMGridFlow_Template_Inst'"));
+	m_MinimapMaterialTemplate=FoundMapMat.Object;
+	static ConstructorHelpers::FObjectFinder<UTexture2D> FoundFogTexture(
+    TEXT("Texture2D'/Game/03_VisualEffect/Minimap/Textures/FogOfWarMask.FogOfWarMask'"));
+	m_MinimapFogOfWarExploreTexture=FoundFogTexture.Object;
 	
 }
 
@@ -40,15 +56,13 @@ void ADiabloGameMode::FindSpawnPoint()
 
 void ADiabloGameMode::InitMinimap()
 {
-	m_MiniMap = NewObject<AGridFlowMiniMap>();
-	// m_MiniMap->m_World = ADiabloPlayerController::Get->GetWorld();
-	// m_MiniMap->OverlayIcons=m_AryOverlayMinimap;
-	// FDungeonMiniMapOverlayTracking TrackingInfo;
-	// TrackingInfo.TrackedActor = ADiabloPlayerController::Get->GetPlayerPawn();
-	// TrackingInfo.Id = "player";
-	// TrackingInfo.IconName = "player";
-	// TrackingInfo.bOrientToRotation = true;
-	// m_MiniMap->DynamicTracking.Add(TrackingInfo);
+	m_MiniMap = NewObject<UGridFlowMiniMap>();
+	m_MiniMap->InitMap(GetWorld(),m_MinimapTextureSize,m_MinimapOutlineThickness,m_MinimapDoorThickness,
+		m_AryOverlayMinimap,m_MinimapMaterialTemplate,m_MinimapBlurRadius,m_MinimapBlurIterations,m_MinimapbEnableFogOfWar
+		,m_MinimapFogOfWarTextureScale,m_MinimapFogOfWarTrackingItem,m_MinimapFogOfWarExploreTexture,m_MinimapFogOfWarVisiblityDistance);
+
+	UGridFlowMiniMap::Get = m_MiniMap;
+	m_MiniMap->AddTrackActor(m_MinimapFogOfWarTrackingItem,ADiabloPlayerController::Get->GetPlayerPawn(),true);
 }
 
 void ADiabloGameMode::StartPlay()
@@ -133,7 +147,7 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	m_OnTick.Broadcast(DeltaSeconds);
-	//m_MiniMap->CustomTick(DeltaSeconds);
+	m_MiniMap->MiniMapTick(DeltaSeconds);
 }
 
 

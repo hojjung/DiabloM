@@ -42,7 +42,7 @@ void UBaseDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attribut
     }
     else if (Attribute == GetMoveSpeedAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 150, 1000);
+        NewValue = FMath::Clamp<float>(NewValue, 150, 10000);
     }
     else if (Attribute == GetAttackSpeedAttribute())
     {

@@ -2,6 +2,7 @@
 
 #include "DiabloGameInstance.h"
 #include "EngineUtils.h"
+#include "GridFlowMiniMap.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Objs/Actor/DgMobSpawnPoint.h"
 
@@ -10,6 +11,9 @@ UMonsterSpawnManager::UMonsterSpawnManager()
     m_CurrentWorld = nullptr;
     m_NavSys = nullptr;
     m_fSpawnRadius = 1200.f;
+    m_IdEnemy="enemy";
+    m_IdBossEnemy="boss";
+    m_IdSpecialEnemy="special";
 }
 
 void UMonsterSpawnManager::UpdateWorld(UWorld* world)
@@ -66,5 +70,10 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
     //88
     FRotator Rot;
     Rot.Yaw=FMath::RandRange(0.f,360.f);
-    return m_CurrentWorld->SpawnActor<AMonsterPawn>(UCharacterDataTable::ClassMonsterPawn, loc, Rot, Param);
+    
+    AMonsterPawn* Mob = m_CurrentWorld->SpawnActor<AMonsterPawn>(UCharacterDataTable::ClassMonsterPawn, loc, Rot, Param);
+
+    UGridFlowMiniMap::Get->AddTrackActor(m_IdEnemy,Mob);
+
+    return Mob;
 }

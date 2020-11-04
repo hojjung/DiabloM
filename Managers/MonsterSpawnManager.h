@@ -30,6 +30,12 @@ protected:
 	UPROPERTY()
 	TArray<AMonsterPawn*> m_ArySpawnedMobs;
 
+	FName m_IdEnemy;
+
+	FName m_IdBossEnemy;
+
+	FName m_IdSpecialEnemy;
+	
 protected:
 	FVector GetRandomPoint(const FVector& loc,const float& radius);
 	

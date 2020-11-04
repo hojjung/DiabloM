@@ -41,9 +41,9 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 
     m_OnPortalCreate.Broadcast(true);
 
-    ADiabloGameMode::Get->m_OnDgCreated.Broadcast(m_CurrentDungeon.Get());
-    // m_MatMinimap = ADiabloGameMode::Get->GetMinimapManager()->CreateMaterialInstance();
-    // ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);//UI Set Brush Tick add
+    UGridFlowMiniMap::Get->BuildLayout(m_CurrentDungeon->GetModel(),m_CurrentDungeon->GetConfig());
+    m_MatMinimap = UGridFlowMiniMap::Get->CreateMaterialInstance();
+    ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);//UI Set Brush Tick add
     
 }
 
