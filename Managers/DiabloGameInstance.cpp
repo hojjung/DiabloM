@@ -71,21 +71,6 @@ ADroppedItem* UDiabloGameInstance::DropItemActor(APawn* dropCenterActor, float d
 void UDiabloGameInstance::CreateDungeon()
 {
     UDiabloGameInstance::Get->GetDungeonManager()->CreateDefaultInfinityDungeon(1);
-    m_bTestIsDungeonOpen = true;
-}
-
-void UDiabloGameInstance::BackToDungeon()
-{
-    if (m_bTestIsDungeonOpen)
-    {
-        UDiabloGameInstance::Get->GetDungeonManager()->PortalToVillage();
-        m_bTestIsDungeonOpen = false;
-    }
-    else
-    {
-        UDiabloGameInstance::Get->GetDungeonManager()->PortalToRecentDungeon();
-        m_bTestIsDungeonOpen = true;
-    }
 }
 
 void UDiabloGameInstance::SaveAllPlayerInfo()

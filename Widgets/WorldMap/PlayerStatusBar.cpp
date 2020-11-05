@@ -50,7 +50,9 @@ void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon)
     SetHealthBarProgressV(diaCon->GetPlayerPawn());
     SetResourceBarProgressV(diaCon->GetPlayerPawn());
 
-    m_PortalBtn->UseHoldEvent(3.f);
+    
+
+    m_Minimap->Init();
 }
 
 void UPlayerStatusBar::SetHealthBarProgressV(AUnitPawn* pawn)

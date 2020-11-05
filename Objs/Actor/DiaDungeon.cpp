@@ -35,6 +35,7 @@ void ADiaDungeon::ShowDungeon()
     {
         ASD->SetActorHiddenInGame(false);
     }
+
 }
 
 void ADiaDungeon::HideDungeon()
@@ -43,6 +44,7 @@ void ADiaDungeon::HideDungeon()
     {
         ASD->SetActorHiddenInGame(true);
     }
+
 }
 
 void ADiaDungeon::ShuffleSpawnPoints(int iter)

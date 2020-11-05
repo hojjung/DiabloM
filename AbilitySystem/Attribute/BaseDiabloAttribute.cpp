@@ -96,24 +96,15 @@ void UBaseDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* Source
 
     if (LocalDamageDone > 1.f)
     {
-        bool WasAlive = true;
-
-        WasAlive = TargetUnit->IsAlive();
-        
         const float OldHealth = GetHealth();
 
         SetHealth(FMath::Clamp(OldHealth - LocalDamageDone, 0.0f, GetMaxHealth()));
 
         TargetUnit->PlayTookHitMontage();
         
-        if (TargetUnit == ADiabloPlayerController::Get->GetPlayerPawn())
+        if (SourceUnit == ADiabloPlayerController::Get->GetPlayerPawn())
         {
-            ADiabloPlayerController::Get->ShowDamageNumber(LocalDamageDone, TargetUnit, EDamagePopup::PlayerHurt);
-        }
-        else if (SourceUnit != TargetUnit)
-        {
-            ADiabloPlayerController* PC = nullptr;
-            PC = Cast<ADiabloPlayerController>(SourceController);
+            ADiabloPlayerController* PC = ADiabloPlayerController::Get;
 
             if (PC)
             {

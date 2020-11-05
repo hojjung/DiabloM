@@ -79,11 +79,8 @@ public:
 		return   m_RewardManager;
 	}
 	//TEST 1017
-	bool m_bTestIsDungeonOpen=false;
 	UFUNCTION(BlueprintCallable)
 	void CreateDungeon();
-	UFUNCTION(BlueprintCallable)
-    void BackToDungeon();
 	UFUNCTION(BlueprintCallable)
 	void SaveAllPlayerInfo();
 	UFUNCTION(BlueprintCallable)

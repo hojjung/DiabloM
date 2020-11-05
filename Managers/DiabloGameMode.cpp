@@ -95,6 +95,7 @@ void ADiabloGameMode::SetDungeonInstanceToMap()
 	for (ADiaDungeon* DungeonInst : TActorRange<ADiaDungeon>(GetWorld()))
 	{
 		m_MapDungeonActors.Emplace(DungeonInst->m_LevelName,DungeonInst);
+		DungeonInst->HideDungeon();
 	}
 }
 

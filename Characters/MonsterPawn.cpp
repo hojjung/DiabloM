@@ -183,7 +183,6 @@ void AMonsterPawn::Tick(float DeltaSeconds)
 void AMonsterPawn::SetHealthPercentage(const FOnAttributeChangeData& data)
 {
     UpdateHealthBar(GetHpPercentOne());
-    PRINTF("HealthPer :%f", GetHpPercentOne());
 }
 
 

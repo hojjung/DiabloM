@@ -4,6 +4,8 @@
 #include "PlayerDiabloAttribute.h"
 
 #include "GameplayEffectExtension.h"
+#include "Characters/DiabloPlayerController.h"
+#include "Characters/PlayerDiabloCharacter.h"
 #include "Characters/UnitPawn.h"
 
 UPlayerDiabloAttribute::UPlayerDiabloAttribute()
@@ -136,5 +138,31 @@ void UPlayerDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModC
 	}
 	
 	m_OnStatChanged.Broadcast(TargetCharacter);
+}
+
+void UPlayerDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* SourceUnit, AController* SourceController,
+	float TookDamageCache)
+{
+	APlayerDiabloCharacter* TargetPlayer=Cast<APlayerDiabloCharacter>( TargetUnit);
+	
+	float RandDmg = FMath::RandRange(0.95f, 1.05f);
+    
+	const float LocalDamageDone = TookDamageCache * RandDmg;
+
+	if (LocalDamageDone > 1.f)
+	{
+		const float OldHealth = GetHealth();
+
+		SetHealth(FMath::Clamp(OldHealth - LocalDamageDone, 0.0f, GetMaxHealth()));
+
+		TargetPlayer->PlayTookHitMontage();
+        
+		ADiabloPlayerController::Get->ShowDamageNumber(LocalDamageDone, TargetPlayer, EDamagePopup::PlayerHurt);
+
+		if(!(GetHealth()>0.f))
+		{
+			TargetPlayer->Die();
+        }
+	}
 }
 

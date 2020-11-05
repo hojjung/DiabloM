@@ -139,4 +139,5 @@ protected:
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	
 
+	virtual void HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* SourceUnit, AController* SourceController, float TookDamageCache) override;
 };

@@ -128,7 +128,7 @@ public:
 protected:
 	void AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty);
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
-	void HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* SourceUnit,
+	virtual void HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* SourceUnit,
 	                  AController* SourceController,
 	                  float TookDamageCache);
 	void GetTargetSourceActors(const FGameplayEffectModCallbackData& Data, FGameplayEffectContextHandle& Context,

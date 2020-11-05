@@ -33,7 +33,6 @@ void ADroppedGold::SetGoldAmount(float amount)
 
 void ADroppedGold::DropEnd()
 {
-    PRINTF("DropEnd");
     m_BillBoard->SetHiddenInGame(false);
     m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     

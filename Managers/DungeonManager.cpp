@@ -14,6 +14,7 @@
 
 void UDungeonManager::Init()
 {
+    m_bIsPlayerInDungeon=false;
     m_CurrentDungeon=nullptr;
     m_CurrentDungeonData=nullptr;
     m_nMonsterLevel=-1;
@@ -21,6 +22,7 @@ void UDungeonManager::Init()
     m_nPointIndex=-1;
     
     UDungeonDataTable::GetDungeonTable->GetAllRows("DgManager-NoDungeonData",m_AryDungeonData);
+
 }
 
 void UDungeonManager::CreateDefaultInfinityDungeon(int level)
@@ -84,6 +86,8 @@ void UDungeonManager::PortalToVillage()
     m_CurrentDungeon->HideDungeon();
 
     ADiabloPlayerController::Get->ClientForceGarbageCollection();
+
+    m_bIsPlayerInDungeon=false;
 }
 
 void UDungeonManager::PortalToRecentDungeon()
@@ -99,6 +103,7 @@ void UDungeonManager::PortalToRecentDungeon()
     FVector Loc=m_RecentDungeonFeetLoc;
     Loc.Z+=PlayerPawn->GetCapsule()->GetScaledCapsuleHalfHeight();
     PlayerPawn->SetActorLocation(Loc,false,nullptr,ETeleportType::None);
+    m_bIsPlayerInDungeon=true;
 }
 
 void UDungeonManager::ClearDungeon()
@@ -122,11 +127,17 @@ void UDungeonManager::RestartDungeon()
     ClearDungeon();
     SpawnMonstersToDungeon(m_nMonsterLevel, m_CurrentDungeonData);
     PortalToRecentDungeon();
+    m_OnPortalCreate.Broadcast(true);
 }
 
 bool UDungeonManager::IsDungeonOpened()
 {
     return m_CurrentDungeon.Get() != nullptr;
+}
+
+bool UDungeonManager::IsPlayerInDg()
+{
+    return m_bIsPlayerInDungeon;
 }
 
 int UDungeonManager::StageLevelToDungeonLevel(int stageLevel)

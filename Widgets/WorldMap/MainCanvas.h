@@ -74,8 +74,6 @@ public:
     UFUNCTION(BlueprintCallable,Category="Menu")
     void TestOpenDungeon();
     UFUNCTION(BlueprintCallable,Category="Menu")
-    void TestPortalBack();
-    UFUNCTION(BlueprintCallable,Category="Menu")
     void TestSaveAll();
 public:
     void Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven);

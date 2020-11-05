@@ -78,13 +78,12 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
     m_StLeftWeapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     m_StLeftWeapon->SetupAttachment(m_SkBody, "LeftWeaponShield");
     m_StLeftWeapon->CastShadow = true;
+
     m_fCurrentExp = 0.f;
 
     m_fMaxExp = 0.f;
 
     m_bIsDead = false;
-
-
 }
 
 
@@ -553,10 +552,6 @@ ADiabloPlayerController* APlayerDiabloCharacter::GetDiaController()
 
 void APlayerDiabloCharacter::Die()
 {
-    if (m_bIsDead)
-    {
-        return;
-    }
     m_bIsDead = true;
 
     m_bUseFSM = false;

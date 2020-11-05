@@ -2,12 +2,13 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 
 #include "DungeonMiniMap.h"
 #include "Image.h"
 #include "Overlay.h"
 #include "Blueprint/UserWidget.h"
+
 #include "MinimapWidget.generated.h"
 
 /**
@@ -19,8 +20,16 @@ class DIABLOM_API UMinimapWidget : public UUserWidget
 	GENERATED_BODY()
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	//UDungeonMiniMap
-
+public:
+	
+	UMinimapWidget(const FObjectInitializer& objInit);
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D m_MinimapWidgetSize;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float m_fPortalHoldTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float m_fCornerMapScale;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Transient)
 	UMaterialInterface* m_MatMinimapInst;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -29,20 +38,57 @@ protected:
 	UOverlay* m_OverlayMinimapWrap;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UImage* m_MinimapCornerSmall;
-
-	FVector2D* m_PlayerScreenPos;
+	UPROPERTY(EditAnywhere)
+	UTexture2D* m_CancelMinimapTexture;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_PortalBtn;
+	
+	UPROPERTY()
+	UImage* m_SelectedUpdateImage;
+	
 protected:
-	float m_fMaxX;
-	float m_fMinX;
-	float m_fMaxY;
-	float m_fMinY;
-public:
+	FVector2D* m_PlayerScreenPos;
 
-	void SetMaxMinCornerMap();
+	FVector2D m_OverlaySize;
+
+	bool m_bIsUsingCornerMap;
+
+	float m_fCornerMapScaleRatio;
+
+	FTimerHandle m_TimerHandle_OnTimer;
+
+protected:
+	FVector2D TransformScreenCoordToMyWidget(const FVector2D& sceenPos);
+
+	void OnTimerPortalHoldDone();
+	
+	void OnTimerPortalDelayDone();
+	
+public:
+	void Init();
+	
+	void SetOverlaySize();
+	
 	void SetMinimapMat(UMaterialInterface* material_interface);
 
+	void SetFullMinimap();
+
+	void SetCornerMinimap();
+
 	void UpdateMinimapWidget();
+	void UpdateCornerMapTransform();
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+	UFUNCTION()
+	FEventReply OnCornerMapClicked(FGeometry MyGeometry, const FPointerEvent& MouseEvent);
+	UFUNCTION(BlueprintCallable)
+	void SetCornerScaleValue(float scaleV);
+	
+	UFUNCTION()
+	void OnBtnPressHold();
+	UFUNCTION()
+	void OnBtnReleaseHold();
 };
+
+

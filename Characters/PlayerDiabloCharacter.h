@@ -310,5 +310,6 @@ public:
 	{
 		return Cast<UPlayerDiabloAttribute>(GetAttributeSet());
 	}
+
 };
 

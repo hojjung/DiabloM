@@ -70,10 +70,6 @@ void UMainCanvas::TestOpenDungeon()
     UDiabloGameInstance::Get->CreateDungeon();
 }
 
-void UMainCanvas::TestPortalBack()
-{
-    UDiabloGameInstance::Get->BackToDungeon();
-}
 
 void UMainCanvas::TestSaveAll()
 {

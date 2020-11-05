@@ -34,6 +34,8 @@ protected:
 	
 	int m_nPointIndex;
 
+	bool m_bIsPlayerInDungeon;
+
 	FVector m_RecentDungeonFeetLoc;
 
 	FDungeonCreate m_OnPortalCreate;
@@ -75,5 +77,5 @@ public:
 		return m_OnPortalCreate;
 	}
 
-
+	bool IsPlayerInDg();
 };
