@@ -75,6 +75,11 @@ void UDungeonManager::HideSpawnedMonster()
 void UDungeonManager::PortalToVillage()
 {
     PRINTF("Dgm - Portal Village");
+
+    if(!m_bIsPlayerInDungeon)
+    {
+        return;
+    }
     
     APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
     m_RecentDungeonFeetLoc=PlayerPawn->GetMovementComponent()->GetActorFeetLocation();

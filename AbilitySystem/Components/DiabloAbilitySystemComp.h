@@ -20,6 +20,8 @@ enum class EAbilityInputID : uint8
 
 	DrinkHpPotion   ,
 
+	MakingPortal   ,
+
 	Ability1        ,
 	// 4 RMB,
 	Ability2		,

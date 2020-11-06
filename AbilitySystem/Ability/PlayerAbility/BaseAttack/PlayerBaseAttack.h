@@ -71,6 +71,8 @@ protected:
 	void DashAttack(UUnitMovement* movementComp,FVector dashNormal,float dashLength,float dashTime);
 
 	bool IsDashable( const FGameplayAbilityActorInfo* ActorInfo,float& outDistSqr,FVector& outDashNormal);
+
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 };
 
 

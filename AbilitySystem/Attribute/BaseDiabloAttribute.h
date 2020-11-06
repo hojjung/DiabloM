@@ -18,6 +18,7 @@
 class AUnitPawn;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnStatChanged,AUnitPawn*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDamageTook,float);
 UCLASS()
 class DIABLOM_API UBaseDiabloAttribute : public UAttributeSet
 {
@@ -28,6 +29,7 @@ public:
 
 public:
 	FOnStatChanged m_OnStatChanged;
+	FOnDamageTook m_OnDmgTook;
 	//
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData TookPhysDamage;

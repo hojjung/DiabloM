@@ -17,7 +17,7 @@ UPlayerBaseAttack::UPlayerBaseAttack()
     m_TagTookPoisonDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPoisonDmg"));
     
     m_TagEventEndAbility= FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
-    m_TagEventBaseAttack= FGameplayTag::RequestGameplayTag(FName("Combat.Ability.BaseAttack"));
+    m_TagEventBaseAttack= FGameplayTag::RequestGameplayTag(FName("Combat.Ability.Skill.BaseAttack"));
     
     AbilityTags.AddTag(m_TagEventBaseAttack);
     
@@ -100,14 +100,13 @@ void UPlayerBaseAttack::ResetComboSection()
 void UPlayerBaseAttack::OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
     ResetComboSection();
-    GetMovement(Cast<APawn>(CurrentActorInfo->AvatarActor.Get()))->SetMoveSpeedRatio(1.f);
     EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
 void UPlayerBaseAttack::OnCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
     //Each one base attack
-    GetMovement(Cast<APawn>( CurrentActorInfo->AvatarActor.Get()))->SetMoveSpeedRatio(1.f);
+    
     EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
@@ -119,7 +118,6 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
     if (EventTag == m_TagEventEndAbility)
     {
         ResetComboSection();
-        GetMovement(PlayerChar)->SetMoveSpeedRatio(1.f);
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
         return;
     }
@@ -196,4 +194,11 @@ bool UPlayerBaseAttack::IsDashable(const FGameplayAbilityActorInfo* ActorInfo,fl
     outDistSqr=DistSqr2D;
     outDashNormal=(Location2 -Location1).GetSafeNormal();
     return DistSqr2D >m_fDashLimitRange*m_fDashLimitRange; 
+}
+
+void UPlayerBaseAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+    const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+    Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+    GetMovement(Cast<APawn>( CurrentActorInfo->AvatarActor.Get()))->SetMoveSpeedRatio(1.f);
 }

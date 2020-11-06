@@ -96,6 +96,8 @@ void UBaseDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* Source
 
     if (LocalDamageDone > 1.f)
     {
+        m_OnDmgTook.Broadcast(LocalDamageDone);
+        
         const float OldHealth = GetHealth();
 
         SetHealth(FMath::Clamp(OldHealth - LocalDamageDone, 0.0f, GetMaxHealth()));

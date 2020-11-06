@@ -151,6 +151,8 @@ void UPlayerDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* Sour
 
 	if (LocalDamageDone > 1.f)
 	{
+		m_OnDmgTook.Broadcast(LocalDamageDone);
+		
 		const float OldHealth = GetHealth();
 
 		SetHealth(FMath::Clamp(OldHealth - LocalDamageDone, 0.0f, GetMaxHealth()));

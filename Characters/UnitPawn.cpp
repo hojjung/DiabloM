@@ -421,12 +421,22 @@ FVector AUnitPawn::GetVelocity() const
     return GetMovementComponent()->Velocity;
 }
 
+void AUnitPawn::SetBlockMove()
+{
+    Cast<UUnitMovement>( GetMovementComponent())->SetMoveSpeed(0.f);
+}
+
+void AUnitPawn::SetUnblockMove()
+{
+    Cast<UUnitMovement>( GetMovementComponent())->SetMoveSpeed(GetAttributeSet()->GetMoveSpeed());
+}
+
 void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
     if(NewCount>0)
     {
         GetDiaAbilitySystem()->CancelAbilities();
-        Cast<UUnitMovement>( GetMovementComponent())->SetMoveSpeed(0.f);
+        SetBlockMove();
         
         if(m_StunMontage)
         {
@@ -441,7 +451,7 @@ void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
         StopAnimMontage(m_StunMontage);
     }
     
-    Cast<UUnitMovement>( GetMovementComponent())->SetMoveSpeed(GetAttributeSet()->GetMoveSpeed());
+    SetUnblockMove();
 }
 
 void AUnitPawn::PlayTookHitMontage()

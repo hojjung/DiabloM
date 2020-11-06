@@ -14,6 +14,7 @@ UMinimapWidget::UMinimapWidget(const FObjectInitializer& objInit):Super(objInit)
     static ConstructorHelpers::FObjectFinder<UTexture2D> FondTxt(TEXT("Texture2D'/Game/Sprite/UI/CSL_Character_DeleteBtn.CSL_Character_DeleteBtn'"));
     m_CancelMinimapTexture=FondTxt.Object;
     m_fPortalHoldTime=2.f;
+    m_fPortalDelayTime=1.f;
 }
 
 void UMinimapWidget::Init()
@@ -142,41 +143,11 @@ void UMinimapWidget::UpdateCornerMapTransform()
 
 void UMinimapWidget::OnBtnPressHold()
 {
-    ADiabloGameMode::Get->GetWorldTimerManager().ClearTimer(m_TimerHandle_OnTimer);
-    
-    ADiabloGameMode::Get->GetWorldTimerManager().SetTimer(m_TimerHandle_OnTimer, this,&UMinimapWidget::OnTimerPortalHoldDone,m_fPortalHoldTime,false);
+    ADiabloPlayerController::Get->GetPlayerPawn()->UsePortal();
 }
 
 void UMinimapWidget::OnBtnReleaseHold()
 {
-    ADiabloGameMode::Get->GetWorldTimerManager().ClearTimer(m_TimerHandle_OnTimer);
-}
-
-void UMinimapWidget::OnTimerPortalHoldDone()
-{
-    PRINTF("Portal PortalHoldDone");
-    
-    bool bIsDgOpened=UDiabloGameInstance::Get->GetDungeonManager()->IsDungeonOpened();
-
-    if(!bIsDgOpened)
-    {
-        return;
-    }
-
-    bool bIsPlayerInDg = UDiabloGameInstance::Get->GetDungeonManager()->IsPlayerInDg();
-
-    if(!bIsPlayerInDg)
-    {
-        return;
-    }
-
-    APlayerDiabloCharacter* CharPlayer = ADiabloPlayerController::Get->GetPlayerPawn();
-
-    CharPlayer->GetWorldTimerManager().SetTimer(m_TimerHandle_OnTimer, this,&UMinimapWidget::OnTimerPortalDelayDone,3.5f,false);
-}
-
-void UMinimapWidget::OnTimerPortalDelayDone()
-{
-    UDiabloGameInstance::Get->GetDungeonManager()->PortalToVillage();
+    ADiabloPlayerController::Get->GetPlayerPawn()->CancelPortal();
 }
 

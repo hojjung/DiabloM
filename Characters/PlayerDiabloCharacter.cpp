@@ -147,6 +147,17 @@ void APlayerDiabloCharacter::GrantResourceRegenAbility()
     }
 }
 
+void APlayerDiabloCharacter::GrantPortalAbility()
+{
+    if (m_GAPlayerPortal)
+    {
+        FGameplayAbilitySpec Spec = FGameplayAbilitySpec(m_GAPlayerPortal, GetCharacterLevel(),
+                                                         static_cast<int32>(m_GAPlayerPortal.GetDefaultObject()->
+                                                             m_AbilityInputID), this);
+        m_PortalHandle = GetDiaAbilitySystem()->GiveAbility(Spec);
+    }
+}
+
 void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSaveData)
 {
     m_nCharacterLevel = loadedSaveData->m_nLevel;
@@ -178,6 +189,7 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     GrantHpRegenAbility();
     GrantHpPotionAbility();
     GrantResourceRegenAbility();
+    GrantPortalAbility();
 }
 
 void APlayerDiabloCharacter::BeginPlay()
@@ -615,6 +627,7 @@ void APlayerDiabloCharacter::Revive()
     GrantBaseAttackAbility();
     GrantHpPotionAbility();
     GrantResourceRegenAbility();
+    GrantPortalAbility();
     //
     GetCapsule()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     GetMovementComponent()->SetActive(true);
@@ -669,6 +682,16 @@ void APlayerDiabloCharacter::GrantHpPotionAbility()
 void APlayerDiabloCharacter::DrinkPotion()
 {
     GetDiaAbilitySystem()->TryActivateAbility(m_PotionHandle);
+}
+
+void APlayerDiabloCharacter::UsePortal()
+{
+    GetDiaAbilitySystem()->TryActivateAbility(m_PortalHandle);
+}
+
+void APlayerDiabloCharacter::CancelPortal()
+{
+    GetDiaAbilitySystem()->CancelAbilityHandle(m_PortalHandle);
 }
 
 float APlayerDiabloCharacter::GetCastSpeed() const

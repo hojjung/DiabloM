@@ -18,16 +18,17 @@ UCLASS()
 class DIABLOM_API UMinimapWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	//UDungeonMiniMap
-public:
 	
+public:
 	UMinimapWidget(const FObjectInitializer& objInit);
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector2D m_MinimapWidgetSize;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float m_fPortalHoldTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float m_fPortalDelayTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float m_fCornerMapScale;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Transient)
@@ -60,35 +61,32 @@ protected:
 protected:
 	FVector2D TransformScreenCoordToMyWidget(const FVector2D& sceenPos);
 
-	void OnTimerPortalHoldDone();
-	
-	void OnTimerPortalDelayDone();
-	
-public:
-	void Init();
-	
 	void SetOverlaySize();
-	
-	void SetMinimapMat(UMaterialInterface* material_interface);
 
 	void SetFullMinimap();
 
 	void SetCornerMinimap();
 
 	void UpdateMinimapWidget();
+	
 	void UpdateCornerMapTransform();
-
+	
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-	UFUNCTION()
-	FEventReply OnCornerMapClicked(FGeometry MyGeometry, const FPointerEvent& MouseEvent);
 	UFUNCTION(BlueprintCallable)
 	void SetCornerScaleValue(float scaleV);
 	
+public:
+	void Init();
 	UFUNCTION()
 	void OnBtnPressHold();
 	UFUNCTION()
 	void OnBtnReleaseHold();
+	
+	void SetMinimapMat(UMaterialInterface* material_interface);
+
+	UFUNCTION()
+	FEventReply OnCornerMapClicked(FGeometry MyGeometry, const FPointerEvent& MouseEvent);
 };
 
 

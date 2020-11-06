@@ -3,6 +3,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "AbilitySystem/Ability/PlayerAbility/PlayerUsePortal.h"
 #include "AbilitySystem/Ability/PlayerAbility/Regen/PlayerManaRegenAbility.h"
 #include "AbilitySystem/Ability/PlayerAbility/Regen/PlayerStaminaRegenAbility.h"
 #include "Animations/DiaAniminstance.h"
@@ -45,6 +46,8 @@ protected:
 	//TSubclassOf<UPlayerManaRegenAbility> m_GAPlayerRageRegen;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TSubclassOf<UPlayerHealthPotion> m_GAPlayerHealthPotion;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	TSubclassOf<UPlayerUsePortal> m_GAPlayerPortal;
 	
 	//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
@@ -124,6 +127,8 @@ protected:
 	FGameplayAbilitySpecHandle m_ResourceRegenHandle;
 
 	FGameplayAbilitySpecHandle m_PotionHandle;
+
+	FGameplayAbilitySpecHandle m_PortalHandle;
 	
 	FDelegateHandle m_InventoryUpdateHandle;
     
@@ -203,8 +208,7 @@ protected:
 public:
 	void Init();
 	
-	void GrantHpRegenAbility();
-	void GrantResourceRegenAbility();
+
 	UFUNCTION(BlueprintCallable)
     void Revive();
 	UFUNCTION(BlueprintCallable,Category="Interact")
@@ -230,7 +234,7 @@ public:
 
 	void RemoveAllEffect();
 	
-	void GrantBaseAttackAbility();
+	
 
 	void SetAnimStance(const FAnimStance* animStance);
 
@@ -300,9 +304,12 @@ public:
 
 	virtual bool IsAlive() const override;
 	
-	void GrantHpPotionAbility();
-
+	
 	void DrinkPotion();
+
+	void UsePortal();
+
+	void CancelPortal();
 
 	float GetCastSpeed() const;
 
@@ -310,6 +317,16 @@ public:
 	{
 		return Cast<UPlayerDiabloAttribute>(GetAttributeSet());
 	}
+	
+public:
+	void GrantHpPotionAbility();
+	
+	void GrantBaseAttackAbility();
+	
+	void GrantHpRegenAbility();
+	
+	void GrantResourceRegenAbility();
 
+	void GrantPortalAbility();
 };
 

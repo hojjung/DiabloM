@@ -220,6 +220,8 @@ public: //AttributeGetter
     friend UDiabloGameInstance;
 
     virtual FVector GetVelocity() const override;
+    void SetBlockMove();
+    void SetUnblockMove();
 
     virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 

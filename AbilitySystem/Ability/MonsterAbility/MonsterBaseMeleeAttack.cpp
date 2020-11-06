@@ -12,7 +12,7 @@ UMonsterBaseMeleeAttack::UMonsterBaseMeleeAttack()
     m_TagTookIceDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookIceDmg"));
     m_TagTookPoisonDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPoisonDmg"));
     m_TagEventEndAbility = FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
-    m_TagEventBaseAttack = FGameplayTag::RequestGameplayTag(FName("Combat.Ability.BaseAttack"));
+    m_TagEventBaseAttack = FGameplayTag::RequestGameplayTag(FName("Combat.Ability.Skill.BaseAttack"));
 
     AbilityTags.AddTag(m_TagEventBaseAttack);
     ActivationOwnedTags.AddTag(m_TagEventBaseAttack);

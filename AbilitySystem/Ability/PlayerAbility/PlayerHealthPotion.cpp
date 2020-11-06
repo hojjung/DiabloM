@@ -11,13 +11,10 @@
 UPlayerHealthPotion::UPlayerHealthPotion()
 {
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-
+    
     m_TagHealthHeal = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.HpHeal"));
-
-    AbilityTags.AddTag(m_TagHealthHeal);
-
-    ActivationOwnedTags.AddTag(m_TagHealthHeal);
-
+    
+    
     ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Combat.Ability.Skill")));
 
     m_AbilityInputID = EAbilityInputID::DrinkHpPotion;
@@ -26,7 +23,12 @@ UPlayerHealthPotion::UPlayerHealthPotion()
 
     m_TagEventEndAbility = FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
 
-    m_TagEventReceive = FGameplayTag::RequestGameplayTag(FName("Combat.Ability.DrinkPotion"));
+    m_TagEventReceive = FGameplayTag::RequestGameplayTag(FName("Combat.Ability.Skill.DrinkPotion"));
+
+    AbilityTags.AddTag(m_TagEventReceive);
+    
+    ActivationOwnedTags.AddTag(m_TagEventReceive);
+    
 }
 
 void UPlayerHealthPotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -41,7 +43,9 @@ void UPlayerHealthPotion::ActivateAbility(const FGameplayAbilitySpecHandle Handl
     
     float CastSpeed = m_PlayerPawn->GetCastSpeed();
 
-    PlayAbilityAnimation(m_PotionDrinkMotion, NAME_None, 0.2f);
+    PlayAbilityAnimation(m_PotionDrinkMotion, NAME_None, 1.f/CastSpeed);
+
+    m_PlayerPawn->SetBlockMove();
 }
 
 void UPlayerHealthPotion::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
@@ -100,4 +104,12 @@ void UPlayerHealthPotion::PlayAbilityAnimation(UAnimMontage* MontageToPlay, FNam
 
     Task->ReadyForActivation();
 
+}
+
+void UPlayerHealthPotion::EndAbility(const FGameplayAbilitySpecHandle Handle,
+    const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
+    bool bReplicateEndAbility, bool bWasCancelled)
+{
+    Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+    m_PlayerPawn->SetUnblockMove();
 }
