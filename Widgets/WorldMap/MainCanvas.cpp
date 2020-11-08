@@ -76,17 +76,27 @@ void UMainCanvas::TestSaveAll()
     UDiabloGameInstance::Get->SaveAllPlayerInfo();
 }
 
-void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven)
+void UMainCanvas::DrinkPotion()
+{
+    m_PlayerPawn->DrinkPotion();
+    //need cd
+}
+
+void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven,TArray<UInventory*>* aryStorage)
 {
     m_PlayerCon = playerCon;
     m_PlayerPawn = playerChar;
     m_EquipSys = equipment;
     m_Inven = inven;
-    m_MainMenu->Init(m_PlayerCon,m_PlayerPawn,m_EquipSys,m_Inven);
+    m_Storage=aryStorage;
+    
+    m_MainMenu->Init(m_PlayerCon,m_PlayerPawn,m_EquipSys,m_Inven,m_Storage);
 
     m_SettingButton->OnClicked.AddDynamic(this,&UMainCanvas::OpenSetting);
 
     m_InteractButton->OnClicked.AddDynamic(this,&UMainCanvas::Interaction);
+
+    m_PotionButton->OnClicked.AddDynamic(this,&UMainCanvas::DrinkPotion);
 
     m_AttackButton->OnPressed.AddDynamic(this,&UMainCanvas::OnAttackPressStart);
     m_AttackButton->OnReleased.AddDynamic(this,&UMainCanvas::OnAttackPressEnd);
@@ -148,4 +158,29 @@ void UMainCanvas::UpdateHpBar()
 void UMainCanvas::UpdateMinimap(UMaterialInterface* mapMat)
 {
     m_PlayerStatusBar->UpdateMinimap(mapMat);
+}
+
+void UMainCanvas::ShowWorldMap()
+{
+    PRINTF("WorldMap");
+}
+
+void UMainCanvas::ShowBasicShopMenu()
+{
+    PRINTF("ShopMenu");
+}
+
+void UMainCanvas::ShowStorageMenu()
+{
+    PRINTF("StorageMenu");
+}
+
+void UMainCanvas::HideMinimap()
+{
+    m_PlayerStatusBar->HideMinimap();
+}
+
+void UMainCanvas::ShowMinimap()
+{
+    m_PlayerStatusBar->ShowMinimap();
 }

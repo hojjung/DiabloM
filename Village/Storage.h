@@ -14,6 +14,13 @@ class DIABLOM_API AStorage : public AVillageActor, public IItemHolder
 {
 	GENERATED_BODY()
 
+public:
+	AStorage();
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* m_MeshStorage;
+	
 protected:
 	FOnItemSlotChanged m_ItemSlotChanged;
 

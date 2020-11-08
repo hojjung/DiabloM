@@ -25,15 +25,28 @@ void UMinimapWidget::Init()
     SetOverlaySize();
     m_PortalBtn->OnPressed.AddDynamic(this,&UMinimapWidget::OnBtnPressHold);
     m_PortalBtn->OnReleased.AddDynamic(this,&UMinimapWidget::OnBtnReleaseHold);
+    m_DgM=UDiabloGameInstance::Get->GetDungeonManager();
+    check(m_DgM);
 }
+
+void UMinimapWidget::HideMinimap()
+{
+    SetFullMinimap();
+    m_SelectedUpdateImage=nullptr;
+    m_MinimapCenterFull->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UMinimapWidget::ShowMinimap()
+{
+    SetCornerMinimap();
+}
+
 
 void UMinimapWidget::SetCornerScaleValue(float scaleV)
 {
     m_fCornerMapScale=scaleV;
     m_fCornerMapScaleRatio=m_fCornerMapScale/2.f;
 }
-
-
 
 void UMinimapWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -46,7 +59,7 @@ void UMinimapWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 FEventReply UMinimapWidget::OnCornerMapClicked(FGeometry MyGeometry, const FPointerEvent& MouseEvent)
 {
-    if(!UDiabloGameInstance::Get->GetDungeonManager()->IsDungeonOpened())
+    if(!m_DgM->IsDungeonOpened() || !m_DgM->IsPlayerInDg())
     {
         return FEventReply();
     }
@@ -90,14 +103,19 @@ void UMinimapWidget::SetMinimapMat(UMaterialInterface* material_interface)
     SetCornerMinimap();
 }
 
-void UMinimapWidget::SetFullMinimap()
+void UMinimapWidget::HideCornerMinimap()
 {
-    m_bIsUsingCornerMap=false;
-    m_SelectedUpdateImage = m_MinimapCenterFull;
     m_MinimapCornerSmall->SetRenderScale(FVector2D(1.f,1.f));
     m_MinimapCornerSmall->SetRenderTranslation(FVector2D(0.f,0.f));
     m_MinimapCornerSmall->SetRenderTransformAngle(135.f);
     m_MinimapCornerSmall->SetBrushFromTexture(m_CancelMinimapTexture);
+}
+
+void UMinimapWidget::SetFullMinimap()
+{
+    m_bIsUsingCornerMap=false;
+    m_SelectedUpdateImage = m_MinimapCenterFull;
+    HideCornerMinimap();
     m_MinimapCenterFull->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
@@ -148,6 +166,6 @@ void UMinimapWidget::OnBtnPressHold()
 
 void UMinimapWidget::OnBtnReleaseHold()
 {
-    ADiabloPlayerController::Get->GetPlayerPawn()->CancelPortal();
+   ADiabloPlayerController::Get->GetPlayerPawn()->CancelPortal();
 }
 

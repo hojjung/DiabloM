@@ -39,6 +39,7 @@ void UPlayerHealthPotion::ActivateAbility(const FGameplayAbilitySpecHandle Handl
     if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
     {
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+        return;
     }
     
     float CastSpeed = m_PlayerPawn->GetCastSpeed();

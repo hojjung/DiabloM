@@ -79,3 +79,13 @@ void UPlayerStatusBar::UpdateMinimap(UMaterialInterface* material_interface)
 {
     m_Minimap->SetMinimapMat(material_interface);
 }
+
+void UPlayerStatusBar::HideMinimap()
+{
+    m_Minimap->HideMinimap();
+}
+
+void UPlayerStatusBar::ShowMinimap()
+{
+    m_Minimap->ShowMinimap();
+}

@@ -100,6 +100,8 @@ protected:
 
 	FOnActionEnd m_OnActionEnd;
 
+	FVector2D m_InitPos;
+
 protected:
 	void SetIcon(const FItemInstance& itemInst);
 	void SetColorTier(const FItemInstance& itemInst);

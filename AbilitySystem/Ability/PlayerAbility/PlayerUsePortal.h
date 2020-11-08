@@ -3,6 +3,8 @@
 #include "AbilitySystem/Ability/PlayerAbility/PlayerDiabloAbility.h"
 #include "PlayerUsePortal.generated.h"
 
+class UPlayMontageAndWaitForEvent;
+
 UCLASS()
 class DIABLOM_API UPlayerUsePortal : public UPlayerDiabloAbility
 {
@@ -23,7 +25,11 @@ protected:
 
     FDelegateHandle m_DmgTookDelegate;
 
+    UPROPERTY()
     UAudioComponent* m_Audio;
+
+    UPROPERTY()
+    UPlayMontageAndWaitForEvent* m_Task;
 protected:
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                  const FGameplayAbilityActivationInfo ActivationInfo,

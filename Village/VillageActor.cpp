@@ -20,19 +20,7 @@ AVillageActor::AVillageActor()
 	m_Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
-// Called when the game starts or when spawned
-void AVillageActor::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
 
-// Called every frame
-void AVillageActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
 void AVillageActor::Interact(AActor* instigator)
 {

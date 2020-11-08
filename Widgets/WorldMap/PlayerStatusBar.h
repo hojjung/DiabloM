@@ -53,4 +53,8 @@ public:
 	void SetResourceBarProgressV(AUnitPawn* pawn);
 	
 	void UpdateMinimap(UMaterialInterface* material_interface);
+	
+	void HideMinimap();
+	
+	void ShowMinimap();
 };

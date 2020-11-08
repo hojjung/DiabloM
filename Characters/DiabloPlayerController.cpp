@@ -17,8 +17,6 @@ ADiabloPlayerController::ADiabloPlayerController()
 	CheatClass = UDiabloCheatManager::StaticClass();
 	m_ClassMainMenu = UMainCanvas::StaticClass();
 
-	m_nInvenX = 5;
-	m_nInvenY = 8;
 	m_DmgIndex=0;
 	bShowMouseCursor=true;
 
@@ -34,11 +32,21 @@ void ADiabloPlayerController::BeginPlay()
 	check( m_ClassDmgText);
 	GetPlayerPawn()->Init();
 	m_Inven = NewObject<UInventory>();
-	m_Inven->InitInven(m_nInvenX,m_nInvenY);
+	m_Inven->InitInven(INVEN_X,INVEN_Y);
 	m_EquipSystem = NewObject<UEquipmentSystem>();
 	m_EquipSystem->Init(GetPlayerPawn()->GetDiaAbilitySystem());
 	m_EquipSystem->GetItemChangeCallback().AddUObject(this,&ADiabloPlayerController::PlayerMeshChange);
-	USaveLoadManager::Get->CreateSetPlayerCharacter();
+	
+	m_AryStorage.Reset();
+	int i=0;
+	while (i++<5)
+	{
+		UInventory* Storage = NewObject<UInventory>();
+		Storage->InitInven(INVEN_X,INVEN_Y);
+		m_AryStorage.Emplace(Storage);
+	}
+	
+	USaveLoadManager::Get->CreateSetPlayerCharacter();//Set Every SaveFile to Load
 	InitWidget();
 }
 
@@ -47,7 +55,7 @@ void ADiabloPlayerController::InitWidget()
 	APlayerDiabloCharacter* PlayerPawn=Cast<APlayerDiabloCharacter>(GetPawn());
 	m_MainMenu = CreateWidget<UMainCanvas>(this, m_ClassMainMenu, "MainMenu00");
 	m_MainMenu->AddToViewport();
-	m_MainMenu->Init(this,PlayerPawn,m_EquipSystem,m_Inven);
+	m_MainMenu->Init(this,PlayerPawn,m_EquipSystem,m_Inven,&m_AryStorage);
 	m_GameOverScreen = CreateWidget<UDiaGameOverScreen>(this, m_ClassGameOver, "GameOverScreen00");
 	m_GameOverScreen->AddToViewport();
 	m_GameOverScreen->Init(this,PlayerPawn);
@@ -94,16 +102,6 @@ UDamageTextWidgetComponent* ADiabloPlayerController::GetDmgWC()
 void ADiabloPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-	PRINTF("End - Pl Con");
-	switch (EndPlayReason)
-	{
-	case EEndPlayReason::Destroyed: PRINTF("Destroyed"); break;
-	case EEndPlayReason::LevelTransition: PRINTF("LevelTrans"); break;
-	case EEndPlayReason::EndPlayInEditor: PRINTF("Editor End"); break;
-	case EEndPlayReason::RemovedFromWorld: PRINTF("RemoveWorld"); break;
-	case EEndPlayReason::Quit: PRINTF("Quit"); break;
-	default: ;
-	}
 }
 
 void ADiabloPlayerController::SetupInputComponent()
@@ -217,6 +215,7 @@ void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done,AUn
 	{
 		DamageText->SetDamageText(UDiaBlueprintFunctionLibrary::GetAlphabetText(local_damage_done));//
 	}
+	
 	DamageText->StartAnimation(dmgPopup);
 }
 
@@ -233,4 +232,29 @@ void ADiabloPlayerController::ShowFocusStatusWidget(AUnitPawn* unit)
 void ADiabloPlayerController::UpdateMinimap(UMaterialInterface* mapMat)
 {
 	m_MainMenu->UpdateMinimap(mapMat);
+}
+
+void ADiabloPlayerController::ShowWorldMap()
+{
+	m_MainMenu->ShowWorldMap();
+}
+
+void ADiabloPlayerController::ShowBasicShopMenu()
+{
+	m_MainMenu->ShowBasicShopMenu();
+}
+
+void ADiabloPlayerController::ShowStorageMenu()
+{
+	m_MainMenu->ShowStorageMenu();
+}
+
+void ADiabloPlayerController::HideMinimap()
+{
+	m_MainMenu->HideMinimap();
+}
+
+void ADiabloPlayerController::ShowMinimap()
+{
+	m_MainMenu->ShowMinimap();
 }

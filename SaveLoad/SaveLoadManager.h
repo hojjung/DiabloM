@@ -3,12 +3,13 @@
 #pragma once
 
 #include "DiabloM.h"
+
 #include "Characters/DiabloPlayerController.h"
 #include "Datas/PlayerInitDataTable.h"
 #include "Item/EquipmentSystem.h"
 #include "SaveLoadManager.generated.h"
 
-
+class USaveStorage;
 class UPlayerCreateManager;
 class USaveEquipment;
 class USaveInventory;
@@ -34,10 +35,13 @@ public:
     const FString m_EquipSlotName;
 
     const FString m_CharSlotName;
+
+    const FString m_StorageSlotName;
     
     static USaveLoadManager* Get;
 
     USaveLoadManager();
+    
     ~USaveLoadManager();
 
     ESaveVersion m_SaveVersion = ESaveVersion::Init;
@@ -55,9 +59,12 @@ protected:
     TArray<USaveEquipment*> m_AryLoadedEquipments;
     UPROPERTY()
     TArray<USaveInventory*> m_AryLoadedInventory;
+    UPROPERTY()
+    TArray<USaveStorage*> m_AryLoadedStorage;
     //They DonNeedInst
 protected:
     void TryLoadAllCharacter();
+    
 public:
     void DeleteSlot(int i);
 
@@ -71,22 +78,35 @@ public:
     void LoadInventory(int slotIndex);
     void LoadEquipment(int slotIndex);
     void LoadCharStat(int index);
+    //
+    void SaveStorage(int slotIndex,const TArray<bool>& aryOpen,const TArray<TArray<FItemInstance>>& aryItems);
+    void LoadStorage(int slotIndex);
 
     bool DoesSaveDataExist(int slotIndex);
     //
 private:
     void CreateSetEquipSlotItem(TArray<FItemInstance>& arrayUsing,FName itemId, ESlotsEquipAry slot);
+    
 public:
     int CreateNewCharacter(UPlayerCreateManager* plManager);
+    
     void SetLoadedEquipDataToPlayer(int slotIndex);
+    
     void SetLoadedCharDataToPlayer(int slotIndex);
+    
     void SetLoadedInvenDataToPlayer(int slotIndex);
 
+    void SetLoadedStorageDataToPlayer(int slot_index);
+    
     void CreateSetPlayerCharacter();
     
     const TArray<USaveCharacterStatus*>& GetLoadedChars() const;
+    
     const TArray<USaveEquipment*>& GetLoadedEquip() const;
+    
     const TArray<USaveInventory*>& GetLoadedInven() const;
+
+    const TArray<USaveStorage*>& GetLoadedStorage() const;
     
     int GetEmptyIndex();
     //Focus Character need

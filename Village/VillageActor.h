@@ -17,16 +17,9 @@ public:
 	AVillageActor();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Item")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UCapsuleComponent* m_Capsule;
 
-protected:
-	virtual void BeginPlay() override;
-
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-
 	virtual void Interact(AActor* instigator)override;
 };

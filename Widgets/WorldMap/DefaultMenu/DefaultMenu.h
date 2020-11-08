@@ -4,6 +4,7 @@
 
 #include "DiabloM.h"
 #include "DiaStatPanel.h"
+#include "DiaStorageGridPanel.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaEquipmentPanel.h"
 #include "Widgets/WorldMap/DefaultMenu/ItemPopupInfo.h"
@@ -15,8 +16,8 @@ class UEquipmentSystem;
 class APlayerDiabloCharacter;
 class ADiabloPlayerController;
 struct FItemInstance;
-class UDiaInvenGridPanel;
 class UItemDrop;
+class UDiaInvenGridPanel;
 UCLASS()
 class DIABLOM_API UDefaultMenu : public UUserWidget
 {
@@ -30,6 +31,8 @@ protected:
 	UDiaInvenGridPanel* m_InvenGridPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaEquipmentPanel* m_EquipPanel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaStorageGridPanel* m_StoragePanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaStatPanel* m_StatPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -49,6 +52,8 @@ protected:
 	UEquipmentSystem* m_Equipment;
 	UPROPERTY()
 	UInventory* m_Inven;
+
+	TArray<UInventory*>* m_Storage;
 	UPROPERTY()
 	TArray<UItemPopupInfo*> m_AryItemPopup;
 
@@ -59,7 +64,7 @@ public:
 	void SetPopupDelegate(const TArray<UDiaInvenGridSlot*>& arySlots);
 
 	void InitPopup();
-	void Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar,  UEquipmentSystem* equipment,UInventory* inven);
+	void Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar,  UEquipmentSystem* equipment,UInventory* inven,TArray<UInventory*>* aryStorage);
 
 	void OpenMainMenu();
 

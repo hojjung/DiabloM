@@ -9,7 +9,7 @@
 #include "Item/ItemManager.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/StartMap/PlayerCreateManager.h"
-
+#include "SaveStorage.h"
 
 USaveLoadManager* USaveLoadManager::Get = nullptr;
 
@@ -18,6 +18,7 @@ USaveLoadManager::USaveLoadManager():
     m_InvenSlotName("Inventory"),
     m_EquipSlotName("Equipment"),
     m_CharSlotName("Character"),
+    m_StorageSlotName("Storage"),
     m_nMaxSlotCount(7),
     m_nCurrentSlotCount(5)
 {
@@ -25,6 +26,7 @@ USaveLoadManager::USaveLoadManager():
     m_AryLoadedCharacters.Init(nullptr, m_nCurrentSlotCount);
     m_AryLoadedEquipments.Init(nullptr, m_nCurrentSlotCount);
     m_AryLoadedInventory.Init(nullptr, m_nCurrentSlotCount);
+    m_AryLoadedStorage.Init(nullptr, m_nCurrentSlotCount);
     TryLoadAllCharacter();
 }
 
@@ -34,6 +36,7 @@ USaveLoadManager::~USaveLoadManager()
     m_AryLoadedCharacters.Empty();
     m_AryLoadedEquipments.Empty();
     m_AryLoadedInventory.Empty();
+    m_AryLoadedStorage.Empty();
     m_OnDataCreated.Unbind();
 }
 
@@ -51,6 +54,7 @@ void USaveLoadManager::TryLoadAllCharacter()
             LoadCharStat(i);
             LoadEquipment(i);
             LoadInventory(i);
+            LoadStorage(i);
 
             PRINTF("Success: %d", i);
         }
@@ -75,6 +79,7 @@ void USaveLoadManager::DeleteSlot(int i)
     m_AryLoadedCharacters[i] = nullptr;
     m_AryLoadedEquipments[i] = nullptr;
     m_AryLoadedInventory[i] = nullptr;
+    m_AryLoadedStorage[i] = nullptr;
 }
 
 void USaveLoadManager::DeleteAllSlot()
@@ -234,20 +239,67 @@ void USaveLoadManager::LoadCharStat(int index)
     PRINTF("LoadCharacter");
 }
 
+void USaveLoadManager::SaveStorage(int slotIndex, const TArray<bool>& aryOpen,
+    const TArray<TArray<FItemInstance>>& aryItems)
+{
+    USaveStorage* SaveStorage = Cast<USaveStorage>(
+     UGameplayStatics::CreateSaveGameObject(USaveStorage::StaticClass()));
+
+    SaveStorage->SetSaveStorage(m_SaveVersion,aryOpen,aryItems);
+
+    UGameplayStatics::SaveGameToSlot(SaveStorage, m_StorageSlotName, slotIndex);
+
+    m_AryLoadedStorage[slotIndex] = SaveStorage;
+
+    PRINTF("SaveStorage");
+}
+
+void USaveLoadManager::LoadStorage(int slotIndex)
+{
+    USaveStorage* LoadStorage = Cast<USaveStorage>(UGameplayStatics::LoadGameFromSlot(m_StorageSlotName, slotIndex));
+
+    if(!LoadStorage)
+    {
+        PRINTF("No StorageLoad-CreateNew");
+        TArray<TArray<FItemInstance>> AryAryStorage;
+        AryAryStorage.Init(TArray<FItemInstance>(),5);
+        int i=0;
+        while (i<5)
+        {
+            AryAryStorage[i].Init(FItemInstance(),INVEN_X*INVEN_Y);
+
+            i++;
+        }
+        TArray<bool> AryDgOpen;
+        AryDgOpen.Init(false,5);
+        AryDgOpen[0]=true;
+        SaveStorage(slotIndex,AryDgOpen,AryAryStorage);
+        LoadStorage=m_AryLoadedStorage[slotIndex];
+    }
+    
+
+    LoadItemDataForInstance(LoadStorage->m_AryStorageItems1,LoadStorage->m_SaveVersion);
+    LoadItemDataForInstance(LoadStorage->m_AryStorageItems2,LoadStorage->m_SaveVersion);
+    LoadItemDataForInstance(LoadStorage->m_AryStorageItems3,LoadStorage->m_SaveVersion);
+    LoadItemDataForInstance(LoadStorage->m_AryStorageItems4,LoadStorage->m_SaveVersion);
+    LoadItemDataForInstance(LoadStorage->m_AryStorageItems5,LoadStorage->m_SaveVersion);
+    
+    m_AryLoadedStorage[slotIndex] = LoadStorage;
+
+    PRINTF("LoadStorage");
+}
+
 bool USaveLoadManager::DoesSaveDataExist(int slotIndex)
 {
     bool CharResult = UGameplayStatics::DoesSaveGameExist(m_CharSlotName, slotIndex);
 
-    bool InvenResult = UGameplayStatics::DoesSaveGameExist(m_InvenSlotName, slotIndex);
-
-    bool EquipResult = UGameplayStatics::DoesSaveGameExist(m_EquipSlotName, slotIndex);
-
-    return CharResult && InvenResult && EquipResult;
+    return CharResult;
 }
 
 int USaveLoadManager::CreateNewCharacter(UPlayerCreateManager* plManager)
 {
     int PlayerIndex = GetEmptyIndex();
+    int MaxInven = INVEN_X*INVEN_Y;
     //
     if (PlayerIndex == -1)
     {
@@ -259,9 +311,24 @@ int USaveLoadManager::CreateNewCharacter(UPlayerCreateManager* plManager)
     SetEquipSaveDataFromCreation(plManager->GetCurrentCharData(),AryEquip);
     SaveEquipment(PlayerIndex,AryEquip);
     SaveCharacterStat(PlayerIndex,1,plManager->m_CurrentTextName,plManager->m_IndexFace,plManager->m_IndexHair,plManager->GetCurrentCharData().m_ClassID);
+    
     TArray<FItemInstance> AryInven;
-    AryInven.Init(FItemInstance(),40);
+    AryInven.Init(FItemInstance(),MaxInven);
     SaveInventory(PlayerIndex,AryInven);
+    //
+    TArray<TArray<FItemInstance>> AryAryStorage;
+    AryAryStorage.Init(TArray<FItemInstance>(),5);
+    int i=0;
+    while (i<5)
+    {
+        AryAryStorage[i].Init(FItemInstance(),MaxInven);
+
+        i++;
+    }
+    TArray<bool> AryDgOpen;
+    AryDgOpen.Init(false,5);
+    AryDgOpen[0]=true;
+    SaveStorage(PlayerIndex,AryDgOpen,AryAryStorage);
     //
     m_OnDataCreated.ExecuteIfBound(m_AryLoadedCharacters[PlayerIndex]);
 
@@ -287,12 +354,26 @@ void USaveLoadManager::SetLoadedInvenDataToPlayer(int slotIndex)
     DiaPC->GetInven()->SetItemAry(m_AryLoadedInventory[slotIndex]->m_InvenAry);
 }
 
+void USaveLoadManager::SetLoadedStorageDataToPlayer(int slot_index)
+{
+    TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+
+    DiaPC->GetStorageAry()[0]->SetItemAry(m_AryLoadedStorage[slot_index]->m_AryStorageItems1);
+    DiaPC->GetStorageAry()[1]->SetItemAry(m_AryLoadedStorage[slot_index]->m_AryStorageItems2);
+    DiaPC->GetStorageAry()[2]->SetItemAry(m_AryLoadedStorage[slot_index]->m_AryStorageItems3);
+    DiaPC->GetStorageAry()[3]->SetItemAry(m_AryLoadedStorage[slot_index]->m_AryStorageItems4);
+    DiaPC->GetStorageAry()[4]->SetItemAry(m_AryLoadedStorage[slot_index]->m_AryStorageItems5);
+    
+    DiaPC->GetStorageOpenAry() = m_AryLoadedStorage[slot_index]->m_AryIsStorageOpened;
+}
+
 void USaveLoadManager::CreateSetPlayerCharacter()
 {
     int slotIndex=UPlayerCreateManager::Get->m_CurrentSelectSlot;
     SetLoadedCharDataToPlayer(slotIndex);
     SetLoadedEquipDataToPlayer(slotIndex);
     SetLoadedInvenDataToPlayer(slotIndex);
+    SetLoadedStorageDataToPlayer(slotIndex);
 }
 
 const TArray<USaveCharacterStatus*>& USaveLoadManager::GetLoadedChars() const
@@ -308,6 +389,11 @@ const TArray<USaveEquipment*>& USaveLoadManager::GetLoadedEquip() const
 const TArray<USaveInventory*>& USaveLoadManager::GetLoadedInven() const
 {
     return m_AryLoadedInventory;
+}
+
+const TArray<USaveStorage*>& USaveLoadManager::GetLoadedStorage() const
+{
+    return m_AryLoadedStorage;
 }
 
 int USaveLoadManager::GetEmptyIndex()

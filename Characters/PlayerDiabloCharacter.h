@@ -19,7 +19,6 @@ class UPlayerSensing;
 class UPlayerBaseAttack;
 class UDefaultFSM;
 class UPlayerDiabloAttribute;
-
 class UPlayerHealthPotion;
 class UPlayerHpRegenAbility;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
@@ -311,12 +310,10 @@ public:
 
 	void CancelPortal();
 
-	float GetCastSpeed() const;
+	float GetCastSpeed();
 
-	FORCEINLINE UPlayerDiabloAttribute* GetPlayerAttribute() const
-	{
-		return Cast<UPlayerDiabloAttribute>(GetAttributeSet());
-	}
+	UPlayerDiabloAttribute* GetPlayerAttribute();
+	
 	
 public:
 	void GrantHpPotionAbility();

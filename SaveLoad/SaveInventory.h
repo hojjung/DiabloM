@@ -21,8 +21,6 @@ public:
 	ESaveVersion m_SaveVersion;
 	//어떤 아이템이, 어떤 인벤칸에 있는지, 그리고 옵션의 종류와 수치,등급
 	UPROPERTY(EditAnywhere)
-	int m_nCount;
-	UPROPERTY(EditAnywhere)
 	TArray<FItemInstance> m_InvenAry;
 public:
 	void SetSaveData(const TArray<FItemInstance>& inven);//

@@ -44,7 +44,7 @@ void UDiabloGameInstance::Init()
     
     
     //
-    UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(45.f);
+    UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(33.f);
     UGameUserSettings::GetGameUserSettings()->ApplySettings(true);
 }
 
@@ -98,6 +98,19 @@ void UDiabloGameInstance::SaveAllPlayerInfo()
 
     USaveLoadManager::Get->SaveCharacterStat(UPlayerCreateManager::Get->m_CurrentSelectSlot, Lev, Name, Face, Hair,
                                              USaveLoadManager::Get->GetCurrentPlayerClassName(), DiaPl->m_fCurrentExp);
+
+    TArray<UInventory*> Storage = DiaPC->GetStorageAry();
+    TArray<TArray<FItemInstance>> StorageItemInst;
+    StorageItemInst.Init(TArray<FItemInstance>(),5);
+
+    int j=0;
+    while (j<5)
+    {
+        StorageItemInst[j]=Storage[j]->GetItemAry();
+        j++;
+    }
+    
+    USaveLoadManager::Get->SaveStorage(UPlayerCreateManager::Get->m_CurrentSelectSlot,DiaPC->GetStorageOpenAry(),StorageItemInst);
 }
 
 bool UDiabloGameInstance::IsDungeonOpened()

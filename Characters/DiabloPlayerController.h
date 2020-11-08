@@ -36,6 +36,10 @@ protected:
 	UInventory* m_Inven;
 	UPROPERTY()
 	UEquipmentSystem* m_EquipSystem;
+	UPROPERTY()
+	TArray<UInventory*> m_AryStorage;
+	UPROPERTY()
+	TArray<bool> m_AryStorageOpend;
 
 	FTextFormat m_FormatMiss;
 protected:
@@ -43,10 +47,6 @@ protected:
 	TSubclassOf<UMainCanvas> m_ClassMainMenu; // 태어나게 할 설계도 위젯 ㅇㅇ
 	UPROPERTY(EditDefaultsOnly,Category="Widget")
 	TSubclassOf<UDiaGameOverScreen> m_ClassGameOver; // 
-	UPROPERTY(EditDefaultsOnly, Category = "Widget")
-	int m_nInvenX;
-	UPROPERTY(EditDefaultsOnly, Category = "Widget")
-	int m_nInvenY;
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<UDamageTextWidgetComponent> m_ClassDmgText;
 protected:
@@ -128,12 +128,37 @@ public:
 		return  m_EquipSystem;
 	}
 
+	FORCEINLINE TArray<UInventory*>& GetStorageAry()
+	{
+		return  m_AryStorage;
+	}
+
+	FORCEINLINE TArray<bool>& GetStorageOpenAry()
+	{
+		return m_AryStorageOpend;
+	}
+
 	APlayerDiabloCharacter* GetPlayerPawn();
 
-	void ShowDamageNumber(const float local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target	
+	void ShowDamageNumber(const float local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target
+	
 	void HideFocusStatusWidget();
+	
 	void ShowFocusStatusWidget(AUnitPawn* unit);
 	
 	UFUNCTION(BlueprintCallable)
 	void UpdateMinimap(UMaterialInterface* mapMat);
+
+	UFUNCTION(BlueprintCallable)
+	void ShowWorldMap();
+
+	UFUNCTION(BlueprintCallable)
+    void ShowBasicShopMenu();
+
+	UFUNCTION(BlueprintCallable)
+    void ShowStorageMenu();
+	
+	void HideMinimap();
+	
+	void ShowMinimap();
 };

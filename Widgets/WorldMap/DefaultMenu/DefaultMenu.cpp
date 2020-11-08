@@ -10,7 +10,7 @@
 
 
 void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar,
-                        UEquipmentSystem* equipment, UInventory* inven)
+                        UEquipmentSystem* equipment, UInventory* inven,TArray<UInventory*>* aryStorage)
 {
     m_bIsPopupOpened = false;
 
@@ -18,6 +18,7 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     m_PlayerChar = playerChar;
     m_Equipment = equipment;
     m_Inven = inven;
+    m_Storage=aryStorage;
 
     m_InvenGridPanel->Init(m_Inven);
     SetPopupDelegate(m_InvenGridPanel->GetArySlots());
@@ -25,10 +26,15 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     m_EquipPanel->Init(m_Equipment);
     SetPopupDelegate(m_EquipPanel->GetArySlots());
 
+    m_StoragePanel->Init(m_Storage);
+    for(TArray<UDiaInvenGridSlot*>* ArySlot1 : m_StoragePanel->GetArySlots2())
+    {
+        SetPopupDelegate(*ArySlot1);
+    }
+    
     InitPopup();
     
     m_StatPanel->Init(playerChar);
-
 }
 
 void UDefaultMenu::InitPopup()
@@ -170,7 +176,7 @@ void UDefaultMenu::CloseItemPopup()
     {
         if(Pop->GetVisibility()==ESlateVisibility::Hidden)
         {
-            continue;;
+            continue;
         }
         
         Pop->PlayHideInfoAnim(Delay);

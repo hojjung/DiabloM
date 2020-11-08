@@ -93,6 +93,8 @@ void UDungeonManager::PortalToVillage()
     ADiabloPlayerController::Get->ClientForceGarbageCollection();
 
     m_bIsPlayerInDungeon=false;
+
+    ADiabloPlayerController::Get->HideMinimap();//UI Set Brush Tick add
 }
 
 void UDungeonManager::PortalToRecentDungeon()
@@ -101,14 +103,16 @@ void UDungeonManager::PortalToRecentDungeon()
     {
         return;
     }
+    
     PRINTF("Dgm - Portal Dungeon");
     m_CurrentDungeon->ShowDungeon();
     ShowSpawnedMonster();
     APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
-    FVector Loc=m_RecentDungeonFeetLoc;
+    FVector Loc = m_RecentDungeonFeetLoc;
     Loc.Z+=PlayerPawn->GetCapsule()->GetScaledCapsuleHalfHeight();
     PlayerPawn->SetActorLocation(Loc,false,nullptr,ETeleportType::None);
     m_bIsPlayerInDungeon=true;
+    ADiabloPlayerController::Get->ShowMinimap();
 }
 
 void UDungeonManager::ClearDungeon()

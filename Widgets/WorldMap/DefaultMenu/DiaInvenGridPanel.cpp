@@ -2,7 +2,6 @@
 #include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 #include "Item/Inventory.h"
 #include "Datas/ItemDataTable.h"
-#include "Lib/DiaBlueprintFunctionLibrary.h"
 
 UDiaInvenGridPanel* UDiaInvenGridPanel::GetInvenWidgetInst = nullptr;
 
@@ -45,12 +44,12 @@ void UDiaInvenGridPanel::SetGrid(int x, int y)
 	{
 		for (int Y = 0; Y < InvenY; Y++)
 		{
-			m_SlotGridPanel->SetColumnFill(Y, 1);
-			m_SlotGridPanel->SetRowFill(X, 1);
+			m_SlotGridPanel->SetColumnFill(X, 1);
+			m_SlotGridPanel->SetRowFill(Y, 1);
 			UDiaInvenGridSlot* SlotCreated = CreateWidget<UDiaInvenGridSlot>(this, m_ClassGridSlot);
 			UGridSlot* ChildSlot = m_SlotGridPanel->AddChildToGrid(SlotCreated);
-			ChildSlot->SetColumn(Y);
-			ChildSlot->SetRow(X);
+			ChildSlot->SetColumn(X);
+			ChildSlot->SetRow(Y);
 			m_ArySlot.Add(SlotCreated);
 			SlotCreated->InitSlot(Index);
 			SlotCreated->m_OnDropIndex.BindUObject(this,&UDiaInvenGridPanel::AddItem);

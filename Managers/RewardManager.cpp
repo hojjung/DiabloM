@@ -7,7 +7,7 @@
 void URewardManager::CreateActorPool()
 {
     m_HidingPoint = FVector(100000, 100000, 100000);
-    CreateAllItemPool(100, 150, 50);
+    CreateAllItemPool(10, 150, 50);
 }
 
 void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMonsterItemDropRow& dropData, int level)

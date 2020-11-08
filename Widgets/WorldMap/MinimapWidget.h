@@ -8,6 +8,8 @@
 #include "Image.h"
 #include "Overlay.h"
 #include "Blueprint/UserWidget.h"
+#include "Managers/DungeonManager.h"
+
 
 #include "MinimapWidget.generated.h"
 
@@ -46,6 +48,8 @@ protected:
 	
 	UPROPERTY()
 	UImage* m_SelectedUpdateImage;
+	UPROPERTY()
+	UDungeonManager* m_DgM;
 	
 protected:
 	FVector2D* m_PlayerScreenPos;
@@ -84,9 +88,14 @@ public:
 	void OnBtnReleaseHold();
 	
 	void SetMinimapMat(UMaterialInterface* material_interface);
+	void HideCornerMinimap();
 
 	UFUNCTION()
 	FEventReply OnCornerMapClicked(FGeometry MyGeometry, const FPointerEvent& MouseEvent);
+
+	void HideMinimap();
+
+	void ShowMinimap();
 };
 
 

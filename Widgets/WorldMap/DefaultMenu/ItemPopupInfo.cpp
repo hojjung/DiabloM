@@ -28,11 +28,14 @@ void UItemPopupInfo::NativeOnInitialized()
 
     GetEquipButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::EquipItem);
     m_UnequipButton->OnClicked.AddDynamic(this, &UItemPopupInfo::UnequipItem);
+
+    UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(Slot);
+    m_InitPos=PanelSlot->GetPosition();
 }
 
 FReply UItemPopupInfo::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-    auto Rep = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+    FReply Rep = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
     PlayHideInfoAnim();
     m_OnActionEnd.Broadcast();
@@ -59,7 +62,7 @@ void UItemPopupInfo::EquipItem()
     auto& Arys = UDiaEquipmentPanel::GetEquipWidgetInst->GetArySlots();
 
 
-    for (auto* EquipSlot : Arys)
+    for (UDiaInvenGridSlot* EquipSlot : Arys)
     {
         if (EquipSlot->IsSlotEmpty())
         {
@@ -121,7 +124,7 @@ void UItemPopupInfo::SetIcon(const FItemInstance& itemInst)
 
 void UItemPopupInfo::SetColorTier(const FItemInstance& itemInst)
 {
-    const auto ColorW = itemInst.m_ItemTier->m_TierColor;
+    const FLinearColor ColorW = itemInst.m_ItemTier->m_TierColor;
     m_ImageItemTierColorSmall->SetColorAndOpacity(ColorW);
     m_ImageItemTierColorLarge->SetColorAndOpacity(ColorW);
     m_TextItemName->SetColorAndOpacity(ColorW);
@@ -131,7 +134,7 @@ void UItemPopupInfo::SetColorTier(const FItemInstance& itemInst)
 
 void UItemPopupInfo::HideAllSubOptions()
 {
-    for (auto* Options : m_AryOptions)
+    for (UImageAndText* Options : m_AryOptions)
     {
         Options->SetString(FText());
         Options->SetVisibility(ESlateVisibility::Collapsed);
@@ -336,6 +339,9 @@ void UItemPopupInfo::HideInfoPanel()
     SetVisibility(ESlateVisibility::Collapsed);
     m_UseButton->SetVisibility(ESlateVisibility::Hidden);
     m_EquipButton->SetVisibility(ESlateVisibility::Hidden);
+    //
+    UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(Slot);
+    PanelSlot->SetPosition(m_InitPos);
 }
 
 void UItemPopupInfo::CompareItem(float origin,float wantCompareOther)

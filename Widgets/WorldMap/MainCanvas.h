@@ -33,7 +33,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UButton* m_AttackButton;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
-    UButton* m_InteractButton;
+    UButton* m_InteractButton;//m_PotionButton
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+    UButton* m_PotionButton;//
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UDefaultMenu* m_MainMenu;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
@@ -42,6 +44,7 @@ protected:
     UMaterialProgressBar* m_ExpBar;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UPlayerStatusBar* m_PlayerStatusBar;
+    
     //PlayerStatus
 protected:
     UPROPERTY()
@@ -52,6 +55,8 @@ protected:
     UEquipmentSystem* m_EquipSys;
     UPROPERTY()
     UInventory* m_Inven;
+
+    TArray<UInventory*>* m_Storage;
 
     FDelegateHandle m_MonUpdateHandle;
     
@@ -75,8 +80,10 @@ public:
     void TestOpenDungeon();
     UFUNCTION(BlueprintCallable,Category="Menu")
     void TestSaveAll();
+    UFUNCTION(BlueprintCallable,Category="Menu")
+    void DrinkPotion();
 public:
-    void Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven);
+    void Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven,TArray<UInventory*>* aryStorage);
 
     void ShowMonsterInfo(AUnitPawn* monInfo);
 
@@ -95,4 +102,14 @@ public:
 
     
     void UpdateMinimap(UMaterialInterface* mapMat);
+    
+    void ShowWorldMap();
+    
+    void ShowBasicShopMenu();
+    
+    void ShowStorageMenu();
+    
+    void HideMinimap();
+    
+    void ShowMinimap();
 };

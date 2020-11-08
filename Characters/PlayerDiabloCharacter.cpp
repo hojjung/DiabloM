@@ -135,12 +135,12 @@ void APlayerDiabloCharacter::GrantResourceRegenAbility()
 {
     auto* DiaAttri = GetPlayerAttribute();
 
-    if (DiaAttri->GetMaxMana()&&m_GAPlayerManaRegen)
+    if (DiaAttri->GetMaxMana() && m_GAPlayerManaRegen)
     {
         FGameplayAbilitySpec Spec = FGameplayAbilitySpec(m_GAPlayerManaRegen, GetCharacterLevel(), -1, this);
         m_ResourceRegenHandle = GetDiaAbilitySystem()->GiveAbility(Spec);
     }
-    else if (DiaAttri->GetMaxStamina()&&m_GAPlayerStaminaRegen)
+    else if (DiaAttri->GetMaxStamina() && m_GAPlayerStaminaRegen)
     {
         FGameplayAbilitySpec Spec = FGameplayAbilitySpec(m_GAPlayerStaminaRegen, GetCharacterLevel(), -1, this);
         m_ResourceRegenHandle = GetDiaAbilitySystem()->GiveAbility(Spec);
@@ -196,7 +196,7 @@ void APlayerDiabloCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
-    if(m_bIsManualInit)
+    if (m_bIsManualInit)
     {
         Init();
     }
@@ -439,33 +439,33 @@ void APlayerDiabloCharacter::ResetCombo()
 
 void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)
 {
-    if(m_FocusOutlinePawn.Get())
+    if (m_FocusOutlinePawn.Get())
     {
-        if(Unit == m_FocusOutlinePawn.Get())
+        if (Unit == m_FocusOutlinePawn.Get())
         {
             return;
         }
     }
-    m_FocusOutlinePawn=Unit;
+    m_FocusOutlinePawn = Unit;
 
     m_FocusRenderer->SetHiddenInGame(false);
     m_FocusRenderer->AttachToComponent(Unit->GetBodyMesh(), FAttachmentTransformRules::KeepRelativeTransform);
 
     m_FocusRenderer->SetSkeletalMesh(Unit->GetBodyMesh()->SkeletalMesh);
-    
+
     for (int i = 0; i < m_FocusRenderer->GetMaterials().Num(); i++)
     {
         m_FocusRenderer->SetMaterial(i, m_OutLineMat);
     }
-    
+
     m_FocusRenderer->SetMasterPoseComponent(Unit->GetBodyMesh(), true);
     PRINTF("ShowOutlineOnTarget");
 }
 
 void APlayerDiabloCharacter::HideOutlineOnTarget()
 {
-    m_FocusOutlinePawn=nullptr;
-    
+    m_FocusOutlinePawn = nullptr;
+
     m_FocusRenderer->SetHiddenInGame(true);
     m_FocusRenderer->SetSkeletalMesh(nullptr);
     m_FocusRenderer->GetMaterials().Reset();
@@ -564,6 +564,10 @@ ADiabloPlayerController* APlayerDiabloCharacter::GetDiaController()
 
 void APlayerDiabloCharacter::Die()
 {
+    if(m_bIsDead)//Sometime call manytime
+    {
+        return;
+    }
     m_bIsDead = true;
 
     m_bUseFSM = false;
@@ -578,23 +582,14 @@ void APlayerDiabloCharacter::Die()
 
     m_PlayerSense->SetSensingUpdatesEnabled(false);
 
-    if (IsValid(GetDiaAbilitySystem()))
-    {
-        GetDiaAbilitySystem()->CancelAbilityHandle(m_PotionHandle);
-        GetDiaAbilitySystem()->CancelAbilityHandle(m_HpRegenHandle);
-        GetDiaAbilitySystem()->CancelAbilityHandle(m_BaseAttackHandle);
-        
-        if(m_ResourceRegenHandle.IsValid())
-        {
-            GetDiaAbilitySystem()->CancelAbilityHandle(m_ResourceRegenHandle);
-        }
+    GetDiaAbilitySystem()->CancelAbilities();
+    GetDiaAbilitySystem()->ClearAllAbilities();
 
-        FGameplayTagContainer EffectTagsToRemove;
-        EffectTagsToRemove.AddTag(m_TagEffectRemoveOnDeath);
-        int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
-        
-        GetDiaAbilitySystem()->AddLooseGameplayTag(m_TagDead);
-    }
+    FGameplayTagContainer EffectTagsToRemove;
+    EffectTagsToRemove.AddTag(m_TagEffectRemoveOnDeath);
+    int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
+
+    GetDiaAbilitySystem()->AddLooseGameplayTag(m_TagDead);
 
     m_OnCharacterDied.Broadcast(this);
 
@@ -620,6 +615,8 @@ void APlayerDiabloCharacter::Die()
 
 void APlayerDiabloCharacter::Revive()
 {
+    m_bIsDead = false;
+    
     m_SkBody->GetAnimInstance()->StopSlotAnimation();
     GetDiaAbilitySystem()->RemoveLooseGameplayTag(m_TagDead);
     //
@@ -633,7 +630,6 @@ void APlayerDiabloCharacter::Revive()
     GetMovementComponent()->SetActive(true);
     SetActorTickEnabled(true);
     m_PlayerSense->SetSensingUpdatesEnabled(true);
-    m_bIsDead = false;
     m_AttributeSet->SetHealth(m_AttributeSet->GetMaxHealth());
     m_OnRevived.Broadcast(this);
     m_AttributeSet->m_OnStatChanged.Broadcast(this);
@@ -694,9 +690,14 @@ void APlayerDiabloCharacter::CancelPortal()
     GetDiaAbilitySystem()->CancelAbilityHandle(m_PortalHandle);
 }
 
-float APlayerDiabloCharacter::GetCastSpeed() const
+float APlayerDiabloCharacter::GetCastSpeed()
 {
     return GetPlayerAttribute()->GetCastingSpeed();
+}
+
+UPlayerDiabloAttribute* APlayerDiabloCharacter::GetPlayerAttribute()
+{
+        return Cast<UPlayerDiabloAttribute>(GetAttributeSet());
 }
 
 

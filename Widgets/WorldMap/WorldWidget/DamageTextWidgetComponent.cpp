@@ -25,5 +25,4 @@ void UDamageTextWidgetComponent::EndAnimation()
     AttachToComponent(m_Base->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
     m_AttachedActor=m_Base;
     SetHiddenInGame(true);
-    PRINTF("EndAnimation");
 }
