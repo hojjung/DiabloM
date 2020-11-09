@@ -13,6 +13,7 @@
  * 
  */
 
+class AShopKeeper;
 class AUnitPawn;
 class UInventory;
 struct FItemInstance;
@@ -153,7 +154,7 @@ public:
 	void ShowWorldMap();
 
 	UFUNCTION(BlueprintCallable)
-    void ShowBasicShopMenu();
+    void ShowShopMenu(AShopKeeper* shopKeeper);
 
 	UFUNCTION(BlueprintCallable)
     void ShowStorageMenu();

@@ -10,6 +10,7 @@
 #include "DiabloGameInstance.generated.h"
 
 
+struct FShopItemSell;
 class APlayerVisual;
 class UStartMenuCanvas;
 class UPlayerCreateManager;
@@ -52,6 +53,8 @@ public:
 
 	FItemInstance CreateUniqueItem(const FUniqueEquipData* uniqueItem,int itemLevel=1);
 
+	FItemInstance CreateItemManual(const FShopItemSell& itemSell);
+
 	ADroppedItem* DropItemActor(APawn* dropCenterActor,float dropRadius,FItemInstance& myItem);
 
 	FORCEINLINE UItemManager* GetItemManager()
@@ -85,4 +88,6 @@ public:
 	void SaveAllPlayerInfo();
 	UFUNCTION(BlueprintCallable)
 	bool IsDungeonOpened();
+
+	
 };

@@ -24,7 +24,7 @@ void UMinimapWidget::Init()
     SetCornerScaleValue(4.f);
     SetOverlaySize();
     m_PortalBtn->OnPressed.AddDynamic(this,&UMinimapWidget::OnBtnPressHold);
-    m_PortalBtn->OnReleased.AddDynamic(this,&UMinimapWidget::OnBtnReleaseHold);
+    m_PortalBtn->OnClicked.AddDynamic(this,&UMinimapWidget::OnBtnReleaseHold);
     m_DgM=UDiabloGameInstance::Get->GetDungeonManager();
     check(m_DgM);
 }

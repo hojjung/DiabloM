@@ -4,25 +4,42 @@
 #include "Item/Inventory.h"
 #include "Datas/ItemDataTable.h"
 
-
-
 UDiaStorageGridPanel* UDiaStorageGridPanel::GetStorageWidgetInst = nullptr;
 
 UDiaStorageGridPanel::UDiaStorageGridPanel(const FObjectInitializer& objInit):Super(objInit)
 {
-	m_nPopupSelectedIndex=-1;
 	m_ClassGridSlot = UDiaInvenGridSlot::StaticClass();
 	m_nCurrentSelectedPanelIndex=0;
+
 }
 
 void UDiaStorageGridPanel::Init(TArray<UInventory*>* itemContainer)
 {
+	m_AryBtns.Reset();
+	m_AryBtns.Emplace(m_BtnPanel1);
+	m_AryBtns.Emplace(m_BtnPanel2);
+	m_AryBtns.Emplace(m_BtnPanel3);
+	m_AryBtns.Emplace(m_BtnPanel4);
+	m_AryBtns.Emplace(m_BtnPanel5);
+
+	m_BtnPanel1->OnCheckStateChanged.AddDynamic(this,&UDiaStorageGridPanel::Open1);
+	m_BtnPanel2->OnCheckStateChanged.AddDynamic(this,&UDiaStorageGridPanel::Open2);
+	m_BtnPanel3->OnCheckStateChanged.AddDynamic(this,&UDiaStorageGridPanel::Open3);
+	m_BtnPanel4->OnCheckStateChanged.AddDynamic(this,&UDiaStorageGridPanel::Open4);
+	m_BtnPanel5->OnCheckStateChanged.AddDynamic(this,&UDiaStorageGridPanel::Open5);
+	
 	m_AryGridPanels.Reset();
 	m_AryGridPanels.Emplace(m_SlotGridPanel1);
 	m_AryGridPanels.Emplace(m_SlotGridPanel2);
 	m_AryGridPanels.Emplace(m_SlotGridPanel3);
 	m_AryGridPanels.Emplace(m_SlotGridPanel4);
 	m_AryGridPanels.Emplace(m_SlotGridPanel5);
+
+	for(UGridPanel* GridPanel : m_AryGridPanels)
+	{
+		GridPanel->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	m_SlotGridPanel1->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
 	m_AryArySlots.Reset();
 	m_AryArySlots.Emplace(&m_ArySlot1);
@@ -59,8 +76,9 @@ void UDiaStorageGridPanel::Init(TArray<UInventory*>* itemContainer)
 		
 		Iter++;
 	}
-	
-	m_nCurrentSelectedPanelIndex=0;
+
+	m_BtnPanel1->SetCheckedState(ECheckBoxState::Checked);
+	Open1(true);
 }
 
 void UDiaStorageGridPanel::SetGrid(int indexPanel,int x, int y)
@@ -115,3 +133,78 @@ void UDiaStorageGridPanel::AddItemStack(int index )
 	(*m_AryStorages)[m_nCurrentSelectedPanelIndex]->AddItemStack(index);
 }
 
+void UDiaStorageGridPanel::Open1(bool bOpen)
+{
+	if(m_nCurrentSelectedPanelIndex==0)
+	{
+		return;
+	}
+	
+	m_AryBtns[m_nCurrentSelectedPanelIndex]->SetCheckedState(ECheckBoxState::Unchecked);
+	m_AryGridPanels[m_nCurrentSelectedPanelIndex]->SetVisibility(ESlateVisibility::Collapsed);
+	
+	m_nCurrentSelectedPanelIndex=0;
+	
+	m_AryBtns[m_nCurrentSelectedPanelIndex]->SetCheckedState(ECheckBoxState::Checked);
+	m_AryGridPanels[m_nCurrentSelectedPanelIndex]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+}
+void UDiaStorageGridPanel::Open2(bool bOpen)
+{
+	if(m_nCurrentSelectedPanelIndex==1)
+	{
+		return;
+	}
+	
+	m_AryBtns[m_nCurrentSelectedPanelIndex]->SetCheckedState(ECheckBoxState::Unchecked);
+	m_AryGridPanels[m_nCurrentSelectedPanelIndex]->SetVisibility(ESlateVisibility::Collapsed);
+	
+	m_nCurrentSelectedPanelIndex=1;
+	
+	m_AryBtns[m_nCurrentSelectedPanelIndex]->SetCheckedState(ECheckBoxState::Checked);
+	m_AryGridPanels[m_nCurrentSelectedPanelIndex]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+}
+void UDiaStorageGridPanel::Open3(bool bOpen)
+{
+	if(m_nCurrentSelectedPanelIndex==2)
+	{
+		return;
+	}
+	
+	m_AryBtns[m_nCurrentSelectedPanelIndex]->SetCheckedState(ECheckBoxState::Unchecked);
+	m_AryGridPanels[m_nCurrentSelectedPanelIndex]->SetVisibility(ESlateVisibility::Collapsed);
+	
+	m_nCurrentSelectedPanelIndex=2;
+	
+	m_AryBtns[m_nCurrentSelectedPanelIndex]->SetCheckedState(ECheckBoxState::Checked);
+	m_AryGridPanels[m_nCurrentSelectedPanelIndex]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+}
+void UDiaStorageGridPanel::Open4(bool bOpen)
+{
+	if(m_nCurrentSelectedPanelIndex==3)
+	{
+		return;
+	}
+	
+	m_AryBtns[m_nCurrentSelectedPanelIndex]->SetCheckedState(ECheckBoxState::Unchecked);
+	m_AryGridPanels[m_nCurrentSelectedPanelIndex]->SetVisibility(ESlateVisibility::Collapsed);
+	
+	m_nCurrentSelectedPanelIndex=3;
+	
+	m_AryBtns[m_nCurrentSelectedPanelIndex]->SetCheckedState(ECheckBoxState::Checked);
+	m_AryGridPanels[m_nCurrentSelectedPanelIndex]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+}
+void UDiaStorageGridPanel::Open5(bool bOpen)
+{
+	if(m_nCurrentSelectedPanelIndex==4)
+	{
+		return;
+	}
+	
+	m_AryBtns[m_nCurrentSelectedPanelIndex]->SetCheckedState(ECheckBoxState::Unchecked);
+	m_AryGridPanels[m_nCurrentSelectedPanelIndex]->SetVisibility(ESlateVisibility::Collapsed);
+	
+	m_nCurrentSelectedPanelIndex=4;
+	
+	m_AryBtns[m_nCurrentSelectedPanelIndex]->SetCheckedState(ECheckBoxState::Checked);
+	m_AryGridPanels[m_nCurrentSelectedPanelIndex]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+}

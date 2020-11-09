@@ -3,6 +3,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "DiaShopPanel.h"
 #include "DiaStatPanel.h"
 #include "DiaStorageGridPanel.h"
 #include "Blueprint/UserWidget.h"
@@ -10,7 +11,7 @@
 #include "Widgets/WorldMap/DefaultMenu/ItemPopupInfo.h"
 #include "DefaultMenu.generated.h"
 
-
+class AShopKeeper;
 class UInventory;
 class UEquipmentSystem;
 class APlayerDiabloCharacter;
@@ -33,6 +34,8 @@ protected:
 	UDiaEquipmentPanel* m_EquipPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaStorageGridPanel* m_StoragePanel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaShopPanel* m_ShopPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaStatPanel* m_StatPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -59,11 +62,15 @@ protected:
 
 	bool m_bIsPopupOpened;
 
+	bool m_bIsStorageOpened;
+
+	bool m_bIsShopOpened;
 	
 public:
 	void SetPopupDelegate(const TArray<UDiaInvenGridSlot*>& arySlots);
 
 	void InitPopup();
+	
 	void Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar,  UEquipmentSystem* equipment,UInventory* inven,TArray<UInventory*>* aryStorage);
 
 	void OpenMainMenu();
@@ -71,8 +78,18 @@ public:
 	void CloseMainMenu();
 
 	void CompareItem(UItemPopupInfo* wantEquip, UItemPopupInfo* equippedOld);
+	
 	void OpenItemPopup(const FGeometry& geo,FItemInstance& itemInst);//장착된게 어딘지 파악필요
 
 	void CloseItemPopup();
 
+public:
+	void OpenStorage();
+
+	void CloseStorage();
+	
+	void OpenShopMenu(AShopKeeper* shopKeeper);
+	
+	void CloseShopMenu();
+	
 };

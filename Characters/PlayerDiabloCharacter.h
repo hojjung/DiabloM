@@ -325,5 +325,6 @@ public:
 	void GrantResourceRegenAbility();
 
 	void GrantPortalAbility();
+
 };
 

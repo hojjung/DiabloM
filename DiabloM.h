@@ -84,9 +84,18 @@ DIABLOM_API DECLARE_LOG_CATEGORY_EXTERN(DiaM, Log, All);
 //#define GETENUMSTRING(etype, evalue) ( (FindObject<UEnum>(ANY_PACKAGE, TEXT(etype), true) != nullptr) ? FindObject<UEnum>(ANY_PACKAGE, TEXT(etype), true)->GetNameStringByValue((int64)evalue) : FString("Invalid - are you sure enum uses UENUM() macro?") )
 
 #define MAXLEVEL 100
+
 #define INVEN_X 6
 
 #define INVEN_Y 7
+
+#define STORAGE_X 6
+
+#define STORAGE_Y 6
+
+#define SHOP_X 6
+
+#define SHOP_Y 6
 
 #define CURRSLOT 2
 

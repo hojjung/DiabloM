@@ -5,6 +5,7 @@
 #include "DiabloM.h"
 #include "ItemHolder.h"
 #include "Datas/ItemDataTable.h"
+#include "Datas/ShopItemTable.h"
 #include "Item/DroppedItem.h"
 #include "ItemManager.generated.h"
 
@@ -40,13 +41,15 @@ public:
 
     FItemInstance CreateUniqueItem(const FUniqueEquipData* unique_item, int item_level);
     
+    FItemInstance CreateItemManual(const FShopItemSell& item_sell);
+    
     virtual FOnItemSlotChanged& GetItemChangeCallback() override
     {
         return m_OnItemGroundChanged;
     }
 
     const FItemTier& GetDefaultTierRoll() const;
-    
+
 
 private:
     virtual bool AddItem(int droppedIndex, FItemInstance& itemWantAdd) override;

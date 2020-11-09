@@ -127,12 +127,16 @@ public:
     void EquipItem();
 	UFUNCTION()
     void UnequipItem();
+	UFUNCTION()
+	void DepositeItem();
+	UFUNCTION()
+    void WithdrawItem();
 	UFUNCTION(BlueprintCallable, Category = "Info")
 	void HideAllSubOptions();
 	UFUNCTION(BlueprintCallable, Category = "Info")
 	void HideFlavorText();
 	UFUNCTION(BlueprintCallable,Category="Info")
-	void SetPanelPosition(const FGeometry & theInstigator,int countSpace=0);
+	void SetPanelPosition(const FGeometry & theInstigator,int countSpace=0,bool bLeft=true);
 	UFUNCTION(BlueprintCallable,Category="Info")
 	void ShowInfoPanel(EPopupType popupType,FItemInstance& itemInst);
 

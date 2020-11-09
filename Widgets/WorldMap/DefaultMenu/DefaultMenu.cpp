@@ -5,20 +5,20 @@
 #include "Item/EquipmentSystem.h"
 #include "Item/Inventory.h"
 #include "Village/Storage.h"
+#include "Village/ShopKeeper.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
 
 
-
 void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar,
-                        UEquipmentSystem* equipment, UInventory* inven,TArray<UInventory*>* aryStorage)
+                        UEquipmentSystem* equipment, UInventory* inven, TArray<UInventory*>* aryStorage)
 {
     m_bIsPopupOpened = false;
-
+    m_bIsStorageOpened = false;
     m_PlayerCon = playerCon;
     m_PlayerChar = playerChar;
     m_Equipment = equipment;
     m_Inven = inven;
-    m_Storage=aryStorage;
+    m_Storage = aryStorage;
 
     m_InvenGridPanel->Init(m_Inven);
     SetPopupDelegate(m_InvenGridPanel->GetArySlots());
@@ -27,14 +27,17 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     SetPopupDelegate(m_EquipPanel->GetArySlots());
 
     m_StoragePanel->Init(m_Storage);
-    for(TArray<UDiaInvenGridSlot*>* ArySlot1 : m_StoragePanel->GetArySlots2())
+
+    for (TArray<UDiaInvenGridSlot*>* ArySlot1 : m_StoragePanel->GetArySlots2())
     {
         SetPopupDelegate(*ArySlot1);
     }
-    
+
     InitPopup();
-    
+
     m_StatPanel->Init(playerChar);
+
+    CloseStorage();
 }
 
 void UDefaultMenu::InitPopup()
@@ -44,9 +47,9 @@ void UDefaultMenu::InitPopup()
     m_AryItemPopup.Add(m_ItemPopup2);
     m_AryItemPopup.Add(m_ItemPopup3);
 
-    for(auto* PP : m_AryItemPopup)
+    for (auto* PP : m_AryItemPopup)
     {
-        PP->GetOnActionEnd().AddUObject(this,&UDefaultMenu::CloseItemPopup);
+        PP->GetOnActionEnd().AddUObject(this, &UDefaultMenu::CloseItemPopup);
     }
 }
 
@@ -72,25 +75,25 @@ void UDefaultMenu::CloseMainMenu()
 
 void UDefaultMenu::CompareItem(UItemPopupInfo* wantEquip, UItemPopupInfo* equippedOld)
 {
-    FOptionSpec WantEquipOption= wantEquip->GetSelectedItem().m_AryOptions[0];
+    FOptionSpec WantEquipOption = wantEquip->GetSelectedItem().m_AryOptions[0];
     FOptionSpec EquippedOption = equippedOld->GetSelectedItem().m_AryOptions[0];
-    
-    if(WantEquipOption.m_OptionID!=EquippedOption.m_OptionID)
+
+    if (WantEquipOption.m_OptionID != EquippedOption.m_OptionID)
     {
         return;
     }
 
-    wantEquip->CompareItem(EquippedOption.m_fValue,WantEquipOption.m_fValue);//
+    wantEquip->CompareItem(EquippedOption.m_fValue, WantEquipOption.m_fValue); //
 }
 
 void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
 {
     if (m_bIsPopupOpened)
     {
-        if(
-            m_AryItemPopup[0]->GetSelectedItem().m_nGridIndex==itemInst.m_nGridIndex
-            &&m_AryItemPopup[0]->GetSelectedItem().m_Holder==itemInst.m_Holder
-            &&m_AryItemPopup[0]->GetSelectedItem().m_ItemData==itemInst.m_ItemData)
+        if (
+            m_AryItemPopup[0]->GetSelectedItem().m_nGridIndex == itemInst.m_nGridIndex
+            && m_AryItemPopup[0]->GetSelectedItem().m_Holder == itemInst.m_Holder
+            && m_AryItemPopup[0]->GetSelectedItem().m_ItemData == itemInst.m_ItemData)
         {
             CloseItemPopup();
             return;
@@ -99,67 +102,72 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
     }
 
     bool IsEquipable = itemInst.m_ItemData->m_bEquipable;
-    
-    bool IsStashOpen=false;//TODO stash
-    
+
+    bool IsStashOpen = m_bIsStorageOpened;
+
     int Count = 0;
-    
-    if (Cast<UInventory>(itemInst.m_Holder))//인벤 클릭일때
+
+    if (itemInst.m_Holder == m_Inven) //인벤 클릭일때
     {
-        if (!IsEquipable)//장착 불가 아이템
+        if (!IsEquipable) //장착 불가 아이템
         {
-            if(IsStashOpen)//창고가 열려있으며
+            if (IsStashOpen) //창고가 열려있으며
             {
                 m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Deposite, itemInst);
-                m_AryItemPopup[Count]->SetPanelPosition(geo);
             }
-            else//열려있지 않으면
+            else //열려있지 않으면
             {
                 m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::None, itemInst);
-                m_AryItemPopup[Count]->SetPanelPosition(geo);
             }
+            m_AryItemPopup[Count]->SetPanelPosition(geo);
         }
-        else//장착 가능 아이템
+        else //장착 가능 아이템
         {
-            m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Equip, itemInst);
+            if (IsStashOpen) //창고가 열려있으며
+            {
+                m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Deposite, itemInst);
+            }
+            else
+            {
+                m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Equip, itemInst);
+            }
+            
             m_AryItemPopup[Count]->SetPanelPosition(geo);
             Count++;
             //오른손 왼손으로 고정될것이 아니라
             //해당 장비를 끼울수있는 슬롯이 최대2개까지 나와야한다.
-            auto& ArySlots=m_Equipment->GetArySlotPtr();
+            auto& ArySlots = m_Equipment->GetArySlotPtr();
 
-            for(int i=0; i<ArySlots.Num();i++)
+            for (int i = 0; i < ArySlots.Num(); i++)
             {
-                if(m_Equipment->CheckSlotValid(i,itemInst)&& !ArySlots[i]->m_Item.IsEmpty())
+                if (m_Equipment->CheckSlotValid(i, itemInst) && !ArySlots[i]->m_Item.IsEmpty())
                 {
                     m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Unequip, m_Equipment->GetItem(i));
-                    m_AryItemPopup[Count]->SetPanelPosition(geo,Count);
+                    m_AryItemPopup[Count]->SetPanelPosition(geo, Count);
                     Count++;
-                    if(Count>=m_AryItemPopup.Num())
+                    if (Count >= m_AryItemPopup.Num())
                     {
                         break;
                     }
                 }
             }
 
-            
-            if(Count>=2)
-            {
-                CompareItem(m_AryItemPopup[0],m_AryItemPopup[1]);
-            }
 
-            
+            if (Count >= 2)
+            {
+                CompareItem(m_AryItemPopup[0], m_AryItemPopup[1]);
+            }
         }
     }
-    else if (Cast<UEquipmentSystem>(itemInst.m_Holder))//장비칸 클릭일때
+    else if (Cast<UEquipmentSystem>(itemInst.m_Holder)) //장비칸 클릭일때
     {
-          m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Unequip, itemInst);
-          m_AryItemPopup[Count]->SetPanelPosition(geo,Count);
+        m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Unequip, itemInst);
+        m_AryItemPopup[Count]->SetPanelPosition(geo, Count);
     }
-    else if (Cast<AStorage>(itemInst.m_Holder))//창고 클릭일때
+    else //창고 클릭일때
     {
         m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Withdraw, itemInst);
-        m_AryItemPopup[Count]->SetPanelPosition(geo,Count);
+        m_AryItemPopup[Count]->SetPanelPosition(geo, Count, false);
     }
 
 
@@ -172,16 +180,45 @@ void UDefaultMenu::CloseItemPopup()
     m_bIsPopupOpened = false;
 
     float Delay = 0.f;
-    for (auto* Pop : m_AryItemPopup)
+    for (UItemPopupInfo* Pop : m_AryItemPopup)
     {
-        if(Pop->GetVisibility()==ESlateVisibility::Hidden)
+        if (Pop->GetVisibility() == ESlateVisibility::Hidden)
         {
             continue;
         }
-        
+
         Pop->PlayHideInfoAnim(Delay);
-        
+
         Delay += 0.1f;
     }
 }
 
+void UDefaultMenu::OpenStorage()
+{
+    m_StoragePanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    m_StatPanel->SetVisibility(ESlateVisibility::Collapsed);
+    m_bIsStorageOpened = true;
+}
+
+void UDefaultMenu::CloseStorage()
+{
+    m_StoragePanel->SetVisibility(ESlateVisibility::Collapsed);
+    m_StatPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    m_bIsStorageOpened = false;
+}
+
+void UDefaultMenu::OpenShopMenu(AShopKeeper* shopKeeper)
+{
+    m_StatPanel->SetVisibility(ESlateVisibility::Collapsed);
+    m_ShopPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    m_ShopPanel->UpdatePanel(shopKeeper);
+    m_bIsShopOpened=true;
+}
+
+void UDefaultMenu::CloseShopMenu()
+{
+    m_StatPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    m_ShopPanel->SetVisibility(ESlateVisibility::Collapsed);
+    m_ShopPanel->ClearPanel();
+    m_bIsShopOpened=false;
+}

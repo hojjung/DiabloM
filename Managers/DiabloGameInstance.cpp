@@ -6,6 +6,7 @@
 #include "MonsterSpawnManager.h"
 #include "DungeonManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Datas/ShopItemTable.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Item/Inventory.h"
 
@@ -61,6 +62,12 @@ FItemInstance UDiabloGameInstance::CreateItem(FName id,float magicItemBonus,floa
 FItemInstance UDiabloGameInstance::CreateUniqueItem(const FUniqueEquipData* uniqueItem,int itemLevel)
 {
     return m_ItemManager->CreateUniqueItem(uniqueItem,itemLevel);
+}
+
+FItemInstance UDiabloGameInstance::CreateItemManual(const FShopItemSell& itemSell)
+{
+    return m_ItemManager->CreateItemManual(itemSell);
+    
 }
 
 ADroppedItem* UDiabloGameInstance::DropItemActor(APawn* dropCenterActor, float dropRadius, FItemInstance& myItem)

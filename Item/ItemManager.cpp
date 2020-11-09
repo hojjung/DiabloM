@@ -1,4 +1,6 @@
 #include "ItemManager.h"
+
+#include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
 
 
@@ -46,7 +48,7 @@ FItemInstance UItemManager::CreateUniqueItem(const FUniqueEquipData* unique_item
     float TierBonusValue = Tier.m_fBonusValue;
 
     TArray<FOptionSpec> RandomOptionForItem;
- 
+
     CreateRandomOptionWithUnique(*unique_item, RandomOptionForItem, TierMaxOptionCount, TierBonusValue, item_level);
 
     return FItemInstance(unique_item, Tier.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, item_level, &Tier);
@@ -61,12 +63,12 @@ bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionS
         PRINTF("ItemOption - the item is not equipment");
         return false;
     }
-    
+
 
     FItemType* ItemTT = itemData.m_ItemType.GetRow<FItemType>("");
 
     FOptionSpec MainOp = ItemTT->m_MainOption.GetRow<FOption>("")->MakeOptionInst(level);
-    
+
     MainOp.m_fValue *= ItemTT->m_MainOptionBonusRate;
 
     MainOp.m_fValue *= bonus;
@@ -215,4 +217,52 @@ const FItemTier& UItemManager::GetDefaultTierRoll() const
     PRINTF("Error? - TierDrop Roll Fucked");
 
     return *m_AryItemTier[0];
+}
+
+FItemInstance UItemManager::CreateItemManual(const FShopItemSell& item_sell) //cant make unique
+{
+    const FItemData* ItemDataFromTable = item_sell.m_ItemData.GetRow<FItemData>("");
+
+    bool IsEquipItem = ItemDataFromTable->m_bEquipable;
+
+    const FItemTier* Tier = nullptr;
+
+    FName TierId = NAME_None;
+
+    int ItemLevel = ADiabloPlayerController::Get->GetPlayerPawn()->GetCharacterLevel();
+
+    TArray<FOptionSpec> AryOp;
+
+    if (IsEquipItem)
+    {
+        bool AutoLevel = item_sell.m_bAutoLevel;
+
+        if (!AutoLevel)
+        {
+            ItemLevel = item_sell.m_nLevel;
+        }
+
+        bool AutoTier = item_sell.m_bAutoTier;
+
+        if (!AutoTier)
+        {
+            Tier = item_sell.m_ItemTier.GetRow<FItemTier>("");
+        }
+        else
+        {
+            Tier = &GetDefaultTierRoll();
+        }
+
+        TierId = Tier->m_TierID;
+
+        int TierMaxOptionCount = (*Tier).m_AryOptionCount.GetRandom();
+
+        float TierBonusValue = (*Tier).m_fBonusValue;
+
+        CreateRandomOption(*ItemDataFromTable, AryOp, TierMaxOptionCount, TierBonusValue, ItemLevel);
+    }
+
+    FItemInstance Inst = FItemInstance(ItemDataFromTable, TierId, m_nCurrentIndex, this, AryOp, ItemLevel);
+
+    return Inst;
 }

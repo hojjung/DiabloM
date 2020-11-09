@@ -2,6 +2,7 @@
 #include "DiaEquipmentPanel.h"
 #include "DiaInvenGridPanel.h"
 #include "DiaInvenGridSlot.h"
+#include "DiaStorageGridPanel.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "Item/ItemManager.h"
 #include "Characters/DiabloPlayerController.h"
@@ -23,14 +24,15 @@ void UItemPopupInfo::NativeOnInitialized()
     m_AryOptions.Emplace(m_SubOption10);
     m_AryOptions.Emplace(m_SubOption11);
 
-    GetUseButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::UseItem);
     m_SelectedItem.ClearData();
-
-    GetEquipButton()->OnClicked.AddDynamic(this, &UItemPopupInfo::EquipItem);
+    m_UseButton->OnClicked.AddDynamic(this, &UItemPopupInfo::UseItem);
+    m_EquipButton->OnClicked.AddDynamic(this, &UItemPopupInfo::EquipItem);
     m_UnequipButton->OnClicked.AddDynamic(this, &UItemPopupInfo::UnequipItem);
+    m_DepositeButton->OnClicked.AddDynamic(this, &UItemPopupInfo::DepositeItem);
+    m_WithdrawButton->OnClicked.AddDynamic(this, &UItemPopupInfo::WithdrawItem);
 
     UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(Slot);
-    m_InitPos=PanelSlot->GetPosition();
+    m_InitPos = PanelSlot->GetPosition();
 }
 
 FReply UItemPopupInfo::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -94,9 +96,34 @@ void UItemPopupInfo::UnequipItem()
     {
         return;
     }
-    //inven 에 공간 먼저 확인
 
-    int RemoveWantIndex = m_SelectedItem.m_nGridIndex;
+    if (UDiaInvenGridPanel::GetInvenWidgetInst->AddItemAuto(m_SelectedItem))
+    {
+        PlayHideInfoAnim();
+        m_OnActionEnd.Broadcast();
+    }
+}
+
+void UItemPopupInfo::DepositeItem()
+{
+    if (m_SelectedItem.IsEmpty())
+    {
+        return;
+    }
+
+    if (UDiaStorageGridPanel::GetStorageWidgetInst->AddItemAuto(m_SelectedItem))
+    {
+        PlayHideInfoAnim();
+        m_OnActionEnd.Broadcast();
+    }
+}
+
+void UItemPopupInfo::WithdrawItem()
+{
+    if (m_SelectedItem.IsEmpty())
+    {
+        return;
+    }
 
     if (UDiaInvenGridPanel::GetInvenWidgetInst->AddItemAuto(m_SelectedItem))
     {
@@ -146,7 +173,7 @@ void UItemPopupInfo::HideFlavorText()
     m_TextFlavor->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator, int countSpace)
+void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator, int countSpace, bool bLeft)
 {
     //TODO: canvas 에 맞춰 왼쪽 오른쪽 조절
 
@@ -159,10 +186,18 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator, int countS
     auto ClickedItemSlot = CanvasPanelParent->GetCachedGeometry().AbsoluteToLocal(theInstigator.GetAbsolutePosition()) +
         theInstigator.GetLocalSize() / 2.0f;
 
-    ClickedItemSlot.X -= (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f) + (GetDesiredSize().X *
-        countSpace);
-
-    //CanvasPanelParent->ForceLayoutPrepass();
+    if (bLeft)
+    {
+        ClickedItemSlot.X -= (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f) + (GetDesiredSize().X
+            *
+            countSpace);
+    }
+    else
+    {
+        ClickedItemSlot.X += (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f) + (GetDesiredSize().X
+            *
+            countSpace);
+    }
 
     float ScreenY = Geo.GetAbsoluteSize().Y;
 
@@ -260,7 +295,7 @@ void UItemPopupInfo::SetItemText(const FItemInstance& itemInst)
 
     FText ItemTypeT;
 
-    ItemTypeT =itemInst.m_ItemData->m_ItemType.GetRow<FItemType>("")->m_ShowingName;
+    ItemTypeT = itemInst.m_ItemData->m_ItemType.GetRow<FItemType>("")->m_ShowingName;
     // if(itemInst.m_ItemData->m_bEquipable)
     // {
     //     
@@ -344,7 +379,7 @@ void UItemPopupInfo::HideInfoPanel()
     PanelSlot->SetPosition(m_InitPos);
 }
 
-void UItemPopupInfo::CompareItem(float origin,float wantCompareOther)
+void UItemPopupInfo::CompareItem(float origin, float wantCompareOther)
 {
-    m_MainOption->ShowCompare(origin,wantCompareOther);
+    m_MainOption->ShowCompare(origin, wantCompareOther);
 }

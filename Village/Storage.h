@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class DIABLOM_API AStorage : public AVillageActor, public IItemHolder
+class DIABLOM_API AStorage : public AVillageActor
 {
 	GENERATED_BODY()
 
@@ -21,17 +21,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* m_MeshStorage;
 	
-protected:
-	FOnItemSlotChanged m_ItemSlotChanged;
-
-	float m_fCurrentGold;
-	
 public:
-	virtual void RemoveItem(FItemInstance& itemWantErase) override;
-	virtual void RemoveItemByIndex(int index)override;
-	virtual bool AddItem(int droppedIndex, FItemInstance& itemWantAdd) override;
-	virtual bool CheckSlotValid(int droppedIndex, FItemInstance& itemWantAdd)override;
-	virtual void SetItem(int droppedIndex, FItemInstance& itemWantAdd) override;
-	virtual bool SwapMove(FItemInstance &Drop, FItemInstance &Drag)override;
-	virtual FOnItemSlotChanged& GetItemChangeCallback()  override;
+	virtual void Interact(AActor* instigator) override;
 };

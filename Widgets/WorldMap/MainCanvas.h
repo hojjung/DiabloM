@@ -5,6 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MainCanvas.generated.h"
 
+class AShopKeeper;
 class UMaterialProgressBar;
 class UInventory;
 class UEquipmentSystem;
@@ -104,12 +105,18 @@ public:
     void UpdateMinimap(UMaterialInterface* mapMat);
     
     void ShowWorldMap();
+
+    void HideWorldMap();
     
-    void ShowBasicShopMenu();
+    void ShowBasicShopMenu(AShopKeeper* shopKeeper);
+
+    void HideBasicShopMenu();
     
     void ShowStorageMenu();
-    
-    void HideMinimap();
+
+    void HideStorageMenu();
     
     void ShowMinimap();
+    
+    void HideMinimap();
 };

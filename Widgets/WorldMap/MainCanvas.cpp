@@ -38,6 +38,8 @@ void UMainCanvas::CloseMainMenu()
     m_InteractButton->SetVisibility(ESlateVisibility::Visible);
 
     UGameplayStatics::SetGamePaused(m_PlayerCon->GetWorld(),false);
+
+    HideStorageMenu();
 }
 
 void UMainCanvas::Interaction()
@@ -165,14 +167,30 @@ void UMainCanvas::ShowWorldMap()
     PRINTF("WorldMap");
 }
 
-void UMainCanvas::ShowBasicShopMenu()
+void UMainCanvas::HideWorldMap()
+{
+    
+}
+
+void UMainCanvas::ShowBasicShopMenu(AShopKeeper* shopKeeper)
 {
     PRINTF("ShopMenu");
+    m_MainMenu->OpenShopMenu(shopKeeper);
+}
+
+void UMainCanvas::HideBasicShopMenu()
+{
+    m_MainMenu->CloseShopMenu();
 }
 
 void UMainCanvas::ShowStorageMenu()
 {
-    PRINTF("StorageMenu");
+    m_MainMenu->OpenStorage();
+}
+
+void UMainCanvas::HideStorageMenu()
+{
+    m_MainMenu->CloseStorage();
 }
 
 void UMainCanvas::HideMinimap()

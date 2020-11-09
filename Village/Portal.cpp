@@ -1,16 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Portal.h"
-
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DungeonManager.h"
+
 
 APortal::APortal()
 {
     m_ParticleEffect=CreateDefaultSubobject<UParticleSystemComponent>("ParticleEffect00");
     m_ParticleEffect->SetupAttachment(RootComponent);
-
     
 }
 
@@ -18,7 +15,6 @@ void APortal::BeginPlay()
 {
     Super::BeginPlay();
 
-    
     UDungeonManager* DungeonM = UDiabloGameInstance::Get->GetDungeonManager();
 
     DungeonM->GetOnDungeonCreate().AddUObject(this,&APortal::SetPortal);

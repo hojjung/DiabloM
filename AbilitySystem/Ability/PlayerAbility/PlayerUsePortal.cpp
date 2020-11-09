@@ -38,6 +38,7 @@ void UPlayerUsePortal::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     }
     
     PRINTF("ActPortal!");
+    
     float CastSpeed = m_PlayerPawn->GetCastSpeed();
     //
     m_DmgTookDelegate = m_PlayerPawn->GetAttributeSet()->m_OnDmgTook.
@@ -61,11 +62,11 @@ void UPlayerUsePortal::OnCompleted(FGameplayTag EventTag, FGameplayEventData Eve
 
 void UPlayerUsePortal::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-    if (EventTag == m_TagEventEndAbility)
-    {
-        EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
-        return;
-    }
+    // if (EventTag == m_TagEventEndAbility)
+    // {
+    //     EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+    //     return;
+    // }
     
     if (EventTag == m_TagEventReceive)
     {
@@ -107,6 +108,7 @@ void UPlayerUsePortal::EndAbility(const FGameplayAbilitySpecHandle Handle, const
     if(m_DmgTookDelegate.IsValid())
     {
         m_PlayerPawn->GetAttributeSet()->m_OnDmgTook.Remove(m_DmgTookDelegate);
+        m_DmgTookDelegate.Reset();
     }
     
     m_PlayerPawn->SetUnblockMove();

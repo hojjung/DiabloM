@@ -161,8 +161,8 @@ bool UPlayMontageAndWaitForEvent::StopPlayingMontage()
 	// The ability would have been interrupted, in which case we should automatically stop the montage
 	if (AbilitySystemComponent && Ability)
 	{
-		if (AbilitySystemComponent->GetAnimatingAbility() == Ability
-			&& AbilitySystemComponent->GetCurrentMontage() == MontageToPlay)
+		// if (AbilitySystemComponent->GetAnimatingAbility() == Ability
+		// 	&& AbilitySystemComponent->GetCurrentMontage() == MontageToPlay)
 		{
 			// Unbind delegates so they don't get called as well
 			FAnimMontageInstance* MontageInstance = AnimInstance->GetActiveInstanceForMontage(MontageToPlay);

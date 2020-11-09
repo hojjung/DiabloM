@@ -42,7 +42,7 @@ void ADiabloPlayerController::BeginPlay()
 	while (i++<5)
 	{
 		UInventory* Storage = NewObject<UInventory>();
-		Storage->InitInven(INVEN_X,INVEN_Y);
+		Storage->InitInven(STORAGE_X,STORAGE_Y);
 		m_AryStorage.Emplace(Storage);
 	}
 	
@@ -239,14 +239,16 @@ void ADiabloPlayerController::ShowWorldMap()
 	m_MainMenu->ShowWorldMap();
 }
 
-void ADiabloPlayerController::ShowBasicShopMenu()
+void ADiabloPlayerController::ShowShopMenu(AShopKeeper* shopKeeper)
 {
-	m_MainMenu->ShowBasicShopMenu();
+	m_MainMenu->ShowBasicShopMenu(shopKeeper);
+	OpenMainMenu();
 }
 
 void ADiabloPlayerController::ShowStorageMenu()
 {
 	m_MainMenu->ShowStorageMenu();
+	OpenMainMenu();
 }
 
 void ADiabloPlayerController::HideMinimap()

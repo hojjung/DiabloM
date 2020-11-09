@@ -94,7 +94,7 @@ void UBaseDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* Source
     
     const float LocalDamageDone = TookDamageCache * RandDmg;
 
-    if (LocalDamageDone > 1.f)
+    if (LocalDamageDone > 0.f)
     {
         m_OnDmgTook.Broadcast(LocalDamageDone);
         
