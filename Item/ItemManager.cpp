@@ -228,39 +228,39 @@ FItemInstance UItemManager::CreateItemManual(const FShopItemSell& item_sell) //c
     const FItemTier* Tier = nullptr;
 
     FName TierId = NAME_None;
+    
+    bool AutoTier = item_sell.m_bAutoTier;
+    
+    if (!AutoTier)
+    {
+        Tier = item_sell.m_ItemTier.GetRow<FItemTier>("");
+    }
+    else
+    {
+        Tier = &GetDefaultTierRoll();
+    }
 
     int ItemLevel = ADiabloPlayerController::Get->GetPlayerPawn()->GetCharacterLevel();
 
     TArray<FOptionSpec> AryOp;
 
+    bool AutoLevel = item_sell.m_bAutoLevel;
+
+    if (!AutoLevel)
+    {
+        ItemLevel = item_sell.m_nLevel;
+    }
+
     if (IsEquipItem)
     {
-        bool AutoLevel = item_sell.m_bAutoLevel;
-
-        if (!AutoLevel)
-        {
-            ItemLevel = item_sell.m_nLevel;
-        }
-
-        bool AutoTier = item_sell.m_bAutoTier;
-
-        if (!AutoTier)
-        {
-            Tier = item_sell.m_ItemTier.GetRow<FItemTier>("");
-        }
-        else
-        {
-            Tier = &GetDefaultTierRoll();
-        }
-
-        TierId = Tier->m_TierID;
-
         int TierMaxOptionCount = (*Tier).m_AryOptionCount.GetRandom();
 
         float TierBonusValue = (*Tier).m_fBonusValue;
 
         CreateRandomOption(*ItemDataFromTable, AryOp, TierMaxOptionCount, TierBonusValue, ItemLevel);
     }
+
+    TierId = Tier->m_TierID;
 
     FItemInstance Inst = FItemInstance(ItemDataFromTable, TierId, m_nCurrentIndex, this, AryOp, ItemLevel);
 

@@ -404,6 +404,20 @@ void APlayerDiabloCharacter::EarnGold(float goldEarned)
     PRINTF("TotalGold:%f", m_fCurrentGold);
 }
 
+bool APlayerDiabloCharacter::SpendGold(float goldSpend)
+{
+    float ValueResult =m_fCurrentGold-goldSpend;
+
+    if(ValueResult<0)
+    {
+        return false;
+    }
+
+    m_fCurrentGold=ValueResult;
+    
+    return  true;
+}
+
 bool APlayerDiabloCharacter::SetCharacterLevel(int NewLevel)
 {
     if (NewLevel > MAXLEVEL || NewLevel <= 0)

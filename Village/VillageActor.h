@@ -14,7 +14,7 @@ class DIABLOM_API AVillageActor : public AActor,public IInteractable
 	GENERATED_BODY()
 	
 public:	
-	AVillageActor();
+	AVillageActor(const FObjectInitializer& objInit);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

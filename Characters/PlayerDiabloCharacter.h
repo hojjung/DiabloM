@@ -233,13 +233,13 @@ public:
 
 	void RemoveAllEffect();
 	
-	
-
 	void SetAnimStance(const FAnimStance* animStance);
 
 	void EarnExp(float expEarned);
 
 	void EarnGold(float goldEarned);
+	
+	bool SpendGold(float goldSpend);
 
     void OnSeeTarget(APawn* target);
 	
@@ -326,5 +326,9 @@ public:
 
 	void GrantPortalAbility();
 
+	FORCEINLINE IInteractable* GetFocusInteractable()
+	{
+		return  m_FocusedInteractable;
+	}
 };
 

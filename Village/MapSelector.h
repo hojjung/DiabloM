@@ -15,7 +15,7 @@ class DIABLOM_API AMapSelector : public AVillageActor
     GENERATED_BODY()
 
 public:
-    AMapSelector();
+    AMapSelector(const FObjectInitializer& objInit);
     
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

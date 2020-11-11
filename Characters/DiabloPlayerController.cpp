@@ -260,3 +260,8 @@ void ADiabloPlayerController::ShowMinimap()
 {
 	m_MainMenu->ShowMinimap();
 }
+
+UDiaShopPanel* ADiabloPlayerController::GetShopPanelWidget()
+{
+	return m_MainMenu->GetShopPanelWidget();
+}

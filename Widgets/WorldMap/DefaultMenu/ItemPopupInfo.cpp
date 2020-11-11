@@ -6,6 +6,7 @@
 #include "Animation/UMGSequencePlayer.h"
 #include "Item/ItemManager.h"
 #include "Characters/DiabloPlayerController.h"
+#include "Characters/PlayerDiabloCharacter.h"
 
 
 void UItemPopupInfo::NativeOnInitialized()
@@ -30,9 +31,12 @@ void UItemPopupInfo::NativeOnInitialized()
     m_UnequipButton->OnClicked.AddDynamic(this, &UItemPopupInfo::UnequipItem);
     m_DepositeButton->OnClicked.AddDynamic(this, &UItemPopupInfo::DepositeItem);
     m_WithdrawButton->OnClicked.AddDynamic(this, &UItemPopupInfo::WithdrawItem);
+    m_SellButton->OnClicked.AddDynamic(this, &UItemPopupInfo::SellItem);
+    m_BuyButton->OnClicked.AddDynamic(this, &UItemPopupInfo::BuyItem);
 
     UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(Slot);
     m_InitPos = PanelSlot->GetPosition();
+
 }
 
 FReply UItemPopupInfo::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -42,6 +46,29 @@ FReply UItemPopupInfo::NativeOnMouseButtonDown(const FGeometry& InGeometry, cons
     PlayHideInfoAnim();
     m_OnActionEnd.Broadcast();
     return Rep;
+}
+
+void UItemPopupInfo::PopupBtnToggle(EPopupType popup)
+{
+    m_UseButton->SetVisibility(ESlateVisibility::Hidden);
+    m_EquipButton->SetVisibility(ESlateVisibility::Hidden);
+    m_UnequipButton->SetVisibility(ESlateVisibility::Hidden);
+    m_WithdrawButton->SetVisibility(ESlateVisibility::Hidden);
+    m_DepositeButton->SetVisibility(ESlateVisibility::Hidden);
+    m_SellButton->SetVisibility(ESlateVisibility::Hidden);
+    m_BuyButton->SetVisibility(ESlateVisibility::Hidden);
+    
+ switch (popup)
+    {
+    case EPopupType::None: break;
+    case EPopupType::Deposite:m_DepositeButton->SetVisibility(ESlateVisibility::Visible); break;
+    case EPopupType::Withdraw:m_WithdrawButton->SetVisibility(ESlateVisibility::Visible); break;
+    case EPopupType::Equip:m_EquipButton->SetVisibility(ESlateVisibility::Visible); break;
+    case EPopupType::Unequip:m_UnequipButton->SetVisibility(ESlateVisibility::Visible); break;
+    case EPopupType::Sell:m_SellButton->SetVisibility(ESlateVisibility::Visible); break;
+    case EPopupType::Buy:m_BuyButton->SetVisibility(ESlateVisibility::Visible); break;
+    default: ;
+    }
 }
 
 void UItemPopupInfo::UseItem()
@@ -132,11 +159,47 @@ void UItemPopupInfo::WithdrawItem()
     }
 }
 
-
-//NativeOnInitialized
-void UItemPopupInfo::NativePreConstruct()
+void UItemPopupInfo::BuyItem()
 {
-    Super::NativePreConstruct();
+    if (m_SelectedItem.IsEmpty())
+    {
+        return;
+    }
+
+    float Value=m_SelectedItem.m_ItemData->m_nBuyValue;
+
+    if(!ADiabloPlayerController::Get->GetPlayerPawn()->SpendGold(Value))
+    {
+        return;
+    }
+
+    if(UDiaInvenGridPanel::GetInvenWidgetInst->AddItemAuto(m_SelectedItem))
+    {
+        PlayHideInfoAnim();
+        m_OnActionEnd.Broadcast();
+    }
+    else//인벤칸없음
+    {
+        PRINTF("Bought but no space");
+        ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
+    }
+}
+
+void UItemPopupInfo::SellItem()
+{
+    if (m_SelectedItem.IsEmpty())
+    {
+        return;
+    }
+
+    float Value=m_SelectedItem.m_ItemData->m_nSellValue;
+
+    if(ADiabloPlayerController::Get->GetShopPanelWidget()->SellItemAuto(m_SelectedItem))
+    {
+        ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
+        PlayHideInfoAnim();
+        m_OnActionEnd.Broadcast();
+    }
 }
 
 void UItemPopupInfo::SetIcon(const FItemInstance& itemInst)
@@ -226,7 +289,6 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator, int countS
         //	ClickedItemSlot.Y -= 50.f;
     }
 
-
     PanelSlot->SetPosition(ClickedItemSlot);
 }
 
@@ -242,45 +304,14 @@ void UItemPopupInfo::ShowInfoPanel(EPopupType popupType, FItemInstance& itemInst
     SetColorTier(itemInst);
     SetItemText(itemInst);
 
-    SetOptionTexts(itemInst);
+    if(itemInst.m_AryOptions.Num()>0)
+        SetOptionTexts(itemInst);
 
     SetFlavorText(itemInst);
 
     m_SelectedItem = itemInst;
 
-    switch (popupType)
-    {
-    case EPopupType::None:
-        GetEquipButton()->SetVisibility(ESlateVisibility::Hidden);
-        m_UnequipButton->SetVisibility(ESlateVisibility::Hidden);
-        m_WithdrawButton->SetVisibility(ESlateVisibility::Hidden);
-        m_DepositeButton->SetVisibility(ESlateVisibility::Hidden);
-        break;
-    case EPopupType::Deposite:
-        GetEquipButton()->SetVisibility(ESlateVisibility::Hidden);
-        m_UnequipButton->SetVisibility(ESlateVisibility::Hidden);
-        m_WithdrawButton->SetVisibility(ESlateVisibility::Hidden);
-        m_DepositeButton->SetVisibility(ESlateVisibility::Visible);
-        break;
-    case EPopupType::Withdraw:
-        GetEquipButton()->SetVisibility(ESlateVisibility::Hidden);
-        m_UnequipButton->SetVisibility(ESlateVisibility::Hidden);
-        m_WithdrawButton->SetVisibility(ESlateVisibility::Visible);
-        m_DepositeButton->SetVisibility(ESlateVisibility::Hidden);
-        break;
-    case EPopupType::Equip:
-        GetEquipButton()->SetVisibility(ESlateVisibility::Visible);
-        m_UnequipButton->SetVisibility(ESlateVisibility::Hidden);
-        m_WithdrawButton->SetVisibility(ESlateVisibility::Hidden);
-        m_DepositeButton->SetVisibility(ESlateVisibility::Hidden);
-        break;
-    case EPopupType::Unequip:
-        GetEquipButton()->SetVisibility(ESlateVisibility::Hidden);
-        m_UnequipButton->SetVisibility(ESlateVisibility::Visible);
-        m_WithdrawButton->SetVisibility(ESlateVisibility::Hidden);
-        m_DepositeButton->SetVisibility(ESlateVisibility::Hidden);
-        break;
-    }
+    PopupBtnToggle(popupType);
 
     ForceLayoutPrepass();
 }
@@ -293,9 +324,8 @@ void UItemPopupInfo::SetItemText(const FItemInstance& itemInst)
 
     FText ItemTier = itemInst.m_ItemTier->m_ShowingName;
 
-    FText ItemTypeT;
-
-    ItemTypeT = itemInst.m_ItemData->m_ItemType.GetRow<FItemType>("")->m_ShowingName;
+    FText ItemTypeT = itemInst.m_ItemData->m_ItemType.GetRow<FItemType>("")->m_ShowingName;
+    
     // if(itemInst.m_ItemData->m_bEquipable)
     // {
     //     

@@ -4,7 +4,7 @@
 #include "VillageActor.h"
 
 // Sets default values
-AVillageActor::AVillageActor()
+AVillageActor::AVillageActor(const FObjectInitializer& objInit):Super(objInit)
 {
 	PrimaryActorTick.bCanEverTick = false;
 	RootComponent=CreateDefaultSubobject<USceneComponent>("Root");

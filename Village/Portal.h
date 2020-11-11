@@ -10,7 +10,7 @@ class DIABLOM_API APortal : public AVillageActor
 	GENERATED_BODY()
 	
 protected:
-	APortal();
+	APortal(const FObjectInitializer& objInit);
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Item")

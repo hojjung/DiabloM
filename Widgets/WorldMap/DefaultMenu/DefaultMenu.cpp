@@ -38,6 +38,10 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     m_StatPanel->Init(playerChar);
 
     CloseStorage();
+
+    m_ShopPanel->Init();
+
+    CloseShopMenu();
 }
 
 void UDefaultMenu::InitPopup()
@@ -71,6 +75,16 @@ void UDefaultMenu::CloseMainMenu()
 {
     this->SetVisibility((ESlateVisibility::Hidden));
     CloseItemPopup();
+
+    if (m_bIsStorageOpened)
+    {
+        CloseStorage();
+    }
+
+    if (m_bIsShopOpened)
+    {
+        CloseShopMenu();
+    }
 }
 
 void UDefaultMenu::CompareItem(UItemPopupInfo* wantEquip, UItemPopupInfo* equippedOld)
@@ -105,6 +119,8 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
 
     bool IsStashOpen = m_bIsStorageOpened;
 
+    bool IsShopOpen = m_bIsShopOpened;
+
     int Count = 0;
 
     if (itemInst.m_Holder == m_Inven) //인벤 클릭일때
@@ -115,10 +131,15 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
             {
                 m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Deposite, itemInst);
             }
+            else if (IsShopOpen) //상점이 열려있으면
+            {
+                m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Sell, itemInst);
+            }
             else //열려있지 않으면
             {
                 m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::None, itemInst);
             }
+            
             m_AryItemPopup[Count]->SetPanelPosition(geo);
         }
         else //장착 가능 아이템
@@ -131,7 +152,7 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
             {
                 m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Equip, itemInst);
             }
-            
+
             m_AryItemPopup[Count]->SetPanelPosition(geo);
             Count++;
             //오른손 왼손으로 고정될것이 아니라
@@ -164,10 +185,17 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
         m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Unequip, itemInst);
         m_AryItemPopup[Count]->SetPanelPosition(geo, Count);
     }
-    else //창고 클릭일때
+    else if (IsStashOpen) //창고 클릭일때
     {
         m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Withdraw, itemInst);
         m_AryItemPopup[Count]->SetPanelPosition(geo, Count, false);
+        PRINTF("StashOpen");
+    }
+    else if (IsShopOpen) //창고 클릭일때
+    {
+        m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Buy, itemInst);
+        m_AryItemPopup[Count]->SetPanelPosition(geo, Count, false);
+        PRINTF("ShopOpen");
     }
 
 
@@ -212,7 +240,7 @@ void UDefaultMenu::OpenShopMenu(AShopKeeper* shopKeeper)
     m_StatPanel->SetVisibility(ESlateVisibility::Collapsed);
     m_ShopPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_ShopPanel->UpdatePanel(shopKeeper);
-    m_bIsShopOpened=true;
+    m_bIsShopOpened = true;
 }
 
 void UDefaultMenu::CloseShopMenu()
@@ -220,5 +248,10 @@ void UDefaultMenu::CloseShopMenu()
     m_StatPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_ShopPanel->SetVisibility(ESlateVisibility::Collapsed);
     m_ShopPanel->ClearPanel();
-    m_bIsShopOpened=false;
+    m_bIsShopOpened = false;
+}
+
+UDiaShopPanel* UDefaultMenu::GetShopPanelWidget()
+{
+    return m_ShopPanel;
 }

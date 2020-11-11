@@ -40,8 +40,16 @@ void UDiaShopPanel::Init()
 	m_AryArySlots.Emplace(&m_ArySlot1);
 	m_AryArySlots.Emplace(&m_ArySlot2);
 	m_AryArySlots.Emplace(&m_ArySlot3);
-	
 
+
+	int Iter=0;
+	while (Iter<3)
+	{
+		SetGrid(Iter,SHOP_X,SHOP_Y);
+
+		Iter++;
+	}
+	
 }
 
 void UDiaShopPanel::SetGrid(int indexPanel,int x, int y)
@@ -94,6 +102,11 @@ bool UDiaShopPanel::AddItemAuto(FItemInstance& itemWantAdd)
 void UDiaShopPanel::AddItemStack(int index )
 {
 	(*m_PtrAryStorages)[m_nCurrentSelectedPanelIndex]->AddItemStack(index);
+}
+
+bool UDiaShopPanel::SellItemAuto(FItemInstance& itemWantAdd)
+{
+	return (*m_PtrAryStorages)[2]->AddItemAuto(itemWantAdd);//constant 2 is resell
 }
 
 void UDiaShopPanel::Open1(bool bOpen)
@@ -159,21 +172,17 @@ void UDiaShopPanel::UpdatePanel(AShopKeeper* shop_keeper)
 {
 	m_PtrAryStorages = shop_keeper->GetShopItemContainer();
 
-	int X=0;
-	int Y=0;
+	int MaxIter = m_PtrAryStorages->Num();
 	
-	int MaxIter=m_PtrAryStorages->Num();
 	int Iter=0;
 	
 	while (Iter<MaxIter)
 	{
 		UInventory* CurrentInven = (*m_PtrAryStorages)[Iter];
 		
-		CurrentInven->GetInvenSize(X,Y);
-		
 		CurrentInven->GetItemChangeCallback().AddUObject(this, &UDiaShopPanel::UpdateSlot);
 
-		SetGrid(Iter,X,Y);
+		
 
 		m_nCurrentSelectedPanelIndex=Iter;
 		
@@ -191,6 +200,11 @@ void UDiaShopPanel::UpdatePanel(AShopKeeper* shop_keeper)
 
 void UDiaShopPanel::ClearPanel()
 {
+	if(!m_PtrAryStorages)
+	{
+		return;
+	}
+	
 	int MaxIter=m_PtrAryStorages->Num();
 	int Iter=0;
 

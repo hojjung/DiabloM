@@ -153,7 +153,6 @@ public:
 };
 
 
-
 USTRUCT(BlueprintType) //���̵�,Ƽ��
 struct FItemData : public FTableRowBase
 {
@@ -188,6 +187,8 @@ public:
     int m_nInitStack;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     int m_nMaxStack;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    int m_nBuyValue;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     int m_nSellValue;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

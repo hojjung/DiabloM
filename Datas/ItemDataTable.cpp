@@ -135,6 +135,8 @@ FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMe
     m_nMaxStack = 99; 
 
     m_nSellValue = 100;
+    m_nBuyValue = 200;
+    
     m_bEquipable = true;
 
     m_ItemID = "NeedName";
@@ -145,7 +147,6 @@ FUniqueEquipData::FUniqueEquipData()
 {
     m_bEquipable=true;
     m_bStackable=false;
-    
 }
 
 FAnimStance::FAnimStance()

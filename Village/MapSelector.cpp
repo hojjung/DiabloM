@@ -5,7 +5,7 @@
 
 #include "Characters/PlayerDiabloCharacter.h"
 
-AMapSelector::AMapSelector()
+AMapSelector::AMapSelector(const FObjectInitializer& objInit):Super(objInit)
 {
     m_MeshMapSelector= CreateDefaultSubobject<UStaticMeshComponent>("Mesh00");
     m_MeshMapSelector->SetupAttachment(RootComponent);

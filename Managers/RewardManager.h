@@ -28,7 +28,11 @@ protected:
 	TQueue<AHealthSphere*> m_PoolHp;
 
 	UPROPERTY()
-	TArray<ACollisionInteract*> m_AryPreventGarbage;
+	TArray<ADroppedItem*> m_AryAllPoolItem;
+	UPROPERTY()
+	TArray<ADroppedGold*> m_AryAllPoolGold;
+	UPROPERTY()
+	TArray<AHealthSphere*> m_AryAllPoolHp;
 
 	FVector m_HidingPoint;
 public:
@@ -41,6 +45,8 @@ public:
 	ADroppedGold* DropGoldActor(APawn* dropCenterActor,float dropRadius,float goldAmount);
 
 	AHealthSphere* DropHpSphereActor(APawn* dropCenterActor,float dropRadius);
+
+	void HideAllActor(bool dgOpen);
 
 protected:
 	void CreateAllItemPool(int itemPoolCount,int goldPoolCount,int hpPoolCount);

@@ -15,7 +15,7 @@ class DIABLOM_API AStorage : public AVillageActor
 	GENERATED_BODY()
 
 public:
-	AStorage();
+	AStorage(const FObjectInitializer& objInit);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

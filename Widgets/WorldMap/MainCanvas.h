@@ -3,6 +3,8 @@
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
+#include "DefaultMenu/DiaShopPanel.h"
+
 #include "MainCanvas.generated.h"
 
 class AShopKeeper;
@@ -110,13 +112,11 @@ public:
     
     void ShowBasicShopMenu(AShopKeeper* shopKeeper);
 
-    void HideBasicShopMenu();
-    
     void ShowStorageMenu();
 
-    void HideStorageMenu();
-    
     void ShowMinimap();
     
     void HideMinimap();
+
+    UDiaShopPanel* GetShopPanelWidget();
 };

@@ -17,7 +17,9 @@ enum class EPopupType: uint8
 	Deposite,
 	Withdraw,
 	Equip,
-	Unequip
+	Unequip,
+	Sell,
+	Buy
 };
 
 DECLARE_MULTICAST_DELEGATE(FOnActionEnd);
@@ -29,7 +31,6 @@ class DIABLOM_API UItemPopupInfo : public UUserWidget
 	
 protected:
 	virtual void NativeOnInitialized()override;
-	virtual void NativePreConstruct() override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
@@ -88,6 +89,10 @@ protected:
 	UButton* m_WithdrawButton;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
 	UButton* m_DepositeButton;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+	UButton* m_SellButton;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+	UButton* m_BuyButton;
 protected:
 	UPROPERTY()
 	TArray< UImageAndText*> m_AryOptions;
@@ -103,14 +108,19 @@ protected:
 	FVector2D m_InitPos;
 
 protected:
+	virtual FReply NativeOnMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent )override;
+	
 	void SetIcon(const FItemInstance& itemInst);
+	
 	void SetColorTier(const FItemInstance& itemInst);
+	
 	void SetItemText(const FItemInstance& itemInst);
 
 	float SetFlavorText(const FItemInstance& itemInst);
+	
 	float SetOptionTexts(const FItemInstance& itemInst);
 
-	virtual FReply NativeOnMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent )override;
+	void PopupBtnToggle(EPopupType popup);
 	
 public:
 	FOnActionEnd& GetOnActionEnd()
@@ -131,6 +141,12 @@ public:
 	void DepositeItem();
 	UFUNCTION()
     void WithdrawItem();
+	UFUNCTION()
+    void BuyItem();
+	UFUNCTION()
+    void SellItem();
+	
+public:
 	UFUNCTION(BlueprintCallable, Category = "Info")
 	void HideAllSubOptions();
 	UFUNCTION(BlueprintCallable, Category = "Info")

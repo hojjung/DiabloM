@@ -2,10 +2,10 @@
 #include "Characters/DiabloPlayerController.h"
 #include "Managers/DiabloGameInstance.h"
 
-AShopKeeper::AShopKeeper()
+AShopKeeper::AShopKeeper(const FObjectInitializer& objInit):Super(objInit)
 {
     m_MeshShopKeeper = CreateDefaultSubobject<USkeletalMeshComponent>("Mesh00");
-    m_MeshShopKeeper->SetupAttachment(RootComponent);
+    m_MeshShopKeeper->SetupAttachment(m_Capsule);
 }
 
 void AShopKeeper::BeginPlay()

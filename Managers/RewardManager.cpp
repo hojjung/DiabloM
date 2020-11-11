@@ -133,7 +133,7 @@ ADroppedItem* URewardManager::DropItemActor(APawn* dropCenterActor, float dropRa
     {
         DropItem = Cast<ADroppedItem>(SpawnInteractActor(UMonsterItemDropTable::ClassDropItemActor));
         DropItem->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueItemActor);
-        m_AryPreventGarbage.Emplace(DropItem);
+        m_AryAllPoolItem.Emplace(DropItem);
     }
 
     myItem.m_Holder = UDiabloGameInstance::Get->GetItemManager();
@@ -159,7 +159,7 @@ ADroppedGold* URewardManager::DropGoldActor(APawn* dropCenterActor, float dropRa
     {
         DropGold = Cast<ADroppedGold>(SpawnInteractActor(UMonsterItemDropTable::ClassDropGoldActor));
         DropGold->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueGoldActor);
-        m_AryPreventGarbage.Emplace(DropGold);
+        m_AryAllPoolGold.Emplace(DropGold);
     }
 
     DropGold->SetGoldAmount(goldAmount);
@@ -182,7 +182,7 @@ AHealthSphere* URewardManager::DropHpSphereActor(APawn* dropCenterActor, float d
     {
         DropHp = Cast<AHealthSphere>(SpawnInteractActor(UMonsterItemDropTable::ClassDropHealthSphere));
         DropHp->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueHpSphereActor);
-        m_AryPreventGarbage.Emplace(DropHp);
+        m_AryAllPoolHp.Emplace(DropHp);
     }
 
     DropHp->SetActorHiddenInGame(false);
@@ -192,12 +192,46 @@ AHealthSphere* URewardManager::DropHpSphereActor(APawn* dropCenterActor, float d
     return DropHp;
 }
 
+void URewardManager::HideAllActor(bool dgOpen)
+{
+    if(dgOpen)
+    {
+        return;
+    }
+    
+    for(ACollisionInteract* DropedItem :m_AryAllPoolItem)
+    {
+        if(!DropedItem->IsHidden())
+        {
+            EnqueItemActor(DropedItem);
+        }
+    }
+
+    for(ACollisionInteract* DropedGold :m_AryAllPoolGold)
+    {
+        if(!DropedGold->IsHidden())
+        {
+            EnqueItemActor(DropedGold);
+        }
+    }
+
+    for(ACollisionInteract* DropedHp :m_AryAllPoolHp)
+    {
+        if(!DropedHp->IsHidden())
+        {
+            EnqueItemActor(DropedHp);
+        }
+    }
+}
+
 void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int hpPoolCount)
 {
     m_PoolItem.Empty();
     m_PoolGold.Empty();
     m_PoolHp.Empty();
-    m_AryPreventGarbage.Empty(itemPoolCount+goldPoolCount+hpPoolCount);
+    m_AryAllPoolItem.Empty(itemPoolCount);
+    m_AryAllPoolGold.Empty(goldPoolCount);
+    m_AryAllPoolHp.Empty(hpPoolCount);
     
     
     int i = 0;
@@ -208,7 +242,7 @@ void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int
         Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueItemActor);
         Created->SetActorHiddenInGame(true);
         m_PoolItem.Enqueue(Created);
-        m_AryPreventGarbage.Emplace(Created);
+        m_AryAllPoolItem.Emplace(Created);
     }
 
     i = 0;
@@ -218,7 +252,7 @@ void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int
         Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueGoldActor);
         Created->SetActorHiddenInGame(true);
         m_PoolGold.Enqueue(Created);
-        m_AryPreventGarbage.Emplace(Created);
+        m_AryAllPoolGold.Emplace(Created);
     }
 
     i = 0;
@@ -228,7 +262,7 @@ void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int
         Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueHpSphereActor);
         Created->SetActorHiddenInGame(true);
         m_PoolHp.Enqueue(Created);
-        m_AryPreventGarbage.Emplace(Created);
+        m_AryAllPoolHp.Emplace(Created);
     }
 }
 

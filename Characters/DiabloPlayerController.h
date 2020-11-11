@@ -5,6 +5,7 @@
 #include "Widgets/WorldMap/DiaMonsterInfo.h"
 #include "Widgets/WorldMap/MainCanvas.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaGameOverScreen.h"
+#include "Widgets/WorldMap/DefaultMenu/DiaShopPanel.h"
 #include "Widgets/WorldMap/WorldWidget/DamageTextWidgetComponent.h"
 
 #include "DiabloPlayerController.generated.h"
@@ -162,4 +163,6 @@ public:
 	void HideMinimap();
 	
 	void ShowMinimap();
+
+	UDiaShopPanel* GetShopPanelWidget();
 };

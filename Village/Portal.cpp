@@ -4,7 +4,7 @@
 #include "Managers/DungeonManager.h"
 
 
-APortal::APortal()
+APortal::APortal(const FObjectInitializer& objInit):Super(objInit)
 {
     m_ParticleEffect=CreateDefaultSubobject<UParticleSystemComponent>("ParticleEffect00");
     m_ParticleEffect->SetupAttachment(RootComponent);

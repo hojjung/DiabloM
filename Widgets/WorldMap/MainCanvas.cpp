@@ -39,7 +39,7 @@ void UMainCanvas::CloseMainMenu()
 
     UGameplayStatics::SetGamePaused(m_PlayerCon->GetWorld(),false);
 
-    HideStorageMenu();
+    
 }
 
 void UMainCanvas::Interaction()
@@ -178,24 +178,19 @@ void UMainCanvas::ShowBasicShopMenu(AShopKeeper* shopKeeper)
     m_MainMenu->OpenShopMenu(shopKeeper);
 }
 
-void UMainCanvas::HideBasicShopMenu()
-{
-    m_MainMenu->CloseShopMenu();
-}
-
 void UMainCanvas::ShowStorageMenu()
 {
     m_MainMenu->OpenStorage();
 }
 
-void UMainCanvas::HideStorageMenu()
-{
-    m_MainMenu->CloseStorage();
-}
-
 void UMainCanvas::HideMinimap()
 {
     m_PlayerStatusBar->HideMinimap();
+}
+
+UDiaShopPanel* UMainCanvas::GetShopPanelWidget()
+{
+    return m_MainMenu->GetShopPanelWidget();
 }
 
 void UMainCanvas::ShowMinimap()

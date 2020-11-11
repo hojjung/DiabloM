@@ -92,4 +92,5 @@ public:
 	
 	void CloseShopMenu();
 	
+	UDiaShopPanel* GetShopPanelWidget();
 };

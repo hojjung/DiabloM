@@ -17,7 +17,7 @@ class DIABLOM_API AShopKeeper : public AVillageActor
 {
 	GENERATED_BODY()
 public:
-	AShopKeeper();
+	AShopKeeper(const FObjectInitializer& objInit);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
