@@ -45,7 +45,8 @@ void ADiabloPlayerController::BeginPlay()
 		Storage->InitInven(STORAGE_X,STORAGE_Y);
 		m_AryStorage.Emplace(Storage);
 	}
-	
+	m_AryStorageOpend.Init(false,5);
+	m_AryStorageOpend[0]=true;
 	
 	USaveLoadManager::Get->CreateSetPlayerCharacter();//Set Every SaveFile to Load
 	InitWidget();

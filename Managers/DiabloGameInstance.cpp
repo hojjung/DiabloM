@@ -124,6 +124,8 @@ void UDiabloGameInstance::SaveAllPlayerInfo()
     }
     
     USaveLoadManager::Get->SaveStorage(UPlayerCreateManager::Get->m_CurrentSelectSlot,DiaPC->GetStorageOpenAry(),StorageItemInst);
+
+    USaveLoadManager::Get->SaveShareStorage(DiaPC->GetStorageOpenAry(),StorageItemInst);
 }
 
 bool UDiabloGameInstance::IsDungeonOpened()

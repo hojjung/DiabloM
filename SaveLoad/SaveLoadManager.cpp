@@ -20,8 +20,9 @@ USaveLoadManager::USaveLoadManager():
     m_EquipSlotName("Equipment"),
     m_CharSlotName("Character"),
     m_StorageSlotName("Storage"),
+    m_StorageShareSlotName("ShareStorage"),
     m_nMaxSlotCount(7),
-    m_nCurrentSlotCount(5)
+    m_nCurrentSlotCount(5),m_LoadShareStorage(nullptr)
 {
     USaveLoadManager::Get = this;
     m_AryLoadedCharacters.Init(nullptr, m_nCurrentSlotCount);
@@ -29,7 +30,7 @@ USaveLoadManager::USaveLoadManager():
     m_AryLoadedInventory.Init(nullptr, m_nCurrentSlotCount);
     m_AryLoadedStorage.Init(nullptr, m_nCurrentSlotCount);
     TryLoadAllCharacter();
-    m_LoadShareStorage=nullptr;
+    
 }
 
 USaveLoadManager::~USaveLoadManager()
@@ -44,7 +45,7 @@ USaveLoadManager::~USaveLoadManager()
 
 void USaveLoadManager::TryLoadAllCharacter()
 {
-  
+    LoadShareStorage();
     for (int i = 0; i < m_nCurrentSlotCount; i++)
     {
         if (!DoesSaveDataExist(i))
@@ -62,20 +63,29 @@ void USaveLoadManager::TryLoadAllCharacter()
         }
     }
 
-    LoadShareStorage();
+    
 }
 
 void USaveLoadManager::DeleteSlot(int i)
 {
-    if (!UGameplayStatics::DeleteGameInSlot("Equipment", i))
+    PRINTF("DeleteSlot-SaveMag");
+    if (!UGameplayStatics::DeleteGameInSlot(m_EquipSlotName, i))
     {
         //PRINTF("Fail Delete Equipment");
     }
-    if (!UGameplayStatics::DeleteGameInSlot("Character", i))
+    if (!UGameplayStatics::DeleteGameInSlot(m_CharSlotName, i))
     {
         //PRINTF("Fail Delete Character");
     }
-    if (!UGameplayStatics::DeleteGameInSlot("InventoryOld", i))
+    if (!UGameplayStatics::DeleteGameInSlot(m_InvenSlotName, i))
+    {
+        //PRINTF("Fail Delete InventoryOld");
+    }
+    if (!UGameplayStatics::DeleteGameInSlot(m_StorageSlotName, i))
+    {
+        //PRINTF("Fail Delete InventoryOld");
+    }
+    if (!UGameplayStatics::DeleteGameInSlot(m_StorageShareSlotName, 0))
     {
         //PRINTF("Fail Delete InventoryOld");
     }
@@ -84,6 +94,7 @@ void USaveLoadManager::DeleteSlot(int i)
     m_AryLoadedEquipments[i] = nullptr;
     m_AryLoadedInventory[i] = nullptr;
     m_AryLoadedStorage[i] = nullptr;
+    m_LoadShareStorage=nullptr;
 }
 
 void USaveLoadManager::DeleteAllSlot()
@@ -318,14 +329,12 @@ void USaveLoadManager::LoadShareStorage()
       {
         PRINTF("No ShareStorageLoad-CreateNew");
         TArray<TArray<FItemInstance>> AryAryStorage;
-        AryAryStorage.Init(TArray<FItemInstance>(),2);
-        AryAryStorage[0].Init(FItemInstance(),INVEN_X*INVEN_Y);
-        AryAryStorage[1].Init(FItemInstance(),INVEN_X*INVEN_Y);
+        AryAryStorage.Init(TArray<FItemInstance>(),5);
+        AryAryStorage[3].Init(FItemInstance(),STORAGE_X*STORAGE_Y);
+        AryAryStorage[4].Init(FItemInstance(),STORAGE_X*STORAGE_Y);
         //Open bool
         TArray<bool> AryDgOpen;
-        AryDgOpen.Init(false,2);
-        AryDgOpen[0]=false;
-        AryDgOpen[1]=false;
+        AryDgOpen.Init(false,5);
         //
         SaveShareStorage(AryDgOpen,AryAryStorage);
         LoadShareStorage=m_LoadShareStorage;
