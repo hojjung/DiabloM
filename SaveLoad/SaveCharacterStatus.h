@@ -36,6 +36,8 @@ public:
     int m_IndexFace=0;
     UPROPERTY(EditAnywhere)
     FName m_ClassName;
+    UPROPERTY(EditAnywhere)
+    float m_fGold;
 
     
 };

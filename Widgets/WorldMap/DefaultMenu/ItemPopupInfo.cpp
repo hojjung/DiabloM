@@ -302,7 +302,7 @@ void UItemPopupInfo::ShowInfoPanel(EPopupType popupType, FItemInstance& itemInst
 
     SetIcon(itemInst);
     SetColorTier(itemInst);
-    SetItemText(itemInst);
+    SetItemText(itemInst,popupType);
 
     if(itemInst.m_AryOptions.Num()>0)
         SetOptionTexts(itemInst);
@@ -317,7 +317,7 @@ void UItemPopupInfo::ShowInfoPanel(EPopupType popupType, FItemInstance& itemInst
 }
 
 
-void UItemPopupInfo::SetItemText(const FItemInstance& itemInst)
+void UItemPopupInfo::SetItemText(const FItemInstance& itemInst,EPopupType popupType)
 {
     //m_SelectedItem
     m_TextItemName->SetText(itemInst.m_ItemData->m_ShowingName);
@@ -326,20 +326,20 @@ void UItemPopupInfo::SetItemText(const FItemInstance& itemInst)
 
     FText ItemTypeT = itemInst.m_ItemData->m_ItemType.GetRow<FItemType>("")->m_ShowingName;
     
-    // if(itemInst.m_ItemData->m_bEquipable)
-    // {
-    //     
-    // }
-    // else
-    // {
-    //     ItemTypeT = GetItemTypeTxt(itemInst.m_ItemData->m_ItemType.GetRow<FItemType>(""));
-    // }
-
     m_TextItemTier->SetText(ItemTier);
 
     m_TextItemType->SetText(ItemTypeT);
 
-    m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.m_ItemData->m_nSellValue));
+    switch (popupType)
+    {
+      case EPopupType::Buy:
+          m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.m_ItemData->m_nBuyValue));
+              break;
+        default:
+          m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.m_ItemData->m_nSellValue));
+    }
+    
+    
 }
 
 float UItemPopupInfo::SetFlavorText(const FItemInstance& itemInst)

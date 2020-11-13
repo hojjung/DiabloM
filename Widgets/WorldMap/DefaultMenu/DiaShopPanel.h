@@ -65,6 +65,8 @@ public:
 
     void UpdateSlot(int index, FItemInstance& itemInst);
 
+    void UpdateForReSellSlot(int index, FItemInstance& itemInst);
+
     bool AddItem(int index, FItemInstance& itemWantAdd);
 
     bool AddItemAuto(FItemInstance& itemWantAdd);
@@ -78,7 +80,7 @@ public:
         return *m_PtrAryStorages;
     }
 
-    FORCEINLINE TArray<TArray<UDiaInvenGridSlot*>*>& GetArySlots2()
+    FORCEINLINE TArray<TArray<UDiaInvenGridSlot*>*>& GetArySlots3()
     {
         return m_AryArySlots;
     }

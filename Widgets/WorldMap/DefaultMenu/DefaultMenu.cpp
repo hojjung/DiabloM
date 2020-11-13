@@ -41,7 +41,14 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
 
     m_ShopPanel->Init();
 
+    for (TArray<UDiaInvenGridSlot*>* ArySlot1 : m_ShopPanel->GetArySlots3())
+    {
+        SetPopupDelegate(*ArySlot1);
+    }
+
     CloseShopMenu();
+
+    m_PlayerChar->GetOnGoldChanged().AddUObject(m_InvenGridPanel, &UDiaInvenGridPanel::UpdateGold);
 }
 
 void UDefaultMenu::InitPopup()
@@ -139,7 +146,7 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
             {
                 m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::None, itemInst);
             }
-            
+
             m_AryItemPopup[Count]->SetPanelPosition(geo);
         }
         else //장착 가능 아이템
@@ -148,12 +155,17 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
             {
                 m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Deposite, itemInst);
             }
+            else if (IsShopOpen) //상점이 열려있으면
+            {
+                m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Sell, itemInst);
+            }
             else
             {
                 m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Equip, itemInst);
             }
 
             m_AryItemPopup[Count]->SetPanelPosition(geo);
+
             Count++;
             //오른손 왼손으로 고정될것이 아니라
             //해당 장비를 끼울수있는 슬롯이 최대2개까지 나와야한다.

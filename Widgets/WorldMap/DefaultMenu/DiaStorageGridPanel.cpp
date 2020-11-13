@@ -89,9 +89,10 @@ void UDiaStorageGridPanel::SetGrid(int indexPanel,int x, int y)
 	m_AryArySlots[indexPanel]->Reserve(InvenX*InvenY);
 
 	int Index = 0;
-	for (int X = 0; X < InvenX; X++)
+	//(int X = 0; X < InvenX; X++)
+	for (int Y = 0; Y < InvenY; Y++)
 	{
-		for (int Y = 0; Y < InvenY; Y++)
+		for(int X = 0; X < InvenX; X++)
 		{
 			m_AryGridPanels[indexPanel]->SetColumnFill(X, 1);
 			m_AryGridPanels[indexPanel]->SetRowFill(Y, 1);

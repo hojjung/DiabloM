@@ -2,6 +2,7 @@
 #include "Characters/DiabloPlayerController.h"
 #include "DiabloM.h"
 #include "SaveEquipment.h"
+#include "SaveShareStorage.h"
 #include "Kismet/GameplayStatics.h"
 #include "SaveLoad/SaveInventory.h"
 #include "SaveLoad/SaveCharacterStatus.h"
@@ -28,6 +29,7 @@ USaveLoadManager::USaveLoadManager():
     m_AryLoadedInventory.Init(nullptr, m_nCurrentSlotCount);
     m_AryLoadedStorage.Init(nullptr, m_nCurrentSlotCount);
     TryLoadAllCharacter();
+    m_LoadShareStorage=nullptr;
 }
 
 USaveLoadManager::~USaveLoadManager()
@@ -59,6 +61,8 @@ void USaveLoadManager::TryLoadAllCharacter()
             PRINTF("Success: %d", i);
         }
     }
+
+    LoadShareStorage();
 }
 
 void USaveLoadManager::DeleteSlot(int i)
@@ -200,7 +204,7 @@ void USaveLoadManager::LoadEquipment(int slotIndex)
     PRINTF("LoadEquipment");
 }
 
-void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex,FName classID,float exp)
+void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex,FName classID,float exp,float gold)
 {
     USaveCharacterStatus* SaveCharStat = Cast<USaveCharacterStatus>(
         UGameplayStatics::CreateSaveGameObject(USaveCharacterStatus::StaticClass()));
@@ -213,6 +217,7 @@ void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameTex
     SaveCharStat->m_IndexHair = hairIndex;
     SaveCharStat->m_fExp=exp;
     SaveCharStat->m_ClassName=classID;
+    SaveCharStat->m_fGold = gold;
     //m_ClassName
 
     UGameplayStatics::SaveGameToSlot(SaveCharStat, m_CharSlotName, slotIndex);
@@ -250,43 +255,89 @@ void USaveLoadManager::SaveStorage(int slotIndex, const TArray<bool>& aryOpen,
     UGameplayStatics::SaveGameToSlot(SaveStorage, m_StorageSlotName, slotIndex);
 
     m_AryLoadedStorage[slotIndex] = SaveStorage;
-
+    //
+ 
+    
     PRINTF("SaveStorage");
+}
+
+void USaveLoadManager::SaveShareStorage( const TArray<bool>& aryOpen,
+    const TArray<TArray<FItemInstance>>& aryItems)
+{
+    //
+    USaveShareStorage* SaveShareStorage = Cast<USaveShareStorage>(
+     UGameplayStatics::CreateSaveGameObject(USaveShareStorage::StaticClass()));
+    //
+    SaveShareStorage->SetSaveShareStorage(m_SaveVersion,aryOpen,aryItems);
+    //
+    UGameplayStatics::SaveGameToSlot(SaveShareStorage, m_StorageShareSlotName, 0);
+    //
+    m_LoadShareStorage=SaveShareStorage;
+    //
+    PRINTF("SaveShareStorage");
 }
 
 void USaveLoadManager::LoadStorage(int slotIndex)
 {
     USaveStorage* LoadStorage = Cast<USaveStorage>(UGameplayStatics::LoadGameFromSlot(m_StorageSlotName, slotIndex));
 
-    if(!LoadStorage)
+    if(!LoadStorage)//for ALready Made Player
     {
         PRINTF("No StorageLoad-CreateNew");
         TArray<TArray<FItemInstance>> AryAryStorage;
-        AryAryStorage.Init(TArray<FItemInstance>(),5);
+        AryAryStorage.Init(TArray<FItemInstance>(),3);
         int i=0;
-        while (i<5)
+        while (i<3)
         {
             AryAryStorage[i].Init(FItemInstance(),INVEN_X*INVEN_Y);
 
             i++;
         }
+        //Open bool
         TArray<bool> AryDgOpen;
         AryDgOpen.Init(false,5);
         AryDgOpen[0]=true;
         SaveStorage(slotIndex,AryDgOpen,AryAryStorage);
         LoadStorage=m_AryLoadedStorage[slotIndex];
     }
-    
 
     LoadItemDataForInstance(LoadStorage->m_AryStorageItems1,LoadStorage->m_SaveVersion);
     LoadItemDataForInstance(LoadStorage->m_AryStorageItems2,LoadStorage->m_SaveVersion);
     LoadItemDataForInstance(LoadStorage->m_AryStorageItems3,LoadStorage->m_SaveVersion);
-    LoadItemDataForInstance(LoadStorage->m_AryStorageItems4,LoadStorage->m_SaveVersion);
-    LoadItemDataForInstance(LoadStorage->m_AryStorageItems5,LoadStorage->m_SaveVersion);
     
     m_AryLoadedStorage[slotIndex] = LoadStorage;
 
     PRINTF("LoadStorage");
+}
+
+void USaveLoadManager::LoadShareStorage()
+{
+    USaveShareStorage* LoadShareStorage = Cast<USaveShareStorage>(UGameplayStatics::LoadGameFromSlot(m_StorageShareSlotName, 0));
+
+    if(!LoadShareStorage)//for ALready Made Player
+      {
+        PRINTF("No ShareStorageLoad-CreateNew");
+        TArray<TArray<FItemInstance>> AryAryStorage;
+        AryAryStorage.Init(TArray<FItemInstance>(),2);
+        AryAryStorage[0].Init(FItemInstance(),INVEN_X*INVEN_Y);
+        AryAryStorage[1].Init(FItemInstance(),INVEN_X*INVEN_Y);
+        //Open bool
+        TArray<bool> AryDgOpen;
+        AryDgOpen.Init(false,2);
+        AryDgOpen[0]=false;
+        AryDgOpen[1]=false;
+        //
+        SaveShareStorage(AryDgOpen,AryAryStorage);
+        LoadShareStorage=m_LoadShareStorage;
+        //계정 공유 bool 배열 어디에서?
+      }
+
+    LoadItemDataForInstance(LoadShareStorage->m_AryStorageItems4,LoadShareStorage->m_SaveVersion);
+    LoadItemDataForInstance(LoadShareStorage->m_AryStorageItems5,LoadShareStorage->m_SaveVersion);
+    
+    m_LoadShareStorage = LoadShareStorage;
+
+    PRINTF("LoadShareStorage");
 }
 
 bool USaveLoadManager::DoesSaveDataExist(int slotIndex)
@@ -357,14 +408,20 @@ void USaveLoadManager::SetLoadedInvenDataToPlayer(int slotIndex)
 void USaveLoadManager::SetLoadedStorageDataToPlayer(int slot_index)
 {
     TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
-
+    //
     DiaPC->GetStorageAry()[0]->SetItemAry(m_AryLoadedStorage[slot_index]->m_AryStorageItems1);
     DiaPC->GetStorageAry()[1]->SetItemAry(m_AryLoadedStorage[slot_index]->m_AryStorageItems2);
     DiaPC->GetStorageAry()[2]->SetItemAry(m_AryLoadedStorage[slot_index]->m_AryStorageItems3);
-    DiaPC->GetStorageAry()[3]->SetItemAry(m_AryLoadedStorage[slot_index]->m_AryStorageItems4);
-    DiaPC->GetStorageAry()[4]->SetItemAry(m_AryLoadedStorage[slot_index]->m_AryStorageItems5);
+    DiaPC->GetStorageAry()[3]->SetItemAry(m_LoadShareStorage->m_AryStorageItems4);
+    DiaPC->GetStorageAry()[4]->SetItemAry(m_LoadShareStorage->m_AryStorageItems5);
+    //
+    auto& AryDgOpen =DiaPC->GetStorageOpenAry();
+    AryDgOpen[0]=m_AryLoadedStorage[slot_index]->m_bShareStorage1Opened;
+    AryDgOpen[1]=m_AryLoadedStorage[slot_index]->m_bShareStorage2Opened;
+    AryDgOpen[2]=m_AryLoadedStorage[slot_index]->m_bShareStorage3Opened;
+    AryDgOpen[3]=m_LoadShareStorage->m_bShareStorage4Opened;
+    AryDgOpen[4]=m_LoadShareStorage->m_bShareStorage5Opened;
     
-    DiaPC->GetStorageOpenAry() = m_AryLoadedStorage[slot_index]->m_AryIsStorageOpened;
 }
 
 void USaveLoadManager::CreateSetPlayerCharacter()

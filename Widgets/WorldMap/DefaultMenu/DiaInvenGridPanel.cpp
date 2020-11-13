@@ -2,6 +2,7 @@
 #include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 #include "Item/Inventory.h"
 #include "Datas/ItemDataTable.h"
+#include "Lib/DiaBlueprintFunctionLibrary.h"
 
 UDiaInvenGridPanel* UDiaInvenGridPanel::GetInvenWidgetInst = nullptr;
 
@@ -27,6 +28,8 @@ void UDiaInvenGridPanel::Init(UInventory* itemContainer )
 	{
 		UpdateSlot(i,m_Inven->GetItemRef(i));
 	}
+
+	UpdateGold(ADiabloPlayerController::Get->GetPlayerPawn()->GetGold());
 }
 
 
@@ -40,20 +43,20 @@ void UDiaInvenGridPanel::SetGrid(int x, int y)
 	m_ArySlot.Reserve(InvenX*InvenY);
 
 	int Index = 0;
-	for (int X = 0; X < InvenX; X++)
+	for (int Y = 0; Y < InvenY; Y++)
 	{
-		for (int Y = 0; Y < InvenY; Y++)
+		for (int X = 0; X < InvenX; X++)
 		{
-			m_SlotGridPanel->SetColumnFill(X, 1);
-			m_SlotGridPanel->SetRowFill(Y, 1);
-			UDiaInvenGridSlot* SlotCreated = CreateWidget<UDiaInvenGridSlot>(this, m_ClassGridSlot);
-			UGridSlot* ChildSlot = m_SlotGridPanel->AddChildToGrid(SlotCreated);
-			ChildSlot->SetColumn(X);
-			ChildSlot->SetRow(Y);
-			m_ArySlot.Add(SlotCreated);
-			SlotCreated->InitSlot(Index);
-			SlotCreated->m_OnDropIndex.BindUObject(this,&UDiaInvenGridPanel::AddItem);
-			Index++;
+				m_SlotGridPanel->SetColumnFill(X, 1);
+				m_SlotGridPanel->SetRowFill(Y, 1);
+				UDiaInvenGridSlot* SlotCreated = CreateWidget<UDiaInvenGridSlot>(this, m_ClassGridSlot);
+				UGridSlot* ChildSlot = m_SlotGridPanel->AddChildToGrid(SlotCreated);
+				ChildSlot->SetColumn(X);
+				ChildSlot->SetRow(Y);
+				m_ArySlot.Add(SlotCreated);
+				SlotCreated->InitSlot(Index);
+				SlotCreated->m_OnDropIndex.BindUObject(this,&UDiaInvenGridPanel::AddItem);
+				Index++;
 		}
 	}
 }
@@ -90,5 +93,10 @@ void UDiaInvenGridPanel::RemoveItemStack(int index )
 {
 	PRINTF("InvenGridPanel RemoveItemStack");
 	//m_Inven->RemoveItemStack(index);
+}
+
+void UDiaInvenGridPanel::UpdateGold(float v)
+{
+	m_TextGold->SetText(UDiaBlueprintFunctionLibrary::GetAlphabetText(v));
 }
 

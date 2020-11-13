@@ -14,7 +14,7 @@ class UPlayerCreateManager;
 class USaveEquipment;
 class USaveInventory;
 class USaveCharacterStatus;
-
+class USaveShareStorage;
 
 DECLARE_DELEGATE_OneParam(FOnSaveDataCreated, const USaveCharacterStatus*);
 
@@ -37,6 +37,8 @@ public:
     const FString m_CharSlotName;
 
     const FString m_StorageSlotName;
+
+    const FString m_StorageShareSlotName;
     
     static USaveLoadManager* Get;
 
@@ -61,6 +63,8 @@ protected:
     TArray<USaveInventory*> m_AryLoadedInventory;
     UPROPERTY()
     TArray<USaveStorage*> m_AryLoadedStorage;
+    UPROPERTY()
+    USaveShareStorage* m_LoadShareStorage;
     //They DonNeedInst
 protected:
     void TryLoadAllCharacter();
@@ -69,18 +73,19 @@ public:
     void DeleteSlot(int i);
 
     void DeleteAllSlot();
-//
+    //
     void SaveInventory(int slotIndex, const TArray<FItemInstance>& aryItem);
     void SaveEquipment(int slotIndex,const TArray<FItemInstance>& aryItem);
     void SetEquipSaveDataFromCreation(const FCurrentCharData& charData,TArray<FItemInstance>& newEquipAry);
-    void SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex,FName classID,float exp=0.f);
-//
+    void SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex,FName classID,float exp=0.f,float gold=0.f);
+    void SaveStorage(int slotIndex,const TArray<bool>& aryOpen,const TArray<TArray<FItemInstance>>& aryItems);
+    void SaveShareStorage(const TArray<bool>& aryOpen,const TArray<TArray<FItemInstance>>& aryItems);
+    //
     void LoadInventory(int slotIndex);
     void LoadEquipment(int slotIndex);
     void LoadCharStat(int index);
-    //
-    void SaveStorage(int slotIndex,const TArray<bool>& aryOpen,const TArray<TArray<FItemInstance>>& aryItems);
     void LoadStorage(int slotIndex);
+    void LoadShareStorage();
 
     bool DoesSaveDataExist(int slotIndex);
     //

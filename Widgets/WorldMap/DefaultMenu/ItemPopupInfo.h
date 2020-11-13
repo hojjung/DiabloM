@@ -114,7 +114,7 @@ protected:
 	
 	void SetColorTier(const FItemInstance& itemInst);
 	
-	void SetItemText(const FItemInstance& itemInst);
+	void SetItemText(const FItemInstance& itemInst,EPopupType popupType);
 
 	float SetFlavorText(const FItemInstance& itemInst);
 	

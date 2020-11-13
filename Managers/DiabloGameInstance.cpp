@@ -79,6 +79,10 @@ ADroppedItem* UDiabloGameInstance::DropItemActor(APawn* dropCenterActor, float d
 
 void UDiabloGameInstance::CreateDungeon()
 {
+    if(UDiabloGameInstance::Get->GetDungeonManager()->IsDungeonOpened())
+    {
+        UDiabloGameInstance::Get->GetDungeonManager()->ClearDungeon();
+    }
     UDiabloGameInstance::Get->GetDungeonManager()->CreateDefaultInfinityDungeon(1);
 }
 
@@ -106,7 +110,7 @@ void UDiabloGameInstance::SaveAllPlayerInfo()
     int Face = DiaPl->m_FaceIndex;
 
     USaveLoadManager::Get->SaveCharacterStat(UPlayerCreateManager::Get->m_CurrentSelectSlot, Lev, Name, Face, Hair,
-                                             USaveLoadManager::Get->GetCurrentPlayerClassName(), DiaPl->m_fCurrentExp);
+                                             USaveLoadManager::Get->GetCurrentPlayerClassName(), DiaPl->m_fCurrentExp,DiaPl->m_fCurrentGold);
 
     TArray<UInventory*> Storage = DiaPC->GetStorageAry();
     TArray<TArray<FItemInstance>> StorageItemInst;

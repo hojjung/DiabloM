@@ -5,7 +5,8 @@
 AStorage::AStorage(const FObjectInitializer& objInit):Super(objInit)
 {
     m_MeshStorage = CreateDefaultSubobject<UStaticMeshComponent>("Mesh00");
-    m_MeshStorage->SetupAttachment(m_Capsule);
+    FAttachmentTransformRules Trans = FAttachmentTransformRules(EAttachmentRule::KeepRelative,false);
+    m_MeshStorage->AttachToComponent(m_Capsule,Trans);
 }
 
 void AStorage::Interact(AActor* instigator)

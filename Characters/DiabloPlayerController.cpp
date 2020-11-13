@@ -46,6 +46,7 @@ void ADiabloPlayerController::BeginPlay()
 		m_AryStorage.Emplace(Storage);
 	}
 	
+	
 	USaveLoadManager::Get->CreateSetPlayerCharacter();//Set Every SaveFile to Load
 	InitWidget();
 }
@@ -62,6 +63,7 @@ void ADiabloPlayerController::InitWidget()
 	m_GameOverScreen->SetVisibility(ESlateVisibility::Hidden);
 	PlayerPawn->GetOnDied().AddUObject(this,&ADiabloPlayerController::OnPlayerDied);
 	PlayerPawn->GetOnRevived().AddUObject(this,&ADiabloPlayerController::OnPlayerRevived);
+	
 	
 	CreateDmgWC(15);
 	CloseMainMenu();

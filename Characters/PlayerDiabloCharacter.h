@@ -31,6 +31,7 @@ class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 	friend UDiabloCheatManager;
 	friend USaveLoadManager;
 	friend UPlayerSensing;
+	friend UDiabloGameInstance;
 public:
 	APlayerDiabloCharacter(const FObjectInitializer& objInit);
 
@@ -152,6 +153,8 @@ protected:
 	FOnFloatChange m_OnExpGaugeChanged;
 	
 	FOnFloatChange m_OnRemainExpChanged;
+
+	FOnFloatChange m_OnGoldChanged;
 
 	FCharacterDiedDelegate m_OnRevived;
 
@@ -329,6 +332,16 @@ public:
 	FORCEINLINE IInteractable* GetFocusInteractable()
 	{
 		return  m_FocusedInteractable;
+	}
+	
+	FORCEINLINE float GetGold()
+	{
+		return m_fCurrentGold;
+	}
+
+	FORCEINLINE FOnFloatChange& GetOnGoldChanged()
+	{
+		return m_OnGoldChanged;
 	}
 };
 

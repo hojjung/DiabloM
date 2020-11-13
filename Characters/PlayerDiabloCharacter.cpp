@@ -182,8 +182,10 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     m_StunMontage = m_PlayerEntityData->m_StunMontage;
     m_TookHitMontage = m_PlayerEntityData->m_TookHitMontage;
 
+
     SetCharacterLevel(loadedSaveData->m_nLevel);
     LoadExp(loadedSaveData);
+    EarnGold(loadedSaveData->m_fGold);
 
 
     GrantHpRegenAbility();
@@ -399,7 +401,7 @@ void APlayerDiabloCharacter::EarnGold(float goldEarned)
 {
     m_fCurrentGold += goldEarned;
     m_fCurrentGold = FMath::Clamp(m_fCurrentGold, m_fCurrentGold,MAXVALUE);
-
+    m_OnGoldChanged.Broadcast(m_fCurrentGold);
     PRINTF("GoldGained:%f", goldEarned);
     PRINTF("TotalGold:%f", m_fCurrentGold);
 }
@@ -414,7 +416,7 @@ bool APlayerDiabloCharacter::SpendGold(float goldSpend)
     }
 
     m_fCurrentGold=ValueResult;
-    
+    m_OnGoldChanged.Broadcast(m_fCurrentGold);
     return  true;
 }
 

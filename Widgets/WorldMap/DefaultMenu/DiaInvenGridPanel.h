@@ -19,6 +19,8 @@ public:
 	UDiaInvenGridPanel(const FObjectInitializer& objInit);
 	
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextGold;
 	UPROPERTY(EditDefaultsOnly,Category="Widget")
 	TSubclassOf<UDiaInvenGridSlot> m_ClassGridSlot;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -50,6 +52,8 @@ public:
 	void RemoveItem(int index);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void RemoveItemStack(int index);
+
+	void UpdateGold(float v);
 
 
 	FORCEINLINE UInventory* GetInven() const
