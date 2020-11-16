@@ -27,7 +27,10 @@ class DIABLOM_API UDefaultMenu : public UUserWidget
 {
 	GENERATED_BODY()
 	//인벤,스텟,장비 그냥 만들것
+public:
+	static UDefaultMenu* Get;
 
+	~UDefaultMenu();
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UCanvasPanel* m_MainCanvas;

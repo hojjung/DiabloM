@@ -11,10 +11,12 @@
 #include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
 
 
+UDefaultMenu*  UDefaultMenu::Get=nullptr;
 
 void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar,
                         UEquipmentSystem* equipment, UInventory* inven, TArray<UInventory*>* aryStorage)
 {
+    Get=this;
     m_bIsPopupOpened = false;
     m_bIsStorageOpened = false;
     m_PlayerCon = playerCon;
@@ -65,6 +67,11 @@ void UDefaultMenu::InitPopup()
     {
         PP->GetOnActionEnd().AddUObject(this, &UDefaultMenu::CloseItemPopup);
     }
+}
+
+UDefaultMenu::~UDefaultMenu()
+{
+    UDefaultMenu::Get=nullptr;
 }
 
 void UDefaultMenu::SetPopupDelegate(const TArray<UDiaInvenGridSlot*>& arySlots)

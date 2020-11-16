@@ -1,5 +1,7 @@
 #include "DiaShopPanel.h"
 
+
+#include "DefaultMenu.h"
 #include "DiaInvenGridPanel.h"
 #include "DiaShopGridSlot.h"
 #include "Datas/ItemDataTable.h"
@@ -180,6 +182,7 @@ bool UDiaShopPanel::BuyItemAuto(FItemInstance& itemWantAdd)
 
 void UDiaShopPanel::Open1(bool bOpen)
 {
+    UDefaultMenu::Get->CloseItemPopup();
     if (m_nCurrentSelectedPanelIndex == 0)
     {
         return;
@@ -192,10 +195,13 @@ void UDiaShopPanel::Open1(bool bOpen)
 
     m_AryBtns[m_nCurrentSelectedPanelIndex]->SetCheckedState(ECheckBoxState::Checked);
     m_AryGridPanels[m_nCurrentSelectedPanelIndex]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+    
 }
 
 void UDiaShopPanel::Open2(bool bOpen)
 {
+    UDefaultMenu::Get->CloseItemPopup();
     if (m_nCurrentSelectedPanelIndex == 1)
     {
         return;
@@ -208,10 +214,13 @@ void UDiaShopPanel::Open2(bool bOpen)
 
     m_AryBtns[m_nCurrentSelectedPanelIndex]->SetCheckedState(ECheckBoxState::Checked);
     m_AryGridPanels[m_nCurrentSelectedPanelIndex]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+    
 }
 
 void UDiaShopPanel::Open3(bool bOpen)
 {
+    UDefaultMenu::Get->CloseItemPopup();
     if (m_nCurrentSelectedPanelIndex == 2)
     {
         return;
@@ -232,6 +241,8 @@ void UDiaShopPanel::UpdateShop(int panelIndex, TArray<FItemInstance>& itemAdd)
     {
         return;
     }
+
+    
 
     for (FItemInstance& ItemEle : itemAdd)
     {

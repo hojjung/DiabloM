@@ -136,6 +136,7 @@ void UDiaStorageGridPanel::AddItemStack(int index )
 
 void UDiaStorageGridPanel::Open1(bool bOpen)
 {
+	UDefaultMenu::Get->CloseItemPopup();
 	if(m_nCurrentSelectedPanelIndex==0)
 	{
 		return;
@@ -166,6 +167,7 @@ void UDiaStorageGridPanel::Open2(bool bOpen)
 }
 void UDiaStorageGridPanel::Open3(bool bOpen)
 {
+	UDefaultMenu::Get->CloseItemPopup();
 	if(m_nCurrentSelectedPanelIndex==2)
 	{
 		return;
@@ -181,6 +183,7 @@ void UDiaStorageGridPanel::Open3(bool bOpen)
 }
 void UDiaStorageGridPanel::Open4(bool bOpen)
 {
+	UDefaultMenu::Get->CloseItemPopup();
 	if(m_nCurrentSelectedPanelIndex==3)
 	{
 		return;
@@ -196,6 +199,7 @@ void UDiaStorageGridPanel::Open4(bool bOpen)
 }
 void UDiaStorageGridPanel::Open5(bool bOpen)
 {
+	UDefaultMenu::Get->CloseItemPopup();
 	if(m_nCurrentSelectedPanelIndex==4)
 	{
 		return;
