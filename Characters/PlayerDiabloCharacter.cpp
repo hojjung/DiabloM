@@ -119,6 +119,8 @@ void APlayerDiabloCharacter::Init()
     SetDefaultShoeMesh();
     //
     m_DissolveCam->Init(m_TopCamera);
+    //
+    
 }
 
 

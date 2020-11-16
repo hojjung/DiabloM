@@ -23,8 +23,9 @@ public class DiabloM : ModuleRules
            "DungeonArchitectRuntime",
            "TechTree",
             "NavigationSystem",
-            "EasyActionPlugin"
-           
+            "EasyActionPlugin",
+            "RenderCore",
+            "RHI"
         });
 
         

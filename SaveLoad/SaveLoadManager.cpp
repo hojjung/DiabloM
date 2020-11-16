@@ -85,16 +85,13 @@ void USaveLoadManager::DeleteSlot(int i)
     {
         //PRINTF("Fail Delete InventoryOld");
     }
-    if (!UGameplayStatics::DeleteGameInSlot(m_StorageShareSlotName, 0))
-    {
-        //PRINTF("Fail Delete InventoryOld");
-    }
+  
 
     m_AryLoadedCharacters[i] = nullptr;
     m_AryLoadedEquipments[i] = nullptr;
     m_AryLoadedInventory[i] = nullptr;
     m_AryLoadedStorage[i] = nullptr;
-    m_LoadShareStorage=nullptr;
+ 
 }
 
 void USaveLoadManager::DeleteAllSlot()
@@ -104,6 +101,15 @@ void USaveLoadManager::DeleteAllSlot()
     {
         DeleteSlot(i);
     }
+}
+
+void USaveLoadManager::DeleteShareStorage()
+{
+    if (!UGameplayStatics::DeleteGameInSlot(m_StorageShareSlotName, 0))
+    {
+        //PRINTF("Fail Delete InventoryOld");
+    }
+    m_LoadShareStorage=nullptr;   
 }
 
 void USaveLoadManager::SaveInventory(int slotIndex, const TArray<FItemInstance>& aryItem)

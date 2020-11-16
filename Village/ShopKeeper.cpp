@@ -18,8 +18,8 @@ void AShopKeeper::BeginPlay()
     
     while (i++<3)
     {
-        UInventory* ShopPanel = NewObject<UInventory>();
-        ShopPanel->InitInven(SHOP_X,SHOP_Y);
+        UShopItemContainer* ShopPanel = NewObject<UShopItemContainer>();
+        ShopPanel->InitShopStorage(SHOP_X,SHOP_Y);
         m_AryShopItemContainer.Emplace(ShopPanel);
     }
 

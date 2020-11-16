@@ -15,14 +15,14 @@ class DIABLOM_API UDiaDragDrop : public UDragDropOperation
 	GENERATED_BODY()
 
 public:
+	static UDiaDragDrop* GetDDOInst;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	USizeBox* m_MainSizeBox;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UImage* m_IconImage;
 	UPROPERTY()
-	UDiaInvenGridPanel* m_PreGrid;
-	UPROPERTY()
-	UDiaInvenGridSlot* m_PreSlot;
+	UImage* m_PreSlot;
 
 public:
 	int m_nPreIndex;
@@ -32,7 +32,7 @@ public:
 public:
 	void SetDDO(const FItemInstance& itemInst);
 
-	void InitDrag(UDiaInvenGridSlot* preSlot);//slot turn blur
+	void InitDrag(UImage* preSlot);//slot turn blur
 
 public:
 	UFUNCTION()

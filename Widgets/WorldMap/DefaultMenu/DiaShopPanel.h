@@ -2,6 +2,7 @@
 
 #include "DiabloM.h"
 #include "CheckBox.h"
+
 #include "GridPanel.h"
 #include "Blueprint/UserWidget.h"
 #include "Village/ShopKeeper.h"
@@ -10,8 +11,8 @@
 
 struct FItemInstance;
 class UItemPopupInfo;
-class UDiaInvenGridSlot;
-class UInventory;
+class UDiaShopGridSlot;
+class UShopItemContainer;
 class UDefaultMenu;
 
 UCLASS()
@@ -24,7 +25,7 @@ public:
 
 protected:
     UPROPERTY(EditDefaultsOnly,Category="Widget")
-    TSubclassOf<UDiaInvenGridSlot> m_ClassGridSlot;
+    TSubclassOf<UDiaShopGridSlot> m_ClassGridSlot;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UGridPanel* m_SlotGridPanel1;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -40,22 +41,21 @@ protected:
 
 protected:
     UPROPERTY()
-    TArray<UDiaInvenGridSlot*> m_ArySlot1;
+    TArray<UDiaShopGridSlot*> m_ArySlot1;
     UPROPERTY()
-    TArray<UDiaInvenGridSlot*> m_ArySlot2;
+    TArray<UDiaShopGridSlot*> m_ArySlot2;
     UPROPERTY()
-    TArray<UDiaInvenGridSlot*> m_ArySlot3;
+    TArray<UDiaShopGridSlot*> m_ArySlot3;
     UPROPERTY()
     TArray<UCheckBox*> m_AryBtns;
     UPROPERTY()
     TArray<UGridPanel*> m_AryGridPanels;
 
-    TArray<TArray<UDiaInvenGridSlot*>*> m_AryArySlots;
+    TArray<TArray<UDiaShopGridSlot*>*> m_AryArySlots;
 
-    TArray<UInventory*>* m_PtrAryStorages;
+    TArray<UShopItemContainer*>* m_PtrAryStorages;
 
     int m_nCurrentSelectedPanelIndex;
-
 
 public:
     void Init();
@@ -67,23 +67,17 @@ public:
 
     void UpdateForReSellSlot(int index, FItemInstance& itemInst);
 
-    bool AddItem(int index, FItemInstance& itemWantAdd);
-
-    bool AddItemAuto(FItemInstance& itemWantAdd);
-
-    void AddItemStack(int index);
+    bool SellItem(int index, FItemInstance& itemWantAdd);
 
     bool SellItemAuto(FItemInstance& itemWantAdd);
 
-    FORCEINLINE const TArray<UInventory*>& GetInven() const
-    {
-        return *m_PtrAryStorages;
-    }
+    bool BuyItem(int index, FItemInstance& itemWantAdd);
 
-    FORCEINLINE TArray<TArray<UDiaInvenGridSlot*>*>& GetArySlots3()
-    {
-        return m_AryArySlots;
-    }
+    bool BuyItemAuto(FItemInstance& itemWantAdd);
+
+    void AddItemStack(int index);
+
+    bool AddItemAuto(FItemInstance& itemWantAdd);
 
 public:
     UFUNCTION()
@@ -95,6 +89,19 @@ public:
 
 public:
     void UpdateShop(int panelIndex, TArray<FItemInstance>& itemAdd);
+    
     void UpdatePanel(AShopKeeper* shop_keeper);
+    
     void ClearPanel();
+
+public:
+    FORCEINLINE const TArray<UShopItemContainer*>& GetShopContainer() const
+    {
+        return *m_PtrAryStorages;
+    }
+
+    FORCEINLINE TArray<TArray<UDiaShopGridSlot*>*>& GetArySlots3()
+    {
+        return m_AryArySlots;
+    }
 };

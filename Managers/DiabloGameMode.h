@@ -5,6 +5,7 @@
 #include "ActionManagerComponent.h"
 #include "DiabloM.h"
 #include "DungeonMiniMap.h"
+#include "Components/PostProcessComponent.h"
 #include "GameFramework/GameMode.h"
 #include "DiabloGameMode.generated.h"
 
@@ -18,71 +19,85 @@ class DIABLOM_API ADiabloGameMode : public AGameMode
 {
 	GENERATED_BODY()
 public:
-	ADiabloGameMode();
-	void InitRewardManager();
-	void FindSpawnPoint();
-	void InitMinimap();
-
 	static ADiabloGameMode* Get;
-
+	
+	ADiabloGameMode();
 	
 protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	UPostProcessComponent* m_PostProcess;
+	
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UActionManagerComponent* m_ActionManager;
+	
 	UPROPERTY(VisibleAnywhere)
 	APortal* m_PlayerVillageSpawn;
+	
 	UPROPERTY()
 	UGridFlowMiniMap* m_MiniMap;
+	
+protected:
 	UPROPERTY(EditAnywhere, Category = "MiniMap")
 	TArray<FDungeonMiniMapOverlayIcon> m_AryOverlayMinimap;
+	
 	UPROPERTY(EditAnywhere, Category = "MiniMap")
-	int32 m_MinimapTextureSize;
+	int32 m_fMinimapTextureSize;
 
 	UPROPERTY(EditAnywhere, Category = "MiniMap")
-	float m_MinimapOutlineThickness;
+	float m_fMinimapOutlineThickness;
 
 	UPROPERTY(EditAnywhere, Category = "MiniMap")
-	float m_MinimapDoorThickness;
+	float m_fMinimapDoorThickness;
 
 	UPROPERTY(EditAnywhere, Category = "MiniMap")
 	UMaterialInterface* m_MinimapMaterialTemplate;
 
 	UPROPERTY(EditAnywhere, Category = "MiniMap")
-	float m_MinimapBlurRadius;
+	float m_fMinimapBlurRadius;
 
 	UPROPERTY(EditAnywhere, Category = "MiniMap")
-	int32 m_MinimapBlurIterations;
+	int32 m_nMinimapBlurIterations;
 
 	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War")
-	bool m_MinimapbEnableFogOfWar;
+	bool m_bMinimapbEnableFogOfWar;
 
 	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = bEnableFogOfWar))
-	float m_MinimapFogOfWarTextureScale;
+	float m_fMinimapFogOfWarTextureScale;
 
 	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = bEnableFogOfWar))
-	FName m_MinimapFogOfWarTrackingItem;
+	FName m_NameMinimapFogOfWarTrackingItem;
 
 	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = bEnableFogOfWar))
 	UTexture2D* m_MinimapFogOfWarExploreTexture;
 
 	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = bEnableFogOfWar))
-	float m_MinimapFogOfWarVisiblityDistance;
+	float m_fMinimapFogOfWarVisiblityDistance;
 	
 	UPROPERTY()
 	TMap<FName,ADiaDungeon*> m_MapDungeonActors;
 	
 	FDelta m_OnTick;
-public:
-	virtual void StartPlay() override;
-
-	ADiaDungeon* GetDungeon(FName id);
-
-	void SetDungeonInstanceToMap();
+	
+protected:
+	void InitRewardManager();
+	
+	void InitMinimap();
 	
 	void InitDungeonInstances();
 	
 	void InitSpawnManager();
+	
+	void FindSpawnPoint();
+	
+	void SetDungeonInstanceToMap();
+	
+	virtual void Tick(float DeltaSeconds) override;
+	
+public:
+	virtual void StartPlay() override;
 
+	ADiaDungeon* GetDungeon(FName id);
+	
 	APortal* GetSpawnPoint();
 
 	FORCEINLINE UActionManagerComponent* GetActionManager()
@@ -90,16 +105,14 @@ public:
 		return m_ActionManager;
 	}
 
-	virtual void Tick(float DeltaSeconds) override;
-
 	FORCEINLINE FDelta GetOnDeltaTick()
 	{
 		return m_OnTick;
 	}
 
-	//UFUNCTION(BlueprintCallable)
-	//UGridFlowMiniMap* GetMinimapManager()
-	//{
-	//	return m_MiniMap;
-	//}
+	UFUNCTION(BlueprintCallable)
+	UGridFlowMiniMap* GetMinimapManager()
+	{
+		return m_MiniMap;
+	}
 };

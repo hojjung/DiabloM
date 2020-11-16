@@ -1,14 +1,16 @@
 #include "DiaShopPanel.h"
-#include "DiaInvenGridSlot.h"
-#include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
-#include "Item/Inventory.h"
+
+#include "DiaInvenGridPanel.h"
+#include "DiaShopGridSlot.h"
 #include "Datas/ItemDataTable.h"
 #include "DiaStorageGridPanel.h"
+#include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Item/ShopItemContainer.h"
 
 UDiaShopPanel::UDiaShopPanel(const FObjectInitializer& objInit): Super(objInit)
 {
-    m_ClassGridSlot = UDiaInvenGridSlot::StaticClass();
+    m_ClassGridSlot = UDiaShopGridSlot::StaticClass();
     m_nCurrentSelectedPanelIndex = 0;
 }
 
@@ -66,14 +68,18 @@ void UDiaShopPanel::SetGrid(int indexPanel, int x, int y)
             m_AryGridPanels[indexPanel]->SetColumnFill(X, 1);
             m_AryGridPanels[indexPanel]->SetRowFill(Y, 1);
 
-            UDiaInvenGridSlot* SlotCreated = CreateWidget<UDiaInvenGridSlot>(this, m_ClassGridSlot);
+            UDiaShopGridSlot* SlotCreated = CreateWidget<UDiaShopGridSlot>(this, m_ClassGridSlot);
             UGridSlot* ChildSlot = m_AryGridPanels[indexPanel]->AddChildToGrid(SlotCreated);
 
             ChildSlot->SetColumn(X);
             ChildSlot->SetRow(Y);
 
             SlotCreated->InitSlot(Index);
-            SlotCreated->m_OnDropIndex.BindUObject(this, &UDiaShopPanel::AddItem);
+            
+            if(indexPanel==2)//Only for ReSell
+            {
+                SlotCreated->m_OnDropIndex.BindUObject(this, &UDiaShopPanel::SellItem);
+            }
 
             m_AryArySlots[indexPanel]->Add(SlotCreated);
 
@@ -93,14 +99,18 @@ void UDiaShopPanel::UpdateForReSellSlot(int index, FItemInstance& itemInst)
     (*m_AryArySlots[2])[index]->SetSlot(itemInst);
 }
 
-bool UDiaShopPanel::AddItem(int index, FItemInstance& itemWantAdd)
+bool UDiaShopPanel::SellItem(int index, FItemInstance& itemWantAdd)
 {
-    return (*m_PtrAryStorages)[m_nCurrentSelectedPanelIndex]->AddItem(index, itemWantAdd);
-}
+    float Value=itemWantAdd.m_ItemData->m_nSellValue;
 
-bool UDiaShopPanel::AddItemAuto(FItemInstance& itemWantAdd)
-{
-    return (*m_PtrAryStorages)[m_nCurrentSelectedPanelIndex]->AddItemAuto(itemWantAdd);
+    if((*m_PtrAryStorages)[2]->AddItem(index, itemWantAdd))
+    {
+        ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
+
+        return true;
+    }
+
+    return false;
 }
 
 void UDiaShopPanel::AddItemStack(int index)
@@ -108,9 +118,64 @@ void UDiaShopPanel::AddItemStack(int index)
     (*m_PtrAryStorages)[m_nCurrentSelectedPanelIndex]->AddItemStack(index);
 }
 
+bool UDiaShopPanel::AddItemAuto(FItemInstance& itemWantAdd)
+{
+    return (*m_PtrAryStorages)[m_nCurrentSelectedPanelIndex]->AddItemAuto(itemWantAdd);
+}
 bool UDiaShopPanel::SellItemAuto(FItemInstance& itemWantAdd)
 {
-    return (*m_PtrAryStorages)[2]->AddItemAuto(itemWantAdd); //constant 2 is resell
+    float Value=itemWantAdd.m_ItemData->m_nSellValue;
+    
+    if((*m_PtrAryStorages)[2]->AddItemAuto(itemWantAdd))
+    {
+        ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
+
+        return true;
+    }
+
+    return false;
+}
+
+bool UDiaShopPanel::BuyItem(int index, FItemInstance& itemWantAdd)
+{
+    float Value = itemWantAdd.m_ItemData->m_nBuyValue;
+
+    if(ADiabloPlayerController::Get->GetPlayerPawn()->SpendGold(Value))
+    {
+        if(UDiaInvenGridPanel::GetInvenWidgetInst->AddItem(index,itemWantAdd))
+        {
+            return true;
+        }
+        else
+        {
+            ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
+            //Spent Gold but no space
+            return false;
+        }
+    }
+
+    return false;
+}
+
+bool UDiaShopPanel::BuyItemAuto(FItemInstance& itemWantAdd)
+{
+    float Value = itemWantAdd.m_ItemData->m_nBuyValue;
+
+    if(ADiabloPlayerController::Get->GetPlayerPawn()->SpendGold(Value))
+    {
+        if(UDiaInvenGridPanel::GetInvenWidgetInst->AddItemAuto(itemWantAdd))
+        {
+            return true;
+        }
+        else
+        {
+            ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
+            //Spent Gold but no space
+            return false;
+        }
+    }
+
+    return false;
 }
 
 void UDiaShopPanel::Open1(bool bOpen)
@@ -182,7 +247,7 @@ void UDiaShopPanel::UpdatePanel(AShopKeeper* shop_keeper)
 
     while (Iter < 3)
     {
-        UInventory* CurrentInven = (*m_PtrAryStorages)[Iter];
+        UShopItemContainer* CurrentInven = (*m_PtrAryStorages)[Iter];
         m_nCurrentSelectedPanelIndex = Iter;
 
         if (Iter < 2)
@@ -225,7 +290,7 @@ void UDiaShopPanel::ClearPanel()
 
     while (Iter < MaxIter)
     {
-        UInventory* CurrentInven = (*m_PtrAryStorages)[Iter];
+        UShopItemContainer* CurrentInven = (*m_PtrAryStorages)[Iter];
 
         CurrentInven->GetItemChangeCallback().Clear();
 

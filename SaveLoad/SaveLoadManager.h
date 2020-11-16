@@ -73,6 +73,8 @@ public:
     void DeleteSlot(int i);
 
     void DeleteAllSlot();
+
+    void DeleteShareStorage();
     //
     void SaveInventory(int slotIndex, const TArray<FItemInstance>& aryItem);
     void SaveEquipment(int slotIndex,const TArray<FItemInstance>& aryItem);

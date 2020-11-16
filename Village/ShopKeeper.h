@@ -6,6 +6,7 @@
 
 #include "Datas/ShopItemTable.h"
 #include "Item/Inventory.h"
+#include "Item/ShopItemContainer.h"
 #include "Village/VillageActor.h"
 #include "ShopKeeper.generated.h"
 
@@ -29,7 +30,7 @@ protected:
 
 protected:
 	UPROPERTY()
-	TArray<UInventory*> m_AryShopItemContainer;
+	TArray<UShopItemContainer*> m_AryShopItemContainer;
 
 protected:
 	void SetItemFromDataTable1();
@@ -43,7 +44,7 @@ public:
 	
 	virtual void Interact(AActor* instigator) override;
 
-	FORCEINLINE TArray<UInventory*>* GetShopItemContainer()
+	FORCEINLINE TArray<UShopItemContainer*>* GetShopItemContainer()
 	{
 		return &m_AryShopItemContainer;
 	}

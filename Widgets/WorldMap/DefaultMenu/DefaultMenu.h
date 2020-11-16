@@ -19,6 +19,9 @@ class ADiabloPlayerController;
 struct FItemInstance;
 class UItemDrop;
 class UDiaInvenGridPanel;
+class UDiaShopGridSlot;
+
+
 UCLASS()
 class DIABLOM_API UDefaultMenu : public UUserWidget
 {
@@ -68,6 +71,8 @@ protected:
 	
 public:
 	void SetPopupDelegate(const TArray<UDiaInvenGridSlot*>& arySlots);
+
+	void SetPopupDelegateToShopPanel(const TArray<UDiaShopGridSlot*>* ArySlot1);
 
 	void InitPopup();
 	

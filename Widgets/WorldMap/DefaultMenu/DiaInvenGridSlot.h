@@ -49,7 +49,6 @@ protected:
 	FTextFormat m_LevelFormat;
 
 public:
-	static UDiaDragDrop* GetDDOInst;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	USizeBox* m_SizeItemVisual;//for DDO
 

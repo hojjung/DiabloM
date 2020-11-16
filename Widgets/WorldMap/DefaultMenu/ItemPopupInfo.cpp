@@ -166,22 +166,14 @@ void UItemPopupInfo::BuyItem()
         return;
     }
 
-    float Value=m_SelectedItem.m_ItemData->m_nBuyValue;
-
-    if(!ADiabloPlayerController::Get->GetPlayerPawn()->SpendGold(Value))
-    {
-        return;
-    }
-
-    if(UDiaInvenGridPanel::GetInvenWidgetInst->AddItemAuto(m_SelectedItem))
+    if(ADiabloPlayerController::Get->GetShopPanelWidget()->BuyItemAuto(m_SelectedItem))
     {
         PlayHideInfoAnim();
         m_OnActionEnd.Broadcast();
     }
-    else//인벤칸없음
+    else
     {
         PRINTF("Bought but no space");
-        ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
     }
 }
 
@@ -192,11 +184,8 @@ void UItemPopupInfo::SellItem()
         return;
     }
 
-    float Value=m_SelectedItem.m_ItemData->m_nSellValue;
-
     if(ADiabloPlayerController::Get->GetShopPanelWidget()->SellItemAuto(m_SelectedItem))
     {
-        ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
         PlayHideInfoAnim();
         m_OnActionEnd.Broadcast();
     }

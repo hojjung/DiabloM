@@ -2,7 +2,6 @@
 #include "Item/ItemManager.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaDragDrop.h"
 
-UDiaDragDrop* UDiaInvenGridSlot::GetDDOInst = nullptr;
 
 
 void UDiaInvenGridSlot::InitSlot(int indexFromGrid)
@@ -117,7 +116,7 @@ void UDiaInvenGridSlot::SetSlotFocus(UDiaDragDrop* ddo)
 {
 	if (m_OnDragIndex.IsBound())
 	{
-		if (m_OnDragIndex.Execute(m_nIndex, UDiaInvenGridSlot::GetDDOInst->m_DraggedItem))
+		if (m_OnDragIndex.Execute(m_nIndex, UDiaDragDrop::GetDDOInst->m_DraggedItem))
 		{
 			SetHighlightColorTint(FLinearColor::White);
 		}
@@ -140,8 +139,8 @@ UDiaDragDrop * UDiaInvenGridSlot::CreateDDO(const FItemInstance & itemInst)
 {
 	auto* DDO = Cast<UDiaDragDrop>(UWidgetBlueprintLibrary::CreateDragDropOperation(UDiaDragDrop::StaticClass()));
 	DDO->SetDDO(itemInst);
-	DDO->InitDrag(this);
-	UDiaInvenGridSlot::GetDDOInst = DDO;
+	DDO->InitDrag(m_ImgItemVisual);
+	UDiaDragDrop::GetDDOInst = DDO;
 	return DDO;
 }
 
@@ -180,7 +179,7 @@ void UDiaInvenGridSlot::NativeOnDragDetected(const FGeometry & InGeometry, const
 void UDiaInvenGridSlot::NativeOnDragEnter(const FGeometry & InGeometry, const FDragDropEvent & InDragDropEvent, UDragDropOperation * InOperation)
 {
 	Super::NativeOnDragEnter(InGeometry, InDragDropEvent, InOperation);
-	SetSlotFocus(UDiaInvenGridSlot::GetDDOInst);
+	SetSlotFocus(UDiaDragDrop::GetDDOInst);
 }
 
 void UDiaInvenGridSlot::NativeOnDragLeave(const FDragDropEvent & InDragDropEvent, UDragDropOperation * InOperation)
@@ -195,9 +194,9 @@ bool UDiaInvenGridSlot::NativeOnDrop(const FGeometry & InGeometry, const FDragDr
 
 	ClearSlotFocus();
 
-	UDiaInvenGridSlot::GetDDOInst->m_PreSlot->SetIconOpacity(1.f);
+	UDiaDragDrop::GetDDOInst->m_PreSlot->SetOpacity(1.f);
 
-	Result= m_OnDropIndex.Execute(m_nIndex, UDiaInvenGridSlot::GetDDOInst->m_DraggedItem);
+	Result= m_OnDropIndex.Execute(m_nIndex, UDiaDragDrop::GetDDOInst->m_DraggedItem);
 
 	return Result;
 }

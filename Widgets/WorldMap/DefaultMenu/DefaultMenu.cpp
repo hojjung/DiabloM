@@ -1,4 +1,6 @@
 #include "DefaultMenu.h"
+
+#include "DiaShopGridSlot.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
@@ -7,6 +9,7 @@
 #include "Village/Storage.h"
 #include "Village/ShopKeeper.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
+
 
 
 void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar,
@@ -41,9 +44,9 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
 
     m_ShopPanel->Init();
 
-    for (TArray<UDiaInvenGridSlot*>* ArySlot1 : m_ShopPanel->GetArySlots3())
+    for (TArray<UDiaShopGridSlot*>* ArySlot1 : m_ShopPanel->GetArySlots3())
     {
-        SetPopupDelegate(*ArySlot1);
+        SetPopupDelegateToShopPanel(ArySlot1);
     }
 
     CloseShopMenu();
@@ -67,6 +70,14 @@ void UDefaultMenu::InitPopup()
 void UDefaultMenu::SetPopupDelegate(const TArray<UDiaInvenGridSlot*>& arySlots)
 {
     for (auto* SlotS : arySlots)
+    {
+        SlotS->m_OnClicked.AddUObject(this, &UDefaultMenu::OpenItemPopup);
+        SlotS->m_OnDragDetect.BindUObject(this, &UDefaultMenu::CloseItemPopup);
+    }
+}
+void UDefaultMenu::SetPopupDelegateToShopPanel(const TArray<UDiaShopGridSlot*>* ArySlot1)
+{
+    for (UDiaShopGridSlot* SlotS : *ArySlot1)
     {
         SlotS->m_OnClicked.AddUObject(this, &UDefaultMenu::OpenItemPopup);
         SlotS->m_OnDragDetect.BindUObject(this, &UDefaultMenu::CloseItemPopup);
