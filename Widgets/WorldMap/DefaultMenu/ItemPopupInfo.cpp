@@ -322,10 +322,10 @@ void UItemPopupInfo::SetItemText(const FItemInstance& itemInst,EPopupType popupT
     switch (popupType)
     {
       case EPopupType::Buy:
-          m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.m_ItemData->m_nBuyValue));
+          m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.m_fBuyCost));
               break;
         default:
-          m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.m_ItemData->m_nSellValue));
+          m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.GetSellValue()));
     }
     
     

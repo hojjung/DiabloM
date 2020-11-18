@@ -31,6 +31,8 @@ FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIn
     {
         m_ItemTier = itemTier;
     }
+
+    m_fBuyCost=(GetSellValue()*2.f);
 }
 
 
@@ -124,6 +126,7 @@ FItemTierHandle::FItemTierHandle()
 
 FItemType::FItemType(): m_EquipableSlot(), m_EquipInterruptSlot(), m_MainOptionBonusRate(1.f)
 {
+    m_SellCostRate=1.f;
     m_TypeID = "SetSameWithRowID";
     m_ShowingName = FText::FromString("ShowNameExOneHandSword");
 }
@@ -134,8 +137,7 @@ FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMe
     m_nInitStack = 1;
     m_nMaxStack = 99; 
 
-    m_nSellValue = 100;
-    m_nBuyValue = 200;
+    m_nDefaultSellValue = 100;
     
     m_bEquipable = true;
 

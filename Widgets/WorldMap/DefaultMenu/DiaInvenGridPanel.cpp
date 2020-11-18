@@ -65,6 +65,16 @@ void UDiaInvenGridPanel::SetGrid(int x, int y)
 void UDiaInvenGridPanel::UpdateSlot(int index, FItemInstance& itemInst)
 {
 	m_ArySlot[index]->SetSlot(itemInst);
+
+	if(itemInst.IsEmpty())
+	{
+		PRINTF("invenUpdate:NoItem");    
+	}
+	else
+	{
+        
+		PRINTF("invenUpdate:%s",*itemInst.m_ItemData->m_ShowingName.ToString());
+	}
 }
 
 

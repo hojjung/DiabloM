@@ -70,6 +70,8 @@ void UInventory::RemoveItemStack(int index)
 
 bool UInventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //빌드후 여기도
 {
+    auto* FromHolder =itemWantAdd.m_Holder;
+    
     if (this == static_cast<UInventory*>(itemWantAdd.m_Holder) && droppedIndex == itemWantAdd.m_nGridIndex)
     {
         PRINTF("Prevent MySelf");
@@ -88,32 +90,28 @@ bool UInventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //빌드�
     ///
     int DragIndex = itemWantAdd.m_nGridIndex;
 
-    FItemInstance Drop = m_ItemAry[droppedIndex];
+    FItemInstance DropOldItem = m_ItemAry[droppedIndex];
 
+    IItemHolder* FromDropItem = DropOldItem.m_Holder;
+    
     //Stack
     bool Result = false;
     //safe
     if (itemWantAdd.GetIsStackable() && itemWantAdd.CheckCanStack() &&
-        Drop.GetIsStackable() && Drop.CheckCanStack() &&
-        Drop.m_ItemID == itemWantAdd.m_ItemID) //스왑방지코드
+        DropOldItem.GetIsStackable() && DropOldItem.CheckCanStack() &&
+        DropOldItem.m_ItemID == itemWantAdd.m_ItemID) //스왑방지코드
     {
-        StackMove(Drop, itemWantAdd, itemWantAdd.m_Holder);
+        StackMove(DropOldItem, itemWantAdd, itemWantAdd.m_Holder);
 
-        Result = true;
         PRINTF("Stack");
+        FromDropItem->GetItemChangeCallback().Broadcast(droppedIndex, m_ItemAry[droppedIndex]);
+        FromHolder->GetItemChangeCallback().Broadcast(DragIndex, m_ItemAry[DragIndex]);
     }
     else
     {
         //Swap
         PRINTF("SWap");
-        Result = SwapMove(Drop, itemWantAdd);
-    }
-    //safe
-
-    if (Result)
-    {
-        m_OnSlotChanged.Broadcast(droppedIndex, m_ItemAry[droppedIndex]);
-        m_OnSlotChanged.Broadcast(DragIndex, m_ItemAry[DragIndex]);
+        SwapMove(DropOldItem, itemWantAdd);
     }
 
     return Result;
@@ -142,7 +140,7 @@ bool UInventory::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
     }
 
     Drag.m_Holder->SetItem(DragIndex, Drop);
-    SetItem(DropIndex, Drag);
+    Drop.m_Holder->SetItem(DropIndex, Drag);
 
     return true;
 }

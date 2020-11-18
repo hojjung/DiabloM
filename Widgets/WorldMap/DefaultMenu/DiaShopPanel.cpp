@@ -98,12 +98,21 @@ void UDiaShopPanel::UpdateSlot(int index, FItemInstance& itemInst)
 
 void UDiaShopPanel::UpdateForReSellSlot(int index, FItemInstance& itemInst)
 {
+    if(!itemInst.IsEmpty())
+    {
+        itemInst.m_fBuyCost=itemInst.GetSellValue();
+
+        PRINTF("Shop-ReSellBuyCost : %f",itemInst.m_fBuyCost);
+    }
+        
     (*m_AryArySlots[2])[index]->SetSlot(itemInst);
 }
 
 bool UDiaShopPanel::SellItem(int index, FItemInstance& itemWantAdd)
 {
-    float Value=itemWantAdd.m_ItemData->m_nSellValue;
+    float Value=itemWantAdd.GetSellValue();
+    
+    PRINTF("SellValue:%f",Value);
 
     if((*m_PtrAryStorages)[2]->AddItem(index, itemWantAdd))
     {
@@ -126,12 +135,14 @@ bool UDiaShopPanel::AddItemAuto(FItemInstance& itemWantAdd)
 }
 bool UDiaShopPanel::SellItemAuto(FItemInstance& itemWantAdd)
 {
-    float Value=itemWantAdd.m_ItemData->m_nSellValue;
+    float Value=itemWantAdd.GetSellValue();
+    
+    PRINTF("SellValue:%f",Value);
     
     if((*m_PtrAryStorages)[2]->AddItemAuto(itemWantAdd))
     {
         ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
-
+        
         return true;
     }
 
@@ -140,8 +151,9 @@ bool UDiaShopPanel::SellItemAuto(FItemInstance& itemWantAdd)
 
 bool UDiaShopPanel::BuyItem(int index, FItemInstance& itemWantAdd)
 {
-    float Value = itemWantAdd.m_ItemData->m_nBuyValue;
-
+    float Value = itemWantAdd.m_fBuyCost;
+    PRINTF("BuyValue:%f",Value);
+    
     if(ADiabloPlayerController::Get->GetPlayerPawn()->SpendGold(Value))
     {
         if(UDiaInvenGridPanel::GetInvenWidgetInst->AddItem(index,itemWantAdd))
@@ -161,8 +173,9 @@ bool UDiaShopPanel::BuyItem(int index, FItemInstance& itemWantAdd)
 
 bool UDiaShopPanel::BuyItemAuto(FItemInstance& itemWantAdd)
 {
-    float Value = itemWantAdd.m_ItemData->m_nBuyValue;
-
+    float Value = itemWantAdd.m_fBuyCost;
+    PRINTF("BuyValue:%f",Value);
+    
     if(ADiabloPlayerController::Get->GetPlayerPawn()->SpendGold(Value))
     {
         if(UDiaInvenGridPanel::GetInvenWidgetInst->AddItemAuto(itemWantAdd))
@@ -242,8 +255,6 @@ void UDiaShopPanel::UpdateShop(int panelIndex, TArray<FItemInstance>& itemAdd)
         return;
     }
 
-    
-
     for (FItemInstance& ItemEle : itemAdd)
     {
         AddItemAuto(ItemEle);
@@ -270,14 +281,9 @@ void UDiaShopPanel::UpdatePanel(AShopKeeper* shop_keeper)
                 UpdateSlot(i, CurrentInven->GetItemRef(i));
             }
         }
-        else//Last
+        else//Last ShopPanel
         {
             CurrentInven->GetItemChangeCallback().AddUObject(this, &UDiaShopPanel::UpdateForReSellSlot);
-
-            for (int i = 0; i < CurrentInven->GetItemAry().Num(); i++)
-            {
-                UpdateForReSellSlot(i, CurrentInven->GetItemRef(i));
-            }    
         }
         
         Iter++;

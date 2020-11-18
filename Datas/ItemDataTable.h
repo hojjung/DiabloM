@@ -78,7 +78,7 @@ struct FItemTier : public FTableRowBase
 public:
     FItemTier(): m_fDefaultDropRate(0)
     {
-        m_fBonusValue=1.f;
+        m_fBonusPowerRate=1.f;
         m_ShowingName = FText::FromString("Normal");
         m_TierColor = FColor(242, 242, 242, 255);
         m_AryOptionCount.Reset();
@@ -86,6 +86,7 @@ public:
         m_AryOptionCount.Add(1);
         m_AryOptionCount.Add(2);
         m_TierID = "SetSameTableID";
+        m_fGoldCostRate=0.9f;
     }
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -99,7 +100,9 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<int> m_AryOptionCount;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "1", UIMin = "1"))
-    float m_fBonusValue;
+    float m_fBonusPowerRate;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "1", UIMin = "1"))
+    float m_fGoldCostRate;
 };
 
 USTRUCT(BlueprintType)
@@ -130,6 +133,8 @@ public:
     TSubclassOf<AWeapon> m_EquipmentBP;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float m_MainOptionBonusRate;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    float m_SellCostRate;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FOptionHandle m_MainOption;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -188,9 +193,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     int m_nMaxStack;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    int m_nBuyValue;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    int m_nSellValue;
+    float m_nDefaultSellValue;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     UStaticMesh* m_ItemMesh;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -253,6 +256,7 @@ public:
 
     const FItemTier* m_ItemTier;
 
+    float m_fBuyCost;
     
 public:
 
@@ -289,7 +293,10 @@ public:
         m_nItemLevel=-1;
     }
 
-  
+    float GetSellValue() const
+    {
+        return (m_ItemTier->m_fGoldCostRate*m_nItemLevel*m_ItemData->m_ItemType.GetRow<FItemType>("")->m_MainOptionBonusRate)+m_ItemData->m_nDefaultSellValue;
+    }
 };
 
 

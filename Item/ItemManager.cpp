@@ -29,7 +29,7 @@ FItemInstance UItemManager::CreateItemInstance(FName id, float magicItemBonus, f
 
     int TierMaxOptionCount = TierRolled.m_AryOptionCount.GetRandom();
 
-    float TierBonusValue = TierRolled.m_fBonusValue;
+    float TierBonusValue = TierRolled.m_fBonusPowerRate;
 
     TArray<FOptionSpec> RandomOptionForItem;
 
@@ -45,7 +45,7 @@ FItemInstance UItemManager::CreateUniqueItem(const FUniqueEquipData* unique_item
 
     int TierMaxOptionCount = Tier.m_AryOptionCount.GetRandom();
 
-    float TierBonusValue = Tier.m_fBonusValue;
+    float TierBonusValue = Tier.m_fBonusPowerRate;
 
     TArray<FOptionSpec> RandomOptionForItem;
 
@@ -255,7 +255,7 @@ FItemInstance UItemManager::CreateItemManual(const FShopItemSell& item_sell) //c
     {
         int TierMaxOptionCount = (*Tier).m_AryOptionCount.GetRandom();
 
-        float TierBonusValue = (*Tier).m_fBonusValue;
+        float TierBonusValue = (*Tier).m_fBonusPowerRate;
 
         CreateRandomOption(*ItemDataFromTable, AryOp, TierMaxOptionCount, TierBonusValue, ItemLevel);
     }

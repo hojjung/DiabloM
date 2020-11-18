@@ -13,11 +13,10 @@ void UDiaDragDrop::SetDDO(const FItemInstance & itemInst)
 void UDiaDragDrop::InitDrag(UImage * preSlot)
 {
 	m_PreSlot = preSlot;
-	//m_PreGrid = prePanel;
+	
 	DefaultDragVisual = m_PreSlot;
 	
 	m_PreSlot->SetOpacity(0.5f);
-	
 }
 
 void UDiaDragDrop::OnDragCancel(UDragDropOperation * meSelf)

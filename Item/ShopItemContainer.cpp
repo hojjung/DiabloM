@@ -36,6 +36,7 @@ void UShopItemContainer::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
     m_ItemAry[droppedIndex] = itemWantAdd;
     m_ItemAry[droppedIndex].m_nGridIndex = droppedIndex;
     m_ItemAry[droppedIndex].m_Holder = this;
+    //m_ItemAry[droppedIndex].m_fBuyCost=(m_ItemAry[droppedIndex].GetSellValue());
     m_OnSlotChanged.Broadcast(droppedIndex, m_ItemAry[droppedIndex]);
 }
 
@@ -79,11 +80,16 @@ bool UShopItemContainer::AddItem(int droppedIndex, FItemInstance& itemWantAdd) /
     }
     if (CheckSlotValid(droppedIndex, itemWantAdd) && m_ItemAry[droppedIndex].m_ItemID == NAME_None)
     {
+        
         SetItem(droppedIndex, itemWantAdd);
+        
         if(itemWantAdd.m_Holder)
         {
             itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
         }
+
+        //Set BuyItem
+        
         return true;
     }
     ///

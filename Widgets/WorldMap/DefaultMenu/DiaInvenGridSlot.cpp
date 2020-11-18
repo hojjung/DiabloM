@@ -159,8 +159,6 @@ FReply UDiaInvenGridSlot::NativeOnMouseButtonDown(const FGeometry & MyGeometry, 
 {
 	FReply Repl = Super::NativeOnMouseButtonDown(MyGeometry, MouseEvent);
 
-	
-
 	return UWidgetBlueprintLibrary::DetectDragIfPressed(MouseEvent,this,EKeys::LeftMouseButton).NativeReply;
 }
 

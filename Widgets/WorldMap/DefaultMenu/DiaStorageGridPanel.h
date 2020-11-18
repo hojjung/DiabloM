@@ -8,6 +8,7 @@
 #include "Blueprint/UserWidget.h"
 #include "DiaStorageGridPanel.generated.h"
 
+class UHoverToggle;
 struct FItemInstance;
 class UItemPopupInfo;
 class UDiaInvenGridSlot;
@@ -36,15 +37,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UGridPanel* m_SlotGridPanel5;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UCheckBox* m_BtnPanel1;
+	UHoverToggle* m_BtnPanel1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UCheckBox* m_BtnPanel2;
+	UHoverToggle* m_BtnPanel2;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UCheckBox* m_BtnPanel3;
+	UHoverToggle* m_BtnPanel3;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UCheckBox* m_BtnPanel4;
+	UHoverToggle* m_BtnPanel4;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UCheckBox* m_BtnPanel5;
+	UHoverToggle* m_BtnPanel5;
 	
 protected:
 	UPROPERTY()
@@ -67,14 +68,21 @@ protected:
 	
 	TArray<UInventory*>* m_AryStorages;
 
-	int m_nCurrentSelectedPanelIndex;
+	int m_nPreSelectedPanelIndex;
 	
+	int m_nCurrentSelectedPanelIndex;
+
+	//
 public:
 	void Init(TArray<UInventory*>* itemContainer);
 
 public:
     void SetGrid(int indexPanel,int x,int y);
-    void UpdateSlot(int index,  FItemInstance& itemInst);
+    void UpdateSlot1(int index,  FItemInstance& itemInst);
+	void UpdateSlot2(int index,  FItemInstance& itemInst);
+	void UpdateSlot3(int index,  FItemInstance& itemInst);
+	void UpdateSlot4(int index,  FItemInstance& itemInst);
+	void UpdateSlot5(int index,  FItemInstance& itemInst);
     bool AddItem(int index, FItemInstance& itemWantAdd);
     bool AddItemAuto(FItemInstance& itemWantAdd);
     void AddItemStack(int index);
