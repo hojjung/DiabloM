@@ -69,7 +69,7 @@ public:
 
     bool SellItem(int index, FItemInstance& itemWantAdd);
 
-    bool SellItemAuto(FItemInstance& itemWantAdd);
+    bool SellItemAuto(int forDele,FItemInstance& itemWantAdd);
 
     bool BuyItemAuto(FItemInstance& itemWantAdd);
 

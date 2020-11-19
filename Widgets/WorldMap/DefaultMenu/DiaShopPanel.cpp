@@ -83,6 +83,10 @@ void UDiaShopPanel::SetGrid(int indexPanel, int x, int y)
             {
                 SlotCreated->m_OnDropIndex.BindUObject(this, &UDiaShopPanel::SellItem);
             }
+            else
+            {
+                SlotCreated->m_OnDropIndex.BindUObject(this, &UDiaShopPanel::SellItemAuto);
+            }
 
             m_AryArySlots[indexPanel]->Add(SlotCreated);
 
@@ -129,7 +133,7 @@ bool UDiaShopPanel::SellItem(int index, FItemInstance& itemWantAdd)
     return false;
 }
 
-bool UDiaShopPanel::SellItemAuto(FItemInstance& itemWantAdd)
+bool UDiaShopPanel::SellItemAuto(int forDele,FItemInstance& itemWantAdd)
 {
     PRINTF("Sell2");
     if((*m_PtrAryStorages)[2]->AddItemAuto(itemWantAdd))

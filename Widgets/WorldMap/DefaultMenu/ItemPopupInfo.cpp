@@ -187,7 +187,7 @@ void UItemPopupInfo::SellItem()
         return;
     }
 
-    if(ADiabloPlayerController::Get->GetShopPanelWidget()->SellItemAuto(m_SelectedItem))
+    if(ADiabloPlayerController::Get->GetShopPanelWidget()->SellItemAuto(-1,m_SelectedItem))
     {
         PlayHideInfoAnim();
         m_OnActionEnd.Broadcast();
