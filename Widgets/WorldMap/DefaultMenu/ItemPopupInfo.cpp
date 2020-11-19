@@ -294,7 +294,15 @@ void UItemPopupInfo::ShowInfoPanel(EPopupType popupType, FItemInstance& itemInst
     SetItemText(itemInst,popupType);
 
     if(itemInst.m_AryOptions.Num()>0)
+    {
         SetOptionTexts(itemInst);
+    }
+    else
+    {
+        m_MainOption->SetString(FText());
+        m_MainOption->SetVisibility(ESlateVisibility::Collapsed);
+        HideAllSubOptions();
+    }
 
     SetFlavorText(itemInst);
 

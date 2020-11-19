@@ -80,47 +80,35 @@ bool UShopItemContainer::AddItem(int droppedIndex, FItemInstance& itemWantAdd) /
     }
     if (CheckSlotValid(droppedIndex, itemWantAdd) && m_ItemAry[droppedIndex].m_ItemID == NAME_None)
     {
-        
         SetItem(droppedIndex, itemWantAdd);
-        
         if(itemWantAdd.m_Holder)
         {
             itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
         }
-
-        //Set BuyItem
-        
         return true;
     }
     ///
     int DragIndex = itemWantAdd.m_nGridIndex;
 
-    FItemInstance Drop = m_ItemAry[droppedIndex];
+    FItemInstance DropOldItem = m_ItemAry[droppedIndex];
 
+    IItemHolder* FromDropItem = DropOldItem.m_Holder;
+    
     //Stack
     bool Result = false;
     //safe
     if (itemWantAdd.GetIsStackable() && itemWantAdd.CheckCanStack() &&
-        Drop.GetIsStackable() && Drop.CheckCanStack() &&
-        Drop.m_ItemID == itemWantAdd.m_ItemID) //스왑방지코드
-    {
-        StackMove(Drop, itemWantAdd, itemWantAdd.m_Holder);
-
-        Result = true;
+        DropOldItem.GetIsStackable() && DropOldItem.CheckCanStack() &&
+        DropOldItem.m_TierID == itemWantAdd.m_TierID &&
+        DropOldItem.m_ItemID == itemWantAdd.m_ItemID) //스왑방지코드
+            {
         PRINTF("Stack");
-    }
+        StackMove(DropOldItem, itemWantAdd, itemWantAdd.m_Holder);
+            }
     else
     {
-        //Swap
         PRINTF("SWap");
-        Result = SwapMove(Drop, itemWantAdd);
-    }
-    //safe
-
-    if (Result)
-    {
-        m_OnSlotChanged.Broadcast(droppedIndex, m_ItemAry[droppedIndex]);
-        m_OnSlotChanged.Broadcast(DragIndex, m_ItemAry[DragIndex]);
+        SwapMove(DropOldItem, itemWantAdd);
     }
 
     return Result;
@@ -149,14 +137,14 @@ bool UShopItemContainer::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
     }
 
     Drag.m_Holder->SetItem(DragIndex, Drop);
-    SetItem(DropIndex, Drag);
+    Drop.m_Holder->SetItem(DropIndex, Drag);
 
     return true;
 }
 
 void UShopItemContainer::StackMove(FItemInstance& Drop, FItemInstance& Drag, IItemHolder* preItemHolder)
 {
-    int DiffStackCount = Drop.m_nMaxStack - Drop.m_nCurrentStack;
+    int DiffStackCount = Drop.GetMaxStack() - Drop.m_nCurrentStack;
 
     int Count = FMath::Min(DiffStackCount, Drag.m_nCurrentStack);
 

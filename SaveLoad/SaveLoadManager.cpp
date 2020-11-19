@@ -483,7 +483,7 @@ int USaveLoadManager::GetEmptyIndex()
 
 void USaveLoadManager::LoadItemDataForInstance(TArray<FItemInstance>& itemAry,ESaveVersion version)
 {
-    for (auto& ItemInst : itemAry)
+    for (FItemInstance& ItemInst : itemAry)
     {
         if (ItemInst.m_ItemID == NAME_None)
         {

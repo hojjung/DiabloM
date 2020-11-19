@@ -17,8 +17,6 @@ FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIn
     m_nCurrentStack = m_ItemData->m_nInitStack;
     m_nGridIndex = gridIndex;
     m_Holder = holder;
-    m_nMaxStack = m_ItemData->m_nMaxStack;
-    m_bStackable = m_ItemData->m_bStackable;
     m_AryOptions = aryUseEffect;
     m_TierID = tierID;
     m_nItemLevel=lv;

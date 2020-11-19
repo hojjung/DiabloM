@@ -47,7 +47,7 @@ void UDiaShopGridSlot::ClearSlot()
 
 void UDiaShopGridSlot::UpdateText(const FItemInstance& itemInstance)
 {
-	if (itemInstance.m_bStackable)
+	if (itemInstance.GetIsStackable())
 	{
 		m_TextItemStackCount->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		m_TextItemStackCount->SetText(FText::AsNumber(itemInstance.m_nCurrentStack));

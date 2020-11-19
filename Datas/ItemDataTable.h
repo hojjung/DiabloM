@@ -246,10 +246,6 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadOnly)
     int m_nItemLevel;
     
-    int m_nMaxStack;
-    
-    bool m_bStackable;
-    
     IItemHolder* m_Holder;
 
     const FItemData* m_ItemData;
@@ -272,12 +268,17 @@ public:
 
     bool CheckCanStack() const
     {
-        return m_nCurrentStack < m_nMaxStack;
+        return m_nCurrentStack < m_ItemData->m_nMaxStack;
     }
     
     bool GetIsStackable() const
     {
-        return m_bStackable;
+        return m_ItemData->m_bStackable;
+    }
+
+    int GetMaxStack()
+    {
+        return m_ItemData->m_nMaxStack;
     }
 
     void ClearData()
@@ -286,8 +287,6 @@ public:
         m_ItemID = NAME_None;
         m_nCurrentStack = -1;
         m_nGridIndex = -1;
-        m_nMaxStack = -1;
-        m_bStackable = false;
         m_ItemData = nullptr;
         m_AryOptions.Empty();
         m_nItemLevel=-1;
@@ -295,7 +294,7 @@ public:
 
     float GetSellValue() const
     {
-        return (m_ItemTier->m_fGoldCostRate*m_nItemLevel*m_ItemData->m_ItemType.GetRow<FItemType>("")->m_MainOptionBonusRate)+m_ItemData->m_nDefaultSellValue;
+        return ((m_ItemTier->m_fGoldCostRate*m_nItemLevel*m_ItemData->m_ItemType.GetRow<FItemType>("")->m_MainOptionBonusRate)+m_ItemData->m_nDefaultSellValue) * m_nCurrentStack;
     }
 };
 

@@ -70,8 +70,6 @@ void UInventory::RemoveItemStack(int index)
 
 bool UInventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //빌드후 여기도
 {
-    auto* FromHolder =itemWantAdd.m_Holder;
-    
     if (this == static_cast<UInventory*>(itemWantAdd.m_Holder) && droppedIndex == itemWantAdd.m_nGridIndex)
     {
         PRINTF("Prevent MySelf");
@@ -99,17 +97,14 @@ bool UInventory::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //빌드�
     //safe
     if (itemWantAdd.GetIsStackable() && itemWantAdd.CheckCanStack() &&
         DropOldItem.GetIsStackable() && DropOldItem.CheckCanStack() &&
+        DropOldItem.m_TierID == itemWantAdd.m_TierID &&
         DropOldItem.m_ItemID == itemWantAdd.m_ItemID) //스왑방지코드
     {
-        StackMove(DropOldItem, itemWantAdd, itemWantAdd.m_Holder);
-
         PRINTF("Stack");
-        FromDropItem->GetItemChangeCallback().Broadcast(droppedIndex, m_ItemAry[droppedIndex]);
-        FromHolder->GetItemChangeCallback().Broadcast(DragIndex, m_ItemAry[DragIndex]);
+        StackMove(DropOldItem, itemWantAdd, itemWantAdd.m_Holder);
     }
     else
     {
-        //Swap
         PRINTF("SWap");
         SwapMove(DropOldItem, itemWantAdd);
     }
@@ -147,7 +142,7 @@ bool UInventory::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
 
 void UInventory::StackMove(FItemInstance& Drop, FItemInstance& Drag, IItemHolder* preItemHolder)
 {
-    int DiffStackCount = Drop.m_nMaxStack - Drop.m_nCurrentStack;
+    int DiffStackCount = Drop.GetMaxStack() - Drop.m_nCurrentStack;
 
     int Count = FMath::Min(DiffStackCount, Drag.m_nCurrentStack);
 
