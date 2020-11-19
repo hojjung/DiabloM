@@ -29,6 +29,15 @@ protected:
     int m_nCurrentEmptyIndex;
 
     FOnItemSlotChanged m_OnSlotChanged;
+
+protected:
+    bool BuyItemGiveGoldShop(const FItemInstance& itemInst);
+
+    bool BuyItemGiveGoldShopOneStack(const FItemInstance& itemInst);
+
+    void SellItemGiveGoldPlayer(const FItemInstance& itemInst);
+
+    void SellItemGiveGoldPlayerOneStack(const FItemInstance& itemInst);
     
 public:
     void InitShopStorage(int xCount, int yCount);
@@ -37,7 +46,7 @@ public:
 
     virtual void SetItem(int index, FItemInstance& itemWantAdd) override;
 
-    void AddItemStack(int index);
+    bool AddItemStack(int index);
 
     virtual void RemoveItem(FItemInstance& itemWantErase) override;
     
@@ -48,6 +57,10 @@ public:
     virtual bool AddItem(int droppedIndex, FItemInstance& itemWantAdd) override;
 
     bool AddItemAuto(FItemInstance& item_instance);
+
+    bool RemoveItemBecauseSell(FItemInstance& itemWantAdd);
+
+    bool RemoveItemBecauseSellStack(FItemInstance& itemWantAdd);
 
     virtual bool SwapMove(FItemInstance& Drop, FItemInstance& Drag) override;
 

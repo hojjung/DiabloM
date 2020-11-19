@@ -30,7 +30,7 @@ FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIn
         m_ItemTier = itemTier;
     }
 
-    m_fBuyCost=(GetSellValue()*2.f);
+    m_fBuyCost=(GetFullStackSellValue()*2.f);
 }
 
 

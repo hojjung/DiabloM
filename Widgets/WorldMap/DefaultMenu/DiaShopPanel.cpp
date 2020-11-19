@@ -46,12 +46,13 @@ void UDiaShopPanel::Init()
 
 
     int Iter = 0;
-    while (Iter < 3)
+    while (Iter < 2)
     {
         SetGrid(Iter,SHOP_X,SHOP_Y);
 
         Iter++;
     }
+    SetGrid(Iter,SHOP_X,SHOP_Y+1);
 }
 
 void UDiaShopPanel::SetGrid(int indexPanel, int x, int y)
@@ -100,29 +101,12 @@ void UDiaShopPanel::UpdateForReSellSlot(int index, FItemInstance& itemInst)
 {
     if(!itemInst.IsEmpty())
     {
-        itemInst.m_fBuyCost=itemInst.GetSellValue();
-
-        PRINTF("Shop-ReSellBuyCost : %f",itemInst.m_fBuyCost);
+        itemInst.m_fBuyCost=itemInst.GetFullStackSellValue();
     }
         
     (*m_AryArySlots[2])[index]->SetSlot(itemInst);
 }
 
-bool UDiaShopPanel::SellItem(int index, FItemInstance& itemWantAdd)
-{
-    float Value=itemWantAdd.GetSellValue();
-    
-    PRINTF("SellValue:%f",Value);
-
-    if((*m_PtrAryStorages)[2]->AddItem(index, itemWantAdd))
-    {
-        ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
-
-        return true;
-    }
-
-    return false;
-}
 
 void UDiaShopPanel::AddItemStack(int index)
 {
@@ -133,39 +117,24 @@ bool UDiaShopPanel::AddItemAuto(FItemInstance& itemWantAdd)
 {
     return (*m_PtrAryStorages)[m_nCurrentSelectedPanelIndex]->AddItemAuto(itemWantAdd);
 }
-bool UDiaShopPanel::SellItemAuto(FItemInstance& itemWantAdd)
+
+bool UDiaShopPanel::SellItem(int index, FItemInstance& itemWantAdd)
 {
-    float Value=itemWantAdd.GetSellValue();
-    
-    PRINTF("SellValue:%f",Value);
-    
-    if((*m_PtrAryStorages)[2]->AddItemAuto(itemWantAdd))
+    PRINTF("Sell1");
+    if((*m_PtrAryStorages)[2]->AddItem(index, itemWantAdd))
     {
-        ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
-        
         return true;
     }
 
     return false;
 }
 
-bool UDiaShopPanel::BuyItem(int index, FItemInstance& itemWantAdd)
+bool UDiaShopPanel::SellItemAuto(FItemInstance& itemWantAdd)
 {
-    float Value = itemWantAdd.m_fBuyCost;
-    PRINTF("BuyValue:%f",Value);
-    
-    if(ADiabloPlayerController::Get->GetPlayerPawn()->SpendGold(Value))
+    PRINTF("Sell2");
+    if((*m_PtrAryStorages)[2]->AddItemAuto(itemWantAdd))
     {
-        if(UDiaInvenGridPanel::GetInvenWidgetInst->AddItem(index,itemWantAdd))
-        {
-            return true;
-        }
-        else
-        {
-            ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
-            //Spent Gold but no space
-            return false;
-        }
+        return true;
     }
 
     return false;
@@ -173,24 +142,8 @@ bool UDiaShopPanel::BuyItem(int index, FItemInstance& itemWantAdd)
 
 bool UDiaShopPanel::BuyItemAuto(FItemInstance& itemWantAdd)
 {
-    float Value = itemWantAdd.m_fBuyCost;
-    PRINTF("BuyValue:%f",Value);
-    
-    if(ADiabloPlayerController::Get->GetPlayerPawn()->SpendGold(Value))
-    {
-        if(UDiaInvenGridPanel::GetInvenWidgetInst->AddItemAuto(itemWantAdd))
-        {
-            return true;
-        }
-        else
-        {
-            ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
-            //Spent Gold but no space
-            return false;
-        }
-    }
-
-    return false;
+    PRINTF("Buy2");
+    return (*m_PtrAryStorages)[m_nCurrentSelectedPanelIndex]->RemoveItemBecauseSell(itemWantAdd);
 }
 
 void UDiaShopPanel::Open1(bool bOpen)
@@ -290,7 +243,6 @@ void UDiaShopPanel::UpdatePanel(AShopKeeper* shop_keeper)
     }
 
     m_BtnPanel1->SetCheckedState(ECheckBoxState::Checked);
-    Open1(true);
 }
 
 void UDiaShopPanel::ClearPanel()
@@ -319,5 +271,9 @@ void UDiaShopPanel::ClearPanel()
         Iter++;
     }
 
+    m_BtnPanel2->SetCheckedState(ECheckBoxState::Unchecked);
+    m_BtnPanel3->SetCheckedState(ECheckBoxState::Unchecked);
+    m_BtnPanel1->SetCheckedState(ECheckBoxState::Checked);
+    
     m_PtrAryStorages = nullptr;
 }

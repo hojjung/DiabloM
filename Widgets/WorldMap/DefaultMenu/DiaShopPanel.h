@@ -71,8 +71,6 @@ public:
 
     bool SellItemAuto(FItemInstance& itemWantAdd);
 
-    bool BuyItem(int index, FItemInstance& itemWantAdd);
-
     bool BuyItemAuto(FItemInstance& itemWantAdd);
 
     void AddItemStack(int index);

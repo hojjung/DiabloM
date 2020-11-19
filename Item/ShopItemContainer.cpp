@@ -1,14 +1,35 @@
 #include "ShopItemContainer.h"
 #include "Inventory.h"
+#include "Characters/PlayerDiabloCharacter.h"
 #include "Datas/ItemDataTable.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Item/ItemManager.h"
+#include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
 
 UShopItemContainer::~UShopItemContainer()
 {
     m_nCurrentEmptyIndex = -1;
     m_nXGridCount = -1;
     m_nYGridCount = -1;
+}
+
+bool UShopItemContainer::BuyItemGiveGoldShop(const FItemInstance& itemInst)
+{
+    return ADiabloPlayerController::Get->GetPlayerPawn()->SpendGold(itemInst.m_fBuyCost);
+}
+
+bool UShopItemContainer::BuyItemGiveGoldShopOneStack(const FItemInstance& itemInst)
+{
+    return ADiabloPlayerController::Get->GetPlayerPawn()->SpendGold(itemInst.m_fBuyCost);
+}
+
+void UShopItemContainer::SellItemGiveGoldPlayer(const FItemInstance& itemInst)
+{
+    ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(itemInst.GetFullStackSellValue());
+}
+
+void UShopItemContainer::SellItemGiveGoldPlayerOneStack(const FItemInstance& itemInst)
+{
+    ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(itemInst.GetOneStackSellValue());
 }
 
 void UShopItemContainer::InitShopStorage(int xCount, int yCount)
@@ -40,19 +61,13 @@ void UShopItemContainer::SetItem(int droppedIndex, FItemInstance& itemWantAdd)
     m_OnSlotChanged.Broadcast(droppedIndex, m_ItemAry[droppedIndex]);
 }
 
-void UShopItemContainer::AddItemStack(int index)
-{
-    m_ItemAry[index].m_nCurrentStack++;
-
-    m_OnSlotChanged.Broadcast(index, m_ItemAry[index]);
-}
 
 void UShopItemContainer::RemoveItem(FItemInstance& itemWantErase)
 {
     RemoveItemByIndex(itemWantErase.m_nGridIndex);
 }
 
-void UShopItemContainer::RemoveItemByIndex(int index)
+void UShopItemContainer::RemoveItemByIndex(int index) //Sell
 {
     m_ItemAry[index].ClearData();
     m_OnSlotChanged.Broadcast(index, m_ItemAry[index]);
@@ -70,18 +85,33 @@ void UShopItemContainer::RemoveItemStack(int index)
     m_OnSlotChanged.Broadcast(index, m_ItemAry[index]);
 }
 
+bool UShopItemContainer::AddItemStack(int index)
+{
+    
+
+    m_ItemAry[index].m_nCurrentStack++;
+
+    m_OnSlotChanged.Broadcast(index, m_ItemAry[index]);
+
+    return true;
+}
+
 bool UShopItemContainer::AddItem(int droppedIndex, FItemInstance& itemWantAdd) //빌드후 여기도
 {
     if (this == static_cast<UShopItemContainer*>(itemWantAdd.m_Holder) && droppedIndex == itemWantAdd.m_nGridIndex)
     {
         PRINTF("Prevent MySelf");
-        
+
         return false;
     }
-    if (CheckSlotValid(droppedIndex, itemWantAdd) && m_ItemAry[droppedIndex].m_ItemID == NAME_None)
+
+    if (CheckSlotValid(droppedIndex, itemWantAdd) &&
+        m_ItemAry[droppedIndex].m_ItemID == NAME_None)
     {
+        SellItemGiveGoldPlayer(itemWantAdd);
         SetItem(droppedIndex, itemWantAdd);
-        if(itemWantAdd.m_Holder)
+
+        if (itemWantAdd.m_Holder)
         {
             itemWantAdd.m_Holder->RemoveItem(itemWantAdd);
         }
@@ -93,7 +123,7 @@ bool UShopItemContainer::AddItem(int droppedIndex, FItemInstance& itemWantAdd) /
     FItemInstance DropOldItem = m_ItemAry[droppedIndex];
 
     IItemHolder* FromDropItem = DropOldItem.m_Holder;
-    
+
     //Stack
     bool Result = false;
     //safe
@@ -101,10 +131,10 @@ bool UShopItemContainer::AddItem(int droppedIndex, FItemInstance& itemWantAdd) /
         DropOldItem.GetIsStackable() && DropOldItem.CheckCanStack() &&
         DropOldItem.m_TierID == itemWantAdd.m_TierID &&
         DropOldItem.m_ItemID == itemWantAdd.m_ItemID) //스왑방지코드
-            {
+    {
         PRINTF("Stack");
         StackMove(DropOldItem, itemWantAdd, itemWantAdd.m_Holder);
-            }
+    }
     else
     {
         PRINTF("SWap");
@@ -126,6 +156,57 @@ bool UShopItemContainer::AddItemAuto(FItemInstance& item_instance)
     return AddItem(Result, item_instance);
 }
 
+bool UShopItemContainer::RemoveItemBecauseSell(FItemInstance& itemWantAdd)
+{
+    float Value = itemWantAdd.m_fBuyCost;
+    
+    if(!BuyItemGiveGoldShop(itemWantAdd))
+    {
+        return  false;
+    }
+
+    if(!UDiaInvenGridPanel::GetInvenWidgetInst->AddItemAuto(itemWantAdd))
+    {
+        //Fail No Space
+        ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
+
+        return false;
+    }
+    
+    RemoveItem(itemWantAdd);
+
+    return true;
+}
+
+bool UShopItemContainer::RemoveItemBecauseSellStack(FItemInstance& itemWantAdd)
+{
+    float Value = itemWantAdd.m_fBuyCost;
+    
+    if(!BuyItemGiveGoldShopOneStack(itemWantAdd))
+    {
+        return  false;
+    }
+
+    RemoveItemStack(itemWantAdd.m_nGridIndex);
+
+    FItemInstance Item=itemWantAdd;
+    
+    Item.m_nCurrentStack=1;
+    
+    if(!UDiaInvenGridPanel::GetInvenWidgetInst->AddItemAuto(Item))
+    {
+        //Fail No Space
+        ADiabloPlayerController::Get->GetPlayerPawn()->EarnGold(Value);
+
+        return false;
+    }
+    
+    RemoveItem(itemWantAdd);
+    
+
+    return true;
+}
+
 bool UShopItemContainer::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
 {
     int DropIndex = Drop.m_nGridIndex;
@@ -136,6 +217,12 @@ bool UShopItemContainer::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
         return false;
     }
 
+    if(!BuyItemGiveGoldShop(Drop))
+    {
+        return false;
+    }
+    SellItemGiveGoldPlayer(Drag);
+    
     Drag.m_Holder->SetItem(DragIndex, Drop);
     Drop.m_Holder->SetItem(DropIndex, Drag);
 
@@ -150,7 +237,10 @@ void UShopItemContainer::StackMove(FItemInstance& Drop, FItemInstance& Drag, IIt
 
     while (Count--)
     {
+        SellItemGiveGoldPlayerOneStack(Drop);
+        
         AddItemStack(Drop.m_nGridIndex);
+        
         Drag.m_nCurrentStack--;
     }
 
@@ -196,17 +286,17 @@ void UShopItemContainer::SetItemAry(TArray<FItemInstance>& loadedAry)
 {
     for (int i = 0; i < m_ItemAry.Num(); i++)
     {
-        if(loadedAry.Num()<=i)
+        if (loadedAry.Num() <= i)
         {
             //inven size changed
             return;
         }
-        if(!loadedAry[i].m_ItemData)
+        if (!loadedAry[i].m_ItemData)
         {
             continue;
         }
 
-        AddItem(i,loadedAry[i]);
+        AddItem(i, loadedAry[i]);
     }
 }
 
@@ -221,4 +311,3 @@ int UShopItemContainer::GetEmptyIndex()
     }
     return -1;
 }
-

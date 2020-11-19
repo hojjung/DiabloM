@@ -292,9 +292,14 @@ public:
         m_nItemLevel=-1;
     }
 
-    float GetSellValue() const
+    float GetFullStackSellValue() const
     {
         return ((m_ItemTier->m_fGoldCostRate*m_nItemLevel*m_ItemData->m_ItemType.GetRow<FItemType>("")->m_MainOptionBonusRate)+m_ItemData->m_nDefaultSellValue) * m_nCurrentStack;
+    }
+
+    float GetOneStackSellValue() const
+    {
+        return (m_ItemTier->m_fGoldCostRate*m_nItemLevel*m_ItemData->m_ItemType.GetRow<FItemType>("")->m_MainOptionBonusRate)+m_ItemData->m_nDefaultSellValue;
     }
 };
 

@@ -7,6 +7,7 @@
 #include "Item/ItemManager.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Managers/DiabloGameMode.h"
 
 
 void UItemPopupInfo::NativeOnInitialized()
@@ -37,6 +38,8 @@ void UItemPopupInfo::NativeOnInitialized()
     UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(Slot);
     m_InitPos = PanelSlot->GetPosition();
 
+
+    m_AnimEndDele.BindDynamic(this,&UItemPopupInfo::HideInfoPanel);
 }
 
 FReply UItemPopupInfo::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -82,7 +85,7 @@ void UItemPopupInfo::UseItem()
 
 void UItemPopupInfo::EquipItem()
 {
-    PRINTF("Equip");
+    PRINTF("POPUP Equip");
 
     if (m_SelectedItem.IsEmpty())
     {
@@ -283,6 +286,8 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator, int countS
 
 void UItemPopupInfo::ShowInfoPanel(EPopupType popupType, FItemInstance& itemInst)
 {
+    UnbindAllFromAnimationFinished(m_FadeAnimation);
+    
     SetRenderOpacity(1.f);
     m_BGForTouch->SetVisibility(ESlateVisibility::Visible);
     SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -293,14 +298,16 @@ void UItemPopupInfo::ShowInfoPanel(EPopupType popupType, FItemInstance& itemInst
     SetColorTier(itemInst);
     SetItemText(itemInst,popupType);
 
-    if(itemInst.m_AryOptions.Num()>0)
+    if(itemInst.m_ItemData->m_bEquipable)
     {
         SetOptionTexts(itemInst);
     }
     else
     {
         m_MainOption->SetString(FText());
+        
         m_MainOption->SetVisibility(ESlateVisibility::Collapsed);
+        
         HideAllSubOptions();
     }
 
@@ -333,7 +340,7 @@ void UItemPopupInfo::SetItemText(const FItemInstance& itemInst,EPopupType popupT
           m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.m_fBuyCost));
               break;
         default:
-          m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.GetSellValue()));
+          m_TextSellValue->SetString(UKismetTextLibrary::Conv_IntToText(itemInst.GetFullStackSellValue()));
     }
     
     
@@ -349,6 +356,7 @@ float UItemPopupInfo::SetFlavorText(const FItemInstance& itemInst)
 float UItemPopupInfo::SetOptionTexts(const FItemInstance& itemInst)
 {
     m_MainOption->HideCompare();
+    m_MainOption->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_MainOption->SetIcon(itemInst.m_AryOptions[0].m_DataOption->m_OptionIcon);
     m_MainOption->SetString(itemInst.m_AryOptions[0].GetOptionText());
     //옵션의 종류가 같을때만?
@@ -385,25 +393,35 @@ void UItemPopupInfo::PlayHideInfoAnim(float delay)
     {
         return;
     }
-
-    GetWorld()->GetTimerManager().ClearTimer(m_TimerHandle);
+    
+    
+    
+    BindToAnimationFinished(m_FadeAnimation, m_AnimEndDele);
 
     m_BGForTouch->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    
     m_SelectedItem.ClearData();
+    
     PlayAnimationReverse(m_FadeAnimation);
-    GetWorld()->GetTimerManager().SetTimer(m_TimerHandle, this, &UItemPopupInfo::HideInfoPanel,
-                                           m_FadeAnimation->GetEndTime() + delay, false);
 }
 
 void UItemPopupInfo::HideInfoPanel()
 {
+    PRINTF("HideInfoPanel");
+    
     m_SelectedItem.ClearData();
+    
     SetVisibility(ESlateVisibility::Collapsed);
+    
     m_UseButton->SetVisibility(ESlateVisibility::Hidden);
+    
     m_EquipButton->SetVisibility(ESlateVisibility::Hidden);
-    //
+    
     UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(Slot);
+    
     PanelSlot->SetPosition(m_InitPos);
+
+    //UnbindAllFromAnimationFinished(m_FadeAnimation);
 }
 
 void UItemPopupInfo::CompareItem(float origin, float wantCompareOther)

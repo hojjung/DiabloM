@@ -101,11 +101,11 @@ protected:
 
 	FItemInstance m_SelectedItem;
 
-	FTimerHandle m_TimerHandle;
-
 	FOnActionEnd m_OnActionEnd;
 
 	FVector2D m_InitPos;
+
+	FWidgetAnimationDynamicEvent m_AnimEndDele;
 
 protected:
 	virtual FReply NativeOnMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent )override;
@@ -158,8 +158,7 @@ public:
 
 	UFUNCTION(BlueprintCallable,Category="Info")
 	void PlayHideInfoAnim(float delay=0.f);
-
-	UFUNCTION(BlueprintCallable,Category="Info")
+UFUNCTION(BlueprintCallable,Category="Info")
 	void HideInfoPanel();
 
 	FORCEINLINE UButton* GetEquipButton()

@@ -66,15 +66,6 @@ void UDiaInvenGridPanel::UpdateSlot(int index, FItemInstance& itemInst)
 {
 	m_ArySlot[index]->SetSlot(itemInst);
 
-	if(itemInst.IsEmpty())
-	{
-		PRINTF("invenUpdate:NoItem");    
-	}
-	else
-	{
-        
-		PRINTF("invenUpdate:%s",*itemInst.m_ItemData->m_ShowingName.ToString());
-	}
 }
 
 
@@ -93,17 +84,6 @@ void UDiaInvenGridPanel::AddItemStack(int index )
 	m_Inven->AddItemStack(index);
 }
 
-void UDiaInvenGridPanel::RemoveItem(int index)
-{
-	PRINTF("InvenGridPanel RemoveItem");
-	//m_Inven->RemoveItem(index);//Why????
-}
-
-void UDiaInvenGridPanel::RemoveItemStack(int index )
-{
-	PRINTF("InvenGridPanel RemoveItemStack");
-	//m_Inven->RemoveItemStack(index);
-}
 
 void UDiaInvenGridPanel::UpdateGold(float v)
 {

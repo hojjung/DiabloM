@@ -48,10 +48,6 @@ public:
     bool AddItemAuto(FItemInstance& itemWantAdd);
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	void AddItemStack(int index);
-	UFUNCTION(BlueprintCallable, Category = "Widget")
-	void RemoveItem(int index);
-	UFUNCTION(BlueprintCallable, Category = "Widget")
-	void RemoveItemStack(int index);
 
 	void UpdateGold(float v);
 
