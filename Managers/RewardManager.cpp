@@ -129,7 +129,7 @@ ADroppedItem* URewardManager::DropItemActor(APawn* dropCenterActor, float dropRa
 {
     ADroppedItem* DropItem=nullptr;
 
-    if (!m_PoolItem.Dequeue(DropItem))
+    if (!m_PoolItem.Dequeue(DropItem)||!DropItem)
     {
         DropItem = Cast<ADroppedItem>(SpawnInteractActor(UMonsterItemDropTable::ClassDropItemActor));
         DropItem->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueItemActor);
@@ -155,7 +155,7 @@ ADroppedGold* URewardManager::DropGoldActor(APawn* dropCenterActor, float dropRa
 {
     ADroppedGold* DropGold=nullptr;
 
-    if (!m_PoolGold.Dequeue(DropGold))
+    if (!m_PoolGold.Dequeue(DropGold)||!DropGold)
     {
         DropGold = Cast<ADroppedGold>(SpawnInteractActor(UMonsterItemDropTable::ClassDropGoldActor));
         DropGold->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueGoldActor);
@@ -178,7 +178,7 @@ AHealthSphere* URewardManager::DropHpSphereActor(APawn* dropCenterActor, float d
 {
     AHealthSphere* DropHp=nullptr;
 
-    if (!m_PoolHp.Dequeue(DropHp))
+    if (!m_PoolHp.Dequeue(DropHp)||!DropHp)
     {
         DropHp = Cast<AHealthSphere>(SpawnInteractActor(UMonsterItemDropTable::ClassDropHealthSphere));
         DropHp->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueHpSphereActor);
