@@ -40,7 +40,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimSequenceBase* m_DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimSequenceBase* m_TookHitMontage;
+	UAnimMontage* m_TookHitMontage;
 };
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
@@ -248,4 +248,6 @@ public:
 	UAnimSequenceBase* m_IdleAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimSequenceBase* m_MoveAnim;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UAnimInstance> m_AnimBP;
 };

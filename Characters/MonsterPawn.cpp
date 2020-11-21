@@ -53,6 +53,9 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
     m_TextUnitName = UnitData->m_ShowingName;
     
     m_SkBody->SetSkeletalMesh(UnitData->m_Mesh);
+
+    m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+    m_SkBody->SetAnimInstanceClass(UnitData->m_AnimBP);
     
     m_GEUnitStat = UnitData->m_DefaultStatTable; //몬스터 랜덤 데이터가 마치 아이템 옵션처럼 몬스터에게 붙어야한다.
     

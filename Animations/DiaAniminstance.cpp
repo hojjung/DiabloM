@@ -12,6 +12,7 @@ void FDiaAnimInstanceProxy::InitializeObjects(UAnimInstance* InAnimInstance)
 
 void FDiaAnimInstanceProxy::Update(float DeltaSeconds)
 {
+    
     m_DiaAnim->UpdateVelocity();
 }
 
@@ -20,11 +21,25 @@ void UDiaAniminstance::NativeBeginPlay()
     Super::NativeBeginPlay();
     
     m_Owner=Cast<AUnitPawn>( TryGetPawnOwner());
+
+#if WITH_EDITOR
+    if(!m_Owner)
+    {
+        return;
+    }
+#endif
+    
     m_UnitPawnVelocityFromMoveComp=m_Owner->GetVelocityPtr();
 }
 
 void UDiaAniminstance::UpdateVelocity()
 {
+#if WITH_EDITOR
+    if(!m_Owner)
+    {
+        return;
+    }
+#endif
     m_fVelocity=GetVeloPercentOne();
 }
 
