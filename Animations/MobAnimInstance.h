@@ -1,13 +1,13 @@
 #pragma once
-
 #include "DiabloM.h"
 #include "AnimInstanceProxy.h"
 #include "Animation/AnimInstance.h"
-#include "DiaAniminstance.generated.h"
+#include "MobAnimInstance.generated.h"
 
-class UDiaAniminstance;
+
+class UMobAnimInstance;
 USTRUCT(BlueprintType)
-struct FDiaAnimInstanceProxy : public FAnimInstanceProxy
+struct FMobAnimInstanceProxy : public FAnimInstanceProxy
 {
 	GENERATED_BODY()
 	
@@ -17,24 +17,24 @@ public:
 	virtual void Update(float DeltaSeconds) override;
 
 	UPROPERTY(Transient)
-	UDiaAniminstance* m_DiaAnim=nullptr;
+	UMobAnimInstance* m_MobAnim=nullptr;
 };
 
-class AUnitPawn;
+class AMonsterPawn;
+
 UCLASS()
-class DIABLOM_API UDiaAniminstance : public UAnimInstance
+class DIABLOM_API UMobAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 	
 public:
 	UPROPERTY(Transient, BlueprintReadOnly,meta = (AllowPrivateAccess = "true"))
-	FDiaAnimInstanceProxy m_Proxy;
+	FMobAnimInstanceProxy m_Proxy;
 	UPROPERTY(Transient,VisibleAnywhere,BlueprintReadWrite)
-	float m_fVelocity;
+	bool m_bIsMoving;
 	UPROPERTY()
-	AUnitPawn* m_Owner;
+	AMonsterPawn* m_Owner;
 	
-	FVector* m_UnitPawnVelocityFromMoveComp;
 public:
 	virtual void NativeBeginPlay() override;
 	
@@ -45,11 +45,6 @@ public:
 	
 	virtual void DestroyAnimInstanceProxy(FAnimInstanceProxy* InProxy) override {}
 
-	void UpdateVelocity();
+	void UpdateMoveFlag();
 	
-    float GetVelocitySqr() const;
-	
-    float GetVeloPercentOne() const;
-	
-	friend struct FDiaAnimInstanceProxy;
 };

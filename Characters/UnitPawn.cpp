@@ -29,7 +29,6 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 
     CreateSkMeshComponent(RootComponent, &m_SkBody, "SkMesh00");
     m_SkBody->bCastDynamicShadow = true;
-
     m_nCharacterLevel = 1;
     m_AbilitySystemComponent = CreateDefaultSubobject<UDiabloAbilitySystemComp>("AbilitySystemComponent00");
     m_AbilitySystemComponent->SetIsReplicated(true); //bCachedIsNetSimulated
@@ -66,6 +65,12 @@ void AUnitPawn::CreateSkMeshComponent(USceneComponent* rootWant, USkeletalMeshCo
     (*refSkComp)->CastShadow = false;
     (*refSkComp)->bCastDynamicShadow = false;
     (*refSkComp)->bReceiveMobileCSMShadows = false;
+
+    (*refSkComp)->bEnableUpdateRateOptimizations=true;
+
+    (*refSkComp)->bComponentUseFixedSkelBounds=true;
+
+    
 }
 
 // Called when the game starts or when spawned
@@ -393,6 +398,7 @@ float AUnitPawn::GetMoveSpeed() const
 }
 
 
+
 bool AUnitPawn::SetCharacterLevel(int NewLevel)
 {
     if (NewLevel > MAXLEVEL)
@@ -421,6 +427,11 @@ FVector AUnitPawn::GetVelocity() const
     return GetMovementComponent()->Velocity;
 }
 
+FVector* AUnitPawn::GetVelocityPtr() const
+{
+    return &(GetMovementComponent()->Velocity);
+}
+
 void AUnitPawn::SetBlockMove()
 {
     Cast<UUnitMovement>( GetMovementComponent())->SetMoveSpeed(0.f);
@@ -440,7 +451,8 @@ void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
         
         if(m_StunMontage)
         {
-            PlayAnimMontage(m_StunMontage);
+            
+            PlayAnim(m_StunMontage,false);
         }
         
         return;
@@ -448,7 +460,7 @@ void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
     
     if(m_StunMontage)
     {
-        StopAnimMontage(m_StunMontage);
+        PlayAnim(m_StunMontage,false);
     }
     
     SetUnblockMove();
@@ -458,7 +470,7 @@ void AUnitPawn::PlayTookHitMontage()
 {
     if(m_TookHitMontage)
     {
-        PlayAnimMontage(m_TookHitMontage);
+        PlayAnim(m_TookHitMontage,false);
     }
 }
 
@@ -466,6 +478,12 @@ void AUnitPawn::FocusTarget(AUnitPawn* target)
 {
 }
 
+float AUnitPawn::PlayAnim(UAnimSequenceBase* animAsset, bool isLoop)
+{
+    m_SkBody->PlayAnimation(animAsset,isLoop);
+
+    return animAsset->SequenceLength;
+}
 
 float AUnitPawn::PlayAnimMontage(UAnimMontage* anim_montage, float InPlayRate, FName StartSectionName)
 {
@@ -493,7 +511,9 @@ float AUnitPawn::PlayAnimMontage(UAnimMontage* anim_montage, float InPlayRate, F
 void AUnitPawn::StopAnimMontage(UAnimMontage* AnimMontage)
 {
     UAnimInstance* AnimInstance = m_SkBody->GetAnimInstance();
+    
     UAnimMontage* MontageToStop = (AnimMontage) ? AnimMontage : GetCurrentMontage();
+    
     bool bShouldStopMontage = AnimInstance && MontageToStop && !AnimInstance->Montage_GetIsStopped(MontageToStop);
 
     if (bShouldStopMontage)

@@ -613,7 +613,7 @@ void APlayerDiabloCharacter::Die()
 
     if (m_DeathMontage)
     {
-        float AnimLength = PlayAnimMontage(m_DeathMontage) - 0.2f;
+        float AnimLength = PlayAnim(m_DeathMontage) - 0.2f;
 
         if (GEngine->GetNetMode(GetWorld()) < NM_Client)
         {

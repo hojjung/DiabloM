@@ -203,7 +203,7 @@ void UUnitMovement::StopActiveMovement()
 
 FRotator UUnitMovement::ComputeOrientToMovementRotation(const FRotator& CurrentRotation) const
 {
-    if (Velocity.IsNearlyZero(0.01f))
+    if (Velocity.IsNearlyZero(0.01f))//회전각이 0이여서 // 몬스터의 경우 추적 대상이 존재한다면 추적대상을 바라봐야함,이함수랑 별개로 만들어야할듯? ㄴㄴ 그냥 움직일때는 고개돌리는게 맞을듯
     {
         return CurrentRotation;
     }

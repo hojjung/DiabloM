@@ -3,7 +3,10 @@
 #pragma once
 
 #include "MobFSMBase.h"
+
 #include "MobFSM_Swamer.generated.h"
+
+class AMonsterPawn;
 
 UCLASS()
 class DIABLOM_API UMobFSM_Swamer : public UMobFSMBase
@@ -17,7 +20,7 @@ public:
 
 protected:
     UPROPERTY()
-    AUnitPawn* m_OwnerUnit;
+    AMonsterPawn* m_OwnerMonster;
 
     FVector m_StartPoint;
 

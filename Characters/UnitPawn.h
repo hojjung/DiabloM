@@ -53,11 +53,11 @@ protected:
 
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Character")
-    UAnimMontage* m_DeathMontage;
+    UAnimSequenceBase* m_DeathMontage;
     UPROPERTY(VisibleAnywhere, Category = "Character")
-    UAnimMontage* m_StunMontage;
+    UAnimSequenceBase* m_StunMontage;
     UPROPERTY(VisibleAnywhere, Category = "Character")
-    UAnimMontage* m_TookHitMontage;
+    UAnimSequenceBase* m_TookHitMontage;
     UPROPERTY(VisibleAnywhere, Category = "Character")
     TSubclassOf<UGameplayEffect> m_GEUnitStat;
     UPROPERTY(VisibleAnywhere, Category = "Character")
@@ -137,6 +137,8 @@ public:
     virtual void PrintStats();
 
     float PlayAnimMontage(UAnimMontage* anim_montage, float InPlayRate = 1.f, FName StartSectionName = NAME_None);
+
+    float PlayAnim(UAnimSequenceBase* animAsset,bool isLoop=false);
 
     void StopAnimMontage(UAnimMontage* AnimMontage);
 
@@ -220,6 +222,8 @@ public: //AttributeGetter
     friend UDiabloGameInstance;
 
     virtual FVector GetVelocity() const override;
+
+    FVector* GetVelocityPtr() const;
     void SetBlockMove();
     void SetUnblockMove();
 
@@ -227,3 +231,5 @@ public: //AttributeGetter
 
     void PlayTookHitMontage();
 };
+
+

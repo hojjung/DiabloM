@@ -21,7 +21,7 @@ struct FEntityTable : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FEntityTable(): m_DeathMontage(nullptr)
+	FEntityTable(): m_StunMontage(nullptr), m_DeathMontage(nullptr), m_TookHitMontage(nullptr)
 	{
 	}
 
@@ -36,11 +36,11 @@ public:
 	TSubclassOf<UGameplayEffect> m_DefaultStatTable;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_StunMontage;
+	UAnimSequenceBase* m_StunMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_DeathMontage;
+	UAnimSequenceBase* m_DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_TookHitMontage;
+	UAnimSequenceBase* m_TookHitMontage;
 };
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
@@ -228,15 +228,14 @@ struct FMonsterTable : public FEntityTable
 	GENERATED_BODY()
 
 public:
-	FMonsterTable(): m_Mesh(nullptr)
+	FMonsterTable(): m_Mesh(nullptr),m_IdleAnim(nullptr),m_MoveAnim(nullptr)
 	{
+		
 	}
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USkeletalMesh* m_Mesh;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UAnimInstance> m_AnimBP;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMonsterTypeHandle m_TypeHandle;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -245,5 +244,8 @@ public:
 	TSubclassOf<UDiabloAbility> m_BaseAttack;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UMobFSMBase> m_MobFSM;
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UAnimSequenceBase* m_IdleAnim;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UAnimSequenceBase* m_MoveAnim;
 };

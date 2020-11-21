@@ -231,6 +231,7 @@ void UPlayMontageAndWaitForEvent::OnAbilityCancelled()
 			OnCancelled.Broadcast(FGameplayTag(), FGameplayEventData());
 		}
 	}
+
 }
 
 void UPlayMontageAndWaitForEvent::OnMontageEnded(UAnimMontage * Montage, bool bInterrupted)

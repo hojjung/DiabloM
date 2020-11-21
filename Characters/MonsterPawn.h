@@ -37,6 +37,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float m_fDropRadius;
 	FMonsterItemDropRow* m_DropDataRow;
+public:
+	bool m_bIsMoving;
 public: //need more monster
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void ShowStatusBar();
@@ -67,5 +69,4 @@ public: //need more monster
 
 	virtual FVector GetLastSeenLocation() override;
 
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };
