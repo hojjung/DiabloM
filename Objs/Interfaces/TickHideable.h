@@ -13,13 +13,20 @@ class UTickHideable : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+class QuadtreeNode;
+
 class DIABLOM_API ITickHideable
 {
 	GENERATED_BODY()
 
 public:
+	virtual FVector GetActorLocation() =0;
+
+	virtual void RegisterToQuadTreeBound()=0;
+
+
+	virtual void ShowAll(bool hasBeenShowed) =0;
 	
+	virtual void HideAll(bool hasBeenShowed) =0;
+
 };

@@ -42,6 +42,12 @@ ADiabloGameMode::ADiabloGameMode()
 
 	//m_FOWMaterialTemplate
 	m_PostProcess=CreateDefaultSubobject<UPostProcessComponent>("PostProcess");
+
+	m_nDepth=3;
+
+	m_Min = FVector2D(0,0);
+	
+	m_Max = FVector2D(1000,1000);
 }
 
 void ADiabloGameMode::InitRewardManager()
@@ -83,6 +89,7 @@ void ADiabloGameMode::StartPlay()
 	
 	
 	
+	m_QuadTree =  MakeUnique<Quadtree>(m_nDepth,m_Min,m_Max);
 	//ㄴBeginPlay Before
 	Super::StartPlay();
 
@@ -92,6 +99,14 @@ void ADiabloGameMode::StartPlay()
 	InitMinimap();
 	//
 	
+
+}
+
+void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	m_QuadTree.Release();
 }
 
 void ADiabloGameMode::SetDungeonInstanceToMap()
@@ -150,6 +165,11 @@ APortal* ADiabloGameMode::GetSpawnPoint()
 	return m_PlayerVillageSpawn;
 }
 
+void ADiabloGameMode::RegisterQuadElement(ITickHideable* actor)
+{
+	m_QuadTree->AddElement(actor);
+}
+
 void ADiabloGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
@@ -157,6 +177,10 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 	//Need Bool
 	m_MiniMap->MiniMapTick(DeltaSeconds);
 	//m_FOW->MyTick(DeltaSeconds);
+
+	m_QuadTree->DrawBoxes(GetWorld());
+
+	m_QuadTree->TickTryShowActors(ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation());
 }
 
 

@@ -42,7 +42,8 @@ void AHealthSphere::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
     }
     else
     {
-        Destroy();
+        //Destroy();
+        HideAll(false);
     }
 }
 

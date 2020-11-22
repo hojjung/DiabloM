@@ -11,6 +11,8 @@ ADroppedItem::ADroppedItem(const FObjectInitializer& objInit):Super(objInit)
 	m_BillBoard->SetHiddenInGame(true);
 	
 	m_CollSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	m_bIsOverlapAble=false;
 }
 
 void ADroppedItem::BeginPlay()
@@ -22,7 +24,6 @@ void ADroppedItem::BeginPlay()
 		SetItem(m_TableID.RowName);
 		
 		DropEnd();
-		
 	}
 }
 
@@ -53,16 +54,15 @@ void ADroppedItem::Interact(AActor * instigator)
 	}
 	else
 	{
-		Destroy();
+		//Destroy();
+		HideAll(false);
 	}
 }
 
 void ADroppedItem::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	FName Tier=GetCurrentItem().m_ItemTier->m_TierID;
-	
-	if(Tier=="Set"||Tier=="Immortal"||Tier=="Legend"||Tier=="Epic")
+	if(m_bIsOverlapAble)
 	{
 		Interact(OtherActor);
 	}
@@ -88,6 +88,14 @@ void ADroppedItem::SetItem(FName itemID)
 	m_ItemInstance = GetGameInstance<UDiabloGameInstance>()->CreateItem(itemID);
 
 	SetItemVisual(m_ItemInstance);
+
+	FName Tier=GetCurrentItem().m_ItemTier->m_TierID;
+	
+	if(Tier=="Set"||Tier=="Immortal"||Tier=="Legend"||Tier=="Epic")
+	{
+		m_bIsOverlapAble=true;
+	}
+	
 }
 
 void ADroppedItem::SetItemInstance(FItemInstance& itemInst)
@@ -110,6 +118,8 @@ void ADroppedItem::DropEnd()
 	SetActorHiddenInGame(false);
 	m_ParticleEffect->Activate(true);
 	m_BillBoard->SetHiddenInGame(false);
+
+	
 	m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	
 	FRotator Rot;

@@ -22,6 +22,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	FItemInstance m_ItemInstance;
 
+	bool m_bIsOverlapAble;
+
 protected:
 	virtual void BeginPlay() override;
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)

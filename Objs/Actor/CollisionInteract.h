@@ -8,12 +8,14 @@
 #include "GameFramework/Actor.h"
 #include "Objs/Interfaces/Interactable.h"
 #include "Components/StaticMeshComponent.h"
+#include "Objs/Interfaces/TickHideable.h"
+
 #include "CollisionInteract.generated.h"
 
 class ACollisionInteract;
 DECLARE_MULTICAST_DELEGATE_OneParam(FCollTaskEnd,ACollisionInteract*);
 UCLASS()
-class DIABLOM_API ACollisionInteract : public AActor,public IInteractable
+class DIABLOM_API ACollisionInteract : public AActor,public IInteractable, public ITickHideable
 {
 	GENERATED_BODY()
 	
@@ -44,6 +46,17 @@ public:
 	{
 		return m_OnTaskEnd;
 	}
+
+public:
+	virtual FVector GetActorLocation() override ;
+
+	virtual void RegisterToQuadTreeBound() override ;
+
+	virtual void ShowAll(bool hasBeenShowed) override ;
+	
+	virtual void HideAll(bool hasBeenShowed) override ;
+
+
 };
 
 

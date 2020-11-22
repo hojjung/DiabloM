@@ -5,12 +5,15 @@
 #include "CoreMinimal.h"
 
 #include "Objs/Actor/DiaDungeon.h"
+#include "Objs/Containers/Quadtree.h"
 #include "UObject/NoExportTypes.h"
 #include "DungeonManager.generated.h"
 
 
 class AMonsterPawn;
 struct FDungeonDataRow;
+
+
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDungeonCreate,bool);
 
@@ -41,6 +44,8 @@ protected:
 	FDungeonCreate m_OnPortalCreate;
 	UPROPERTY(Transient)
 	UMaterialInterface* m_MatMinimap;
+	
+	
 protected:
 	int StageLevelToDungeonLevel(int stageLevel);
 	

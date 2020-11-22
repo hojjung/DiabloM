@@ -85,6 +85,6 @@ void ADroppedGold::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
     }
     else
     {
-        Destroy();
+        HideAll(false);
     }
 }

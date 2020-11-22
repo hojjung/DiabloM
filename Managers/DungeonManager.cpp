@@ -11,6 +11,7 @@
 #include "UObject/UObjectGlobals.h"
 #include "Serialization/AsyncPackageLoader.h"
 #include "Village/Portal.h"
+#include "GenericOctree.h"
 
 void UDungeonManager::Init()
 {
@@ -23,6 +24,9 @@ void UDungeonManager::Init()
     
     UDungeonDataTable::GetDungeonTable->GetAllRows("DgManager-NoDungeonData",m_AryDungeonData);
 
+    
+    
+    
 }
 
 void UDungeonManager::CreateDefaultInfinityDungeon(int level)

@@ -7,6 +7,8 @@
 #include "DungeonMiniMap.h"
 #include "Components/PostProcessComponent.h"
 #include "GameFramework/GameMode.h"
+#include "Objs/Containers/Quadtree.h"
+
 #include "DiabloGameMode.generated.h"
 
 class UGridFlowMiniMap;
@@ -35,6 +37,14 @@ protected:
 	
 	UPROPERTY()
 	UGridFlowMiniMap* m_MiniMap;
+
+	TUniquePtr<Quadtree> m_QuadTree;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FVector2D m_Min;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FVector2D m_Max;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	int m_nDepth;
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = "MiniMap")
@@ -96,6 +106,8 @@ protected:
 public:
 	virtual void StartPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	ADiaDungeon* GetDungeon(FName id);
 	
 	APortal* GetSpawnPoint();
@@ -115,4 +127,8 @@ public:
 	{
 		return m_MiniMap;
 	}
+
+	void RegisterQuadElement(ITickHideable* actor);
+
+	
 };

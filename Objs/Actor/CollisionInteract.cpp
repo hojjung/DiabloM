@@ -1,4 +1,6 @@
 #include "CollisionInteract.h"
+
+#include "Managers/DiabloGameMode.h"
 #include "Widgets/WorldMap/WorldWidget/ItemNameCard.h"
 
 
@@ -31,13 +33,40 @@ ACollisionInteract::ACollisionInteract(const FObjectInitializer& objInit)
 void ACollisionInteract::BeginPlay()
 {
 	Super::BeginPlay();
-	m_CollSphere->OnComponentBeginOverlap.AddDynamic(this,&ACollisionInteract::OnOverlap);	
+	m_CollSphere->OnComponentBeginOverlap.AddDynamic(this,&ACollisionInteract::OnOverlap);
+	RegisterToQuadTreeBound();
 }
 void ACollisionInteract::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	
 }
+
+FVector ACollisionInteract::GetActorLocation()
+{
+	return AActor::GetActorLocation();
+}
+
+void ACollisionInteract::RegisterToQuadTreeBound()
+{
+	ADiabloGameMode::Get->RegisterQuadElement(this);
+	HideAll(false);
+
+}
+
+void ACollisionInteract::ShowAll(bool hasBeenShowed)
+{
+	SetActorTickEnabled(true);
+	SetActorHiddenInGame(false);
+}
+
+void ACollisionInteract::HideAll(bool hasBeenShowed)
+{
+	SetActorTickEnabled(false);
+	SetActorHiddenInGame(true);
+}
+
+
 void ACollisionInteract::Interact(AActor* instigator)
 {
 	

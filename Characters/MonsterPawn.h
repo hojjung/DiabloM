@@ -15,7 +15,7 @@
 class UMobFSMBase;
 class UMonsterSensing;
 UCLASS()
-class DIABLOM_API AMonsterPawn : public AUnitPawn
+class DIABLOM_API AMonsterPawn : public AUnitPawn,public ITickHideable
 {
 	GENERATED_BODY()
 public:
@@ -69,4 +69,12 @@ public: //need more monster
 
 	virtual FVector GetLastSeenLocation() override;
 
+public:
+	virtual FVector GetActorLocation() override;
+
+	virtual void RegisterToQuadTreeBound() override ;
+
+	virtual void ShowAll(bool hasBeenShowed) override;
+	
+	virtual void HideAll(bool hasBeenShowed) override;
 };

@@ -92,6 +92,7 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
         m_BaseAttackHandle = GetDiaAbilitySystem()->GiveAbility(BaseAttackHandle);
     }
 
+    RegisterToQuadTreeBound();
 }
 
 
@@ -211,5 +212,35 @@ bool AMonsterPawn::CanSeeTarget()
 FVector AMonsterPawn::GetLastSeenLocation()
 {
     return m_MonsterSense->m_LastPlayerSeen;
+}
+
+FVector AMonsterPawn::GetActorLocation()
+{
+    return AActor::GetActorLocation();
+}
+
+void AMonsterPawn::RegisterToQuadTreeBound()
+{
+    ADiabloGameMode::Get->RegisterQuadElement(this);
+
+    HideAll(false);
+}
+
+void AMonsterPawn::ShowAll(bool hasBeenShowed)
+{
+    SetActorTickEnabled(true);
+    SetActorHiddenInGame(false);
+    PRINTF("ShowMob");
+}
+
+void AMonsterPawn::HideAll(bool hasBeenShowed)
+{
+    if(!hasBeenShowed)
+    {
+        SetActorTickEnabled(false);
+    }
+    
+    SetActorHiddenInGame(true);
+    PRINTF("HideMob");
 }
 
