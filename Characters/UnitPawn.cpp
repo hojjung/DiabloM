@@ -44,7 +44,7 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 
     m_fMoveAcceptRadius = 100.f;
    
-
+    m_fHitAnimCD=-1.f;
     //Test
 }
 
@@ -322,7 +322,8 @@ void AUnitPawn::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
     m_fTickDeltaTime = DeltaTime;
- 
+
+    m_fHitAnimCD-=DeltaTime;
 }
 
 
@@ -468,9 +469,11 @@ void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 
 void AUnitPawn::PlayTookHitMontage()
 {
-    if(m_TookHitMontage)
+    if(m_TookHitMontage && m_fHitAnimCD<0.f)
     {
         PlayAnim(m_TookHitMontage,false);
+
+        m_fHitAnimCD = FMath::RandRange(3,10);
     }
 }
 

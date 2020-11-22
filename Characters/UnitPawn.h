@@ -85,6 +85,8 @@ protected:
     
     float m_fTickDeltaTime;
 
+    float m_fHitAnimCD;
+
     FGameplayAbilitySpecHandle m_BaseAttackHandle;
 
 public:

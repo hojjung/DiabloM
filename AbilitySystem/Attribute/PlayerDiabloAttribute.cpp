@@ -145,9 +145,9 @@ void UPlayerDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* Sour
 {
 	APlayerDiabloCharacter* TargetPlayer=Cast<APlayerDiabloCharacter>( TargetUnit);
 	
-	float RandDmg = FMath::RandRange(0.95f, 1.05f);
+	
     
-	const float LocalDamageDone = TookDamageCache * RandDmg;
+	const float LocalDamageDone = TookDamageCache;
 
 	if (LocalDamageDone > 0.f)
 	{

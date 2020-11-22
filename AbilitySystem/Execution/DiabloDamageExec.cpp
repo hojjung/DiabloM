@@ -330,7 +330,14 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
         //LifeStealEffect Need
     }
 
-  
+    float RandDmg = FMath::RandRange(0.95f, 1.05f);
+    
+    LTookPhysDamage*=RandDmg;
+    LTookFireDamage*=RandDmg;
+    LTookElecDamage*=RandDmg;
+    LTookIceDamage*=RandDmg;
+    LTookPoisonDamage*=RandDmg;
+    
     //
     OutExecutionOutput.AddOutputModifier(
         FGameplayModifierEvaluatedData(GetDamageStatics().TookPhysDamageProperty, EGameplayModOp::Additive,

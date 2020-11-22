@@ -32,25 +32,28 @@ void UMobFSM_Swamer::OnIdle()
 	{
 		m_StartPoint=m_OwnerMonster->GetActorLocation();
 		m_CurrentState = EFSM::Chase;
-		m_OwnerMonster->m_bIsMoving=true;
+		
 		return;
 	}
+	
+	EPathFollowingStatus::Type Status = m_OwnerMonster->m_PFComp->GetStatus();
 	
 	if (m_fIdleTimer > 0.f)
 	{
 		m_fIdleTimer -= m_OwnerMonster->m_fTickDeltaTime;
 
+		if(EPathFollowingStatus::Idle == Status)
+		{
+			m_OwnerMonster->m_bIsMoving=false;
+		}
 		return;
 	}
 
-	EPathFollowingStatus::Type Status = m_OwnerMonster->m_PFComp->GetStatus();
 	
 	FNavLocation Result;
-	
-	switch (Status)
-	{
-	case EPathFollowingStatus::Idle:
 
+	if(EPathFollowingStatus::Idle == Status)
+	{
 		if (!m_OwnerMonster->m_NavSys->GetRandomPointInNavigableRadius(m_StartPoint, 500.f, Result))
 		{
 			return;
@@ -60,8 +63,7 @@ void UMobFSM_Swamer::OnIdle()
 
 		m_fIdleTimer = FMath::FRandRange(3.f,7.f);
 		
-		break;
-	default: ;
+		m_OwnerMonster->m_bIsMoving=true;
 	}
 }
 
@@ -102,6 +104,7 @@ void UMobFSM_Swamer::OnChase()
 			if(FMath::RandBool())
 			{
 				Result = m_OwnerMonster->MoveToLocation(m_OwnerMonster->GetLastSeenLocation());
+				m_OwnerMonster->m_bIsMoving=true;
 			}
 			
 			m_fChaseFindTimer = FMath::FRandRange(6.f,12.f);//길게 뽑힌애는 계속 쫓아가고 짧은애는 중도 포기함
@@ -121,7 +124,7 @@ void UMobFSM_Swamer::OnCombat()
 	if(!m_OwnerMonster->GetFocusedTarget() ||!m_OwnerMonster->GetFocusedTarget()->IsAlive())
 	{
 		m_CurrentState = EFSM::Return;
-		
+		m_OwnerMonster->m_bIsMoving=true;
 		m_OwnerMonster->FocusTarget(nullptr);
 		
 		return;
@@ -152,6 +155,7 @@ void UMobFSM_Swamer::OnReturn()
 	if (m_OwnerMonster->GetFocusedTarget())
 	{
 		m_CurrentState = EFSM::Chase;
+		m_OwnerMonster->m_bIsMoving=true;
 		return;
 	}
 	auto Result= m_OwnerMonster->MoveToLocation(m_StartPoint);

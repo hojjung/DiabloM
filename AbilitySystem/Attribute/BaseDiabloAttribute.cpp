@@ -90,9 +90,7 @@ void UBaseDiabloAttribute::HandleDamage(AUnitPawn* TargetUnit, AUnitPawn* Source
                                         AController* SourceController,
                                         float TookDamageCache)
 {
-    float RandDmg = FMath::RandRange(0.95f, 1.05f);
-    
-    const float LocalDamageDone = TookDamageCache * RandDmg;
+    const float LocalDamageDone = TookDamageCache;
 
     if (LocalDamageDone > 0.f)
     {
