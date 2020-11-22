@@ -4,6 +4,7 @@
 #include "HealthSphere.h"
 
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Objs/Containers/QuadtreeNode.h"
 
 
 AHealthSphere::AHealthSphere(const FObjectInitializer& objInit):Super(objInit)
@@ -42,8 +43,12 @@ void AHealthSphere::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
     }
     else
     {
-        //Destroy();
-        HideAll(false);
+        if(GetCurrentNode())
+        {
+            GetCurrentNode()->RemoveElement(this);
+        }
+
+        Destroy();
     }
 }
 

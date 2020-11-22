@@ -22,6 +22,7 @@ AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit): Super(objInit)
     m_bIsPlaced = false;
     m_DropDataRow = nullptr;
     m_bIsMoving=false;
+    m_CurrentNode=nullptr;
 }
 
 void AMonsterPawn::BeginPlay()
@@ -228,19 +229,29 @@ void AMonsterPawn::RegisterToQuadTreeBound()
 
 void AMonsterPawn::ShowAll(bool hasBeenShowed)
 {
-    SetActorTickEnabled(true);
     SetActorHiddenInGame(false);
-    PRINTF("ShowMob");
+    SetActorTickEnabled(true);
+    SetActorEnableCollision(true);
 }
 
 void AMonsterPawn::HideAll(bool hasBeenShowed)
 {
+    SetActorHiddenInGame(true);
+    
     if(!hasBeenShowed)
     {
         SetActorTickEnabled(false);
     }
     
-    SetActorHiddenInGame(true);
-    PRINTF("HideMob");
+    SetActorEnableCollision(false);
 }
 
+void AMonsterPawn::SetNode(QuadtreeNode* quadtree_node)
+{
+    m_CurrentNode=quadtree_node;
+}
+
+QuadtreeNode* AMonsterPawn::GetCurrentNode()
+{
+    return m_CurrentNode;
+}

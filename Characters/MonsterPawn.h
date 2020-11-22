@@ -37,6 +37,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float m_fDropRadius;
 	FMonsterItemDropRow* m_DropDataRow;
+
+	 QuadtreeNode* m_CurrentNode;
 public:
 	bool m_bIsMoving;
 public: //need more monster
@@ -77,4 +79,9 @@ public:
 	virtual void ShowAll(bool hasBeenShowed) override;
 	
 	virtual void HideAll(bool hasBeenShowed) override;
+
+	virtual void SetNode(QuadtreeNode* quadtree_node)override;
+
+	virtual QuadtreeNode* GetCurrentNode()override;
+
 };

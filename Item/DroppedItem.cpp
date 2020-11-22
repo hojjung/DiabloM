@@ -3,6 +3,7 @@
 #include "Widgets/WorldMap/WorldWidget/ItemNameCard.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Objs/Containers/QuadtreeNode.h"
 
 ADroppedItem::ADroppedItem(const FObjectInitializer& objInit):Super(objInit)
 {
@@ -54,8 +55,11 @@ void ADroppedItem::Interact(AActor * instigator)
 	}
 	else
 	{
-		//Destroy();
-		HideAll(false);
+		if(GetCurrentNode())
+		{
+			GetCurrentNode()->RemoveElement(this);
+		}
+		Destroy();
 	}
 }
 
@@ -129,6 +133,8 @@ void ADroppedItem::DropEnd()
 	Rot.Pitch=0.f;
 	
 	SetActorRelativeRotation(Rot);
+
+	RegisterToQuadTreeBound();
 }
 
 

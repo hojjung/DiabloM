@@ -16,6 +16,7 @@ Quadtree::Quadtree(const int maxDistance, FVector2D min, FVector2D max)
 
 Quadtree::~Quadtree()
 {
+    PRINTF("Quadtree Die");
 }
 
 TSharedPtr<QuadtreeNode> Quadtree::GetRootNode()

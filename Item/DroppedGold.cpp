@@ -8,6 +8,7 @@
 #include "AbilitySystem/Attribute/PlayerDiabloAttribute.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
+#include "Objs/Containers/QuadtreeNode.h"
 #include "Widgets/WorldMap/WorldWidget/ItemNameCard.h"
 
 ADroppedGold::ADroppedGold(const FObjectInitializer& objInit):Super(objInit)
@@ -42,6 +43,8 @@ void ADroppedGold::DropEnd()
     Args.Add(GoldText);
     ItemCard->SetItemName(FText::Format(m_Format,Args));
     m_BillBoard->SetDrawSize(m_BillBoard->GetUserWidgetObject()->GetDesiredSize());
+
+    RegisterToQuadTreeBound();
 }
 
 void ADroppedGold::BeginPlay()
@@ -79,12 +82,16 @@ void ADroppedGold::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
     m_BillBoard->SetHiddenInGame(true);
     m_CollSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     
-    if(m_OnTaskEnd.IsBound())
+    if(m_OnTaskEnd.IsBound())//Pooled
     {
         m_OnTaskEnd.Broadcast(this);
     }
-    else
+    else//Not Pooled
     {
-        HideAll(false);
+        if(GetCurrentNode())
+        {
+            GetCurrentNode()->RemoveElement(this);
+        }
+        Destroy();
     }
 }

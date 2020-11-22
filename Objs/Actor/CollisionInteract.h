@@ -32,6 +32,8 @@ protected:
 	UWidgetComponent* m_BillBoard;
 
 	FCollTaskEnd m_OnTaskEnd;
+
+	QuadtreeNode* m_CurrentNode;
 protected:
 	virtual void BeginPlay() override;
 
@@ -56,7 +58,9 @@ public:
 	
 	virtual void HideAll(bool hasBeenShowed) override ;
 
+	virtual void SetNode(QuadtreeNode* quadtree_node) override;
 
+	virtual QuadtreeNode* GetCurrentNode() override;
 };
 
 

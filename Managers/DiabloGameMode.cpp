@@ -73,6 +73,7 @@ void ADiabloGameMode::InitMinimap()
 		,m_fMinimapFogOfWarTextureScale,m_NameMinimapFogOfWarTrackingItem,m_MinimapFogOfWarExploreTexture,m_fMinimapFogOfWarVisiblityDistance);
 
 	UGridFlowMiniMap::Get = m_MiniMap;
+	
 	m_MiniMap->AddTrackActor(m_NameMinimapFogOfWarTrackingItem,ADiabloPlayerController::Get->GetPlayerPawn(),true);
 }
 
@@ -87,26 +88,20 @@ void ADiabloGameMode::StartPlay()
 
 	InitRewardManager();
 	
-	
-	
 	m_QuadTree =  MakeUnique<Quadtree>(m_nDepth,m_Min,m_Max);
 	//ㄴBeginPlay Before
 	Super::StartPlay();
 
 	InitSpawnManager();
 
-	//InitFOW();
 	InitMinimap();
-	//
-	
-
 }
 
 void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	m_QuadTree.Release();
+	delete m_QuadTree.Release();
 }
 
 void ADiabloGameMode::SetDungeonInstanceToMap()
@@ -173,11 +168,13 @@ void ADiabloGameMode::RegisterQuadElement(ITickHideable* actor)
 void ADiabloGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
 	m_OnTick.Broadcast(DeltaSeconds);
 	//Need Bool
 	m_MiniMap->MiniMapTick(DeltaSeconds);
 	//m_FOW->MyTick(DeltaSeconds);
 
+	
 	m_QuadTree->DrawBoxes(GetWorld());
 
 	m_QuadTree->TickTryShowActors(ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation());

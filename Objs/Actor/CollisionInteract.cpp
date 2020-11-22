@@ -28,13 +28,14 @@ ACollisionInteract::ACollisionInteract(const FObjectInitializer& objInit)
 	m_BillBoard->SetupAttachment(RootComponent);
 	m_BillBoard->SetRelativeLocation( FVector(0.f, 0.f, 70.f));
 	m_BillBoard->CastShadow = false;
+
+	m_CurrentNode=nullptr;
 }
 
 void ACollisionInteract::BeginPlay()
 {
 	Super::BeginPlay();
 	m_CollSphere->OnComponentBeginOverlap.AddDynamic(this,&ACollisionInteract::OnOverlap);
-	RegisterToQuadTreeBound();
 }
 void ACollisionInteract::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -50,20 +51,30 @@ FVector ACollisionInteract::GetActorLocation()
 void ACollisionInteract::RegisterToQuadTreeBound()
 {
 	ADiabloGameMode::Get->RegisterQuadElement(this);
-	HideAll(false);
-
 }
 
 void ACollisionInteract::ShowAll(bool hasBeenShowed)
 {
-	SetActorTickEnabled(true);
 	SetActorHiddenInGame(false);
+	SetActorTickEnabled(true);
+	SetActorEnableCollision(true);
 }
 
 void ACollisionInteract::HideAll(bool hasBeenShowed)
 {
-	SetActorTickEnabled(false);
 	SetActorHiddenInGame(true);
+	SetActorTickEnabled(false);
+	SetActorEnableCollision(false);
+}
+
+void ACollisionInteract::SetNode(QuadtreeNode* quadtree_node)
+{
+	m_CurrentNode=quadtree_node;
+}
+
+QuadtreeNode* ACollisionInteract::GetCurrentNode()
+{
+	return m_CurrentNode;
 }
 
 

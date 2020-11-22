@@ -45,6 +45,8 @@ public:
     /** Add an element to this node. */
     void AddElement(ITickHideable* element);
 
+    void RemoveElement(ITickHideable* element);
+
     /** Get elements belonging to this node. */
     TArray<ITickHideable*> GetElements();
 

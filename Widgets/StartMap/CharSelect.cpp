@@ -77,6 +77,6 @@ void UCharSelect::ContinueToGameWorld()
 {
     PRINTF("Continue World");
 
-    UGameplayStatics::OpenLevel(GetWorld(),"StartHub");
+    UGameplayStatics::OpenLevel(GetWorld(),"GameWorld");
     
 }

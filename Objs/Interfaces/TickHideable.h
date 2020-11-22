@@ -28,5 +28,9 @@ public:
 	virtual void ShowAll(bool hasBeenShowed) =0;
 	
 	virtual void HideAll(bool hasBeenShowed) =0;
+	
+	virtual void SetNode(QuadtreeNode* quadtree_node)=0;
+
+	virtual QuadtreeNode* GetCurrentNode()=0;
 
 };

@@ -4,6 +4,7 @@
 
 QuadtreeNode::QuadtreeNode(): m_eNodePosition(), m_bHasBeenShowed(false)
 {
+    m_Elements.Reserve(100);
 }
 
 /** Shallow copies a QuadtreeNode. */
@@ -52,6 +53,11 @@ TArray<TSharedPtr<QuadtreeNode>> QuadtreeNode::GetChildNodes()
 
 void QuadtreeNode::AddElement(ITickHideable* element)
 {
+    if(element->GetCurrentNode())
+    {
+        element->GetCurrentNode()->RemoveElement(element);
+        element->SetNode(nullptr);
+    }
     // Exlpore each child belonging to this node
     for (auto childNode : m_ChildNodes)
     {
@@ -70,6 +76,7 @@ void QuadtreeNode::AddElement(ITickHideable* element)
             else
             {
                 childNode->m_Elements.Add(element);
+                element->SetNode(childNode.Get());
                 return;
             }
         }
@@ -77,6 +84,12 @@ void QuadtreeNode::AddElement(ITickHideable* element)
 
     // Wasn't inside a child node, probably on a boundary, must be in this node.
     m_Elements.Add(element);
+    element->SetNode(this);
+}
+
+void QuadtreeNode::RemoveElement(ITickHideable* element)
+{
+    m_Elements.Remove(element);
 }
 
 
@@ -183,7 +196,6 @@ void QuadtreeNode::HideActors()
 {
     if (!HasChildNodes())
     {
-        PRINTF("NodeHide-Count:%d", GetAllElements().Num());
         for (ITickHideable* Eles : GetAllElements())
         {
             Eles->HideAll(m_bHasBeenShowed);
@@ -202,7 +214,6 @@ void QuadtreeNode::ShowActors()
 {
     if (!HasChildNodes())
     {
-        PRINTF("NodeShow-Count:%d", GetAllElements().Num());
         
         if (!m_bHasBeenShowed)
         {
