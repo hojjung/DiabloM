@@ -3,13 +3,20 @@
 #include "Widgets/WorldMap/WorldWidget/ItemNameCard.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Components/BillboardComponent.h"
 #include "Objs/Containers/QuadtreeNode.h"
 
 ADroppedItem::ADroppedItem(const FObjectInitializer& objInit):Super(objInit)
 {
-	m_ParticleEffect=CreateDefaultSubobject<UParticleSystemComponent>("ParticleEffect00");
-	m_ParticleEffect->SetupAttachment(RootComponent);
+	m_Imposter=CreateDefaultSubobject<UBillboardComponent>("ImposterTexture00");
+	m_Imposter->SetupAttachment(RootComponent);
+	m_Imposter->SetVisibility(true);
+	m_Imposter->SetHiddenInGame(false);
+	
 	m_BillBoard->SetHiddenInGame(true);
+	
+	m_MeshComp->SetVisibility(false);
+	m_MeshComp->SetHiddenInGame(true);
 	
 	m_CollSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
@@ -81,7 +88,7 @@ void ADroppedItem::SetItemVisual(const FItemInstance& ItemData)
 
 	ItemCard->SetItemColor(ItemData.m_ItemTier->m_TierColor);
 
-	m_MeshComp->SetStaticMesh(ItemData.m_ItemData->m_ItemMesh);
+	//m_MeshComp->SetStaticMesh(ItemData.m_ItemData->m_ItemMesh);
 
 	m_BillBoard->SetDrawSize(m_BillBoard->GetUserWidgetObject()->GetDesiredSize());
 
@@ -94,12 +101,7 @@ void ADroppedItem::SetItem(FName itemID)
 
 	SetItemVisual(m_ItemInstance);
 
-	FName Tier=GetCurrentItem().m_ItemTier->m_TierID;
-	
-	if(Tier=="Set"||Tier=="Immortal"||Tier=="Legend"||Tier=="Epic")
-	{
-		m_bIsOverlapAble=true;
-	}
+
 	
 }
 
@@ -121,7 +123,6 @@ const FItemInstance& ADroppedItem::GetCurrentItem()const
 void ADroppedItem::DropEnd()
 {
 	SetActorHiddenInGame(false);
-	m_ParticleEffect->Activate(true);
 	m_BillBoard->SetHiddenInGame(false);
 
 	m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -135,6 +136,13 @@ void ADroppedItem::DropEnd()
 	SetActorRelativeRotation(Rot);
 
 	RegisterToQuadTreeBound();
+
+	FName Tier=GetCurrentItem().m_ItemTier->m_TierID;
+	
+	if(Tier=="Set"||Tier=="Immortal"||Tier=="Legend"||Tier=="Epic")
+	{
+		m_bIsOverlapAble=true;
+	}
 }
 
 

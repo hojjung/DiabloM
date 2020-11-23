@@ -10,7 +10,6 @@ ACollisionInteract::ACollisionInteract(const FObjectInitializer& objInit)
 	PrimaryActorTick.bCanEverTick = false;
 	m_CollSphere = CreateDefaultSubobject<USphereComponent>("Coll00");
 	m_CollSphere->SetCollisionProfileName("PickupItem");
-	m_CollSphere->SetupAttachment(m_MeshComp);
 	m_CollSphere->SetSphereRadius(70.f);
 	RootComponent = m_CollSphere;
 	//

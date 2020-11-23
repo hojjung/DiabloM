@@ -6,6 +6,7 @@
 #include "Objs/Actor/CollisionInteract.h"
 #include "DroppedItem.generated.h"
 
+class UBillboardComponent;
 UCLASS()
 class DIABLOM_API ADroppedItem : public ACollisionInteract
 {
@@ -16,7 +17,7 @@ public:
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Item")
-	UParticleSystemComponent* m_ParticleEffect;
+	UBillboardComponent* m_Imposter;
 	UPROPERTY(EditAnywhere, Category = "Item")
 	FItemDataHandle m_TableID;
 	UPROPERTY(VisibleAnywhere)
