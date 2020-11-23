@@ -349,6 +349,22 @@ void AUnitPawn::DoBaseAttack()
     GetDiaAbilitySystem()->TryActivateAbility(m_BaseAttackHandle);
 }
 
+FRotator AUnitPawn::GetHomingRotToTarget()
+{
+    FRotator NewRot = GetActorRotation();
+
+    if (!m_FocusedEnemy.Get())
+    {
+        return NewRot;
+    }
+
+    NewRot.Yaw = UKismetMathLibrary::RInterpTo(
+        NewRot, UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), m_FocusedEnemy->GetActorLocation()),
+        m_fTickDeltaTime, 5.5f).Yaw;
+
+    return NewRot;
+}
+
 void AUnitPawn::HomingRotateToTarget()
 {
     if (!m_FocusedEnemy.Get())
@@ -356,11 +372,8 @@ void AUnitPawn::HomingRotateToTarget()
         return;
     }
 
-    FRotator NewRot = GetActorRotation();
-
-    NewRot.Yaw = UKismetMathLibrary::RInterpTo(
-        NewRot, UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), m_FocusedEnemy->GetActorLocation()),
-        m_fTickDeltaTime, 5.5f).Yaw;
+    FRotator NewRot=GetHomingRotToTarget();
+    
     SetActorRotation(NewRot);
 }
 

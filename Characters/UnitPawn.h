@@ -157,6 +157,8 @@ public:
     }
 
     void DoBaseAttack();
+    
+    FRotator GetHomingRotToTarget();
 
 public: //AttributeGetter
 
@@ -207,6 +209,11 @@ public: //AttributeGetter
     AUnitPawn* GetFocusedTarget()
     {
         return m_FocusedEnemy.Get();
+    }
+
+    TWeakObjectPtr<AUnitPawn>& GetFocusedTargetWeakPtr()
+    {
+        return m_FocusedEnemy;
     }
 
     FCharacterDiedDelegate& GetOnDied()

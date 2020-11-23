@@ -3,13 +3,15 @@
 #include "DiabloPlayerController.h"
 #include "DungeonMiniMap.h"
 #include "GridFlowMiniMap.h"
+#include "MobUnitMovement.h"
 #include "PlayerDiabloCharacter.h"
 #include "Logic/MonsterSensing.h"
 #include "Logic/MobFSMBase.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DiabloGameMode.h"
 
-AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit): Super(objInit)
+AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit):
+Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
 {
     m_fDropRadius = 400.f;
     m_bUseFSM = false;

@@ -80,6 +80,8 @@ public:
 	void SetMoveSpeedRatio(float newRatioMax1);
 
 	void SetDash(FVector dashDelta,float duration);
+
+	virtual FRotator GetRotationNotMove(const FRotator& rot) const;
 	
 #pragma region RVO
 	// IRVOAvoidanceInterface��(��) ���� ��ӵ�

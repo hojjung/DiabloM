@@ -32,7 +32,7 @@ void UMobFSM_Swamer::OnIdle()
 	{
 		m_StartPoint=m_OwnerMonster->GetActorLocation();
 		m_CurrentState = EFSM::Chase;
-		
+		m_OwnerMonster->m_bIsMoving=true;
 		return;
 	}
 	
@@ -131,8 +131,6 @@ void UMobFSM_Swamer::OnCombat()
 	}
 	
 	TryAttack();
-
-	
 
 	float DistSqr = FVector::DistSquared(m_OwnerMonster->GetActorLocation(), m_OwnerMonster->GetFocusedTarget()->GetActorLocation());
 
