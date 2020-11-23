@@ -31,19 +31,19 @@ void ADiaDungeon::AddMyActors(AActor* actor)
 
 void ADiaDungeon::ShowDungeon()
 {
-    for (auto* ASD : m_AryMyActors)
-    {
-        ASD->SetActorHiddenInGame(false);
-    }
+    // for (auto* ASD : m_AryMyActors)
+    // {
+    //     ASD->SetActorHiddenInGame(false);
+    // }
 
 }
 
 void ADiaDungeon::HideDungeon()
 {
-    for (auto* ASD : m_AryMyActors)
-    {
-        ASD->SetActorHiddenInGame(true);
-    }
+    // for (auto* ASD : m_AryMyActors)
+    // {
+    //     ASD->SetActorHiddenInGame(true);
+    // }
 
 }
 

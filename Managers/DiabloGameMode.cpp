@@ -3,6 +3,7 @@
 #include "EngineUtils.h"
 #include "DungeonMiniMap.h"
 #include "GridFlowMiniMap.h"
+#include "GridFlowTilemap.h"
 #include "MonsterSpawnManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Characters/DiabloPlayerController.h"
@@ -88,7 +89,7 @@ void ADiabloGameMode::StartPlay()
 
 	InitRewardManager();
 	
-	m_QuadTree =  MakeUnique<Quadtree>(m_nDepth,m_Min,m_Max);
+	
 	//ㄴBeginPlay Before
 	Super::StartPlay();
 
@@ -162,7 +163,42 @@ APortal* ADiabloGameMode::GetSpawnPoint()
 
 void ADiabloGameMode::RegisterQuadElement(ITickHideable* actor)
 {
+	if(!m_QuadTree)
+	{
+		return;
+	}
 	 m_QuadTree->AddElement(actor);
+}
+
+void ADiabloGameMode::SetQuadTreeCoord(ADiaDungeon* dgActor,UGridFlowTilemap* dgTilemap)
+{
+	FVector DgCenterPos = dgActor->GetActorLocation();
+	
+	FVector DgMinPos = DgCenterPos;
+	
+	FVector DgMaxPos = DgCenterPos;
+	//
+	int32 Width = dgTilemap->GetWidth() * 400.f;
+    
+	int32 Height = dgTilemap->GetHeight() * 400.f;
+	
+	int32 OffsetIdxX = Width / 2;
+    
+	int32 OffsetIdxY = Height / 2;
+	//
+	DgMinPos.X-=OffsetIdxX;
+	DgMinPos.Y-=OffsetIdxY;
+	
+	DgMaxPos.X+=OffsetIdxX;
+	DgMaxPos.Y+=OffsetIdxY;
+	//
+	if(m_QuadTree)
+	{
+		delete m_QuadTree.Release();
+	}
+	m_QuadTree =  MakeUnique<Quadtree>(m_nDepth,FVector2D(DgMinPos),FVector2D(DgMaxPos));
+	PRINTF("Min :%s",*DgMinPos.ToString());
+	PRINTF("Max :%s",*DgMaxPos.ToString());
 }
 
 void ADiabloGameMode::Tick(float DeltaSeconds)
@@ -174,10 +210,13 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 	m_MiniMap->MiniMapTick(DeltaSeconds);
 	//m_FOW->MyTick(DeltaSeconds);
 
-	
-	m_QuadTree->DrawBoxes(GetWorld());
 
-	m_QuadTree->TickTryShowActors(ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation());
+	if(m_QuadTree)
+	{
+		//m_QuadTree->DrawBoxes(GetWorld());
+
+		m_QuadTree->TickTryShowActors(ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation());
+	}
 }
 
 

@@ -38,6 +38,7 @@ void AMonsterPawn::BeginPlay()
     }
 }
 
+
 void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
 {
     SetCharacterLevel(level);
@@ -184,6 +185,11 @@ void AMonsterPawn::RequestDropRewards()
 
 void AMonsterPawn::OnDeathAnimEnd()
 {
+    if(GetCurrentNode())
+    {
+        GetCurrentNode()->RemoveElement(this);
+    }
+
     Destroy();
 }
 
@@ -195,7 +201,10 @@ void AMonsterPawn::Tick(float DeltaSeconds)
     {
         m_FSM->TickFSM();
     }
-
+    if(!m_CurrentNode)
+    {
+        PRINTF("ASD");
+    }
     UpdateBound();
 }
 
@@ -244,14 +253,13 @@ void AMonsterPawn::ShowAll(bool hasBeenShowed)
     SetActorHiddenInGame(false);
     SetActorTickEnabled(true);
     SetActorEnableCollision(true);
-
+    
     m_bIsVisible=true;
+
 }
 
 void AMonsterPawn::HideAll(bool hasBeenShowed)
 {
-    SetActorHiddenInGame(true);
-    
     if(!hasBeenShowed)
     {
         SetActorTickEnabled(false);
@@ -259,12 +267,16 @@ void AMonsterPawn::HideAll(bool hasBeenShowed)
     
     SetActorEnableCollision(false);
 
+    SetActorHiddenInGame(true);
     m_bIsVisible=false;
+
 }
 
 void AMonsterPawn::SetNode(QuadtreeNode* quadtree_node)
 {
-    m_CurrentNode=quadtree_node;
+    m_CurrentNode = quadtree_node;
+
+  
 }
 
 QuadtreeNode* AMonsterPawn::GetCurrentNode()
@@ -290,6 +302,7 @@ void AMonsterPawn::UpdateBound()//여기하는중
     {
         RegisterToQuadTreeBound();
 
-        ShowAll(true);
+        //ShowAll(true);
+
     }
 }

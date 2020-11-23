@@ -14,6 +14,8 @@
 class UGridFlowMiniMap;
 class ADiaDungeon;
 class APortal;
+class UGridFlowTilemap;
+
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDelta,float);
 UCLASS()
@@ -71,16 +73,16 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War")
 	bool m_bMinimapbEnableFogOfWar;
 
-	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = bEnableFogOfWar))
+	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = m_bMinimapbEnableFogOfWar))
 	float m_fMinimapFogOfWarTextureScale;
 
-	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = bEnableFogOfWar))
+	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = m_bMinimapbEnableFogOfWar))
 	FName m_NameMinimapFogOfWarTrackingItem;
 
-	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = bEnableFogOfWar))
+	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = m_bMinimapbEnableFogOfWar))
 	UTexture2D* m_MinimapFogOfWarExploreTexture;
 
-	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = bEnableFogOfWar))
+	UPROPERTY(EditAnywhere, Category = "MiniMap-Fog Of War", meta = (EditCondition = m_bMinimapbEnableFogOfWar))
 	float m_fMinimapFogOfWarVisiblityDistance;
 	
 	UPROPERTY()
@@ -130,5 +132,7 @@ public:
 
 	void RegisterQuadElement(ITickHideable* actor);
 
-	
+	//UGridFlowTilemap*
+
+	void SetQuadTreeCoord(ADiaDungeon* dgActor,UGridFlowTilemap* dgTilemap);
 };

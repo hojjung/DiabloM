@@ -60,13 +60,19 @@ void Quadtree::TickTryShowActors(FVector&& position)
     
     TSharedPtr<QuadtreeNode> NodeEntered = GetMinNode(pos2D);
     
-    if(!NodeEntered)
+    if(!NodeEntered)//바운더리 밖임
     {
-        if(m_CurrentNode)
+        if(m_CurrentNode)//해제
         {
             m_CurrentNode->HideActors();
             
             m_CurrentNode=nullptr;
+        }
+        if(m_OldNode)
+        {
+            m_OldNode->HideActors();
+
+            m_OldNode=nullptr;
         }
         return;
     }
@@ -75,7 +81,12 @@ void Quadtree::TickTryShowActors(FVector&& position)
     {
         if(m_CurrentNode)
         {
-            m_CurrentNode->HideActors();
+            if(m_OldNode)
+            {
+                m_OldNode->HideActors();                
+            }
+            
+            m_OldNode=m_CurrentNode;
         }
         
         m_CurrentNode=NodeEntered;

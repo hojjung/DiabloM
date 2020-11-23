@@ -44,4 +44,6 @@ private:
     int m_MaxDistance;
 
     TSharedPtr<QuadtreeNode> m_CurrentNode;
+
+    TSharedPtr<QuadtreeNode> m_OldNode;
 };

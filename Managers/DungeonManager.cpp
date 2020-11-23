@@ -12,6 +12,7 @@
 #include "Serialization/AsyncPackageLoader.h"
 #include "Village/Portal.h"
 #include "GenericOctree.h"
+#include "GridFlowModel.h"
 
 void UDungeonManager::Init()
 {
@@ -29,6 +30,11 @@ void UDungeonManager::Init()
     
 }
 
+void UDungeonManager::CreateQuadTreeBound()
+{
+    ADiabloGameMode::Get->SetQuadTreeCoord(m_CurrentDungeon.Get(),Cast<UGridFlowModel>(m_CurrentDungeon.Get()->GetModel())->Tilemap);
+}
+
 void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 {
     m_nPointIndex=0;
@@ -41,6 +47,8 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 
     LoadDungeonLevel(m_CurrentDungeonData);
 
+    CreateQuadTreeBound();
+
     SpawnMonstersToDungeon(m_nMonsterLevel, m_CurrentDungeonData);
 
     PortalToRecentDungeon();
@@ -50,30 +58,16 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
     UGridFlowMiniMap::Get->BuildLayout(m_CurrentDungeon->GetModel(),m_CurrentDungeon->GetConfig());
     m_MatMinimap = UGridFlowMiniMap::Get->CreateMaterialInstance();
     ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);//UI Set Brush Tick add
+
     
 }
 
 void UDungeonManager::ShowSpawnedMonster()
 {
-    for (auto* Pawn : m_AryMonsterSpawnedCurrently)
-    {
-        if(Pawn)
-        {
-            Pawn->SetHidden(false);
-        }
-    }
 }
 
 void UDungeonManager::HideSpawnedMonster()
 {
-    for (AMonsterPawn* Pawn : m_AryMonsterSpawnedCurrently)
-    {
-        if(Pawn)
-        {
-            Pawn->FocusTarget(nullptr);
-            Pawn->SetHidden(true);
-        }
-    }
 }
 
 void UDungeonManager::PortalToVillage()

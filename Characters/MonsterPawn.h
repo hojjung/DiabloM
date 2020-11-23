@@ -38,7 +38,7 @@ protected:
 	float m_fDropRadius;
 	FMonsterItemDropRow* m_DropDataRow;
 
-	 QuadtreeNode* m_CurrentNode;
+	QuadtreeNode* m_CurrentNode;
 
 	bool m_bIsVisible;
 public:

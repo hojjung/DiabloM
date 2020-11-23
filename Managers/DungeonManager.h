@@ -59,7 +59,8 @@ protected:
 	
 public:
 	void Init();
-	
+	void CreateQuadTreeBound();
+
 	UFUNCTION(BlueprintCallable)
 	void CreateDefaultInfinityDungeon(int level=1);
 	UFUNCTION(BlueprintCallable)

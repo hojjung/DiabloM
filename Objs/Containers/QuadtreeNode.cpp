@@ -99,7 +99,7 @@ TArray<ITickHideable*> QuadtreeNode::GetElements()
 
 void QuadtreeNode::DrawBoxAroundNode(UWorld* world, FColor colour)
 {
-    FVector centre = {m_BoundingBox->GetCenter().X, m_BoundingBox->GetCenter().Y, 0.0f};
+    FVector centre = {m_BoundingBox->GetCenter().X, m_BoundingBox->GetCenter().Y, 100.f};
     FVector extent = {m_BoundingBox->GetExtent().X, m_BoundingBox->GetExtent().Y, 0.0f};
 
     DrawDebugBox(world, centre, extent, colour);
@@ -197,6 +197,10 @@ void QuadtreeNode::HideActors()
     {
         for (ITickHideable* Eles : GetAllElements())
         {
+            if(!Eles)
+            {
+                continue;
+            }
             Eles->HideAll(m_bHasBeenShowed);
         }
     }
@@ -221,6 +225,10 @@ void QuadtreeNode::ShowActors()
         
         for (ITickHideable* Eles : GetAllElements())
         {
+            if(!Eles)
+            {
+                continue;
+            }
             Eles->ShowAll(m_bHasBeenShowed);
         }
     }
