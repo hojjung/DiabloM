@@ -30,6 +30,7 @@ ACollisionInteract::ACollisionInteract(const FObjectInitializer& objInit)
 	m_BillBoard->CastShadow = false;
 
 	m_CurrentNode=nullptr;
+	m_bIsVisible=true;
 }
 
 void ACollisionInteract::BeginPlay()
@@ -55,9 +56,16 @@ void ACollisionInteract::RegisterToQuadTreeBound()
 
 void ACollisionInteract::ShowAll(bool hasBeenShowed)
 {
+	if(m_bIsVisible)
+	{
+		return;	
+	}
+	
 	SetActorHiddenInGame(false);
 	SetActorTickEnabled(true);
 	SetActorEnableCollision(true);
+
+	m_bIsVisible=true;
 }
 
 void ACollisionInteract::HideAll(bool hasBeenShowed)
@@ -65,6 +73,8 @@ void ACollisionInteract::HideAll(bool hasBeenShowed)
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
 	SetActorEnableCollision(false);
+
+	m_bIsVisible=false;
 }
 
 void ACollisionInteract::SetNode(QuadtreeNode* quadtree_node)

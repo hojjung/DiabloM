@@ -39,6 +39,8 @@ protected:
 	FMonsterItemDropRow* m_DropDataRow;
 
 	 QuadtreeNode* m_CurrentNode;
+
+	bool m_bIsVisible;
 public:
 	bool m_bIsMoving;
 public: //need more monster
@@ -84,4 +86,6 @@ public:
 
 	virtual QuadtreeNode* GetCurrentNode()override;
 
+protected:
+	void UpdateBound();
 };

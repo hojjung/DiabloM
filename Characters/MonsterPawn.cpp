@@ -23,6 +23,7 @@ AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit): Super(objInit)
     m_DropDataRow = nullptr;
     m_bIsMoving=false;
     m_CurrentNode=nullptr;
+    m_bIsVisible=true;
 }
 
 void AMonsterPawn::BeginPlay()
@@ -94,6 +95,10 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
     }
 
     RegisterToQuadTreeBound();
+    if(m_CurrentNode)
+    {
+        HideAll(false);
+    }
 }
 
 
@@ -188,6 +193,8 @@ void AMonsterPawn::Tick(float DeltaSeconds)
     {
         m_FSM->TickFSM();
     }
+
+    UpdateBound();
 }
 
 void AMonsterPawn::SetHealthPercentage(const FOnAttributeChangeData& data)
@@ -223,15 +230,20 @@ FVector AMonsterPawn::GetActorLocation()
 void AMonsterPawn::RegisterToQuadTreeBound()
 {
     ADiabloGameMode::Get->RegisterQuadElement(this);
-
-    HideAll(false);
 }
 
 void AMonsterPawn::ShowAll(bool hasBeenShowed)
 {
+    if(m_bIsVisible)
+    {
+        return;	
+    }
+	
     SetActorHiddenInGame(false);
     SetActorTickEnabled(true);
     SetActorEnableCollision(true);
+
+    m_bIsVisible=true;
 }
 
 void AMonsterPawn::HideAll(bool hasBeenShowed)
@@ -244,6 +256,8 @@ void AMonsterPawn::HideAll(bool hasBeenShowed)
     }
     
     SetActorEnableCollision(false);
+
+    m_bIsVisible=false;
 }
 
 void AMonsterPawn::SetNode(QuadtreeNode* quadtree_node)
@@ -254,4 +268,26 @@ void AMonsterPawn::SetNode(QuadtreeNode* quadtree_node)
 QuadtreeNode* AMonsterPawn::GetCurrentNode()
 {
     return m_CurrentNode;
+}
+
+void AMonsterPawn::UpdateBound()//여기하는중
+{
+    if(m_CurrentNode)//TODO Need Erase
+    {
+        if(!GetCurrentNode()->IsPositionInsideNode(GetActorLocation()))
+        {
+            RegisterToQuadTreeBound();
+
+            if(m_CurrentNode)//Succed register tree
+            {
+                ShowAll(true);
+            }
+        }
+    }
+    else//out of bound
+    {
+        RegisterToQuadTreeBound();
+
+        ShowAll(true);
+    }
 }

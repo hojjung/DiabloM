@@ -57,7 +57,7 @@ public:
     int GetDistance();
 
     /** Find if a given position is inside this node. */
-    bool PositionInsideNode(FVector position);
+    bool IsPositionInsideNode(FVector position);
 
     /** Get the node which contains a given position. */
     TSharedPtr<QuadtreeNode> GetNode(FVector position);

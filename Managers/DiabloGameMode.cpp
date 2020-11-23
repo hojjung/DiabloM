@@ -162,7 +162,7 @@ APortal* ADiabloGameMode::GetSpawnPoint()
 
 void ADiabloGameMode::RegisterQuadElement(ITickHideable* actor)
 {
-	m_QuadTree->AddElement(actor);
+	 m_QuadTree->AddElement(actor);
 }
 
 void ADiabloGameMode::Tick(float DeltaSeconds)

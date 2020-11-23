@@ -53,26 +53,23 @@ TArray<TSharedPtr<QuadtreeNode>> QuadtreeNode::GetChildNodes()
 
 void QuadtreeNode::AddElement(ITickHideable* element)
 {
+    FVector2D position = {element->GetActorLocation().X, element->GetActorLocation().Y};
+    
     if(element->GetCurrentNode())
     {
         element->GetCurrentNode()->RemoveElement(element);
         element->SetNode(nullptr);
     }
-    // Exlpore each child belonging to this node
+    
     for (auto childNode : m_ChildNodes)
     {
-        FVector2D position = {element->GetActorLocation().X, element->GetActorLocation().Y};
-        // if the position lies within the bounding box of this child
         if (childNode->m_BoundingBox->IsInside(position))
         {
-            // If the child has children of it's own
             if (childNode->HasChildNodes())
             {
-                // Explore their children nodes to get the deepest position in the tree
                 childNode->AddElement(element);
                 return;
             }
-                // If this node has no children, we can't be any more accurate
             else
             {
                 childNode->m_Elements.Add(element);
@@ -82,9 +79,11 @@ void QuadtreeNode::AddElement(ITickHideable* element)
         }
     }
 
-    // Wasn't inside a child node, probably on a boundary, must be in this node.
-    m_Elements.Add(element);
-    element->SetNode(this);
+    if(m_BoundingBox->IsInside(position))
+    {
+        m_Elements.Add(element);
+        element->SetNode(this);
+    }
 }
 
 void QuadtreeNode::RemoveElement(ITickHideable* element)
@@ -126,14 +125,14 @@ int QuadtreeNode::GetDistance()
     return i;
 }
 
-bool QuadtreeNode::PositionInsideNode(FVector position)
+bool QuadtreeNode::IsPositionInsideNode(FVector position)
 {
     FVector2D pos2d = {position.X, position.Y};
     for (auto childNode : m_ChildNodes)
     {
         if (childNode->m_BoundingBox->IsInside(pos2d))
         {
-            return childNode->PositionInsideNode(position);
+            return childNode->IsPositionInsideNode(position);
         }
     }
 
@@ -149,7 +148,7 @@ TSharedPtr<QuadtreeNode> QuadtreeNode::GetNode(FVector position)
 {
     for (auto childNode : m_ChildNodes)
     {
-        if (childNode->PositionInsideNode(position))
+        if (childNode->IsPositionInsideNode(position))
         {
             return childNode;
         }

@@ -36,7 +36,7 @@ void Quadtree::DrawBoxes(UWorld* world)
 
 TSharedPtr<QuadtreeNode> Quadtree::GetNode(FVector position)
 {
-    if (m_RootNode->PositionInsideNode(position))
+    if (m_RootNode->IsPositionInsideNode(position))
     {
         return m_RootNode->GetNode(position);
     }

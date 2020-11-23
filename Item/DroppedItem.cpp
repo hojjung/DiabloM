@@ -59,6 +59,7 @@ void ADroppedItem::Interact(AActor * instigator)
 		{
 			GetCurrentNode()->RemoveElement(this);
 		}
+		
 		Destroy();
 	}
 }
@@ -123,7 +124,6 @@ void ADroppedItem::DropEnd()
 	m_ParticleEffect->Activate(true);
 	m_BillBoard->SetHiddenInGame(false);
 
-	
 	m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	
 	FRotator Rot;

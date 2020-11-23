@@ -34,6 +34,8 @@ protected:
 	FCollTaskEnd m_OnTaskEnd;
 
 	QuadtreeNode* m_CurrentNode;
+
+	bool m_bIsVisible;
 protected:
 	virtual void BeginPlay() override;
 
