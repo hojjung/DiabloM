@@ -45,7 +45,7 @@ void UDiabloGameInstance::Init()
     
     
     //
-    UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(33.f);
+    UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(40.f);
     UGameUserSettings::GetGameUserSettings()->ApplySettings(true);
 
     m_DungeonManager->GetOnDungeonCreate().AddUObject(m_RewardManager,&URewardManager::HideAllActor);

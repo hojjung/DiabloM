@@ -213,9 +213,9 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 
 	if(m_QuadTree)
 	{
-		//m_QuadTree->DrawBoxes(GetWorld());
+		m_QuadTree->DrawBoxes(GetWorld());
 
-		m_QuadTree->TickTryShowActors(ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation());
+		m_QuadTree->TryShow9Cell(ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation());
 	}
 }
 

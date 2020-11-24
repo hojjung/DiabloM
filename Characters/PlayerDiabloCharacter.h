@@ -63,8 +63,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UCameraComponent* m_TopCamera;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	USkeletalMeshComponent* m_SkShadow;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	USkeletalMeshComponent* m_SkFace;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	USkeletalMeshComponent* m_SkHair;

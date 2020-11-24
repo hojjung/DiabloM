@@ -5,6 +5,9 @@
 QuadtreeNode::QuadtreeNode(): m_eNodePosition(), m_bHasBeenShowed(false)
 {
     m_Elements.Reserve(100);
+    m_bHasBeenShowed = false;
+    m_Siblings.Init(nullptr,4);
+    m_bVisible=false;
 }
 
 /** Shallow copies a QuadtreeNode. */
@@ -15,6 +18,7 @@ QuadtreeNode::QuadtreeNode(const QuadtreeNode& copy)
     m_Elements = copy.m_Elements;
     m_ChildNodes = copy.m_ChildNodes;
     m_bHasBeenShowed = false;
+    m_bVisible=false;
 }
 
 QuadtreeNode::~QuadtreeNode()
@@ -102,7 +106,7 @@ void QuadtreeNode::DrawBoxAroundNode(UWorld* world, FColor colour)
     FVector centre = {m_BoundingBox->GetCenter().X, m_BoundingBox->GetCenter().Y, 100.f};
     FVector extent = {m_BoundingBox->GetExtent().X, m_BoundingBox->GetExtent().Y, 0.0f};
 
-    DrawDebugBox(world, centre, extent, colour);
+    DrawDebugBox(world, centre, extent, m_bVisible? FColor::Red:colour,false,-1,m_bVisible?1:0,m_bVisible?20.f:0);
 
     for (TSharedPtr<QuadtreeNode, ESPMode::Fast>& node : m_ChildNodes)
     {
@@ -195,6 +199,8 @@ void QuadtreeNode::HideActors()
 {
     if (!HasChildNodes())
     {
+        m_bVisible=false;
+        
         for (ITickHideable* Eles : GetAllElements())
         {
             if(!Eles)
@@ -217,6 +223,7 @@ void QuadtreeNode::ShowActors()
 {
     if (!HasChildNodes())
     {
+        m_bVisible=true;
         
         if (!m_bHasBeenShowed)
         {

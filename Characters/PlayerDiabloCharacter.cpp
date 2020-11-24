@@ -40,7 +40,6 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
     CreateSkMeshComponent(m_SkBody, &m_SkShoe, "SkMesh05");
     CreateSkMeshComponent(m_SkBody, &m_SkShoulderPad, "SkMesh06");
     CreateSkMeshComponent(m_SkBody, &m_SkHeadGear, "SkMesh07");
-    CreateSkMeshComponent(m_SkBody, &m_SkShadow, "SkMesh08");
 
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundMesh1(
         TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/ModularBodyParts/Cloth01SK.Cloth01SK'"));
@@ -51,18 +50,10 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundMesh3(
         TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/ModularBodyParts/Shoe01SK.Shoe01SK'"));
     m_DefaultShoeMesh = FoundMesh3.Object;
-    static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundMesh4(
-        TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/OneMeshCharacters/ApprenticeSK.ApprenticeSK'"));
 
     m_SkBody->bCastDynamicShadow = false;
     m_SkBody->CastShadow = false;
     m_SkBody->bReceiveMobileCSMShadows = false;
-
-    m_SkShadow->SetSkeletalMesh(FoundMesh4.Object);
-    m_SkShadow->bCastDynamicShadow = true;
-    m_SkShadow->CastShadow = true;
-    m_SkShadow->bCastHiddenShadow = true;
-    m_SkShadow->SetVisibility(false);
 
     m_StBackpack = CreateDefaultSubobject<UStaticMeshComponent>("StMeshBackpack");
     m_StBackpack->CastShadow = false;
@@ -111,7 +102,6 @@ void APlayerDiabloCharacter::Init()
     m_SkHeadGear->SetMasterPoseComponent(m_SkBody);
     m_SkShoulderPad->SetMasterPoseComponent(m_SkBody);
     m_SkBelt->SetMasterPoseComponent(m_SkBody);
-    m_SkShadow->SetMasterPoseComponent(m_SkBody);
     //
     SetDefaultBodyMesh();
     SetDefaultGloveMesh();

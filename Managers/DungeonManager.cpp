@@ -105,10 +105,22 @@ void UDungeonManager::PortalToRecentDungeon()
     PRINTF("Dgm - Portal Dungeon");
     m_CurrentDungeon->ShowDungeon();
     ShowSpawnedMonster();
+    
     APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
+    UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(PlayerPawn->GetWorld());
     FVector Loc = m_RecentDungeonFeetLoc;
+    FNavLocation NavLoc;
+    
+    if(NavSys->GetRandomReachablePointInRadius(Loc,300.f,NavLoc))
+    {
+        Loc=NavLoc.Location;
+    }
+    
+    
     Loc.Z+=PlayerPawn->GetCapsule()->GetScaledCapsuleHalfHeight();
     PlayerPawn->SetActorLocation(Loc,false,nullptr,ETeleportType::None);
+
+    
     m_bIsPlayerInDungeon=true;
     ADiabloPlayerController::Get->ShowMinimap();
 }

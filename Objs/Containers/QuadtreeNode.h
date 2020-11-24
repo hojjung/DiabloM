@@ -104,12 +104,18 @@ private:
     /** Child nodes held by this node. */
     TArray<TSharedPtr<QuadtreeNode>> m_ChildNodes;
 
+    
+
     /** The position of this node relevant to it's parent. */
     ENodePosition m_eNodePosition;
 
     /** The chance that there is to spawn an enemy on a node. */
-    const float m_fChanceToSpawnPlatform = 0.25f;
 
     bool m_bHasBeenShowed;
+
+    bool m_bVisible;
+
+public:
+    TArray<TSharedPtr<QuadtreeNode>> m_Siblings;
 };
 

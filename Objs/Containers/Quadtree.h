@@ -37,6 +37,8 @@ private:
     void InitialiseNodes(TSharedPtr<QuadtreeNode> parentNode, FVector2D min, FVector2D max);
 
     TSharedPtr<QuadtreeNode> CreateNode(TSharedPtr<QuadtreeNode> parent, FVector2D min, FVector2D max);
+    //
+    void NodeShowHide(TSharedPtr<QuadtreeNode>& OldNodeEntered,TSharedPtr<QuadtreeNode>& newNodeEntered);
     
 private:
     TSharedPtr<QuadtreeNode> m_RootNode;
@@ -46,4 +48,27 @@ private:
     TSharedPtr<QuadtreeNode> m_CurrentNode;
 
     TSharedPtr<QuadtreeNode> m_OldNode;
+
+    
+
+    float MinCellHeight=0;
+    float MinCellWidth=0;
+
+    float ForMinCellHeight=0;//대각선
+    float ForMinCellWidth=0;
+
+TSharedPtr<QuadtreeNode> m_CenterNodeEntered   ;
+TSharedPtr<QuadtreeNode> m_NorthNodeEntered    ;
+TSharedPtr<QuadtreeNode> m_SouthNodeEntered    ;
+TSharedPtr<QuadtreeNode> m_EastNodeEntered     ;
+TSharedPtr<QuadtreeNode> m_WestNodeEntered     ;
+TSharedPtr<QuadtreeNode> m_NorthEastNodeEntered;
+TSharedPtr<QuadtreeNode> m_NorthWestNodeEntered;
+TSharedPtr<QuadtreeNode> m_SouthEastNodeEntered;
+TSharedPtr<QuadtreeNode> m_SouthWestNodeEntered;
+
+    TArray< TSharedPtr<QuadtreeNode>> m_AryNode;
+
+public:
+    void TryShow9Cell(FVector&& centerPosition);
 };
