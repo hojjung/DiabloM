@@ -96,6 +96,8 @@ protected:
 	//
 	UDiaDragDrop* CreateDDO(const FItemInstance& itemInst);
 
+	
+
 public:
 	FORCEINLINE int  GetIndex()
 	{

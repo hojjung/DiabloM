@@ -38,6 +38,8 @@ protected:
     UCheckBox* m_BtnPanel2;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UCheckBox* m_BtnPanel3;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+    UButton* m_BtnSellAllCheap;
 
 protected:
     UPROPERTY()
@@ -91,6 +93,9 @@ public:
     void UpdatePanel(AShopKeeper* shop_keeper);
     
     void ClearPanel();
+
+    UFUNCTION()
+    void SellAllCheapItem();
 
 public:
     FORCEINLINE const TArray<UShopItemContainer*>& GetShopContainer() const

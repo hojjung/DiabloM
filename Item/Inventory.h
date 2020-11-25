@@ -63,7 +63,7 @@ public:
 
     FItemInstance& GetItemRef(int index);
 
-    const TArray<FItemInstance>& GetItemAry() const;
+    TArray<FItemInstance>& GetItemAry();
 
     void SetItemAry(TArray<FItemInstance>& loadedAry);
 

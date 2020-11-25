@@ -54,5 +54,6 @@ public:
 		return GetCurrentItem().m_ItemTier->m_TierColor;
 	}
 
+
 	void DropEnd();
 };

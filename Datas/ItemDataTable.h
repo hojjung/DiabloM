@@ -103,6 +103,7 @@ public:
     float m_fBonusPowerRate;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "1", UIMin = "1"))
     float m_fGoldCostRate;
+
 };
 
 USTRUCT(BlueprintType)
@@ -290,6 +291,7 @@ public:
         m_ItemData = nullptr;
         m_AryOptions.Empty();
         m_nItemLevel=-1;
+        m_ItemTier=nullptr;
     }
 
     float GetFullStackSellValue() const
@@ -300,6 +302,18 @@ public:
     float GetOneStackSellValue() const
     {
         return (m_ItemTier->m_fGoldCostRate*m_nItemLevel*m_ItemData->m_ItemType.GetRow<FItemType>("")->m_MainOptionBonusRate)+m_ItemData->m_nDefaultSellValue;
+    }
+
+    bool IsHighValue() const
+    {
+        FName Tier=this->m_ItemTier->m_TierID;
+        
+        if(Tier=="Set"||Tier=="Immortal"||Tier=="Legend"||Tier=="Epic")
+        {
+            return true;
+        }
+
+        return false;
     }
 };
 

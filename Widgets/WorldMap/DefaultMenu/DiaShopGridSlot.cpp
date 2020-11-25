@@ -4,6 +4,7 @@
 #include "DiaShopGridSlot.h"
 
 #include "DiaInvenGridSlot.h"
+#include "Characters/DiabloPlayerController.h"
 #include "Item/ItemManager.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaDragDrop.h"
 
@@ -147,6 +148,7 @@ UDiaDragDrop * UDiaShopGridSlot::CreateDDO(const FItemInstance & itemInst)
 	UDiaDragDrop::GetDDOInst = DDO;
 	return DDO;
 }
+
 
 
 FReply UDiaShopGridSlot::NativeOnMouseButtonDown(const FGeometry & InGeometry, const FPointerEvent & InMouseEvent)

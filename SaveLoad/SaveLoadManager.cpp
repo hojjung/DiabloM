@@ -499,13 +499,10 @@ void USaveLoadManager::LoadItemDataForInstance(TArray<FItemInstance>& itemAry,ES
         
         ItemInst.m_ItemTier = UItemDataTable::GetItemTierPtr(ItemInst.m_TierID);
 
-        // if(ItemInst.m_ItemTier==nullptr)
-        // {
-        //     switch (version)
-        //     {
-        //         
-        //     }
-        // }
+        if(ItemInst.m_ItemTier==nullptr)
+        {
+            PRINTF("SaveLoadMAnager - ItemTIer NULL");
+        }
 
         for(auto& OO: ItemInst.m_AryOptions)
         {

@@ -136,6 +136,11 @@ ADroppedItem* URewardManager::DropItemActor(APawn* dropCenterActor, float dropRa
         m_AryAllPoolItem.Emplace(DropItem);
     }
 
+    if(myItem.IsEmpty())
+    {
+        PRINTF("ISEmpty Item");
+    }
+
     myItem.m_Holder = UDiabloGameInstance::Get->GetItemManager();
 
     DropItem->SetItemInstance(myItem);

@@ -25,7 +25,7 @@ public class DiabloM : ModuleRules
             "NavigationSystem",
             "EasyActionPlugin",
             "RenderCore",
-            "RHI"
+            "MoviePlayer"
         });
 
         

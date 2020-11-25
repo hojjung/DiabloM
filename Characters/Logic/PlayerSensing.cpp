@@ -36,6 +36,10 @@ bool UPlayerSensing::TickTryFoundInteraction()
             ETraceTypeQuery::TraceTypeQuery3, false, m_OwnedPlayer->m_AryIgnoreActor, EDrawDebugTrace::ForOneFrame, OutHit, true)
         || !OutHit.GetActor())
     {
+        if(m_OwnedPlayer->m_FocusedInteractable)
+        {
+            m_OwnedPlayer->m_FocusedInteractable=nullptr;
+        }
         return false;
     }
     

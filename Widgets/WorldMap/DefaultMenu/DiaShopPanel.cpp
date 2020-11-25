@@ -53,6 +53,9 @@ void UDiaShopPanel::Init()
         Iter++;
     }
     SetGrid(Iter,SHOP_X,SHOP_Y+1);
+
+
+    m_BtnSellAllCheap->OnClicked.AddDynamic(this,&UDiaShopPanel::SellAllCheapItem);
 }
 
 void UDiaShopPanel::SetGrid(int indexPanel, int x, int y)
@@ -143,6 +146,25 @@ bool UDiaShopPanel::SellItemAuto(int forDele,FItemInstance& itemWantAdd)
 
     return false;
 }
+
+void UDiaShopPanel::SellAllCheapItem()
+{
+    PRINTF("SellAll");
+
+    for(FItemInstance& ItemInst : ADiabloPlayerController::Get->GetInven()->GetItemAry())
+    {
+        if(ItemInst.IsEmpty()||ItemInst.IsHighValue())
+        {
+            continue;
+        }
+        if(!SellItemAuto(-1,ItemInst))
+        {
+            break;
+        }
+    }
+
+}
+
 
 bool UDiaShopPanel::BuyItemAuto(FItemInstance& itemWantAdd)
 {

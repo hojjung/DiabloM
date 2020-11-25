@@ -185,7 +185,7 @@ FItemInstance& UInventory::GetItemRef(int index)
     return m_ItemAry[index];
 }
 
-const TArray<FItemInstance>& UInventory::GetItemAry() const
+TArray<FItemInstance>& UInventory::GetItemAry()
 {
     return m_ItemAry;
 }

@@ -143,6 +143,8 @@ void ADroppedItem::DropEnd()
 	{
 		m_bIsOverlapAble=true;
 	}
+
+	//m_bIsOverlapAble=GetCurrentItem().IsHighValue(); //bug?
 }
 
 
