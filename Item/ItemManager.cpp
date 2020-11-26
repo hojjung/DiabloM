@@ -35,13 +35,13 @@ FItemInstance UItemManager::CreateItemInstance(FName id, float magicItemBonus, f
 
     CreateRandomOption(*ItemData, RandomOptionForItem, TierMaxOptionCount, TierBonusValue, itemLevel);
 
-    return FItemInstance(ItemData, TierRolled.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, itemLevel,
-                         &TierRolled);
+    return FItemInstance(ItemData, TierRolled.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, itemLevel);
 }
 
 FItemInstance UItemManager::CreateUniqueItem(const FUniqueEquipData* unique_item, int item_level)
 {
-    const FItemTier& Tier = *unique_item->m_UniqueItemTierHandle.GetRow<FItemTier>("");
+    const FItemTier& Tier = *unique_item->m_UniqueItemTierHandle.GetRow<FItemTier>("FailedTOGetUniqueTier");
+    
 
     int TierMaxOptionCount = Tier.m_AryOptionCount.GetRandom();
 
@@ -51,7 +51,7 @@ FItemInstance UItemManager::CreateUniqueItem(const FUniqueEquipData* unique_item
 
     CreateRandomOptionWithUnique(*unique_item, RandomOptionForItem, TierMaxOptionCount, TierBonusValue, item_level);
 
-    return FItemInstance(unique_item, Tier.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, item_level, &Tier);
+    return FItemInstance(unique_item, Tier.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, item_level);
 }
 
 

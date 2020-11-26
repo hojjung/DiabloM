@@ -40,9 +40,9 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMons
     }
     //
     //Spawn Gold
-    int GoldAmount = dropActor->GetAttributeSet()->GetGoldBounty();
+    float GoldAmount = dropActor->GetAttributeSet()->GetGoldBounty();
 
-    if (GoldAmount > 0)
+    if (GoldAmount > 0.f)
     {
         int CountGoldActor = FMath::RandRange(1, 3);
         float GoldAmountEach = GoldAmount / CountGoldActor;
@@ -118,7 +118,6 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMons
         int RandItemLevel = FMath::RandRange(MinItemLevel,MaxItemLevel);
 
         FItemInstance CreatedUniqueItem = UDiabloGameInstance::Get->CreateUniqueItem(UniqueData,RandItemLevel);
-
         DropItemActor(dropActor, 300.f, CreatedUniqueItem);
 
         IterUnique++;
@@ -127,28 +126,13 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMons
 
 ADroppedItem* URewardManager::DropItemActor(APawn* dropCenterActor, float dropRadius, FItemInstance& myItem)
 {
-    ADroppedItem* DropItem=nullptr;
-
-    if (!m_PoolItem.Dequeue(DropItem)||!DropItem)
-    {
-        DropItem = Cast<ADroppedItem>(SpawnInteractActor(UMonsterItemDropTable::ClassDropItemActor));
-        DropItem->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueItemActor);
-        m_AryAllPoolItem.Emplace(DropItem);
-    }
-
-    if(myItem.IsEmpty())
-    {
-        PRINTF("ISEmpty Item");
-    }
+    ADroppedItem* DropItem=GetDropItemActor();
 
     myItem.m_Holder = UDiabloGameInstance::Get->GetItemManager();
 
     DropItem->SetItemInstance(myItem);
 
-    DropItem->SetActorHiddenInGame(false);
-
     FOnEnd OnDropEnd;
-
     OnDropEnd.AddUObject(DropItem, &ADroppedItem::DropEnd);
 
     DropRandomPoint(dropCenterActor, dropRadius, DropItem, 700.f, &OnDropEnd);
@@ -158,18 +142,9 @@ ADroppedItem* URewardManager::DropItemActor(APawn* dropCenterActor, float dropRa
 
 ADroppedGold* URewardManager::DropGoldActor(APawn* dropCenterActor, float dropRadius, float goldAmount)
 {
-    ADroppedGold* DropGold=nullptr;
-
-    if (!m_PoolGold.Dequeue(DropGold)||!DropGold)
-    {
-        DropGold = Cast<ADroppedGold>(SpawnInteractActor(UMonsterItemDropTable::ClassDropGoldActor));
-        DropGold->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueGoldActor);
-        m_AryAllPoolGold.Emplace(DropGold);
-    }
+    ADroppedGold* DropGold=GetDropGoldActor();
 
     DropGold->SetGoldAmount(goldAmount);
-
-    DropGold->SetActorHiddenInGame(false);
 
     FOnEnd OnDropEnd;
     OnDropEnd.AddUObject(DropGold, &ADroppedGold::DropEnd);
@@ -181,52 +156,16 @@ ADroppedGold* URewardManager::DropGoldActor(APawn* dropCenterActor, float dropRa
 
 AHealthSphere* URewardManager::DropHpSphereActor(APawn* dropCenterActor, float dropRadius)
 {
-    AHealthSphere* DropHp=nullptr;
+    AHealthSphere* DropHp=GetDropHealthActor();
 
-    if (!m_PoolHp.Dequeue(DropHp)||!DropHp)
-    {
-        DropHp = Cast<AHealthSphere>(SpawnInteractActor(UMonsterItemDropTable::ClassDropHealthSphere));
-        DropHp->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueHpSphereActor);
-        m_AryAllPoolHp.Emplace(DropHp);
-    }
+    FOnEnd OnDropEnd;
+    OnDropEnd.AddUObject(DropHp, &AHealthSphere::DropEnd);
+
+    DropRandomPoint(dropCenterActor, dropRadius, DropHp, 550.f,&OnDropEnd);
 
     DropHp->SetActorHiddenInGame(false);
 
-    DropRandomPoint(dropCenterActor, dropRadius, DropHp, 450.f);
-
     return DropHp;
-}
-
-void URewardManager::HideAllActor(bool dgOpen)
-{
-    if(dgOpen)
-    {
-        return;
-    }
-    
-    for(ACollisionInteract* DropedItem :m_AryAllPoolItem)
-    {
-        if(!DropedItem->IsHidden())
-        {
-            EnqueItemActor(DropedItem);
-        }
-    }
-
-    for(ACollisionInteract* DropedGold :m_AryAllPoolGold)
-    {
-        if(!DropedGold->IsHidden())
-        {
-            EnqueItemActor(DropedGold);
-        }
-    }
-
-    for(ACollisionInteract* DropedHp :m_AryAllPoolHp)
-    {
-        if(!DropedHp->IsHidden())
-        {
-            EnqueItemActor(DropedHp);
-        }
-    }
 }
 
 void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int hpPoolCount)
@@ -234,53 +173,25 @@ void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int
     m_PoolItem.Empty();
     m_PoolGold.Empty();
     m_PoolHp.Empty();
-    m_AryAllPoolItem.Empty(itemPoolCount);
-    m_AryAllPoolGold.Empty(goldPoolCount);
-    m_AryAllPoolHp.Empty(hpPoolCount);
-    
     
     int i = 0;
     
     while (i++ < itemPoolCount)
     {
-        ADroppedItem* Created = Cast<ADroppedItem>(SpawnInteractActor(UMonsterItemDropTable::ClassDropItemActor));
-        Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueItemActor);
-        Created->SetActorHiddenInGame(true);
-        m_PoolItem.Enqueue(Created);
-        m_AryAllPoolItem.Emplace(Created);
+        CreateDropItemActor();
     }
 
     i = 0;
     while (i++ < goldPoolCount)
     {
-        ADroppedGold* Created = Cast<ADroppedGold>(SpawnInteractActor(UMonsterItemDropTable::ClassDropGoldActor));
-        Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueGoldActor);
-        Created->SetActorHiddenInGame(true);
-        m_PoolGold.Enqueue(Created);
-        m_AryAllPoolGold.Emplace(Created);
+        CreateDropGoldActor();
     }
 
     i = 0;
     while (i++ < hpPoolCount)
     {
-        AHealthSphere* Created = Cast<AHealthSphere>(SpawnInteractActor(UMonsterItemDropTable::ClassDropHealthSphere));
-        Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueHpSphereActor);
-        Created->SetActorHiddenInGame(true);
-        m_PoolHp.Enqueue(Created);
-        m_AryAllPoolHp.Emplace(Created);
+        CreateHealthActor();
     }
-}
-
-ACollisionInteract* URewardManager::SpawnInteractActor(TSubclassOf<ACollisionInteract> classWant)
-{
-    FActorSpawnParameters Param;
-    Param.bNoFail = true;
-
-    ACollisionInteract* DroppedActor = UDiabloGameInstance::Get->GetWorld()->SpawnActor<ACollisionInteract>(
-        classWant, Param);
-    DroppedActor->SetActorLocation(m_HidingPoint);
-
-    return DroppedActor;
 }
 
 ACollisionInteract* URewardManager::DropRandomPoint(APawn* dropCenterActor, float dropRadius,
@@ -342,23 +253,95 @@ FVector URewardManager::GetQuadControlPoint(FVector start, FVector end, float he
     return Result;
 }
 
+ACollisionInteract* URewardManager::SpawnInteractActor(TSubclassOf<ACollisionInteract> classWant)
+{
+    FActorSpawnParameters Param;
+    Param.bNoFail = true;
+
+    ACollisionInteract* DroppedActor = UDiabloGameInstance::Get->GetWorld()->SpawnActor<ACollisionInteract>(
+        classWant, Param);
+    DroppedActor->SetActorLocation(m_HidingPoint);
+
+    return DroppedActor;
+}
+
+ADroppedItem* URewardManager::CreateDropItemActor()
+{
+    ADroppedItem* Created = Cast<ADroppedItem>(SpawnInteractActor(UMonsterItemDropTable::ClassDropItemActor));
+    Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueItemActor);
+    EnqueItemActor(Created);
+    return Created;
+}
+
+ADroppedGold* URewardManager::CreateDropGoldActor()
+{
+    ADroppedGold* Created = Cast<ADroppedGold>(SpawnInteractActor(UMonsterItemDropTable::ClassDropGoldActor));
+    Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueGoldActor);
+    EnqueGoldActor(Created);
+    return Created;
+}
+
+AHealthSphere* URewardManager::CreateHealthActor()
+{
+    AHealthSphere* Created = Cast<AHealthSphere>(SpawnInteractActor(UMonsterItemDropTable::ClassDropHealthSphere));
+    Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueHpSphereActor);
+    EnqueHpSphereActor(Created);
+    return Created;
+}
+
 void URewardManager::EnqueItemActor(ACollisionInteract* collActor)
 {
-    collActor->SetActorHiddenInGame(true);
+    Cast<ITickHideable>(collActor)->HideAll(false);
     m_PoolItem.Enqueue(Cast<ADroppedItem>(collActor));
     collActor->SetActorLocation(m_HidingPoint);
 }
 
 void URewardManager::EnqueGoldActor(ACollisionInteract* collActor)
 {
-    collActor->SetActorHiddenInGame(true);
+    Cast<ITickHideable>( collActor)->HideAll(false);
     m_PoolGold.Enqueue(Cast<ADroppedGold>(collActor));
     collActor->SetActorLocation(m_HidingPoint);
 }
 
 void URewardManager::EnqueHpSphereActor(ACollisionInteract* collActor)
 {
-    collActor->SetActorHiddenInGame(true);
+    Cast<ITickHideable>( collActor)->HideAll(false);
     m_PoolHp.Enqueue(Cast<AHealthSphere>(collActor));
     collActor->SetActorLocation(m_HidingPoint);
+}
+
+ADroppedItem* URewardManager::GetDropItemActor()
+{
+    ADroppedItem* DropItem;
+    
+    if (!m_PoolItem.Dequeue(DropItem)||!DropItem)
+    {
+        DropItem = CreateDropItemActor();
+    }
+
+    return DropItem;
+}
+
+ADroppedGold* URewardManager::GetDropGoldActor()
+{
+    ADroppedGold* DropGold;
+    
+    if (!m_PoolGold.Dequeue(DropGold)||!DropGold)
+    {
+        DropGold = CreateDropGoldActor();
+    }
+
+    return DropGold;
+}
+
+AHealthSphere* URewardManager::GetDropHealthActor()
+{
+    AHealthSphere* DropHpSphere;
+    
+    if (!m_PoolHp.Dequeue(DropHpSphere)||!DropHpSphere)
+    {
+        DropHpSphere = CreateHealthActor();
+    }
+
+    return DropHpSphere;
 }

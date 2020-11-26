@@ -231,7 +231,7 @@ public:
     }
 
     FItemInstance(const FItemData* itemData, FName tierID, int gridIndex, IItemHolder* holder,
-                  TArray<FOptionSpec>& aryUseEffect, int lv=0,const FItemTier* itemTier = nullptr);//in cpp
+                  TArray<FOptionSpec>& aryUseEffect, int lv=0);//in cpp
 
 public:
     UPROPERTY(EditAnywhere,BlueprintReadOnly)
@@ -259,7 +259,7 @@ public:
 
     bool IsEmpty() const
     {
-        return m_ItemID == NAME_None && !m_ItemData;
+        return m_ItemID == NAME_None || !m_ItemData || !m_ItemTier;
     }
 
     void SetGridNewIndex(int newIndex)
@@ -292,6 +292,8 @@ public:
         m_AryOptions.Empty();
         m_nItemLevel=-1;
         m_ItemTier=nullptr;
+        m_Holder=nullptr;
+        m_fBuyCost=0.f;
     }
 
     float GetFullStackSellValue() const

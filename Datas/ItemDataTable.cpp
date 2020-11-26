@@ -10,7 +10,7 @@ UDataTable* UItemDataTable::GetUniqueItemTypeTable = nullptr;
 //GetUniqueItemTypeTable
 
 FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIndex, IItemHolder* holder,
-                             TArray<FOptionSpec>& aryUseEffect, int lv, const FItemTier* itemTier)
+                             TArray<FOptionSpec>& aryUseEffect, int lv)
 {
     m_ItemData = itemData;
     m_ItemID = m_ItemData->m_ItemID;
@@ -18,19 +18,21 @@ FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIn
     m_nGridIndex = gridIndex;
     m_Holder = holder;
     m_AryOptions = aryUseEffect;
-    m_TierID = tierID;
     m_nItemLevel=lv;
 
-    if (!itemTier)
-    {
-        m_ItemTier = UItemDataTable::GetItemTierPtr(m_TierID);
-    }
-    else
-    {
-        m_ItemTier = itemTier;
-    }
+    m_TierID = tierID;
+    m_ItemTier = UItemDataTable::GetItemTierPtr(m_TierID);
 
     m_fBuyCost=(GetFullStackSellValue()*2.f);
+
+
+    if(m_Holder)
+    {
+        if(IsEmpty() || m_nCurrentStack<1)
+        {
+            PRINTF("ITEMInst WTF");
+        }
+    }
 }
 
 

@@ -31,4 +31,6 @@ public:
 	void SetGoldAmount(float amount);
 
 	void DropEnd();
+
+	virtual void RegisterToQuadTreeBound() override ;
 };

@@ -7,7 +7,6 @@
 ACollisionInteract::ACollisionInteract(const FObjectInitializer& objInit)
 {
 	PrimaryActorTick.bCanEverTick = false;
-	PrimaryActorTick.bCanEverTick = false;
 	m_CollSphere = CreateDefaultSubobject<USphereComponent>("Coll00");
 	m_CollSphere->SetCollisionProfileName("PickupItem");
 	m_CollSphere->SetSphereRadius(70.f);
@@ -51,6 +50,15 @@ FVector ACollisionInteract::GetActorLocation()
 void ACollisionInteract::RegisterToQuadTreeBound()
 {
 	ADiabloGameMode::Get->RegisterQuadElement(this);
+
+	if(!GetCurrentNode())
+	{
+		return;
+	}
+	if(GetCurrentNode()->IsPositionInsideNode(GetActorLocation()))
+	{
+		ShowAll(true);
+	}
 }
 
 void ACollisionInteract::ShowAll(bool hasBeenShowed)
@@ -61,7 +69,6 @@ void ACollisionInteract::ShowAll(bool hasBeenShowed)
 	}
 	
 	SetActorHiddenInGame(false);
-	SetActorTickEnabled(true);
 	SetActorEnableCollision(true);
 
 	m_bIsVisible=true;
@@ -70,7 +77,6 @@ void ACollisionInteract::ShowAll(bool hasBeenShowed)
 void ACollisionInteract::HideAll(bool hasBeenShowed)
 {
 	SetActorHiddenInGame(true);
-	SetActorTickEnabled(false);
 	SetActorEnableCollision(false);
 
 	m_bIsVisible=false;

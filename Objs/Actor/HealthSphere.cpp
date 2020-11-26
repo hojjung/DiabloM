@@ -7,7 +7,7 @@
 #include "Objs/Containers/QuadtreeNode.h"
 
 
-AHealthSphere::AHealthSphere(const FObjectInitializer& objInit):Super(objInit)
+AHealthSphere::AHealthSphere(const FObjectInitializer& objInit): Super(objInit)
 {
     m_BillBoard->SetVisibility(false);
     m_TagMagnitude = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.HpHeal"));
@@ -24,31 +24,35 @@ void AHealthSphere::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
         return;
     }
 
-    float HpHalf=Char->GetMaxHealth()/2.f;
+    float HpHalf = Char->GetMaxHealth() / 2.f;
 
     FGameplayEffectContextHandle Context = Char->GetDiaAbilitySystem()->MakeEffectContext();
-    FGameplayEffectSpecHandle EffectSpecHandle = Char->GetDiaAbilitySystem()->MakeOutgoingSpec(m_GEEffect, 1,Context);
+    FGameplayEffectSpecHandle EffectSpecHandle = Char->GetDiaAbilitySystem()->MakeOutgoingSpec(m_GEEffect, 1, Context);
 
     EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(
         m_TagMagnitude, HpHalf);
 
-   Char->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
+    Char->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
         *EffectSpecHandle.Data);
 
-    m_CollSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    HideAll(true);
 
-    if(m_OnTaskEnd.IsBound())
+    if (GetCurrentNode())
+    {
+        GetCurrentNode()->RemoveElement(this);
+    }
+
+    if (m_OnTaskEnd.IsBound())
     {
         m_OnTaskEnd.Broadcast(this);
     }
     else
     {
-        if(GetCurrentNode())
-        {
-            GetCurrentNode()->RemoveElement(this);
-        }
-
         Destroy();
     }
 }
 
+void AHealthSphere::DropEnd()
+{
+    RegisterToQuadTreeBound();
+}

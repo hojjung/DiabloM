@@ -4,54 +4,58 @@
 #include "DroppedGold.h"
 
 
-
 #include "AbilitySystem/Attribute/PlayerDiabloAttribute.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Objs/Containers/QuadtreeNode.h"
 #include "Widgets/WorldMap/WorldWidget/ItemNameCard.h"
 
-ADroppedGold::ADroppedGold(const FObjectInitializer& objInit):Super(objInit)
+ADroppedGold::ADroppedGold(const FObjectInitializer& objInit): Super(objInit)
 {
-    m_fGoldAmount=12.f;
-    m_Format=FTextFormat::FromString("{0} Gold");
+    m_Format = FTextFormat::FromString("{0} Gold");
     m_BillBoard->SetHiddenInGame(true);
-    m_CollSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void ADroppedGold::SetRandScale()
 {
-    float Rand=FMath::RandRange(0.8f,1.3f);
-    FVector ScaleW=FVector(Rand,Rand,Rand);
+    float Rand = FMath::RandRange(0.8f, 1.5f);
+    FVector ScaleW = FVector(Rand, Rand, Rand);
     SetActorScale3D(ScaleW);
 }
 
 void ADroppedGold::SetGoldAmount(float amount)
 {
-    m_fGoldAmount=amount;
+    m_fGoldAmount = amount;
     SetRandScale();
+    SetActorHiddenInGame(false);
 }
 
 void ADroppedGold::DropEnd()
 {
-    m_BillBoard->SetHiddenInGame(false);
-    m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-    
     UItemNameCard* ItemCard = Cast<UItemNameCard>(m_BillBoard->GetUserWidgetObject());
-    FText GoldText=UDiaBlueprintFunctionLibrary::GetAlphabetText(m_fGoldAmount);
+    FText GoldText = UDiaBlueprintFunctionLibrary::GetAlphabetText(m_fGoldAmount);
     FFormatOrderedArguments Args;
     Args.Add(GoldText);
-    ItemCard->SetItemName(FText::Format(m_Format,Args));
+    ItemCard->SetItemName(FText::Format(m_Format, Args));
+    
     m_BillBoard->SetDrawSize(m_BillBoard->GetUserWidgetObject()->GetDesiredSize());
 
     RegisterToQuadTreeBound();
 }
 
+void ADroppedGold::RegisterToQuadTreeBound()
+{
+    Super::RegisterToQuadTreeBound();
+
+    m_BillBoard->SetHiddenInGame(false);
+}
+
 void ADroppedGold::BeginPlay()
 {
     Super::BeginPlay();
-    
-    if(m_fGoldAmount>0.f)
+
+    if (m_fGoldAmount > 0.f)
     {
         SetGoldAmount(m_fGoldAmount);
         DropEnd();
@@ -59,9 +63,9 @@ void ADroppedGold::BeginPlay()
 }
 
 void ADroppedGold::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                             const FHitResult& SweepResult)
 {
-
     APlayerDiabloCharacter* Char = Cast<APlayerDiabloCharacter>(OtherActor);
 
     if (!Char)
@@ -69,29 +73,29 @@ void ADroppedGold::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
         return;
     }
 
-    
-    float AmountBounus=Cast<UPlayerDiabloAttribute>( Char->GetAttributeSet())->GetGoldBonusPer();
 
-    if(AmountBounus<1.f)
+    float AmountBounus = Cast<UPlayerDiabloAttribute>(Char->GetAttributeSet())->GetGoldBonusPer();
+
+    if (AmountBounus < 1.f)
     {
-        AmountBounus=1.f;
+        AmountBounus = 1.f;
     }
-    
-    Char->EarnGold(m_fGoldAmount*AmountBounus);
 
-    m_BillBoard->SetHiddenInGame(true);
-    m_CollSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    
-    if(m_OnTaskEnd.IsBound())//Pooled
+    Char->EarnGold(m_fGoldAmount * AmountBounus);
+
+    HideAll(true);
+
+    if (GetCurrentNode())
+    {
+        GetCurrentNode()->RemoveElement(this);
+    }
+
+    if (m_OnTaskEnd.IsBound()) //Pooled
     {
         m_OnTaskEnd.Broadcast(this);
     }
-    else//Not Pooled
+    else //Not Pooled
     {
-        if(GetCurrentNode())
-        {
-            GetCurrentNode()->RemoveElement(this);
-        }
         Destroy();
     }
 }

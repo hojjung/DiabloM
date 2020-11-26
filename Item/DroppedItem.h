@@ -14,12 +14,13 @@ class DIABLOM_API ADroppedItem : public ACollisionInteract
 
 public:
 	ADroppedItem(const FObjectInitializer& objInit);
-	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Item")
 	UBillboardComponent* m_Imposter;
 	UPROPERTY(EditAnywhere, Category = "Item")
 	FItemDataHandle m_TableID;
+	UPROPERTY(EditAnywhere, Category = "Item")
+	bool m_bIsDroppedInField;
 	UPROPERTY(VisibleAnywhere)
 	FItemInstance m_ItemInstance;
 
@@ -36,11 +37,8 @@ public:
 	
 	void SetItemVisual(const FItemInstance& ItemData);
 
-	void SetItem(FName itemID);
-
 	void SetItemInstance(FItemInstance& itemInst);
 
-	UFUNCTION(BlueprintCallable)
 	const FItemInstance& GetCurrentItem()const;
 
 	UFUNCTION(BlueprintCallable)
@@ -54,6 +52,7 @@ public:
 		return GetCurrentItem().m_ItemTier->m_TierColor;
 	}
 
-
 	void DropEnd();
+
+	virtual void RegisterToQuadTreeBound() override;
 };
