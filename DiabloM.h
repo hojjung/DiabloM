@@ -101,7 +101,7 @@ DIABLOM_API DECLARE_LOG_CATEGORY_EXTERN(DiaM, Log, All);
 
 #define MAXSLOT 7
 
-#define MAXVALUE 18000000000000000000.f 
+#define MAXVALUE 99999999999999999999.f 
 
 #define stringify(name) #name
 #define EnumToStr(Enum, Val)  EnumToString( (stringify(Enum)) , Val)

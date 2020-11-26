@@ -87,6 +87,13 @@ void UDiaInvenGridPanel::AddItemStack(int index )
 
 void UDiaInvenGridPanel::UpdateGold(float v)
 {
-	m_TextGold->SetText(UDiaBlueprintFunctionLibrary::GetAlphabetText(v));
+	if(v>100000000.f)
+	{
+		m_TextGold->SetText(UDiaBlueprintFunctionLibrary::GetAlphabetText(v));	
+	}
+	else
+	{
+		m_TextGold->SetText(FText::AsNumber(v));
+	}
 }
 

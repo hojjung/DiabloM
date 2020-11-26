@@ -239,6 +239,8 @@ public:
 	void EarnExp(float expEarned);
 
 	void EarnGold(float goldEarned);
+
+	void SetGold(float goldEarned);
 	
 	bool SpendGold(float goldSpend);
 
