@@ -18,7 +18,6 @@ class UMonsterSpawnManager;
 class UDungeonManager;
 struct FItemInstance;
 struct FItemTier;
-struct FItemTier;
 
 UCLASS()
 class DIABLOM_API UDiabloGameInstance : public UGameInstance

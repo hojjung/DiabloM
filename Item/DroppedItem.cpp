@@ -113,7 +113,7 @@ void ADroppedItem::SetItemInstance(FItemInstance& itemInst)
     m_TableID.RowName = m_ItemInstance.m_ItemID;
 
     SetActorHiddenInGame(false);
-}
+} 
 
 
 const FItemInstance& ADroppedItem::GetCurrentItem() const

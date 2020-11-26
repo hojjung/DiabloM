@@ -23,6 +23,8 @@ ADiabloPlayerController::ADiabloPlayerController()
 	APlayerController::SetVirtualJoystickVisibility(true);
 
 	m_FormatMiss=FTextFormat::FromString("Miss-{0}%");
+
+
 }
 
 void ADiabloPlayerController::BeginPlay()

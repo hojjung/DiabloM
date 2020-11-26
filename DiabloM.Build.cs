@@ -25,7 +25,7 @@ public class DiabloM : ModuleRules
             "NavigationSystem",
             "EasyActionPlugin",
             "RenderCore",
-            "MoviePlayer"
+            "MoviePlayer",
         });
 
         
@@ -39,8 +39,7 @@ public class DiabloM : ModuleRules
             "DungeonArchitectRuntime",
             "TechTree",
             "OnlineSubsystem",
-            "EasyActionPlugin"
-           
+            "EasyActionPlugin",
         });
         if (Target.Platform == UnrealTargetPlatform.Android)
         {
