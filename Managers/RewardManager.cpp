@@ -7,7 +7,7 @@
 void URewardManager::CreateActorPool()
 {
     m_HidingPoint = FVector(100000, 100000, 100000);
-    CreateAllItemPool(75, 75, 75);
+    CreateAllItemPool(5, 5, 5);
 }
 
 void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMonsterItemDropRow& dropData, int level)
@@ -168,11 +168,47 @@ AHealthSphere* URewardManager::DropHpSphereActor(APawn* dropCenterActor, float d
     return DropHp;
 }
 
+void URewardManager::EnqueAllActors(bool dgOpen)
+{
+    if(dgOpen)
+    {
+        return;
+    }
+    
+    for(ADroppedItem* CollActors : m_AryAllItemActors)
+    {
+        if(!CollActors->IsHidden())
+        {
+            EnqueItemActor(CollActors);
+        }
+    }
+    
+    for(ADroppedGold* CollActors : m_AryAllGoldActors)
+    {
+        if(!CollActors->IsHidden())
+        {
+            EnqueGoldActor(CollActors);
+        }
+    }
+
+    for(AHealthSphere* CollActors : m_AryAllHpActors)
+    {
+        if(!CollActors->IsHidden())
+        {
+            EnqueHpSphereActor(CollActors);
+        }   
+    }
+}
+
 void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int hpPoolCount)
 {
     m_PoolItem.Empty();
     m_PoolGold.Empty();
     m_PoolHp.Empty();
+    
+    m_AryAllItemActors.Reserve(100);
+    m_AryAllGoldActors.Reserve(100);
+    m_AryAllHpActors.Reserve(100);
     
     int i = 0;
     
@@ -270,6 +306,7 @@ ADroppedItem* URewardManager::CreateDropItemActor()
     ADroppedItem* Created = Cast<ADroppedItem>(SpawnInteractActor(UMonsterItemDropTable::ClassDropItemActor));
     Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueItemActor);
     EnqueItemActor(Created);
+    m_AryAllItemActors.Emplace(Created);
     return Created;
 }
 
@@ -278,6 +315,7 @@ ADroppedGold* URewardManager::CreateDropGoldActor()
     ADroppedGold* Created = Cast<ADroppedGold>(SpawnInteractActor(UMonsterItemDropTable::ClassDropGoldActor));
     Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueGoldActor);
     EnqueGoldActor(Created);
+    m_AryAllGoldActors.Emplace(Created);
     return Created;
 }
 
@@ -286,6 +324,7 @@ AHealthSphere* URewardManager::CreateHealthActor()
     AHealthSphere* Created = Cast<AHealthSphere>(SpawnInteractActor(UMonsterItemDropTable::ClassDropHealthSphere));
     Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueHpSphereActor);
     EnqueHpSphereActor(Created);
+    m_AryAllHpActors.Emplace(Created);
     return Created;
 }
 

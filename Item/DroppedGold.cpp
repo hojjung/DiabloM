@@ -13,21 +13,16 @@
 ADroppedGold::ADroppedGold(const FObjectInitializer& objInit): Super(objInit)
 {
     m_Format = FTextFormat::FromString("{0} Gold");
-    m_BillBoard->SetHiddenInGame(true);
+    m_MeshComp->SetHiddenInGame(true);
+    m_MeshComp->SetVisibility(false);
     m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-}
-
-void ADroppedGold::SetRandScale()
-{
-    float Rand = FMath::RandRange(0.8f, 1.5f);
-    FVector ScaleW = FVector(Rand, Rand, Rand);
-    SetActorScale3D(ScaleW);
+    m_BillBoard->SetHiddenInGame(true);
 }
 
 void ADroppedGold::SetGoldAmount(float amount)
 {
     m_fGoldAmount = amount;
-    SetRandScale();
+    m_BillBoard->SetHiddenInGame(true);
     SetActorHiddenInGame(false);
 }
 
@@ -40,7 +35,6 @@ void ADroppedGold::DropEnd()
     ItemCard->SetItemName(FText::Format(m_Format, Args));
     
     m_BillBoard->SetDrawSize(m_BillBoard->GetUserWidgetObject()->GetDesiredSize());
-
     RegisterToQuadTreeBound();
 }
 

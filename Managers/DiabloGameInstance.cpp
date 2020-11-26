@@ -42,12 +42,11 @@ void UDiabloGameInstance::Init()
     m_DungeonManager = NewObject<UDungeonManager>();
     m_DungeonManager->Init();
     m_RewardManager = NewObject<URewardManager>();
-    
-    
     //
     UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(40.f);
     UGameUserSettings::GetGameUserSettings()->ApplySettings(true);
-
+    //
+    m_DungeonManager->GetOnDungeonCreate().AddUObject(m_RewardManager,&URewardManager::EnqueAllActors);
 }
 
 void UDiabloGameInstance::Shutdown()

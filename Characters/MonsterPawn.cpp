@@ -251,8 +251,9 @@ void AMonsterPawn::ShowAll(bool hasBeenShowed)
     }
 	
     SetActorHiddenInGame(false);
-    SetActorTickEnabled(true);
     SetActorEnableCollision(true);
+    SetActorTickEnabled(true);
+    m_SkBody->SetComponentTickEnabled(true);
     
     m_bIsVisible=true;
 
@@ -263,6 +264,7 @@ void AMonsterPawn::HideAll(bool hasBeenShowed)
     if(!hasBeenShowed)
     {
         SetActorTickEnabled(false);
+        m_SkBody->SetComponentTickEnabled(false);
     }
     
     SetActorEnableCollision(false);
@@ -275,7 +277,6 @@ void AMonsterPawn::HideAll(bool hasBeenShowed)
 void AMonsterPawn::SetNode(QuadtreeNode* quadtree_node)
 {
     m_CurrentNode = quadtree_node;
-
   
 }
 

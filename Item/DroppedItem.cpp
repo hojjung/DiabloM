@@ -112,6 +112,7 @@ void ADroppedItem::SetItemInstance(FItemInstance& itemInst)
 
     m_TableID.RowName = m_ItemInstance.m_ItemID;
 
+    m_BillBoard->SetHiddenInGame(true);
     SetActorHiddenInGame(false);
 } 
 

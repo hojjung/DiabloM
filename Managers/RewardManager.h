@@ -22,10 +22,19 @@ class DIABLOM_API URewardManager : public UObject
 	GENERATED_BODY()
 	//아이템 액터 풀링 필요함 렉걸림
 
-protected:
+protected:	
 	TQueue<ADroppedItem*> m_PoolItem;
+	
 	TQueue<ADroppedGold*> m_PoolGold;
+	
 	TQueue<AHealthSphere*> m_PoolHp;
+
+	UPROPERTY()
+	TArray<ADroppedItem*> m_AryAllItemActors;
+	UPROPERTY()
+	TArray<ADroppedGold*> m_AryAllGoldActors;
+	UPROPERTY()
+	TArray<AHealthSphere*> m_AryAllHpActors;
 
 	FVector m_HidingPoint;
 public:
@@ -39,6 +48,8 @@ public:
 
 	AHealthSphere* DropHpSphereActor(APawn* dropCenterActor,float dropRadius);
 
+	void EnqueAllActors(bool dgOpen);
+
 protected:
 	void CreateAllItemPool(int itemPoolCount,int goldPoolCount,int hpPoolCount);
 
@@ -49,6 +60,8 @@ protected:
 	void BezierCurveMove(AActor* target,float height,FVector destination,FOnEnd* endCallback=nullptr);
 
 	FVector GetQuadControlPoint(FVector start,FVector end,float height);
+
+	
 
 protected:
 	ADroppedItem* CreateDropItemActor();
