@@ -28,11 +28,13 @@ void UMobFSM_Swamer::TickFSM()
 
 void UMobFSM_Swamer::OnIdle()
 {
+	m_OwnerMonster->m_bIsMoving=false;
+	
 	if (m_OwnerMonster->GetFocusedTarget())
 	{
 		m_StartPoint=m_OwnerMonster->GetActorLocation();
 		m_CurrentState = EFSM::Chase;
-		m_OwnerMonster->m_bIsMoving=true;
+		
 		return;
 	}
 	
@@ -69,6 +71,7 @@ void UMobFSM_Swamer::OnIdle()
 
 void UMobFSM_Swamer::OnChase()
 {
+	m_OwnerMonster->m_bIsMoving=true;
 	
 	bool CanSeeTarget = m_OwnerMonster->CanSeeTarget();
 
@@ -81,7 +84,6 @@ void UMobFSM_Swamer::OnChase()
 		if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
 		{
 			m_CurrentState = EFSM::Combat;
-			m_OwnerMonster->m_bIsMoving=false;
 		}
 	}
 	else//안보일때,안보이는채로 시간이 너무길면
@@ -104,7 +106,6 @@ void UMobFSM_Swamer::OnChase()
 			if(FMath::RandBool())
 			{
 				Result = m_OwnerMonster->MoveToLocation(m_OwnerMonster->GetLastSeenLocation());
-				m_OwnerMonster->m_bIsMoving=true;
 			}
 			
 			m_fChaseFindTimer = FMath::FRandRange(6.f,12.f);//길게 뽑힌애는 계속 쫓아가고 짧은애는 중도 포기함
@@ -113,7 +114,6 @@ void UMobFSM_Swamer::OnChase()
 		{
 			//null target
 			m_CurrentState = EFSM::Return;
-			m_OwnerMonster->m_bIsMoving=true;
 			m_fChaseFindTimer=-1.f;
 		}
 	}
@@ -121,10 +121,11 @@ void UMobFSM_Swamer::OnChase()
 
 void UMobFSM_Swamer::OnCombat()
 {
+	m_OwnerMonster->m_bIsMoving=false;
+	
 	if(!m_OwnerMonster->GetFocusedTarget() ||!m_OwnerMonster->GetFocusedTarget()->IsAlive())
 	{
 		m_CurrentState = EFSM::Return;
-		m_OwnerMonster->m_bIsMoving=true;
 		m_OwnerMonster->FocusTarget(nullptr);
 		
 		return;
@@ -137,7 +138,6 @@ void UMobFSM_Swamer::OnCombat()
 	if (DistSqr > GetAttackRange())
 	{
 		m_CurrentState = EFSM::Chase;
-		m_OwnerMonster->m_bIsMoving=true;
 	}
 }
 
@@ -150,10 +150,11 @@ void UMobFSM_Swamer::TryAttack()
 
 void UMobFSM_Swamer::OnReturn()
 {
+	m_OwnerMonster->m_bIsMoving=true;
+	
 	if (m_OwnerMonster->GetFocusedTarget())
 	{
 		m_CurrentState = EFSM::Chase;
-		m_OwnerMonster->m_bIsMoving=true;
 		return;
 	}
 	auto Result= m_OwnerMonster->MoveToLocation(m_StartPoint);
@@ -161,8 +162,6 @@ void UMobFSM_Swamer::OnReturn()
 	if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
 	{
 		m_CurrentState = EFSM::Idle;
-		m_OwnerMonster->m_bIsMoving=false;
-
 	}
 }
 

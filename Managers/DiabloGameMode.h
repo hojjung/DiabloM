@@ -88,7 +88,7 @@ protected:
 	UPROPERTY()
 	TMap<FName,ADiaDungeon*> m_MapDungeonActors;
 	
-	FDelta m_OnTick;
+	//FDelta m_OnTick;
 	
 protected:
 	void InitRewardManager();
@@ -119,10 +119,6 @@ public:
 		return m_ActionManager;
 	}
 
-	FORCEINLINE FDelta GetOnDeltaTick()
-	{
-		return m_OnTick;
-	}
 
 	UFUNCTION(BlueprintCallable)
 	UGridFlowMiniMap* GetMinimapManager()

@@ -205,7 +205,7 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	m_OnTick.Broadcast(DeltaSeconds);
+	//m_OnTick.Broadcast(DeltaSeconds);
 	//Need Bool
 	m_MiniMap->MiniMapTick(DeltaSeconds);
 	//m_FOW->MyTick(DeltaSeconds);
