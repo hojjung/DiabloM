@@ -16,12 +16,15 @@ void AShopKeeper::BeginPlay()
     
     int i=0;
     
-    while (i++<3)
+    while (i++<2)
     {
         UShopItemContainer* ShopPanel = NewObject<UShopItemContainer>();
         ShopPanel->InitShopStorage(SHOP_X,SHOP_Y);
         m_AryShopItemContainer.Emplace(ShopPanel);
     }
+    UShopItemContainer* ShopPanel = NewObject<UShopItemContainer>();
+    ShopPanel->InitShopStorage(SHOPRESELL_X,SHOPRESELL_Y);
+    m_AryShopItemContainer.Emplace(ShopPanel);
 
     SetItemFromDataTable1();
     SetItemFromDataTable2();

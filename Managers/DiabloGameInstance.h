@@ -45,8 +45,6 @@ protected:
 protected:
 	virtual void Init() override;
 	
-	virtual void Shutdown()override;
-
 public:
 	FItemInstance CreateItem(FName id,float magicItemBonus=0.f,float rareItemBonus=0.f,float epicItemBonus=0.f,int itemLevel=1.f);
 

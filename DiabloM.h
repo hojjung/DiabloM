@@ -97,6 +97,10 @@ DIABLOM_API DECLARE_LOG_CATEGORY_EXTERN(DiaM, Log, All);
 
 #define SHOP_Y 6
 
+#define SHOPRESELL_X 6
+
+#define SHOPRESELL_Y 7
+
 #define CURRSLOT 2
 
 #define MAXSLOT 7

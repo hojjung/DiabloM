@@ -12,7 +12,6 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
     m_TagEffectRemoveOnDeath = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.RemoveOnDeath"));
     m_TagDead = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
     //
-    m_AttachedTextPopup=nullptr;
     PrimaryActorTick.bCanEverTick = true;
     m_bUseFSM = false;
     m_Capsule = CreateDefaultSubobject<UCapsuleComponent>("Capsule00");

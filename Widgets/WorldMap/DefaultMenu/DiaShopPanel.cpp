@@ -52,7 +52,7 @@ void UDiaShopPanel::Init()
 
         Iter++;
     }
-    SetGrid(Iter,SHOP_X,SHOP_Y+1);
+    SetGrid(Iter,SHOPRESELL_X,SHOPRESELL_Y);
 
 
     m_BtnSellAllCheap->OnClicked.AddDynamic(this,&UDiaShopPanel::SellAllCheapItem);

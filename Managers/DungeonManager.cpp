@@ -24,9 +24,6 @@ void UDungeonManager::Init()
     m_nPointIndex=-1;
     
     UDungeonDataTable::GetDungeonTable->GetAllRows("DgManager-NoDungeonData",m_AryDungeonData);
-
-    
-    
     
 }
 

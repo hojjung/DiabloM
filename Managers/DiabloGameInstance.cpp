@@ -49,10 +49,6 @@ void UDiabloGameInstance::Init()
     m_DungeonManager->GetOnDungeonCreate().AddUObject(m_RewardManager,&URewardManager::EnqueAllActors);
 }
 
-void UDiabloGameInstance::Shutdown()
-{
-    Super::Shutdown();
-}
 
 FItemInstance UDiabloGameInstance::CreateItem(FName id,float magicItemBonus,float rareItemBonus,float epicItemBonus,int itemLevel)
 {

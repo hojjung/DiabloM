@@ -79,9 +79,8 @@ void ADiabloPlayerController::CreateDmgWC(int count)
 	{
 		UDamageTextWidgetComponent* DamageText = NewObject<UDamageTextWidgetComponent>(GetPlayerPawn(), m_ClassDmgText);
 		DamageText->RegisterComponent();
-		DamageText->AttachToActor(GetPlayerPawn());
 		m_AryDmgWC.Add(DamageText);
-		DamageText->Init(GetPlayerPawn());
+		DamageText->AttachToComponent(this->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageText->SetHiddenInGame(true);
 	}
 }
@@ -95,12 +94,8 @@ UDamageTextWidgetComponent* ADiabloPlayerController::GetDmgWC()
 		m_DmgIndex=0;
 	}
 	
-	if(Dmg->GetAttachedActor()!=this)
-	{
-		Dmg->EndAnimation();
-	}
-	
 	Dmg->SetHiddenInGame(false);
+	
 	return Dmg;
 }
 
@@ -208,7 +203,7 @@ void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done,AUn
 {
 	UDamageTextWidgetComponent* DamageText = GetDmgWC();
 	
-	DamageText->AttachToActor(unit_pawn);
+	DamageText->SetWorldLocation(unit_pawn->GetActorLocation());
 	
 	if(dmgPopup==EDamagePopup::Miss)
 	{

@@ -122,8 +122,6 @@ bool UShopItemContainer::AddItem(int droppedIndex, FItemInstance& itemWantAdd) /
 
     FItemInstance DropOldItem = m_ItemAry[droppedIndex];
 
-    IItemHolder* FromDropItem = DropOldItem.m_Holder;
-
     //Stack
     bool Result = false;
     //safe

@@ -27,26 +27,12 @@ UCLASS()
 class DIABLOM_API UDamageTextWidgetComponent : public UWidgetComponent
 {
 	GENERATED_BODY()
-   protected:
-    UPROPERTY()
-    const AActor* m_Base;
-    UPROPERTY()
-    const AActor* m_AttachedActor;
 public:
-    void Init(AActor* base);
-    void AttachToActor(AUnitPawn* newRoot);
-    
     UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void SetDamageText(const FText& Damage);
     UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void StartAnimation(EDamagePopup dmg);
     UFUNCTION(BlueprintCallable)
-    void PlaceTempArea();
-    UFUNCTION(BlueprintCallable)
     void EndAnimation();
 
-    FORCEINLINE const AActor* GetAttachedActor() const
-    {
-        return m_AttachedActor;
-    }
 };

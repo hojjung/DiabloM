@@ -89,10 +89,6 @@ protected:
 
     FGameplayAbilitySpecHandle m_BaseAttackHandle;
 
-public:
-    UPROPERTY()
-    UDamageTextWidgetComponent* m_AttachedTextPopup;
-
 protected:
     virtual void BeginPlay() override;
 

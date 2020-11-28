@@ -118,13 +118,6 @@ void AMonsterPawn::GiveExpToPlayer()
 
 void AMonsterPawn::Die()
 {
-    if (m_AttachedTextPopup)
-    {
-        m_AttachedTextPopup->PlaceTempArea(); //몬스터가 죽으면 자리를 거기로 세팅하고 애니매이션 끝까지 실행
-        
-        m_AttachedTextPopup = nullptr;
-    }
-    
     m_OnCharacterDied.Broadcast(this);
 
     SetActorTickEnabled(false);

@@ -25,7 +25,7 @@ void UPlayerSensing::InitSense(APlayerDiabloCharacter* player)
 
 bool UPlayerSensing::TickTryFoundInteraction()
 {
-    FVector TraceStart = m_OwnedPlayer->GetBodyMesh()->GetComponentLocation();
+    FVector TraceStart = m_OwnedPlayer->GetCapsule()->GetComponentLocation();
     FVector TraceEnd = TraceStart + m_OwnedPlayer->GetCapsule()->GetForwardVector() * m_OwnedPlayer->m_fInteractRange;
     
     FHitResult OutHit;
