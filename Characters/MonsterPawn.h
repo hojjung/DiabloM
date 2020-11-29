@@ -22,8 +22,6 @@ public:
 	AMonsterPawn(const FObjectInitializer& objInit);
 
 protected:
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	UFloatingStatusBarWidgetCompo* m_StatusBar;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FMonsterEntityHandle m_MonsterUnitHandle;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

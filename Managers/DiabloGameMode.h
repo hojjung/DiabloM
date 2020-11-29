@@ -32,7 +32,7 @@ protected:
 	UPostProcessComponent* m_PostProcess;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	UActionManagerComponent* m_ActionManager;
+	UActionManagerComponent* m_ItemActionManager;
 	
 	UPROPERTY(VisibleAnywhere)
 	APortal* m_PlayerVillageSpawn;
@@ -41,10 +41,6 @@ protected:
 	UGridFlowMiniMap* m_MiniMap;
 
 	TUniquePtr<Quadtree> m_QuadTree;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FVector2D m_Min;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FVector2D m_Max;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int m_nDepth;
 	
@@ -114,9 +110,9 @@ public:
 	
 	APortal* GetSpawnPoint();
 
-	FORCEINLINE UActionManagerComponent* GetActionManager()
+	FORCEINLINE UActionManagerComponent* GetItemActionManager()
 	{
-		return m_ActionManager;
+		return m_ItemActionManager;
 	}
 
 

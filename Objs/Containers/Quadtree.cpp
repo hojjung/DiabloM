@@ -24,6 +24,7 @@ Quadtree::Quadtree(const int maxDistance, FVector2D min, FVector2D max)
 Quadtree::~Quadtree()
 {
     PRINTF("Quadtree Die");
+    m_RootNode.Reset();
 }
 
 TSharedPtr<QuadtreeNode> Quadtree::GetRootNode()
@@ -171,7 +172,7 @@ TSharedPtr<QuadtreeNode> Quadtree::CreateNode(TSharedPtr<QuadtreeNode> parent, F
     {
         parent->AddChildNode(newNode);
     }
-    newNode->SetParentNode(TWeakPtr<QuadtreeNode>(parent));
+    newNode->SetParentNode(TSharedPtr<QuadtreeNode>(parent));
     
     newNode->SetBoundingBox(min, max);
     
@@ -239,61 +240,78 @@ void Quadtree::TryShow9Cell(FVector&& centerPosition)
     {
         if(m_CenterNodeEntered)
         {
+            PRINTF("m_CenterNodeHide");
             m_CenterNodeEntered->HideActors();
             m_CenterNodeEntered=nullptr;
         }
         if(m_NorthNodeEntered)
         {
+            PRINTF("m_NorthNodeHide");
             m_NorthNodeEntered->HideActors();
             m_NorthNodeEntered=nullptr;
         }
         if(m_EastNodeEntered)
         {
+            PRINTF("m_EastNodeHide");
             m_EastNodeEntered->HideActors();
             m_EastNodeEntered=nullptr;
         }
         if(m_WestNodeEntered)
         {
+            PRINTF("m_WestNodeHide");
             m_WestNodeEntered->HideActors();
             m_WestNodeEntered=nullptr;
         }
         if(m_NorthEastNodeEntered)
         {
+            PRINTF("m_NorthEastNodeHide");
             m_NorthEastNodeEntered->HideActors();
             m_NorthEastNodeEntered=nullptr;
         }
         if(m_NorthWestNodeEntered)
         {
+            PRINTF("m_NorthWestNodeHide");
             m_NorthWestNodeEntered->HideActors();
             m_NorthWestNodeEntered=nullptr;
         }
         if(m_SouthEastNodeEntered)
         {
+            PRINTF("m_SouthEastNodeHide");
             m_SouthEastNodeEntered->HideActors();
             m_SouthEastNodeEntered=nullptr;
         }
         if(m_SouthWestNodeEntered)
         {
+            PRINTF("m_SouthWestNodeHide");
             m_SouthWestNodeEntered->HideActors();
             m_SouthWestNodeEntered=nullptr;
         }
         if(m_SouthNodeEntered)
         {
+            PRINTF("m_SouthNodeHide");
             m_SouthNodeEntered->HideActors();
             m_SouthNodeEntered=nullptr;
-        }
+        }//문제 없는데
     
 
         NodeShowHide(m_CenterNodeEntered,CenterNodeEntered);
+        PRINTF("Hide1");
         NodeShowHide(m_NorthNodeEntered,NorthNodeEntered);
+        PRINTF("Hide2");
         NodeShowHide(m_EastNodeEntered,EastNodeEntered);
+        PRINTF("Hide3");
         NodeShowHide(m_WestNodeEntered,WestNodeEntered);
+        PRINTF("Hide4");
         NodeShowHide(m_SouthNodeEntered,SouthNodeEntered);
-        
+        PRINTF("Hide5");
         NodeShowHide(m_SouthWestNodeEntered,SouthWestNodeEntered);
+        PRINTF("Hide6");
         NodeShowHide(m_SouthEastNodeEntered,SouthEastNodeEntered);
+        PRINTF("Hide7");
         NodeShowHide(m_NorthWestNodeEntered,NorthWestNodeEntered);
+        PRINTF("Hide8");
         NodeShowHide(m_NorthEastNodeEntered,NorthEastNodeEntered);
+        PRINTF("Hide9");
     }
 }
 

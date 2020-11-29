@@ -4,10 +4,11 @@
 #include "DiabloGameMode.h"
 #include "Datas/MonsterItemDropTable.h"
 
+
 void URewardManager::CreateActorPool()
 {
     m_HidingPoint = FVector(100000, 100000, 100000);
-    CreateAllItemPool(3, 3, 3);//757575
+    CreateAllItemPool(5, 5, 5);//757575
 }
 
 void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMonsterItemDropRow& dropData, int level)
@@ -27,9 +28,7 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMons
     float EpicItemBonus=0.f;
 
     float UniqueItemBonus=0.f;
-
     //
-    
     int CountHp = dropData.m_AryHpDropRand.GetRandom();
 
     int IterHp = 0;
@@ -54,7 +53,6 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMons
             DropGoldActor(dropActor, 400.f, GoldAmountEach);
         }
     }
-
     //
     //Spawn Normal Item
     
@@ -174,6 +172,8 @@ void URewardManager::EnqueAllActors(bool dgOpen)
     {
         return;
     }
+
+    ADiabloGameMode::Get->GetItemActionManager()->CompleteAll();
     
     for(ADroppedItem* CollActors : m_AryAllItemActors)
     {
@@ -275,7 +275,7 @@ void URewardManager::BezierCurveMove(AActor* target, float height, FVector desti
         PathAction->m_OnComplete = *endCallback;
     }
 
-    ADiabloGameMode::Get->GetActionManager()->RunAction(PathAction);
+    ADiabloGameMode::Get->GetItemActionManager()->RunAction(PathAction);
 }
 
 FVector URewardManager::GetQuadControlPoint(FVector start, FVector end, float height)
@@ -352,7 +352,18 @@ ADroppedItem* URewardManager::GetDropItemActor()
     
     if (!m_PoolItem.Dequeue(DropItem)||!DropItem)
     {
-        DropItem = CreateDropItemActor();
+        PRINTF("NoItemActor,Deque");
+        
+        DropItem = m_AryAllItemActors[m_nItemIndex++];
+        
+        Cast<ITickHideable>(DropItem)->HideAll(false);
+        
+        DropItem->SetActorLocation(m_HidingPoint);
+
+        if(m_nItemIndex >= m_AryAllItemActors.Num())
+        {
+            m_nItemIndex=0;
+        }
     }
 
     return DropItem;
@@ -364,7 +375,18 @@ ADroppedGold* URewardManager::GetDropGoldActor()
     
     if (!m_PoolGold.Dequeue(DropGold)||!DropGold)
     {
-        DropGold = CreateDropGoldActor();
+        PRINTF("NoGoldActor,Deque");
+        
+        DropGold = m_AryAllGoldActors[m_nGoldIndex++];
+        
+        Cast<ITickHideable>(DropGold)->HideAll(false);
+        
+        DropGold->SetActorLocation(m_HidingPoint);
+
+        if(m_nGoldIndex >= m_AryAllGoldActors.Num())
+        {
+            m_nGoldIndex=0;
+        }
     }
 
     return DropGold;
@@ -376,7 +398,18 @@ AHealthSphere* URewardManager::GetDropHealthActor()
     
     if (!m_PoolHp.Dequeue(DropHpSphere)||!DropHpSphere)
     {
-        DropHpSphere = CreateHealthActor();
+        PRINTF("NoHealthActor,Deque");
+        
+        DropHpSphere = m_AryAllHpActors[m_nHpIndex++];
+        
+        Cast<ITickHideable>(DropHpSphere)->HideAll(false);
+        
+        DropHpSphere->SetActorLocation(m_HidingPoint);
+
+        if(m_nHpIndex >= m_AryAllHpActors.Num())
+        {
+            m_nHpIndex=0;
+        }
     }
 
     return DropHpSphere;

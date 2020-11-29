@@ -31,10 +31,10 @@ public:
     TSharedPtr<FBox2D> GetBoundingBox();
 
     /** Set the parent node for this node. */
-    void SetParentNode(TWeakPtr<QuadtreeNode> parentNode);
+    void SetParentNode(TSharedPtr<QuadtreeNode> parentNode);
 
     /** Get the parent node to this node. */
-    TWeakPtr<QuadtreeNode> GetParentNode();
+    TSharedPtr<QuadtreeNode> GetParentNode();
 
     /* Add a child node to this node. */
     void AddChildNode(TSharedPtr<QuadtreeNode> node);
@@ -96,7 +96,7 @@ private:
     TSharedPtr<FBox2D> m_BoundingBox;
 
     /** The parent node to this node */
-    TWeakPtr<QuadtreeNode> m_ParentNode;
+    TSharedPtr<QuadtreeNode> m_ParentNode;
 
     /** Elements held within this node. */
     TArray<ITickHideable*> m_Elements;

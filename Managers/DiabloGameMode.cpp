@@ -21,7 +21,7 @@ ADiabloGameMode::ADiabloGameMode()
 	
 	DefaultPawnClass = APlayerDiabloCharacter::StaticClass();
 
-	m_ActionManager=CreateDefaultSubobject<UActionManagerComponent>("ActionManager");
+	m_ItemActionManager=CreateDefaultSubobject<UActionManagerComponent>("ActionManager");
 
 	m_fMinimapTextureSize=1024.f;
 	m_fMinimapOutlineThickness=4.0f;
@@ -46,9 +46,6 @@ ADiabloGameMode::ADiabloGameMode()
 
 	m_nDepth=3;
 
-	m_Min = FVector2D(0,0);
-	
-	m_Max = FVector2D(1000,1000);
 }
 
 void ADiabloGameMode::InitRewardManager()
@@ -102,7 +99,8 @@ void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	delete m_QuadTree.Release();
+
+	m_QuadTree.Reset();
 }
 
 void ADiabloGameMode::SetDungeonInstanceToMap()
@@ -192,9 +190,9 @@ void ADiabloGameMode::SetQuadTreeCoord(ADiaDungeon* dgActor,UGridFlowTilemap* dg
 	DgMaxPos.X+=OffsetIdxX;
 	DgMaxPos.Y+=OffsetIdxY;
 	//
-	if(m_QuadTree)
+	if(m_QuadTree.Get())
 	{
-		delete m_QuadTree.Release();
+		m_QuadTree.Reset();
 	}
 	m_QuadTree =  MakeUnique<Quadtree>(m_nDepth,FVector2D(DgMinPos),FVector2D(DgMaxPos));
 	PRINTF("Min :%s",*DgMinPos.ToString());
@@ -213,7 +211,7 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 
 	if(m_QuadTree)
 	{
-		m_QuadTree->DrawBoxes(GetWorld());
+		//m_QuadTree->DrawBoxes(GetWorld());
 
 		m_QuadTree->TryShow9Cell(ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation());
 	}

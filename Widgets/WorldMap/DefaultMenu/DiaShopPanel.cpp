@@ -254,19 +254,20 @@ void UDiaShopPanel::UpdatePanel(AShopKeeper* shop_keeper)
         if (Iter < 2)
         {
             CurrentInven->GetItemChangeCallback().AddUObject(this, &UDiaShopPanel::UpdateSlot);
-
-            for (int i = 0; i < CurrentInven->GetItemAry().Num(); i++)
-            {
-                UpdateSlot(i, CurrentInven->GetItemRef(i));
-            }
         }
         else//Last ShopPanel
         {
             CurrentInven->GetItemChangeCallback().AddUObject(this, &UDiaShopPanel::UpdateForReSellSlot);
         }
+
+        for (int i = 0; i < CurrentInven->GetItemAry().Num(); i++)
+        {
+            UpdateSlot(i, CurrentInven->GetItemRef(i));
+        }
         
         Iter++;
     }
+    m_nCurrentSelectedPanelIndex=0;
 
     m_BtnPanel1->SetCheckedState(ECheckBoxState::Checked);
 }
@@ -282,6 +283,7 @@ void UDiaShopPanel::ClearPanel()
     int Iter = 0;
 
     FItemInstance Empty;
+    m_nCurrentSelectedPanelIndex=0;
 
     while (Iter < MaxIter)
     {
@@ -295,7 +297,11 @@ void UDiaShopPanel::ClearPanel()
         }
 
         Iter++;
+        
+        m_nCurrentSelectedPanelIndex++;
     }
+    m_nCurrentSelectedPanelIndex=0;
+  
 
     m_BtnPanel2->SetCheckedState(ECheckBoxState::Unchecked);
     m_BtnPanel3->SetCheckedState(ECheckBoxState::Unchecked);

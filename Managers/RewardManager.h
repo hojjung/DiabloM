@@ -37,6 +37,12 @@ protected:
 	TArray<AHealthSphere*> m_AryAllHpActors;
 
 	FVector m_HidingPoint;
+	UPROPERTY()
+	int m_nItemIndex;
+	UPROPERTY()
+	int m_nGoldIndex;
+	UPROPERTY()
+	int m_nHpIndex;
 public:
 	void CreateActorPool();
 	

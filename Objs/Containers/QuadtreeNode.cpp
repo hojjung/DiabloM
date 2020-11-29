@@ -6,7 +6,6 @@ QuadtreeNode::QuadtreeNode(): m_eNodePosition(), m_bHasBeenShowed(false)
 {
     m_Elements.Reserve(100);
     m_bHasBeenShowed = false;
-    m_Siblings.Init(nullptr,4);
     m_bVisible=false;
 }
 
@@ -35,12 +34,12 @@ TSharedPtr<FBox2D> QuadtreeNode::GetBoundingBox()
     return m_BoundingBox;
 }
 
-void QuadtreeNode::SetParentNode(TWeakPtr<QuadtreeNode> parentNode)
+void QuadtreeNode::SetParentNode(TSharedPtr<QuadtreeNode> parentNode)
 {
     this->m_ParentNode = parentNode;
 }
 
-TWeakPtr<QuadtreeNode> QuadtreeNode::GetParentNode()
+TSharedPtr<QuadtreeNode> QuadtreeNode::GetParentNode()
 {
     return m_ParentNode;
 }
@@ -251,13 +250,13 @@ void QuadtreeNode::ShowActors()
 
 TSharedPtr<QuadtreeNode> QuadtreeNode::GetRootNode()
 {
-    TSharedPtr<QuadtreeNode> parentNode = TSharedPtr<QuadtreeNode>(GetParentNode().Pin());
+    TSharedPtr<QuadtreeNode> parentNode = GetParentNode();
 
     // If the parent node isn't nullptr
     if (parentNode.IsValid())
     {
         // Grab an instance of the grandparent
-        TSharedPtr<QuadtreeNode> parentOfParent = TSharedPtr<QuadtreeNode>(parentNode->GetParentNode().Pin());
+        TSharedPtr<QuadtreeNode> parentOfParent = parentNode->GetParentNode();
 
         // If grandparent is not nullptr
         if (parentOfParent.IsValid())

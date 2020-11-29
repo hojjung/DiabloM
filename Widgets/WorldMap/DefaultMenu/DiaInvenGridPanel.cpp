@@ -20,6 +20,7 @@ void UDiaInvenGridPanel::Init(UInventory* itemContainer )
 
 	m_Inven->GetInvenSize(X,Y);
 	m_Inven->GetItemChangeCallback().AddUObject(this, &UDiaInvenGridPanel::UpdateSlot);
+	
 	SetGrid(X, Y);
 
 	UDiaInvenGridPanel::GetInvenWidgetInst=this;
@@ -31,9 +32,6 @@ void UDiaInvenGridPanel::Init(UInventory* itemContainer )
 
 	UpdateGold(ADiabloPlayerController::Get->GetPlayerPawn()->GetGold());
 }
-
-
-
 
 void UDiaInvenGridPanel::SetGrid(int x, int y)
 {
@@ -93,7 +91,8 @@ void UDiaInvenGridPanel::UpdateGold(float v)
 	}
 	else
 	{
-		m_TextGold->SetText(FText::AsNumber(v));
+		float New =  UDiaBlueprintFunctionLibrary::SetFloatPrecision(v,0);
+		m_TextGold->SetText(FText::AsNumber(New));
 	}
 }
 
