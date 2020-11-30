@@ -223,7 +223,6 @@ void QuadtreeNode::ShowActors()
 {
     if (!HasChildNodes())
     {
-        PRINTF("ShowActorQuadTreeNode11");
         m_bVisible=true;
         
         if (!m_bHasBeenShowed)
@@ -238,7 +237,6 @@ void QuadtreeNode::ShowActors()
                 continue;
             }
             Eles->ShowAll(m_bHasBeenShowed);
-            PRINTF("QuadTreeNode Eles 22");
         }
     }
     else

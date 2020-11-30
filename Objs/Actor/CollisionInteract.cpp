@@ -63,7 +63,6 @@ void ACollisionInteract::RegisterToQuadTreeBound()
 
 void ACollisionInteract::ShowAll(bool hasBeenShowed)
 {
-	PRINTF("ItemShowall1");
 	if(m_bIsVisible)
 	{
 		return;	
@@ -73,7 +72,6 @@ void ACollisionInteract::ShowAll(bool hasBeenShowed)
 	SetActorEnableCollision(true);
 
 	m_bIsVisible=true;
-	PRINTF("ItemShowall2");
 }
 
 void ACollisionInteract::HideAll(bool hasBeenShowed)

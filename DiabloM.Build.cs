@@ -28,8 +28,6 @@ public class DiabloM : ModuleRules
             "MoviePlayer",
         });
 
-        
-
         PrivateDependencyModuleNames.AddRange(new string[] { 
             "Slate", "SlateCore","UMG",
             "Core", "CoreUObject", "Engine",

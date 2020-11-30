@@ -199,55 +199,46 @@ void Quadtree::TryShow9Cell(FVector&& centerPosition)
     {
         if(m_CenterNodeEntered)
         {
-            PRINTF("m_CenterNodeHide");
             m_CenterNodeEntered->HideActors();
             m_CenterNodeEntered=nullptr;
         }
         if(m_NorthNodeEntered)
         {
-            PRINTF("m_NorthNodeHide");
             m_NorthNodeEntered->HideActors();
             m_NorthNodeEntered=nullptr;
         }
         if(m_EastNodeEntered)
         {
-            PRINTF("m_EastNodeHide");
             m_EastNodeEntered->HideActors();
             m_EastNodeEntered=nullptr;
         }
         if(m_WestNodeEntered)
         {
-            PRINTF("m_WestNodeHide");
             m_WestNodeEntered->HideActors();
             m_WestNodeEntered=nullptr;
         }
         if(m_NorthEastNodeEntered)
         {
-            PRINTF("m_NorthEastNodeHide");
             m_NorthEastNodeEntered->HideActors();
             m_NorthEastNodeEntered=nullptr;
         }
         if(m_NorthWestNodeEntered)
         {
-            PRINTF("m_NorthWestNodeHide");
             m_NorthWestNodeEntered->HideActors();
             m_NorthWestNodeEntered=nullptr;
         }
         if(m_SouthEastNodeEntered)
         {
-            PRINTF("m_SouthEastNodeHide");
             m_SouthEastNodeEntered->HideActors();
             m_SouthEastNodeEntered=nullptr;
         }
         if(m_SouthWestNodeEntered)
         {
-            PRINTF("m_SouthWestNodeHide");
             m_SouthWestNodeEntered->HideActors();
             m_SouthWestNodeEntered=nullptr;
         }
         if(m_SouthNodeEntered)
         {
-            PRINTF("m_SouthNodeHide");
             m_SouthNodeEntered->HideActors();
             m_SouthNodeEntered=nullptr;
         }//문제 없는데
