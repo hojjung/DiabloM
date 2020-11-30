@@ -32,5 +32,11 @@ public:
 	void InitWidget();	
 	
 	APlayerVisual* GetPlayerVisual();
-	
+
+protected:
+	virtual void SetupInputComponent() override;
+
+	void OnDeviceBackKey();
+
+	void ExitGame();
 };

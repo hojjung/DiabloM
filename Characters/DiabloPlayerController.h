@@ -165,4 +165,7 @@ public:
 	void ShowMinimap();
 
 	UDiaShopPanel* GetShopPanelWidget();
+
+	UFUNCTION()
+	void BackToSelectMenu();
 };

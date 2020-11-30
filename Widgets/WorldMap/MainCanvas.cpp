@@ -84,6 +84,11 @@ void UMainCanvas::DrinkPotion()
     //need cd
 }
 
+void UMainCanvas::TestGoBackMenu()
+{
+    m_PlayerCon->BackToSelectMenu();
+}
+
 void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven,TArray<UInventory*>* aryStorage)
 {
     m_PlayerCon = playerCon;

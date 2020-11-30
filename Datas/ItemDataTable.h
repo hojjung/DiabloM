@@ -247,11 +247,11 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadOnly)
     int m_nItemLevel;
     
-    IItemHolder* m_Holder;
+    IItemHolder* m_Holder=nullptr;
 
-    const FItemData* m_ItemData;
+    const FItemData* m_ItemData=nullptr;
 
-    const FItemTier* m_ItemTier;
+    const FItemTier* m_ItemTier=nullptr;
 
     float m_fBuyCost;
     
@@ -288,9 +288,9 @@ public:
         m_ItemID = NAME_None;
         m_nCurrentStack = -1;
         m_nGridIndex = -1;
-        m_ItemData = nullptr;
         m_AryOptions.Empty();
         m_nItemLevel=-1;
+        m_ItemData = nullptr;
         m_ItemTier=nullptr;
         m_Holder=nullptr;
         m_fBuyCost=0.f;

@@ -515,3 +515,4 @@ FName USaveLoadManager::GetCurrentPlayerClassName()
 {
     return m_AryLoadedCharacters[UPlayerCreateManager::Get->m_CurrentSelectSlot]->m_ClassName;
 }
+

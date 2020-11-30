@@ -6,6 +6,7 @@ QuadtreeNode::QuadtreeNode(): m_eNodePosition(), m_bHasBeenShowed(false)
 {
     m_Elements.Reserve(100);
     m_bHasBeenShowed = false;
+    m_Siblings.Init(nullptr,4);
     m_bVisible=false;
 }
 
@@ -222,6 +223,7 @@ void QuadtreeNode::ShowActors()
 {
     if (!HasChildNodes())
     {
+        PRINTF("ShowActorQuadTreeNode11");
         m_bVisible=true;
         
         if (!m_bHasBeenShowed)
@@ -236,6 +238,7 @@ void QuadtreeNode::ShowActors()
                 continue;
             }
             Eles->ShowAll(m_bHasBeenShowed);
+            PRINTF("QuadTreeNode Eles 22");
         }
     }
     else

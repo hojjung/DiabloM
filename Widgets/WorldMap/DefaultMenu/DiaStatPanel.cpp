@@ -59,11 +59,17 @@ void UDiaStatPanel::Init(APlayerDiabloCharacter* charPlayer)
     m_Player->GetLevelDele().AddUObject(this, &UDiaStatPanel::UpdateLevel);
     m_Player->GetRemainExpDele().AddUObject(this, &UDiaStatPanel::UpdateRemainExp); //m_OnChangedExpRamain
 
-    //UpdateAllAttributeText();
+    //
+    UpdateAllAttributeTextWrap();
 }
 
 void UDiaStatPanel::UpdateAllAttributeTextWrap()
 {
+    UpdateLevel(m_Player->GetCharacterLevel());
+    
+    float RemainExp = m_Player->m_fMaxExp - m_Player->m_fCurrentExp;
+    UpdateRemainExp(RemainExp);
+    
     UpdateStr(m_AttributeSet->GetStr());
     UpdateDex(m_AttributeSet->GetDex());
     UpdateInt(m_AttributeSet->GetInt());

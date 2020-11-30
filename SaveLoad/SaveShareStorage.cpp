@@ -13,4 +13,14 @@ void USaveShareStorage::SetSaveShareStorage(ESaveVersion saveV, const TArray<boo
     
     m_AryStorageItems4=aryItems34[3];
     m_AryStorageItems5=aryItems34[4];
+
+
+    for(auto& Item : m_AryStorageItems4)
+    {
+        Item.m_Holder=nullptr;
+    }
+    for(auto& Item : m_AryStorageItems5)
+    {
+        Item.m_Holder=nullptr;
+    }
 }

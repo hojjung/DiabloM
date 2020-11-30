@@ -134,10 +134,14 @@ void UCharCreate::Continue()
     m_PlManager->m_CurrentTextName=FText();
     //Cast<APlayerCreateController>( GetOwningPlayer())->GetPlayerVisual()->HideMesh();
     m_CharSelect->m_AryCharInfoSlot[Index]->SelectSlot();
+}
 
-    //SelectSlot
-    //
-    //focus need
+void UCharCreate::BackCancel()
+{
+    PRINTF("BackCancel");
+    m_NameBox->SetText(FText());
+    m_BtnContinue->SetIsEnabled(false);
+    m_PlManager->m_CurrentTextName=FText();
 }
 
 void UCharCreate::StartCreation()

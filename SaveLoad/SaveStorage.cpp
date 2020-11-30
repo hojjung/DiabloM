@@ -15,4 +15,17 @@ void USaveStorage::SetSaveStorage(ESaveVersion saveV, const TArray<bool>& aryOpe
     m_AryStorageItems1=aryItems012[0];
     m_AryStorageItems2=aryItems012[1];
     m_AryStorageItems3=aryItems012[2];
+
+    for(auto& Item : m_AryStorageItems1)
+    {
+        Item.m_Holder=nullptr;
+    }
+    for(auto& Item : m_AryStorageItems2)
+    {
+        Item.m_Holder=nullptr;
+    }
+    for(auto& Item : m_AryStorageItems3)
+    {
+        Item.m_Holder=nullptr;
+    }
 }

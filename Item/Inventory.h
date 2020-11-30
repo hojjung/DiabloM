@@ -65,7 +65,7 @@ public:
 
     TArray<FItemInstance>& GetItemAry();
 
-    void SetItemAry(TArray<FItemInstance>& loadedAry);
+    void SetItemAry(TArray<FItemInstance> loadedAry);
 
     int GetEmptyIndex();
 };

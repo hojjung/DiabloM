@@ -161,12 +161,12 @@ AHealthSphere* URewardManager::DropHpSphereActor(APawn* dropCenterActor, float d
 
     DropRandomPoint(dropCenterActor, dropRadius, DropHp, 550.f,&OnDropEnd);
 
-    DropHp->SetActorHiddenInGame(false);
+    DropHp->SetActorHiddenInGame(false); //이게 문제 아닐까//Set이 없기때문에해줌
 
     return DropHp;
 }
 
-void URewardManager::EnqueAllActors(bool dgOpen)
+void URewardManager::EnqueAllActors(bool dgOpen)//애초에 이게 문제 될수있는게 풀 밖에 있는지를 히든으로 따질수 없다,
 {
     if(dgOpen)
     {
@@ -174,13 +174,16 @@ void URewardManager::EnqueAllActors(bool dgOpen)
     }
 
     ADiabloGameMode::Get->GetItemActionManager()->CompleteAll();
+
+    m_PoolItem.Empty();
+
+    m_PoolGold.Empty();
+
+    m_PoolHp.Empty();
     
     for(ADroppedItem* CollActors : m_AryAllItemActors)
     {
-        if(!CollActors->IsHidden())
-        {
-            EnqueItemActor(CollActors);
-        }
+        EnqueItemActor(CollActors);
     }
     
     for(ADroppedGold* CollActors : m_AryAllGoldActors)

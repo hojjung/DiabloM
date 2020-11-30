@@ -238,6 +238,7 @@ void AMonsterPawn::RegisterToQuadTreeBound()
 
 void AMonsterPawn::ShowAll(bool hasBeenShowed)
 {
+    PRINTF("MonsterShowall1");
     if(m_bIsVisible)
     {
         return;	
@@ -249,7 +250,7 @@ void AMonsterPawn::ShowAll(bool hasBeenShowed)
     m_SkBody->SetComponentTickEnabled(true);
     
     m_bIsVisible=true;
-
+    PRINTF("MonsterShowall2");
 }
 
 void AMonsterPawn::HideAll(bool hasBeenShowed)

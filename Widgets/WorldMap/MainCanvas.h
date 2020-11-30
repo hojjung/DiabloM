@@ -85,6 +85,8 @@ public:
     void TestSaveAll();
     UFUNCTION(BlueprintCallable,Category="Menu")
     void DrinkPotion();
+    UFUNCTION(BlueprintCallable,Category="Menu")
+    void TestGoBackMenu();
 public:
     void Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven,TArray<UInventory*>* aryStorage);
 

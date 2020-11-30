@@ -31,8 +31,6 @@ public:
 
 	int GetMaxDistance() const;
 
-	void TickTryShowActors(FVector&& position);
-
 
 private:
 	void InitialiseNodes(TSharedPtr<QuadtreeNode> parentNode, FVector2D min, FVector2D max);
@@ -45,11 +43,6 @@ private:
 	TSharedPtr<QuadtreeNode> m_RootNode;
 
 	int m_MaxDistance;
-
-	TSharedPtr<QuadtreeNode> m_CurrentNode;
-
-	TSharedPtr<QuadtreeNode> m_OldNode;
-
 
 	float MinCellHeight = 0;
 	float MinCellWidth = 0;

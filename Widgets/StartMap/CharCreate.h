@@ -34,6 +34,7 @@ protected:
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UButton* m_BtnContinue;
+
     
 protected:
     UPROPERTY()
@@ -75,9 +76,13 @@ public:
     UFUNCTION()
     void Continue();
 
+    UFUNCTION()
+    void BackCancel();
+
     void StartCreation();
 protected:
     FText GetFormatCount(int index, int aryMax);
+
 
     friend UStartMenuCanvas;
 };

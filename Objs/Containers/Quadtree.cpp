@@ -62,47 +62,6 @@ int Quadtree::GetMaxDistance() const
     return m_MaxDistance;
 }
 
-void Quadtree::TickTryShowActors(FVector&& position)
-{
-    FVector2D pos2D(position);
-    
-    TSharedPtr<QuadtreeNode> NodeEntered = GetMinNode(pos2D);
-    
-    if(!NodeEntered)//바운더리 밖임
-    {
-        if(m_CurrentNode)//해제
-        {
-            m_CurrentNode->HideActors();
-            
-            m_CurrentNode=nullptr;
-        }
-        if(m_OldNode)
-        {
-            m_OldNode->HideActors();
-
-            m_OldNode=nullptr;
-        }
-        return;
-    }
-
-    if(NodeEntered!=m_CurrentNode)
-    {
-        if(m_CurrentNode)
-        {
-            if(m_OldNode)
-            {
-                m_OldNode->HideActors();                
-            }
-            
-            m_OldNode=m_CurrentNode;
-        }
-        
-        m_CurrentNode=NodeEntered;
-
-        m_CurrentNode->ShowActors();
-    }
-}
-
 
 void Quadtree::InitialiseNodes(TSharedPtr<QuadtreeNode> parentNode, FVector2D min, FVector2D max)
 {
@@ -185,12 +144,12 @@ void Quadtree::NodeShowHide(TSharedPtr<QuadtreeNode>& OldNodeEntered,TSharedPtr<
     {
         return;
     }
-    
- 
 
     OldNodeEntered = newNodeEntered;
-
+     
+    PRINTF("QuadTreeNodeShowHide1");
     OldNodeEntered->ShowActors();
+    PRINTF("QuadTreeNodeShowHide2");
 }
 
 void Quadtree::TryShow9Cell(FVector&& centerPosition)

@@ -120,4 +120,5 @@ public:
     void LoadItemDataForInstance(TArray<FItemInstance>& itemAry,ESaveVersion version);
 
     FName GetCurrentPlayerClassName();
+
 };

@@ -190,7 +190,7 @@ TArray<FItemInstance>& UInventory::GetItemAry()
     return m_ItemAry;
 }
 
-void UInventory::SetItemAry(TArray<FItemInstance>& loadedAry)
+void UInventory::SetItemAry(TArray<FItemInstance> loadedAry)
 {
     for (int i = 0; i < m_ItemAry.Num(); i++)
     {

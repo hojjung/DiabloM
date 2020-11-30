@@ -12,6 +12,7 @@
 #include "SaveLoad/SaveCharacterStatus.h"
 #include "PlayerDiabloCharacter.generated.h"
 
+class UDiaStatPanel;
 class IInteractable;
 class ADiabloPlayerController;
 class UCameraDissolve;
@@ -343,5 +344,7 @@ public:
 	{
 		return m_OnGoldChanged;
 	}
+
+	friend UDiaStatPanel;
 };
 
