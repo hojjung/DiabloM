@@ -1,6 +1,4 @@
 #include "MainCanvas.h"
-
-
 #include "DiaMonsterInfo.h"
 #include "PlayerStatusBar.h"
 #include "Characters/PlayerDiabloCharacter.h"
@@ -25,6 +23,7 @@ void UMainCanvas::OpenMainMenu()
     m_AttackButton->SetVisibility(ESlateVisibility::Hidden);
     m_InteractButton->SetVisibility(ESlateVisibility::Hidden);
     UGameplayStatics::SetGamePaused(m_PlayerCon->GetWorld(),true);
+    m_PlayerCon->SetVirtualJoystickVisibility(false);
 }
 
 void UMainCanvas::CloseMainMenu()
@@ -38,8 +37,13 @@ void UMainCanvas::CloseMainMenu()
     m_InteractButton->SetVisibility(ESlateVisibility::Visible);
 
     UGameplayStatics::SetGamePaused(m_PlayerCon->GetWorld(),false);
+    m_PlayerCon->SetVirtualJoystickVisibility(true);
+}
 
-    
+void UMainCanvas::OpenSkillMenu()
+{
+    OpenMainMenu();
+    m_MainMenu->OpenSkillPanel();
 }
 
 void UMainCanvas::Interaction()
@@ -115,6 +119,8 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
     m_bIsOpened=false;
     //
     m_EquipSys->m_OnOptionChanged.AddUObject(this,&UMainCanvas::UpdateHpBar);
+    //
+    m_SkillMenuButton->OnClicked.AddDynamic(this,&UMainCanvas::OpenSkillMenu);
 }
 
 void UMainCanvas::ShowMonsterInfo(AUnitPawn* monInfo)

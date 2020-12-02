@@ -32,6 +32,8 @@ public:
     UMainCanvas(const FObjectInitializer& objInit);
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+    UButton* m_SkillMenuButton;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UButton* m_SettingButton;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UButton* m_AttackButton;
@@ -69,6 +71,8 @@ public:
     void OpenMainMenu();
     UFUNCTION(BlueprintCallable,Category="Menu")
     void CloseMainMenu();
+    UFUNCTION(BlueprintCallable,Category="Menu")
+    void OpenSkillMenu();
     UFUNCTION(BlueprintCallable,Category="Menu")
     void Interaction();
     UFUNCTION(BlueprintCallable,Category="Menu")

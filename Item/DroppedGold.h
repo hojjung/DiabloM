@@ -9,6 +9,7 @@
 /**
  * 
  */
+class UBillboardComponent;
 UCLASS()
 class DIABLOM_API ADroppedGold : public ACollisionInteract
 {
@@ -19,6 +20,8 @@ public:
 	
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Item")
+	UBillboardComponent* m_Imposter;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	float m_fGoldAmount;
 	

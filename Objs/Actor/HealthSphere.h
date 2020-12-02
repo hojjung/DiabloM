@@ -19,6 +19,8 @@ public:
     
 protected:
     UPROPERTY(EditAnywhere,BlueprintReadOnly)
+    UParticleSystemComponent* m_Particle;
+    UPROPERTY(EditAnywhere,BlueprintReadOnly)
     FGameplayTag m_TagMagnitude;
     UPROPERTY(EditAnywhere,BlueprintReadOnly)
     TSubclassOf<UGameplayEffect> m_GEEffect;
@@ -29,4 +31,8 @@ protected:
 
 public:
     void DropEnd();
+
+    virtual void ShowAll(bool hasBeenShowed) override ;
+	
+    virtual void HideAll(bool hasBeenShowed) override ;
 };

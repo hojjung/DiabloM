@@ -32,7 +32,7 @@ bool UPlayerSensing::TickTryFoundInteraction()
     
     if (!UKismetSystemLibrary::SphereTraceSingle(
             GetWorld(),
-            TraceStart, TraceEnd, 15.f,
+            TraceStart, TraceEnd, 100.f,
             ETraceTypeQuery::TraceTypeQuery3, false, m_OwnedPlayer->m_AryIgnoreActor, EDrawDebugTrace::ForOneFrame, OutHit, true)
         || !OutHit.GetActor())
     {

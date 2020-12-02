@@ -31,17 +31,9 @@ UMonsterItemDropTable::UMonsterItemDropTable()
      TEXT("DataTable'/Game/DataTables/Dungeon/MonsterRewardTable.MonsterRewardTable'"));
     UMonsterItemDropTable::GetMonsterRewardDropTable=FoundDropTable.Object;
     
-     static ConstructorHelpers::FClassFinder<ADroppedGold>FoundDropGold(
-        TEXT("Blueprint'/Game/Blueprints/DropActor/BP_DroppedGold.BP_DroppedGold_C'"));
-    ClassDropGoldActor=FoundDropGold.Class;
-
-    static ConstructorHelpers::FClassFinder<ADroppedItem>FoundDropItem(
-        TEXT("Blueprint'/Game/Blueprints/DropActor/BP_DroppedItem.BP_DroppedItem_C'"));
-    ClassDropItemActor=FoundDropItem.Class;
-    
-    static ConstructorHelpers::FClassFinder<AHealthSphere>FoundDropHpSphere(
-        TEXT("Blueprint'/Game/Blueprints/DropActor/BP_HealthSphere.BP_HealthSphere_C'"));
-    ClassDropHealthSphere=FoundDropHpSphere.Class;
+    ClassDropGoldActor=ADroppedGold::StaticClass();
+    ClassDropHealthSphere=AHealthSphere::StaticClass();
+    ClassDropItemActor=ADroppedItem::StaticClass();
 }
 
 const FMonsterItemDropRow& UMonsterItemDropTable::GetDropRewardTableRow(FName id)

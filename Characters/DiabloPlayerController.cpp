@@ -168,13 +168,11 @@ void ADiabloPlayerController::OpenMainMenu()
 
 	m_MainMenu->OpenMainMenu();
 
-	APlayerController::SetVirtualJoystickVisibility(false);
 }
 
 void ADiabloPlayerController::CloseMainMenu()
 {
 	m_MainMenu->CloseMainMenu();
-	APlayerController::SetVirtualJoystickVisibility(true);
 }
 
 void ADiabloPlayerController::OnDeviceBackKey()

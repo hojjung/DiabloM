@@ -25,11 +25,9 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Item")
-	UStaticMeshComponent* m_MeshComp;
-	UPROPERTY(VisibleAnywhere, Category = "Item")
 	USphereComponent* m_CollSphere;
 	UPROPERTY(VisibleAnywhere, Category = "Item")
-	UWidgetComponent* m_BillBoard;
+	UWidgetComponent* m_WidgetNameCard;
 
 	FCollTaskEnd m_OnTaskEnd;
 

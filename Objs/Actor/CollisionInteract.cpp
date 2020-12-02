@@ -12,20 +12,15 @@ ACollisionInteract::ACollisionInteract(const FObjectInitializer& objInit)
 	m_CollSphere->SetSphereRadius(70.f);
 	RootComponent = m_CollSphere;
 	//
-	m_MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Mesh02");
-	m_MeshComp->SetCollisionProfileName("NoCollision");
-	m_MeshComp->SetGenerateOverlapEvents(true);
-	m_MeshComp->CastShadow = false;
-	m_MeshComp->SetupAttachment(RootComponent);
-	//
-	m_BillBoard = CreateDefaultSubobject<UWidgetComponent>("Billboard03");
-	m_BillBoard->SetWidgetSpace(EWidgetSpace::Screen);
-	m_BillBoard->SetWidgetClass(UItemNameCard::StaticClass());
-	m_BillBoard->SetDrawAtDesiredSize(false);
-	m_BillBoard->SetGenerateOverlapEvents(false);
-	m_BillBoard->SetupAttachment(RootComponent);
-	m_BillBoard->SetRelativeLocation( FVector(0.f, 0.f, 70.f));
-	m_BillBoard->CastShadow = false;
+	m_WidgetNameCard = CreateDefaultSubobject<UWidgetComponent>("NameCard03");
+	m_WidgetNameCard->SetWidgetSpace(EWidgetSpace::Screen);
+	m_WidgetNameCard->SetWidgetClass(UItemNameCard::StaticClass());
+	m_WidgetNameCard->SetDrawAtDesiredSize(false);
+	m_WidgetNameCard->SetGenerateOverlapEvents(false);
+	m_WidgetNameCard->SetupAttachment(RootComponent);
+	m_WidgetNameCard->SetRelativeLocation( FVector(0.f, 0.f, 70.f));
+	m_WidgetNameCard->CastShadow = false;
+	m_WidgetNameCard->SetCollisionProfileName("NoCollision");
 
 	m_CurrentNode=nullptr;
 	m_bIsVisible=true;
@@ -70,7 +65,7 @@ void ACollisionInteract::ShowAll(bool hasBeenShowed)
 	
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
-
+	m_WidgetNameCard->SetComponentTickEnabled(true);
 	m_bIsVisible=true;
 }
 
@@ -78,7 +73,7 @@ void ACollisionInteract::HideAll(bool hasBeenShowed)
 {
 	SetActorHiddenInGame(true);
 	SetActorEnableCollision(false);
-
+	m_WidgetNameCard->SetComponentTickEnabled(false);
 	m_bIsVisible=false;
 }
 

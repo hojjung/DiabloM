@@ -13,7 +13,7 @@ void URewardManager::CreateActorPool()
     m_nGoldIndex=0;
     m_nHpIndex=0;
     
-    CreateAllItemPool(300, 45, 15);//757575
+    CreateAllItemPool(75, 30, 4);//757575
 }
 
 void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMonsterItemDropRow& dropData, int level)
@@ -173,7 +173,7 @@ AHealthSphere* URewardManager::DropHpSphereActor(APawn* dropCenterActor, float d
 
 void URewardManager::EnqueAllActors(bool dgOpen)//애초에 이게 문제 될수있는게 풀 밖에 있는지를 히든으로 따질수 없다,
 {
-    if(dgOpen)
+    if(dgOpen)//이거때문에 느린듯
     {
         return;
     }

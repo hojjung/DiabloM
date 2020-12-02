@@ -1,6 +1,7 @@
 #include "DefaultMenu.h"
 
 #include "DiaShopGridSlot.h"
+#include "ItemDrop.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
@@ -19,6 +20,7 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     Get=this;
     m_bIsPopupOpened = false;
     m_bIsStorageOpened = false;
+    m_bIsSkillOpened=false;
     m_PlayerCon = playerCon;
     m_PlayerChar = playerChar;
     m_Equipment = equipment;
@@ -54,6 +56,8 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     CloseShopMenu();
 
     m_PlayerChar->GetOnGoldChanged().AddUObject(m_InvenGridPanel, &UDiaInvenGridPanel::UpdateGold);
+
+    CloseSkillPanel();
 }
 
 void UDefaultMenu::InitPopup()
@@ -100,6 +104,11 @@ void UDefaultMenu::CloseMainMenu()
 {
     this->SetVisibility((ESlateVisibility::Hidden));
     CloseItemPopup();
+
+    if(m_bIsSkillOpened)
+    {
+        CloseSkillPanel();
+    }
 
     if (m_bIsStorageOpened)
     {
@@ -284,4 +293,26 @@ void UDefaultMenu::CloseShopMenu()
 UDiaShopPanel* UDefaultMenu::GetShopPanelWidget()
 {
     return m_ShopPanel;
+}
+
+void UDefaultMenu::OpenSkillPanel()
+{
+    m_SkillPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    m_TalentPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    m_InvenGridPanel->SetVisibility(ESlateVisibility::Collapsed);
+    m_EquipPanel->SetVisibility(ESlateVisibility::Collapsed);
+    m_StatPanel->SetVisibility(ESlateVisibility::Collapsed);
+    m_ItemDropPanel->SetVisibility(ESlateVisibility::Hidden);
+    m_bIsSkillOpened=true;
+}
+
+void UDefaultMenu::CloseSkillPanel()
+{
+    m_SkillPanel->SetVisibility(ESlateVisibility::Collapsed);
+    m_TalentPanel->SetVisibility(ESlateVisibility::Collapsed);
+    m_InvenGridPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    m_EquipPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    m_StatPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    m_ItemDropPanel->SetVisibility(ESlateVisibility::Visible);
+    m_bIsSkillOpened=false;
 }

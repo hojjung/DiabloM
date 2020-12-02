@@ -7,6 +7,8 @@
 #include "DiaStatPanel.h"
 #include "DiaStorageGridPanel.h"
 #include "Blueprint/UserWidget.h"
+#include "Skills/DiaSkillPanel.h"
+#include "Talents/DiaTalentPanel.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaEquipmentPanel.h"
 #include "Widgets/WorldMap/DefaultMenu/ItemPopupInfo.h"
 #include "DefaultMenu.generated.h"
@@ -45,6 +47,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaStatPanel* m_StatPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaSkillPanel* m_SkillPanel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaTalentPanel* m_TalentPanel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UItemDrop* m_ItemDropPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UItemPopupInfo* m_ItemPopup1;
@@ -52,6 +58,7 @@ protected:
 	UItemPopupInfo* m_ItemPopup2;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UItemPopupInfo* m_ItemPopup3;
+	
 protected:
 	UPROPERTY()
 	ADiabloPlayerController* m_PlayerCon;
@@ -71,6 +78,8 @@ protected:
 	bool m_bIsStorageOpened;
 
 	bool m_bIsShopOpened;
+
+	bool m_bIsSkillOpened;
 	
 public:
 	void SetPopupDelegate(const TArray<UDiaInvenGridSlot*>& arySlots);
@@ -101,4 +110,9 @@ public:
 	void CloseShopMenu();
 	
 	UDiaShopPanel* GetShopPanelWidget();
+
+public:
+	void OpenSkillPanel();
+
+	void CloseSkillPanel();
 };

@@ -55,4 +55,8 @@ public:
 	void DropEnd();
 
 	virtual void RegisterToQuadTreeBound() override;
+
+	virtual void ShowAll(bool hasBeenShowed) override ;
+	
+	virtual void HideAll(bool hasBeenShowed) override ;
 };
