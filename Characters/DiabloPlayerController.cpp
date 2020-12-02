@@ -269,6 +269,6 @@ UDiaShopPanel* ADiabloPlayerController::GetShopPanelWidget()
 void ADiabloPlayerController::BackToSelectMenu()
 {
 	PRINTF("Continue StartMenu");
-
+	ClientForceGarbageCollection();
 	UGameplayStatics::OpenLevel(GetWorld(),"StartMenu");
 }

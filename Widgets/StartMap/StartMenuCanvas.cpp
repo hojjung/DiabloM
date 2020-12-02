@@ -88,9 +88,10 @@ void UStartMenuCanvas::CreationStart()
 void UStartMenuCanvas::CreationEnd()
 {
     m_CharCreate->SetVisibility(ESlateVisibility::Hidden);
-    m_BtnBackCancel->SetVisibility(ESlateVisibility::Hidden);
     m_CharSelect->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_bIsCreationOpened=false;
+    
+    
 }
 
 void UStartMenuCanvas::ExitGame()
@@ -103,6 +104,8 @@ void UStartMenuCanvas::BackCancel()
     if(m_bIsCreationOpened)
     {
         m_CharCreate->BackCancel();
+        m_CharSelect->m_FocusedIndex=-1;
+        Cast<APlayerCreateController>( GetOwningPlayer())->GetPlayerVisual()->HideMesh();
         CreationEnd();    
     }
     else if(m_bIsSelectionOpened)

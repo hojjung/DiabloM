@@ -50,9 +50,9 @@ void APlayerCreateController::OnDeviceBackKey()
     {
         m_StartCanvas->m_CharCreate->BackCancel();
     }
-    else if(m_StartCanvas->m_CharSelect->GetVisibility() != ESlateVisibility::Hidden)
+    else if(m_StartCanvas->m_bIsSelectionOpened)
     {
-        m_StartCanvas->m_CharSelect->SetVisibility(ESlateVisibility::Hidden);
+        m_StartCanvas->ShowMainMenu();
     }
     else
     {

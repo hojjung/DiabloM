@@ -59,7 +59,7 @@ void UCharSelect::FocusCharacter(int slotIndex)
 
     m_FocusedIndex=slotIndex;
     
-    Cast<APlayerCreateController> (GetOwningPlayer())->GetPlayerVisual()->ShowMesh();
+    
     
     UPlayerCreateManager* PlMa=UPlayerCreateManager::Get;
     USaveCharacterStatus* CharStat = USaveLoadManager::Get->GetLoadedChars()[m_FocusedIndex];
@@ -70,6 +70,8 @@ void UCharSelect::FocusCharacter(int slotIndex)
     m_FocusedIndex=slotIndex;
     
     PlMa->m_CurrentSelectSlot = m_FocusedIndex;
+
+    Cast<APlayerCreateController> (GetOwningPlayer())->GetPlayerVisual()->ShowMesh();
 
 }
 

@@ -93,11 +93,15 @@ void ADroppedItem::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 
 void ADroppedItem::SetItemVisual(const FItemInstance& ItemData)
 {
+    //m_BillBoard->SetDrawSize(FVector2D());
+    
     UItemNameCard* ItemCard = Cast<UItemNameCard>(m_BillBoard->GetUserWidgetObject());
 
     ItemCard->SetItemName(ItemData.m_ItemData->m_ShowingName);
 
     ItemCard->SetItemColor(ItemData.m_ItemTier->m_TierColor);
+
+    ItemCard->ForceLayoutPrepass();
 
     m_BillBoard->SetDrawSize(m_BillBoard->GetUserWidgetObject()->GetDesiredSize());
 

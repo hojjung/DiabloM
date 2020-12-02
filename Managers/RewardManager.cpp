@@ -8,7 +8,12 @@
 void URewardManager::CreateActorPool()
 {
     m_HidingPoint = FVector(100000, 100000, 100000);
-    CreateAllItemPool(5, 5, 5);//757575
+    
+    m_nItemIndex=0;
+    m_nGoldIndex=0;
+    m_nHpIndex=0;
+    
+    CreateAllItemPool(300, 45, 15);//757575
 }
 
 void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMonsterItemDropRow& dropData, int level)
@@ -209,9 +214,9 @@ void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int
     m_PoolGold.Empty();
     m_PoolHp.Empty();
     
-    m_AryAllItemActors.Reserve(100);
-    m_AryAllGoldActors.Reserve(100);
-    m_AryAllHpActors.Reserve(100);
+    m_AryAllItemActors.Reset(100);
+    m_AryAllGoldActors.Reset(100);
+    m_AryAllHpActors.Reset(100);
     
     int i = 0;
     

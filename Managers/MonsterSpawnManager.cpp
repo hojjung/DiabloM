@@ -40,7 +40,6 @@ bool UMonsterSpawnManager::SpawnIter(const FVector& centerSpawnLoc,const FMonste
 
             outMobAry.Add(SpawnedMob);
 
-            PRINTF("MonsterManualSpawn Init");
             SpawnedMob->InitMonster(MobSelected.m_MonsterEntity, level);
         }
     }

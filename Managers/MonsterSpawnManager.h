@@ -27,8 +27,6 @@ protected:
 	UNavigationSystemV1* m_NavSys;
 	UPROPERTY()
 	UWorld* m_CurrentWorld;
-	UPROPERTY()
-	TArray<AMonsterPawn*> m_ArySpawnedMobs;
 
 	FName m_IdEnemy;
 

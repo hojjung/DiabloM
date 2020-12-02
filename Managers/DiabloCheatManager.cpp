@@ -1,5 +1,4 @@
 #include "DiabloCheatManager.h"
-
 #include "DungeonManager.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
