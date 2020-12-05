@@ -6,7 +6,7 @@
 #include "ItemDataTable.h"
 #include "MonsterItemDropTable.h"
 #include "AbilitySystem/AbilityTypes.h"
-
+#include "SkillDataTable.h"
 #include "Characters/Logic/MobFSMBase.h"
 
 #include "CharacterDataTable.generated.h"
@@ -96,8 +96,10 @@ public:
 	TArray<FItemTypeHandle> m_AryUnequipFingerRight;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FItemTypeHandle> m_AryUnequipFingerLeft;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FSkillDataHandle m_ClassSkill;
 
-
+	
 	FORCEINLINE TArray<TArray<FItemTypeHandle>> GetUnequipableAry() const
 	{
 		TArray<TArray<FItemTypeHandle>> AryAryMade;

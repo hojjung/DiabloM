@@ -143,9 +143,7 @@ void UDiaShopGridSlot::ClearSlotFocus()
 UDiaDragDrop * UDiaShopGridSlot::CreateDDO(const FItemInstance & itemInst)
 {
 	auto* DDO = Cast<UDiaDragDrop>(UWidgetBlueprintLibrary::CreateDragDropOperation(UDiaDragDrop::StaticClass()));
-	DDO->SetDDO(itemInst);
-	DDO->InitDrag(m_ImgItemVisual);
-	UDiaDragDrop::GetDDOInst = DDO;
+	DDO->SetDDO(itemInst,m_ImgItemVisual);
 	return DDO;
 }
 

@@ -17,10 +17,6 @@ class DIABLOM_API UDiaDragDrop : public UDragDropOperation
 public:
 	static UDiaDragDrop* GetDDOInst;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	USizeBox* m_MainSizeBox;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UImage* m_IconImage;
 	UPROPERTY()
 	UImage* m_PreSlot;
 
@@ -30,9 +26,7 @@ public:
 	FItemInstance m_DraggedItem;
 
 public:
-	void SetDDO(const FItemInstance& itemInst);
-
-	void InitDrag(UImage* preSlot);//slot turn blur
+	void SetDDO(const FItemInstance & itemInst,UImage * preSlot);
 
 public:
 	UFUNCTION()

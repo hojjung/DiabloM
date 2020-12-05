@@ -15,11 +15,13 @@
 #include "AbilitySystem/Ability//PlayerAbility/Regen/PlayerHpRegenAbility.h"
 #include "AbilitySystem/Ability//PlayerAbility/Regen/PlayerManaRegenAbility.h"
 #include "AbilitySystem/Ability//PlayerAbility/Regen/PlayerStaminaRegenAbility.h"
+#include "AbilitySystem/Components/PlayerDiabloAbilitySystemComp.h"
 #include "Logic/PlayerSensing.h"
 #include "Characters/MonsterPawn.h"
 
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
-    : Super(objInit.SetDefaultSubobjectClass<UPlayerDiabloAttribute>("AttributeSet00"))
+    : Super(objInit.SetDefaultSubobjectClass<UPlayerDiabloAttribute>("AttributeSet00")
+        .SetDefaultSubobjectClass<UPlayerDiabloAbilitySystemComp>("AbilitySystemComponent00"))
 {
     m_fBonusDamage = 1.f;
     m_DissolveCam = CreateDefaultSubobject<UCameraDissolve>("CamDissolve00");
@@ -179,7 +181,7 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
     LoadExp(loadedSaveData);
     SetGold(loadedSaveData->m_fGold);
 
-
+    Cast<UPlayerDiabloAbilitySystemComp>( GetAbilitySystemComponent())->CreateClassSkillSpecs(m_PlayerEntityData->m_ClassSkill);
     GrantHpRegenAbility();
     GrantHpPotionAbility();
     GrantResourceRegenAbility();

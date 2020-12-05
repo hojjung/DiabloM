@@ -49,7 +49,6 @@ protected:
 	TSubclassOf<UPlayerHealthPotion> m_GAPlayerHealthPotion;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TSubclassOf<UPlayerUsePortal> m_GAPlayerPortal;
-	
 	//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	bool m_bIsManualInit=false;
@@ -87,7 +86,6 @@ protected:
 protected:
 	UPROPERTY()
 	UPlayerSensing* m_PlayerSense;
-	
 	UPROPERTY()
 	USkeletalMeshComponent* m_FocusRenderer;
 	UPROPERTY()

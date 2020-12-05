@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "PlayerDiabloAttribute.h"
 
@@ -8,9 +6,11 @@
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Characters/UnitPawn.h"
 
+UPlayerDiabloAttribute* UPlayerDiabloAttribute::Get =nullptr;
+
 UPlayerDiabloAttribute::UPlayerDiabloAttribute()
 {
-	
+	Get=this;
 }
 
 

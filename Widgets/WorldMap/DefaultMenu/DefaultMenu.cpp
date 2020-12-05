@@ -57,6 +57,8 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
 
     m_PlayerChar->GetOnGoldChanged().AddUObject(m_InvenGridPanel, &UDiaInvenGridPanel::UpdateGold);
 
+    m_SkillPanel->Init(Cast<UPlayerDiabloAbilitySystemComp>(m_PlayerChar->GetAbilitySystemComponent()));
+    
     CloseSkillPanel();
 }
 

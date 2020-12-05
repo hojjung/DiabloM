@@ -24,7 +24,7 @@ ADroppedGold::ADroppedGold(const FObjectInitializer& objInit): Super(objInit)
     m_Imposter->ScreenSize=1.f;
     m_Imposter->bIsScreenSizeScaled=true;
     m_Imposter->Sprite=FoundImposter.Object;
-    m_Imposter->SetRelativeLocation(FVector(0.f,0.f,70.f));
+    m_Imposter->SetRelativeLocation(FVector(0.f,0.f,30.f));
     m_Imposter->SetRelativeScale3D(FVector(0.55f,0.55f,0.55f));
     m_Imposter->SetReceivesDecals(false);
     m_Imposter->SetCastShadow(false);

@@ -16,6 +16,8 @@ class DIABLOM_API UPlayerDiabloAttribute : public UBaseDiabloAttribute
 	
 public:
 	UPlayerDiabloAttribute();
+
+	static UPlayerDiabloAttribute* Get;
 	
 public:
 	UPROPERTY(BlueprintReadOnly, Category = "Health")

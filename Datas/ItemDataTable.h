@@ -415,3 +415,14 @@ public:
     }
 };
 
+USTRUCT(BlueprintType)
+struct FAnimStanceDataHandle :public FDataTableRowHandle
+{
+    GENERATED_USTRUCT_BODY()
+public:
+    FAnimStanceDataHandle()
+    {
+        DataTable=UItemDataTable::GetAnimStanceTable;
+    }
+
+};

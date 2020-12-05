@@ -138,12 +138,9 @@ void UDiaInvenGridSlot::ClearSlotFocus()
 UDiaDragDrop * UDiaInvenGridSlot::CreateDDO(const FItemInstance & itemInst)
 {
 	auto* DDO = Cast<UDiaDragDrop>(UWidgetBlueprintLibrary::CreateDragDropOperation(UDiaDragDrop::StaticClass()));
-	DDO->SetDDO(itemInst);
-	DDO->InitDrag(m_ImgItemVisual);
-	UDiaDragDrop::GetDDOInst = DDO;
+	DDO->SetDDO(itemInst,m_ImgItemVisual);
 	return DDO;
 }
-
 
 FReply UDiaInvenGridSlot::NativeOnMouseButtonUp(const FGeometry & InGeometry, const FPointerEvent & InMouseEvent)
 {
@@ -188,14 +185,15 @@ void UDiaInvenGridSlot::NativeOnDragLeave(const FDragDropEvent & InDragDropEvent
 
 bool UDiaInvenGridSlot::NativeOnDrop(const FGeometry & InGeometry, const FDragDropEvent & InDragDropEvent, UDragDropOperation * InOperation)
 {
-	bool Result=Super::NativeOnDrop(InGeometry,InDragDropEvent,InOperation);
+	Super::NativeOnDrop(InGeometry,InDragDropEvent,InOperation);
+
+	if(UDiaDragDrop::GetDDOInst!=InOperation)
+	{
+		return false;
+	}
 
 	ClearSlotFocus();
 
-	UDiaDragDrop::GetDDOInst->m_PreSlot->SetOpacity(1.f);
-
-	Result= m_OnDropIndex.Execute(m_nIndex, UDiaDragDrop::GetDDOInst->m_DraggedItem);
-
-	return Result;
+	return m_OnDropIndex.Execute(m_nIndex, UDiaDragDrop::GetDDOInst->m_DraggedItem);
 }
 
