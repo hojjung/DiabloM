@@ -60,8 +60,12 @@ protected:
 	FTextFormat m_FormatSkillPoint;
 
 	FTextFormat m_FormatTotalSkillPoint;
+	
+	UPROPERTY()
+	TArray<USkillLearnButton*> m_AryAllSkillLearnButton;
 
 public:
+	
 	void Init(UPlayerDiabloAbilitySystemComp* playerSkillComp);
 
 private:
@@ -74,4 +78,10 @@ public:
 	void UpdateAvailablePoint();
 	UFUNCTION()
     void UpdateTotalPoint();
+
+
+	FORCEINLINE TArray<USkillLearnButton*> GetAllSkillLearnBtn()
+	{
+		return m_AryAllSkillLearnButton;
+	}
 };

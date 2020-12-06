@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DiabloM.h"
-#include  "Widgets/WorldMap/DefaultMenu/ImageAndText.h"
+#include "ImageAndText.h"
 #include "ImageAndTextAndCompare.generated.h"
 
 /**

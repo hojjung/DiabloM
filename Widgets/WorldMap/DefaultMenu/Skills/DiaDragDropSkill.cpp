@@ -17,7 +17,7 @@ void UDiaDragDropSkill::SetDDO(FSkillDataSpec* skillSpec, USkillLearnButton* ski
 	OnDragCancelled.AddDynamic(this, &UDiaDragDropSkill::OnDragCancel);
 	
 	UDragDropOperation::OnDrop.AddDynamic(this, &UDiaDragDropSkill::OnDrop);
-	
+	 
 	if(UDiaDragDropSkill::GetDDOInst)
 	{
 		FPointerEvent Event;

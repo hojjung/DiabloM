@@ -1,5 +1,6 @@
 #include "DiabloGameMode.h"
 #include "DiabloGameInstance.h"
+#include "DungeonManager.h"
 #include "EngineUtils.h"
 #include "DungeonMiniMap.h"
 #include "GridFlowMiniMap.h"
@@ -203,16 +204,14 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	//m_OnTick.Broadcast(DeltaSeconds);
-	//Need Bool
-	m_MiniMap->MiniMapTick(DeltaSeconds);
-	//m_FOW->MyTick(DeltaSeconds);
-
+	if(UDiabloGameInstance::Get->GetDungeonManager()->IsDungeonOpened())
+	{
+		m_MiniMap->MiniMapTick(DeltaSeconds);
+	}
 
 	if(m_QuadTree)
 	{
 		//m_QuadTree->DrawBoxes(GetWorld());
-
 		m_QuadTree->TryShow9Cell(ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation());
 	}
 }

@@ -20,7 +20,7 @@ class DIABLOM_API USkillLearnButton : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnClicked, const FGeometry &,  FSkillDataSpec &);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnClicked,const FGeometry& , FSkillDataSpec &);
 	DECLARE_DELEGATE(FOnDrag);
 public:
 	FOnClicked m_OnClicked;

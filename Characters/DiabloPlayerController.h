@@ -2,10 +2,9 @@
 
 #include "DiabloM.h"
 #include "GameFramework/PlayerController.h"
-#include "Widgets/WorldMap/DiaMonsterInfo.h"
-#include "Widgets/WorldMap/MainCanvas.h"
 #include "Widgets/WorldMap/DefaultMenu/DiaGameOverScreen.h"
-#include "Widgets/WorldMap/DefaultMenu/DiaShopPanel.h"
+#include "Widgets/WorldMap/DefaultMenu/MainCanvas.h"
+#include "Widgets/WorldMap/DefaultMenu/Shop/DiaShopPanel.h"
 #include "Widgets/WorldMap/WorldWidget/DamageTextWidgetComponent.h"
 
 #include "DiabloPlayerController.generated.h"

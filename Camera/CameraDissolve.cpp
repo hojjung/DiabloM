@@ -3,7 +3,7 @@
 UCameraDissolve::UCameraDissolve()
 {
     PrimaryComponentTick.bCanEverTick = true;
-    bAutoActivate = true;
+    bAutoActivate = false;
     bTickInEditor = true;
     PrimaryComponentTick.TickGroup = TG_PostPhysics;
 
@@ -30,12 +30,14 @@ UCameraDissolve::UCameraDissolve()
     TargetArmLength = 1000.0f;
 
     m_RelativeSocketRotation = FQuat::Identity;
+
 }
 
 void UCameraDissolve::Init(USceneComponent* camWantFollow)
 {
     m_TargetCam = camWantFollow;
     m_MatParamInstance = m_TargetCam->GetWorld()->GetParameterCollectionInstance(m_MatParamAsset);
+    SetActive(true);
 }
 
 void UCameraDissolve::StartDissolve()
@@ -54,7 +56,10 @@ void UCameraDissolve::EndDissolve()
 void UCameraDissolve::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+    if (!m_MatParamInstance)
+    {
+        return;
+    }
     UpdateDesiredArmLocation();
     ExecuteDissolve(DeltaTime);
 }
@@ -62,10 +67,10 @@ void UCameraDissolve::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 void UCameraDissolve::ExecuteDissolve(float DeltaTime)
 {
-    if (!m_MatParamInstance)
-    {
-        return;
-    }
+    // if (!m_MatParamInstance)
+    // {
+    //     return;
+    // }
 
     if (m_bWasBlocked)
     {
@@ -95,7 +100,7 @@ void UCameraDissolve::ExecuteDissolve(float DeltaTime)
 
 void UCameraDissolve::SetPosParameter()
 {
-    m_MatParamInstance->SetVectorParameterValue("Position1", m_CompOrigin);
+    //m_MatParamInstance->SetVectorParameterValue("Position1", m_CompOrigin);
     m_MatParamInstance->SetVectorParameterValue("Position2", m_TargetPos);
 }
 
@@ -136,6 +141,8 @@ FTransform UCameraDissolve::GetSocketTransform(FName InSocketName, ERelativeTran
 void UCameraDissolve::UpdateDesiredArmLocation()
 {
     m_CompOrigin = GetComponentLocation();
+    m_MatParamInstance->SetVectorParameterValue("Position1", m_CompOrigin);
+    
     FRotator DesiredRot = GetRelativeRotation();
     m_TargetPos = m_CompOrigin;
 

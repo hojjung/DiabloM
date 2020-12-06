@@ -4,6 +4,7 @@
 #include "AbilitySystem/Attribute/PlayerDiabloAttribute.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
+#include "Widgets/WorldMap/DefaultMenu/MaterialProgressBar.h"
 
 UPlayerStatusBar::UPlayerStatusBar(const FObjectInitializer& objInit): Super(objInit)
 {

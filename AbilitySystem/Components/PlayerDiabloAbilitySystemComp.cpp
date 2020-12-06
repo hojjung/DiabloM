@@ -49,3 +49,18 @@ void UPlayerDiabloAbilitySystemComp::CreateClassSkillSpecs(const FSkillDataHandl
 	}
 	
 }
+
+int UPlayerDiabloAbilitySystemComp::GetSkillPoints()
+{
+	return m_nSkillPoints;
+}
+
+void UPlayerDiabloAbilitySystemComp::LevelupSkill(FSkillDataSpec* skillSpec)
+{
+	PRINTF("Skill Learn Pressed");
+	//스킬포인트 체크
+	//실제 레벨업
+	//현재 장착된 스킬 업데이트
+	//위젯 업데이트
+	//저장
+}

@@ -2,7 +2,6 @@
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-#include "Widgets/WorldMap/DefaultMenu/DiaInvenGridSlot.h"
 #include "DiaInvenGridPanel.generated.h"
 
 

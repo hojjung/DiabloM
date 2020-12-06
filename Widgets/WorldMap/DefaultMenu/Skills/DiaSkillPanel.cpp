@@ -1,10 +1,10 @@
 #include "DiaSkillPanel.h"
-
+#define LOCTEXT_NAMESPACE "DiaSkillPanel"
 void UDiaSkillPanel::Init(UPlayerDiabloAbilitySystemComp* playerSkillComp)
 {
-	m_FormatSkillPoint = FText::FromString("Points Available:{0}");
+	m_FormatSkillPoint =LOCTEXT("SkillPanelPointAvailable","Points Available:{0}");
 	
-	m_FormatTotalSkillPoint = FText::FromString("Total Points Spent:{0}");
+	m_FormatTotalSkillPoint =LOCTEXT("SkillPanelPointTotal","Total Points Spent:{0}");
 	
 	m_PlayerSkillComp=playerSkillComp;
 
@@ -55,6 +55,8 @@ USkillLearnButton* UDiaSkillPanel::CreateSkillButton(FSkillDataSpec& skillSpec)
 	USkillLearnButton* SkillButtonCreated = CreateWidget<USkillLearnButton>(this, m_ClassSkillLearnButton);
 
 	SkillButtonCreated->InitSkillButton(skillSpec);
+
+	m_AryAllSkillLearnButton.Emplace(SkillButtonCreated);
 
 	return SkillButtonCreated;
 }
@@ -123,3 +125,4 @@ void UDiaSkillPanel::UpdateTotalPoint()
 	
 	m_TextPointTotalSpent->SetText(Result);
 }
+#undef LOCTEXT_NAMESPACE

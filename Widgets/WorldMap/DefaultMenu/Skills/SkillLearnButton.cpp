@@ -5,8 +5,15 @@ void USkillLearnButton::InitSkillButton(FSkillDataSpec& skill_spec)
 {
 	m_HoldSpec=&skill_spec;
 	m_ImageSkillIcon->SetBrushFromTexture(m_HoldSpec->m_SkillDataPtr->m_SkillIcon);
-	m_TextSkillLevel->SetText(UKismetTextLibrary::Conv_IntToText(m_HoldSpec->m_nCurrentLevel,false,false));
-	//m_FormatSkillRank
+
+	if(m_HoldSpec->m_nCurrentLevel<1)
+	{
+		m_TextSkillLevel->SetText(FText::FromString("X"));
+	}
+	else
+	{
+		m_TextSkillLevel->SetText(UKismetTextLibrary::Conv_IntToText(m_HoldSpec->m_nCurrentLevel,false,false));
+	}	
 }
 
 void USkillLearnButton::SkillSelected()//직접 부르지말고 델리게이트?
@@ -33,7 +40,7 @@ FReply USkillLearnButton::NativeOnMouseButtonUp(const FGeometry& InGeometry, con
 	FReply Reply = Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
 	
 	// if (!IsSlotEmpty())
-	m_OnClicked.Broadcast(InGeometry, *m_HoldSpec);//팝업
+	m_OnClicked.Broadcast(InGeometry,*m_HoldSpec);//팝업
 	
 	return Reply;
 }

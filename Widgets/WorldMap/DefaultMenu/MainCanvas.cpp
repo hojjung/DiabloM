@@ -1,10 +1,11 @@
 #include "MainCanvas.h"
-#include "DiaMonsterInfo.h"
-#include "PlayerStatusBar.h"
+
+#include "MaterialProgressBar.h"
 #include "Characters/PlayerDiabloCharacter.h"
-#include "DefaultMenu/MaterialProgressBar.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/DiabloGameInstance.h"
+#include "PlayerHUD/DiaMonsterInfo.h"
+#include "PlayerHUD/PlayerStatusBar.h"
 #include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 
 

@@ -3,7 +3,7 @@
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Datas/ItemDataTable.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
+#include "Widgets/WorldMap/DefaultMenu/Item/DiaInvenGridPanel.h"
 
 UShopItemContainer::~UShopItemContainer()
 {

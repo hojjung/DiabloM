@@ -1,7 +1,7 @@
 #include "ItemDrop.h"
 
+#include "DiaDragDrop.h"
 #include "Characters/PlayerDiabloCharacter.h"
-#include "Widgets/WorldMap/DefaultMenu/DiaDragDrop.h"
 #include "Managers/DiabloGameInstance.h"
 
 

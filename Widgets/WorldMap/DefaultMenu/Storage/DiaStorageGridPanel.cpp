@@ -1,11 +1,9 @@
 #include "DiaStorageGridPanel.h"
-
-#include "DiaDragDrop.h"
-#include "DiaInvenGridSlot.h"
 #include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 #include "Item/Inventory.h"
 #include "Datas/ItemDataTable.h"
 #include "Widgets/CommonElement/HoverToggle.h"
+#include "Widgets/WorldMap/DefaultMenu/Item/DiaInvenGridSlot.h"
 
 UDiaStorageGridPanel* UDiaStorageGridPanel::GetStorageWidgetInst = nullptr;
 

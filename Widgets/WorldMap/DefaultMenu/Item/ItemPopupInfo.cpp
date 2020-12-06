@@ -1,13 +1,12 @@
+
 #include "ItemPopupInfo.h"
 #include "DiaEquipmentPanel.h"
 #include "DiaInvenGridPanel.h"
 #include "DiaInvenGridSlot.h"
-#include "DiaStorageGridPanel.h"
 #include "Animation/UMGSequencePlayer.h"
-#include "Item/ItemManager.h"
 #include "Characters/DiabloPlayerController.h"
-#include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameMode.h"
+#include "Widgets/WorldMap/DefaultMenu/Storage/DiaStorageGridPanel.h"
 
 
 void UItemPopupInfo::NativeOnInitialized()
@@ -232,26 +231,23 @@ void UItemPopupInfo::SetPanelPosition(const FGeometry& theInstigator, int countS
 {
     //TODO: canvas 에 맞춰 왼쪽 오른쪽 조절
 
-    auto Geo = UWidgetLayoutLibrary::GetPlayerScreenWidgetGeometry(GetOwningPlayer());
+    FGeometry&& Geo = UWidgetLayoutLibrary::GetPlayerScreenWidgetGeometry(GetOwningPlayer());
 
-    auto* PanelSlot = Cast<UCanvasPanelSlot>(Slot);
+    UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(Slot);
 
-    auto* CanvasPanelParent = Cast<UCanvasPanel>(PanelSlot->Parent);
+    UCanvasPanel* CanvasPanelParent = Cast<UCanvasPanel>(PanelSlot->Parent);
 
-    auto ClickedItemSlot = CanvasPanelParent->GetCachedGeometry().AbsoluteToLocal(theInstigator.GetAbsolutePosition()) +
+    FVector2D ClickedItemSlot = CanvasPanelParent->GetCachedGeometry().AbsoluteToLocal(
+            theInstigator.GetAbsolutePosition()) +
         theInstigator.GetLocalSize() / 2.0f;
 
     if (bLeft)
     {
-        ClickedItemSlot.X -= (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f) + (GetDesiredSize().X
-            *
-            countSpace);
+        ClickedItemSlot.X -= (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f) + (GetDesiredSize().X*countSpace);
     }
     else
     {
-        ClickedItemSlot.X += (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f) + (GetDesiredSize().X
-            *
-            countSpace);
+        ClickedItemSlot.X += (GetDesiredSize().X / 2.0f) + (theInstigator.GetLocalSize().X / 2.0f) + (GetDesiredSize().X*countSpace);
     }
 
     float ScreenY = Geo.GetAbsoluteSize().Y;
@@ -288,7 +284,7 @@ void UItemPopupInfo::ShowInfoPanel(EPopupType popupType, FItemInstance& itemInst
 {
     UnbindAllFromAnimationFinished(m_FadeAnimation);
     
-    SetRenderOpacity(1.f);
+    //SetRenderOpacity(1.f);
     m_BGForTouch->SetVisibility(ESlateVisibility::Visible);
     SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     PlayAnimation(m_FadeAnimation);

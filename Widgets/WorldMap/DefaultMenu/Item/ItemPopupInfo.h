@@ -2,10 +2,10 @@
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-#include "Widgets/WorldMap/DefaultMenu/ImageAndTextAndCompare.h"
-#include "Widgets/WorldMap/DefaultMenu/ImageAndText.h"
 #include "Datas/ItemDataTable.h"
 #include "Animation/WidgetAnimation.h"
+#include "Widgets/CommonElement/ImageAndTextAndCompare.h"
+
 #include "ItemPopupInfo.generated.h"
 
 

@@ -1,14 +1,9 @@
 #include "DiaShopPanel.h"
-
-
-#include "DefaultMenu.h"
-#include "DiaInvenGridPanel.h"
 #include "DiaShopGridSlot.h"
 #include "Datas/ItemDataTable.h"
-#include "DiaStorageGridPanel.h"
-#include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Item/ShopItemContainer.h"
+#include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 
 UDiaShopPanel::UDiaShopPanel(const FObjectInitializer& objInit): Super(objInit)
 {

@@ -7,7 +7,6 @@
 #include "MinimapWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/DiabloPlayerController.h"
-#include "DefaultMenu/MaterialProgressBar.h"
 #include "PlayerStatusBar.generated.h"
 
 /**

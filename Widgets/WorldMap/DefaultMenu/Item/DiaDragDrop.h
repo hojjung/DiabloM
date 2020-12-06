@@ -5,7 +5,6 @@
 #include "DiabloM.h"
 #include "Blueprint/DragDropOperation.h"
 #include "Datas/ItemDataTable.h"
-#include "Widgets/WorldMap/DefaultMenu/DiaInvenGridSlot.h"
 #include "DiaDragDrop.generated.h"
 
 

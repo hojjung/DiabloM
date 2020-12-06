@@ -1,15 +1,16 @@
 #include "DefaultMenu.h"
-
-#include "DiaShopGridSlot.h"
-#include "ItemDrop.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Item/DiaInvenGridPanel.h"
+#include "Item/DiaInvenGridSlot.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Item/EquipmentSystem.h"
 #include "Item/Inventory.h"
-#include "Village/Storage.h"
+#include "Item/ItemDrop.h"
+#include "Item/ItemPopupInfo.h"
+#include "Shop/DiaShopGridSlot.h"
+#include "Skills/DiaSkillPopup.h"
 #include "Village/ShopKeeper.h"
-#include "Widgets/WorldMap/DefaultMenu/DiaInvenGridPanel.h"
 
 
 UDefaultMenu*  UDefaultMenu::Get=nullptr;
@@ -56,10 +57,20 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     CloseShopMenu();
 
     m_PlayerChar->GetOnGoldChanged().AddUObject(m_InvenGridPanel, &UDiaInvenGridPanel::UpdateGold);
-
+    //Skill
     m_SkillPanel->Init(Cast<UPlayerDiabloAbilitySystemComp>(m_PlayerChar->GetAbilitySystemComponent()));
     
     CloseSkillPanel();
+
+    m_SkillPopup->Init(Cast<UPlayerDiabloAbilitySystemComp>( playerChar->GetAbilitySystemComponent()));
+    
+    for(auto* LearnBtn: m_SkillPanel->GetAllSkillLearnBtn())
+    {
+        LearnBtn->m_OnClicked.AddUObject(this,&UDefaultMenu::OpenSkillPopup);
+        LearnBtn->m_OnDragDetect.BindUObject(this,&UDefaultMenu::CloseSkillPopup);
+    }
+
+    //CloseSkillPopup();
 }
 
 void UDefaultMenu::InitPopup()
@@ -317,4 +328,15 @@ void UDefaultMenu::CloseSkillPanel()
     m_StatPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_ItemDropPanel->SetVisibility(ESlateVisibility::Visible);
     m_bIsSkillOpened=false;
+    m_SkillPopup->HidePopup();
+}
+
+void UDefaultMenu::OpenSkillPopup(const FGeometry& geo,FSkillDataSpec& skillSpec)
+{
+    m_SkillPopup->SetPopupSkillData(&skillSpec,geo);
+}
+
+void UDefaultMenu::CloseSkillPopup()
+{
+    m_SkillPopup->PlayHideInfoAnim();
 }

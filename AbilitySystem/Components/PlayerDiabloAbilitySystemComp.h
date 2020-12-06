@@ -22,6 +22,9 @@ public:
 
 public:
 	void CreateClassSkillSpecs(const FSkillDataHandle& skillDataHandle);
+	
+	int GetSkillPoints();
+
 
 protected:
 	const FSkillDataRow* m_SkillDataTableRow;
@@ -43,6 +46,8 @@ protected:
 	int m_nTotalSkillPointSpents;
 
 public:
+	void LevelupSkill(FSkillDataSpec* skillSpec);
+	
 	FORCEINLINE const FSkillDataRow* GetSkillDataTableRow() const
 	{
 		return m_SkillDataTableRow;

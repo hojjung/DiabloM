@@ -118,6 +118,11 @@ void AMonsterPawn::GiveExpToPlayer()
 
 void AMonsterPawn::Die()
 {
+    if(GetCurrentNode())
+    {
+        GetCurrentNode()->RemoveElement(this);
+    }
+
     m_OnCharacterDied.Broadcast(this);
 
     SetActorTickEnabled(false);
@@ -125,6 +130,7 @@ void AMonsterPawn::Die()
     GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     
     GetMovementComponent()->SetActive(false);
+    GetMovementComponent()->SetComponentTickEnabled(false);
 
     m_bUseFSM = false;
     
@@ -178,10 +184,6 @@ void AMonsterPawn::RequestDropRewards()
 
 void AMonsterPawn::OnDeathAnimEnd()
 {
-    if(GetCurrentNode())
-    {
-        GetCurrentNode()->RemoveElement(this);
-    }
 
     Destroy();
 }
@@ -244,6 +246,9 @@ void AMonsterPawn::ShowAll(bool hasBeenShowed)
     SetActorEnableCollision(true);
     SetActorTickEnabled(true);
     m_SkBody->SetComponentTickEnabled(true);
+    m_Movement->SetComponentTickEnabled(true);
+    m_MonsterSense->SetSensingUpdatesEnabled(true);
+    m_PFComp->SetComponentTickEnabled(true);
     
     m_bIsVisible=true;
 }
@@ -254,6 +259,9 @@ void AMonsterPawn::HideAll(bool hasBeenShowed)
     {
         SetActorTickEnabled(false);
         m_SkBody->SetComponentTickEnabled(false);
+        m_Movement->SetComponentTickEnabled(false);
+        m_MonsterSense->SetSensingUpdatesEnabled(false);
+        m_PFComp->SetComponentTickEnabled(false);
     }
     
     SetActorEnableCollision(false);

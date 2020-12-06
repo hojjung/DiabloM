@@ -315,7 +315,9 @@ public:
 	float GetCastSpeed();
 
 	UPlayerDiabloAttribute* GetPlayerAttribute();
-	
+
+	UFUNCTION(BlueprintCallable)
+	void PlayColorEffect(const FLinearColor& colorWant);
 	
 public:
 	void GrantHpPotionAbility();

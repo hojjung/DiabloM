@@ -3,14 +3,12 @@
 #pragma once
 
 #include "DiabloM.h"
-#include "DiaShopPanel.h"
 #include "DiaStatPanel.h"
-#include "DiaStorageGridPanel.h"
 #include "Blueprint/UserWidget.h"
+#include "Item/DiaEquipmentPanel.h"
 #include "Skills/DiaSkillPanel.h"
+#include "Storage/DiaStorageGridPanel.h"
 #include "Talents/DiaTalentPanel.h"
-#include "Widgets/WorldMap/DefaultMenu/DiaEquipmentPanel.h"
-#include "Widgets/WorldMap/DefaultMenu/ItemPopupInfo.h"
 #include "DefaultMenu.generated.h"
 
 class AShopKeeper;
@@ -22,7 +20,7 @@ struct FItemInstance;
 class UItemDrop;
 class UDiaInvenGridPanel;
 class UDiaShopGridSlot;
-
+class UDiaSkillPopup;
 
 UCLASS()
 class DIABLOM_API UDefaultMenu : public UUserWidget
@@ -58,6 +56,8 @@ protected:
 	UItemPopupInfo* m_ItemPopup2;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UItemPopupInfo* m_ItemPopup3;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaSkillPopup* m_SkillPopup;
 	
 protected:
 	UPROPERTY()
@@ -115,4 +115,8 @@ public:
 	void OpenSkillPanel();
 
 	void CloseSkillPanel();
+
+	void OpenSkillPopup(const FGeometry& geo,FSkillDataSpec& skillSpec);
+
+	void CloseSkillPopup();
 };

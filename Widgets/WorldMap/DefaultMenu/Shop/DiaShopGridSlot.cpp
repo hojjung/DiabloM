@@ -1,12 +1,7 @@
-// My First Hack n Slash
-
-
 #include "DiaShopGridSlot.h"
-
-#include "DiaInvenGridSlot.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Item/ItemManager.h"
-#include "Widgets/WorldMap/DefaultMenu/DiaDragDrop.h"
+#include "Widgets/WorldMap/DefaultMenu/Item/DiaDragDrop.h"
 
 
 void UDiaShopGridSlot::InitSlot(int indexFromGrid)

@@ -56,6 +56,17 @@ public:
 	}
 };
 
+UENUM(BlueprintType)
+enum class EDamageType:uint8
+{
+	None,
+	Physical,
+	Poison,
+	Fire,
+	Ice,
+	Elec
+};
+
 USTRUCT(BlueprintType)
 struct FSkillData
 {
@@ -63,12 +74,11 @@ struct FSkillData
 public:
 	FSkillData(): m_SkillAbility(nullptr), m_SkillIcon(nullptr)
 	{
+		m_eSkillDamageType =EDamageType::Physical;
 		m_nMinRequireLevel=0;
 		m_nMaxSkillLevel=15;
 		m_FormatSkillDesc = FText::FromString("Ex)% Attack Bonus {0}");//This is last format
-		m_FormatSkillCost = FText::FromString("Ex)Generate Fury:{0}");//This is last format
-		m_FormatSkillCD = FText::FromString("Cooldown:{0}");//This is last format
-		m_FormatSkillRank= FText::FromString("Rank:{0}");//This is last format
+		m_FormatSkillCost = FText::FromString("Ex)Generate Fury: {0}");//This is last format
 	}
 
 public:
@@ -76,22 +86,19 @@ public:
 	TSubclassOf<UDiabloAbility> m_SkillAbility;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTexture2D* m_SkillIcon;
-	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText m_TagSkillCastType;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FText m_TagSkillDamageType;
-	//
+	EDamageType m_eSkillDamageType;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText m_SkillShowingName;
-	FText m_FormatSkillCD;
-	FText m_FormatSkillRank;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText m_FormatSkillCost;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=( MultiLine="true" ))
 	FText m_FormatSkillDesc;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=( MultiLine="true" ))
 	FText m_FormatSkillPreviewLevelup;
+	
 	//요구 스탠스 및 주무기 보조무기 종류
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int m_nMinRequireLevel;
@@ -106,9 +113,13 @@ public:
 	TArray<FLevelupableScaleFloat> m_ArySkillValue;//블프랑 코스트호환?//음수?
 	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FItemTypeHandle> m_RequireMainWeaponType;
+	FAnimStanceDataHandle m_RequireAnimStance;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FItemTypeHandle> m_RequireSubWeaponType;
+	FItemTypeHandle m_RequireMainWeaponType;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FItemTypeHandle m_RequireSubWeaponType;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText m_TextSkillAdditionalEffect;
 	//플레이어 어트리뷰트에 의해 줄어든 수치 어떻게?
 	//데이터 테이블이아니라 옵션 스펙이 포맷을 만드는게 맞을듯 하다.
 	//모든 수치가 아이템 옵션 패시브 스킬, 특성으로 변경될수있다.
@@ -144,6 +155,11 @@ public:
 	float m_fCurrentCDRemain;
 
 public:
+	int GetRequireLearnLevel()
+	{
+		return (m_nCurrentLevel*3) + m_SkillDataPtr->m_nMinRequireLevel;
+	}
+	
 	FText GetCostText() const
 	{
 		float Cost = m_SkillDataPtr->m_fSkillCost.m_fScaleFloat.GetValueAtLevel(m_nCurrentLevel);
@@ -159,27 +175,7 @@ public:
 		return FText::Format(FormatT, Args);
 	}
 
-	bool GetCoolDownText(FText& outText) const
-	{
-		float CD = m_SkillDataPtr->m_fSkillCD.m_fScaleFloat.GetValueAtLevel(m_nCurrentLevel);
-		float CDRate =1.f - UPlayerDiabloAttribute::Get->GetCoolDownReduce();
-		CD *=CDRate;
-		
-		if(CD<=0.f)
-		{
-			return false;
-		}
-        
-		FFormatOrderedArguments Args;
 
-		Args.Add(CD);
-		
-		FTextFormat FormatT = m_SkillDataPtr->m_FormatSkillCD;
-
-		outText = FText::Format(FormatT, Args);
-
-		return true;
-	}
 	//
 	FText GetDescFormatText() const
 	{
@@ -202,16 +198,7 @@ public:
 		return FText::Format(FormatT, Args);
 	}
 
-	FText GetSkillRankText() const
-	{
-		FFormatOrderedArguments Args;
 
-		Args.Add(m_nCurrentLevel);
-		
-		FTextFormat FormatT = m_SkillDataPtr->m_FormatSkillRank;
- 
-		return FText::Format(FormatT, Args);
-	}
 
 	FText GetLevelupPreviewFormatText() const
 	{

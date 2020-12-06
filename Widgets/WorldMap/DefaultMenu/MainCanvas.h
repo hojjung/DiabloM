@@ -3,7 +3,8 @@
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-#include "DefaultMenu/DiaShopPanel.h"
+#include "Shop/DiaShopPanel.h"
+
 
 #include "MainCanvas.generated.h"
 
