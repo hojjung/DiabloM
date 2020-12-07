@@ -237,6 +237,12 @@ public:
  
 		return FText::Format(FormatT, Args);
 	}
+
+
+	bool IsLevelupable(int playerLevel)
+	{
+		return m_SkillDataPtr->m_nMaxSkillLevel >m_nCurrentLevel && GetRequireLearnLevel() <=playerLevel;
+	}
 };
 
 USTRUCT(BlueprintType)

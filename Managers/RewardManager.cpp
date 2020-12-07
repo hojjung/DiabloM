@@ -13,7 +13,7 @@ void URewardManager::CreateActorPool()
     m_nGoldIndex=0;
     m_nHpIndex=0;
     
-    CreateAllItemPool(75, 30, 4);//757575
+    CreateAllItemPool(75, 40, 4);//75/40/4
 }
 
 void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMonsterItemDropRow& dropData, int level)
@@ -138,7 +138,7 @@ ADroppedItem* URewardManager::DropItemActor(APawn* dropCenterActor, float dropRa
     FOnEnd OnDropEnd;
     OnDropEnd.AddUObject(DropItem, &ADroppedItem::DropEnd);
 
-    DropRandomPoint(dropCenterActor, dropRadius, DropItem, 700.f, &OnDropEnd);
+    DropRandomPoint(dropCenterActor,0.8f, dropRadius, DropItem, 700.f, &OnDropEnd);
 
     return DropItem;
 }
@@ -152,7 +152,7 @@ ADroppedGold* URewardManager::DropGoldActor(APawn* dropCenterActor, float dropRa
     FOnEnd OnDropEnd;
     OnDropEnd.AddUObject(DropGold, &ADroppedGold::DropEnd);
 
-    DropRandomPoint(dropCenterActor, dropRadius, DropGold, 450.f, &OnDropEnd);
+    DropRandomPoint(dropCenterActor,0.55f, dropRadius, DropGold, 450.f, &OnDropEnd);
 
     return DropGold;
 }
@@ -164,7 +164,7 @@ AHealthSphere* URewardManager::DropHpSphereActor(APawn* dropCenterActor, float d
     FOnEnd OnDropEnd;
     OnDropEnd.AddUObject(DropHp, &AHealthSphere::DropEnd);
 
-    DropRandomPoint(dropCenterActor, dropRadius, DropHp, 550.f,&OnDropEnd);
+    DropRandomPoint(dropCenterActor,0.35f, dropRadius, DropHp, 550.f,&OnDropEnd);
 
     DropHp->SetActorHiddenInGame(false); //이게 문제 아닐까//Set이 없기때문에해줌
 
@@ -238,7 +238,7 @@ void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int
     }
 }
 
-ACollisionInteract* URewardManager::DropRandomPoint(APawn* dropCenterActor, float dropRadius,
+ACollisionInteract* URewardManager::DropRandomPoint(APawn* dropCenterActor,float dur, float dropRadius,
                                                     ACollisionInteract* targetActorToDrop, float height,
                                                     FOnEnd* endCallback)
 {
@@ -264,19 +264,19 @@ ACollisionInteract* URewardManager::DropRandomPoint(APawn* dropCenterActor, floa
         NewPos = OutLoc.Location;
     }
 
-    BezierCurveMove(targetActorToDrop, height, NewPos, endCallback);
+    BezierCurveMove(targetActorToDrop, height, NewPos,dur, endCallback);
 
     return targetActorToDrop;
 }
 
-void URewardManager::BezierCurveMove(AActor* target, float height, FVector destination, FOnEnd* endCallback)
+void URewardManager::BezierCurveMove(AActor* target, float height, FVector destination,float dur, FOnEnd* endCallback)
 {
     FVector StartPoint = target->GetActorLocation();
     UCBezierCurve* Curve = UCActionFactory::MakeCurve();
     FVector ControlPoint = GetQuadControlPoint(StartPoint, destination, height);
     Curve->InitializeQuad(StartPoint, ControlPoint, destination);
 
-    UCFollowBezierCurvePathAction* PathAction = UCActionFactory::MakeFollowBezierPathAction(target, Curve, 0.75f);
+    UCFollowBezierCurvePathAction* PathAction = UCActionFactory::MakeFollowBezierPathAction(target, Curve, dur);
 
     if (endCallback)
     {

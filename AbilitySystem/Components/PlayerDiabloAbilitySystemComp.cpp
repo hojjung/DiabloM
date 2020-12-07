@@ -1,5 +1,7 @@
 #include "PlayerDiabloAbilitySystemComp.h"
 
+#include "Characters/PlayerDiabloCharacter.h"
+
 UPlayerDiabloAbilitySystemComp::UPlayerDiabloAbilitySystemComp()
 {
 	m_SkillDataTableRow=nullptr;
@@ -10,7 +12,15 @@ UPlayerDiabloAbilitySystemComp::UPlayerDiabloAbilitySystemComp()
 	m_AryMasterySkill.Reset();
 	m_AryUltimateSkill.Reset();
 	m_nSkillPoints=10;//Test
-	m_nTotalSkillPointSpents=m_nSkillPoints;
+	m_nTotalSkillPointSpents=0;
+	
+}
+
+void UPlayerDiabloAbilitySystemComp::BeginPlay()
+{
+	Super::BeginPlay();
+
+	m_PlayerPawn=Cast<APlayerDiabloCharacter>( GetOwner());
 }
 
 void UPlayerDiabloAbilitySystemComp::CreateClassSkillSpecs(const FSkillDataHandle& skillDataHandle)
@@ -58,9 +68,27 @@ int UPlayerDiabloAbilitySystemComp::GetSkillPoints()
 void UPlayerDiabloAbilitySystemComp::LevelupSkill(FSkillDataSpec* skillSpec)
 {
 	PRINTF("Skill Learn Pressed");
-	//스킬포인트 체크
-	//실제 레벨업
+
+	if(GetSkillPoints()<=0)
+	{
+		PRINTF("SkillLearn Fail - No SkillPoints");
+		return;
+	}
+	
+	if(!skillSpec->IsLevelupable(m_PlayerPawn->GetCharacterLevel()))
+	{
+		PRINTF("SkillLearn Fail - Not Require Levels");
+		return;;
+	}
+
+	skillSpec->m_nCurrentLevel++;
+
+	m_nSkillPoints--;
+
+	m_nTotalSkillPointSpents++;
+
+	m_OnSkillLevelChanged.Broadcast(skillSpec);
 	//현재 장착된 스킬 업데이트
-	//위젯 업데이트
+	
 	//저장
 }

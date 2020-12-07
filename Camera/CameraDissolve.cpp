@@ -23,7 +23,7 @@ UCameraDissolve::UCameraDissolve()
     m_fDissolvingTime = 0.5f;
     m_fTimer = 0.f;
     m_bWasBlocked = false;
-
+    m_fCastSphereRadius=12.f;
     //
 
 
@@ -140,8 +140,8 @@ FTransform UCameraDissolve::GetSocketTransform(FName InSocketName, ERelativeTran
 
 void UCameraDissolve::UpdateDesiredArmLocation()
 {
-    m_CompOrigin = GetComponentLocation();
-    m_MatParamInstance->SetVectorParameterValue("Position1", m_CompOrigin);
+    m_CompOrigin = GetComponentLocation() ;
+    m_MatParamInstance->SetVectorParameterValue("Position1", m_CompOrigin+m_CastOffset);
     
     FRotator DesiredRot = GetRelativeRotation();
     m_TargetPos = m_CompOrigin;
@@ -151,7 +151,7 @@ void UCameraDissolve::UpdateDesiredArmLocation()
     FCollisionQueryParams QueryParams(SCENE_QUERY_STAT(SpringArm), false, GetOwner());
     FHitResult Result;
     GetWorld()->SweepSingleByChannel(Result, m_CompOrigin, m_TargetPos, FQuat::Identity, ECC_Camera,
-                                     FCollisionShape::MakeSphere(12.f), QueryParams);
+                                     FCollisionShape::MakeSphere(m_fCastSphereRadius), QueryParams);
 
     if (Result.bBlockingHit)
     {

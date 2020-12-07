@@ -1,11 +1,8 @@
 #include "SkillLearnButton.h"
 
 
-void USkillLearnButton::InitSkillButton(FSkillDataSpec& skill_spec)
+void USkillLearnButton::UpdateLevelText()
 {
-	m_HoldSpec=&skill_spec;
-	m_ImageSkillIcon->SetBrushFromTexture(m_HoldSpec->m_SkillDataPtr->m_SkillIcon);
-
 	if(m_HoldSpec->m_nCurrentLevel<1)
 	{
 		m_TextSkillLevel->SetText(FText::FromString("X"));
@@ -13,7 +10,15 @@ void USkillLearnButton::InitSkillButton(FSkillDataSpec& skill_spec)
 	else
 	{
 		m_TextSkillLevel->SetText(UKismetTextLibrary::Conv_IntToText(m_HoldSpec->m_nCurrentLevel,false,false));
-	}	
+	}
+}
+
+void USkillLearnButton::InitSkillButton(FSkillDataSpec& skill_spec)
+{
+	m_HoldSpec=&skill_spec;
+	m_ImageSkillIcon->SetBrushFromTexture(m_HoldSpec->m_SkillDataPtr->m_SkillIcon);
+
+	UpdateLevelText();	
 }
 
 void USkillLearnButton::SkillSelected()//직접 부르지말고 델리게이트?

@@ -16,17 +16,23 @@ UCLASS()
 class DIABLOM_API UPlayerDiabloAbilitySystemComp : public UDiabloAbilitySystemComp
 {
 	GENERATED_BODY()
-
+	
 public:
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnSkillLevelup,FSkillDataSpec*);
 	UPlayerDiabloAbilitySystemComp();
 
 public:
+	virtual void BeginPlay()override;
+	
 	void CreateClassSkillSpecs(const FSkillDataHandle& skillDataHandle);
 	
 	int GetSkillPoints();
 
-
+	FOnSkillLevelup m_OnSkillLevelChanged;
 protected:
+	UPROPERTY()
+	APlayerDiabloCharacter* m_PlayerPawn;
+	
 	const FSkillDataRow* m_SkillDataTableRow;
 	
 	TArray<FSkillDataSpec> m_AryBaseSkill;

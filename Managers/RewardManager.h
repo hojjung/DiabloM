@@ -61,9 +61,9 @@ protected:
 
 	ACollisionInteract* SpawnInteractActor(TSubclassOf<ACollisionInteract> classWant);
 	
-	ACollisionInteract* DropRandomPoint(APawn* dropCenterActor,float dropRadius,ACollisionInteract* targetActorToDrop,float height,FOnEnd* endCallback=nullptr);
+	ACollisionInteract* DropRandomPoint(APawn* dropCenterActor,float dur,float dropRadius,ACollisionInteract* targetActorToDrop,float height,FOnEnd* endCallback=nullptr);
 	
-	void BezierCurveMove(AActor* target,float height,FVector destination,FOnEnd* endCallback=nullptr);
+	void BezierCurveMove(AActor* target,float height,FVector destination,float dur,FOnEnd* endCallback=nullptr);
 
 	FVector GetQuadControlPoint(FVector start,FVector end,float height);
 

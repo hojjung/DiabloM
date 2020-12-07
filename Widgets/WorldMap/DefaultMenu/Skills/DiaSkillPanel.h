@@ -9,9 +9,8 @@
 #include "Blueprint/UserWidget.h"
 #include "DiaSkillPanel.generated.h"
 
-/**
- * 
- */
+class UDefaultMenu;
+
 UCLASS()
 class DIABLOM_API UDiaSkillPanel : public UUserWidget
 {
@@ -79,9 +78,13 @@ public:
 	UFUNCTION()
     void UpdateTotalPoint();
 
+	void UpdateAllWidget(FSkillDataSpec* notUse=nullptr);
+
 
 	FORCEINLINE TArray<USkillLearnButton*> GetAllSkillLearnBtn()
 	{
 		return m_AryAllSkillLearnButton;
 	}
+
+	friend UDefaultMenu;
 };

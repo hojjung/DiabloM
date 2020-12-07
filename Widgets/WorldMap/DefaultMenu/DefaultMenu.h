@@ -118,5 +118,8 @@ public:
 
 	void OpenSkillPopup(const FGeometry& geo,FSkillDataSpec& skillSpec);
 
+	UFUNCTION()
 	void CloseSkillPopup();
+
+	
 };

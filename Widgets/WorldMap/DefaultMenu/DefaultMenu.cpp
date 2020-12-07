@@ -58,11 +58,17 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
 
     m_PlayerChar->GetOnGoldChanged().AddUObject(m_InvenGridPanel, &UDiaInvenGridPanel::UpdateGold);
     //Skill
-    m_SkillPanel->Init(Cast<UPlayerDiabloAbilitySystemComp>(m_PlayerChar->GetAbilitySystemComponent()));
+
+    UPlayerDiabloAbilitySystemComp* PlayerGASComp=Cast<UPlayerDiabloAbilitySystemComp>(m_PlayerChar->GetAbilitySystemComponent());
     
+    m_SkillPanel->Init(PlayerGASComp);
+    m_SkillPanel->m_ResetButton->OnClicked.AddDynamic(this,&UDefaultMenu::CloseSkillPopup);
     CloseSkillPanel();
 
-    m_SkillPopup->Init(Cast<UPlayerDiabloAbilitySystemComp>( playerChar->GetAbilitySystemComponent()));
+    PlayerGASComp->m_OnSkillLevelChanged.AddUObject(m_SkillPopup,&UDiaSkillPopup::SetSkillSpecData);
+    PlayerGASComp->m_OnSkillLevelChanged.AddUObject(m_SkillPanel,&UDiaSkillPanel::UpdateAllWidget);
+
+    m_SkillPopup->Init(PlayerGASComp);
     
     for(auto* LearnBtn: m_SkillPanel->GetAllSkillLearnBtn())
     {
@@ -70,6 +76,7 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
         LearnBtn->m_OnDragDetect.BindUObject(this,&UDefaultMenu::CloseSkillPopup);
     }
 
+    
     //CloseSkillPopup();
 }
 
@@ -333,7 +340,7 @@ void UDefaultMenu::CloseSkillPanel()
 
 void UDefaultMenu::OpenSkillPopup(const FGeometry& geo,FSkillDataSpec& skillSpec)
 {
-    m_SkillPopup->SetPopupSkillData(&skillSpec,geo);
+    m_SkillPopup->SetSkillPopupWidget(&skillSpec,geo);
 }
 
 void UDefaultMenu::CloseSkillPopup()

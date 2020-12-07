@@ -48,6 +48,7 @@ void UDiaSkillPanel::Init(UPlayerDiabloAbilitySystemComp* playerSkillComp)
 	//
 	UpdateAvailablePoint();
 	UpdateTotalPoint();
+	//LevelLoad and update
 }
 
 USkillLearnButton* UDiaSkillPanel::CreateSkillButton(FSkillDataSpec& skillSpec)
@@ -101,7 +102,9 @@ void UDiaSkillPanel::ResetSkillPoint()
 	}
 
 	m_PlayerSkillComp->m_nSkillPoints+=LearnedLevel;
-	UpdateAvailablePoint();
+	m_PlayerSkillComp->m_nTotalSkillPointSpents=0;
+	
+	UpdateAllWidget();
 }
 
 void UDiaSkillPanel::UpdateAvailablePoint()
@@ -124,5 +127,16 @@ void UDiaSkillPanel::UpdateTotalPoint()
 	FText Result = FText::Format(m_FormatTotalSkillPoint, Args);
 	
 	m_TextPointTotalSpent->SetText(Result);
+}
+
+void UDiaSkillPanel::UpdateAllWidget(FSkillDataSpec* notUse)
+{
+	UpdateAvailablePoint();
+	UpdateTotalPoint();
+
+	for(USkillLearnButton* LBtn :GetAllSkillLearnBtn())
+	{
+		LBtn->UpdateLevelText();
+	}
 }
 #undef LOCTEXT_NAMESPACE

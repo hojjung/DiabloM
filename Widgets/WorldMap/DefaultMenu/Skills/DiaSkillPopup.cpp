@@ -33,16 +33,19 @@ void UDiaSkillPopup::Init(UPlayerDiabloAbilitySystemComp* plDiaComp)
 	m_InitPos = PanelSlot->GetPosition();
 }
 
-void UDiaSkillPopup::SetPopupSkillData(FSkillDataSpec* selectedSkillData,const FGeometry& geo)
+void UDiaSkillPopup::SetSkillSpecData(FSkillDataSpec* selectedSkillData)
 {
-	if(m_CurrentSkillSpec)
-	{
-		PlayHideInfoAnim();
-		return;
-	}
-	
 	m_CurrentSkillSpec = selectedSkillData;
 	check(m_CurrentSkillSpec);
+
+	if(m_PlayerDiaComp->GetSkillPoints()<=0)//cant learn
+	{
+		m_BtnLearn->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		m_BtnLearn->SetVisibility(ESlateVisibility::Visible);
+	}
 
 	UnbindAllFromAnimationFinished(m_FadeAnimation);
 	
@@ -64,16 +67,20 @@ void UDiaSkillPopup::SetPopupSkillData(FSkillDataSpec* selectedSkillData,const F
 	SetSkillAdditionalInfo();
 	SetSkillPreviewOverlay();
 
-	if(m_PlayerDiaComp->GetSkillPoints()<=0)//cant learn
-	{
-		m_BtnLearn->SetVisibility(ESlateVisibility::Hidden);
-	}
-	else
-	{
-		m_BtnLearn->SetVisibility(ESlateVisibility::Visible);
-	}
+	
 
 	ForceLayoutPrepass();
+}
+
+void UDiaSkillPopup::SetSkillPopupWidget(FSkillDataSpec* selectedSkillData,const FGeometry& geo)
+{
+	if(m_CurrentSkillSpec)
+	{
+		PlayHideInfoAnim();
+		return;
+	}
+	
+	SetSkillSpecData(selectedSkillData);
 	
 	SetPanelPosition(geo);
 }
@@ -284,20 +291,25 @@ void UDiaSkillPopup::SetSkillPreviewOverlay()
 	m_TextPreviewSkillEffect->ForceLayoutPrepass();
 
 	int RequireLevel = m_CurrentSkillSpec->GetRequireLearnLevel();
+	RequireLevel = FMath::Clamp(RequireLevel,0,MAXLEVEL);
 	
-	if(RequireLevel <= ADiabloPlayerController::Get->GetPlayerPawn()->GetCharacterLevel())
+	if(RequireLevel <= ADiabloPlayerController::Get->GetPlayerPawn()->GetCharacterLevel())//배울수 있음
 	{
-		m_TextPreviewSkillRequireLevel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		m_TextPreviewSkillRequireLevel->SetVisibility(ESlateVisibility::Collapsed);
 		
+		m_BtnLearn->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		m_TextPreviewSkillRequireLevel->SetVisibility(ESlateVisibility::HitTestInvisible);//배울수 없을때 왜못배우는지 띄움
+
 		FFormatOrderedArguments Args;
 
 		Args.Add(m_CurrentSkillSpec->GetRequireLearnLevel());
 
 		m_TextPreviewSkillRequireLevel->SetText(FText::Format(m_FormatRequireLevel, Args));
-	}
-	else
-	{
-		m_TextPreviewSkillRequireLevel->SetVisibility(ESlateVisibility::Collapsed);
+		
+		m_BtnLearn->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
 	m_OverlayNextPreview->ForceLayoutPrepass();

@@ -38,6 +38,7 @@ protected:
 	FSkillDataSpec* m_HoldSpec;
 	
 public:
+	void UpdateLevelText();
 	void InitSkillButton(FSkillDataSpec& skill_spec);
 
 	void SkillSelected();

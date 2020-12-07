@@ -37,6 +37,10 @@ protected:
 	float m_fDissolveMaxAmount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 	float m_fDissolveHoleMaxRadius;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
+	float m_fCastSphereRadius;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
+	FVector m_CastOffset;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)

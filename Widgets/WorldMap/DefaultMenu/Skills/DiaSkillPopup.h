@@ -90,7 +90,9 @@ protected:
 public:
 	void Init(UPlayerDiabloAbilitySystemComp* plDiaComp);
 	
-	void SetPopupSkillData(FSkillDataSpec* selectedSkillData,const FGeometry& geo);
+	void SetSkillSpecData(FSkillDataSpec* selectedSkillData);
+
+	void SetSkillPopupWidget(FSkillDataSpec* selectedSkillData,const FGeometry& geo);
 	
 	void SetPanelPosition(const FGeometry& instigatorGeo);//RightOnly
 

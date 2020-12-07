@@ -15,7 +15,6 @@ ADroppedItem::ADroppedItem(const FObjectInitializer& objInit): Super(objInit)
     
     m_Imposter = CreateDefaultSubobject<UBillboardComponent>("ImposterTexture00");
     m_Imposter->SetupAttachment(RootComponent);
-    m_Imposter->SetHiddenInGame(false);
     m_Imposter->ScreenSize=1.f;
     m_Imposter->bIsScreenSizeScaled=true;
     m_Imposter->Sprite=FoundImposter.Object;
@@ -25,17 +24,15 @@ ADroppedItem::ADroppedItem(const FObjectInitializer& objInit): Super(objInit)
     m_Imposter->SetCastShadow(false);
     m_Imposter->bReceiveMobileCSMShadows=false;
 
-    m_WidgetNameCard->SetHiddenInGame(true);
-    
     static ConstructorHelpers::FClassFinder<UUserWidget> FoundWidgetNameCard(
             TEXT("WidgetBlueprint'/Game/Blueprints/Widgets/WorldWidget/WB_ItemNamecard.WB_ItemNamecard_C'"));
     m_WidgetNameCard->SetWidgetClass(FoundWidgetNameCard.Class);
 
     m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-
     m_bIsOverlapAble = false;
     m_bIsDroppedInField = false;
 
+    m_WidgetNameCard->SetVisibility(false);
 }
 
 void ADroppedItem::BeginPlay()
@@ -43,8 +40,6 @@ void ADroppedItem::BeginPlay()
     Super::BeginPlay();
 
     m_WidgetNameCard->InitWidget();
-    //m_BillBoard->SetHiddenInGame(true);
-    //m_BillBoard->SetComponentTickEnabled(false);
 
     if (!m_TableID.IsNull() && m_bIsDroppedInField)
     {
@@ -56,6 +51,37 @@ void ADroppedItem::BeginPlay()
     }
 }
 
+
+void ADroppedItem::SetItemInstance(FItemInstance& itemInst)
+{
+    m_ItemInstance = itemInst;
+
+    SetItemVisual(m_ItemInstance);
+
+    m_TableID.RowName = m_ItemInstance.m_ItemID;
+
+    //
+    SetActorHiddenInGame(false);
+    m_Imposter->SetHiddenInGame(false);
+    m_WidgetNameCard->SetVisibility(false);
+} 
+
+void ADroppedItem::SetItemVisual(const FItemInstance& ItemData)
+{
+    //m_BillBoard->SetDrawSize(FVector2D());
+    
+    UItemNameCard* ItemCard = Cast<UItemNameCard>(m_WidgetNameCard->GetUserWidgetObject());
+
+    ItemCard->SetItemName(ItemData.m_ItemData->m_ShowingName);
+
+    ItemCard->SetItemColor(ItemData.m_ItemTier->m_TierColor);
+
+    ItemCard->ForceLayoutPrepass();
+
+    m_WidgetNameCard->SetDrawSize(m_WidgetNameCard->GetUserWidgetObject()->GetDesiredSize());
+
+    OnItemVisualChange(GetItemColor());
+}
 
 void ADroppedItem::Interact(AActor* instigator)
 {
@@ -106,34 +132,7 @@ void ADroppedItem::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
     }
 }
 
-void ADroppedItem::SetItemVisual(const FItemInstance& ItemData)
-{
-    //m_BillBoard->SetDrawSize(FVector2D());
-    
-    UItemNameCard* ItemCard = Cast<UItemNameCard>(m_WidgetNameCard->GetUserWidgetObject());
 
-    ItemCard->SetItemName(ItemData.m_ItemData->m_ShowingName);
-
-    ItemCard->SetItemColor(ItemData.m_ItemTier->m_TierColor);
-
-    ItemCard->ForceLayoutPrepass();
-
-    m_WidgetNameCard->SetDrawSize(m_WidgetNameCard->GetUserWidgetObject()->GetDesiredSize());
-
-    OnItemVisualChange(GetItemColor());
-}
-
-void ADroppedItem::SetItemInstance(FItemInstance& itemInst)
-{
-    m_ItemInstance = itemInst;
-
-    SetItemVisual(m_ItemInstance);
-
-    m_TableID.RowName = m_ItemInstance.m_ItemID;
-
-    m_WidgetNameCard->SetHiddenInGame(true);
-    SetActorHiddenInGame(false);
-} 
 
 
 const FItemInstance& ADroppedItem::GetCurrentItem() const
@@ -153,13 +152,6 @@ void ADroppedItem::DropEnd()
     RegisterToQuadTreeBound();
 }
 
-void ADroppedItem::RegisterToQuadTreeBound()
-{
-    Super::RegisterToQuadTreeBound();
-
-    m_WidgetNameCard->SetHiddenInGame(false);
-}
-
 void ADroppedItem::ShowAll(bool hasBeenShowed)
 {
     if(m_bIsVisible)
@@ -167,11 +159,17 @@ void ADroppedItem::ShowAll(bool hasBeenShowed)
         return;	
     }
 	
-    SetActorHiddenInGame(false);
     SetActorEnableCollision(true);
-    m_WidgetNameCard->SetComponentTickEnabled(true);
-    m_bIsVisible=true;
+
+    SetActorHiddenInGame(false);
+	
+    m_WidgetNameCard->SetVisibility(true);
+
+    m_Imposter->SetHiddenInGame(false);
+    
     m_Imposter->SetComponentTickEnabled(true);
+    
+    m_bIsVisible=true;
 }
 
 void ADroppedItem::HideAll(bool hasBeenShowed)
@@ -181,10 +179,16 @@ void ADroppedItem::HideAll(bool hasBeenShowed)
         return;	
     }
     
-    SetActorHiddenInGame(true);
     SetActorEnableCollision(false);
-    m_WidgetNameCard->SetComponentTickEnabled(false);
-    m_bIsVisible=false;
+    
+    SetActorHiddenInGame(false);
+	
+    m_WidgetNameCard->SetVisibility(false);
+	
+    m_Imposter->SetHiddenInGame(true);
+
     m_Imposter->SetComponentTickEnabled(false);
+    
+    m_bIsVisible=false;
 }
 
