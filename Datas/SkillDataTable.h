@@ -3,9 +3,11 @@
 #include "ItemDataTable.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
 #include "AbilitySystem/Attribute/PlayerDiabloAttribute.h"
+//#include "Widgets/WorldMap/DefaultMenu/Skills/SkillLearnButton.h"
+
 #include "SkillDataTable.generated.h"
 
-
+class USkillLearnButton;
 UCLASS()
 class DIABLOM_API USkillDataTable : public UObject
 {
@@ -126,6 +128,7 @@ public:
 	
 };
 
+
 //시작하면 모든 데이터 테이블에 맞춰서 스펙을 만들어야함,저장되는것은 인덱스와 레벨뿐이다
 USTRUCT(BlueprintType)
 struct FSkillDataSpec
@@ -134,25 +137,30 @@ struct FSkillDataSpec
 public:
 	FSkillDataSpec()
 	{
+		m_LearnBtn=nullptr;
 		m_SkillDataPtr = nullptr;
+		m_nEquipIndex=-1;
 		m_nCurrentLevel = 0;
-		m_fCurrentCDRemain=0.f;
 	}
 	
 	FSkillDataSpec(int level,const FSkillData* skillData)
 	{
+		m_LearnBtn=nullptr;
 		m_SkillDataPtr = skillData;
+		m_nEquipIndex=-1;
 		m_nCurrentLevel = level;
-		m_fCurrentCDRemain=0.f;
 	}
 
 public:
 	UPROPERTY(EditAnywhere)
 	int m_nCurrentLevel;
+	UPROPERTY(EditAnywhere)
+	int m_nEquipIndex;
 	
 	const FSkillData* m_SkillDataPtr;
-	
-	float m_fCurrentCDRemain;
+
+	UPROPERTY()
+	USkillLearnButton* m_LearnBtn;
 
 public:
 	int GetRequireLearnLevel()

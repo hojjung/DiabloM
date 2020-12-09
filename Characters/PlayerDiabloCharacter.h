@@ -345,6 +345,11 @@ public:
 		return m_OnGoldChanged;
 	}
 
+	FORCEINLINE float GetExpPercent() const
+	{
+		return m_fCurrentExp / m_fMaxExp;
+	}
+	
 	friend UDiaStatPanel;
 };
 

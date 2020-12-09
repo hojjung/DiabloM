@@ -66,16 +66,10 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     CloseSkillPanel();
 
     PlayerGASComp->m_OnSkillLevelChanged.AddUObject(m_SkillPopup,&UDiaSkillPopup::SetSkillSpecData);
-    PlayerGASComp->m_OnSkillLevelChanged.AddUObject(m_SkillPanel,&UDiaSkillPanel::UpdateAllWidget);
-
-    m_SkillPopup->Init(PlayerGASComp);
     
-    for(auto* LearnBtn: m_SkillPanel->GetAllSkillLearnBtn())
-    {
-        LearnBtn->m_OnClicked.AddUObject(this,&UDefaultMenu::OpenSkillPopup);
-        LearnBtn->m_OnDragDetect.BindUObject(this,&UDefaultMenu::CloseSkillPopup);
-    }
-
+    PlayerGASComp->m_OnSkillChanged.AddUObject(m_SkillPanel,&UDiaSkillPanel::UpdateAllWidget);
+    //UpdateAllWidget
+    m_SkillPopup->Init(PlayerGASComp);
     
     //CloseSkillPopup();
 }
@@ -87,7 +81,7 @@ void UDefaultMenu::InitPopup()
     m_AryItemPopup.Add(m_ItemPopup2);
     m_AryItemPopup.Add(m_ItemPopup3);
 
-    for (auto* PP : m_AryItemPopup)
+    for (UItemPopupInfo* PP : m_AryItemPopup)
     {
         PP->GetOnActionEnd().AddUObject(this, &UDefaultMenu::CloseItemPopup);
     }

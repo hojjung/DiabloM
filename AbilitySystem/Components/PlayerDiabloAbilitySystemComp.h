@@ -19,6 +19,7 @@ class DIABLOM_API UPlayerDiabloAbilitySystemComp : public UDiabloAbilitySystemCo
 	
 public:
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnSkillLevelup,FSkillDataSpec*);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSkillChanged,FSkillDataSpec*,int);
 	UPlayerDiabloAbilitySystemComp();
 
 public:
@@ -29,6 +30,11 @@ public:
 	int GetSkillPoints();
 
 	FOnSkillLevelup m_OnSkillLevelChanged;
+
+	FOnSkillChanged m_OnSkillChanged;
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 protected:
 	UPROPERTY()
 	APlayerDiabloCharacter* m_PlayerPawn;
@@ -51,8 +57,18 @@ protected:
 
 	int m_nTotalSkillPointSpents;
 
+	TMap<FSkillDataSpec*,FGameplayAbilitySpecHandle> m_EquippedSkill;
+
 public:
 	void LevelupSkill(FSkillDataSpec* skillSpec);
+
+	void EquipSkill(FSkillDataSpec* skillSpec);
+
+	void UnequipSkill(FSkillDataSpec* skillSpec);
+
+	FGameplayAbilitySpec* UseSkill(FSkillDataSpec* skillSpec);
+
+	bool CheckAlreadyEquipped(FSkillDataSpec* skillSpec);
 	
 	FORCEINLINE const FSkillDataRow* GetSkillDataTableRow() const
 	{
@@ -61,3 +77,5 @@ public:
 
 	friend UDiaSkillPanel;
 };
+
+

@@ -30,6 +30,7 @@ void UDiaDragDropSkill::SetDDO(FSkillDataSpec* skillSpec, USkillLearnButton* ski
 void UDiaDragDropSkill::OnDragCancel(UDragDropOperation* meSelf)
 {
 	m_SkillLearnWidget->m_ImageSkillIcon->SetRenderOpacity(1.f);
+	m_SkillLearnWidget->CloseHotKeyPanel();
 	UDiaDragDropSkill::GetDDOInst = nullptr;
 }
 
@@ -39,4 +40,5 @@ void UDiaDragDropSkill::OnDrop(UDragDropOperation* meSelf)//drop true
 	m_SkillLearnWidget->m_ImageSkillIcon->SetRenderOpacity(1.f);
 	UDiaDragDropSkill::GetDDOInst = nullptr;
 	m_SkillLearnWidget->SkillSelected();
+	m_SkillLearnWidget->CloseHotKeyPanel();
 }

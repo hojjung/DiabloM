@@ -19,10 +19,7 @@ void UMainCanvas::OpenMainMenu()
     m_bIsOpened=true;
     m_MainMenu->OpenMainMenu();
     
-    m_PlayerStatusBar->SetVisibility(ESlateVisibility::Hidden);
-    m_SettingButton->SetVisibility(ESlateVisibility::Hidden);
-    m_AttackButton->SetVisibility(ESlateVisibility::Hidden);
-    m_InteractButton->SetVisibility(ESlateVisibility::Hidden);
+    m_PlayerStatusBar->HidePlayerHUD();
     UGameplayStatics::SetGamePaused(m_PlayerCon->GetWorld(),true);
     m_PlayerCon->SetVirtualJoystickVisibility(false);
 }
@@ -32,10 +29,7 @@ void UMainCanvas::CloseMainMenu()
     m_bIsOpened=false;
     m_MainMenu->CloseMainMenu();
 
-    m_PlayerStatusBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-    m_SettingButton->SetVisibility(ESlateVisibility::Visible);
-    m_AttackButton->SetVisibility(ESlateVisibility::Visible);
-    m_InteractButton->SetVisibility(ESlateVisibility::Visible);
+    m_PlayerStatusBar->ShowPlayerHUD();
 
     UGameplayStatics::SetGamePaused(m_PlayerCon->GetWorld(),false);
     m_PlayerCon->SetVirtualJoystickVisibility(true);
@@ -104,14 +98,9 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
     
     m_MainMenu->Init(m_PlayerCon,m_PlayerPawn,m_EquipSys,m_Inven,m_Storage);
 
-    m_SettingButton->OnClicked.AddDynamic(this,&UMainCanvas::OpenSetting);
+    m_PlayerStatusBar->m_InteractButton->OnClicked.AddDynamic(this,&UMainCanvas::Interaction);
 
-    m_InteractButton->OnClicked.AddDynamic(this,&UMainCanvas::Interaction);
-
-    m_PotionButton->OnClicked.AddDynamic(this,&UMainCanvas::DrinkPotion);
-
-    m_AttackButton->OnPressed.AddDynamic(this,&UMainCanvas::OnAttackPressStart);
-    m_AttackButton->OnReleased.AddDynamic(this,&UMainCanvas::OnAttackPressEnd);
+    m_PlayerStatusBar->m_PotionButton->OnClicked.AddDynamic(this,&UMainCanvas::DrinkPotion);
 
     m_PlayerPawn->GetExpGaugeDele().AddUObject(this,&UMainCanvas::UpdateExpGauge);
 
@@ -121,7 +110,21 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
     //
     m_EquipSys->m_OnOptionChanged.AddUObject(this,&UMainCanvas::UpdateHpBar);
     //
-    m_SkillMenuButton->OnClicked.AddDynamic(this,&UMainCanvas::OpenSkillMenu);
+    m_PlayerStatusBar->m_SkillMenuOpenButton->OnClicked.AddDynamic(this,&UMainCanvas::OpenSkillMenu);
+    UPlayerDiabloAbilitySystemComp* PlayerGASComp=Cast<UPlayerDiabloAbilitySystemComp>(m_PlayerPawn->GetAbilitySystemComponent());
+    
+    PlayerGASComp->m_OnSkillChanged.AddUObject(m_MainMenu->m_SkillPanel,&UDiaSkillPanel::UpdateAllWidget);
+
+    //
+    for(auto* LearnBtn:m_MainMenu->m_SkillPanel->GetAllSkillLearnBtn())
+    {
+        LearnBtn->m_OnClicked.AddUObject(m_MainMenu,&UDefaultMenu::OpenSkillPopup);
+        LearnBtn->m_OnDragDetect.AddUObject(m_MainMenu,&UDefaultMenu::CloseSkillPopup);
+        LearnBtn->m_OnDragDetect.AddUObject(this,&UMainCanvas::ShowSkillHotkeyPanel);
+        LearnBtn->m_OnDragEnd.AddUObject(this,&UMainCanvas::CloseSkillHotkeyPanel);
+    }
+    
+   UpdateExpGauge(m_PlayerPawn->GetExpPercent());
 }
 
 void UMainCanvas::ShowMonsterInfo(AUnitPawn* monInfo)
@@ -138,10 +141,10 @@ void UMainCanvas::UpdateMonsterInfo(AUnitPawn* monInfo)
         HideMonsterInfo();
         return;
     }
-    m_DiaMonInfo->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-    m_DiaMonInfo->SetCharacterLevel(monInfo->GetCharacterLevel());
-    m_DiaMonInfo->SetCharacterName(monInfo->GetShowNameText());
-    m_DiaMonInfo->SetHealthPercentage(monInfo->GetHpPercentOne());
+    m_PlayerStatusBar->m_DiaMonInfo->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    m_PlayerStatusBar->m_DiaMonInfo->SetCharacterLevel(monInfo->GetCharacterLevel());
+    m_PlayerStatusBar->m_DiaMonInfo->SetCharacterName(monInfo->GetShowNameText());
+    m_PlayerStatusBar->m_DiaMonInfo->SetHealthPercentage(monInfo->GetHpPercentOne());
 
     
     
@@ -150,18 +153,18 @@ void UMainCanvas::UpdateMonsterInfo(AUnitPawn* monInfo)
     float MH=monInfo->GetMaxHealth();
     Args.Add(UDiaBlueprintFunctionLibrary::GetAlphabetText(CH));
     Args.Add(UDiaBlueprintFunctionLibrary::GetAlphabetText(MH));
-    m_DiaMonInfo->SetHealthFormat(FText::Format(m_HpFormat,Args));
+    m_PlayerStatusBar->m_DiaMonInfo->SetHealthFormat(FText::Format(m_HpFormat,Args));
 }
 
 void UMainCanvas::HideMonsterInfo()
 {
     m_MonUpdateHandle.Reset();
-    m_DiaMonInfo->SetVisibility(ESlateVisibility::Hidden);
+    m_PlayerStatusBar->m_DiaMonInfo->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainCanvas::UpdateExpGauge(float v)
 {
-    m_ExpBar->SetProgressValue(v);
+    m_PlayerStatusBar->m_ExpBar->SetProgressValue(v);
 }
 
 void UMainCanvas::UpdateHpBar()
@@ -198,6 +201,16 @@ void UMainCanvas::ShowStorageMenu()
 void UMainCanvas::HideMinimap()
 {
     m_PlayerStatusBar->HideMinimap();
+}
+
+void UMainCanvas::ShowSkillHotkeyPanel()
+{
+    m_PlayerStatusBar->m_SkillUseCanvas->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+}
+
+void UMainCanvas::CloseSkillHotkeyPanel()
+{
+    m_PlayerStatusBar->m_SkillUseCanvas->SetVisibility(ESlateVisibility::Hidden);
 }
 
 UDiaShopPanel* UMainCanvas::GetShopPanelWidget()

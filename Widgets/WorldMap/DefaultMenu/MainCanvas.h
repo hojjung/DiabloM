@@ -33,21 +33,7 @@ public:
     UMainCanvas(const FObjectInitializer& objInit);
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
-    UButton* m_SkillMenuButton;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
-    UButton* m_SettingButton;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
-    UButton* m_AttackButton;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
-    UButton* m_InteractButton;//m_PotionButton
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
-    UButton* m_PotionButton;//
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UDefaultMenu* m_MainMenu;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
-    UDiaMonsterInfo* m_DiaMonInfo;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
-    UMaterialProgressBar* m_ExpBar;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UPlayerStatusBar* m_PlayerStatusBar;
     
@@ -124,6 +110,10 @@ public:
     void ShowMinimap();
     
     void HideMinimap();
+
+    void ShowSkillHotkeyPanel();
+
+    void CloseSkillHotkeyPanel();
 
     UDiaShopPanel* GetShopPanelWidget();
 };

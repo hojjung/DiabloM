@@ -49,6 +49,7 @@ void UDiaSkillPanel::Init(UPlayerDiabloAbilitySystemComp* playerSkillComp)
 	UpdateAvailablePoint();
 	UpdateTotalPoint();
 	//LevelLoad and update
+	m_PlayerSkillComp->m_OnSkillLevelChanged.AddUObject(this,&UDiaSkillPanel::UpdateAllWidgetWrap);
 }
 
 USkillLearnButton* UDiaSkillPanel::CreateSkillButton(FSkillDataSpec& skillSpec)
@@ -68,35 +69,41 @@ void UDiaSkillPanel::ResetSkillPoint()
 	//need limit here
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryBaseSkill)
 	{
+		m_PlayerSkillComp->UnequipSkill(&SkillSpec);
 		LearnedLevel+=SkillSpec.m_nCurrentLevel;
 		SkillSpec.m_nCurrentLevel=0;
 	}
 	//
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryPowerSkill)
 	{
+		m_PlayerSkillComp->UnequipSkill(&SkillSpec);
 		LearnedLevel+=SkillSpec.m_nCurrentLevel;
 		SkillSpec.m_nCurrentLevel=0;
 	}
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryDefensvieSkill)
 	{
+		m_PlayerSkillComp->UnequipSkill(&SkillSpec);
 		LearnedLevel+=SkillSpec.m_nCurrentLevel;
 		SkillSpec.m_nCurrentLevel=0;
 	}
 	//
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_ArySpecialSkill)
 	{
+		m_PlayerSkillComp->UnequipSkill(&SkillSpec);
 		LearnedLevel+=SkillSpec.m_nCurrentLevel;
 		SkillSpec.m_nCurrentLevel=0;
 	}
 	//
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryMasterySkill)
 	{
+		m_PlayerSkillComp->UnequipSkill(&SkillSpec);
 		LearnedLevel+=SkillSpec.m_nCurrentLevel;
 		SkillSpec.m_nCurrentLevel=0;
 	}
 	//
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryUltimateSkill)
 	{
+		m_PlayerSkillComp->UnequipSkill(&SkillSpec);
 		LearnedLevel+=SkillSpec.m_nCurrentLevel;
 		SkillSpec.m_nCurrentLevel=0;
 	}
@@ -129,7 +136,12 @@ void UDiaSkillPanel::UpdateTotalPoint()
 	m_TextPointTotalSpent->SetText(Result);
 }
 
-void UDiaSkillPanel::UpdateAllWidget(FSkillDataSpec* notUse)
+void UDiaSkillPanel::UpdateAllWidgetWrap(FSkillDataSpec* notUse)
+{
+	UpdateAllWidget();
+}
+
+void UDiaSkillPanel::UpdateAllWidget(FSkillDataSpec* notUse,int notUseIndex)
 {
 	UpdateAvailablePoint();
 	UpdateTotalPoint();
@@ -137,6 +149,14 @@ void UDiaSkillPanel::UpdateAllWidget(FSkillDataSpec* notUse)
 	for(USkillLearnButton* LBtn :GetAllSkillLearnBtn())
 	{
 		LBtn->UpdateLevelText();
+		if(LBtn->GetSkillSpec()->m_nEquipIndex<0)
+		{
+			LBtn->SkillDeselected();	
+		}
+		else
+		{
+			LBtn->SkillSelected();
+		}
 	}
 }
 #undef LOCTEXT_NAMESPACE

@@ -65,6 +65,13 @@ int UPlayerDiabloAbilitySystemComp::GetSkillPoints()
 	return m_nSkillPoints;
 }
 
+void UPlayerDiabloAbilitySystemComp::TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
+}
+
 void UPlayerDiabloAbilitySystemComp::LevelupSkill(FSkillDataSpec* skillSpec)
 {
 	PRINTF("Skill Learn Pressed");
@@ -91,4 +98,52 @@ void UPlayerDiabloAbilitySystemComp::LevelupSkill(FSkillDataSpec* skillSpec)
 	//현재 장착된 스킬 업데이트
 	
 	//저장
+}//GetDiaAbilitySystem()->TryActivateAbility(m_PotionHandle);
+
+void UPlayerDiabloAbilitySystemComp::EquipSkill(FSkillDataSpec* skillSpec)
+{
+	check(skillSpec->m_SkillDataPtr->m_SkillAbility);
+	
+	FGameplayAbilitySpec Spec = FGameplayAbilitySpec(skillSpec->m_SkillDataPtr->m_SkillAbility, skillSpec->m_nCurrentLevel, -1, this);
+	
+	FGameplayAbilitySpecHandle Handle = GiveAbility(Spec);
+	
+	m_EquippedSkill.Add(skillSpec,Handle);
+
+}
+
+void UPlayerDiabloAbilitySystemComp::UnequipSkill(FSkillDataSpec* skillSpec)
+{
+	if(!CheckAlreadyEquipped(skillSpec))
+	{
+		return;
+	}
+	
+	ClearAbility(m_EquippedSkill[skillSpec]);
+	m_EquippedSkill.Remove(skillSpec);
+	int Index =skillSpec->m_nEquipIndex;
+	skillSpec->m_nEquipIndex=-1;
+	m_OnSkillChanged.Broadcast(skillSpec,Index);
+}
+
+FGameplayAbilitySpec* UPlayerDiabloAbilitySystemComp::UseSkill(FSkillDataSpec* skillSpec)
+{
+	if(!skillSpec)
+	{
+		return nullptr;
+	}
+	
+	FGameplayAbilitySpecHandle Handle = m_EquippedSkill[skillSpec];
+	
+	if(TryActivateAbility(Handle))
+	{
+		return FindAbilitySpecFromHandle(Handle);	
+	}
+
+	return nullptr;
+}
+
+bool UPlayerDiabloAbilitySystemComp::CheckAlreadyEquipped(FSkillDataSpec* skillSpec)
+{
+	return m_EquippedSkill.Contains(skillSpec);
 }

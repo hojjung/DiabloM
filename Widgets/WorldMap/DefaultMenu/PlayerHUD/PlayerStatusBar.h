@@ -7,6 +7,8 @@
 #include "MinimapWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/DiabloPlayerController.h"
+#include "Widgets/WorldMap/DefaultMenu/Skills/DiaSkillHotKeyPanel.h"
+
 #include "PlayerStatusBar.generated.h"
 
 /**
@@ -35,7 +37,21 @@ protected:
 	UMaterialProgressBar* m_RageBar;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMinimapWidget* m_Minimap;
+	//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_InteractButton;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_PotionButton;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_SkillMenuOpenButton;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaSkillHotKeyPanel* m_SkillUseCanvas;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaMonsterInfo* m_DiaMonInfo;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UMaterialProgressBar* m_ExpBar;
 	
+	TWeakObjectPtr<UPlayerDiabloAbilitySystemComp> m_PlayerComp;
 
 	TWeakObjectPtr<UMaterialProgressBar> m_SelectedBar;
 
@@ -56,4 +72,14 @@ public:
 	void HideMinimap();
 	
 	void ShowMinimap();
+	
+	void ShowPlayerHUD();
+	
+	void HidePlayerHUD();
+
+	void UpdateSkill(FSkillDataSpec* spec);
+
+	void UpdateSkillBtn(FSkillDataSpec* spec,int index);
+
+	friend UMainCanvas;
 };

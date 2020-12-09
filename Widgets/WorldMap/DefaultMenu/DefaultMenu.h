@@ -121,5 +121,5 @@ public:
 	UFUNCTION()
 	void CloseSkillPopup();
 
-	
+	friend UMainCanvas;
 };

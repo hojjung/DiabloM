@@ -78,7 +78,9 @@ public:
 	UFUNCTION()
     void UpdateTotalPoint();
 
-	void UpdateAllWidget(FSkillDataSpec* notUse=nullptr);
+	void UpdateAllWidgetWrap(FSkillDataSpec* notUse=nullptr);
+	
+	void UpdateAllWidget(FSkillDataSpec* notUse=nullptr,int notUseIndex=-1);
 
 
 	FORCEINLINE TArray<USkillLearnButton*> GetAllSkillLearnBtn()

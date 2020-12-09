@@ -635,7 +635,6 @@ void APlayerDiabloCharacter::Revive()
 {
 	m_bIsDead = false;
 	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	//m_SkBody->GetAnimInstance()->StopSlotAnimation();//Only for montage
 
 	GetDiaAbilitySystem()->RemoveLooseGameplayTag(m_TagDead);
 	//
