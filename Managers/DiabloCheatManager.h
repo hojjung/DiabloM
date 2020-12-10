@@ -38,7 +38,10 @@ public:
 	void PrintInventoryOld();
 	UFUNCTION(exec)
 	void PrintEquipment();
-
+	UFUNCTION(exec)
+    void SaveSkill();
+	UFUNCTION(exec)
+    void LoadSkill();
 	UFUNCTION(exec)
 	void SaveInven();
 	UFUNCTION(exec)

@@ -8,6 +8,9 @@
 
 #include "PlayerDiabloAbilitySystemComp.generated.h"
 
+class UPlayerStatusBar;
+class USaveLoadManager;
+class UDiabloCheatManager;
 class UDiaSkillPanel;
 /**
  * 
@@ -25,15 +28,11 @@ public:
 public:
 	virtual void BeginPlay()override;
 	
-	void CreateClassSkillSpecs(const FSkillDataHandle& skillDataHandle);
-	
 	int GetSkillPoints();
 
 	FOnSkillLevelup m_OnSkillLevelChanged;
 
 	FOnSkillChanged m_OnSkillChanged;
-
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
 	UPROPERTY()
@@ -60,6 +59,12 @@ protected:
 	TMap<FSkillDataSpec*,FGameplayAbilitySpecHandle> m_EquippedSkill;
 
 public:
+	void SetSkillData(TArray<FSkillDataSpec>& skill1,
+        TArray<FSkillDataSpec>& skill2,
+        TArray<FSkillDataSpec>& skill3,
+        TArray<FSkillDataSpec>& skill4,
+        TArray<FSkillDataSpec>& skill5,
+        TArray<FSkillDataSpec>& skill6);
 	void LevelupSkill(FSkillDataSpec* skillSpec);
 
 	void EquipSkill(FSkillDataSpec* skillSpec);
@@ -76,8 +81,15 @@ public:
 	{
 		return m_SkillDataTableRow;
 	}
-
+	void CreateClassSkillSpecs(const FSkillDataHandle& skillDataHandle);
 	friend UDiaSkillPanel;
+	friend UDiabloCheatManager;
+	friend USaveLoadManager;
+	friend UPlayerStatusBar;
+
+private:
+	void SetFromSaveData(TArray<FSkillDataSpec>& my,const TArray<FSkillDataSpec>& loadedData);
 };
+
 
 

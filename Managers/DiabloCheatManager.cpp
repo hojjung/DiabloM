@@ -1,5 +1,6 @@
 #include "DiabloCheatManager.h"
 #include "DungeonManager.h"
+#include "AbilitySystem/Components/PlayerDiabloAbilitySystemComp.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Item/Inventory.h"
@@ -19,9 +20,13 @@ UDiabloCheatManager::UDiabloCheatManager()
 void UDiabloCheatManager::InitCheatManager()
 {
 	Super::InitCheatManager();
+	
 	PRINTF("Cheat Manager Init !");
+	
 	m_GameManager = GetWorld()->GetGameInstance<UDiabloGameInstance>();
+	
 	m_PlayerController = Cast<ADiabloPlayerController>(GetWorld()->GetFirstPlayerController());
+	
 	if(m_PlayerController)
 		m_Player = Cast<APlayerDiabloCharacter>(m_PlayerController->GetPawn());
 }
@@ -39,6 +44,27 @@ void UDiabloCheatManager::PrintInventoryOld()
 void UDiabloCheatManager::PrintEquipment()
 {
 	m_PlayerController->PrintEquipment();
+}
+
+void UDiabloCheatManager::SaveSkill()
+{
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
+	UPlayerDiabloAbilitySystemComp* Gas = Cast<UPlayerDiabloAbilitySystemComp
+	>(DiaPl.Get()->GetAbilitySystemComponent());
+	USaveLoadManager::Get->SaveSkill(UPlayerCreateManager::Get->m_CurrentSelectSlot,Gas->m_nSkillPoints,Gas->m_nTotalSkillPointSpents,
+		Gas->m_AryBaseSkill,
+		Gas->m_AryPowerSkill,
+		Gas->m_AryDefensvieSkill,
+		Gas->m_AryPowerSkill,
+		Gas->m_AryMasterySkill,
+		Gas->m_AryUltimateSkill);
+}
+
+void UDiabloCheatManager::LoadSkill()
+{
+	USaveLoadManager::Get->LoadSkill(UPlayerCreateManager::Get->m_CurrentSelectSlot);
+	USaveLoadManager::Get->SetLoadedSkillDataToPlayer(UPlayerCreateManager::Get->m_CurrentSelectSlot);
 }
 
 void UDiabloCheatManager::SaveInven()
@@ -104,7 +130,8 @@ void UDiabloCheatManager::RemoveAllEffect()
 }
 
 void UDiabloCheatManager::SetPlayerLevel(int levelWant)
-{TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+{
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
 	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
 	DiaPl->SetCharacterLevel(levelWant);
 }

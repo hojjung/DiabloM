@@ -15,6 +15,7 @@ class USaveEquipment;
 class USaveInventory;
 class USaveCharacterStatus;
 class USaveShareStorage;
+class USaveSkill;
 
 DECLARE_DELEGATE_OneParam(FOnSaveDataCreated, const USaveCharacterStatus*);
 
@@ -39,6 +40,10 @@ public:
     const FString m_StorageSlotName;
 
     const FString m_StorageShareSlotName;
+
+    const FString m_SkillSlotName;
+
+    const FString m_TalentSlotName;
     
     static USaveLoadManager* Get;
 
@@ -64,6 +69,8 @@ protected:
     UPROPERTY()
     TArray<USaveStorage*> m_AryLoadedStorage;
     UPROPERTY()
+    TArray<USaveSkill*> m_AryLoadedSkills;
+    UPROPERTY()
     USaveShareStorage* m_LoadShareStorage;
     //They DonNeedInst
 protected:
@@ -82,11 +89,15 @@ public:
     void SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex,FName classID,float exp=0.f,float gold=0.f);
     void SaveStorage(int slotIndex,const TArray<bool>& aryOpen,const TArray<TArray<FItemInstance>>& aryItems);
     void SaveShareStorage(const TArray<bool>& aryOpen,const TArray<TArray<FItemInstance>>& aryItems);
+    void SaveSkill(int slotIndex,int remainPoints,int spentPoints,TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2,
+    TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5,
+    TArray<FSkillDataSpec>& skill6);
     //
     void LoadInventory(int slotIndex);
     void LoadEquipment(int slotIndex);
     void LoadCharStat(int index);
     void LoadStorage(int slotIndex);
+    void LoadSkill(int slotIndex);
     void LoadShareStorage();
 
     bool DoesSaveDataExist(int slotIndex);
@@ -104,6 +115,8 @@ public:
     void SetLoadedInvenDataToPlayer(int slotIndex);
 
     void SetLoadedStorageDataToPlayer(int slot_index);
+
+    void SetLoadedSkillDataToPlayer(int slot_index);
     
     void CreateSetPlayerCharacter();
     
@@ -121,4 +134,8 @@ public:
 
     FName GetCurrentPlayerClassName();
 
+    void SetSpecDataForSkillInst(int slotIndex,const FSkillDataHandle& skillDataHandle,TArray<FSkillDataSpec>& skill1,TArray<FSkillDataSpec>& skill2,TArray<FSkillDataSpec>& skill3,TArray<FSkillDataSpec>& skill4,TArray<FSkillDataSpec>& skill5,TArray<FSkillDataSpec>& skill6);
+
 };
+
+

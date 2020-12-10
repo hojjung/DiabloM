@@ -8,16 +8,7 @@
 #include "SkillDataTable.generated.h"
 
 class USkillLearnButton;
-UCLASS()
-class DIABLOM_API USkillDataTable : public UObject
-{
-	GENERATED_BODY()
-public:
-	USkillDataTable();
-	
-public:
-	static  UDataTable* GetSkillDataTable;
-};
+
 
 USTRUCT(BlueprintType)
 struct FLevelupableScaleFloat
@@ -289,7 +280,26 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FSkillData> m_AryUltimateSkillBelt;
 };
+UCLASS()
+class DIABLOM_API USkillDataTable : public UObject
+{
+	GENERATED_BODY()
+	public:
+	USkillDataTable();
+	
+	public:
+	static  UDataTable* GetSkillDataTable;
 
+	static const FSkillData* GetSkillDataPtr(FName id)
+	{
+		return GetSkillDataTable->FindRow<FSkillData>(id, "");
+	}
+
+	static const FSkillData& GetSkillData(FName id)
+	{
+		return *GetSkillDataTable->FindRow<FSkillData>(id, "");
+	}
+};
 USTRUCT(BlueprintType)
 struct FSkillDataHandle :public FDataTableRowHandle
 {

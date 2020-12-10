@@ -21,6 +21,7 @@ class DIABLOM_API UPlayerStatusBar : public UUserWidget
 
 public:
 	UPlayerStatusBar(const FObjectInitializer& objInit);
+	void EquipFromSaveData();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))

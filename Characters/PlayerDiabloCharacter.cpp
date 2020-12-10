@@ -180,8 +180,6 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
 	LoadExp(loadedSaveData);
 	SetGold(loadedSaveData->m_fGold);
 
-	Cast<UPlayerDiabloAbilitySystemComp>(GetAbilitySystemComponent())->CreateClassSkillSpecs(
-		m_PlayerEntityData->m_ClassSkill);
 	GrantHpRegenAbility();
 	GrantHpPotionAbility();
 	GrantResourceRegenAbility();

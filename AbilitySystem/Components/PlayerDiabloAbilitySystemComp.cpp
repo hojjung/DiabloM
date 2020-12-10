@@ -1,5 +1,4 @@
 #include "PlayerDiabloAbilitySystemComp.h"
-
 #include "Characters/PlayerDiabloCharacter.h"
 
 UPlayerDiabloAbilitySystemComp::UPlayerDiabloAbilitySystemComp()
@@ -22,51 +21,23 @@ void UPlayerDiabloAbilitySystemComp::BeginPlay()
     m_PlayerPawn = Cast<APlayerDiabloCharacter>(GetOwner());
 }
 
-void UPlayerDiabloAbilitySystemComp::CreateClassSkillSpecs(const FSkillDataHandle& skillDataHandle)
-{
-    m_SkillDataTableRow = skillDataHandle.GetRow<FSkillDataRow>("SkillDataNotFound-PlayerGASComp");
-
-    check(m_SkillDataTableRow);
-
-    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryBaseSkillBelt)
-    {
-        m_AryBaseSkill.Emplace(FSkillDataSpec(0, &SkillData));
-    }
-
-    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryDefensiveSkillBelt)
-    {
-        m_AryDefensvieSkill.Emplace(FSkillDataSpec(0, &SkillData));
-    }
-
-    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryMasterySkillBelt)
-    {
-        m_AryMasterySkill.Emplace(FSkillDataSpec(0, &SkillData));
-    }
-    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryPowerSkillBelt)
-    {
-        m_AryPowerSkill.Emplace(FSkillDataSpec(0, &SkillData));
-    }
-
-    for (const FSkillData& SkillData : m_SkillDataTableRow->m_ArySpecialSkillBelt)
-    {
-        m_ArySpecialSkill.Emplace(FSkillDataSpec(0, &SkillData));
-    }
-
-    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryUltimateSkillBelt)
-    {
-        m_AryUltimateSkill.Emplace(FSkillDataSpec(0, &SkillData));
-    }
-}
 
 int UPlayerDiabloAbilitySystemComp::GetSkillPoints()
 {
     return m_nSkillPoints;
 }
 
-void UPlayerDiabloAbilitySystemComp::TickComponent(float DeltaTime, ELevelTick TickType,
-                                                   FActorComponentTickFunction* ThisTickFunction)
+
+void UPlayerDiabloAbilitySystemComp::SetSkillData(TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2,
+    TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5,
+    TArray<FSkillDataSpec>& skill6)
 {
-    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+    SetFromSaveData(m_AryBaseSkill,skill1);
+    SetFromSaveData(m_AryPowerSkill,skill2);
+    SetFromSaveData(m_AryDefensvieSkill,skill3);
+    SetFromSaveData(m_ArySpecialSkill,skill4);
+    SetFromSaveData(m_AryMasterySkill,skill5);
+    SetFromSaveData(m_AryUltimateSkill,skill6);
 }
 
 void UPlayerDiabloAbilitySystemComp::LevelupSkill(FSkillDataSpec* skillSpec)
@@ -164,4 +135,50 @@ FGameplayAbilitySpec* UPlayerDiabloAbilitySystemComp::UseSkill(FSkillDataSpec* s
 bool UPlayerDiabloAbilitySystemComp::CheckAlreadyEquipped(FSkillDataSpec* skillSpec)
 {
     return m_EquippedSkill.Contains(skillSpec);
+}
+
+void UPlayerDiabloAbilitySystemComp::CreateClassSkillSpecs(const FSkillDataHandle& skillDataHandle)
+{
+    m_SkillDataTableRow = skillDataHandle.GetRow<FSkillDataRow>("SkillDataNotFound-PlayerGASComp");
+
+    check(m_SkillDataTableRow);
+
+    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryBaseSkillBelt)
+    {
+        m_AryBaseSkill.Emplace(FSkillDataSpec(0, &SkillData));
+    }
+
+    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryDefensiveSkillBelt)
+    {
+        m_AryDefensvieSkill.Emplace(FSkillDataSpec(0, &SkillData));
+    }
+
+    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryMasterySkillBelt)
+    {
+        m_AryMasterySkill.Emplace(FSkillDataSpec(0, &SkillData));
+    }
+    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryPowerSkillBelt)
+    {
+        m_AryPowerSkill.Emplace(FSkillDataSpec(0, &SkillData));
+    }
+
+    for (const FSkillData& SkillData : m_SkillDataTableRow->m_ArySpecialSkillBelt)
+    {
+        m_ArySpecialSkill.Emplace(FSkillDataSpec(0, &SkillData));
+    }
+
+    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryUltimateSkillBelt)
+    {
+        m_AryUltimateSkill.Emplace(FSkillDataSpec(0, &SkillData));
+    }
+}
+void UPlayerDiabloAbilitySystemComp::SetFromSaveData(TArray<FSkillDataSpec>& my,
+    const TArray<FSkillDataSpec>& loadedData)
+{
+
+    for(int i=0; i<my.Num();i++)
+    {
+        my[i].m_nCurrentLevel = loadedData[i].m_nCurrentLevel;
+        my[i].m_nEquipIndex = loadedData[i].m_nEquipIndex;
+    }
 }

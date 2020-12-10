@@ -3,6 +3,7 @@
 #include "DiabloM.h"
 #include "SaveEquipment.h"
 #include "SaveShareStorage.h"
+#include "SaveSkill.h"
 #include "Kismet/GameplayStatics.h"
 #include "SaveLoad/SaveInventory.h"
 #include "SaveLoad/SaveCharacterStatus.h"
@@ -11,6 +12,7 @@
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/StartMap/PlayerCreateManager.h"
 #include "SaveStorage.h"
+#include "AbilitySystem/Components/PlayerDiabloAbilitySystemComp.h"
 
 USaveLoadManager* USaveLoadManager::Get = nullptr;
 
@@ -21,6 +23,8 @@ USaveLoadManager::USaveLoadManager():
     m_CharSlotName("Character"),
     m_StorageSlotName("Storage"),
     m_StorageShareSlotName("ShareStorage"),
+    m_SkillSlotName("Skill"),
+    m_TalentSlotName("Talent"),
     m_nMaxSlotCount(7),
     m_nCurrentSlotCount(5),m_LoadShareStorage(nullptr)
 {
@@ -29,6 +33,7 @@ USaveLoadManager::USaveLoadManager():
     m_AryLoadedEquipments.Init(nullptr, m_nCurrentSlotCount);
     m_AryLoadedInventory.Init(nullptr, m_nCurrentSlotCount);
     m_AryLoadedStorage.Init(nullptr, m_nCurrentSlotCount);
+    m_AryLoadedSkills.Init(nullptr, m_nCurrentSlotCount);
     TryLoadAllCharacter();
     
 }
@@ -58,6 +63,7 @@ void USaveLoadManager::TryLoadAllCharacter()
             LoadEquipment(i);
             LoadInventory(i);
             LoadStorage(i);
+            LoadSkill(i);
 
             PRINTF("Success: %d", i);
         }
@@ -85,12 +91,18 @@ void USaveLoadManager::DeleteSlot(int i)
     {
         //PRINTF("Fail Delete InventoryOld");
     }
+
+    if (!UGameplayStatics::DeleteGameInSlot(m_SkillSlotName, i))
+    {
+        //PRINTF("Fail Delete InventoryOld");
+    }
   
 
     m_AryLoadedCharacters[i] = nullptr;
     m_AryLoadedEquipments[i] = nullptr;
     m_AryLoadedInventory[i] = nullptr;
     m_AryLoadedStorage[i] = nullptr;
+    m_AryLoadedSkills[i] = nullptr;
  
 }
 
@@ -294,6 +306,22 @@ void USaveLoadManager::SaveShareStorage( const TArray<bool>& aryOpen,
     PRINTF("SaveShareStorage");
 }
 
+void USaveLoadManager::SaveSkill(int slotIndex,int remainPoints,int spentPoints, TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2,
+    TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5,
+    TArray<FSkillDataSpec>& skill6)
+{
+    USaveSkill* SaveSkill = Cast<USaveSkill>(
+     UGameplayStatics::CreateSaveGameObject(USaveSkill::StaticClass()));
+
+    SaveSkill->SetSaveSkill(m_SaveVersion,remainPoints,spentPoints,skill1,skill2,skill3,skill4,skill5,skill6);
+
+    UGameplayStatics::SaveGameToSlot(SaveSkill, m_SkillSlotName, slotIndex);
+
+    m_AryLoadedSkills[slotIndex] = SaveSkill;
+
+    PRINTF("SaveSkill");
+}
+
 void USaveLoadManager::LoadStorage(int slotIndex)
 {
     USaveStorage* LoadStorage = Cast<USaveStorage>(UGameplayStatics::LoadGameFromSlot(m_StorageSlotName, slotIndex));
@@ -325,6 +353,15 @@ void USaveLoadManager::LoadStorage(int slotIndex)
     m_AryLoadedStorage[slotIndex] = LoadStorage;
 
     PRINTF("LoadStorage");
+}
+
+void USaveLoadManager::LoadSkill(int slotIndex)
+{
+    USaveSkill* LoadSkill = Cast<USaveSkill>(UGameplayStatics::LoadGameFromSlot(m_SkillSlotName, slotIndex));
+    
+    m_AryLoadedSkills[slotIndex] = LoadSkill;
+
+    PRINTF("LoadSkill");
 }
 
 void USaveLoadManager::LoadShareStorage()
@@ -395,6 +432,16 @@ int USaveLoadManager::CreateNewCharacter(UPlayerCreateManager* plManager)
     AryDgOpen.Init(false,5);
     AryDgOpen[0]=true;
     SaveStorage(PlayerIndex,AryDgOpen,AryAryStorage);
+    //스킬 Save가 필요한가?
+    // TArray<FSkillDataSpec> Skill1;
+    // TArray<FSkillDataSpec> Skill2;
+    // TArray<FSkillDataSpec> Skill3;
+    // TArray<FSkillDataSpec> Skill4;
+    // TArray<FSkillDataSpec> Skill5;
+    // TArray<FSkillDataSpec> Skill6;
+    // auto* PlayerEntityData = UCharacterDataTable::GetPlayerEntityPtr(m_AryLoadedCharacters[PlayerIndex]->m_ClassName);
+    // SetSpecDataForSkillInst(PlayerIndex,PlayerEntityData->m_ClassSkill,Skill1,Skill2,Skill3,Skill4,Skill5,Skill6);
+    // SaveSkill(PlayerIndex,Skill1,Skill2,Skill3,Skill4,Skill5,Skill6);
     //
     m_OnDataCreated.ExecuteIfBound(m_AryLoadedCharacters[PlayerIndex]);
 
@@ -439,6 +486,36 @@ void USaveLoadManager::SetLoadedStorageDataToPlayer(int slot_index)
     
 }
 
+void USaveLoadManager::SetLoadedSkillDataToPlayer(int slot_index)
+{
+    TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+    
+    TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
+    
+    UPlayerDiabloAbilitySystemComp* Comp =Cast<UPlayerDiabloAbilitySystemComp>(DiaPl.Get()->GetAbilitySystemComponent());
+    
+    const FPlayerEntityTable* PlayerEntityData = UCharacterDataTable::GetPlayerEntityPtr(
+            m_AryLoadedCharacters[slot_index]->m_ClassName);
+    
+    Comp->CreateClassSkillSpecs(PlayerEntityData->m_ClassSkill);
+
+    if(!m_AryLoadedSkills[slot_index])
+    {
+        return;//NoSaveData Letthem
+    }
+
+    Comp->m_nSkillPoints = m_AryLoadedSkills[slot_index]->m_nRemainSkillPoint;
+    
+    Comp->m_nTotalSkillPointSpents = m_AryLoadedSkills[slot_index]->m_nSpentSkillPoint;
+    
+    Comp->SetSkillData(m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec1,
+            m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec2,
+            m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec3,
+            m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec4,
+            m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec5,
+            m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec6);
+}
+
 void USaveLoadManager::CreateSetPlayerCharacter()
 {
     int slotIndex=UPlayerCreateManager::Get->m_CurrentSelectSlot;
@@ -446,6 +523,7 @@ void USaveLoadManager::CreateSetPlayerCharacter()
     SetLoadedEquipDataToPlayer(slotIndex);
     SetLoadedInvenDataToPlayer(slotIndex);
     SetLoadedStorageDataToPlayer(slotIndex);
+    SetLoadedSkillDataToPlayer(slotIndex);
 }
 
 const TArray<USaveCharacterStatus*>& USaveLoadManager::GetLoadedChars() const
@@ -514,5 +592,45 @@ void USaveLoadManager::LoadItemDataForInstance(TArray<FItemInstance>& itemAry,ES
 FName USaveLoadManager::GetCurrentPlayerClassName()
 {
     return m_AryLoadedCharacters[UPlayerCreateManager::Get->m_CurrentSelectSlot]->m_ClassName;
+}
+
+void USaveLoadManager::SetSpecDataForSkillInst(int slotIndex, const FSkillDataHandle& skillDataHandle,
+    TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2, TArray<FSkillDataSpec>& skill3,
+    TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5, TArray<FSkillDataSpec>& skill6)
+{
+    auto m_SkillDataTableRow = skillDataHandle.GetRow<FSkillDataRow>("SkillDataNotFound-PlayerGASComp");
+
+    check(m_SkillDataTableRow);
+
+    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryBaseSkillBelt)
+    {
+        skill1.Emplace(FSkillDataSpec(0, &SkillData));
+    }
+    
+    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryPowerSkillBelt)
+    {
+        skill2.Emplace(FSkillDataSpec(0, &SkillData));
+    }
+    
+    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryDefensiveSkillBelt)
+    {
+        skill3.Emplace(FSkillDataSpec(0,&SkillData));
+    }
+    
+    for (const FSkillData& SkillData : m_SkillDataTableRow->m_ArySpecialSkillBelt)
+    {
+        skill4.Emplace(FSkillDataSpec(0, &SkillData));
+    }
+    
+    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryMasterySkillBelt)
+    {
+        skill5.Emplace(FSkillDataSpec(0,&SkillData));
+    }
+    
+    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryUltimateSkillBelt)
+    {
+        skill6.Emplace(FSkillDataSpec(0, &SkillData));
+    }
+
 }
 

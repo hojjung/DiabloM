@@ -1,7 +1,5 @@
 #include "DiaSkillUseButton.h"
 
-#include <xkeycheck.h>
-
 
 #include "DiaDragDropSkill.h"
 #include "SkillLearnButton.h"

@@ -14,6 +14,67 @@ UPlayerStatusBar::UPlayerStatusBar(const FObjectInitializer& objInit): Super(obj
     m_HpFormat = FTextFormat::FromString("{0}/{1}");
 }
 
+void UPlayerStatusBar::EquipFromSaveData()
+{
+    for(FSkillDataSpec& Skill : m_PlayerComp->m_AryBaseSkill)
+    {
+        if(Skill.m_nEquipIndex>-1)
+        {
+            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+        }
+    }
+
+    for(FSkillDataSpec& Skill : m_PlayerComp->m_AryPowerSkill)
+    {
+        if(Skill.m_nEquipIndex>-1)
+        {
+            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+        }
+    }
+
+    
+    for(FSkillDataSpec& Skill : m_PlayerComp->m_AryDefensvieSkill)
+    {
+        if(Skill.m_nEquipIndex>-1)
+        {
+            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+        }
+    }
+
+    for(FSkillDataSpec& Skill : m_PlayerComp->m_AryDefensvieSkill)
+    {
+        if(Skill.m_nEquipIndex>-1)
+        {
+            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+        }
+    }
+
+    
+    for(FSkillDataSpec& Skill : m_PlayerComp->m_ArySpecialSkill)
+    {
+        if(Skill.m_nEquipIndex>-1)
+        {
+            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+        }
+    }
+
+    for(FSkillDataSpec& Skill : m_PlayerComp->m_AryMasterySkill)
+    {
+        if(Skill.m_nEquipIndex>-1)
+        {
+            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+        }
+    }
+
+    for(FSkillDataSpec& Skill : m_PlayerComp->m_AryUltimateSkill)
+    {
+        if(Skill.m_nEquipIndex>-1)
+        {
+            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+        }
+    }
+}
+
 void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon)
 {
     m_StaminaBar->SetVisibility(ESlateVisibility::Collapsed);
@@ -62,6 +123,8 @@ void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon)
     }
 
     m_Minimap->Init();
+    //
+    EquipFromSaveData();
 }
 
 void UPlayerStatusBar::SetHealthBarProgressV(AUnitPawn* pawn)
