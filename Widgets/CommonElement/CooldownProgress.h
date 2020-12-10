@@ -16,14 +16,20 @@ class DIABLOM_API UCooldownProgress : public UUserWidget
 	GENERATED_BODY()
 
 public:
+    UCooldownProgress(const FObjectInitializer& obj);
+    virtual void NativePreConstruct() override;
     virtual void NativeOnInitialized() override;
 protected:
     UPROPERTY(EditAnywhere,BlueprintReadWrite)
     UMaterialInterface* m_MatTemplate;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "ImageText")
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UImage* m_ImageCooldown;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "ImageText")
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UTextBlock* m_TextCooldown;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    FLinearColor m_ColorText;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    float m_fFontSize;
     
 protected:
     UPROPERTY(Transient)

@@ -1,5 +1,8 @@
 #include "DiaSkillUseButton.h"
 
+#include <xkeycheck.h>
+
+
 #include "DiaDragDropSkill.h"
 #include "SkillLearnButton.h"
 
@@ -23,10 +26,12 @@ void UDiaSkillUseButton::SetSkillSpec(FSkillDataSpec* skillSpec)
 {
 	if(m_EquippedSkillSpec)//버튼에 장착된 스킬 제거
 	{
-		m_PlayerDiaComp->UnequipSkill(m_EquippedSkillSpec);
-		
-		//ClearSkillSpec();//called from dele
+		if(!m_PlayerDiaComp->UnequipSkill(m_EquippedSkillSpec))
+		{
+			return;
+		}
 	}
+	
 	if(skillSpec->m_nEquipIndex>-1)// 드래그한 스킬을 다른곳에서 해제
 	{
 		m_PlayerDiaComp->UnequipSkill(skillSpec);
@@ -43,7 +48,7 @@ void UDiaSkillUseButton::SetSkillSpec(FSkillDataSpec* skillSpec)
 	Style.Hovered= DefaultStyle;
 	DefaultStyle.TintColor = FSlateColor(FLinearColor(0.5f,0.5f,0.5f,1.f));
 	Style.Pressed= DefaultStyle;
-	
+	m_BtnSkill->SetVisibility(ESlateVisibility::Visible);
 	m_BtnSkill->SetStyle(Style);
 
 	m_PlayerDiaComp->EquipSkill(m_EquippedSkillSpec);
@@ -52,7 +57,7 @@ void UDiaSkillUseButton::SetSkillSpec(FSkillDataSpec* skillSpec)
 
 void UDiaSkillUseButton::ClearSkillSpec()
 {
-	
+	m_BtnSkill->SetVisibility(ESlateVisibility::Hidden);
 	m_GaSpec=nullptr;
 	m_EquippedSkillSpec=nullptr;
 	m_BtnSkill->SetStyle(FButtonStyle());
@@ -68,13 +73,15 @@ void UDiaSkillUseButton::ClearCooldown()
 void UDiaSkillUseButton::UseSkill()
 {
     PRINTF("UseSkill");
-	
-	m_GaSpec = m_PlayerDiaComp->UseSkill(m_EquippedSkillSpec);
 
-	if(!m_GaSpec)
+    FGameplayAbilitySpec* AbilSpec = m_PlayerDiaComp->UseSkill(m_EquippedSkillSpec);
+
+	if(!AbilSpec)
 	{
 		return;
 	}
+
+	m_GaSpec=AbilSpec;
 	
 	m_fMaxCD = m_GaSpec->Ability->GetCooldownTimeRemaining(m_PlayerDiaComp->AbilityActorInfo.Get());
 

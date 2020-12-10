@@ -19,31 +19,31 @@ void UDiaSkillPanel::Init(UPlayerDiabloAbilitySystemComp* playerSkillComp)
 
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryBaseSkill)
 	{
-		m_BaseSkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec));
+		m_BaseSkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec,m_PlayerSkillComp));
 	}
 	//
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryPowerSkill)
 	{
-		m_PowerSkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec));
+		m_PowerSkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec,m_PlayerSkillComp));
 	}
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryDefensvieSkill)
 	{
-		m_DefenseSkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec));
+		m_DefenseSkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec,m_PlayerSkillComp));
 	}
 	//
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_ArySpecialSkill)
 	{
-		m_SpeicalSkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec));
+		m_SpeicalSkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec,m_PlayerSkillComp));
 	}
 	//
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryMasterySkill)
 	{
-		m_MasterySkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec));
+		m_MasterySkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec,m_PlayerSkillComp));
 	}
 	//
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryUltimateSkill)
 	{
-		m_UltimateSkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec));
+		m_UltimateSkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec,m_PlayerSkillComp));
 	}
 	//
 	UpdateAvailablePoint();
@@ -52,11 +52,11 @@ void UDiaSkillPanel::Init(UPlayerDiabloAbilitySystemComp* playerSkillComp)
 	m_PlayerSkillComp->m_OnSkillLevelChanged.AddUObject(this,&UDiaSkillPanel::UpdateAllWidgetWrap);
 }
 
-USkillLearnButton* UDiaSkillPanel::CreateSkillButton(FSkillDataSpec& skillSpec)
+USkillLearnButton* UDiaSkillPanel::CreateSkillButton(FSkillDataSpec& skillSpec,UPlayerDiabloAbilitySystemComp* compDi)
 {
 	USkillLearnButton* SkillButtonCreated = CreateWidget<USkillLearnButton>(this, m_ClassSkillLearnButton);
 
-	SkillButtonCreated->InitSkillButton(skillSpec);
+	SkillButtonCreated->InitSkillButton(skillSpec,compDi);
 
 	m_AryAllSkillLearnButton.Emplace(SkillButtonCreated);
 

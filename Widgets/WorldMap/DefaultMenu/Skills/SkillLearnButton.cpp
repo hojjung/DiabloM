@@ -1,5 +1,5 @@
 #include "SkillLearnButton.h"
-
+#include "AbilitySystem/Components/PlayerDiabloAbilitySystemComp.h"
 
 void USkillLearnButton::UpdateLevelText()
 {
@@ -13,8 +13,9 @@ void USkillLearnButton::UpdateLevelText()
 	}
 }
 
-void USkillLearnButton::InitSkillButton(FSkillDataSpec& skill_spec)
+void USkillLearnButton::InitSkillButton(FSkillDataSpec& skill_spec,UPlayerDiabloAbilitySystemComp* comp)
 {
+	m_PlDiaComp=comp;
 	m_HoldSpec=&skill_spec;
 	m_HoldSpec->m_LearnBtn=this;
 	m_ImageSkillIcon->SetBrushFromTexture(m_HoldSpec->m_SkillDataPtr->m_SkillIcon);
@@ -82,6 +83,17 @@ void USkillLearnButton::NativeOnDragDetected(const FGeometry& InGeometry, const 
     {
 	    return;
     }
+	
+	if(m_PlDiaComp->CheckAlreadyEquipped(m_HoldSpec))
+	{
+		if(!m_PlDiaComp->IsCooldownAvailable(m_HoldSpec))
+		{
+			return;
+		}
+	}
+
+	
+	
 	m_OnDragDetect.Broadcast();
 	OutOperation = CreateDDO();
 }

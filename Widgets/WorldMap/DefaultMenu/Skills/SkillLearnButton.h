@@ -14,9 +14,8 @@
 
 #include "SkillLearnButton.generated.h"
 
-/**
- * 
- */
+class UPlayerDiabloAbilitySystemComp;
+
 UCLASS()
 class DIABLOM_API USkillLearnButton : public UUserWidget
 {
@@ -41,10 +40,13 @@ protected:
 	UCooldownProgress* m_SkillCooldown;
 	
 protected:
+	UPROPERTY()
+	UPlayerDiabloAbilitySystemComp* m_PlDiaComp;
+	
 	FSkillDataSpec* m_HoldSpec;
 	
 public:
-	void InitSkillButton(FSkillDataSpec& skill_spec);
+	void InitSkillButton(FSkillDataSpec& skill_spec,UPlayerDiabloAbilitySystemComp* comp);
 	
 	void UpdateLevelText();
 	

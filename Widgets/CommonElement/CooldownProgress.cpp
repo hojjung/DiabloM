@@ -3,6 +3,21 @@
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Materials/MaterialInstanceDynamic.h"
 
+UCooldownProgress::UCooldownProgress(const FObjectInitializer& obj):Super(obj)
+{
+    m_ColorText =FLinearColor::White;
+    m_fFontSize=22.f;
+}
+
+void UCooldownProgress::NativePreConstruct()
+{
+    Super::NativePreConstruct();
+    m_TextCooldown->SetColorAndOpacity(m_ColorText);
+    FSlateFontInfo Font =m_TextCooldown->Font;
+    Font.Size=m_fFontSize;
+    m_TextCooldown->SetFont(Font);
+}
+
 void UCooldownProgress::NativeOnInitialized()
 {
     Super::NativeOnInitialized();

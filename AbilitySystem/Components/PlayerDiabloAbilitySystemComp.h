@@ -64,7 +64,9 @@ public:
 
 	void EquipSkill(FSkillDataSpec* skillSpec);
 
-	void UnequipSkill(FSkillDataSpec* skillSpec);
+	bool UnequipSkill(FSkillDataSpec* skillSpec);
+
+	bool IsCooldownAvailable(FSkillDataSpec* skillSpec);
 
 	FGameplayAbilitySpec* UseSkill(FSkillDataSpec* skillSpec);
 

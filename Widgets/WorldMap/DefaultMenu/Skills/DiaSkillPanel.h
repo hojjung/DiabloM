@@ -68,7 +68,7 @@ public:
 	void Init(UPlayerDiabloAbilitySystemComp* playerSkillComp);
 
 private:
-	USkillLearnButton* CreateSkillButton(FSkillDataSpec& skillSpec);
+	USkillLearnButton* CreateSkillButton(FSkillDataSpec& skillSpec,UPlayerDiabloAbilitySystemComp* compDi);
 
 public:
 	UFUNCTION()
