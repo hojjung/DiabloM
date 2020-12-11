@@ -36,7 +36,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FSkillDataSpec> m_ArySkillDataSpec6;
 
-
 public:
 	void SetSaveSkill(ESaveVersion saveVersion,int remainPoint,int spentPoint,TArray<FSkillDataSpec>& skill1,
 		TArray<FSkillDataSpec>& skill2,

@@ -1,4 +1,6 @@
 #include "PlayerDiabloAbilitySystemComp.h"
+
+#include "TTTechNode.h"
 #include "Characters/PlayerDiabloCharacter.h"
 
 UPlayerDiabloAbilitySystemComp::UPlayerDiabloAbilitySystemComp()
@@ -12,6 +14,8 @@ UPlayerDiabloAbilitySystemComp::UPlayerDiabloAbilitySystemComp()
     m_AryUltimateSkill.Reset();
     m_nSkillPoints = 10; //Test
     m_nTotalSkillPointSpents = 0;
+    m_nTalentPoints = 10;
+    m_nTotalTalentPointSpents = 0;
 }
 
 void UPlayerDiabloAbilitySystemComp::BeginPlay()
@@ -19,6 +23,10 @@ void UPlayerDiabloAbilitySystemComp::BeginPlay()
     Super::BeginPlay();
 
     m_PlayerPawn = Cast<APlayerDiabloCharacter>(GetOwner());
+    
+    m_TechManager1= NewObject<UTechTreeManager>();
+    
+    m_TechManager2= NewObject<UTechTreeManager>();
 }
 
 
@@ -27,17 +35,48 @@ int UPlayerDiabloAbilitySystemComp::GetSkillPoints()
     return m_nSkillPoints;
 }
 
-
-void UPlayerDiabloAbilitySystemComp::SetSkillData(TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2,
-    TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5,
-    TArray<FSkillDataSpec>& skill6)
+void UPlayerDiabloAbilitySystemComp::CreateTalentSpec(const UTechnologyTree* const technology_tree1,
+                                                      const UTechnologyTree* const technology_tree2)
 {
-    SetFromSaveData(m_AryBaseSkill,skill1);
-    SetFromSaveData(m_AryPowerSkill,skill2);
-    SetFromSaveData(m_AryDefensvieSkill,skill3);
-    SetFromSaveData(m_ArySpecialSkill,skill4);
-    SetFromSaveData(m_AryMasterySkill,skill5);
-    SetFromSaveData(m_AryUltimateSkill,skill6);
+    m_AryTalents1.Empty();
+    m_AryTalents2.Empty();
+    
+    if (!technology_tree1)
+    {
+        for (UTTTechNode* Node : technology_tree1->TechNodes)
+        {
+            m_AryTalents1.Emplace(FTalentDataSpec(Cast<UDiaTechnologyAsset>( Node->TechnologyAsset)));
+        }
+    }
+
+    if (!technology_tree2)
+    {
+        for (UTTTechNode* Node : technology_tree2->TechNodes)
+        {
+           m_AryTalents2.Emplace(FTalentDataSpec(Cast<UDiaTechnologyAsset>( Node->TechnologyAsset)));
+        }
+    }
+}
+
+void UPlayerDiabloAbilitySystemComp::SetLoadedTalent(TArray<FTalentDataSpec> talent1,
+                                                     TArray<FTalentDataSpec> talent2)
+{
+    SetTalentFromSaveData(m_AryTalents1,talent1);
+    SetTalentFromSaveData(m_AryTalents2,talent2);
+}
+
+
+void UPlayerDiabloAbilitySystemComp::SetLoadedSkillData(TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2,
+                                                        TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4,
+                                                        TArray<FSkillDataSpec>& skill5,
+                                                        TArray<FSkillDataSpec>& skill6)
+{
+    SetSkillFromSaveData(m_AryBaseSkill, skill1);
+    SetSkillFromSaveData(m_AryPowerSkill, skill2);
+    SetSkillFromSaveData(m_AryDefensvieSkill, skill3);
+    SetSkillFromSaveData(m_ArySpecialSkill, skill4);
+    SetSkillFromSaveData(m_AryMasterySkill, skill5);
+    SetSkillFromSaveData(m_AryUltimateSkill, skill6);
 }
 
 void UPlayerDiabloAbilitySystemComp::LevelupSkill(FSkillDataSpec* skillSpec)
@@ -172,13 +211,56 @@ void UPlayerDiabloAbilitySystemComp::CreateClassSkillSpecs(const FSkillDataHandl
         m_AryUltimateSkill.Emplace(FSkillDataSpec(0, &SkillData));
     }
 }
-void UPlayerDiabloAbilitySystemComp::SetFromSaveData(TArray<FSkillDataSpec>& my,
-    const TArray<FSkillDataSpec>& loadedData)
-{
 
-    for(int i=0; i<my.Num();i++)
+void UPlayerDiabloAbilitySystemComp::SetSkillFromSaveData(TArray<FSkillDataSpec>& my,
+                                                     const TArray<FSkillDataSpec>& loadedData)
+{
+    for (int i = 0; i < my.Num(); i++)
     {
         my[i].m_nCurrentLevel = loadedData[i].m_nCurrentLevel;
         my[i].m_nEquipIndex = loadedData[i].m_nEquipIndex;
     }
 }
+
+void UPlayerDiabloAbilitySystemComp::SetTalentFromSaveData(TArray<FTalentDataSpec>& my,
+    const TArray<FTalentDataSpec>& loadedData)
+{
+    for (int i = 0; i < my.Num(); i++)
+    {
+        my[i].m_nCurrentLevel = loadedData[i].m_nCurrentLevel;
+    }
+}
+
+void UPlayerDiabloAbilitySystemComp::AllEquipTalentData()
+{
+    if(m_AryTalents1.Num()>1)
+    {    
+        for(FTalentDataSpec& TT :m_AryTalents1)
+        {
+            check(TT.m_TalentDataPtr->m_TalentAbility);
+
+            FGameplayAbilitySpec Spec = FGameplayAbilitySpec(TT.m_TalentDataPtr->m_TalentAbility,TT.m_nCurrentLevel, -1, this);
+
+            FGameplayAbilitySpecHandle Handle = GiveAbility(Spec);
+
+            m_EquippedTalent.Add(&TT, Handle);
+        }
+    }
+
+    if(m_AryTalents2.Num()>1)
+    {
+        for(FTalentDataSpec& TT :m_AryTalents2)
+        {
+            check(TT.m_TalentDataPtr->m_TalentAbility);
+
+            FGameplayAbilitySpec Spec = FGameplayAbilitySpec(TT.m_TalentDataPtr->m_TalentAbility,TT.m_nCurrentLevel, -1, this);
+
+            FGameplayAbilitySpecHandle Handle = GiveAbility(Spec);
+
+            m_EquippedTalent.Add(&TT, Handle);
+        }
+    }
+}
+
+
+

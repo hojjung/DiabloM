@@ -39,6 +39,10 @@ public:
 	UFUNCTION(exec)
 	void PrintEquipment();
 	UFUNCTION(exec)
+    void SaveTalent();
+	UFUNCTION(exec)
+    void LoadTalent();
+	UFUNCTION(exec)
     void SaveSkill();
 	UFUNCTION(exec)
     void LoadSkill();

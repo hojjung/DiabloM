@@ -12,6 +12,7 @@
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/StartMap/PlayerCreateManager.h"
 #include "SaveStorage.h"
+#include "SaveTalent.h"
 #include "AbilitySystem/Components/PlayerDiabloAbilitySystemComp.h"
 
 USaveLoadManager* USaveLoadManager::Get = nullptr;
@@ -322,6 +323,19 @@ void USaveLoadManager::SaveSkill(int slotIndex,int remainPoints,int spentPoints,
     PRINTF("SaveSkill");
 }
 
+void USaveLoadManager::SaveTalent(int slotIndex,ESaveVersion saveVersion, int remainPoint, int spentPoint,
+    TArray<FTalentDataSpec>& talent1, TArray<FTalentDataSpec>& talent2)
+{
+    USaveTalent* SaveTalent = Cast<USaveTalent>(
+    UGameplayStatics::CreateSaveGameObject(USaveTalent::StaticClass()));
+    
+    SaveTalent->SetSaveTalent(m_SaveVersion,remainPoint,spentPoint,talent1,talent2);
+    
+    UGameplayStatics::SaveGameToSlot(SaveTalent, m_SkillSlotName, slotIndex);
+
+    m_AryLoadedTalents[slotIndex] = SaveTalent;
+}
+
 void USaveLoadManager::LoadStorage(int slotIndex)
 {
     USaveStorage* LoadStorage = Cast<USaveStorage>(UGameplayStatics::LoadGameFromSlot(m_StorageSlotName, slotIndex));
@@ -508,12 +522,37 @@ void USaveLoadManager::SetLoadedSkillDataToPlayer(int slot_index)
     
     Comp->m_nTotalSkillPointSpents = m_AryLoadedSkills[slot_index]->m_nSpentSkillPoint;
     
-    Comp->SetSkillData(m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec1,
+    Comp->SetLoadedSkillData(m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec1,
             m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec2,
             m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec3,
             m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec4,
             m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec5,
             m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec6);
+}
+
+void USaveLoadManager::SetLoadedTalentDataToPlayer(int slot_index)
+{
+    TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+    
+    TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
+    
+    UPlayerDiabloAbilitySystemComp* Comp =Cast<UPlayerDiabloAbilitySystemComp>(DiaPl.Get()->GetAbilitySystemComponent());
+
+    const FPlayerEntityTable* PlayerEntityData = UCharacterDataTable::GetPlayerEntityPtr(
+          m_AryLoadedCharacters[slot_index]->m_ClassName);
+    
+    Comp->CreateTalentSpec(PlayerEntityData->m_AssetSkillTree1,PlayerEntityData->m_AssetSkillTree2);
+
+    if(!m_AryLoadedTalents[slot_index])
+    {
+        return;//NoSaveData Letthem
+    }
+
+    Comp->m_nTalentPoints = m_AryLoadedTalents[slot_index]->m_nRemainSkillPoint;
+    
+    Comp->m_nTotalTalentPointSpents = m_AryLoadedTalents[slot_index]->m_nSpentSkillPoint;
+    
+    Comp->SetLoadedTalent(m_AryLoadedTalents[slot_index]->m_AryTalentData1,m_AryLoadedTalents[slot_index]->m_AryTalentData2);
 }
 
 void USaveLoadManager::CreateSetPlayerCharacter()

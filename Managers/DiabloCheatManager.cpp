@@ -46,6 +46,27 @@ void UDiabloCheatManager::PrintEquipment()
 	m_PlayerController->PrintEquipment();
 }
 
+void UDiabloCheatManager::SaveTalent()
+{
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
+	UPlayerDiabloAbilitySystemComp* Gas = Cast<UPlayerDiabloAbilitySystemComp
+    >(DiaPl.Get()->GetAbilitySystemComponent());
+	USaveLoadManager::Get->SaveSkill(UPlayerCreateManager::Get->m_CurrentSelectSlot,Gas->m_nSkillPoints,Gas->m_nTotalSkillPointSpents,
+        Gas->m_AryBaseSkill,
+        Gas->m_AryPowerSkill,
+        Gas->m_AryDefensvieSkill,
+        Gas->m_AryPowerSkill,
+        Gas->m_AryMasterySkill,
+        Gas->m_AryUltimateSkill);
+}
+
+void UDiabloCheatManager::LoadTalent()
+{
+	USaveLoadManager::Get->LoadSkill(UPlayerCreateManager::Get->m_CurrentSelectSlot);
+	USaveLoadManager::Get->SetLoadedSkillDataToPlayer(UPlayerCreateManager::Get->m_CurrentSelectSlot);
+}
+
 void UDiabloCheatManager::SaveSkill()
 {
 	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
