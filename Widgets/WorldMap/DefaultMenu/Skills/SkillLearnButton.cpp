@@ -91,8 +91,6 @@ void USkillLearnButton::NativeOnDragDetected(const FGeometry& InGeometry, const 
 			return;
 		}
 	}
-
-	
 	
 	m_OnDragDetect.Broadcast();
 	OutOperation = CreateDDO();

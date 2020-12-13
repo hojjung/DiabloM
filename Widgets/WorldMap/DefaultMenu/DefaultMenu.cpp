@@ -1,4 +1,6 @@
 #include "DefaultMenu.h"
+
+#include "TechNodeWidget.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Item/DiaInvenGridPanel.h"
@@ -72,6 +74,17 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     m_SkillPopup->Init(PlayerGASComp);
     
     //CloseSkillPopup();
+    //Talent
+    m_TalentPanel->Init(PlayerGASComp);
+    m_TalentPanel->m_ResetButton->OnClicked.AddDynamic(this,&UDefaultMenu::CloseSkillPopup);
+
+    for(UTechNodeWidget* NodeW :  m_TalentPanel->GetTechNodeWidgets())
+    {
+        NodeW->SetVisibility(ESlateVisibility::Visible);
+        NodeW->m_OnClicked.AddUObject(this,&UDefaultMenu::OpenTalentPopup);
+    }
+
+    m_TalentPopup->Init(PlayerGASComp);
 }
 
 void UDefaultMenu::InitPopup()
@@ -341,3 +354,13 @@ void UDefaultMenu::CloseSkillPopup()
 {
     m_SkillPopup->PlayHideInfoAnim();
 }
+
+void UDefaultMenu::OpenTalentPopup(const FGeometry& geo, UTechnologyAsset* talent)
+{
+    if(!talent)
+    {
+        return;
+    }
+    m_TalentPopup->SetTalentPopupWidget(Cast<UDiaTechnologyAsset>( talent),geo);
+}
+

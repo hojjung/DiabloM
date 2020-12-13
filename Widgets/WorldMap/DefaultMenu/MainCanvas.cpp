@@ -218,6 +218,7 @@ UDiaShopPanel* UMainCanvas::GetShopPanelWidget()
     return m_MainMenu->GetShopPanelWidget();
 }
 
+
 void UMainCanvas::ShowMinimap()
 {
     m_PlayerStatusBar->ShowMinimap();

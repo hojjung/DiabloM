@@ -2,6 +2,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "TechTreeWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Shop/DiaShopPanel.h"
 
@@ -116,4 +117,5 @@ public:
     void CloseSkillHotkeyPanel();
 
     UDiaShopPanel* GetShopPanelWidget();
+    
 };

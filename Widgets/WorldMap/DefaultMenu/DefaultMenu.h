@@ -9,6 +9,8 @@
 #include "Skills/DiaSkillPanel.h"
 #include "Storage/DiaStorageGridPanel.h"
 #include "Talents/DiaTalentPanel.h"
+#include "Talents/DiaTalentPopup.h"
+
 #include "DefaultMenu.generated.h"
 
 class AShopKeeper;
@@ -58,6 +60,8 @@ protected:
 	UItemPopupInfo* m_ItemPopup3;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaSkillPopup* m_SkillPopup;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UDiaTalentPopup* m_TalentPopup;
 	
 protected:
 	UPROPERTY()
@@ -120,6 +124,10 @@ public:
 
 	UFUNCTION()
 	void CloseSkillPopup();
+	
+public:
+	void OpenTalentPopup(const FGeometry& geo,UTechnologyAsset* talent);
 
 	friend UMainCanvas;
+
 };

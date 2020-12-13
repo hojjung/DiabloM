@@ -99,10 +99,6 @@ public:
 	TArray<FItemTypeHandle> m_AryUnequipFingerLeft;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FSkillDataHandle m_ClassSkill;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UTechnologyTree* m_AssetSkillTree1;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UTechnologyTree* m_AssetSkillTree2;
 
 	
 	FORCEINLINE TArray<TArray<FItemTypeHandle>> GetUnequipableAry() const

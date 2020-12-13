@@ -17,7 +17,6 @@ class USaveInventory;
 class USaveCharacterStatus;
 class USaveShareStorage;
 class USaveSkill;
-class USaveTalent;
 
 
 DECLARE_DELEGATE_OneParam(FOnSaveDataCreated, const USaveCharacterStatus*);
@@ -74,8 +73,6 @@ protected:
     UPROPERTY()
     TArray<USaveSkill*> m_AryLoadedSkills;
     UPROPERTY()
-    TArray<USaveTalent*> m_AryLoadedTalents;
-    UPROPERTY()
     USaveShareStorage* m_LoadShareStorage;
     //They DonNeedInst
 protected:
@@ -97,8 +94,6 @@ public:
     void SaveSkill(int slotIndex,int remainPoints,int spentPoints,TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2,
     TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5,
     TArray<FSkillDataSpec>& skill6);
-    //
-    void SaveTalent(int slotIndex,ESaveVersion saveVersion,int remainPoint,int spentPoint,TArray<FTalentDataSpec>& talent1,TArray<FTalentDataSpec>& talent2);
     //
     void LoadInventory(int slotIndex);
     void LoadEquipment(int slotIndex);
