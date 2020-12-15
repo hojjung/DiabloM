@@ -31,6 +31,12 @@ void UDiabloCheatManager::InitCheatManager()
 		m_Player = Cast<APlayerDiabloCharacter>(m_PlayerController->GetPawn());
 }
 
+void UDiabloCheatManager::BackToSelectMenu()
+{
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	DiaPC.Get()->BackToSelectMenu();
+}
+
 void UDiabloCheatManager::PrintPlayerStats()
 {
 	m_PlayerController->PrintStat();
@@ -212,9 +218,10 @@ void UDiabloCheatManager::StunPlayer(float duration)
 	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
 	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
 
-	auto ASD=DiaPl->GetDiaAbilitySystem()->MakeOutgoingSpec(m_StunEffect,1,DiaPl->GetDiaAbilitySystem()->MakeEffectContext());
+	FGameplayEffectSpecHandle ASD = DiaPl->GetDiaAbilitySystem()->MakeOutgoingSpec(
+		m_StunEffect, 1, DiaPl->GetDiaAbilitySystem()->MakeEffectContext());
 
-	ASD.Data->Duration=duration;//효과없음
+	//ASD.Data->Duration=duration;//효과없음
 	
 	DiaPl->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(*ASD.Data);
 }

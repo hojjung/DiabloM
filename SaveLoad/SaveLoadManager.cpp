@@ -513,6 +513,8 @@ void USaveLoadManager::SetLoadedSkillDataToPlayer(int slot_index)
             m_AryLoadedCharacters[slot_index]->m_ClassName);
     
     Comp->CreateClassSkillSpecs(PlayerEntityData->m_ClassSkill);
+    //
+    Comp->SetLoadedTalentTree(m_AryLoadedCharacters[slot_index]->m_ClassName,nullptr);
 
     if(!m_AryLoadedSkills[slot_index])
     {
@@ -530,7 +532,7 @@ void USaveLoadManager::SetLoadedSkillDataToPlayer(int slot_index)
             m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec5,
             m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec6);
     //
-    Comp->SetLoadedTalentTree(m_AryLoadedCharacters[slot_index]->m_ClassName,nullptr);
+    
 }
 
 void USaveLoadManager::CreateSetPlayerCharacter()

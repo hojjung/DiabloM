@@ -97,6 +97,8 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
     m_Storage=aryStorage;
     
     m_MainMenu->Init(m_PlayerCon,m_PlayerPawn,m_EquipSys,m_Inven,m_Storage);
+    
+    m_PlayerStatusBar->Init(m_PlayerCon);
 
     m_PlayerStatusBar->m_InteractButton->OnClicked.AddDynamic(this,&UMainCanvas::Interaction);
 
@@ -104,7 +106,6 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
 
     m_PlayerPawn->GetExpGaugeDele().AddUObject(this,&UMainCanvas::UpdateExpGauge);
 
-    m_PlayerStatusBar->Init(m_PlayerCon);
 
     m_bIsOpened=false;
     //

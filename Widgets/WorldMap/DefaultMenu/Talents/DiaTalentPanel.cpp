@@ -32,7 +32,6 @@ void UDiaTalentPanel::Init(UPlayerDiabloAbilitySystemComp* player)
     }
 
     m_SelectedTalentTechtree->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-
     
     m_PlayerTalentComp->AssignTechTreeWidget(m_SelectedTalentTechtree->GetTechTree(),m_SelectedTalentTechtree);
 

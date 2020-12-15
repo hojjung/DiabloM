@@ -31,7 +31,11 @@ protected:
 	TSubclassOf<UGameplayEffect> m_StunEffect;
 protected:
 	virtual void InitCheatManager() override;
+
+	
 public:
+	UFUNCTION(exec)
+    void BackToSelectMenu();
 	UFUNCTION(exec)
 	void PrintPlayerStats();
 	UFUNCTION(exec)

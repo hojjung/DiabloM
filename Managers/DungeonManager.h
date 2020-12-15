@@ -59,6 +59,7 @@ protected:
 	
 public:
 	void Init();
+	
 	void CreateQuadTreeBound();
 
 	UFUNCTION(BlueprintCallable)
