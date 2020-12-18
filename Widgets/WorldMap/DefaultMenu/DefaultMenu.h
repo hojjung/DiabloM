@@ -124,6 +124,9 @@ public:
 
 	UFUNCTION()
 	void CloseSkillPopup();
+
+	UFUNCTION()
+    void CloseTalentPopup();
 	
 public:
 	void OpenTalentPopup(const FGeometry& geo,UTechnologyAsset* talent);
@@ -131,3 +134,4 @@ public:
 	friend UMainCanvas;
 
 };
+

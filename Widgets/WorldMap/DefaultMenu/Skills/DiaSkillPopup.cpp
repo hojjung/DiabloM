@@ -326,8 +326,10 @@ FReply UDiaSkillPopup::NativeOnMouseButtonDown(const FGeometry& InGeometry, cons
 
 void UDiaSkillPopup::LearnSkill()
 {
-	if(m_CurrentSkillSpec)
-		m_PlayerDiaComp->LevelupSkill(m_CurrentSkillSpec);
+	if(m_CurrentSkillSpec&&m_PlayerDiaComp->LevelupSkill(m_CurrentSkillSpec))
+	{
+		SetSkillSpecData(m_CurrentSkillSpec);
+	}
 }
 
 void UDiaSkillPopup::PlayHideInfoAnim(float delay)

@@ -67,7 +67,7 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     m_SkillPanel->m_ResetButton->OnClicked.AddDynamic(this,&UDefaultMenu::CloseSkillPopup);
     CloseSkillPanel();
 
-    PlayerGASComp->m_OnSkillLevelChanged.AddUObject(m_SkillPopup,&UDiaSkillPopup::SetSkillSpecData);
+    //PlayerGASComp->m_OnSkillLevelChanged.AddUObject(m_SkillPopup,&UDiaSkillPopup::SetSkillSpecData);
     
     PlayerGASComp->m_OnSkillChanged.AddUObject(m_SkillPanel,&UDiaSkillPanel::UpdateAllWidget);
     //UpdateAllWidget
@@ -76,13 +76,14 @@ void UDefaultMenu::Init(ADiabloPlayerController* playerCon, APlayerDiabloCharact
     //CloseSkillPopup();
     //Talent
     m_TalentPanel->Init(PlayerGASComp);
-    m_TalentPanel->m_ResetButton->OnClicked.AddDynamic(this,&UDefaultMenu::CloseSkillPopup);
+    m_TalentPanel->m_ResetButton->OnClicked.AddDynamic(this,&UDefaultMenu::CloseTalentPopup);
 
     for(UTechNodeWidget* NodeW :  m_TalentPanel->GetTechNodeWidgets())
     {
         NodeW->SetVisibility(ESlateVisibility::Visible);
         NodeW->m_OnClicked.AddUObject(this,&UDefaultMenu::OpenTalentPopup);
     }
+    //PlayerGASComp->GetTechtreeManager()->GetAssignedTechTree()->OnTechLevelChanged.AddUObject()
 
     m_TalentPopup->Init(PlayerGASComp);
 }
@@ -353,6 +354,11 @@ void UDefaultMenu::OpenSkillPopup(const FGeometry& geo,FSkillDataSpec& skillSpec
 void UDefaultMenu::CloseSkillPopup()
 {
     m_SkillPopup->PlayHideInfoAnim();
+}
+
+void UDefaultMenu::CloseTalentPopup()
+{
+    m_TalentPopup->PlayHideInfoAnim();
 }
 
 void UDefaultMenu::OpenTalentPopup(const FGeometry& geo, UTechnologyAsset* talent)

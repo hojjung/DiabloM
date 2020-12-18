@@ -52,20 +52,20 @@ void UPlayerDiabloAbilitySystemComp::SetLoadedSkillData(TArray<FSkillDataSpec>& 
     SetSkillFromSaveData(m_AryUltimateSkill, skill6);
 }
 
-void UPlayerDiabloAbilitySystemComp::LevelupSkill(FSkillDataSpec* skillSpec)
+bool UPlayerDiabloAbilitySystemComp::LevelupSkill(FSkillDataSpec* skillSpec)
 {
     PRINTF("Skill Learn Pressed");
 
     if (GetSkillPoints() <= 0)
     {
         PRINTF("SkillLearn Fail - No SkillPoints");
-        return;
+        return false;
     }
 
     if (!skillSpec->IsLevelupable(m_PlayerPawn->GetCharacterLevel()))
     {
         PRINTF("SkillLearn Fail - Not Require Levels");
-        return;;
+        return false;
     }
 
     skillSpec->m_nCurrentLevel++;
@@ -77,6 +77,7 @@ void UPlayerDiabloAbilitySystemComp::LevelupSkill(FSkillDataSpec* skillSpec)
     m_OnSkillLevelChanged.Broadcast(skillSpec);
     //현재 장착된 스킬 업데이트
 
+    return true;
     //저장
 } //GetDiaAbilitySystem()->TryActivateAbility(m_PotionHandle);
 
@@ -274,12 +275,16 @@ bool UPlayerDiabloAbilitySystemComp::IsTalentUnlock(UDiaTechnologyAsset* tech)
     return m_TechManager->IsTechnologyUnlocked(tech);
 }
 
-void UPlayerDiabloAbilitySystemComp::LevelupTalent(UDiaTechnologyAsset* talentTech)
+bool UPlayerDiabloAbilitySystemComp::LevelupTalent(UDiaTechnologyAsset* talentTech)
 {
     if(m_TechManager->LevelupTechnology(talentTech))
     {
         m_OnTalentChanged.Broadcast();
+
+        return true;
     }
+
+    return false;
 }
 
 void UPlayerDiabloAbilitySystemComp::UnlockTalent(UDiaTechnologyAsset* tech)

@@ -82,7 +82,7 @@ public:
         TArray<FSkillDataSpec>& skill4,
         TArray<FSkillDataSpec>& skill5,
         TArray<FSkillDataSpec>& skill6);
-	void LevelupSkill(FSkillDataSpec* skillSpec);
+	bool LevelupSkill(FSkillDataSpec* skillSpec);
 
 	void EquipSkill(FSkillDataSpec* skillSpec);
 
@@ -115,7 +115,7 @@ public:
 
 	bool IsTalentUnlock(UDiaTechnologyAsset* tech);
 
-	void LevelupTalent(UDiaTechnologyAsset* talentTech);
+	bool LevelupTalent(UDiaTechnologyAsset* talentTech);
 
 	void UnlockTalent(UDiaTechnologyAsset* tech);
 
