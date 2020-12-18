@@ -54,23 +54,16 @@ void UDiabloCheatManager::PrintEquipment()
 
 void UDiabloCheatManager::SaveTalent()
 {
-	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
-	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
-	UPlayerDiabloAbilitySystemComp* Gas = Cast<UPlayerDiabloAbilitySystemComp
-    >(DiaPl.Get()->GetAbilitySystemComponent());
-	USaveLoadManager::Get->SaveSkill(UPlayerCreateManager::Get->m_CurrentSelectSlot,Gas->m_nSkillPoints,Gas->m_nTotalSkillPointSpents,
-        Gas->m_AryBaseSkill,
-        Gas->m_AryPowerSkill,
-        Gas->m_AryDefensvieSkill,
-        Gas->m_AryPowerSkill,
-        Gas->m_AryMasterySkill,
-        Gas->m_AryUltimateSkill);
+	UPlayerDiabloAbilitySystemComp* Gas =UPlayerDiabloAbilitySystemComp::Get;
+
+	Gas->GetTechtreeManager()->SaveTechStateFromSlot(UTechnologySaveGame::TalentSaveSlotName,UPlayerCreateManager::Get->m_CurrentSelectSlot);
 }
 
 void UDiabloCheatManager::LoadTalent()
 {
-	USaveLoadManager::Get->LoadSkill(UPlayerCreateManager::Get->m_CurrentSelectSlot);
-	USaveLoadManager::Get->SetLoadedSkillDataToPlayer(UPlayerCreateManager::Get->m_CurrentSelectSlot);
+	UPlayerDiabloAbilitySystemComp* Gas =UPlayerDiabloAbilitySystemComp::Get;
+
+	Gas->GetTechtreeManager()->LoadTechStateFromSlot(UTechnologySaveGame::TalentSaveSlotName,UPlayerCreateManager::Get->m_CurrentSelectSlot);
 }
 
 void UDiabloCheatManager::SaveSkill()

@@ -32,14 +32,10 @@ void UDiaTalentPanel::Init(UPlayerDiabloAbilitySystemComp* player)
     }
 
     m_SelectedTalentTechtree->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-    
-    m_PlayerTalentComp->AssignTechTreeWidget(m_SelectedTalentTechtree->GetTechTree(),m_SelectedTalentTechtree);
 
-    if(m_SelectedTalentTechtree->GetTechTree()->TechTreeManager == m_PlayerTalentComp->GetTechtreeManager())
-    {
-        PRINTF("Here");
-    }
-    
+    UTechnologyTree* TemplateTree =m_SelectedTalentTechtree->GetTechTree();
+    m_PlayerTalentComp->AssignTechTreeWidget(TemplateTree,m_SelectedTalentTechtree);
+
     m_PlayerTalentComp->m_OnTalentChanged.AddUObject(this,&UDiaTalentPanel::UpdateAvailablePoint);
     m_PlayerTalentComp->m_OnTalentChanged.AddUObject(this,&UDiaTalentPanel::UpdateTotalPoint);
     m_PlayerTalentComp->m_OnTalentChanged.AddUObject(m_SelectedTalentTechtree,&UTechTreeWidget::UpdateSlotWidgets);

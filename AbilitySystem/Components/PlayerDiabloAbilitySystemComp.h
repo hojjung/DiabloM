@@ -67,9 +67,6 @@ protected:
 
 	TMap<FSkillDataSpec*,FGameplayAbilitySpecHandle> m_EquippedSkill;
 	//
-	int m_nTalentPoints;
-
-	int m_nTotalTalentPointSpents;
 
 	UPROPERTY()
 	TMap<UDiaTechnologyAsset*,FGameplayAbilitySpecHandle> m_EquippedTalent;
@@ -134,6 +131,9 @@ public:
 	{
 		return m_TechManager;
 	}
+	UFUNCTION()
+	void OnTalentLevelChanged(UTechnologyAsset* tech, int level);
+	//UTTTechNode*, TechNode, bool, IsUnlocked
 private:
 	void SetSkillFromSaveData(TArray<FSkillDataSpec>& my,const TArray<FSkillDataSpec>& loadedData);
 	

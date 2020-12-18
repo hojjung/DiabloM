@@ -96,6 +96,10 @@ void USaveLoadManager::DeleteSlot(int i)
     {
         //PRINTF("Fail Delete InventoryOld");
     }
+    if (!UGameplayStatics::DeleteGameInSlot(UTechnologySaveGame::TalentSaveSlotName, i))
+    {
+        //PRINTF("Fail Delete InventoryOld");
+    }
   
 
     m_AryLoadedCharacters[i] = nullptr;

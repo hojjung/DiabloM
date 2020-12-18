@@ -1,6 +1,7 @@
 #include "PlayerDiabloAbilitySystemComp.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "TTTechNode.h"
+#include "Managers/StartMap/PlayerCreateManager.h"
 
 UPlayerDiabloAbilitySystemComp* UPlayerDiabloAbilitySystemComp::Get=nullptr;
 
@@ -16,8 +17,6 @@ UPlayerDiabloAbilitySystemComp::UPlayerDiabloAbilitySystemComp()
     m_AryUltimateSkill.Reset();
     m_nSkillPoints = 10; //Test
     m_nTotalSkillPointSpents = 0;
-    m_nTalentPoints = 20;
-    m_nTotalTalentPointSpents = 0;
 
     UPlayerDiabloAbilitySystemComp::Get=this;
 }
@@ -188,11 +187,65 @@ void UPlayerDiabloAbilitySystemComp::CreateClassSkillSpecs(const FSkillDataHandl
 
 void UPlayerDiabloAbilitySystemComp::ResetTech()
 {
-    m_nTotalTalentPointSpents=0;
-
-    m_nTalentPoints+=m_TechManager->ResetTech();
+    m_TechManager->ResetTech();
 
     m_OnTalentChanged.Broadcast();
+
+    //RemoveTalent
+    for(auto& TalentEquipped :m_EquippedTalent)
+    {
+        ClearAbility(TalentEquipped.Value);
+    }
+
+    m_EquippedTalent.Reset();
+}
+
+void UPlayerDiabloAbilitySystemComp::OnTalentLevelChanged(UTechnologyAsset* tech, int level)
+{
+    UDiaTechnologyAsset* DiaTechAsset = Cast<UDiaTechnologyAsset>(tech);
+
+    if(DiaTechAsset->m_bIsTierBaseNode)
+    {
+        return;
+    }
+
+    if(!DiaTechAsset->m_TalentAbility)
+    {
+        return;
+    }
+
+    if(!DiaTechAsset->m_bIsUnlocked)
+    {
+        return;
+    }
+
+    FGameplayAbilitySpecHandle Handle;
+
+    if(level<=0)
+    {
+        m_EquippedTalent.RemoveAndCopyValue(DiaTechAsset,Handle);
+        
+        ClearAbility(Handle);
+
+        return;
+    }
+
+    if(m_EquippedTalent.Contains(DiaTechAsset))
+    {
+        m_EquippedTalent.RemoveAndCopyValue(DiaTechAsset,Handle);
+        
+        ClearAbility(Handle);
+    }
+
+    PRINTF("Add-TalentLevel:%d",level);
+    
+    FGameplayAbilitySpec Spec = FGameplayAbilitySpec(DiaTechAsset->m_TalentAbility,level, -1, this);
+        
+    Handle = GiveAbility(Spec);
+
+    TryActivateAbility(Handle);
+        
+    m_EquippedTalent.Add(DiaTechAsset,Handle);    
 }
 
 void UPlayerDiabloAbilitySystemComp::SetSkillFromSaveData(TArray<FSkillDataSpec>& my,
@@ -208,12 +261,12 @@ void UPlayerDiabloAbilitySystemComp::SetSkillFromSaveData(TArray<FSkillDataSpec>
 
 int UPlayerDiabloAbilitySystemComp::GetTalentPoint()
 {
-    return m_nTalentPoints;
+    return m_TechManager->GetAssignedTechTree()->m_nRemainTalentPoint;
 }
 
 int UPlayerDiabloAbilitySystemComp::GetTotalTalentPoint()
 {
-    return m_nTotalTalentPointSpents;
+    return m_TechManager->GetAssignedTechTree()->m_nTotalSpentTalentPoint;
 }
 
 bool UPlayerDiabloAbilitySystemComp::IsTalentUnlock(UDiaTechnologyAsset* tech)
@@ -223,17 +276,8 @@ bool UPlayerDiabloAbilitySystemComp::IsTalentUnlock(UDiaTechnologyAsset* tech)
 
 void UPlayerDiabloAbilitySystemComp::LevelupTalent(UDiaTechnologyAsset* talentTech)
 {
-    if(m_nTalentPoints<=0)
-    {
-        return;
-    }
-    
     if(m_TechManager->LevelupTechnology(talentTech))
     {
-        m_nTalentPoints--;
-
-        m_nTotalTalentPointSpents++;
-
         m_OnTalentChanged.Broadcast();
     }
 }
@@ -251,6 +295,13 @@ UTechnologyTree* UPlayerDiabloAbilitySystemComp::GetCurrentTalentTree()
 void UPlayerDiabloAbilitySystemComp::AssignTechTreeWidget(UTechnologyTree* tree,UTechTreeWidget* widget)
 {
     m_TechManager->AssignTechTreeWidget(tree,widget);
+    m_TechManager->LoadTechStateFromSlot(UTechnologySaveGame::TalentSaveSlotName,UPlayerCreateManager::Get->m_CurrentSelectSlot);
+    m_TechManager->GetAssignedTechTree()->OnTechLevelChanged.AddUObject(this,&UPlayerDiabloAbilitySystemComp::OnTalentLevelChanged);
+
+    for(auto& TechTuple : m_TechManager->GetAssignedTechTree()->UnlockedTechnologies)
+    {
+        OnTalentLevelChanged(TechTuple.Key,TechTuple.Key->m_nCurrentTalentLevel);
+    }
 }
 
 void UPlayerDiabloAbilitySystemComp::SetLoadedTalentTree(FName className,UTechnologySaveGame* saveGame)
