@@ -82,7 +82,7 @@ void UDiaTalentPopup::SetTalentLevelupPreview()
 	{
 		m_OverlayNextPreview->SetVisibility(ESlateVisibility::Collapsed);
 
-		m_BtnLearn->SetVisibility(ESlateVisibility::Hidden);
+		m_BtnLearn->SetVisibility(ESlateVisibility::Collapsed);
 
 		return;
 	}
@@ -101,7 +101,7 @@ void UDiaTalentPopup::SetTalentLevelupPreview()
 
 	if (m_PlayerDiaComp->GetTalentPoint() <= 0 ||!m_PlayerDiaComp->IsTalentUnlock(m_CurrentTalent)) //cant learn
 	{
-		m_BtnLearn->SetVisibility(ESlateVisibility::Hidden);
+		m_BtnLearn->SetVisibility(ESlateVisibility::Collapsed);
 	}
 	else
 	{

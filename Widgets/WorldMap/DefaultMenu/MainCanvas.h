@@ -4,6 +4,7 @@
 #include "DiabloM.h"
 #include "TechTreeWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "MapSelect/MapSelectPanel.h"
 #include "Shop/DiaShopPanel.h"
 
 
@@ -37,6 +38,8 @@ protected:
     UDefaultMenu* m_MainMenu;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UPlayerStatusBar* m_PlayerStatusBar;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+    UMapSelectPanel* m_MapSelect;
     
     //PlayerStatus
 protected:

@@ -367,6 +367,10 @@ void UDefaultMenu::OpenTalentPopup(const FGeometry& geo, UTechnologyAsset* talen
     {
         return;
     }
+    if(talent->m_bIsTierBaseNode)
+    {
+        return;
+    }
     m_TalentPopup->SetTalentPopupWidget(Cast<UDiaTechnologyAsset>( talent),geo);
 }
 

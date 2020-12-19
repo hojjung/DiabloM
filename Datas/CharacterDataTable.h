@@ -44,6 +44,7 @@ public:
 	UAnimMontage* m_TookHitMontage;
 };
 
+
 USTRUCT(BlueprintType)//���̵�,Ƽ��
 struct FMonsterTypeRow : public FTableRowBase
 {
@@ -53,17 +54,21 @@ public:
 	FMonsterTypeRow()
 	{
 		m_ShowingText=FText::FromString("LikeUndead,Animal");
-		
 	}
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText m_ShowingText;
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText m_MonsterWeakDef;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText m_MonsterStrongDef;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText m_MonsterDealing;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> m_BonusGE;
 	//MoreThings
 };
-
-
 
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��

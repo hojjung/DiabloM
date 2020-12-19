@@ -26,7 +26,11 @@ struct FDungeonDataRow : public FTableRowBase
 
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TArray<FMonsterHordeHandle> m_AryHorde;
+	UTexture2D* m_DgIcon;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	FText m_DgShowName;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<FMonsterHordeHandle> m_AryHorde;//이중한개의 호드만 사용
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TArray<FName> m_IDPremadeDungeons;//should be add in stream level
 	
@@ -49,3 +53,16 @@ public:
 	static const FDungeonDataRow* GetDungeonDataPtr(FName id);
 };
 
+USTRUCT(BlueprintType)
+struct FDgDataHandle :public FDataTableRowHandle
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	
+	FDgDataHandle()
+	{
+		DataTable = UDungeonDataTable::GetDungeonTable;
+	}
+
+	
+};
