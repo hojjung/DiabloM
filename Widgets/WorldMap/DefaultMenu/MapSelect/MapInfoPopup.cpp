@@ -3,3 +3,7 @@
 
 #include "MapInfoPopup.h"
 
+void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
+{
+	
+}

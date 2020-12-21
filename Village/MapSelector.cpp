@@ -13,5 +13,10 @@ AMapSelector::AMapSelector(const FObjectInitializer& objInit):Super(objInit)
 
 void AMapSelector::Interact(AActor* instigator)
 {
-    Cast<ADiabloPlayerController>( ( Cast<APlayerDiabloCharacter>( instigator)->GetController()))->ShowWorldMap();
+    TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+
+    DiaPC.Get()->OpenMapSelectMenu();
+
+    PRINTF("MapSlectr - OpenMaop");
+    //
 }

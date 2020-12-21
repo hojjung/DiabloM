@@ -18,21 +18,14 @@ void UMainCanvas::OpenMainMenu()
 {
     m_bIsOpened=true;
     m_MainMenu->OpenMainMenu();
-    
     m_PlayerStatusBar->HidePlayerHUD();
-    UGameplayStatics::SetGamePaused(m_PlayerCon->GetWorld(),true);
-    m_PlayerCon->SetVirtualJoystickVisibility(false);
 }
 
 void UMainCanvas::CloseMainMenu()
 {
     m_bIsOpened=false;
     m_MainMenu->CloseMainMenu();
-
     m_PlayerStatusBar->ShowPlayerHUD();
-
-    UGameplayStatics::SetGamePaused(m_PlayerCon->GetWorld(),false);
-    m_PlayerCon->SetVirtualJoystickVisibility(true);
 }
 
 void UMainCanvas::OpenSkillMenu()
@@ -178,20 +171,13 @@ void UMainCanvas::UpdateMinimap(UMaterialInterface* mapMat)
     m_PlayerStatusBar->UpdateMinimap(mapMat);
 }
 
-void UMainCanvas::ShowWorldMap()
-{
-    PRINTF("WorldMap");
-}
-
-void UMainCanvas::HideWorldMap()
-{
-    
-}
 
 void UMainCanvas::ShowBasicShopMenu(AShopKeeper* shopKeeper)
 {
     PRINTF("ShopMenu");
     m_MainMenu->OpenShopMenu(shopKeeper);
+
+    
 }
 
 void UMainCanvas::ShowStorageMenu()
@@ -217,6 +203,20 @@ void UMainCanvas::CloseSkillHotkeyPanel()
 UDiaShopPanel* UMainCanvas::GetShopPanelWidget()
 {
     return m_MainMenu->GetShopPanelWidget();
+}
+
+void UMainCanvas::OpenMapMenu()
+{
+    m_MapSelect->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+    m_PlayerStatusBar->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UMainCanvas::CloseMapMenu()
+{
+    m_MapSelect->SetVisibility(ESlateVisibility::Hidden);
+
+    m_PlayerStatusBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
 

@@ -34,5 +34,12 @@ public:
 
 	const FDungeonDataRow* m_DgData;
 
+protected:
+	virtual void NativeOnInitialized() override;
+	
+public:
+	UFUNCTION()
+	void OnBttnClick();
+	
 	void InitButton(const FDungeonDataRow* dgData);
 };

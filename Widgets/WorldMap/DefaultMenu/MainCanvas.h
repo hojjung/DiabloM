@@ -103,9 +103,6 @@ public:
     
     void UpdateMinimap(UMaterialInterface* mapMat);
     
-    void ShowWorldMap();
-
-    void HideWorldMap();
     
     void ShowBasicShopMenu(AShopKeeper* shopKeeper);
 
@@ -121,4 +118,7 @@ public:
 
     UDiaShopPanel* GetShopPanelWidget();
     
+    void OpenMapMenu();
+    
+    void CloseMapMenu();
 };

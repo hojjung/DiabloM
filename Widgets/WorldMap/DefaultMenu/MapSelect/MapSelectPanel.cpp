@@ -7,43 +7,49 @@ UMapSelectPanel::UMapSelectPanel(const FObjectInitializer& objInit):Super(objIni
 	
 }
 
+void UMapSelectPanel::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+
+	InitDgButton(m_DefaultDgHandle.GetRow<FDungeonDataRow>("NoDgData1"),m_BtnDefaultInf);
+	InitDgButton(m_DemonDgHandle.GetRow<FDungeonDataRow>("NoDgData2"),m_BtnDemon);
+	InitDgButton(m_BeastDgHandle.GetRow<FDungeonDataRow>("NoDgData3"),m_BtnBeast);
+	InitDgButton(m_UndeadDgHandle.GetRow<FDungeonDataRow>("NoDgData4"),m_BtnUndead);
+	InitDgButton(m_HordeDgHandle.GetRow<FDungeonDataRow>("NoDgData5"),m_BtnHorde);
+}
+
 void UMapSelectPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-	m_BtnDefaultInf->OnClicked.AddDynamic(this,&UMapSelectPanel::EnterDefaultInfDungeon);
-	m_BtnDemon->OnClicked.AddDynamic(this,&UMapSelectPanel::EnterDemonTypeDungeon);
-	m_BtnBeast->OnClicked.AddDynamic(this,&UMapSelectPanel::EnterBeastTypeDungeon);
-	m_BtnUndead->OnClicked.AddDynamic(this,&UMapSelectPanel::EnterUndeadTypeDungeon);
-	m_BtnHorde->OnClicked.AddDynamic(this,&UMapSelectPanel::EnterHordeTypeDungeon);
 	//
 	m_BtnMainDG->OnClicked.AddDynamic(this,&UMapSelectPanel::ShowMainDG);
 	m_BtnRiteDG->OnClicked.AddDynamic(this,&UMapSelectPanel::ShowRiteDG);
 	m_BtnEventDG->OnClicked.AddDynamic(this,&UMapSelectPanel::ShowEventDG);
-	
+	//
+	m_BtnClose->OnClicked.AddDynamic(this,&UMapSelectPanel::CloseDgPanel);
 }
 
-FReply UMapSelectPanel::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+void UMapSelectPanel::InitDgButton(const FDungeonDataRow* dgData, UMapSelectButton* SlotCreated)
 {
-	FReply Result = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-
-	return Result;
+	SlotCreated->InitButton(dgData);
+	
+	SlotCreated->m_OnDgClicked.AddUObject(this,&UMapSelectPanel::OpenMapInfoPopup);
 }
 
 UMapSelectButton* UMapSelectPanel::CreateDgBtn(const FDungeonDataRow* dgData)
 {
 	UMapSelectButton* SlotCreated = CreateWidget<UMapSelectButton>(this, m_ClassMapSelectBtn);
 
-	SlotCreated->InitButton(dgData);
-	
-	SlotCreated->m_OnDgClicked.AddUObject(this,&UMapSelectPanel::OpenMapInfoPopup);
+	InitDgButton(dgData, SlotCreated);
 	
 	return SlotCreated;
 }
 
 void UMapSelectPanel::OpenMapInfoPopup(const FDungeonDataRow* dgData)
 {
+	PRINTF("OpenMapPopup");
 
+	m_MapInfoPopup->OpenPopup(dgData);
 }
 
 void UMapSelectPanel::ShowMainDG()
@@ -61,30 +67,6 @@ void UMapSelectPanel::ShowEventDG()
 	m_PanelSwitcher->SetActiveWidget(m_EventDungeonPanel);
 }
 
-void UMapSelectPanel::EnterDefaultInfDungeon()
-{
-	UDiabloGameInstance::Get->GetDungeonManager()->CreateDefaultInfinityDungeon(1);
-}
-
-void UMapSelectPanel::EnterDemonTypeDungeon()
-{
-	
-}
-
-void UMapSelectPanel::EnterBeastTypeDungeon()
-{
-	
-}
-
-void UMapSelectPanel::EnterUndeadTypeDungeon()
-{
-	
-}
-
-void UMapSelectPanel::EnterHordeTypeDungeon()
-{
-	
-}
 
 void UMapSelectPanel::PowerDungeon()
 {
@@ -104,4 +86,14 @@ void UMapSelectPanel::EventGoldDungeon()
 void UMapSelectPanel::EventCowRoom()
 {
 	
+}
+
+
+void UMapSelectPanel::CloseDgPanel()
+{
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	
+	DiaPC.Get()->CloseMapSelectMenu();
+	
+	ShowMainDG();
 }

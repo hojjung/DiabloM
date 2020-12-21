@@ -168,11 +168,16 @@ void ADiabloPlayerController::OpenMainMenu()
 
 	m_MainMenu->OpenMainMenu();
 
+	UGameplayStatics::SetGamePaused(this->GetWorld(),true);
+	this->SetVirtualJoystickVisibility(false);
 }
 
 void ADiabloPlayerController::CloseMainMenu()
 {
 	m_MainMenu->CloseMainMenu();
+
+	UGameplayStatics::SetGamePaused(this->GetWorld(),false);
+	this->SetVirtualJoystickVisibility(true);
 }
 
 void ADiabloPlayerController::OnDeviceBackKey()
@@ -185,6 +190,24 @@ void ADiabloPlayerController::OnDeviceBackKey()
 	}
 
 	ExitGame();
+}
+
+void ADiabloPlayerController::OpenMapSelectMenu()
+{
+
+	m_MainMenu->OpenMapMenu();
+	
+	UGameplayStatics::SetGamePaused(this->GetWorld(),true);
+	this->SetVirtualJoystickVisibility(false);
+}
+
+void ADiabloPlayerController::CloseMapSelectMenu()
+{
+
+	m_MainMenu->CloseMapMenu();
+	
+	UGameplayStatics::SetGamePaused(this->GetWorld(),false);
+	this->SetVirtualJoystickVisibility(true);
 }
 
 void ADiabloPlayerController::PlayerMeshChange(int slot, FItemInstance& item)
@@ -232,10 +255,6 @@ void ADiabloPlayerController::UpdateMinimap(UMaterialInterface* mapMat)
 	m_MainMenu->UpdateMinimap(mapMat);
 }
 
-void ADiabloPlayerController::ShowWorldMap()
-{
-	m_MainMenu->ShowWorldMap();
-}
 
 void ADiabloPlayerController::ShowShopMenu(AShopKeeper* shopKeeper)
 {

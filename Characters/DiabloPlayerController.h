@@ -101,6 +101,11 @@ public:
 	void CloseMainMenu();
 	UFUNCTION(BlueprintCallable)
 	void OnDeviceBackKey();
+	//
+	UFUNCTION(BlueprintCallable)
+    void OpenMapSelectMenu();
+	UFUNCTION(BlueprintCallable)
+    void CloseMapSelectMenu();
 
 	void PlayerMeshChange(int slot,FItemInstance& item);
 	//
@@ -150,8 +155,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateMinimap(UMaterialInterface* mapMat);
 
-	UFUNCTION(BlueprintCallable)
-	void ShowWorldMap();
 
 	UFUNCTION(BlueprintCallable)
     void ShowShopMenu(AShopKeeper* shopKeeper);
