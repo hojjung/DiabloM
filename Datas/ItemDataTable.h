@@ -123,6 +123,8 @@ struct FItemType : public FTableRowBase
 public:
     FItemType();
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UTexture2D* m_ItemTypeIcon;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName m_TypeID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_ShowingName;
@@ -175,7 +177,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_FlavorText;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FDataTableRowHandle m_ItemType;
+    FItemTypeHandle m_ItemType;
     //무기 같은건 소켓과 액터
     //무기는 스켈레탈 스태틱 둘다 있지 않나? 미리 박아놓으면 소켓이고 뭐고 할게 없다
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

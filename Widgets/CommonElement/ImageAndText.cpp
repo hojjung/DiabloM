@@ -1,7 +1,6 @@
 #include "ImageAndText.h"
 
 UImageAndText::UImageAndText(const FObjectInitializer& objInit) : Super(objInit)
-, m_StringWant("Test String")
 , m_nFontSize(24)
 , m_nOutlineSize(1)
 , m_fIconSize(64.f)
@@ -18,14 +17,14 @@ UImageAndText::UImageAndText(const FObjectInitializer& objInit) : Super(objInit)
 	m_IconWant = FoundTexture.Object;
 
 
-
+	m_StringWant=FText::FromString("TestString!");
 }
 
 void UImageAndText::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 	//
-	SetString(FText::FromString( m_StringWant));
+	SetString(m_StringWant);
 	//
 	FSlateBrush BrushWant;
 	BrushWant.SetImageSize(FVector2D(64.f,64.f));
@@ -47,14 +46,16 @@ void UImageAndText::NativePreConstruct()
 
 void UImageAndText::SetIcon(UTexture* texture)
 {
+	m_IconWant=texture;
 	FSlateBrush BrushWant;
 	BrushWant.SetImageSize(FVector2D(64.f,64.f));
-	BrushWant.SetResourceObject(texture);
+	BrushWant.SetResourceObject(m_IconWant);
 	m_ImageIcon->SetBrush(BrushWant);
 }
 
 void UImageAndText::SetString(FText stringWant)
 {
+	m_StringWant=stringWant;
 	m_TextStringShow->SetText(stringWant);
 }
 

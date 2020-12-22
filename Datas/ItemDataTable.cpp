@@ -124,9 +124,9 @@ FItemTierHandle::FItemTierHandle()
     DataTable = UItemDataTable::GetTierTable;
 }
 
-FItemType::FItemType(): m_EquipableSlot(), m_EquipInterruptSlot(), m_MainOptionBonusRate(1.f)
+FItemType::FItemType(): m_ItemTypeIcon(nullptr), m_EquipableSlot(), m_EquipInterruptSlot(), m_MainOptionBonusRate(1.f)
 {
-    m_SellCostRate=1.f;
+    m_SellCostRate = 1.f;
     m_TypeID = "SetSameWithRowID";
     m_ShowingName = FText::FromString("ShowNameExOneHandSword");
 }

@@ -22,11 +22,6 @@ class DIABLOM_API UMapSelectPanel : public UUserWidget
 {
 	GENERATED_BODY()
 
-public:
-	UMapSelectPanel(const FObjectInitializer& objInit);
-
-	virtual void NativePreConstruct() override;
-
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UMapSelectButton> m_ClassMapSelectBtn;
@@ -79,8 +74,8 @@ protected:
 	UCanvasPanel* m_EventDungeonPanel;
 	
 public:
-	virtual void NativeOnInitialized() override;
-
+	void Init();
+	
 	void InitDgButton(const FDungeonDataRow* dgData, UMapSelectButton* SlotCreated);
 
 protected://need dg data

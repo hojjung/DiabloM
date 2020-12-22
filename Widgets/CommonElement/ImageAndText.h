@@ -29,7 +29,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ImageText")
 	UFont* m_FontWant;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category = "ImageText")
-	FString m_StringWant;
+	FText m_StringWant;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ImageText")
 	int m_nFontSize;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ImageText")

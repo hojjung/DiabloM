@@ -2,31 +2,22 @@
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DungeonManager.h"
 
-UMapSelectPanel::UMapSelectPanel(const FObjectInitializer& objInit):Super(objInit)
-{
-	
-}
 
-void UMapSelectPanel::NativePreConstruct()
+void UMapSelectPanel::Init()
 {
-	Super::NativePreConstruct();
-
 	InitDgButton(m_DefaultDgHandle.GetRow<FDungeonDataRow>("NoDgData1"),m_BtnDefaultInf);
 	InitDgButton(m_DemonDgHandle.GetRow<FDungeonDataRow>("NoDgData2"),m_BtnDemon);
 	InitDgButton(m_BeastDgHandle.GetRow<FDungeonDataRow>("NoDgData3"),m_BtnBeast);
 	InitDgButton(m_UndeadDgHandle.GetRow<FDungeonDataRow>("NoDgData4"),m_BtnUndead);
 	InitDgButton(m_HordeDgHandle.GetRow<FDungeonDataRow>("NoDgData5"),m_BtnHorde);
-}
-
-void UMapSelectPanel::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
 	//
 	m_BtnMainDG->OnClicked.AddDynamic(this,&UMapSelectPanel::ShowMainDG);
 	m_BtnRiteDG->OnClicked.AddDynamic(this,&UMapSelectPanel::ShowRiteDG);
 	m_BtnEventDG->OnClicked.AddDynamic(this,&UMapSelectPanel::ShowEventDG);
 	//
 	m_BtnClose->OnClicked.AddDynamic(this,&UMapSelectPanel::CloseDgPanel);
+	
+	m_MapInfoPopup->Init();
 }
 
 void UMapSelectPanel::InitDgButton(const FDungeonDataRow* dgData, UMapSelectButton* SlotCreated)
@@ -48,7 +39,7 @@ UMapSelectButton* UMapSelectPanel::CreateDgBtn(const FDungeonDataRow* dgData)
 void UMapSelectPanel::OpenMapInfoPopup(const FDungeonDataRow* dgData)
 {
 	PRINTF("OpenMapPopup");
-
+	m_MapInfoPopup->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	m_MapInfoPopup->OpenPopup(dgData);
 }
 
@@ -94,6 +85,8 @@ void UMapSelectPanel::CloseDgPanel()
 	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
 	
 	DiaPC.Get()->CloseMapSelectMenu();
+
+	m_MapInfoPopup->ClosePopup();
 	
 	ShowMainDG();
 }

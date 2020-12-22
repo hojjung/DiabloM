@@ -33,7 +33,19 @@ public:
 	TArray<FMonsterHordeHandle> m_AryHorde;//이중한개의 호드만 사용
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TArray<FName> m_IDPremadeDungeons;//should be add in stream level
-	
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<TSubclassOf<UDiabloAbility>> m_AryClassPlayerBuff;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<TSubclassOf<UDiabloAbility>> m_AryClassPlayerDebuff;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<TSubclassOf<UDiabloAbility>> m_AryClassMonsterBuff;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<TSubclassOf<UDiabloAbility>> m_AryClassMonsterDebuff;
+
+	int StageLevelToDungeonLevel(int dgLv)const
+	{
+		return dgLv;
+	}
 };
 
 

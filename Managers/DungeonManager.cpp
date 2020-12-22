@@ -29,7 +29,9 @@ void UDungeonManager::Init()
 
 void UDungeonManager::CreateQuadTreeBound()
 {
-    ADiabloGameMode::Get->SetQuadTreeCoord(m_CurrentDungeon.Get(),Cast<UGridFlowModel>(m_CurrentDungeon.Get()->GetModel())->Tilemap);
+    UGridFlowModel* GridModel =Cast<UGridFlowModel>(m_CurrentDungeon.Get()->GetModel());
+    UGridFlowTilemap* GridTileMap = GridModel->Tilemap;
+    ADiabloGameMode::Get->SetQuadTreeCoord(m_CurrentDungeon.Get(),GridTileMap);
 }
 
 void UDungeonManager::CreateDefaultInfinityDungeon(int level)
@@ -56,7 +58,7 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
     m_MatMinimap = UGridFlowMiniMap::Get->CreateMaterialInstance();
     ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);//UI Set Brush Tick add
 
-    
+    ADiabloPlayerController::Get->CloseMapSelectMenu();
 }
 
 void UDungeonManager::ShowSpawnedMonster()
@@ -159,7 +161,7 @@ bool UDungeonManager::IsPlayerInDg()
 int UDungeonManager::StageLevelToDungeonLevel(int stageLevel)
 {
     //FDungeonDataRow
-    return 1;
+    return stageLevel;
 }
 
 int UDungeonManager::StageLevelToDungeonType(int stageLevel)

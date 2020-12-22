@@ -47,7 +47,6 @@ protected:
 	
 	
 protected:
-	int StageLevelToDungeonLevel(int stageLevel);
 	
 	int StageLevelToDungeonType(int stageLevel);
 	
@@ -59,6 +58,8 @@ protected:
 	
 public:
 	void Init();
+	
+	int StageLevelToDungeonLevel(int stageLevel);
 	
 	void CreateQuadTreeBound();
 

@@ -119,6 +119,9 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
     }
     
    UpdateExpGauge(m_PlayerPawn->GetExpPercent());
+
+    //
+    m_MapSelect->Init();
 }
 
 void UMainCanvas::ShowMonsterInfo(AUnitPawn* monInfo)
@@ -215,6 +218,7 @@ void UMainCanvas::OpenMapMenu()
 void UMainCanvas::CloseMapMenu()
 {
     m_MapSelect->SetVisibility(ESlateVisibility::Hidden);
+    //m_MapSelect->CloseDgPanel();
 
     m_PlayerStatusBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }

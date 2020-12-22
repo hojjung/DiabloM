@@ -19,6 +19,13 @@ class DIABLOM_API UDiabloAbility : public UGameplayAbility
 
 public:
 	UDiabloAbility();
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ability")
+	FText m_ShowingName;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ability")
+	UTexture2D* m_AbilityIcon;
+	
 protected:	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ability")
 	bool m_bActivateAbilityOnGranted;
