@@ -5,6 +5,8 @@
 
 void UMapSelectPanel::Init()
 {
+	m_CurrentDgData=nullptr;
+	
 	InitDgButton(m_DefaultDgHandle.GetRow<FDungeonDataRow>("NoDgData1"),m_BtnDefaultInf);
 	InitDgButton(m_DemonDgHandle.GetRow<FDungeonDataRow>("NoDgData2"),m_BtnDemon);
 	InitDgButton(m_BeastDgHandle.GetRow<FDungeonDataRow>("NoDgData3"),m_BtnBeast);
@@ -27,6 +29,22 @@ void UMapSelectPanel::InitDgButton(const FDungeonDataRow* dgData, UMapSelectButt
 	SlotCreated->m_OnDgClicked.AddUObject(this,&UMapSelectPanel::OpenMapInfoPopup);
 }
 
+void UMapSelectPanel::Open(bool isDgCleared)
+{
+	if(isDgCleared)
+	{
+		m_MapInfoPopup->m_BtnBackToVillage->SetVisibility(ESlateVisibility::Visible);
+
+		OpenMapInfoPopup(m_CurrentDgData);
+	}
+	else
+	{
+		m_MapInfoPopup->m_BtnBackToVillage->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	
+}
+
 UMapSelectButton* UMapSelectPanel::CreateDgBtn(const FDungeonDataRow* dgData)
 {
 	UMapSelectButton* SlotCreated = CreateWidget<UMapSelectButton>(this, m_ClassMapSelectBtn);
@@ -41,6 +59,7 @@ void UMapSelectPanel::OpenMapInfoPopup(const FDungeonDataRow* dgData)
 	PRINTF("OpenMapPopup");
 	m_MapInfoPopup->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	m_MapInfoPopup->OpenPopup(dgData);
+	m_CurrentDgData=dgData;
 }
 
 void UMapSelectPanel::ShowMainDG()

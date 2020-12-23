@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "CheckBox.h"
 #include "Blueprint/UserWidget.h"
 #include "Datas/DungeonDataTable.h"
 #include "Widgets/CommonElement/ImageAndText.h"
@@ -64,6 +66,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UImageAndText* m_MonsterDebuff;
 	//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UCheckBox* m_ToggleAutoRepeat;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UCheckBox* m_ToggleAutoNext;
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnBackToVillage;
 	
 protected:
 	const FDungeonDataRow* m_CurrentDgData;
@@ -96,8 +105,6 @@ public:
 
 	void OpenPopup(const FDungeonDataRow* dg_data);
 
-	
-
 
 public:
 	UFUNCTION()
@@ -112,6 +119,8 @@ public:
     void IncreaseMax();
 	UFUNCTION()
 	void EnterDungeon();
+	UFUNCTION()
+    void PortalToVillage();
 	
 };
 

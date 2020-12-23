@@ -175,7 +175,7 @@ void UDiabloCheatManager::PortalToDungeon()
 
 void UDiabloCheatManager::PortalToVillage()
 {
-	UDiabloGameInstance::Get->GetDungeonManager()->PortalToVillage();
+	UDiabloGameInstance::Get->GetDungeonManager()->PortalToVillage(false);
 }
 
 void UDiabloCheatManager::DamageToPlayer(float wantV)

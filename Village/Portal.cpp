@@ -18,6 +18,7 @@ void APortal::BeginPlay()
     UDungeonManager* DungeonM = UDiabloGameInstance::Get->GetDungeonManager();
 
     DungeonM->GetOnDungeonCreate().AddUObject(this,&APortal::SetPortal);
+    
     SetPortal(false);
 }
 

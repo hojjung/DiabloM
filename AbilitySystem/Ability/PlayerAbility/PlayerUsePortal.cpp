@@ -77,7 +77,7 @@ void UPlayerUsePortal::EventReceived(FGameplayTag EventTag, FGameplayEventData E
 
         PRINTF("Portal!");
         
-        UDiabloGameInstance::Get->GetDungeonManager()->PortalToVillage();
+        UDiabloGameInstance::Get->GetDungeonManager()->PortalToVillage(false);
     }
 }
 

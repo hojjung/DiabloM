@@ -118,7 +118,7 @@ public:
 
     UDiaShopPanel* GetShopPanelWidget();
     
-    void OpenMapMenu();
-    
+    void OpenMapMenu(bool isCleared);
+
     void CloseMapMenu();
 };

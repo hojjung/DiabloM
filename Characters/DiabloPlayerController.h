@@ -103,7 +103,7 @@ public:
 	void OnDeviceBackKey();
 	//
 	UFUNCTION(BlueprintCallable)
-    void OpenMapSelectMenu();
+    void OpenMapSelectMenu(bool isDgCleared);
 	UFUNCTION(BlueprintCallable)
     void CloseMapSelectMenu();
 

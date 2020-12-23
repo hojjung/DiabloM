@@ -7,6 +7,8 @@
 #include "Objs/Actor/DiaDungeon.h"
 #include "Objs/Containers/Quadtree.h"
 #include "UObject/NoExportTypes.h"
+#include "Village/DgToVillagePortal.h"
+
 #include "DungeonManager.generated.h"
 
 
@@ -22,14 +24,31 @@ class DIABLOM_API UDungeonManager : public UObject
 {
 	GENERATED_BODY()
 
+public:
+	UDungeonManager(const FObjectInitializer& objInit);
+	
+public:
+	int m_nCurrentMonsterCount;
+
+	int m_nClearableCount;
+
 protected:
-	TArray<FDungeonDataRow*> m_AryDungeonData;//던전 데이터는 돌려쓰면 됨
+	UPROPERTY()
+	TSubclassOf<ADgToVillagePortal> m_ClassDgVillagePortal;
+	UPROPERTY()
+	ADgToVillagePortal* m_CurrentDgVillagePortal;
 	UPROPERTY()
 	TArray<AMonsterPawn*> m_AryMonsterSpawnedCurrently;
+	UPROPERTY(Transient)
+	UMaterialInterface* m_MatMinimap;
+	
+	TArray<FDungeonDataRow*> m_AryDungeonData;//던전 데이터는 돌려쓰면 됨
 	
 	TWeakObjectPtr<ADiaDungeon> m_CurrentDungeon;
 
 	FDungeonDataRow* m_CurrentDungeonData;
+
+	FName m_NamePortalID;
 
 	int m_nMonsterLevel;
 
@@ -42,19 +61,16 @@ protected:
 	FVector m_RecentDungeonFeetLoc;
 
 	FDungeonCreate m_OnPortalCreate;
-	UPROPERTY(Transient)
-	UMaterialInterface* m_MatMinimap;
-	
+
 	
 protected:
-	
 	int StageLevelToDungeonType(int stageLevel);
 	
 	void LoadDungeonLevel(FDungeonDataRow* SelectedDungeonData);
 	
 	void SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData);
-	
-	
+
+	void OnDungeonCleared();
 	
 public:
 	void Init();
@@ -66,11 +82,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateDefaultInfinityDungeon(int level=1);
 	UFUNCTION(BlueprintCallable)
-	void ShowSpawnedMonster();
-	UFUNCTION(BlueprintCallable)
-	void HideSpawnedMonster();
-	UFUNCTION(BlueprintCallable)
-	void PortalToVillage();
+	void PortalToVillage(bool isDgCleared);
 	UFUNCTION(BlueprintCallable)
 	void PortalToRecentDungeon();
 	UFUNCTION(BlueprintCallable)
@@ -86,4 +98,8 @@ public:
 	}
 
 	bool IsPlayerInDg();
+
+	void MonsterDead();
+
+	FVector GetCurrentPlayerFeetLoc();
 };

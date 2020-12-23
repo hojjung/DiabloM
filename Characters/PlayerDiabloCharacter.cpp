@@ -176,7 +176,7 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
 	m_TookHitMontage = m_PlayerEntityData->m_TookHitMontage;
 
 
-	SetCharacterLevel(loadedSaveData->m_nLevel);
+	SetCharacterLevel(m_nCharacterLevel);
 	LoadExp(loadedSaveData);
 	SetGold(loadedSaveData->m_fGold);
 

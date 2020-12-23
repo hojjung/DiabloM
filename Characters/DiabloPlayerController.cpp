@@ -192,11 +192,9 @@ void ADiabloPlayerController::OnDeviceBackKey()
 	ExitGame();
 }
 
-void ADiabloPlayerController::OpenMapSelectMenu()
+void ADiabloPlayerController::OpenMapSelectMenu(bool isDgCleared)
 {
-
-	m_MainMenu->OpenMapMenu();
-	
+	m_MainMenu->OpenMapMenu(isDgCleared);
 	UGameplayStatics::SetGamePaused(this->GetWorld(),true);
 	this->SetVirtualJoystickVisibility(false);
 }

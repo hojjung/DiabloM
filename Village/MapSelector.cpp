@@ -15,7 +15,7 @@ void AMapSelector::Interact(AActor* instigator)
 {
     TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
 
-    DiaPC.Get()->OpenMapSelectMenu();
+    DiaPC.Get()->OpenMapSelectMenu(false);
 
     PRINTF("MapSlectr - OpenMaop");
     //

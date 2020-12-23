@@ -111,7 +111,6 @@ void ADiabloGameMode::SetDungeonInstanceToMap()
 	for (ADiaDungeon* DungeonInst : TActorRange<ADiaDungeon>(GetWorld()))
 	{
 		m_MapDungeonActors.Emplace(DungeonInst->m_LevelName,DungeonInst);
-		DungeonInst->HideDungeon();
 	}
 }
 
@@ -144,7 +143,6 @@ void ADiabloGameMode::InitDungeonInstances()
 	for(auto& DungeonActor :m_MapDungeonActors)
 	{
 		DungeonActor.Value->ShuffleSpawnPoints();
-		DungeonActor.Value->HideDungeon();
 	}
 }
 

@@ -208,8 +208,9 @@ UDiaShopPanel* UMainCanvas::GetShopPanelWidget()
     return m_MainMenu->GetShopPanelWidget();
 }
 
-void UMainCanvas::OpenMapMenu()
+void UMainCanvas::OpenMapMenu(bool isCleared)
 {
+    m_MapSelect->Open(isCleared);
     m_MapSelect->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
     m_PlayerStatusBar->SetVisibility(ESlateVisibility::Hidden);
@@ -217,8 +218,9 @@ void UMainCanvas::OpenMapMenu()
 
 void UMainCanvas::CloseMapMenu()
 {
+    m_MapSelect->ShowMainDG();
+    m_MapSelect->m_MapInfoPopup->ClosePopup();
     m_MapSelect->SetVisibility(ESlateVisibility::Hidden);
-    //m_MapSelect->CloseDgPanel();
 
     m_PlayerStatusBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }

@@ -14,8 +14,22 @@
 #include "GenericOctree.h"
 #include "GridFlowModel.h"
 
+UDungeonManager::UDungeonManager(const FObjectInitializer& objInit):Super(objInit)
+{
+    static ConstructorHelpers::FClassFinder<ADgToVillagePortal> FoundPortal(
+    TEXT("Blueprint'/Game/Blueprints/VillageActors/BP_DgVillagePortal.BP_DgVillagePortal_C'"));
+    //
+    //
+    m_ClassDgVillagePortal=FoundPortal.Class;
+    m_CurrentDgVillagePortal=nullptr;
+    m_MatMinimap=nullptr;
+    m_NamePortalID="DgPortal";
+}
+
 void UDungeonManager::Init()
 {
+    m_nClearableCount=0;
+    m_nCurrentMonsterCount=0;
     m_bIsPlayerInDungeon=false;
     m_CurrentDungeon=nullptr;
     m_CurrentDungeonData=nullptr;
@@ -61,17 +75,24 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
     ADiabloPlayerController::Get->CloseMapSelectMenu();
 }
 
-void UDungeonManager::ShowSpawnedMonster()
-{
-}
 
-void UDungeonManager::HideSpawnedMonster()
-{
-}
-
-void UDungeonManager::PortalToVillage()
+void UDungeonManager::PortalToVillage(bool isDgCleared)
 {
     PRINTF("Dgm - Portal Village");
+
+    if(isDgCleared)
+    {
+        APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
+        PlayerPawn->SetActorLocation(GetCurrentPlayerFeetLoc(),false,nullptr,ETeleportType::None);
+
+        m_bIsPlayerInDungeon=false;
+
+        ClearDungeon();
+
+        
+
+        return;
+    }
 
     if(!m_bIsPlayerInDungeon)
     {
@@ -79,14 +100,8 @@ void UDungeonManager::PortalToVillage()
     }
     
     APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
-    m_RecentDungeonFeetLoc=PlayerPawn->GetMovementComponent()->GetActorFeetLocation();
-    FVector Loc= ADiabloGameMode::Get->GetSpawnPoint()->GetActorLocation();
-    Loc.Z+=PlayerPawn->GetCapsule()->GetScaledCapsuleHalfHeight();
-    PlayerPawn->SetActorLocation(Loc,false,nullptr,ETeleportType::None);
+    PlayerPawn->SetActorLocation(GetCurrentPlayerFeetLoc(),false,nullptr,ETeleportType::None);
     
-    HideSpawnedMonster();
-    m_CurrentDungeon->HideDungeon();
-
     ADiabloPlayerController::Get->ClientForceGarbageCollection();
 
     m_bIsPlayerInDungeon=false;
@@ -102,15 +117,13 @@ void UDungeonManager::PortalToRecentDungeon()
     }
     
     PRINTF("Dgm - Portal Dungeon");
-    m_CurrentDungeon->ShowDungeon();
-    ShowSpawnedMonster();
     
     APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
     UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(PlayerPawn->GetWorld());
     FVector Loc = m_RecentDungeonFeetLoc;
     FNavLocation NavLoc;
     
-    if(NavSys->GetRandomReachablePointInRadius(Loc,300.f,NavLoc))
+    if(NavSys->GetRandomPointInNavigableRadius(Loc,300.f,NavLoc))
     {
         Loc=NavLoc.Location;
     }
@@ -133,11 +146,22 @@ void UDungeonManager::ClearDungeon()
             Pawn->Destroy();
         }
     }
-    m_CurrentDungeon->HideDungeon();
+    m_AryMonsterSpawnedCurrently.Reset();
+    m_nCurrentMonsterCount=0;
+    m_nClearableCount=0;
+    
     ADiabloPlayerController::Get->ClientForceGarbageCollection();
     m_RecentDungeonFeetLoc=m_CurrentDungeon->GetActorLocation();
     
     m_OnPortalCreate.Broadcast(false);
+
+    if(m_CurrentDgVillagePortal)
+    {
+        m_CurrentDgVillagePortal->Destroy();
+        m_CurrentDgVillagePortal=nullptr;
+    }
+
+    ADiabloPlayerController::Get->HideMinimap();//UI Set Brush Tick a
 }
 
 void UDungeonManager::RestartDungeon()
@@ -158,11 +182,35 @@ bool UDungeonManager::IsPlayerInDg()
     return m_bIsPlayerInDungeon;
 }
 
+void UDungeonManager::MonsterDead()
+{
+    m_nCurrentMonsterCount--;
+
+    if(m_nCurrentMonsterCount<=m_nClearableCount)
+    {
+        PRINTF("All MonsterDead");
+
+        OnDungeonCleared();
+    }
+}
+
+FVector UDungeonManager::GetCurrentPlayerFeetLoc()
+{
+    APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
+    m_RecentDungeonFeetLoc=PlayerPawn->GetMovementComponent()->GetActorFeetLocation();
+    FVector Loc= ADiabloGameMode::Get->GetSpawnPoint()->GetActorLocation();
+    Loc.Z+=PlayerPawn->GetCapsule()->GetScaledCapsuleHalfHeight();
+
+    return Loc;
+}
+
 int UDungeonManager::StageLevelToDungeonLevel(int stageLevel)
 {
     //FDungeonDataRow
     return stageLevel;
 }
+
+
 
 int UDungeonManager::StageLevelToDungeonType(int stageLevel)
 {
@@ -175,15 +223,15 @@ void UDungeonManager::LoadDungeonLevel(FDungeonDataRow* SelectedDungeonData)
     
     m_CurrentDungeon = ADiabloGameMode::Get->GetDungeon(DungeonID);
 
-    m_CurrentDungeon->ShowDungeon();
-
     m_RecentDungeonFeetLoc=m_CurrentDungeon->GetActorLocation();
 }
 
 void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData)
 {
     m_AryMonsterSpawnedCurrently.Reset();
-
+    m_nCurrentMonsterCount=0;
+    m_nClearableCount=0;
+    
     if(m_CurrentDungeon->GetArySpawnPoints().Num()<1)
     {
         return;
@@ -199,5 +247,50 @@ void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* 
             break;
         }
     }
+
+    for(AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
+    {
+        Mob->m_SpawnedManager = this;
+    }
+    
+    m_nCurrentMonsterCount=m_AryMonsterSpawnedCurrently.Num();
+    m_nClearableCount = m_nCurrentMonsterCount *0.1f;
+    PRINTF("Dgmanager-Clearable Remain Count: %d",m_nClearableCount);
+}
+
+void UDungeonManager::OnDungeonCleared()
+{
+    APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
+    UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(PlayerPawn->GetWorld());
+    FVector Loc = PlayerPawn->GetActorLocation();
+    FNavLocation NavLoc;
+    
+    if(NavSys->GetRandomPointInNavigableRadius(Loc,400.f,NavLoc))
+    {
+        Loc=NavLoc.Location;
+    }
+    
+    Loc.Z += PlayerPawn->GetCapsule()->GetScaledCapsuleHalfHeight();
+
+    //플레이어 체력 전부체워줘야함
+    
+    //마나 스태미나 캐릭터는 자원 채워줘야함
+
+    if(m_CurrentDgVillagePortal)
+    {
+        m_CurrentDgVillagePortal->Destroy();
+        m_CurrentDgVillagePortal=nullptr;
+    }
+    
+    FActorSpawnParameters Param;
+    
+    Param.bNoFail = true;
+    //88
+    FRotator Rot(0.f,0.f,0.f);
+    
+    m_CurrentDgVillagePortal = PlayerPawn->GetWorld()->SpawnActor<ADgToVillagePortal>(m_ClassDgVillagePortal, Loc, Rot, Param);
+    
+    UGridFlowMiniMap::Get->AddTrackActor(m_NamePortalID,m_CurrentDgVillagePortal);
+    
 }
 

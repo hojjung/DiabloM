@@ -35,10 +35,10 @@ protected:
 	FDgDataHandle m_UndeadDgHandle;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FDgDataHandle m_HordeDgHandle;
-	
-protected:
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMapInfoPopup* m_MapInfoPopup;
+protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UWidgetSwitcher* m_PanelSwitcher;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -72,11 +72,15 @@ protected:
 protected:	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UCanvasPanel* m_EventDungeonPanel;
-	
+
+protected:
+	const FDungeonDataRow* m_CurrentDgData;
 public:
 	void Init();
 	
 	void InitDgButton(const FDungeonDataRow* dgData, UMapSelectButton* SlotCreated);
+
+	void Open(bool isDgCleared);
 
 protected://need dg data
 	UMapSelectButton* CreateDgBtn(const FDungeonDataRow* dgData);

@@ -39,7 +39,7 @@ void UDiaGameOverScreen::BackToVillage()
     {
         return;
     }
-    UDiabloGameInstance::Get->GetDungeonManager()->PortalToVillage();
+    UDiabloGameInstance::Get->GetDungeonManager()->PortalToVillage(false);
     m_Player->Revive();
    // SetVisibility(ESlateVisibility::Hidden);
 }

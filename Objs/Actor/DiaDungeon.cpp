@@ -29,23 +29,6 @@ void ADiaDungeon::AddMyActors(AActor* actor)
     m_AryMyActors.Emplace(actor);
 }
 
-void ADiaDungeon::ShowDungeon()
-{
-    // for (auto* ASD : m_AryMyActors)
-    // {
-    //     ASD->SetActorHiddenInGame(false);
-    // }
-
-}
-
-void ADiaDungeon::HideDungeon()
-{
-    // for (auto* ASD : m_AryMyActors)
-    // {
-    //     ASD->SetActorHiddenInGame(true);
-    // }
-
-}
 
 void ADiaDungeon::ShuffleSpawnPoints(int iter)
 {

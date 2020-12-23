@@ -1,5 +1,4 @@
 #include "MonsterPawn.h"
-
 #include "DiabloPlayerController.h"
 #include "DungeonMiniMap.h"
 #include "GridFlowMiniMap.h"
@@ -9,6 +8,7 @@
 #include "Logic/MobFSMBase.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DiabloGameMode.h"
+#include "Managers/DungeonManager.h"
 
 AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit):
 Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
@@ -41,7 +41,7 @@ void AMonsterPawn::BeginPlay()
 
 void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
 {
-    SetCharacterLevel(level);
+    
     
     m_MonsterUnitHandle.RowName = unitID.RowName;
     
@@ -63,6 +63,8 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
     m_SkBody->SetAnimInstanceClass(UnitData->m_AnimBP);
     
     m_GEUnitStat = UnitData->m_DefaultStatTable; //몬스터 랜덤 데이터가 마치 아이템 옵션처럼 몬스터에게 붙어야한다.
+
+    SetCharacterLevel(level);
     
     check(m_GEUnitStat);
     
@@ -121,6 +123,11 @@ void AMonsterPawn::Die()
     if(GetCurrentNode())
     {
         GetCurrentNode()->RemoveElement(this);
+    }
+
+    if(m_SpawnedManager)
+    {
+        m_SpawnedManager->MonsterDead();
     }
 
     m_OnCharacterDied.Broadcast(this);

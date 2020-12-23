@@ -29,6 +29,7 @@ void UMapInfoPopup::Init()
 	//
 	m_BtnClosePanel->OnClicked.AddDynamic(this,&UMapInfoPopup::ClosePopup);
 	m_BtnEnterDg->OnClicked.AddDynamic(this,&UMapInfoPopup::EnterDungeon);
+	m_BtnBackToVillage->OnClicked.AddDynamic(this,&UMapInfoPopup::PortalToVillage);
 }
 
 void UMapInfoPopup::SetMonsterAndItemLevel(const FDungeonDataRow* dg_data)
@@ -54,6 +55,15 @@ void UMapInfoPopup::SetMonsterAndItemLevel(const FDungeonDataRow* dg_data)
 
 void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 {
+	if(m_CurrentDgData!=dg_data)
+	{
+		m_nCurrentDgLevel=1;
+
+		m_TextDgLevel->SetText(FText::AsNumber(m_nCurrentDgLevel));
+	
+		m_nMaxDgLevel=100;//need fix
+	}
+	
 	m_CurrentDgData=dg_data;
 
 	if(!m_CurrentDgData)
@@ -62,11 +72,7 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 		return;
 	}
 	
-	m_nCurrentDgLevel=1;
-
-	m_TextDgLevel->SetText(FText::AsNumber(m_nCurrentDgLevel));
 	
-	m_nMaxDgLevel=100;//need fix
 	
 	m_DgIcon->SetBrushFromTexture(m_CurrentDgData->m_DgIcon);
 	
@@ -138,32 +144,33 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 	 {
 	 	UImageAndText* Widget = CreateImageText(PlayerBuff.GetDefaultObject()->m_AbilityIcon,PlayerBuff.GetDefaultObject()->m_ShowingName);
 
-	 	m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_PlayerBuff)+1,Widget);
+	 	//m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_PlayerBuff)+1,Widget);
 	 }
 
 	for(const TSubclassOf<UDiabloAbility>& PlayerDebuff : m_CurrentDgData->m_AryClassPlayerDebuff)
 	{
 		UImageAndText* Widget = CreateImageText(PlayerDebuff.GetDefaultObject()->m_AbilityIcon,PlayerDebuff.GetDefaultObject()->m_ShowingName);
 
-		m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_PlayerDebuff)+1,Widget);
+		//m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_PlayerDebuff)+1,Widget);
 	}
 
 	for(const TSubclassOf<UDiabloAbility>& MonsterBuff : m_CurrentDgData->m_AryClassMonsterBuff)
 	{
 		UImageAndText* Widget = CreateImageText(MonsterBuff.GetDefaultObject()->m_AbilityIcon,MonsterBuff.GetDefaultObject()->m_ShowingName);
 
-		m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_MonsterBuff)+1,Widget);
+		//m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_MonsterBuff)+1,Widget);
 	}
 
 	for(const TSubclassOf<UDiabloAbility>& MonsterDebuff : m_CurrentDgData->m_AryClassMonsterDebuff)
 	{
 		UImageAndText* Widget = CreateImageText(MonsterDebuff.GetDefaultObject()->m_AbilityIcon,MonsterDebuff.GetDefaultObject()->m_ShowingName);
 
-		m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_MonsterDebuff)+1,Widget);
+		//m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_MonsterDebuff)+1,Widget);
 	}
 
 	
 }
+
 
 void UMapInfoPopup::ClosePopup()
 {
@@ -177,7 +184,7 @@ void UMapInfoPopup::ClosePopup()
 	m_AryItemTypes.Reset();
 	m_AryUniqueItemData.Reset();
 
-	m_CurrentDgData=nullptr;
+	//m_CurrentDgData=nullptr;
 	
 	SetVisibility(ESlateVisibility::Hidden);
 }
@@ -235,7 +242,16 @@ void UMapInfoPopup::IncreaseMax()
 
 void UMapInfoPopup::EnterDungeon()
 {
+	ClosePopup();
 	m_DgManager->CreateDefaultInfinityDungeon(m_nCurrentDgLevel);//결국 던전 또한 레벨넘기는것으로 바껴야함? 동적 제작해도 되지않나
+}
+
+void UMapInfoPopup::PortalToVillage()
+{
+	m_DgManager->PortalToVillage(true);
+	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+	DiaPC.Get()->CloseMapSelectMenu();
+	
 }
 #undef LOCTEXT_NAMESPACE
 

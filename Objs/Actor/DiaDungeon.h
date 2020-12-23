@@ -30,9 +30,6 @@ public:
 
 	void AddMyActors(AActor* actor);
 
-	void ShowDungeon();
-
-	void HideDungeon();
 
 	void ShuffleSpawnPoints(int iter=1);
 	

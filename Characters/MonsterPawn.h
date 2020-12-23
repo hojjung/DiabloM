@@ -5,10 +5,9 @@
 #include "CoreMinimal.h"
 #include "Characters/UnitPawn.h"
 
-#include "Widgets/WorldMap/WorldWidget/FloatingStatusBarWidgetCompo.h"
-
 #include "MonsterPawn.generated.h"
 
+class UDungeonManager;
 /**
  * 
  */
@@ -20,6 +19,10 @@ class DIABLOM_API AMonsterPawn : public AUnitPawn,public ITickHideable
 	GENERATED_BODY()
 public:
 	AMonsterPawn(const FObjectInitializer& objInit);
+
+public:
+	UPROPERTY()
+	UDungeonManager* m_SpawnedManager;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -83,6 +86,8 @@ public:
 	virtual void SetNode(QuadtreeNode* quadtree_node)override;
 
 	virtual QuadtreeNode* GetCurrentNode()override;
+
+	
 
 protected:
 	void UpdateBound();

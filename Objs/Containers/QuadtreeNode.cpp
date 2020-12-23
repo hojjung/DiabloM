@@ -203,7 +203,9 @@ void QuadtreeNode::HideActors()
         
         for (ITickHideable* Eles : GetAllElements())
         {
-            if(!Eles || !Cast<AActor>(Eles)->IsValidLowLevel())
+            AActor* ElesActor = Cast<AActor>(Eles);
+            
+            if(!Eles ||!ElesActor|| !ElesActor->IsValidLowLevel())
             {
                 continue;
             }
