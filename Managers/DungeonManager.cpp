@@ -139,6 +139,8 @@ void UDungeonManager::PortalToRecentDungeon()
 
 void UDungeonManager::ClearDungeon()
 {
+    ADiabloGameMode::Get->ClearQuadTree();
+    
     for (AMonsterPawn* Pawn : m_AryMonsterSpawnedCurrently)
     {
         if(Pawn)

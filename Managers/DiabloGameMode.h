@@ -127,4 +127,6 @@ public:
 	//UGridFlowTilemap*
 
 	void SetQuadTreeCoord(ADiaDungeon* dgActor,UGridFlowTilemap* dgTilemap);
+
+	void ClearQuadTree();
 };

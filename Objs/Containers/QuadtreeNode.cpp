@@ -203,9 +203,16 @@ void QuadtreeNode::HideActors()
         
         for (ITickHideable* Eles : GetAllElements())
         {
-            AActor* ElesActor = Cast<AActor>(Eles);
-            
-            if(!Eles ||!ElesActor|| !ElesActor->IsValidLowLevel())
+            // AActor* ElesActor = Cast<AActor>(Eles);
+            //
+            // if(!Eles ||!ElesActor|| !ElesActor->IsValidLowLevel())
+            // {
+            //     continue;
+            // }
+
+            //던전 클리어시 문제 발생->아이템삭제 및 가비지 돌리기 때문
+
+            if(!Eles)
             {
                 continue;
             }
@@ -234,7 +241,14 @@ void QuadtreeNode::ShowActors()
         
         for (ITickHideable* Eles : GetAllElements())
         {
-            if(!Eles || !Cast<AActor>(Eles)->IsValidLowLevel())
+            // AActor* ElesActor = Cast<AActor>(Eles);
+            //
+            // if(!Eles ||!ElesActor|| !ElesActor->IsValidLowLevel())
+            // {
+            //     continue;
+            // }
+
+            if(!Eles)
             {
                 continue;
             }

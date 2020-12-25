@@ -19,6 +19,8 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UCapsuleComponent* m_Capsule;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UWidgetComponent* m_WidgetComp;
 
 public:	
 	virtual void Interact(AActor* instigator)override;

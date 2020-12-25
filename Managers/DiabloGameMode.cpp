@@ -198,6 +198,15 @@ void ADiabloGameMode::SetQuadTreeCoord(ADiaDungeon* dgActor,UGridFlowTilemap* dg
 	PRINTF("Max :%s",*DgMaxPos.ToString());
 }
 
+void ADiabloGameMode::ClearQuadTree()
+{
+	if(m_QuadTree.Get())
+	{
+		m_QuadTree.Reset();
+
+	}
+}
+
 void ADiabloGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);

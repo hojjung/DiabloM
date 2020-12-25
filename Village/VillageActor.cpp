@@ -19,6 +19,11 @@ AVillageActor::AVillageActor(const FObjectInitializer& objInit):Super(objInit)
 	
 	
 	m_Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+	m_WidgetComp=CreateDefaultSubobject<UWidgetComponent>("WidgetComp00");
+	m_WidgetComp->SetupAttachment(RootComponent);
+	m_WidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+	m_WidgetComp->SetDrawAtDesiredSize(true);
 }
 
 

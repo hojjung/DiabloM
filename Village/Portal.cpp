@@ -30,6 +30,7 @@ void APortal::SetPortal(bool bIsOn)
         m_ParticleEffect->SetHiddenInGame(false);
         m_ParticleEffect->Activate();
         m_Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+        m_WidgetComp->SetVisibility(true);
     }
     else
     {
@@ -37,6 +38,7 @@ void APortal::SetPortal(bool bIsOn)
         m_ParticleEffect->SetHiddenInGame(true);
         m_ParticleEffect->Deactivate();
         m_Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        m_WidgetComp->SetVisibility(false);
     }
 }
 
