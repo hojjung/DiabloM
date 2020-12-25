@@ -41,8 +41,6 @@ void UMapSelectPanel::Open(bool isDgCleared)
 	{
 		m_MapInfoPopup->m_BtnBackToVillage->SetVisibility(ESlateVisibility::Hidden);
 	}
-
-	
 }
 
 UMapSelectButton* UMapSelectPanel::CreateDgBtn(const FDungeonDataRow* dgData)

@@ -62,6 +62,8 @@ FVector UMonsterSpawnManager::GetRandomPoint(const FVector& loc, const float& ra
 
 AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 {
+    check(UCharacterDataTable::ClassMonsterPawn);
+    
     FActorSpawnParameters Param;
 
     Param.bNoFail = true;

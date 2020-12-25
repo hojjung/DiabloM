@@ -70,7 +70,7 @@ protected:
 	
 	void SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData);
 
-	void OnDungeonCleared();
+	void DungeonComplete();
 	
 public:
 	void Init();

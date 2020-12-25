@@ -1,4 +1,6 @@
 #include "MonsterPawn.h"
+
+#include "BaseWidgetBlueprint.h"
 #include "DiabloPlayerController.h"
 #include "DungeonMiniMap.h"
 #include "GridFlowMiniMap.h"
@@ -26,16 +28,64 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     m_bIsMoving=false;
     m_CurrentNode=nullptr;
     m_bIsVisible=true;
+    //
+    m_StShadow = CreateDefaultSubobject<UStaticMeshComponent>("StShadow");
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> FoundSt(
+             TEXT("StaticMesh'/Game/Models/SM_CharM_Shadow.SM_CharM_Shadow'"));
+    m_StShadow->SetStaticMesh(FoundSt.Object);
+    m_StShadow->SetupAttachment(m_SkBody);
+    m_StShadow->SetRelativeLocation(FVector(0,0,5.f));
+    m_StShadow->SetRelativeScale3D(FVector(3.f,3.f,3.f));
+    m_StShadow->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    //
+    static ConstructorHelpers::FClassFinder<UUserWidget> FoundHpBar(
+             TEXT("WidgetBlueprint'/Game/Blueprints/Widgets/Elements/WB_ProgressBarParents.WB_ProgressBarParents_C'"));
+    m_WorldHpBar = CreateDefaultSubobject<UFloatingStatusBarWidgetCompo>("WorldHpBar");
+    m_WorldHpBar->SetWidgetClass(FoundHpBar.Class);
+    m_WorldHpBar->SetDrawSize(FVector2D(150.f,22.f));
+    FVector2D Pivot(0.5f,0.5f);
+    m_WorldHpBar->SetPivot(Pivot);
+    m_WorldHpBar->SetWidgetSpace(EWidgetSpace::Screen);
+    m_WorldHpBar->SetupAttachment(m_Capsule);
+    m_WorldHpBar->SetRelativeLocation(FVector(0,0,90));
+    //m_WorldHpBar->Screen
+    //
+    m_Movement->NavAgentProps.AgentHeight=88.f;
+    m_Movement->NavAgentProps.AgentRadius=24.f;
+    //
+    static ConstructorHelpers::FClassFinder<UGameplayEffect> FoundGEExp(
+    TEXT("Blueprint'/Game/Blueprints/Abilities/GameEffect/GE_EXP.GE_EXP_C'"));
+    m_GEExpReward = FoundGEExp.Class;
+}
+
+void AMonsterPawn::ShowStatusBar()
+{
+    m_WorldHpBar->SetVisibility(true);
+}
+
+void AMonsterPawn::HideStatusBar()
+{
+    m_WorldHpBar->SetVisibility(false);
+}
+
+bool AMonsterPawn::IsStatusBarActive()
+{
+    return m_WorldHpBar->IsVisible();
+}
+
+void AMonsterPawn::UpdateHealthBar(float perOne)
+{
+    m_WorldHpBar->SetHealthPercentage(perOne);
 }
 
 void AMonsterPawn::BeginPlay()
 {
     Super::BeginPlay();
-
     if (m_bIsPlaced && !m_MonsterUnitHandle.IsNull())
     {
         InitMonster(m_MonsterUnitHandle, m_nCharacterLevel);
     }
+    HideStatusBar();
 }
 
 
@@ -256,7 +306,8 @@ void AMonsterPawn::ShowAll(bool hasBeenShowed)
     m_Movement->SetComponentTickEnabled(true);
     m_MonsterSense->SetSensingUpdatesEnabled(true);
     m_PFComp->SetComponentTickEnabled(true);
-    
+    m_StShadow->SetComponentTickEnabled(true);
+    m_WorldHpBar->SetComponentTickEnabled(true);
     m_bIsVisible=true;
 }
 
@@ -265,11 +316,14 @@ void AMonsterPawn::HideAll(bool hasBeenShowed)
     if(!hasBeenShowed)
     {
         SetActorTickEnabled(false);
-        m_SkBody->SetComponentTickEnabled(false);
         m_Movement->SetComponentTickEnabled(false);
         m_MonsterSense->SetSensingUpdatesEnabled(false);
         m_PFComp->SetComponentTickEnabled(false);
+        
     }
+    m_SkBody->SetComponentTickEnabled(false);
+    m_StShadow->SetComponentTickEnabled(false);
+    m_WorldHpBar->SetComponentTickEnabled(false);
     
     SetActorEnableCollision(false);
 
@@ -288,6 +342,7 @@ QuadtreeNode* AMonsterPawn::GetCurrentNode()
 {
     return m_CurrentNode;
 }
+
 
 void AMonsterPawn::UpdateBound()//여기하는중
 {

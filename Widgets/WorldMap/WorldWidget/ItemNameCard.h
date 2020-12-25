@@ -20,6 +20,8 @@ class DIABLOM_API UItemNameCard : public UUserWidget
 	UImage* m_ImgBackground;
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void SetItemName(const FText& itemName);
+	UFUNCTION(BlueprintCallable)
 	void SetItemColor(const FLinearColor& colorWant);
 };

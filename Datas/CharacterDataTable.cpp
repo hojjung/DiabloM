@@ -27,9 +27,8 @@ UCharacterDataTable::UCharacterDataTable()
               TEXT("DataTable'/Game/DataTables/Entities/MonsterTypeTable.MonsterTypeTable'"));
     GetMonsterTypeTable=FoundEntityTable4.Object;
 //
-    static ConstructorHelpers::FClassFinder<AMonsterPawn> FoundMonster(TEXT("Blueprint'/Game/Blueprints/Pawns/BP_Monster.BP_Monster_C'"));
     //
-    ClassMonsterPawn=FoundMonster.Class;
+    ClassMonsterPawn=AMonsterPawn::StaticClass();
 }
 
 const FMonsterTable& UCharacterDataTable::GetMonster(FName id)

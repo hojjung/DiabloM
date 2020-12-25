@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Characters/UnitPawn.h"
+#include "Widgets/WorldMap/WorldWidget/FloatingStatusBarWidgetCompo.h"
+
 
 #include "MonsterPawn.generated.h"
 
@@ -23,7 +25,11 @@ public:
 public:
 	UPROPERTY()
 	UDungeonManager* m_SpawnedManager;
-
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UStaticMeshComponent* m_StShadow;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UFloatingStatusBarWidgetCompo* m_WorldHpBar;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FMonsterEntityHandle m_MonsterUnitHandle;
@@ -42,16 +48,17 @@ protected:
 	QuadtreeNode* m_CurrentNode;
 
 	bool m_bIsVisible;
+	
 public:
 	bool m_bIsMoving;
+	
 public: //need more monster
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void ShowStatusBar();
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	
     void HideStatusBar();
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	
     bool IsStatusBarActive();
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	
 	void UpdateHealthBar(float perOne);
 
 	virtual void BeginPlay() override;
@@ -86,8 +93,6 @@ public:
 	virtual void SetNode(QuadtreeNode* quadtree_node)override;
 
 	virtual QuadtreeNode* GetCurrentNode()override;
-
-	
 
 protected:
 	void UpdateBound();

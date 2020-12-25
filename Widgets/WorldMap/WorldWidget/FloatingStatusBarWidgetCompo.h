@@ -6,6 +6,7 @@
 #include "Components/WidgetComponent.h"
 #include "FloatingStatusBarWidgetCompo.generated.h"
 
+class UMaterialProgressBar;
 /**
  * 
  */
@@ -14,8 +15,10 @@ class DIABLOM_API UFloatingStatusBarWidgetCompo : public UWidgetComponent
 {
 	GENERATED_BODY()
 
+	
 public:
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	virtual void BeginPlay() override;
+	
     void SetHealthPercentage(float HealthPercentage);
 
 };

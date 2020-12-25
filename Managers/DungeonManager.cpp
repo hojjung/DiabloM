@@ -186,11 +186,11 @@ void UDungeonManager::MonsterDead()
 {
     m_nCurrentMonsterCount--;
 
-    if(m_nCurrentMonsterCount<=m_nClearableCount)
+    //if(m_nCurrentMonsterCount<=m_nClearableCount)
     {
         PRINTF("All MonsterDead");
 
-        OnDungeonCleared();
+        DungeonComplete();
     }
 }
 
@@ -258,7 +258,7 @@ void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* 
     PRINTF("Dgmanager-Clearable Remain Count: %d",m_nClearableCount);
 }
 
-void UDungeonManager::OnDungeonCleared()
+void UDungeonManager::DungeonComplete()
 {
     APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
     UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(PlayerPawn->GetWorld());
