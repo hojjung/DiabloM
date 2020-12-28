@@ -2,17 +2,20 @@
 #include "DiabloGameInstance.h"
 #include "DiabloGameMode.h"
 #include "DungeonMiniMap.h"
-#include "GridFlowMiniMap.h"
 #include "MonsterSpawnManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Datas/DungeonDataTable.h"
 #include "Engine/LevelStreaming.h"
-#include "Objs/Actor/DgMobSpawnPoint.h"
 #include "UObject/UObjectGlobals.h"
 #include "Serialization/AsyncPackageLoader.h"
 #include "Village/Portal.h"
-#include "GenericOctree.h"
+#include "GridFlowBuilder.h"
+#include "GridFlowConfig.h"
+#include "GridFlowMiniMap.h"
 #include "GridFlowModel.h"
+#include "GridFlowAsset.h"
+#include "MoviePlayer.h"
+#include "DungeonThemeAsset.h"
 
 UDungeonManager::UDungeonManager(const FObjectInitializer& objInit):Super(objInit)
 {
@@ -31,25 +34,31 @@ void UDungeonManager::Init()
     m_nClearableCount=0;
     m_nCurrentMonsterCount=0;
     m_bIsPlayerInDungeon=false;
-    m_CurrentDungeon=nullptr;
     m_CurrentDungeonData=nullptr;
     m_nMonsterLevel=-1;
     m_nDungeonType=-1;
     m_nPointIndex=-1;
     
     UDungeonDataTable::GetDungeonTable->GetAllRows("DgManager-NoDungeonData",m_AryDungeonData);
-    
 }
 
 void UDungeonManager::CreateQuadTreeBound()
 {
-    UGridFlowModel* GridModel =Cast<UGridFlowModel>(m_CurrentDungeon.Get()->GetModel());
+    ADiaDungeon* Dg = ADiabloGameMode::Get->GetDungeon();
+    UGridFlowConfig* Config = Cast< UGridFlowConfig>( Dg->GetConfig());
+    UGridFlowModel* GridModel = Cast<UGridFlowModel>(Dg->GetModel());
     UGridFlowTilemap* GridTileMap = GridModel->Tilemap;
-    ADiabloGameMode::Get->SetQuadTreeCoord(m_CurrentDungeon.Get(),GridTileMap);
+    ADiabloGameMode::Get->SetQuadTreeCoord(GridTileMap,Config);
 }
+
+
 
 void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 {
+    BindOnDgDelegate();
+    
+    GetMoviePlayer()->PlayMovie();
+    
     m_nPointIndex=0;
     
     m_nMonsterLevel = StageLevelToDungeonLevel(level);
@@ -58,21 +67,8 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
     
     m_CurrentDungeonData = m_AryDungeonData[m_nDungeonType];
 
-    LoadDungeonLevel(m_CurrentDungeonData);
-
-    CreateQuadTreeBound();
-
-    SpawnMonstersToDungeon(m_nMonsterLevel, m_CurrentDungeonData);
-
-    PortalToRecentDungeon();
-
-    m_OnPortalCreate.Broadcast(true);
-
-    UGridFlowMiniMap::Get->BuildLayout(m_CurrentDungeon->GetModel(),m_CurrentDungeon->GetConfig());
-    m_MatMinimap = UGridFlowMiniMap::Get->CreateMaterialInstance();
-    ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);//UI Set Brush Tick add
-
-    ADiabloPlayerController::Get->CloseMapSelectMenu();
+    BuildDungeonLevel(m_CurrentDungeonData);
+    
 }
 
 
@@ -88,7 +84,6 @@ void UDungeonManager::PortalToVillage(bool isDgCleared)
         m_bIsPlayerInDungeon=false;
 
         ClearDungeon();
-
         
 
         return;
@@ -107,6 +102,8 @@ void UDungeonManager::PortalToVillage(bool isDgCleared)
     m_bIsPlayerInDungeon=false;
 
     ADiabloPlayerController::Get->HideMinimap();//UI Set Brush Tick add
+    //
+    
 }
 
 void UDungeonManager::PortalToRecentDungeon()
@@ -153,7 +150,7 @@ void UDungeonManager::ClearDungeon()
     m_nClearableCount=0;
     
     ADiabloPlayerController::Get->ClientForceGarbageCollection();
-    m_RecentDungeonFeetLoc=m_CurrentDungeon->GetActorLocation();
+    m_RecentDungeonFeetLoc=ADiabloGameMode::Get->GetDungeon()->GetActorLocation();
     
     m_OnPortalCreate.Broadcast(false);
 
@@ -176,7 +173,7 @@ void UDungeonManager::RestartDungeon()
 
 bool UDungeonManager::IsDungeonOpened()
 {
-    return m_CurrentDungeon.Get() != nullptr;
+    return ADiabloGameMode::Get->GetDungeon() != nullptr;
 }
 
 bool UDungeonManager::IsPlayerInDg()
@@ -206,6 +203,8 @@ FVector UDungeonManager::GetCurrentPlayerFeetLoc()
     return Loc;
 }
 
+
+
 int UDungeonManager::StageLevelToDungeonLevel(int stageLevel)
 {
     //FDungeonDataRow
@@ -219,13 +218,53 @@ int UDungeonManager::StageLevelToDungeonType(int stageLevel)
     return 0;
 }
 
-void UDungeonManager::LoadDungeonLevel(FDungeonDataRow* SelectedDungeonData)
+void UDungeonManager::BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData)
 {
-    FName DungeonID=SelectedDungeonData->m_IDPremadeDungeons.GetRandom();
-    
-    m_CurrentDungeon = ADiabloGameMode::Get->GetDungeon(DungeonID);
+    ADiaDungeon* Dg = ADiabloGameMode::Get->GetDungeon();
 
-    m_RecentDungeonFeetLoc=m_CurrentDungeon->GetActorLocation();
+    Dg->Themes.Reset();
+    Dg->Themes.Add(SelectedDungeonData->m_DgTheme);
+    
+    Dg->SetBuilderClass(UGridFlowBuilder::StaticClass());
+
+    UGridFlowConfig* Config = Cast< UGridFlowConfig>( Dg->GetConfig());
+
+    Config->GridFlow = SelectedDungeonData->m_DgGridFlow;
+
+    Config->Instanced = true;
+
+    Dg->BuildDungeon();
+}
+
+void UDungeonManager::OnDgBuildComplete(ADungeon* Dungeon)
+{
+    PRINTF("DgBuildCOmplete");
+}
+
+void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
+{
+    UWorld* World = ADiabloPlayerController::Get->GetWorld();
+    UNavigationSystemBase* NavSystems = (World->GetNavigationSystem());
+    check(NavSystems);
+    UNavigationSystemV1* NavV1 = Cast<UNavigationSystemV1>(NavSystems);
+    NavV1->OnNavigationGenerationFinishedDelegate.Clear();
+    //NavData->RenderingComp->bSelectable;
+    m_RecentDungeonFeetLoc=ADiabloGameMode::Get->GetDungeon()->GetStartPoint();
+    
+    CreateQuadTreeBound();
+
+    SpawnMonstersToDungeon(m_nMonsterLevel, m_CurrentDungeonData);
+
+    PortalToRecentDungeon();
+
+    m_OnPortalCreate.Broadcast(true);
+
+    UGridFlowMiniMap::Get->BuildLayout(ADiabloGameMode::Get->GetDungeon()->GetModel(),ADiabloGameMode::Get->GetDungeon()->GetConfig());
+    m_MatMinimap = UGridFlowMiniMap::Get->CreateMaterialInstance();
+    ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);//UI Set Brush Tick add
+
+    ADiabloPlayerController::Get->CloseMapSelectMenu();
+    PRINTF("OnNavCookComplete");
 }
 
 void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData)
@@ -234,27 +273,21 @@ void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* 
     m_nCurrentMonsterCount=0;
     m_nClearableCount=0;
     
-    if(m_CurrentDungeon->GetArySpawnPoints().Num()<1)
+    if(ADiabloGameMode::Get->GetDungeon()->GetArySpawnPoints().Num()<1)
     {
+        PRINTF("NoSpawnPint");
         return;
     }
     
     UMonsterSpawnManager* SpawnManager = UDiabloGameInstance::Get->GetMonsterSpawn();
     
-    for(FMonsterHordeHandle& Horde :SelectedDungeonData->m_AryHorde)
+    FMonsterHordeHandle& Horde = SelectedDungeonData->m_Horde;
+
+    for(const FTransform& PointTrans : ADiabloGameMode::Get->GetDungeon()->GetArySpawnPoints())
     {
-        if(!SpawnManager->SpawnIter(m_CurrentDungeon->GetArySpawnPoints()[m_nPointIndex++]->GetActorLocation(),
-            *Horde.GetRow<FMonsterHordeRow>(""),m_AryMonsterSpawnedCurrently,MonsterLevel))
-        {
-            break;
-        }
+        SpawnManager->SpawnIter(PointTrans.GetLocation(),*Horde.GetRow<FMonsterHordeRow>(""),m_AryMonsterSpawnedCurrently,MonsterLevel,this);    
     }
 
-    for(AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
-    {
-        Mob->m_SpawnedManager = this;
-    }
-    
     m_nCurrentMonsterCount=m_AryMonsterSpawnedCurrently.Num();
     m_nClearableCount = m_nCurrentMonsterCount *0.1f;
     PRINTF("Dgmanager-Clearable Remain Count: %d",m_nClearableCount);
@@ -293,6 +326,22 @@ void UDungeonManager::DungeonComplete()
     m_CurrentDgVillagePortal = PlayerPawn->GetWorld()->SpawnActor<ADgToVillagePortal>(m_ClassDgVillagePortal, Loc, Rot, Param);
     
     UGridFlowMiniMap::Get->AddTrackActor(m_NamePortalID,m_CurrentDgVillagePortal);
+
+    PRINTF("DgStageClear");
+}
+
+void UDungeonManager::BindOnDgDelegate()
+{
+    UWorld* World = ADiabloPlayerController::Get->GetWorld();
+    UNavigationSystemBase* NavSystems = (World->GetNavigationSystem());
+    check(NavSystems);
+    UNavigationSystemV1* NavV1 = Cast<UNavigationSystemV1>(NavSystems);
+    NavV1->OnNavigationGenerationFinishedDelegate.Clear();
+    NavV1->OnNavigationGenerationFinishedDelegate.AddDynamic(this, &UDungeonManager::OnNavCookComplete);
     
+    ADiabloGameMode::Get->GetDungeon()->OnDungeonBuildComplete.Clear();
+    ADiabloGameMode::Get->GetDungeon()->OnDungeonBuildComplete.AddDynamic(this,&UDungeonManager::OnDgBuildComplete);
+
+    PRINTF("BindDelegate");
 }
 

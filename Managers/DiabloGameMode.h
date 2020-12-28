@@ -5,6 +5,7 @@
 #include "ActionManagerComponent.h"
 #include "DiabloM.h"
 #include "DungeonMiniMap.h"
+#include "GridFlowConfig.h"
 #include "Components/PostProcessComponent.h"
 #include "GameFramework/GameMode.h"
 #include "Objs/Containers/Quadtree.h"
@@ -82,7 +83,7 @@ protected:
 	float m_fMinimapFogOfWarVisiblityDistance;
 	
 	UPROPERTY()
-	TMap<FName,ADiaDungeon*> m_MapDungeonActors;
+	ADiaDungeon* m_MapDungeonActor;
 	
 	//FDelta m_OnTick;
 	
@@ -91,13 +92,11 @@ protected:
 	
 	void InitMinimap();
 	
-	void InitDungeonInstances();
-	
 	void InitSpawnManager();
 	
 	void FindSpawnPoint();
 	
-	void SetDungeonInstanceToMap();
+	void SetDungeonInstanceFromMap();
 	
 	virtual void Tick(float DeltaSeconds) override;
 	
@@ -106,7 +105,7 @@ public:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	ADiaDungeon* GetDungeon(FName id);
+	ADiaDungeon* GetDungeon();
 	
 	APortal* GetSpawnPoint();
 
@@ -126,7 +125,7 @@ public:
 
 	//UGridFlowTilemap*
 
-	void SetQuadTreeCoord(ADiaDungeon* dgActor,UGridFlowTilemap* dgTilemap);
+	void SetQuadTreeCoord(UGridFlowTilemap* dgTilemap,UGridFlowConfig* config);
 
 	void ClearQuadTree();
 };

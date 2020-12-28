@@ -9,5 +9,12 @@ void UFloatingStatusBarWidgetCompo::BeginPlay()
 
 void UFloatingStatusBarWidgetCompo::SetHealthPercentage(float HealthPercentage)
 {
-	Cast<UMaterialProgressBar>( GetUserWidgetObject())->SetProgressValue(HealthPercentage);
+	UUserWidget* WidgetObj = GetUserWidgetObject();
+
+	if(!WidgetObj)
+	{
+		return;
+	}
+	UMaterialProgressBar* WidgetProgressBar=Cast<UMaterialProgressBar>(WidgetObj);
+	WidgetProgressBar->SetProgressValue(HealthPercentage);
 }//Hide show할때마다 다시 위젯 만드는ㄷㅅ

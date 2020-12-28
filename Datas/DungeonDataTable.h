@@ -2,6 +2,8 @@
 
 #include "CharacterDataTable.h"
 #include "DiabloM.h"
+#include "DungeonThemeAsset.h"
+#include "GridFlowAsset.h"
 #include "SpawnDataTable.h"
 #include "UObject/NoExportTypes.h"
 #include "DungeonDataTable.generated.h"
@@ -30,9 +32,7 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FText m_DgShowName;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TArray<FMonsterHordeHandle> m_AryHorde;//이중한개의 호드만 사용
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TArray<FName> m_IDPremadeDungeons;//should be add in stream level
+	FMonsterHordeHandle m_Horde;//이중한개의 호드만 사용
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TArray<TSubclassOf<UDiabloAbility>> m_AryClassPlayerBuff;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -41,6 +41,10 @@ public:
 	TArray<TSubclassOf<UDiabloAbility>> m_AryClassMonsterBuff;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TArray<TSubclassOf<UDiabloAbility>> m_AryClassMonsterDebuff;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UDungeonThemeAsset* m_DgTheme;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UGridFlowAsset* m_DgGridFlow;
 
 	int StageLevelToDungeonLevel(int dgLv)const
 	{

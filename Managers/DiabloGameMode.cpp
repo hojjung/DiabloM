@@ -9,7 +9,6 @@
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Objs/Actor/DiaDungeon.h"
-#include "Objs/Actor/DgMobSpawnPoint.h"
 #include "Village/Portal.h"
 
 ADiabloGameMode* ADiabloGameMode::Get=nullptr;
@@ -79,9 +78,7 @@ void ADiabloGameMode::InitMinimap()
 
 void ADiabloGameMode::StartPlay()
 {
-	SetDungeonInstanceToMap();
-
-	InitDungeonInstances();//이방식의 문제점은 메모리 사용량 증가 //생각보다 적을지도 모른다
+	SetDungeonInstanceFromMap();
 
 	FindSpawnPoint();
 
@@ -104,47 +101,18 @@ void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	m_QuadTree.Reset();
 }
 
-void ADiabloGameMode::SetDungeonInstanceToMap()
+void ADiabloGameMode::SetDungeonInstanceFromMap()
 {
-	m_MapDungeonActors.Reset();
-	
 	for (ADiaDungeon* DungeonInst : TActorRange<ADiaDungeon>(GetWorld()))
 	{
-		m_MapDungeonActors.Emplace(DungeonInst->m_LevelName,DungeonInst);
+		if(DungeonInst)
+		{
+			m_MapDungeonActor = DungeonInst;
+			break;
+		}
 	}
 }
 
-void ADiabloGameMode::InitDungeonInstances()
-{
-	for (ADgMobSpawnPoint* SpawnPointInWorld : TActorRange<ADgMobSpawnPoint>(GetWorld()))
-	{
-		for(auto& DungeonActor :m_MapDungeonActors)
-		{
-			if(DungeonActor.Value->IsMyActor(SpawnPointInWorld))
-			{
-				DungeonActor.Value->AddSpawnPoints(SpawnPointInWorld);
-				break; //found the master
-			}
-		}
-	}
-
-	for (AActor* AllActor : TActorRange<ADgMobSpawnPoint>(GetWorld()))
-	{
-		for(auto& DungeonActor :m_MapDungeonActors)
-		{
-			if(DungeonActor.Value->IsMyActor(AllActor))
-			{
-				DungeonActor.Value->AddMyActors(AllActor);
-				break; //found the master
-			}
-		}
-	}
-
-	for(auto& DungeonActor :m_MapDungeonActors)
-	{
-		DungeonActor.Value->ShuffleSpawnPoints();
-	}
-}
 
 void ADiabloGameMode::InitSpawnManager()
 {
@@ -167,17 +135,17 @@ void ADiabloGameMode::RegisterQuadElement(ITickHideable* actor)
 	 m_QuadTree->AddElement(actor);
 }
 
-void ADiabloGameMode::SetQuadTreeCoord(ADiaDungeon* dgActor,UGridFlowTilemap* dgTilemap)
+void ADiabloGameMode::SetQuadTreeCoord(UGridFlowTilemap* dgTilemap,UGridFlowConfig* config)
 {
-	FVector DgCenterPos = dgActor->GetActorLocation();
+	FVector DgCenterPos = m_MapDungeonActor->GetActorLocation();
 	
 	FVector DgMinPos = DgCenterPos;
 	
 	FVector DgMaxPos = DgCenterPos;
 	//
-	int32 Width = dgTilemap->GetWidth() * 400.f;
+	int32 Width = dgTilemap->GetWidth() * config->GridSize.X;
     
-	int32 Height = dgTilemap->GetHeight() * 400.f;
+	int32 Height = dgTilemap->GetHeight() * config->GridSize.Y;
 	
 	int32 OffsetIdxX = Width / 2;
     
@@ -224,7 +192,7 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 }
 
 
-ADiaDungeon* ADiabloGameMode::GetDungeon(FName id)
+ADiaDungeon* ADiabloGameMode::GetDungeon()
 {
-	return m_MapDungeonActors[id]; //use dungeon location to Player Start?
+	return m_MapDungeonActor;
 }

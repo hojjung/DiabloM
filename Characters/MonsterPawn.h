@@ -22,15 +22,14 @@ class DIABLOM_API AMonsterPawn : public AUnitPawn,public ITickHideable
 public:
 	AMonsterPawn(const FObjectInitializer& objInit);
 
-public:
-	UPROPERTY()
-	UDungeonManager* m_SpawnedManager;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* m_StShadow;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UFloatingStatusBarWidgetCompo* m_WorldHpBar;
 protected:
+	UPROPERTY()
+	UDungeonManager* m_SpawnedManager;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FMonsterEntityHandle m_MonsterUnitHandle;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -65,7 +64,7 @@ public: //need more monster
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	void InitMonster(FDataTableRowHandle unitID, int level);
+	void InitMonster(FDataTableRowHandle unitID, int level=1,UDungeonManager* dgManager=nullptr);
 
 	void GiveExpToPlayer();
 

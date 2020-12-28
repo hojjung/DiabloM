@@ -32,7 +32,7 @@ struct FMonsterHordeRow : public FTableRowBase
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FMonsterSelect>m_AryMonsterEntity;
+	TArray<FMonsterSelect> m_AryMonsterEntity;
 	
 };
 

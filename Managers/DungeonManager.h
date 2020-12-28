@@ -12,6 +12,7 @@
 #include "DungeonManager.generated.h"
 
 
+class ANavigationData;
 class AMonsterPawn;
 struct FDungeonDataRow;
 
@@ -31,6 +32,8 @@ public:
 	int m_nCurrentMonsterCount;
 
 	int m_nClearableCount;
+	
+	
 
 protected:
 	UPROPERTY()
@@ -44,8 +47,6 @@ protected:
 	
 	TArray<FDungeonDataRow*> m_AryDungeonData;//던전 데이터는 돌려쓰면 됨
 	
-	TWeakObjectPtr<ADiaDungeon> m_CurrentDungeon;
-
 	FDungeonDataRow* m_CurrentDungeonData;
 
 	FName m_NamePortalID;
@@ -66,11 +67,13 @@ protected:
 protected:
 	int StageLevelToDungeonType(int stageLevel);
 	
-	void LoadDungeonLevel(FDungeonDataRow* SelectedDungeonData);
+	void BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData);
 	
 	void SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData);
 
 	void DungeonComplete();
+
+	void BindOnDgDelegate();
 	
 public:
 	void Init();
@@ -78,6 +81,7 @@ public:
 	int StageLevelToDungeonLevel(int stageLevel);
 	
 	void CreateQuadTreeBound();
+
 
 	UFUNCTION(BlueprintCallable)
 	void CreateDefaultInfinityDungeon(int level=1);
@@ -102,4 +106,10 @@ public:
 	void MonsterDead();
 
 	FVector GetCurrentPlayerFeetLoc();
+
+	UFUNCTION()
+	void OnNavCookComplete(ANavigationData* NavData);
+	
+	UFUNCTION()
+	void OnDgBuildComplete(ADungeon* Dungeon);
 };

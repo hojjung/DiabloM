@@ -1,9 +1,6 @@
 #include "MonsterPawn.h"
-
-#include "BaseWidgetBlueprint.h"
 #include "DiabloPlayerController.h"
 #include "DungeonMiniMap.h"
-#include "GridFlowMiniMap.h"
 #include "MobUnitMovement.h"
 #include "PlayerDiabloCharacter.h"
 #include "Logic/MonsterSensing.h"
@@ -89,9 +86,9 @@ void AMonsterPawn::BeginPlay()
 }
 
 
-void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level)
+void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level,UDungeonManager* dgManager)
 {
-    
+    m_SpawnedManager = dgManager;
     
     m_MonsterUnitHandle.RowName = unitID.RowName;
     

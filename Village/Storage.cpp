@@ -13,5 +13,6 @@ void AStorage::Interact(AActor* instigator)
 {
     TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
     DiaPC->ShowStorageMenu();
+
 }
 

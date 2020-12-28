@@ -6,36 +6,23 @@
 #include "Core/Dungeon.h"
 #include "DiaDungeon.generated.h"
 
-class ADgMobSpawnPoint;
-
 UCLASS()
 class DIABLOM_API ADiaDungeon : public ADungeon
 {
 	GENERATED_BODY()
 
 public:
+	static FString m_EmitNameEnemy;
+	static FString m_EmitNameStart;
+	
 	ADiaDungeon(const FObjectInitializer& ObjectInitializer);
 	
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = Dungeon)
-	FName m_LevelName;
-protected:
-	UPROPERTY()
-	TArray<ADgMobSpawnPoint*> m_ArySpawnPoints;
-	UPROPERTY()
-	TArray<AActor*> m_AryMyActors;
 public:
 	bool IsMyActor(AActor* actor);
+
+	void ShuffleSpawnPoints(TArray<FTransform>& aryEmit,int iter=1) const;
 	
-	void AddSpawnPoints(ADgMobSpawnPoint* spawnPoint);
+	TArray<FTransform>& GetArySpawnPoints();
 
-	void AddMyActors(AActor* actor);
-
-
-	void ShuffleSpawnPoints(int iter=1);
-	
-
-	const TArray<ADgMobSpawnPoint*>& GetArySpawnPoints() const
-	{
-		return m_ArySpawnPoints;
-	}
+	FVector GetStartPoint();	
 };

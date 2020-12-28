@@ -1,10 +1,11 @@
 #include "DiaDungeon.h"
-#include "DgMobSpawnPoint.h"
 #include "DungeonModelHelper.h"
+
+FString ADiaDungeon::m_EmitNameEnemy ="Enemy";
+FString ADiaDungeon::m_EmitNameStart ="Start";
 
 ADiaDungeon::ADiaDungeon(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer)
 {
-    m_ArySpawnPoints.Reset();
 }
 
 bool ADiaDungeon::IsMyActor(AActor* actor)
@@ -19,29 +20,36 @@ bool ADiaDungeon::IsMyActor(AActor* actor)
     return false;
 }
 
-void ADiaDungeon::AddSpawnPoints(ADgMobSpawnPoint* spawnPoint)
+void ADiaDungeon::ShuffleSpawnPoints(TArray<FTransform>& aryEmit, int iter) const
 {
-    m_ArySpawnPoints.Emplace(spawnPoint);
-}
-
-void ADiaDungeon::AddMyActors(AActor* actor)
-{
-    m_AryMyActors.Emplace(actor);
-}
-
-
-void ADiaDungeon::ShuffleSpawnPoints(int iter)
-{
-    int MaxIndex = m_ArySpawnPoints.Num() - 1;
+	int MaxIndex = aryEmit.Num() - 1;
     
-    for (int j = 0; j < iter; j++)
-    {
-        for (int i = 0; i < m_ArySpawnPoints.Num(); i++)
-        {
-            auto* Temp = m_ArySpawnPoints[i];
-            int RandIndex = FMath::RandRange(0, MaxIndex);
-            m_ArySpawnPoints[i] = m_ArySpawnPoints[RandIndex];
-            m_ArySpawnPoints[RandIndex] = Temp;
-        }
-    }
+	for (int j = 0; j < iter; j++)
+	{
+		for (int i = 0; i < aryEmit.Num(); i++)
+		{
+			FTransform Temp = aryEmit[i];
+			
+			int RandIndex = FMath::RandRange(0, MaxIndex);
+			
+			aryEmit[i] = aryEmit[RandIndex];
+			
+			aryEmit[RandIndex] = Temp;
+		}
+	}
+}
+
+
+ TArray<FTransform>& ADiaDungeon::GetArySpawnPoints() 
+{
+	TArray<FTransform>& EmitAry = m_MapEmitTransform[ADiaDungeon::m_EmitNameEnemy];
+	
+    ShuffleSpawnPoints(EmitAry,3);
+
+	return EmitAry;
+}
+
+FVector ADiaDungeon::GetStartPoint()
+{
+   return m_MapEmitTransform[ADiaDungeon::m_EmitNameStart][0].GetLocation();
 }
