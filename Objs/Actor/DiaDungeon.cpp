@@ -8,6 +8,14 @@ ADiaDungeon::ADiaDungeon(const FObjectInitializer& ObjectInitializer): Super(Obj
 {
 }
 
+void ADiaDungeon::Init()
+{
+	for(FDgDataAsset& Data : m_AryDgDatas)
+	{
+		m_MapDgDatas.Emplace(Data.m_Id,&Data);
+	}
+}
+
 bool ADiaDungeon::IsMyActor(AActor* actor)
 {
     const FName DungeonTag = UDungeonModelHelper::GetDungeonIdTag(this);
@@ -52,4 +60,9 @@ void ADiaDungeon::ShuffleSpawnPoints(TArray<FTransform>& aryEmit, int iter) cons
 FVector ADiaDungeon::GetStartPoint()
 {
    return m_MapEmitTransform[ADiaDungeon::m_EmitNameStart][0].GetLocation();
+}
+
+const FDgDataAsset& ADiaDungeon::GetDgData(FName id)
+{
+	return *m_MapDgDatas[id];
 }

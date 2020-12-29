@@ -76,7 +76,7 @@ void QuadtreeNode::AddElement(ITickHideable* element)
             }
             else
             {
-                childNode->m_Elements.Add(element);
+                childNode->m_Elements.Add(*element);
                 element->SetNode(childNode.Get());
                 return;
             }
@@ -85,18 +85,20 @@ void QuadtreeNode::AddElement(ITickHideable* element)
 
     if(m_BoundingBox->IsInside(position))
     {
-        m_Elements.Add(element);
+        m_Elements.Add(*element);
         element->SetNode(this);
     }
 }
 
 void QuadtreeNode::RemoveElement(ITickHideable* element)
 {
-    m_Elements.Remove(element);
+    TWeakInterfacePtr<ITickHideable> RemoveWant(*element);
+    
+    m_Elements.Remove(RemoveWant);
 }
 
 
-TArray<ITickHideable*> QuadtreeNode::GetElements()
+TArray<TWeakInterfacePtr<ITickHideable>> QuadtreeNode::GetMyElements()
 {
     return m_Elements;
 }
@@ -161,9 +163,9 @@ TSharedPtr<QuadtreeNode> QuadtreeNode::GetNode(FVector position)
     return nullptr;
 }
 
-TArray<ITickHideable*> QuadtreeNode::GetAllElements()
+TArray<TWeakInterfacePtr<ITickHideable>> QuadtreeNode::GetAllElements()
 {
-    TArray<ITickHideable*> result;
+    TArray<TWeakInterfacePtr<ITickHideable>> result;
 
     for (auto childNode : GetChildNodes())
     {
@@ -201,18 +203,9 @@ void QuadtreeNode::HideActors()
     {
         m_bVisible=false;
         
-        for (ITickHideable* Eles : GetAllElements())
+        for (TWeakInterfacePtr<ITickHideable> Eles : GetAllElements())
         {
-            // AActor* ElesActor = Cast<AActor>(Eles);
-            //
-            // if(!Eles ||!ElesActor|| !ElesActor->IsValidLowLevel())
-            // {
-            //     continue;
-            // }
-
-            //던전 클리어시 문제 발생->아이템삭제 및 가비지 돌리기 때문
-
-            if(!Eles)
+            if(!Eles.IsValid())
             {
                 continue;
             }
@@ -239,16 +232,9 @@ void QuadtreeNode::ShowActors()
             m_bHasBeenShowed = true;
         }
         
-        for (ITickHideable* Eles : GetAllElements())
+        for (TWeakInterfacePtr<ITickHideable> Eles : GetAllElements())
         {
-            // AActor* ElesActor = Cast<AActor>(Eles);
-            //
-            // if(!Eles ||!ElesActor|| !ElesActor->IsValidLowLevel())
-            // {
-            //     continue;
-            // }
-
-            if(!Eles)
+            if(!Eles.IsValid())
             {
                 continue;
             }
@@ -331,13 +317,13 @@ ITickHideable* QuadtreeNode::GetNearestActor(FVector2D position)
 {
     TUniquePtr<FGenericPlatformMath> genericMaths(MakeUnique<FGenericPlatformMath>());
 
-    ITickHideable* result = nullptr;
+    TWeakInterfacePtr<ITickHideable> result;
 
     // If the maths object we defined was valid
     if (genericMaths.IsValid())
     {
         // Explore each platform element
-        for (auto platform : GetRootNode()->GetAllElements())
+        for (TWeakInterfacePtr<ITickHideable> platform : GetRootNode()->GetAllElements())
         {
             // If result hasn't been initialised yet, don't bother processing, just assume this is the closest platform
             if (result == nullptr)
@@ -367,6 +353,6 @@ ITickHideable* QuadtreeNode::GetNearestActor(FVector2D position)
             }
         }
     }
-
-    return result;
+    
+    return result.Get();
 }

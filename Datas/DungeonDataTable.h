@@ -42,9 +42,8 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TArray<TSubclassOf<UDiabloAbility>> m_AryClassMonsterDebuff;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	UDungeonThemeAsset* m_DgTheme;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	UGridFlowAsset* m_DgGridFlow;
+	FName m_IDDgTheme;
+	
 
 	int StageLevelToDungeonLevel(int dgLv)const
 	{

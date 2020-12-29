@@ -223,15 +223,17 @@ void UDungeonManager::BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData)
     ADiaDungeon* Dg = ADiabloGameMode::Get->GetDungeon();
 
     Dg->Themes.Reset();
-    Dg->Themes.Add(SelectedDungeonData->m_DgTheme);
+    Dg->Themes.Add(Dg->GetDgData(SelectedDungeonData->m_IDDgTheme).m_DgTheme);
     
     Dg->SetBuilderClass(UGridFlowBuilder::StaticClass());
 
     UGridFlowConfig* Config = Cast< UGridFlowConfig>( Dg->GetConfig());
 
-    Config->GridFlow = SelectedDungeonData->m_DgGridFlow;
+    Config->GridFlow = Dg->GetDgData(SelectedDungeonData->m_IDDgTheme).m_DgGridFlow;
 
     Config->Instanced = true;
+
+    Config->Seed = FMath::Rand();
 
     Dg->BuildDungeon();
 }

@@ -4,6 +4,7 @@
 
 #include "DiabloM.h"
 #include "SharedPointer.h"
+#include "WeakInterfacePtr.h"
 #include "WeakObjectPtr.h"
 #include "Containers/Array.h"
 #include "Objs/Interfaces/TickHideable.h"
@@ -48,7 +49,7 @@ public:
     void RemoveElement(ITickHideable* element);
 
     /** Get elements belonging to this node. */
-    TArray<ITickHideable*> GetElements();
+    TArray<TWeakInterfacePtr<ITickHideable>> GetMyElements();
 
     /** Draw a debug box to outline where the box is. */
     void DrawBoxAroundNode(UWorld* world, FColor colour);
@@ -63,7 +64,7 @@ public:
     TSharedPtr<QuadtreeNode> GetNode(FVector position);
 
     /** Get all elements belonging to this node and any elements which are contained within it's children. */
-    TArray<ITickHideable*> GetAllElements();
+    TArray<TWeakInterfacePtr<ITickHideable>> GetAllElements();
 
     /** Get a copy of the node position member variable. */
     ENodePosition GetNodePosition() const;
@@ -99,7 +100,7 @@ private:
     TSharedPtr<QuadtreeNode> m_ParentNode;
 
     /** Elements held within this node. */
-    TArray<ITickHideable*> m_Elements;
+    TArray<TWeakInterfacePtr<ITickHideable>> m_Elements;
 
     /** Child nodes held by this node. */
     TArray<TSharedPtr<QuadtreeNode>> m_ChildNodes;

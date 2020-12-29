@@ -108,6 +108,7 @@ void ADiabloGameMode::SetDungeonInstanceFromMap()
 		if(DungeonInst)
 		{
 			m_MapDungeonActor = DungeonInst;
+			m_MapDungeonActor->Init();
 			break;
 		}
 	}
