@@ -32,6 +32,8 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FText m_DgShowName;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	bool m_bIsInfinityDg=false;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FMonsterHordeHandle m_Horde;//이중한개의 호드만 사용
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TArray<TSubclassOf<UDiabloAbility>> m_AryClassPlayerBuff;
@@ -41,6 +43,8 @@ public:
 	TArray<TSubclassOf<UDiabloAbility>> m_AryClassMonsterBuff;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TArray<TSubclassOf<UDiabloAbility>> m_AryClassMonsterDebuff;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	FScalableFloat m_DgLevelTable;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FName m_IDDgTheme;
 	

@@ -20,7 +20,7 @@ void UMonsterSpawnManager::UpdateWorld(UWorld* world)
     m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(m_CurrentWorld);
 }
 
-bool UMonsterSpawnManager::SpawnIter(const FVector& centerSpawnLoc,const FMonsterHordeRow& selectedHorde, TArray<AMonsterPawn*>& outMobAry,
+bool UMonsterSpawnManager::SpawnIter(const FVector& centerSpawnLoc,const FMonsterHordeRow& selectedHorde,
                                       int level,UDungeonManager* dgSpawnedManager)
 {
     for (const FMonsterSelect& MobSelected : selectedHorde.m_AryMonsterEntity) 
@@ -36,7 +36,7 @@ bool UMonsterSpawnManager::SpawnIter(const FVector& centerSpawnLoc,const FMonste
                 continue;
             }
 
-            outMobAry.Add(SpawnedMob);
+            m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
 
             SpawnedMob->InitMonster(MobSelected.m_MonsterEntity, level,dgSpawnedManager);
         }
@@ -45,11 +45,51 @@ bool UMonsterSpawnManager::SpawnIter(const FVector& centerSpawnLoc,const FMonste
     return true;
 }
 
+void UMonsterSpawnManager::Reset()
+{
+    for(AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
+    {
+        if(!Mob)
+        {
+            continue;
+        }
+        Mob->Destroy();
+    }
+    
+    m_AryMonsterSpawnedCurrently.Reset();
+}
+
+AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos,bool bSeeHideObj)
+{
+    float Dist = FLT_MAX;
+    
+    AMonsterPawn* ResultMob = nullptr;
+
+    for(AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
+    {
+        if(!Mob || (Mob->IsHidden()&&!bSeeHideObj) || !Mob->IsAlive())
+        {
+            continue;
+        }
+        
+        float DistNew =  FVector::DistSquared2D(Mob->GetActorLocation(),wantPos);
+
+        if(Dist >= DistNew)
+        {
+            Dist = DistNew;
+            
+            ResultMob = Mob;    
+        }
+    }
+
+    return ResultMob;
+}
+
 FVector UMonsterSpawnManager::GetRandomPoint(const FVector& loc, const float& radius)
 {
     FNavLocation ResultLoc;
 
-    if (!m_NavSys->GetRandomPointInNavigableRadius(loc, radius, ResultLoc))
+    if (!m_NavSys->GetRandomReachablePointInRadius(loc, radius, ResultLoc))
     {
         //FAIL
         return loc;
@@ -63,6 +103,7 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
     check(UCharacterDataTable::ClassMonsterPawn);
     
     FActorSpawnParameters Param;
+    Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
     Param.bNoFail = true;
     loc.Z += 88.f;

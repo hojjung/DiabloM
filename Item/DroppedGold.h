@@ -31,6 +31,8 @@ protected:
 	
 	virtual  void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 public:
+	virtual void Interact(AActor* instigator) override;
+	
 	void SetGoldAmount(float amount);
 
 	void DropEnd();
@@ -38,4 +40,6 @@ public:
 	virtual void ShowAll(bool hasBeenShowed) override ;
     	
 	virtual void HideAll(bool hasBeenShowed) override ;
+
+	
 };

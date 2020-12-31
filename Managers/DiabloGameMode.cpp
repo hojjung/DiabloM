@@ -6,6 +6,7 @@
 #include "GridFlowMiniMap.h"
 #include "GridFlowTilemap.h"
 #include "MonsterSpawnManager.h"
+#include "MoviePlayer.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Objs/Actor/DiaDungeon.h"
@@ -91,6 +92,8 @@ void ADiabloGameMode::StartPlay()
 	InitSpawnManager();
 
 	InitMinimap();
+
+	GetMoviePlayer()->StopMovie();
 }
 
 void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)

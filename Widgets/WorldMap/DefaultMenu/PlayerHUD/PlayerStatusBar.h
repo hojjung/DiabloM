@@ -22,6 +22,7 @@ class DIABLOM_API UPlayerStatusBar : public UUserWidget
 public:
 	UPlayerStatusBar(const FObjectInitializer& objInit);
 	void EquipFromSaveData();
+	void StopAutoPlay();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -39,6 +40,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMinimapWidget* m_Minimap;
 	//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UCheckBox* m_AutoPlayButton;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_InteractButton;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -82,5 +85,8 @@ public:
 
 	void UpdateSkillBtn(FSkillDataSpec* spec,int index);
 
+	UFUNCTION()
+	void SetAutoPlay(bool isAuto);
+	
 	friend UMainCanvas;
 };

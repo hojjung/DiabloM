@@ -151,6 +151,7 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level,UDungeonMan
     {
         HideAll(false);
     }
+
 }
 
 

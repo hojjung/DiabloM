@@ -35,6 +35,16 @@ void AHealthSphere::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
                               const FHitResult& SweepResult)
 {
     APlayerDiabloCharacter* Char = Cast<APlayerDiabloCharacter>(OtherActor);
+    
+    if (Char)
+    {
+        Interact(Char);
+    }
+}
+
+void AHealthSphere::Interact(AActor* instigator)
+{
+    APlayerDiabloCharacter* Char = Cast<APlayerDiabloCharacter>(instigator);
 
     if (!Char)
     {

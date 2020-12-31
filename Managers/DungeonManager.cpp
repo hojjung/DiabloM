@@ -17,6 +17,8 @@
 #include "MoviePlayer.h"
 #include "DungeonThemeAsset.h"
 
+
+
 UDungeonManager::UDungeonManager(const FObjectInitializer& objInit):Super(objInit)
 {
     static ConstructorHelpers::FClassFinder<ADgToVillagePortal> FoundPortal(
@@ -57,7 +59,6 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 {
     BindOnDgDelegate();
     
-    GetMoviePlayer()->PlayMovie();
     
     m_nPointIndex=0;
     
@@ -68,6 +69,7 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
     m_CurrentDungeonData = m_AryDungeonData[m_nDungeonType];
 
     BuildDungeonLevel(m_CurrentDungeonData);
+    
     
 }
 
@@ -138,18 +140,16 @@ void UDungeonManager::ClearDungeon()
 {
     ADiabloGameMode::Get->ClearQuadTree();
     
-    for (AMonsterPawn* Pawn : m_AryMonsterSpawnedCurrently)
-    {
-        if(Pawn)
-        {
-            Pawn->Destroy();
-        }
-    }
-    m_AryMonsterSpawnedCurrently.Reset();
+    UMonsterSpawnManager* SpawnManager = UDiabloGameInstance::Get->GetMonsterSpawn();
+
+    SpawnManager->Reset();
+    
     m_nCurrentMonsterCount=0;
+    
     m_nClearableCount=0;
     
     ADiabloPlayerController::Get->ClientForceGarbageCollection();
+    
     m_RecentDungeonFeetLoc=ADiabloGameMode::Get->GetDungeon()->GetActorLocation();
     
     m_OnPortalCreate.Broadcast(false);
@@ -196,22 +196,21 @@ void UDungeonManager::MonsterDead()
 FVector UDungeonManager::GetCurrentPlayerFeetLoc()
 {
     APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
+    
     m_RecentDungeonFeetLoc=PlayerPawn->GetMovementComponent()->GetActorFeetLocation();
+    
     FVector Loc= ADiabloGameMode::Get->GetSpawnPoint()->GetActorLocation();
+    
     Loc.Z+=PlayerPawn->GetCapsule()->GetScaledCapsuleHalfHeight();
 
     return Loc;
 }
-
-
 
 int UDungeonManager::StageLevelToDungeonLevel(int stageLevel)
 {
     //FDungeonDataRow
     return stageLevel;
 }
-
-
 
 int UDungeonManager::StageLevelToDungeonType(int stageLevel)
 {
@@ -235,12 +234,26 @@ void UDungeonManager::BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData)
 
     Config->Seed = FMath::Rand();
 
+    
+    GetMoviePlayer()->PlayMovie();
+    ADiabloPlayerController::Get->SetInputMode(FInputModeGameOnly());
+    ADiabloPlayerController::Get->bBlockInput=true;
     Dg->BuildDungeon();
 }
 
 void UDungeonManager::OnDgBuildComplete(ADungeon* Dungeon)
 {
     PRINTF("DgBuildCOmplete");
+    UNavigationSystemBase* NavSystems = (Dungeon->GetWorld()->GetNavigationSystem());
+    check(NavSystems);
+    UNavigationSystemV1* NavV1 = Cast<UNavigationSystemV1>(NavSystems);
+    NavV1->OnNavigationGenerationFinishedDelegate.Clear();
+    NavV1->OnNavigationGenerationFinishedDelegate.AddDynamic(this, &UDungeonManager::OnNavCookComplete);
+}
+
+ADgToVillagePortal* UDungeonManager::GetDgCompletePortalOpen()
+{
+    return m_CurrentDgVillagePortal;
 }
 
 void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
@@ -267,11 +280,18 @@ void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
 
     ADiabloPlayerController::Get->CloseMapSelectMenu();
     PRINTF("OnNavCookComplete");
+
+    GetMoviePlayer()->StopMovie();
+    ADiabloPlayerController::Get->bBlockInput=false;
+    ADiabloPlayerController::Get->SetInputMode(FInputModeGameAndUI());
 }
 
 void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData)
 {
-    m_AryMonsterSpawnedCurrently.Reset();
+    UMonsterSpawnManager* SpawnManager = UDiabloGameInstance::Get->GetMonsterSpawn();
+
+    SpawnManager->Reset();
+    
     m_nCurrentMonsterCount=0;
     m_nClearableCount=0;
     
@@ -281,16 +301,14 @@ void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* 
         return;
     }
     
-    UMonsterSpawnManager* SpawnManager = UDiabloGameInstance::Get->GetMonsterSpawn();
-    
     FMonsterHordeHandle& Horde = SelectedDungeonData->m_Horde;
 
     for(const FTransform& PointTrans : ADiabloGameMode::Get->GetDungeon()->GetArySpawnPoints())
     {
-        SpawnManager->SpawnIter(PointTrans.GetLocation(),*Horde.GetRow<FMonsterHordeRow>(""),m_AryMonsterSpawnedCurrently,MonsterLevel,this);    
+        SpawnManager->SpawnIter(PointTrans.GetLocation(),*Horde.GetRow<FMonsterHordeRow>(""),MonsterLevel,this);    
     }
 
-    m_nCurrentMonsterCount=m_AryMonsterSpawnedCurrently.Num();
+    m_nCurrentMonsterCount=SpawnManager->GetCurrentMonsters().Num();
     m_nClearableCount = m_nCurrentMonsterCount *0.1f;
     PRINTF("Dgmanager-Clearable Remain Count: %d",m_nClearableCount);
 }
@@ -335,11 +353,7 @@ void UDungeonManager::DungeonComplete()
 void UDungeonManager::BindOnDgDelegate()
 {
     UWorld* World = ADiabloPlayerController::Get->GetWorld();
-    UNavigationSystemBase* NavSystems = (World->GetNavigationSystem());
-    check(NavSystems);
-    UNavigationSystemV1* NavV1 = Cast<UNavigationSystemV1>(NavSystems);
-    NavV1->OnNavigationGenerationFinishedDelegate.Clear();
-    NavV1->OnNavigationGenerationFinishedDelegate.AddDynamic(this, &UDungeonManager::OnNavCookComplete);
+  
     
     ADiabloGameMode::Get->GetDungeon()->OnDungeonBuildComplete.Clear();
     ADiabloGameMode::Get->GetDungeon()->OnDungeonBuildComplete.AddDynamic(this,&UDungeonManager::OnDgBuildComplete);

@@ -33,6 +33,9 @@ protected:
 	FName m_IdBossEnemy;
 
 	FName m_IdSpecialEnemy;
+
+	UPROPERTY()
+	TArray<AMonsterPawn*> m_AryMonsterSpawnedCurrently;
 	
 protected:
 	FVector GetRandomPoint(const FVector& loc,const float& radius);
@@ -43,9 +46,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateWorld(UWorld* world);
 	UFUNCTION(BlueprintCallable)
-	bool SpawnIter(const FVector& centerSpawnLoc,const FMonsterHordeRow& selectedHorde,TArray<AMonsterPawn*>& outMobAry,int level=1,UDungeonManager* dgSpawnedManager=nullptr);
+	bool SpawnIter(const FVector& centerSpawnLoc,const FMonsterHordeRow& selectedHorde,int level=1,UDungeonManager* dgSpawnedManager=nullptr);
 	//
 
-	
+	void Reset();
+
+	FORCEINLINE TArray<AMonsterPawn*>& GetCurrentMonsters()
+	{
+		return m_AryMonsterSpawnedCurrently;
+	}
+
+	AMonsterPawn* GetNearestMonster(const FVector& wantPos,bool bSeeHideObj);
 };
 

@@ -96,7 +96,7 @@ void ADroppedGold::HideAll(bool hasBeenShowed)
 	
 	SetActorEnableCollision(false);
     
-	SetActorHiddenInGame(false);
+	SetActorHiddenInGame(true);
 	
 	
 	m_Imposter->SetHiddenInGame(true);
@@ -116,6 +116,17 @@ void ADroppedGold::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
                              const FHitResult& SweepResult)
 {
 	APlayerDiabloCharacter* Char = Cast<APlayerDiabloCharacter>(OtherActor);
+    
+	if (Char)
+	{
+		Interact(Char);
+	}
+
+}
+
+void ADroppedGold::Interact(AActor* instigator)
+{
+	APlayerDiabloCharacter* Char = Cast<APlayerDiabloCharacter>(instigator);
 
 	if (!Char)
 	{
@@ -140,11 +151,11 @@ void ADroppedGold::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 	}
 
 	if (m_OnTaskEnd.IsBound()) //Pooled
-	{
+		{
 		m_OnTaskEnd.Broadcast(this);
-	}
+		}
 	else //Not Pooled
-	{
+		{
 		Destroy();
-	}
+		}
 }

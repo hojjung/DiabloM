@@ -13,11 +13,6 @@ class DIABLOM_API UMobFSM_Swamer : public UMobFSMBase
 {
     GENERATED_BODY()
 
-public:
- 
-
-   
-
 protected:
     UPROPERTY()
     AMonsterPawn* m_OwnerMonster;

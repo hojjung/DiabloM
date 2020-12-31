@@ -55,6 +55,14 @@ public:
 	AHealthSphere* DropHpSphereActor(APawn* dropCenterActor,float dropRadius);
 
 	void EnqueAllActors(bool dgOpen);
+	
+	ACollisionInteract* GetNearestCollActor(APawn* wantPawn,ACollisionInteract* wantIgnore = nullptr);
+
+	void GetNearestItem(const FVector& PawnPos, ADroppedItem*& outNearItem, float& outNearItemDist,ACollisionInteract* wantIgnore = nullptr);
+
+	void GetNearestGold(const FVector& PawnPos, ADroppedGold*& outNearGold, float& outNearGoldDist,ACollisionInteract* wantIgnore = nullptr);
+
+	void GetNearestHp(const FVector& PawnPos, AHealthSphere*& outNearHpSph, float& outNearHpDist,ACollisionInteract* wantIgnore = nullptr);
 
 protected:
 	void CreateAllItemPool(int itemPoolCount,int goldPoolCount,int hpPoolCount);
@@ -90,6 +98,8 @@ protected:
 	void EnqueGoldActor(ACollisionInteract* collActor);
 	
 	void EnqueHpSphereActor(ACollisionInteract* collActor);
+
+
 };
 
 

@@ -55,14 +55,14 @@ void UMapInfoPopup::SetMonsterAndItemLevel(const FDungeonDataRow* dg_data)
 
 void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 {
-	if (m_CurrentDgData != dg_data)
+	if (m_CurrentDgData != dg_data)//던전 데이터 바뀌면 레벨 초기화
 	{
 		m_nCurrentDgLevel = 1;
 
 		m_TextDgLevel->SetText(FText::AsNumber(m_nCurrentDgLevel));
 
 		m_nMaxDgLevel = 100; //need fix
-	}
+	}//정확히는 해당 던전 데이터가 가진 저장된 맥시멈을 가저와야함
 
 	m_CurrentDgData = dg_data;
 
@@ -72,6 +72,12 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 		return;
 	}
 
+	//if(m_CurrentDgData->m_bIsInfinityDg)
+	{
+		float MaxLevel = m_CurrentDgData->m_DgLevelTable.GetMaxLevel();
+
+		PRINTF("MaxLevel:%f",MaxLevel);
+	}
 
 	m_DgIcon->SetBrushFromTexture(m_CurrentDgData->m_DgIcon);
 

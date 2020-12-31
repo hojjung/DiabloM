@@ -81,7 +81,7 @@ void AUnitPawn::BeginPlay()
     
 }
 
-FPathFollowingRequestResult AUnitPawn::MoveToLocation(FVector goalLocation)
+FPathFollowingRequestResult AUnitPawn::MoveToLocation(FVector goalLocation,float additionalAcceptRadius)
 {
     if (m_PFComp && m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
     {
@@ -94,14 +94,14 @@ FPathFollowingRequestResult AUnitPawn::MoveToLocation(FVector goalLocation)
     MoveReq.SetAllowPartialPath(true);
     MoveReq.SetProjectGoalLocation(false);
     MoveReq.SetNavigationFilter(UNavigationQueryFilter::StaticClass());
-    MoveReq.SetAcceptanceRadius(GetAcceptRadiusSelfOnly()+10.f);
+    MoveReq.SetAcceptanceRadius(GetAcceptRadiusSelfOnly()+10.f+additionalAcceptRadius);
     MoveReq.SetReachTestIncludesAgentRadius(true);
     MoveReq.SetCanStrafe(true);
 
     return MoveTo(MoveReq);
 }
 
-FPathFollowingRequestResult AUnitPawn::MoveToActor(AActor* goalTarget)
+FPathFollowingRequestResult AUnitPawn::MoveToActor(AActor* goalTarget,float additionalAcceptRadius)
 {
     if (m_PFComp && m_PFComp->GetStatus() != EPathFollowingStatus::Idle)
     {
@@ -113,7 +113,7 @@ FPathFollowingRequestResult AUnitPawn::MoveToActor(AActor* goalTarget)
     MoveReq.SetUsePathfinding(true);
     MoveReq.SetAllowPartialPath(true);
     MoveReq.SetNavigationFilter(UNavigationQueryFilter::StaticClass());
-    MoveReq.SetAcceptanceRadius(GetAcceptRadiusToOther());
+    MoveReq.SetAcceptanceRadius(GetAcceptRadiusToOther()+additionalAcceptRadius);
     MoveReq.SetReachTestIncludesAgentRadius(true);
     MoveReq.SetCanStrafe(true);
 

@@ -8,6 +8,7 @@
 #include "AbilitySystem/Ability/PlayerAbility/Regen/PlayerStaminaRegenAbility.h"
 #include "Animations/DiaAniminstance.h"
 #include "Characters/UnitPawn.h"
+#include "Logic/PlayerAutoPlayFSM.h"
 #include "Managers/DiabloCheatManager.h"
 #include "SaveLoad/SaveCharacterStatus.h"
 #include "PlayerDiabloCharacter.generated.h"
@@ -23,7 +24,7 @@ class UPlayerDiabloAttribute;
 class UPlayerHealthPotion;
 class UPlayerHpRegenAbility;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
-
+DECLARE_MULTICAST_DELEGATE(FOnMove);
 UCLASS()
 class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 {
@@ -35,6 +36,9 @@ class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 	friend UDiabloGameInstance;
 public:
 	APlayerDiabloCharacter(const FObjectInitializer& objInit);
+
+public:
+	FOnMove m_OnMove;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
@@ -87,6 +91,8 @@ protected:
 	UPROPERTY()
 	UPlayerSensing* m_PlayerSense;
 	UPROPERTY()
+	UPlayerAutoPlayFSM* m_PlayerAutoPlay;
+	UPROPERTY()
 	USkeletalMeshComponent* m_FocusRenderer;
 	UPROPERTY()
 	USkeletalMesh* m_DefaultFullHairMesh;
@@ -113,7 +119,7 @@ protected:
 	UPROPERTY()
 	TSubclassOf<UPlayerBaseAttack> m_PlayerBaseAttack;
 	
-	IInteractable* m_FocusedInteractable;
+	TWeakInterfacePtr<IInteractable> m_FocusedInteractable;
 	
 	const FAnimStance* m_AnimStance;
 	
@@ -175,9 +181,9 @@ protected:
 
 	void MoveRight(float AxisValue);
 	
-	virtual void FocusTarget(AUnitPawn* target) override;
+	
 
-	void AutoPlayTick(bool useAuto);
+	
 
 	virtual void Tick(float DeltaTime) override;
 	
@@ -207,7 +213,8 @@ protected:
 public:
 	void Init();
 	
-
+	virtual void FocusTarget(AUnitPawn* target) override;
+	
 	UFUNCTION(BlueprintCallable)
     void Revive();
 	UFUNCTION(BlueprintCallable,Category="Interact")
@@ -218,6 +225,7 @@ public:
     void OnAttackRelease();
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
+	void StopMove();
 	UFUNCTION(BlueprintCallable)
     void ResetCombo();
 	
@@ -332,7 +340,7 @@ public:
 
 	FORCEINLINE IInteractable* GetFocusInteractable()
 	{
-		return  m_FocusedInteractable;
+		return  m_FocusedInteractable.Get();
 	}
 	
 	FORCEINLINE float GetGold()
@@ -351,5 +359,7 @@ public:
 	}
 	
 	friend UDiaStatPanel;
+
+    void SetAutoPlay(bool useAuto);
 };
 

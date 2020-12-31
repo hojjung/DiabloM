@@ -10,6 +10,8 @@ ACollisionInteract::ACollisionInteract(const FObjectInitializer& objInit)
 	m_CollSphere = CreateDefaultSubobject<USphereComponent>("Coll00");
 	m_CollSphere->SetCollisionProfileName("PickupItem");
 	m_CollSphere->SetSphereRadius(70.f);
+	m_CollSphere->CanCharacterStepUpOn = ECB_No;
+	
 	RootComponent = m_CollSphere;
 	//
 	m_WidgetNameCard = CreateDefaultSubobject<UWidgetComponent>("NameCard03");

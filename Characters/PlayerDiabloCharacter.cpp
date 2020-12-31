@@ -31,8 +31,6 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_TopCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera00");
 	m_TopCamera->SetupAttachment(m_DissolveCam);
 
-	m_FocusedInteractable = nullptr;
-
 	m_fInteractRange = 300.f;
 	//
 	CreateSkMeshComponent(m_SkBody, &m_SkFace, "SkMesh01");
@@ -112,6 +110,8 @@ void APlayerDiabloCharacter::Init()
 	//
 	m_DissolveCam->Init(m_TopCamera);
 	//
+	m_PlayerAutoPlay=NewObject<UPlayerAutoPlayFSM>(this,UPlayerAutoPlayFSM::StaticClass());
+	m_PlayerAutoPlay->Init(this);
 }
 
 
@@ -760,16 +760,40 @@ void APlayerDiabloCharacter::PlayColorEffect(const FLinearColor& colorWant)//애
 
 void APlayerDiabloCharacter::InteractWithTarget()
 {
-	if (!m_FocusedInteractable)
+	if (!m_FocusedInteractable.IsValid())
 		return;
 
 	m_FocusedInteractable->Interact(this);
-	m_FocusedInteractable = nullptr;
+	m_FocusedInteractable.Clear();
 }
 
-void APlayerDiabloCharacter::AutoPlayTick(bool useAuto)
+void APlayerDiabloCharacter::StopMove()
 {
+	GetMovementComponent()->StopMovementImmediately();
+	m_PFComp->PauseMove(FAIRequestID::CurrentRequest, EPathFollowingVelocityMode::Reset);
+}
+
+void APlayerDiabloCharacter::SetAutoPlay(bool useAuto)
+{
+	if(m_bUseFSM == useAuto)
+	{
+		return;
+	}
+	
 	m_bUseFSM = useAuto;
+
+	StopMove();
+	
+	if(m_bUseFSM)
+	{
+		PRINTF("UseAutoPlay");
+	}
+	else
+	{
+		PRINTF("NotuseAutoPlay");
+		
+	}
+	
 }
 
 void APlayerDiabloCharacter::Tick(float DeltaTime)
@@ -788,8 +812,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 
 	if (m_bUseFSM)
 	{
-		//   m_MonsterSense->Tick();
-		// m_FSM->TickFSM();
+		m_PlayerAutoPlay->TickFSM(DeltaTime);
 	}
 
 
@@ -814,6 +837,8 @@ void APlayerDiabloCharacter::MoveForward(float AxisValue)
 
 	if (m_PlayerCon && (AxisValue != 0.0f))
 	{
+		m_OnMove.Broadcast();
+		
 		const FRotator Rotation = m_PlayerCon->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
@@ -828,6 +853,8 @@ void APlayerDiabloCharacter::MoveRight(float AxisValue)
 
 	if (m_PlayerCon && (AxisValue != 0.0f))
 	{
+		m_OnMove.Broadcast();
+		
 		const FRotator Rotation = m_PlayerCon->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 

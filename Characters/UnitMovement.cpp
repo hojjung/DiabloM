@@ -61,6 +61,7 @@ void UUnitMovement::MoveProceed(float DeltaTime)
 {
     if (!Velocity.IsNearlyZero())
     {
+        Velocity.Z=0.f;
         FVector MoveDelta = Velocity;
         
         MoveDelta*=DeltaTime;

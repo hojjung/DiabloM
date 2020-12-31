@@ -40,8 +40,7 @@ protected:
 	TSubclassOf<ADgToVillagePortal> m_ClassDgVillagePortal;
 	UPROPERTY()
 	ADgToVillagePortal* m_CurrentDgVillagePortal;
-	UPROPERTY()
-	TArray<AMonsterPawn*> m_AryMonsterSpawnedCurrently;
+	
 	UPROPERTY(Transient)
 	UMaterialInterface* m_MatMinimap;
 	
@@ -112,4 +111,6 @@ public:
 	
 	UFUNCTION()
 	void OnDgBuildComplete(ADungeon* Dungeon);
+
+	ADgToVillagePortal* GetDgCompletePortalOpen();
 };

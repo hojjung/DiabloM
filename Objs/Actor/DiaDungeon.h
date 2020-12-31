@@ -19,7 +19,7 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UDungeonThemeAsset* m_DgTheme;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	UGridFlowAsset* m_DgGridFlow;
+	TSoftObjectPtr<UGridFlowAsset> m_DgGridFlow;
 };
 
 UCLASS()

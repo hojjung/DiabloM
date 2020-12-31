@@ -75,6 +75,11 @@ void UPlayerStatusBar::EquipFromSaveData()
     }
 }
 
+void UPlayerStatusBar::StopAutoPlay()
+{
+    m_AutoPlayButton->SetCheckedState(ECheckBoxState::Unchecked);
+}
+
 void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon)
 {
     m_StaminaBar->SetVisibility(ESlateVisibility::Collapsed);
@@ -125,6 +130,11 @@ void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon)
     m_Minimap->Init();
     //
     EquipFromSaveData();
+
+    m_AutoPlayButton->OnCheckStateChanged.AddDynamic(this,&UPlayerStatusBar::SetAutoPlay);
+    StopAutoPlay();
+
+    diaCon->GetPlayerPawn()->m_OnMove.AddUObject(this,&UPlayerStatusBar::StopAutoPlay);
 }
 
 void UPlayerStatusBar::SetHealthBarProgressV(AUnitPawn* pawn)
@@ -208,4 +218,9 @@ void UPlayerStatusBar::UpdateSkill(FSkillDataSpec* spec)
 void UPlayerStatusBar::UpdateSkillBtn(FSkillDataSpec* spec, int index)
 {
     m_SkillUseCanvas->m_AryButtons[index]->ClearSkillSpec();
+}
+
+void UPlayerStatusBar::SetAutoPlay(bool isAuto)
+{
+    ADiabloPlayerController::Get->GetPlayerPawn()->SetAutoPlay(isAuto);
 }

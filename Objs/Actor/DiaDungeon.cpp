@@ -1,5 +1,7 @@
 #include "DiaDungeon.h"
 #include "DungeonModelHelper.h"
+#include "GridFlowConfig.h"
+#include "SceneProviderCommand.h"
 
 FString ADiaDungeon::m_EmitNameEnemy ="Enemy";
 FString ADiaDungeon::m_EmitNameStart ="Start";
@@ -53,7 +55,7 @@ void ADiaDungeon::ShuffleSpawnPoints(TArray<FTransform>& aryEmit, int iter) cons
 	TArray<FTransform>& EmitAry = m_MapEmitTransform[ADiaDungeon::m_EmitNameEnemy];
 	
     ShuffleSpawnPoints(EmitAry,3);
-
+	
 	return EmitAry;
 }
 

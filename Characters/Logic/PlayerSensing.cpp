@@ -36,9 +36,9 @@ bool UPlayerSensing::TickTryFoundInteraction()
             ETraceTypeQuery::TraceTypeQuery3, false, m_OwnedPlayer->m_AryIgnoreActor, EDrawDebugTrace::ForOneFrame, OutHit, true)
         || !OutHit.GetActor())
     {
-        if(m_OwnedPlayer->m_FocusedInteractable)
+        if(m_OwnedPlayer->GetFocusInteractable())
         {
-            m_OwnedPlayer->m_FocusedInteractable=nullptr;
+            m_OwnedPlayer->m_FocusedInteractable.Clear();
         }
         return false;
     }
@@ -46,7 +46,7 @@ bool UPlayerSensing::TickTryFoundInteraction()
     
     IInteractable* FoundIntract = Cast<IInteractable>(OutHit.GetActor());
 
-    m_OwnedPlayer->m_FocusedInteractable=FoundIntract;
+    m_OwnedPlayer->m_FocusedInteractable=TWeakInterfacePtr<IInteractable>( *FoundIntract);
 
     return true;
 }

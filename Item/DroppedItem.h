@@ -26,6 +26,8 @@ protected:
 
 	bool m_bIsOverlapAble;
 
+	bool m_bIsDropEnd;
+
 protected:
 	virtual void BeginPlay() override;
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)

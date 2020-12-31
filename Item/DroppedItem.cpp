@@ -29,8 +29,10 @@ ADroppedItem::ADroppedItem(const FObjectInitializer& objInit): Super(objInit)
     m_WidgetNameCard->SetWidgetClass(FoundWidgetNameCard.Class);
 
     m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-    m_bIsOverlapAble = false;
+    
     m_bIsDroppedInField = false;
+
+    m_bIsDropEnd=false;
 
     m_WidgetNameCard->SetVisibility(false);
 }
@@ -64,6 +66,10 @@ void ADroppedItem::SetItemInstance(FItemInstance& itemInst)
     SetActorHiddenInGame(false);
     m_Imposter->SetHiddenInGame(false);
     m_WidgetNameCard->SetVisibility(false);
+
+    m_bIsOverlapAble = false;
+
+    m_bIsDropEnd = false;
 } 
 
 void ADroppedItem::SetItemVisual(const FItemInstance& ItemData)
@@ -85,8 +91,12 @@ void ADroppedItem::SetItemVisual(const FItemInstance& ItemData)
 
 void ADroppedItem::Interact(AActor* instigator)
 {
-    if(m_ItemInstance.IsEmpty())
+    if(!m_bIsDropEnd)
     {
+        return;
+    }
+    if(m_ItemInstance.IsEmpty())
+    {   
         return;
     }
     
@@ -126,6 +136,10 @@ void ADroppedItem::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
                              UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                              const FHitResult& SweepResult)
 {
+    if(!m_bIsDropEnd)
+    {
+        return;
+    }
     if (m_bIsOverlapAble)
     {
         Interact(OtherActor);
@@ -149,6 +163,8 @@ void ADroppedItem::DropEnd()
 
     m_bIsOverlapAble = GetCurrentItem().IsHighValue();
 
+    m_bIsDropEnd = true;
+    
     RegisterToQuadTreeBound();
 }
 
@@ -181,7 +197,7 @@ void ADroppedItem::HideAll(bool hasBeenShowed)
     
     SetActorEnableCollision(false);
     
-    SetActorHiddenInGame(false);
+    SetActorHiddenInGame(true);
 	
     m_WidgetNameCard->SetVisibility(false);
 	

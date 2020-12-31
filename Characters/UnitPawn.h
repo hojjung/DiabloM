@@ -11,10 +11,9 @@
 #include "AbilitySystem/Ability/DiabloAbility.h"
 #include "Datas/CharacterDataTable.h"
 #include "Logic/MobFSM_Swamer.h"
-
-
 #include "UnitPawn.generated.h"
 
+class UPlayerAutoPlayFSM;
 class UDamageTextWidgetComponent;
 class UDiabloGameInstance;
 DECLARE_MULTICAST_DELEGATE(FOnAttack);
@@ -117,9 +116,9 @@ public:
     UFUNCTION(BlueprintCallable)
     virtual void Die();
     
-    FPathFollowingRequestResult MoveToLocation(FVector goalLocation);
+    FPathFollowingRequestResult MoveToLocation(FVector goalLocation,float additionalAcceptRadius=0.f);
     
-    FPathFollowingRequestResult MoveToActor(AActor* goalTarget);
+    FPathFollowingRequestResult MoveToActor(AActor* goalTarget,float additionalAcceptRadius=0.f);
 
     UFUNCTION(BlueprintCallable,Category="Interact")
     virtual void StartAttack();
@@ -225,6 +224,7 @@ public: //AttributeGetter
 
     friend UMobFSM_Swamer;
     friend UDiabloGameInstance;
+    friend UPlayerAutoPlayFSM;
 
     virtual FVector GetVelocity() const override;
 
