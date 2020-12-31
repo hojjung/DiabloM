@@ -1,4 +1,3 @@
-
 #include "PlayerAutoPlayFSM.h"
 
 #include "Characters/PlayerDiabloCharacter.h"
@@ -13,8 +12,8 @@ void UPlayerAutoPlayFSM::Init(APlayerDiabloCharacter* player)
 	m_RewardManager = UDiabloGameInstance::Get->GetRewardManager();
 	m_SpawnManager = UDiabloGameInstance::Get->GetMonsterSpawn();
 	m_DgManager = UDiabloGameInstance::Get->GetDungeonManager();
-	m_fPickupAbleRadius=300.f;
-	m_fPickupAbleRadius=m_fPickupAbleRadius*m_fPickupAbleRadius;
+	m_fPickupAbleRadius = 300.f;
+	m_fPickupAbleRadius = m_fPickupAbleRadius * m_fPickupAbleRadius;
 	//
 	m_AryStateFunction[static_cast<int>(EFSM::SearchIdle)] = &UPlayerAutoPlayFSM::OnSearchIdle;
 	m_AryStateFunction[static_cast<int>(EFSM::ChaseItem)] = &UPlayerAutoPlayFSM::OnChaseItem;
@@ -23,8 +22,8 @@ void UPlayerAutoPlayFSM::Init(APlayerDiabloCharacter* player)
 	m_AryStateFunction[static_cast<int>(EFSM::Combat)] = &UPlayerAutoPlayFSM::OnCombat;
 	m_AryStateFunction[static_cast<int>(EFSM::ChasePortal)] = &UPlayerAutoPlayFSM::OnChasePortal;
 	m_AryStateFunction[static_cast<int>(EFSM::UsePortal)] = &UPlayerAutoPlayFSM::OnUsePortal;
-	
-	
+
+
 	//m_AryStateFunction[static_cast<int>(EFSM::Return)] = &UMobFSM_Swamer::OnReturn;
 }
 
@@ -32,25 +31,26 @@ void UPlayerAutoPlayFSM::TickFSM(float deltaTime)
 {
 	(this->*m_AryStateFunction[static_cast<int>(m_CurrentState)])();
 
-	if(m_FocusedInteract)
+	if (m_FocusedInteract)
 	{
-		DrawDebugLine(m_OwnedPlayer->GetWorld(),m_OwnedPlayer->GetActorLocation(),m_FocusedInteract->GetActorLocation(),FColor::Red);
+		DrawDebugLine(m_OwnedPlayer->GetWorld(), m_OwnedPlayer->GetActorLocation(),
+		              m_FocusedInteract->GetActorLocation(), FColor::Red);
 	}
 }
 
 void UPlayerAutoPlayFSM::OnSearchIdle()
 {
 	FVector PlayerLoc = m_OwnedPlayer->GetActorLocation();
-	
+
 	m_FocusedInteract = m_RewardManager->GetNearestCollActor(m_OwnedPlayer);
 
 	AMonsterPawn* MobContainHide = m_SpawnManager->GetNearestMonster(PlayerLoc, true);
 
 	AMonsterPawn* MobNotContainHide = m_SpawnManager->GetNearestMonster(PlayerLoc, false);
 
-	if(MobNotContainHide)
+	if (MobNotContainHide)
 	{
-		m_FocusedMonster = MobNotContainHide; 
+		m_FocusedMonster = MobNotContainHide;
 	}
 	else
 	{
@@ -58,48 +58,48 @@ void UPlayerAutoPlayFSM::OnSearchIdle()
 	}
 
 
-	if(!m_FocusedMonster)
+	if (!m_FocusedMonster)
 	{
-		m_FocusedMonster = m_SpawnManager->GetNearestMonster(PlayerLoc,true);
+		m_FocusedMonster = m_SpawnManager->GetNearestMonster(PlayerLoc, true);
 	}
-	
-	if(m_FocusedMonster && m_FocusedInteract)
+
+	if (m_FocusedMonster && m_FocusedInteract)
 	{
 		FVector InteractLoc = m_FocusedInteract->GetActorLocation();
-		
+
 		FVector MonsterLoc = m_FocusedMonster->GetActorLocation();
-		
-		float InteractDist = FVector::DistSquared2D(PlayerLoc,InteractLoc);
-		
-		float MonsterDist = FVector::DistSquared2D(PlayerLoc,MonsterLoc);
+
+		float InteractDist = FVector::DistSquared2D(PlayerLoc, InteractLoc);
+
+		float MonsterDist = FVector::DistSquared2D(PlayerLoc, MonsterLoc);
 		//
-		if(InteractDist <= MonsterDist)
+		if (InteractDist <= MonsterDist)
 		{
 			m_CurrentState = EFSM::ChaseItem;
-		
+
 			return;
 		}
 
 		m_CurrentState = EFSM::ChaseEnemy;
-		
+
 		return;
 	}
 
 	if (m_FocusedInteract)
 	{
 		m_CurrentState = EFSM::ChaseItem;
-		
+
 		return;
 	}
 
 	if (m_FocusedMonster)
 	{
 		m_CurrentState = EFSM::ChaseEnemy;
-		
+
 		return;
 	}
 
-	if(m_DgManager->GetDgCompletePortalOpen())
+	if (m_DgManager->GetDgCompletePortalOpen())
 	{
 		m_CurrentState = EFSM::ChasePortal;
 	}
@@ -107,69 +107,82 @@ void UPlayerAutoPlayFSM::OnSearchIdle()
 
 void UPlayerAutoPlayFSM::OnChaseItem()
 {
-	if(!m_FocusedInteract)
+	if (!m_FocusedInteract)
 	{
 		m_CurrentState = EFSM::SearchIdle;
 	}
 
-	float Dist = FVector::DistSquared2D(m_OwnedPlayer->GetActorLocation(),m_FocusedInteract->GetActorLocation());
+	float Dist = FVector::DistSquared2D(m_OwnedPlayer->GetActorLocation(), m_FocusedInteract->GetActorLocation());
 
-	if(Dist <= m_fPickupAbleRadius)
+	if (Dist <= m_fPickupAbleRadius)
 	{
 		m_CurrentState = EFSM::PickupItem;
-		
+
 		return;
 	}
-	
+
 	EPathFollowingRequestResult::Type RequestResult = m_OwnedPlayer->MoveToActor(m_FocusedInteract);
 
-	if(RequestResult == EPathFollowingRequestResult::Type::AlreadyAtGoal)
+	if (RequestResult == EPathFollowingRequestResult::Type::AlreadyAtGoal)
 	{
-		if(m_FocusedInteract && !m_FocusedInteract->IsHidden())
+		if (m_FocusedInteract && !m_FocusedInteract->IsHidden())
 		{
 			m_CurrentState = EFSM::PickupItem;
 		}
 	}
-	else if(RequestResult == EPathFollowingRequestResult::Type::Failed)
+	else if (RequestResult == EPathFollowingRequestResult::Type::Failed)
 	{
-		if(m_FocusedMonster)
+		if (m_FocusedMonster)
 		{
 			m_CurrentState = EFSM::ChaseEnemy;
 
 			return;
 		}
-		
-		if(m_DgManager->GetDgCompletePortalOpen())
+
+		if (m_DgManager->GetDgCompletePortalOpen())
 		{
 			m_CurrentState = EFSM::ChasePortal;
 
 			return;
 		}
 
-		m_FocusedInteract = m_RewardManager->GetNearestCollActor(m_OwnedPlayer,m_FocusedInteract);
+		m_FocusedInteract = m_RewardManager->GetNearestCollActor(m_OwnedPlayer, m_FocusedInteract);
 
-		if(!m_FocusedInteract)
+		if (!m_FocusedInteract)
 		{
 			m_CurrentState = EFSM::SearchIdle;
 		}
 	}
-
 }
 
 void UPlayerAutoPlayFSM::OnChaseEnemy()
 {
 	FVector PlayerLoc = m_OwnedPlayer->GetActorLocation();
-	
-	if(!m_FocusedMonster || !m_FocusedMonster->IsAlive())
+
+	if (!m_FocusedMonster || !m_FocusedMonster->IsAlive())
 	{
 		m_CurrentState = EFSM::SearchIdle;
 
 		return;
 	}
-	
-	EPathFollowingRequestResult::Type Result=EPathFollowingRequestResult::Failed;
 
-	Result = m_OwnedPlayer->MoveToActor(m_FocusedMonster,300.f);
+	AMonsterPawn* NewMob = m_SpawnManager->GetNearestMonster(PlayerLoc, false, m_FocusedMonster);
+
+	if (NewMob)
+	{
+		float Dist1 = FVector::DistSquared2D(PlayerLoc, NewMob->GetActorLocation());
+
+		float Dist2 = FVector::DistSquared2D(PlayerLoc, m_FocusedMonster->GetActorLocation());
+
+		if (Dist1 <= Dist2)
+		{
+			m_FocusedMonster = NewMob;
+		}
+	}
+
+	EPathFollowingRequestResult::Type Result = EPathFollowingRequestResult::Failed;
+
+	Result = m_OwnedPlayer->MoveToActor(m_FocusedMonster, 180.f);
 
 	if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
 	{
@@ -179,33 +192,34 @@ void UPlayerAutoPlayFSM::OnChaseEnemy()
 
 void UPlayerAutoPlayFSM::OnPickupItem()
 {
-	m_fPickItemTimer-=m_OwnedPlayer->m_fTickDeltaTime;
+	m_fPickItemTimer -= m_OwnedPlayer->m_fTickDeltaTime;
 
-	if(m_fPickItemTimer<=0.f)
+	if (m_fPickItemTimer <= 0.f)
 	{
 		m_FocusedInteract->Interact(m_OwnedPlayer);
-	
-		m_FocusedInteract=nullptr;
-		
-		m_FocusedMonster=nullptr;
+
+		m_FocusedInteract = nullptr;
+
+		m_FocusedMonster = nullptr;
 
 		m_CurrentState = EFSM::SearchIdle;
 
-		m_fPickItemTimer=0.15f;
+		m_fPickItemTimer = 0.15f;
 	}
 }
 
 void UPlayerAutoPlayFSM::OnCombat()
 {
-	if(!m_FocusedMonster||!m_FocusedMonster->IsAlive()||m_FocusedMonster->IsHidden())
+	if (!m_FocusedMonster || !m_FocusedMonster->IsAlive() || m_FocusedMonster->IsHidden())
 	{
 		m_CurrentState = EFSM::SearchIdle;
-		
+
 		m_FocusedMonster = nullptr;
-		
+
 		return;
 	}
-	
+	m_OwnedPlayer->FocusTarget(m_FocusedMonster);
+
 	TryAttack();
 
 	float DistSqr = FVector::DistSquared(m_OwnedPlayer->GetActorLocation(), m_FocusedMonster->GetActorLocation());
@@ -225,7 +239,7 @@ void UPlayerAutoPlayFSM::TryAttack()
 
 void UPlayerAutoPlayFSM::OnChasePortal()
 {
-	EPathFollowingRequestResult::Type Result=EPathFollowingRequestResult::Failed;
+	EPathFollowingRequestResult::Type Result = EPathFollowingRequestResult::Failed;
 
 	Result = m_OwnedPlayer->MoveToActor(m_DgManager->GetDgCompletePortalOpen());
 
@@ -233,12 +247,10 @@ void UPlayerAutoPlayFSM::OnChasePortal()
 	{
 		m_CurrentState = EFSM::UsePortal;
 	}
-	else if(Result == EPathFollowingRequestResult::Type::Failed)
+	else if (Result == EPathFollowingRequestResult::Type::Failed)
 	{
 		m_CurrentState = EFSM::SearchIdle;
 	}
-
-	
 }
 
 void UPlayerAutoPlayFSM::OnUsePortal()
@@ -260,5 +272,5 @@ float UPlayerAutoPlayFSM::GetAttackRangeSqr()
 
 	//스킬들이 사거리 지수를 가지고 있어야함
 
-	return 400 * 400;
+	return 300 * 300;
 }

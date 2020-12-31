@@ -59,7 +59,7 @@ void UMonsterSpawnManager::Reset()
     m_AryMonsterSpawnedCurrently.Reset();
 }
 
-AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos,bool bSeeHideObj)
+AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos,bool bSeeHideObj,AMonsterPawn* ignoreActor)
 {
     float Dist = FLT_MAX;
     
@@ -67,7 +67,7 @@ AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos,boo
 
     for(AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
     {
-        if(!Mob || (Mob->IsHidden()&&!bSeeHideObj) || !Mob->IsAlive())
+        if(Mob == ignoreActor ||!Mob || (Mob->IsHidden()&&!bSeeHideObj) || !Mob->IsAlive())
         {
             continue;
         }

@@ -41,7 +41,7 @@ protected:
 	UPROPERTY()
 	ACollisionInteract* m_FocusedInteract;
 	UPROPERTY()
-	AUnitPawn* m_FocusedMonster;
+	AMonsterPawn* m_FocusedMonster;
 
 	float m_fPickupAbleRadius;
 

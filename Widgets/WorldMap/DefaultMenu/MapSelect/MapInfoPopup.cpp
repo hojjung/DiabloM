@@ -1,5 +1,8 @@
 #include "MapInfoPopup.h"
+
+#include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/DiabloGameMode.h"
 #include "Managers/DungeonManager.h"
 
 #define LOCTEXT_NAMESPACE "DiaMapInfoPopup"
@@ -26,10 +29,21 @@ void UMapInfoPopup::Init()
 	//
 	m_FormatMonsterLevel = LOCTEXT("MapPopupMobLevel", "Monster Level: {0}");
 	m_FormatItemLevel = LOCTEXT("MapPopupMobItemLevel", "Dropable Item (Lv{0}~Lv{1})");
+	m_FormatAutoPlay = LOCTEXT("MapPopupMobAutoPlay", "Auto Play In : {0}");
 	//
 	m_BtnClosePanel->OnClicked.AddDynamic(this, &UMapInfoPopup::ClosePopup);
 	m_BtnEnterDg->OnClicked.AddDynamic(this, &UMapInfoPopup::EnterDungeon);
 	m_BtnBackToVillage->OnClicked.AddDynamic(this, &UMapInfoPopup::PortalToVillage);
+	//
+	m_BtnCancelAutoStart->OnClicked.AddDynamic(this, &UMapInfoPopup::CancelCountdownAutoPlay);
+
+	m_BtnCancelAutoStart->SetVisibility(ESlateVisibility::Hidden);
+
+	m_fTimerMaxDelay = -1.f;
+
+	m_ToggleAutoNext->OnCheckStateChanged.AddDynamic(this, &UMapInfoPopup::SetAutoNext);
+	
+	m_ToggleAutoRepeat->OnCheckStateChanged.AddDynamic(this, &UMapInfoPopup::SetAutoRepeat);
 }
 
 void UMapInfoPopup::SetMonsterAndItemLevel(const FDungeonDataRow* dg_data)
@@ -180,6 +194,22 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 	}
 }
 
+void UMapInfoPopup::SetAutoRepeat(bool b)
+{
+	if(b)
+	{
+		m_ToggleAutoNext->SetCheckedState(ECheckBoxState::Unchecked);
+	}
+}
+
+void UMapInfoPopup::SetAutoNext(bool b)
+{
+	if(b)
+	{
+		m_ToggleAutoRepeat->SetCheckedState(ECheckBoxState::Unchecked);
+	}
+}
+
 
 void UMapInfoPopup::ClosePopup()
 {
@@ -260,5 +290,71 @@ void UMapInfoPopup::PortalToVillage()
 	m_DgManager->PortalToVillage(true);
 	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
 	DiaPC.Get()->CloseMapSelectMenu();
+}
+
+void UMapInfoPopup::SetCountdownEnterDg(float wantDelay)
+{
+	m_fTimerMaxDelay = wantDelay;
+}
+
+void UMapInfoPopup::TryAutoEnter()
+{
+	bool Repeat = m_ToggleAutoRepeat->IsChecked();
+	
+	bool Next = m_ToggleAutoNext->IsChecked();
+
+	if(Repeat&&Next)
+	{
+		PRINTF("MAPINFO -No Auto Setting,");
+		return;
+	}
+	if(Next)
+	{
+		IncreaseDgLv();
+
+		PRINTF("MAPINFO -NextStage");
+	}
+	
+	PRINTF("MAPINFO -Auto Timer Stage On");
+	
+	SetCountdownEnterDg(4.f);
+	
+	m_BtnCancelAutoStart->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMapInfoPopup::CancelCountdownAutoPlay()
+{
+	m_fTimerMaxDelay= -1.f;
+	
+	m_BtnCancelAutoStart->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UMapInfoPopup::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if(m_fTimerMaxDelay<=0.f)
+	{
+		return;
+	}
+
+	m_fTimerMaxDelay -= InDeltaTime;
+
+	if(m_fTimerMaxDelay<=0.f)
+	{
+		EnterDungeon();
+
+		m_fTimerMaxDelay=0.f;
+
+		return;
+	}
+	
+	FFormatOrderedArguments Args;
+
+	FNumberFormattingOptions OO;
+	OO.MaximumFractionalDigits =1;
+	Args.Add(FText::AsNumber(m_fTimerMaxDelay,&OO));
+
+	m_TextTimer->SetText(FText::Format(m_FormatAutoPlay, Args));
 }
 #undef LOCTEXT_NAMESPACE

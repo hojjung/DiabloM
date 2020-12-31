@@ -36,6 +36,8 @@ void UMapSelectPanel::Open(bool isDgCleared)
 		m_MapInfoPopup->m_BtnBackToVillage->SetVisibility(ESlateVisibility::Visible);
 
 		OpenMapInfoPopup(m_CurrentDgData);
+		//auto존재하면 타이머 돌아감
+		m_MapInfoPopup->TryAutoEnter();
 	}
 	else
 	{

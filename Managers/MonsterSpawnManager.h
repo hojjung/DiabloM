@@ -56,6 +56,6 @@ public:
 		return m_AryMonsterSpawnedCurrently;
 	}
 
-	AMonsterPawn* GetNearestMonster(const FVector& wantPos,bool bSeeHideObj);
+	AMonsterPawn* GetNearestMonster(const FVector& wantPos,bool bSeeHideObj,AMonsterPawn* ignoreActor =nullptr);
 };
 

@@ -70,6 +70,12 @@ protected:
 	UCheckBox* m_ToggleAutoRepeat;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UCheckBox* m_ToggleAutoNext;
+	//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnCancelAutoStart;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextTimer;
+	
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnBackToVillage;
@@ -94,6 +100,10 @@ protected:
 	int m_nCurrentDgLevel;
 
 	int m_nMaxDgLevel;
+
+	float m_fTimerMaxDelay;
+
+	FTextFormat m_FormatAutoPlay;
 	
 protected:
 	UImageAndText* CreateImageText(UTexture* texture,FText stringWant);
@@ -108,6 +118,10 @@ public:
 
 public:
 	UFUNCTION()
+	void SetAutoRepeat(bool b);
+	UFUNCTION()
+    void SetAutoNext(bool b);
+	UFUNCTION()
     void ClosePopup();
 	UFUNCTION()
 	void DecreaseDgLv();
@@ -121,6 +135,13 @@ public:
 	void EnterDungeon();
 	UFUNCTION()
     void PortalToVillage();
+
+	void SetCountdownEnterDg(float wantDelay);
 	
+	void TryAutoEnter();
+	UFUNCTION()
+	void CancelCountdownAutoPlay();
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 };
 
