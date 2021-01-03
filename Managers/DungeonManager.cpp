@@ -57,8 +57,9 @@ void UDungeonManager::CreateQuadTreeBound()
 
 void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 {
-    BindOnDgDelegate();
     
+    
+    BindOnDgDelegate();
     
     m_nPointIndex=0;
     
@@ -69,8 +70,8 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
     m_CurrentDungeonData = m_AryDungeonData[m_nDungeonType];
 
     BuildDungeonLevel(m_CurrentDungeonData);
-    
-    
+
+    GetMoviePlayer()->PlayMovie();
 }
 
 
@@ -160,14 +161,21 @@ void UDungeonManager::ClearDungeon()
         m_CurrentDgVillagePortal=nullptr;
     }
 
+    URewardManager* RewardManager = UDiabloGameInstance::Get->GetRewardManager();
+
+    RewardManager->EnqueAllActors(false);
+    
     ADiabloPlayerController::Get->HideMinimap();//UI Set Brush Tick a
 }
 
 void UDungeonManager::RestartDungeon()
 {
     ClearDungeon();
+    
     SpawnMonstersToDungeon(m_nMonsterLevel, m_CurrentDungeonData);
+    
     PortalToRecentDungeon();
+    
     m_OnPortalCreate.Broadcast(true);
 }
 
@@ -235,7 +243,7 @@ void UDungeonManager::BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData)
     Config->Seed = FMath::Rand();
 
     
-    GetMoviePlayer()->PlayMovie();
+    
     ADiabloPlayerController::Get->SetInputMode(FInputModeGameOnly());
     ADiabloPlayerController::Get->bBlockInput=true;
     Dg->BuildDungeon();
@@ -263,7 +271,7 @@ void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
     check(NavSystems);
     UNavigationSystemV1* NavV1 = Cast<UNavigationSystemV1>(NavSystems);
     NavV1->OnNavigationGenerationFinishedDelegate.Clear();
-    //NavData->RenderingComp->bSelectable;
+    
     m_RecentDungeonFeetLoc=ADiabloGameMode::Get->GetDungeon()->GetStartPoint();
     
     CreateQuadTreeBound();
@@ -275,15 +283,20 @@ void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
     m_OnPortalCreate.Broadcast(true);
 
     UGridFlowMiniMap::Get->BuildLayout(ADiabloGameMode::Get->GetDungeon()->GetModel(),ADiabloGameMode::Get->GetDungeon()->GetConfig());
+    
     m_MatMinimap = UGridFlowMiniMap::Get->CreateMaterialInstance();
+    
     ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);//UI Set Brush Tick add
 
     ADiabloPlayerController::Get->CloseMapSelectMenu();
+    
     PRINTF("OnNavCookComplete");
 
-    GetMoviePlayer()->StopMovie();
     ADiabloPlayerController::Get->bBlockInput=false;
+    
     ADiabloPlayerController::Get->SetInputMode(FInputModeGameAndUI());
+    
+    GetMoviePlayer()->StopMovie();
 }
 
 void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData)
@@ -293,6 +306,7 @@ void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* 
     SpawnManager->Reset();
     
     m_nCurrentMonsterCount=0;
+    
     m_nClearableCount=0;
     
     if(ADiabloGameMode::Get->GetDungeon()->GetArySpawnPoints().Num()<1)
@@ -308,8 +322,10 @@ void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* 
         SpawnManager->SpawnIter(PointTrans.GetLocation(),*Horde.GetRow<FMonsterHordeRow>(""),MonsterLevel,this);    
     }
 
-    m_nCurrentMonsterCount=SpawnManager->GetCurrentMonsters().Num();
+    m_nCurrentMonsterCount = SpawnManager->GetCurrentMonsters().Num();
+    
     m_nClearableCount = m_nCurrentMonsterCount *0.1f;
+    
     PRINTF("Dgmanager-Clearable Remain Count: %d",m_nClearableCount);
 }
 

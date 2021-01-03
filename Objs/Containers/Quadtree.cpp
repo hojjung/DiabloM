@@ -147,9 +147,7 @@ void Quadtree::NodeShowHide(TSharedPtr<QuadtreeNode>& OldNodeEntered,TSharedPtr<
 
     OldNodeEntered = newNodeEntered;
      
-    PRINTF("QuadTreeNodeShowHide1");
     OldNodeEntered->ShowActors();
-    PRINTF("QuadTreeNodeShowHide2");
 }
 
 void Quadtree::TryShow9Cell(FVector&& centerPosition)

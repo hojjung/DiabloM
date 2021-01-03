@@ -74,12 +74,12 @@ void UBaseDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attribut
     }
     else if (Attribute == GetPhysicalDamageAttribute())
     {
-        PRINTF("NewPhysDmg:%f",NewValue);
+       // PRINTF("NewPhysDmg:%f",NewValue);
 
     }
     else if (Attribute == GetPhysicalDefenseAttribute())
     {
-        PRINTF("NewPhysDef:%f",NewValue);
+      //  PRINTF("NewPhysDef:%f",NewValue);
     }
 
 
@@ -245,11 +245,11 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
 
     else if (Data.EvaluatedData.Attribute == GetPhysicalDamageAttribute())
     {
-      PRINTF("PhysDmg:%f",GetPhysicalDamage());
+     // PRINTF("PhysDmg:%f",GetPhysicalDamage());
     }
     else if (Data.EvaluatedData.Attribute == GetPhysicalDefenseAttribute())
     {
-        PRINTF("PhysDEf:%f",GetPhysicalDefense());
+      //  PRINTF("PhysDEf:%f",GetPhysicalDefense());
     }
 
     //속도 측정해볼것

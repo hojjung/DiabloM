@@ -1,5 +1,7 @@
 #include "MapInfoPopup.h"
 
+
+#include "Characters/PlayerDiabloCharacter.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DiabloGameMode.h"
@@ -283,6 +285,16 @@ void UMapInfoPopup::EnterDungeon()
 {
 	ClosePopup();
 	m_DgManager->CreateDefaultInfinityDungeon(m_nCurrentDgLevel); //결국 던전 또한 레벨넘기는것으로 바껴야함? 동적 제작해도 되지않나
+
+	bool Repeat = m_ToggleAutoRepeat->IsChecked();
+	
+	bool Next = m_ToggleAutoNext->IsChecked();
+
+	if(Repeat || Next)
+	{
+		ADiabloPlayerController::Get->GetPlayerPawn()->SetAutoPlay(true);
+	}
+	PRINTF("EnterDungeon !");
 }
 
 void UMapInfoPopup::PortalToVillage()
@@ -303,7 +315,7 @@ void UMapInfoPopup::TryAutoEnter()
 	
 	bool Next = m_ToggleAutoNext->IsChecked();
 
-	if(Repeat&&Next)
+	if(!Repeat&&!Next)
 	{
 		PRINTF("MAPINFO -No Auto Setting,");
 		return;
