@@ -376,6 +376,30 @@ void AUnitPawn::HomingRotateToTarget()
     SetActorRotation(NewRot);
 }
 
+bool AUnitPawn::IsEulerAngleAcceptForTarget(float eulerAngle)
+{
+    float AngleForDot = FMath::Cos(FMath::DegreesToRadians(eulerAngle));
+
+    FVector const SelfToOther = GetFocusedTarget()->GetActorLocation() - GetActorLocation();
+
+    FVector const SelfToOtherDir = SelfToOther.GetSafeNormal();
+    
+    FVector const MyFacingDir = GetActorRotation().Vector();
+
+    return ((SelfToOtherDir | MyFacingDir) >= AngleForDot);
+}
+
+bool AUnitPawn::IsDotAngleAcceptForTarget(float dotAngle)
+{
+    FVector const SelfToOther = GetFocusedTarget()->GetActorLocation() - GetActorLocation();
+
+    FVector const SelfToOtherDir = SelfToOther.GetSafeNormal();
+    
+    FVector const MyFacingDir = GetActorRotation().Vector();
+
+    return ((SelfToOtherDir | MyFacingDir) >= dotAngle);
+}
+
 UAbilitySystemComponent* AUnitPawn::GetAbilitySystemComponent() const
 {
     return GetDiaAbilitySystem();
@@ -559,6 +583,11 @@ float AUnitPawn::GetAttackSpeed() const
     return m_AttributeSet->GetAttackSpeed();
 }
 
+float AUnitPawn::GetAttackRange() const
+{
+    return m_AttributeSet->GetAttackRange();
+}
+
 void AUnitPawn::SetUnitStatEffect()
 {
     FGameplayEffectContextHandle EffectContext = m_AbilitySystemComponent->MakeEffectContext();
@@ -571,3 +600,8 @@ void AUnitPawn::SetUnitStatEffect()
         *NewHandle.Data.Get(), m_AbilitySystemComponent);
 }
 
+void AUnitPawn::StopMove()
+{
+    GetMovementComponent()->StopMovementImmediately();
+    m_PFComp->PauseMove(FAIRequestID::CurrentRequest, EPathFollowingVelocityMode::Reset);
+}

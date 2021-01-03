@@ -1,9 +1,11 @@
-#include "MonsterBaseMeleeAttack.h"
+#include "MonsterBaseRangeAttack.h"
+
+#include "AbilitySystem/Ability/AbilitySkillActors/AbilityProjectile.h"
 #include "AbilitySystem/Task/PlayMontageAndWaitForEvent.h"
 #include "Characters/MonsterPawn.h"
 #include "Characters/PlayerDiabloCharacter.h"
 
-UMonsterBaseMeleeAttack::UMonsterBaseMeleeAttack()
+UMonsterBaseRangeAttack::UMonsterBaseRangeAttack()
 {
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
     m_TagTookPhysDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPhysDmg"));
@@ -12,7 +14,7 @@ UMonsterBaseMeleeAttack::UMonsterBaseMeleeAttack()
     m_TagTookIceDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookIceDmg"));
     m_TagTookPoisonDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPoisonDmg"));
     m_TagEventEndAbility = FGameplayTag::RequestGameplayTag(FName("Event.Montage.EndAbility"));
-    m_TagEventBaseAttack = FGameplayTag::RequestGameplayTag(FName("Combat.Ability.Skill.BaseAttack"));
+    m_TagEventBaseAttack = FGameplayTag::RequestGameplayTag(FName("Event.Montage.SpawnProjectile"));
 
     AbilityTags.AddTag(m_TagEventBaseAttack);
     ActivationOwnedTags.AddTag(m_TagEventBaseAttack);
@@ -24,7 +26,7 @@ UMonsterBaseMeleeAttack::UMonsterBaseMeleeAttack()
     m_fAttackAngle = 50.f;
 }
 
-bool UMonsterBaseMeleeAttack::CheckAttackRange(const AActor* other) const
+bool UMonsterBaseRangeAttack::CheckAttackRange(const AActor* other) const
 {
     if (!GetAvatarActorFromActorInfo())
     {
@@ -46,22 +48,22 @@ bool UMonsterBaseMeleeAttack::CheckAttackRange(const AActor* other) const
     return bAngle && bDist;
 }
 
-void UMonsterBaseMeleeAttack::PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection, float AttackSpeed)
+void UMonsterBaseRangeAttack::PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection, float AttackSpeed)
 {
     UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(
         this, NAME_None, MontageToPlay, FGameplayTagContainer(), AttackSpeed,
         playSection, false, 1.0f);
 
-    Task->OnBlendOut.AddDynamic(this, &UMonsterBaseMeleeAttack::OnCompleted);
-    Task->OnCompleted.AddDynamic(this, &UMonsterBaseMeleeAttack::OnCompleted);
-    Task->OnInterrupted.AddDynamic(this, &UMonsterBaseMeleeAttack::OnCancelled);
-    Task->OnCancelled.AddDynamic(this, &UMonsterBaseMeleeAttack::OnCancelled);
-    Task->EventReceived.AddDynamic(this, &UMonsterBaseMeleeAttack::EventReceived);
+    Task->OnBlendOut.AddDynamic(this, &UMonsterBaseRangeAttack::OnCompleted);
+    Task->OnCompleted.AddDynamic(this, &UMonsterBaseRangeAttack::OnCompleted);
+    Task->OnInterrupted.AddDynamic(this, &UMonsterBaseRangeAttack::OnCancelled);
+    Task->OnCancelled.AddDynamic(this, &UMonsterBaseRangeAttack::OnCancelled);
+    Task->EventReceived.AddDynamic(this, &UMonsterBaseRangeAttack::EventReceived);
 
     Task->ReadyForActivation();
 }
 
-void UMonsterBaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+void UMonsterBaseRangeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                               const FGameplayAbilityActorInfo* ActorInfo,
                                               const FGameplayAbilityActivationInfo ActivationInfo,
                                               const FGameplayEventData* TriggerEventData)
@@ -74,7 +76,7 @@ void UMonsterBaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle H
     PlayAbilityAnimation(m_BaseAttackMotion, NAME_None, 1);
 }
 
-void UMonsterBaseMeleeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo,
+void UMonsterBaseRangeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo,
                                             const FGameplayAbilitySpec& Spec)
 {
     Super::OnGiveAbility(ActorInfo, Spec);
@@ -83,41 +85,56 @@ void UMonsterBaseMeleeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* Act
     m_fAttackAngleCos = FMath::Cos(FMath::DegreesToRadians(m_fAttackAngle));
 }
 
-void UMonsterBaseMeleeAttack::OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
+void UMonsterBaseRangeAttack::OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
     Super::OnAvatarSet(ActorInfo, Spec);
     m_MonsterPawn = Cast<AMonsterPawn>(m_OwnerUnit);
 }
 
-void UMonsterBaseMeleeAttack::OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
+void UMonsterBaseRangeAttack::OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
     EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
-void UMonsterBaseMeleeAttack::OnCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
+void UMonsterBaseRangeAttack::OnCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
     EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
-void UMonsterBaseMeleeAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
+void UMonsterBaseRangeAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-    if (EventTag == m_TagEventEndAbility)
+    if (EventTag ==m_TagEventEndAbility)
     {
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
         return;
     }
-
-    if (EventTag == m_TagEventBaseAttack)
+  
+    if ( EventTag == m_TagEventBaseAttack)
     {
-        if (!m_OwnerUnit || !EventData.Target || !CheckAttackRange(EventData.Target))
+        AMonsterPawn* Mob = Cast<AMonsterPawn>(GetAvatarActorFromActorInfo());
+        
+        if (!Mob)
         {
-            //EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+            EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
             return;
         }
+        
+        FTransform MuzzleTransform = Mob->GetActorTransform();
 
-        FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
-            DamageGameplayEffect, GetAbilityLevel());
-
+        FRotator Rotation = Mob->GetActorForwardVector().Rotation();
+        
+        MuzzleTransform.SetRotation(Rotation.Quaternion());
+        
+        MuzzleTransform.SetScale3D(FVector(1.0f));
+    
+        FActorSpawnParameters SpawnParameters;
+        
+        SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    
+        AAbilityProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAbilityProjectile>(m_ClassBullet, MuzzleTransform, GetOwningActorFromActorInfo(),
+            Mob, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+        
+        FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageGameplayEffect, Mob->GetCharacterLevel());
 
         float PhysDmg = m_OwnerUnit->GetAttributeSet()->GetPhysicalDamage();
         DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPhysDamage, PhysDmg);
@@ -134,9 +151,14 @@ void UMonsterBaseMeleeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
         float IceDmg = m_OwnerUnit->GetAttributeSet()->GetAtkCold();
         DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookIceDamage, IceDmg);
 
-        auto* SourceAbili = m_OwnerUnit->GetDiaAbilitySystem();
-        auto* TargetAbili = Cast<AUnitPawn>(EventData.Target)->GetDiaAbilitySystem();
+        FGameplayEffectContextHandle Context = DamageEffectSpecHandle.Data->GetEffectContext();
+	
+        Context.AddInstigator(GetActorInfo().AvatarActor.Get(),Projectile);
 
-        SourceAbili->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data, TargetAbili);
+        DamageEffectSpecHandle.Data->SetContext(Context);
+
+        Projectile->SetEffectSpec(DamageEffectSpecHandle);
+
+        Projectile->FinishSpawning(MuzzleTransform);
     }
 }

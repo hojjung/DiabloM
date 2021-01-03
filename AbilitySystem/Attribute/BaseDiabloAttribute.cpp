@@ -81,8 +81,10 @@ void UBaseDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attribut
     {
       //  PRINTF("NewPhysDef:%f",NewValue);
     }
-
-
+    else if(Attribute == GetAttackRangeAttribute())
+    {
+        NewValue = FMath::Clamp<float>(NewValue, 100.f, 2000.f);
+    }
     
 }
 
@@ -242,7 +244,6 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
             Cast<UUnitMovement>(TargetCharacter->GetMovementComponent())->SetMoveSpeed(GetMoveSpeed());
         }
     }
-
     else if (Data.EvaluatedData.Attribute == GetPhysicalDamageAttribute())
     {
      // PRINTF("PhysDmg:%f",GetPhysicalDamage());

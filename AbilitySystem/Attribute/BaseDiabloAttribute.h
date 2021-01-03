@@ -34,6 +34,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData TookPhysDamage;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, TookPhysDamage)
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData TookFireDamage;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, TookFireDamage)
@@ -58,6 +59,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData AttackSpeed;
 	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AttackSpeed)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData AttackRange;
+	ATTRIBUTE_ACCESSORS(UBaseDiabloAttribute, AttackRange)
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData PhysicalDamage;

@@ -261,6 +261,7 @@ bool UPlayerSensing::CouldSeePawn(APawn* Other, bool bMaySkipChecks) const
     }
     
     FVector const SelfToOtherDir = SelfToOther.GetSafeNormal();
+    
     FVector const MyFacingDir = GetSensorRotation().Vector();
 
     return ((SelfToOtherDir | MyFacingDir) >= m_PeripheralVisionCosine);

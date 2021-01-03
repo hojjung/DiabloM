@@ -110,8 +110,13 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
     //88
     FRotator Rot;
     Rot.Yaw=FMath::RandRange(0.f,360.f);
+
+    FTransform SpawnedTransform;
+    SpawnedTransform.SetScale3D(FVector(1.0f));
+    SpawnedTransform.SetLocation(loc);
+    SpawnedTransform.SetRotation(Rot.Quaternion());
     
-    AMonsterPawn* Mob = m_CurrentWorld->SpawnActor<AMonsterPawn>(UCharacterDataTable::ClassMonsterPawn, loc, Rot, Param);
+    AMonsterPawn* Mob = m_CurrentWorld->SpawnActor<AMonsterPawn>(UCharacterDataTable::ClassMonsterPawn, SpawnedTransform, Param);
 
     UGridFlowMiniMap::Get->AddTrackActor(m_IdEnemy,Mob);
 

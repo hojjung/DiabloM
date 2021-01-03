@@ -10,9 +10,12 @@
 #include "Navigation/PathFollowingComponent.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
 #include "Datas/CharacterDataTable.h"
-#include "Logic/MobFSM_Swamer.h"
+#include "Perception/AIPerceptionComponent.h"
+
 #include "UnitPawn.generated.h"
 
+class UMobFSM_Swamer;
+class UMobFSM_Shooter;
 class UPlayerAutoPlayFSM;
 class UDamageTextWidgetComponent;
 class UDiabloGameInstance;
@@ -20,6 +23,13 @@ DECLARE_MULTICAST_DELEGATE(FOnAttack);
 DECLARE_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, class AUnitPawn*);
 
 class UNavigationSystemV1;
+
+UENUM(BlueprintType)
+enum class ETeamID :uint8
+{
+    Player,
+    Monster
+};
 UCLASS()
 class DIABLOM_API AUnitPawn : public APawn, public IAbilitySystemInterface
 {
@@ -29,8 +39,9 @@ class DIABLOM_API AUnitPawn : public APawn, public IAbilitySystemInterface
 
 public:
     AUnitPawn(const FObjectInitializer& objInit);
-
 protected:
+    UPROPERTY(EditAnywhere)
+    ETeamID m_TeamID;
     UPROPERTY(EditAnywhere)
     bool m_bUseFSM;
     UPROPERTY(EditAnywhere, Category = Abilities)
@@ -156,14 +167,21 @@ public:
     FRotator GetHomingRotToTarget();
 
 public: //AttributeGetter
-
+    void StopMove();
+    
     virtual void HomingRotateToTarget();
+
+    bool IsEulerAngleAcceptForTarget(float eulerAngle);
+
+    bool IsDotAngleAcceptForTarget(float dotAngle);
     
     virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
     
     UDiabloAbilitySystemComp* GetDiaAbilitySystem() const;
 
     float GetAttackSpeed() const;
+
+    float GetAttackRange() const;
 
     
     
@@ -225,6 +243,7 @@ public: //AttributeGetter
     friend UMobFSM_Swamer;
     friend UDiabloGameInstance;
     friend UPlayerAutoPlayFSM;
+    friend UMobFSM_Shooter;
 
     virtual FVector GetVelocity() const override;
 
@@ -235,6 +254,16 @@ public: //AttributeGetter
     virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
     void PlayTookHitMontage();
+
+    FORCEINLINE UPathFollowingComponent* GetPfComp()
+    {
+        return m_PFComp;
+    }
+
+    FORCEINLINE ETeamID GetTeamID()
+    {
+        return m_TeamID;
+    }
 };
 
 

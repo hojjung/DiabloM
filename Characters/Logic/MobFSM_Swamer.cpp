@@ -9,16 +9,19 @@ void UMobFSM_Swamer::Init(AUnitPawn* pawnUnit)
     m_OwnerMonster=Cast<AMonsterPawn>(pawnUnit);
 	check(m_OwnerMonster);
 	
-	m_fAttackRange = 100.f;
+	m_fAttackRange = pawnUnit->GetAttackSpeed();
+	
 	m_CurrentState = EFSM::Idle;
 	//
 	m_AryStateFunction[static_cast<int>(EFSM::Idle)] = &UMobFSM_Swamer::OnIdle;
+	
 	m_AryStateFunction[static_cast<int>(EFSM::Chase)] = &UMobFSM_Swamer::OnChase;
+	
 	m_AryStateFunction[static_cast<int>(EFSM::Combat)] = &UMobFSM_Swamer::OnCombat;
+	
 	m_AryStateFunction[static_cast<int>(EFSM::Return)] = &UMobFSM_Swamer::OnReturn;
 	//
 	m_StartPoint=m_OwnerMonster->GetActorLocation();
-
 }
 
 void UMobFSM_Swamer::TickFSM()
@@ -28,11 +31,10 @@ void UMobFSM_Swamer::TickFSM()
 
 void UMobFSM_Swamer::OnIdle()
 {
-	m_OwnerMonster->m_bIsMoving=false;
-	
 	if (m_OwnerMonster->GetFocusedTarget())
 	{
-		m_StartPoint=m_OwnerMonster->GetActorLocation();
+		//m_StartPoint=m_OwnerMonster->GetActorLocation();
+		
 		m_CurrentState = EFSM::Chase;
 		
 		return;
@@ -46,7 +48,6 @@ void UMobFSM_Swamer::OnIdle()
 
 		if(EPathFollowingStatus::Idle == Status)
 		{
-			m_OwnerMonster->m_bIsMoving=false;
 		}
 		return;
 	}
@@ -65,14 +66,11 @@ void UMobFSM_Swamer::OnIdle()
 
 		m_fIdleTimer = FMath::FRandRange(3.f,7.f);
 		
-		m_OwnerMonster->m_bIsMoving=true;
 	}
 }
 
 void UMobFSM_Swamer::OnChase()
 {
-	m_OwnerMonster->m_bIsMoving=true;
-	
 	bool CanSeeTarget = m_OwnerMonster->CanSeeTarget();
 
 	EPathFollowingRequestResult::Type Result=EPathFollowingRequestResult::Failed;
@@ -121,7 +119,6 @@ void UMobFSM_Swamer::OnChase()
 
 void UMobFSM_Swamer::OnCombat()
 {
-	m_OwnerMonster->m_bIsMoving=false;
 	
 	if(!m_OwnerMonster->GetFocusedTarget() ||!m_OwnerMonster->GetFocusedTarget()->IsAlive())
 	{
@@ -150,14 +147,13 @@ void UMobFSM_Swamer::TryAttack()
 
 void UMobFSM_Swamer::OnReturn()
 {
-	m_OwnerMonster->m_bIsMoving=true;
-	
 	if (m_OwnerMonster->GetFocusedTarget())
 	{
 		m_CurrentState = EFSM::Chase;
 		return;
 	}
-	auto Result= m_OwnerMonster->MoveToLocation(m_StartPoint);
+	
+	FPathFollowingRequestResult Result = m_OwnerMonster->MoveToLocation(m_StartPoint);
 	
 	if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
 	{
@@ -165,6 +161,3 @@ void UMobFSM_Swamer::OnReturn()
 	}
 }
 
-void UMobFSM_Swamer::OnFlee()
-{
-}

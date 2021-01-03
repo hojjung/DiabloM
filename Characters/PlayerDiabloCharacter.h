@@ -225,7 +225,6 @@ public:
     void OnAttackRelease();
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
-	void StopMove();
 	UFUNCTION(BlueprintCallable)
     void ResetCombo();
 	

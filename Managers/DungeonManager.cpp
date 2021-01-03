@@ -369,9 +369,9 @@ void UDungeonManager::DungeonComplete()
 void UDungeonManager::BindOnDgDelegate()
 {
     UWorld* World = ADiabloPlayerController::Get->GetWorld();
-  
     
     ADiabloGameMode::Get->GetDungeon()->OnDungeonBuildComplete.Clear();
+    
     ADiabloGameMode::Get->GetDungeon()->OnDungeonBuildComplete.AddDynamic(this,&UDungeonManager::OnDgBuildComplete);
 
     PRINTF("BindDelegate");

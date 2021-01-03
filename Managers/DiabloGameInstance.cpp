@@ -1,5 +1,4 @@
 #include "DiabloGameInstance.h"
-
 #include "AbilitySystemGlobals.h"
 #include "NavigationSystem.h"
 #include "StartMap/PlayerCreateManager.h"
@@ -45,6 +44,8 @@ void UDiabloGameInstance::Init()
     //
     UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(50.f);
     UGameUserSettings::GetGameUserSettings()->ApplySettings(true);
+    
+    UKismetSystemLibrary::ControlScreensaver(false);
     //
     m_DungeonManager->GetOnDungeonCreate().AddUObject(m_RewardManager,&URewardManager::EnqueAllActors);
 }

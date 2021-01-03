@@ -767,12 +767,6 @@ void APlayerDiabloCharacter::InteractWithTarget()
 	m_FocusedInteractable.Clear();
 }
 
-void APlayerDiabloCharacter::StopMove()
-{
-	GetMovementComponent()->StopMovementImmediately();
-	m_PFComp->PauseMove(FAIRequestID::CurrentRequest, EPathFollowingVelocityMode::Reset);
-}
-
 void APlayerDiabloCharacter::SetAutoPlay(bool useAuto)
 {
 	if(m_bUseFSM == useAuto)

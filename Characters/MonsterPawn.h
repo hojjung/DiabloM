@@ -48,9 +48,6 @@ protected:
 
 	bool m_bIsVisible;
 	
-public:
-	bool m_bIsMoving;
-	
 public: //need more monster
     void ShowStatusBar();
 	
@@ -92,6 +89,12 @@ public:
 	virtual void SetNode(QuadtreeNode* quadtree_node)override;
 
 	virtual QuadtreeNode* GetCurrentNode()override;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsMoving()
+	{
+		return !GetMovementComponent()->Velocity.IsNearlyZero(0.01f);
+	}
 
 protected:
 	void UpdateBound();

@@ -12,7 +12,19 @@ UCLASS()
 class DIABLOM_API UMobFSM_Swamer : public UMobFSMBase
 {
     GENERATED_BODY()
+public:
+    enum EFSM
+    {
+        Idle,
+        Chase,
+        Combat,
+        Return,
+        Length
+    };
 
+protected:
+    EFSM m_CurrentState;
+    
 protected:
     UPROPERTY()
     AMonsterPawn* m_OwnerMonster;
@@ -27,37 +39,29 @@ protected:
     
     float m_fAttackRangeSqr; //from startPos
 
-    float m_fChaseRange;
-
     typedef void (UMobFSM_Swamer::*FPtrState)(void);
 	
     FPtrState m_AryStateFunction[static_cast<int>(EFSM::Length)];
+    
 protected:
-    virtual void OnIdle() override;
-
-    virtual void OnChase() override;
-
-    virtual void OnCombat() override;
-
-    virtual void TryAttack() override;
-
-    virtual void OnReturn() override;
-
-    virtual void OnFlee() override;
-
     virtual void Init(AUnitPawn* pawnUnit) override;
 
     virtual void TickFSM() override;
     
+    void OnIdle();
+
+    void OnChase();
+
+    void OnCombat();
+
+    void TryAttack();
+
+    void OnReturn();
+
 public:
     FORCEINLINE float GetAttackRange()
     {
         return m_fAttackRange;
-    }
-
-    FORCEINLINE float GetChaseRange()
-    {
-        return m_fChaseRange;
     }
 
     FORCEINLINE float GetAttackRangeSqr()

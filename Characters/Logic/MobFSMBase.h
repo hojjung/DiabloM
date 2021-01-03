@@ -14,36 +14,7 @@ UCLASS(Abstract)
 	GENERATED_BODY()
 
 public:
-	enum EFSM
-	{
-		Idle,
-        Chase,
-        Combat,
-        Return,
-        Length
-    };
-
-protected:
-	EFSM m_CurrentState;
-
-
-protected:
-	virtual void OnIdle(){};
-
-	virtual void OnChase(){};
-
-	virtual void OnCombat(){};
-
-	virtual void TryAttack(){};
-
-	virtual void OnReturn(){};
-
-	virtual void OnFlee(){};
-
-public:
-	virtual void Init(AUnitPawn* pawnUnit);
+	virtual void Init(AUnitPawn* pawnUnit){};
 
 	virtual void TickFSM(){};
-
-	
 };

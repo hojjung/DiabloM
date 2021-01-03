@@ -32,6 +32,6 @@ void UMobAnimInstance::UpdateMoveFlag()
         return;
     }
 #endif
-    m_bIsMoving=m_Owner->m_bIsMoving;
+    m_bIsMoving=m_Owner->IsMoving();
 }
 

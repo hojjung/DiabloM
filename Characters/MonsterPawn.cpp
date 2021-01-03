@@ -22,7 +22,6 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     m_SkBody->SetRelativeRotation(FRotator(0, -90.f, 0));
     m_bIsPlaced = false;
     m_DropDataRow = nullptr;
-    m_bIsMoving=false;
     m_CurrentNode=nullptr;
     m_bIsVisible=true;
     //
@@ -88,6 +87,8 @@ void AMonsterPawn::BeginPlay()
 
 void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level,UDungeonManager* dgManager)
 {
+    m_TeamID = ETeamID::Monster;
+    
     m_SpawnedManager = dgManager;
     
     m_MonsterUnitHandle.RowName = unitID.RowName;
@@ -189,8 +190,6 @@ void AMonsterPawn::Die()
 
     m_bUseFSM = false;
     
-    m_bIsMoving=false;
-
     if (IsValid(GetDiaAbilitySystem()))
     {
         GetDiaAbilitySystem()->CancelAllAbilities();
