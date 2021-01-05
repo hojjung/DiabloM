@@ -32,6 +32,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TSubclassOf<AAbilityProjectile> m_ClassBullet;
 	
+	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float m_fAttackRange;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -48,11 +49,17 @@ protected:
 
 	UPROPERTY()
 	AMonsterPawn* m_MonsterPawn;
+	
+	UPROPERTY()
+	TArray<AAbilityProjectile*> m_AryMissle;
 
-	protected:
+	int m_nBulletIndexForPull;
+
+protected:
 	void PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection,float AttackSpeed);
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	void CreateBulletPool(const FGameplayAbilityActorInfo* ActorInfo);
 
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 
@@ -68,4 +75,6 @@ protected:
 
 	UFUNCTION()
     void EventReceived(FGameplayTag EventTag, FGameplayEventData EventData);
+
+	AAbilityProjectile* GetBullet();
 };

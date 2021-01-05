@@ -38,17 +38,23 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Meta = (ExposeOnSpawn = true))
 	FGameplayEffectSpecHandle m_DamageEffectSpecHandle;
 
-public:
-	virtual void BeginPlay() override;
+	FTimerHandle m_EndHandle;
+
+protected:
+	float GetLifeTime() const;
 	
+	virtual void BeginPlay() override;
+
+	void SetProjectileVelocity();
+	
+public:
 	UFUNCTION()
 	virtual void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	float GetLifeTime() const
-	{
-		return m_Range / m_ProjectileMovement->InitialSpeed;
-	}
+	void ShootStart(const FGameplayEffectSpecHandle& effect);
 
-	void SetEffectSpec(const FGameplayEffectSpecHandle& effect);
+	void ShootEnd();
+	
+	void ShootEndSpen(float timer);
 };

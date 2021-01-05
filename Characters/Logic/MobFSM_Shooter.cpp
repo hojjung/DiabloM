@@ -54,8 +54,10 @@ void UMobFSM_Shooter::TickFSM()
 	
 	(this->*m_AryStateFunction[static_cast<int>(m_CurrentState)])();
 
+#if WITH_EDITOR
 	if(m_OwnerMonster)
 		DrawDebugString(m_OwnerMonster->GetWorld(),m_OwnerMonster->GetActorLocation(),GetEnumName(),nullptr,FColor::White,0.1f,false,3);
+#endif
 }
 
 void UMobFSM_Shooter::DecisionByDistance()
@@ -121,7 +123,7 @@ void UMobFSM_Shooter::OnChase()
 
 	if (CanSeeTarget)
 	{
-		Result = m_OwnerMonster->MoveToActor(m_OwnerMonster->GetFocusedTarget(), m_fAttackRange);
+		Result = m_OwnerMonster->MoveToActor(m_OwnerMonster->GetFocusedTarget(), m_fAttackRange-250.f);
 
 		if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
 		{
@@ -180,7 +182,7 @@ void UMobFSM_Shooter::OnTryShoot()
 		return;
 	}
 
-	if (m_fTargetDistSqr >= GetAttackRangeSqr())
+	if (m_fTargetDistSqr > GetAttackRangeSqr())
 	{
 		m_CurrentState = EFSM::Chase;
 
@@ -223,6 +225,7 @@ void UMobFSM_Shooter::OnFlee()
 		if(m_fFleeTimer<=.0f)
 		{
 			m_OwnerMonster->StopMove();
+			
 			DecisionByDistance();
 		}
 

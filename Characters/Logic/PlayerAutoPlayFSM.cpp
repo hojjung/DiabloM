@@ -182,7 +182,7 @@ void UPlayerAutoPlayFSM::OnChaseEnemy()
 
 	EPathFollowingRequestResult::Type Result = EPathFollowingRequestResult::Failed;
 
-	Result = m_OwnedPlayer->MoveToActor(m_FocusedMonster, 180.f);
+	Result = m_OwnedPlayer->MoveToActor(m_FocusedMonster,5.f);
 
 	if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
 	{

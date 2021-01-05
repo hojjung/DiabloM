@@ -76,6 +76,27 @@ void UMonsterBaseRangeAttack::ActivateAbility(const FGameplayAbilitySpecHandle H
     PlayAbilityAnimation(m_BaseAttackMotion, NAME_None, 1);
 }
 
+void UMonsterBaseRangeAttack::CreateBulletPool(const FGameplayAbilityActorInfo* ActorInfo)
+{
+    m_nBulletIndexForPull=0;
+    m_AryMissle.Reset();
+    int i=0;
+    FVector Location = ActorInfo->OwnerActor->GetActorLocation();
+    
+    FRotator Rot(0.f,0.f,0.f);
+    FActorSpawnParameters Param;
+    Param.bNoFail = true;
+    Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    
+    while(i++<3)
+    {
+        AAbilityProjectile* SpawnedBullet = ActorInfo->OwnerActor->GetWorld()->SpawnActor<AAbilityProjectile>(
+            m_ClassBullet, Location, Rot, Param);
+        
+        m_AryMissle.Emplace(SpawnedBullet);
+    }
+}
+
 void UMonsterBaseRangeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo,
                                             const FGameplayAbilitySpec& Spec)
 {
@@ -83,6 +104,8 @@ void UMonsterBaseRangeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* Act
     m_fAttackRange = m_OwnerUnit->GetAttackRange();
     m_fAttackRangeSqr = m_fAttackRange * m_fAttackRange;
     m_fAttackAngleCos = FMath::Cos(FMath::DegreesToRadians(m_fAttackAngle));
+    //
+    CreateBulletPool(ActorInfo);
 }
 
 void UMonsterBaseRangeAttack::OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
@@ -127,12 +150,12 @@ void UMonsterBaseRangeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
         
         MuzzleTransform.SetScale3D(FVector(1.0f));
     
-        FActorSpawnParameters SpawnParameters;
-        
-        SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-    
-        AAbilityProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAbilityProjectile>(m_ClassBullet, MuzzleTransform, GetOwningActorFromActorInfo(),
-            Mob, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+        AAbilityProjectile* Projectile = GetBullet();
+
+        Projectile->SetActorRotation(Rotation);
+        Projectile->SetActorLocation(Mob->GetActorLocation());
+
+        //Projectile->SetActorTransform(MuzzleTransform);
         
         FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageGameplayEffect, Mob->GetCharacterLevel());
 
@@ -157,8 +180,17 @@ void UMonsterBaseRangeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
 
         DamageEffectSpecHandle.Data->SetContext(Context);
 
-        Projectile->SetEffectSpec(DamageEffectSpecHandle);
-
-        Projectile->FinishSpawning(MuzzleTransform);
+        Projectile->ShootStart(DamageEffectSpecHandle);
+        
     }
+}
+
+AAbilityProjectile* UMonsterBaseRangeAttack::GetBullet()
+{
+    if(m_nBulletIndexForPull>=m_AryMissle.Num())
+    {
+        m_nBulletIndexForPull=0;
+    }
+    
+    return m_AryMissle[m_nBulletIndexForPull++];
 }

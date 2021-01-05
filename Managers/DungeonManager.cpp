@@ -16,7 +16,7 @@
 #include "GridFlowAsset.h"
 #include "MoviePlayer.h"
 #include "DungeonThemeAsset.h"
-
+#include "GridDungeonBuilder.h"
 
 
 UDungeonManager::UDungeonManager(const FObjectInitializer& objInit):Super(objInit)
@@ -234,14 +234,16 @@ void UDungeonManager::BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData)
     
     Dg->SetBuilderClass(UGridFlowBuilder::StaticClass());
 
-    UGridFlowConfig* Config = Cast< UGridFlowConfig>( Dg->GetConfig());
-
-    Config->GridFlow = Dg->GetDgData(SelectedDungeonData->m_IDDgTheme).m_DgGridFlow;
-
-    Config->Instanced = true;
-
-    Config->Seed = FMath::Rand();
-
+     UGridFlowConfig* Config = Cast< UGridFlowConfig>( Dg->GetConfig());
+    
+     Config->GridFlow = Dg->GetDgData(SelectedDungeonData->m_IDDgTheme).m_DgGridFlow;
+    
+     Config->Instanced = true;
+    
+     Config->Seed = FMath::Rand();
+    
+     Config->GridSize = FVector(200.f,200.f,100.f);
+    
     
     
     ADiabloPlayerController::Get->SetInputMode(FInputModeGameOnly());

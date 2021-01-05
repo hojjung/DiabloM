@@ -444,13 +444,13 @@ FVector URewardManager::GetQuadControlPoint(FVector start, FVector end, float he
 
 ACollisionInteract* URewardManager::SpawnInteractActor(TSubclassOf<ACollisionInteract> classWant)
 {
-	FTransform SpawnedTransform;
-	SpawnedTransform.SetScale3D(FVector(1.0f));
-	SpawnedTransform.SetLocation(m_HidingPoint);
 	FActorSpawnParameters Param;
+	
 	Param.bNoFail = true;
 
-	ACollisionInteract* DroppedActor = UDiabloGameInstance::Get->GetWorld()->SpawnActor<ACollisionInteract>(classWant,SpawnedTransform,Param);
+	FRotator Rot(0.f,0.f,0.f);
+	
+	ACollisionInteract* DroppedActor = UDiabloGameInstance::Get->GetWorld()->SpawnActor<ACollisionInteract>(classWant,m_HidingPoint,Rot,Param);
 
 	return DroppedActor;
 }
