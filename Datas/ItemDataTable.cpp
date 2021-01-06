@@ -1,5 +1,5 @@
 #include "ItemDataTable.h"
-#include "AbilitySystem/Ability/PlayerAbility/BaseAttack/PlayerBaseAttack.h"
+#include "AbilitySystem/Ability/PlayerAbility/BaseSkillTemplate/PlayerBaseAttack.h"
 #include "AbilitySystem/GameEffect/ItemOptionGameEffect.h"
 
 UDataTable* UItemDataTable::GetTierTable = nullptr;

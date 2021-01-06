@@ -10,7 +10,7 @@
 #include "Objs/Interfaces/Interactable.h"
 #include "Item/Weapon.h"
 #include "AbilitySystem/Ability/DiabloAbility.h"
-#include "AbilitySystem/Ability/PlayerAbility/BaseAttack/PlayerBaseAttack.h"
+#include "AbilitySystem/Ability/PlayerAbility/BaseSkillTemplate/PlayerBaseAttack.h"
 #include "AbilitySystem/Ability/PlayerAbility/PlayerHealthPotion.h"
 #include "AbilitySystem/Ability//PlayerAbility/Regen/PlayerHpRegenAbility.h"
 #include "AbilitySystem/Ability//PlayerAbility/Regen/PlayerManaRegenAbility.h"

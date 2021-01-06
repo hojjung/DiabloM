@@ -51,29 +51,21 @@ void UPlayerBaseAttack::PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName 
 
 }
 
-void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-                                        const FGameplayAbilityActorInfo* ActorInfo,
-                                        const FGameplayAbilityActivationInfo ActivationInfo,
-                                        const FGameplayEventData* TriggerEventData)
+void UPlayerBaseAttack::TryDashAttack(const FGameplayAbilityActorInfo* ActorInfo)
 {
-    if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
-    {
-        EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-    }
-
-    
     float AttackSpeed = m_PlayerPawn->GetAttackSpeed();
-
+    
     auto* Movement=GetMovement(m_PlayerPawn);
+    
     Movement->SetMoveSpeedRatio(0.25f);
-
+    
     float DistSqred;
     FVector DashNormal;
     
     if(IsDashable(ActorInfo,DistSqred,DashNormal))
     {
         PlayAbilityAnimation(m_BaseAttackMotion,"DashAttack" ,2);
-
+    
         float Accept=m_PlayerPawn->GetAcceptRadiusToOther();
         float AcceptSqr=Accept*Accept;
         DashAttack(Movement,DashNormal,FMath::Sqrt(DistSqred-AcceptSqr),m_fDashTime);
@@ -84,12 +76,42 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     }
 }
 
+void UPlayerBaseAttack::TryNormalAttack()
+{
+    float AttackSpeed = m_PlayerPawn->GetAttackSpeed();
+    
+    auto* Movement=GetMovement(m_PlayerPawn);
+    
+    Movement->SetMoveSpeedRatio(0.25f);
+    
+    PlayAbilityAnimation(m_BaseAttackMotion,GetSectionName() ,AttackSpeed);
+}
+
+void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+                                        const FGameplayAbilityActorInfo* ActorInfo,
+                                        const FGameplayAbilityActivationInfo ActivationInfo,
+                                        const FGameplayEventData* TriggerEventData)
+{
+    if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
+    {
+        EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+    }
+
+}
+
 void UPlayerBaseAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
     Super::OnGiveAbility(ActorInfo, Spec);
 
     m_AryMontageSections = m_BaseAttackMotion->GetArySections();
+    
     ResetComboSection();
+    
+    //m_fAttackRange = m_OwnerUnit->GetAttackRange();
+    
+    m_fAttackRangeSqr = m_fAttackRange * m_fAttackRange;
+    
+    m_fAttackAngleCos = FMath::Cos(FMath::DegreesToRadians(m_fAttackAngle));
 }
 
 void UPlayerBaseAttack::ResetComboSection()
@@ -130,27 +152,8 @@ void UPlayerBaseAttack::EventReceived(FGameplayTag EventTag, FGameplayEventData 
             EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
             return;
         }
-        
 
-        FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
-            DamageGameplayEffect, GetAbilityLevel());
-
-        float PhysDmg=PlayerChar->GetAttributeSet()->GetPhysicalDamage()*PlayerChar->GetBonusDamage();
-        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPhysDamage,PhysDmg);
-
-        float FireDmg=PlayerChar->GetAttributeSet()->GetAtkFire()*PlayerChar->GetBonusDamage();
-        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookFireDamage,FireDmg);
-
-        float ElecDmg=PlayerChar->GetAttributeSet()->GetAtkElec()*PlayerChar->GetBonusDamage();
-        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookElecDamage,ElecDmg);
-
-        float PoisonDmg=PlayerChar->GetAttributeSet()->GetAtkPoison()*PlayerChar->GetBonusDamage();
-        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPoisonDamage,PoisonDmg);
-
-        float IceDmg=PlayerChar->GetAttributeSet()->GetAtkCold()*PlayerChar->GetBonusDamage();
-        DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookIceDamage,IceDmg);
-
-        PlayerChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data,TargetChar->GetDiaAbilitySystem());
+        //SandBox
     }
 }
 
@@ -185,19 +188,43 @@ bool UPlayerBaseAttack::IsDashable(const FGameplayAbilityActorInfo* ActorInfo,fl
     {
         return false;
     }
-    float AcceptRadius=70.f;
     
     FVector Location1 = PlayerChar->GetActorLocation();
+    
     FVector Location2 = PlayerChar->GetFocusedTarget()->GetActorLocation();
 
     float DistSqr2D=FVector::DistSquared2D(Location1,Location2);
+    
     outDistSqr=DistSqr2D;
+    
     outDashNormal=(Location2 -Location1).GetSafeNormal();
+    
     return DistSqr2D >m_fDashLimitRange*m_fDashLimitRange; 
 }
 
+bool UPlayerBaseAttack::CheckAttackRange(const AActor* other) const
+{
+    if (!GetAvatarActorFromActorInfo())
+    {
+        return false;
+    }
+
+    FVector const OtherLoc = other->GetActorLocation();
+    FVector const MyLoc = GetAvatarActorFromActorInfo()->GetActorLocation();
+    FVector const SelfToOther = OtherLoc - MyLoc;
+    FVector const SelfToOtherDir = SelfToOther.GetSafeNormal();
+    FVector const MyFacingDir = GetAvatarActorFromActorInfo()->GetActorRotation().Vector();
+
+    bool bAngle = (SelfToOtherDir | MyFacingDir) >= m_fAttackAngleCos; //벡터의 내적
+
+    float DistSqr = FVector::DistSquared2D(OtherLoc, MyLoc);
+    bool bDist = DistSqr < m_fAttackRangeSqr;
+
+    return bAngle && bDist;
+}
+
 void UPlayerBaseAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-    const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+                                   const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
     Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
     GetMovement(Cast<APawn>( CurrentActorInfo->AvatarActor.Get()))->SetMoveSpeedRatio(1.f);

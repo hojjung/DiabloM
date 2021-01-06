@@ -113,10 +113,6 @@ public:
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, LifeSteal)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData BashChance;
-	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, BashChance)//Max 0.65
-
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData CriticalChance;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, CriticalChance)//Max 95%
 

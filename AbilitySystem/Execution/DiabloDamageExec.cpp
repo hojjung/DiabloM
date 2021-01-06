@@ -37,7 +37,6 @@ public:
     //7
     DECLARE_ATTRIBUTE_CAPTUREDEF(LifeSteal);
     DECLARE_ATTRIBUTE_CAPTUREDEF(DoubleAttackChance);
-    DECLARE_ATTRIBUTE_CAPTUREDEF(BashChance);
     DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalChance);
     DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalDamage);
     //5
@@ -68,7 +67,6 @@ public:
         //DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, 	AtkPoison		    		, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseDiabloAttribute, Accuracy, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, LifeSteal, Source, true);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, BashChance, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CriticalChance, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CriticalDamage, Source, true);
         //5
@@ -128,7 +126,6 @@ UDiabloDamageExec::UDiabloDamageExec()
     RelevantAttributesToCapture.Add(GetDamageStatics().AccuracyDef);
     RelevantAttributesToCapture.Add(GetDamageStatics().LifeStealDef);
     RelevantAttributesToCapture.Add(GetDamageStatics().DoubleAttackChanceDef);
-    RelevantAttributesToCapture.Add(GetDamageStatics().BashChanceDef);
     RelevantAttributesToCapture.Add(GetDamageStatics().CriticalChanceDef);
     RelevantAttributesToCapture.Add(GetDamageStatics().CriticalDamageDef);
     //
@@ -268,8 +265,6 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
                                                                EvaluationParameters, LCriticalChance);
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetDamageStatics().CriticalDamageDef,
                                                                EvaluationParameters, LCriticalDamage);
-    ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetDamageStatics().BashChanceDef, EvaluationParameters,
-                                                               LBashChance);
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetDamageStatics().DmgReductionDef, EvaluationParameters,
                                                                LDmgReduction);
     //

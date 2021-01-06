@@ -64,7 +64,6 @@ protected:
 	TArray<USkillLearnButton*> m_AryAllSkillLearnButton;
 
 public:
-	
 	void Init(UPlayerDiabloAbilitySystemComp* playerSkillComp);
 
 private:

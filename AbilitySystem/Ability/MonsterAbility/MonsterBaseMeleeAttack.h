@@ -30,6 +30,7 @@ protected:
 	float m_fAttackAngle;
 
 	float m_fAttackRangeSqr;
+	
 	float m_fAttackAngleCos;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)

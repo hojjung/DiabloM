@@ -86,6 +86,7 @@ void UDiaSkillUseButton::UseSkill()
 	if(m_fMaxCD>0.f)
 	{
 		m_SkillCooldown->StartCooldown();
+		
 		m_EquippedSkillSpec->m_LearnBtn->StartCooldown();
 	}
 }
@@ -121,11 +122,14 @@ void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 	if(CD<=0.f)
 	{
 		ClearCooldown();
+		
 		m_EquippedSkillSpec->m_LearnBtn->ClearCooldown();
+		
 		return;
 	}
 	
 	m_SkillCooldown->SetCooldownProgress(CD,m_fMaxCD);//0이 끝임
+	
 	m_EquippedSkillSpec->m_LearnBtn->SetCooldownProgress(CD,m_fMaxCD);//0이 끝임
 }
 

@@ -54,8 +54,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_CriticalDmg;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_Basher;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_FireDmg;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_FrostDmg;
@@ -143,7 +141,6 @@ protected:
     void UpdateCastSpeed(float v);
     void UpdateCritical(float v);
 	void UpdateCriticalDmg(float v);
-    void UpdateBasher(float v);
     void UpdateFireDmg(float v);
     void UpdateFrostDmg(float v);
     void UpdatePoisonDmg(float v);

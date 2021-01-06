@@ -83,7 +83,6 @@ void UDiaStatPanel::UpdateAllAttributeTextWrap()
     UpdateCastSpeed(m_AttributeSet->GetCastingSpeed());
     UpdateCritical(m_AttributeSet->GetCriticalChance());
     UpdateCriticalDmg(m_AttributeSet->GetCriticalDamage()); //default 150
-    UpdateBasher(m_AttributeSet->GetBashChance());
 
     UpdateFireDmg(m_AttributeSet->GetAtkFire());
     UpdateFrostDmg(m_AttributeSet->GetAtkCold());
@@ -202,13 +201,6 @@ void UDiaStatPanel::UpdateCriticalDmg(float v)
 {
     FText TextCreated = GetPercentFormat(v);
     m_CriticalDmg->SetText(TextCreated);
-}
-
-
-void UDiaStatPanel::UpdateBasher(float v)
-{
-    FText TextCreated = GetPercentFormat(v);
-    m_Basher->SetText(TextCreated);
 }
 
 void UDiaStatPanel::UpdateFireDmg(float v)

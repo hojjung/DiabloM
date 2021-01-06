@@ -104,7 +104,6 @@ struct DiabloCharStatStatics
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, AllSkillBonus, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, LifeSteal, Source, true);
       
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, BashChance, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, CriticalChance, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, MagicItemDropBonus, Source, true);
         DEFINE_ATTRIBUTE_CAPTUREDEF(UPlayerDiabloAttribute, GoldBonusPer, Source, true);
@@ -216,7 +215,6 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
     float AllSkillBonus=0.f;
     float LifeSteal=1.0f;
    
-    float BashChance=1.0f;
     float CriticalChance=1.0f;
     float MagicItemDropBonus=1.0f;
     float GoldBonusPer=1.0f;
@@ -290,8 +288,6 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetCharStatStatics().LifeStealDef, EvaluationParameters,
                                                                LifeSteal);
  
-    ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetCharStatStatics().BashChanceDef, EvaluationParameters,
-                                                               BashChance);
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetCharStatStatics().CriticalChanceDef,
                                                                EvaluationParameters, CriticalChance);
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetCharStatStatics().MagicItemDropBonusDef,

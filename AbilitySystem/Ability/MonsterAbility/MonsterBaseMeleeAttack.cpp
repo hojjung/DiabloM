@@ -109,7 +109,9 @@ void UMonsterBaseMeleeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
 
     if (EventTag == m_TagEventBaseAttack)
     {
-        if (!m_OwnerUnit || !EventData.Target || !CheckAttackRange(EventData.Target))
+        const AUnitPawn* TargetChar=Cast<AUnitPawn>( EventData.Target);
+        
+        if (!m_OwnerUnit || !TargetChar ||!TargetChar->IsAlive() ||!CheckAttackRange(TargetChar))
         {
             //EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
             return;

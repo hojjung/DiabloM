@@ -55,8 +55,8 @@ void UMobFSM_Shooter::TickFSM()
 	(this->*m_AryStateFunction[static_cast<int>(m_CurrentState)])();
 
 #if WITH_EDITOR
-	if(m_OwnerMonster)
-		DrawDebugString(m_OwnerMonster->GetWorld(),m_OwnerMonster->GetActorLocation(),GetEnumName(),nullptr,FColor::White,0.1f,false,3);
+	//if(m_OwnerMonster)
+	//	DrawDebugString(m_OwnerMonster->GetWorld(),m_OwnerMonster->GetActorLocation(),GetEnumName(),nullptr,FColor::White,0.1f,false,3);
 #endif
 }
 
