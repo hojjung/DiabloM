@@ -25,6 +25,7 @@ class UPlayerHealthPotion;
 class UPlayerHpRegenAbility;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
 DECLARE_MULTICAST_DELEGATE(FOnMove);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnFocusTargetChanged,AUnitPawn*)
 UCLASS()
 class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 {
@@ -39,6 +40,8 @@ public:
 
 public:
 	FOnMove m_OnMove;
+
+	FOnFocusTargetChanged m_OnFocusTarget;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
@@ -164,8 +167,6 @@ protected:
 	UPROPERTY()
 	TSet<AActor*> m_AlreadyHittenForIgnore;
 
-	float m_fBonusDamage;
-
 	bool m_bIsAttackInputPressed;
 
 	bool m_bIsDead;
@@ -217,8 +218,6 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
     void Revive();
-	UFUNCTION(BlueprintCallable,Category="Interact")
-	void SetBonusDamage(float v);
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void OnAttackPressed();
 	UFUNCTION(BlueprintCallable,Category="Interact")
@@ -294,13 +293,6 @@ public:
 		return m_AlreadyHittenForIgnore;
 	}
 
-	 virtual void EndAttack() override;
-
-	FORCEINLINE float GetBonusDamage()
-	{
-		return m_fBonusDamage;
-	}
-
 	virtual FVector GetLastSeenLocation() override;
 
 	friend UDiabloGameInstance;
@@ -324,7 +316,7 @@ public:
 	UPlayerDiabloAttribute* GetPlayerAttribute();
 
 	UFUNCTION(BlueprintCallable)
-	void PlayColorEffect(const FLinearColor& colorWant);
+	void PlayColorEffect(const FLinearColor& colorWant,float effectLength);
 	
 public:
 	void GrantHpPotionAbility();

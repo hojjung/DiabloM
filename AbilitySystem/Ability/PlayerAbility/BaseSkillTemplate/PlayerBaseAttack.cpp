@@ -32,7 +32,10 @@ UPlayerBaseAttack::UPlayerBaseAttack()
     m_AbilityInputID = EAbilityInputID::BaseAttack;
 
     m_AbilityID = EAbilityInputID::BaseAttack;
-    
+
+    m_fAttackAngle = 45.f;
+
+    m_fAttackRange = 250.f;    
 }
 
 void UPlayerBaseAttack::PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName playSection, float AttackSpeed)

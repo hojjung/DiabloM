@@ -60,6 +60,8 @@ void ADiabloPlayerController::InitWidget()
 	m_MainMenu = CreateWidget<UMainCanvas>(this, m_ClassMainMenu, "MainMenu00");
 	m_MainMenu->AddToViewport();
 	m_MainMenu->Init(this,PlayerPawn,m_EquipSystem,m_Inven,&m_AryStorage);
+	m_MainMenu->CloseMainMenu();
+	
 	m_GameOverScreen = CreateWidget<UDiaGameOverScreen>(this, m_ClassGameOver, "GameOverScreen00");
 	m_GameOverScreen->AddToViewport();
 	m_GameOverScreen->Init(this,PlayerPawn);
@@ -67,9 +69,7 @@ void ADiabloPlayerController::InitWidget()
 	PlayerPawn->GetOnDied().AddUObject(this,&ADiabloPlayerController::OnPlayerDied);
 	PlayerPawn->GetOnRevived().AddUObject(this,&ADiabloPlayerController::OnPlayerRevived);
 	
-	
 	CreateDmgWC(15);
-	CloseMainMenu();
 }
 
 void ADiabloPlayerController::CreateDmgWC(int count)
@@ -108,7 +108,6 @@ void ADiabloPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAction("Exit", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::ExitGame);
-	InputComponent->BindAction("OpenMainMenu", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::OpenMainMenu);
 	InputComponent->BindAction("AndroidBack", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::OnDeviceBackKey);
 }
 
@@ -158,59 +157,22 @@ bool ADiabloPlayerController::PickUpItem(ADroppedItem * pickupItem)
 	//return true;
 }
 
-void ADiabloPlayerController::OpenMainMenu()
-{
-	if (m_MainMenu->m_bIsOpened)
-	{
-		CloseMainMenu();
-		return;
-	}
-
-	m_MainMenu->OpenMainMenu();
-
-	UGameplayStatics::SetGamePaused(this->GetWorld(),true);
-	this->SetVirtualJoystickVisibility(false);
-}
-
-void ADiabloPlayerController::CloseMainMenu()
-{
-	m_MainMenu->CloseMainMenu();
-
-	UGameplayStatics::SetGamePaused(this->GetWorld(),false);
-	this->SetVirtualJoystickVisibility(true);
-}
-
 void ADiabloPlayerController::OnDeviceBackKey()
 {
-	if(m_MainMenu->IsOpened())
-	{
-		CloseMainMenu();
-
-		return;
-	}
-
-	ExitGame();
-}
-
-void ADiabloPlayerController::OpenMapSelectMenu(bool isDgCleared)
-{
-	m_MainMenu->OpenMapMenu(isDgCleared);
-	UGameplayStatics::SetGamePaused(this->GetWorld(),true);
-	this->SetVirtualJoystickVisibility(false);
-}
-
-void ADiabloPlayerController::CloseMapSelectMenu()
-{
-
-	m_MainMenu->CloseMapMenu();
+	m_MainMenu->CloseMainMenu();
 	
-	UGameplayStatics::SetGamePaused(this->GetWorld(),false);
-	this->SetVirtualJoystickVisibility(true);
+	ExitGame();
 }
 
 void ADiabloPlayerController::PlayerMeshChange(int slot, FItemInstance& item)
 {
 	GetPlayerPawn()->EquipMesh(&item,static_cast<ESlotsEquipAry>(slot));
+}
+
+void ADiabloPlayerController::OnWidgetOpenClose(bool isOpen)
+{
+	UGameplayStatics::SetGamePaused(this->GetWorld(),isOpen);
+	this->SetVirtualJoystickVisibility(!isOpen);
 }
 
 APlayerDiabloCharacter* ADiabloPlayerController::GetPlayerPawn()
@@ -238,47 +200,20 @@ void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done,AUn
 	DamageText->StartAnimation(dmgPopup);
 }
 
-void ADiabloPlayerController::HideFocusStatusWidget()
+void ADiabloPlayerController::ShowDamageText(const FString stringWant, AUnitPawn* unit_pawn, EDamagePopup dmgPopup)
 {
-	m_MainMenu->HideMonsterInfo();
+	UDamageTextWidgetComponent* DamageText = GetDmgWC();
+	
+	DamageText->SetWorldLocation(unit_pawn->GetActorLocation());
+	
+	DamageText->SetDamageText(FText::FromString(stringWant));//
+	
+	DamageText->StartAnimation(dmgPopup);
 }
 
-void ADiabloPlayerController::ShowFocusStatusWidget(AUnitPawn* unit)
+UMainCanvas* ADiabloPlayerController::GetMainCanvas()
 {
-	m_MainMenu->ShowMonsterInfo(unit);
-}
-
-void ADiabloPlayerController::UpdateMinimap(UMaterialInterface* mapMat)
-{
-	m_MainMenu->UpdateMinimap(mapMat);
-}
-
-
-void ADiabloPlayerController::ShowShopMenu(AShopKeeper* shopKeeper)
-{
-	m_MainMenu->ShowBasicShopMenu(shopKeeper);
-	OpenMainMenu();
-}
-
-void ADiabloPlayerController::ShowStorageMenu()
-{
-	m_MainMenu->ShowStorageMenu();
-	OpenMainMenu();
-}
-
-void ADiabloPlayerController::HideMinimap()
-{
-	m_MainMenu->HideMinimap();
-}
-
-void ADiabloPlayerController::ShowMinimap()
-{
-	m_MainMenu->ShowMinimap();
-}
-
-UDiaShopPanel* ADiabloPlayerController::GetShopPanelWidget()
-{
-	return m_MainMenu->GetShopPanelWidget();
+	return m_MainMenu;
 }
 
 void ADiabloPlayerController::BackToSelectMenu()

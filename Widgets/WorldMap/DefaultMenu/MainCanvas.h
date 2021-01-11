@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include "BackgroundBlur.h"
 #include "DiabloM.h"
 #include "TechTreeWidget.h"
 #include "Blueprint/UserWidget.h"
@@ -30,10 +31,16 @@ class DIABLOM_API UMainCanvas : public UUserWidget
 	GENERATED_BODY()
 
 public:
-    bool m_bIsOpened=false;
-
     UMainCanvas(const FObjectInitializer& objInit);
+
+    DECLARE_MULTICAST_DELEGATE_OneParam(FOnWidgetOpenClose,bool);
+
+    FOnWidgetOpenClose m_OnWidgetOpenClose;
 protected:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+    UBackgroundBlur* m_BGBlur;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
+    UButton* m_BtnCloseMenu;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
     UDefaultMenu* m_MainMenu;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Info")
@@ -59,66 +66,76 @@ protected:
     FTextFormat m_HpFormat;
 public:
     UFUNCTION(BlueprintCallable,Category="Menu")
-    void OpenMainMenu();
-    UFUNCTION(BlueprintCallable,Category="Menu")
-    void CloseMainMenu();
-    UFUNCTION(BlueprintCallable,Category="Menu")
-    void OpenSkillMenu();
-    UFUNCTION(BlueprintCallable,Category="Menu")
     void Interaction();
     UFUNCTION(BlueprintCallable,Category="Menu")
-    void OnAttackPressStart();
-    UFUNCTION(BlueprintCallable,Category="Menu")
-    void OnAttackPressEnd();
-    UFUNCTION(BlueprintCallable,Category="Menu")
-    void OpenSetting();
-    UFUNCTION(BlueprintCallable,Category="Menu")
-    void CloseSetting();
+    void DrinkPotion();
+    
+public:
     UFUNCTION(BlueprintCallable,Category="Menu")
     void TestOpenDungeon();
     UFUNCTION(BlueprintCallable,Category="Menu")
     void TestSaveAll();
     UFUNCTION(BlueprintCallable,Category="Menu")
-    void DrinkPotion();
-    UFUNCTION(BlueprintCallable,Category="Menu")
     void TestGoBackMenu();
+
+protected:
+    void OnOpenClosePlayerHUD(bool isOpen);
+
+    void OnMonsterFocused(AUnitPawn* monInfo);
+    
 public:
     void Init(ADiabloPlayerController * playerCon, APlayerDiabloCharacter * playerChar, UEquipmentSystem * equipment, UInventory * inven,TArray<UInventory*>* aryStorage);
-
-    void ShowMonsterInfo(AUnitPawn* monInfo);
+    //
+    void OpenMonsterInfo(AUnitPawn* monInfo);
 
     void UpdateMonsterInfo(AUnitPawn* monInfo);
     
-    void HideMonsterInfo();
-    
+    void CloseMonsterInfo();
+    //
     void UpdateExpGauge(float v);
 
     void UpdateHpBar();
+    //
+    void OpenMinimap();
 
-    FORCEINLINE bool IsOpened() const
-    {
-        return m_bIsOpened;
-    }
-
-    
     void UpdateMinimap(UMaterialInterface* mapMat);
     
-    
-    void ShowBasicShopMenu(AShopKeeper* shopKeeper);
+    void CloseMinimap();
+    //
+    UFUNCTION()
+    void OpenMainMenu();
+    UFUNCTION()
+    void CloseMainMenu();
+    //
+    void OpenBasicShopMenu(AShopKeeper* shopKeeper);
 
-    void ShowStorageMenu();
+    void CloseBasicShopMenu();
+    //
+    void OpenStorageMenu();
 
-    void ShowMinimap();
-    
-    void HideMinimap();
-
-    void ShowSkillHotkeyPanel();
+    void CloseStorageMenu();
+    //
+    void OpenSkillHotkeyPanel();
 
     void CloseSkillHotkeyPanel();
-
-    UDiaShopPanel* GetShopPanelWidget();
-    
+    //
     void OpenMapMenu(bool isCleared);
 
     void CloseMapMenu();
+    //
+    UFUNCTION()
+    void OpenSkillMenu();
+    
+    void CloseSkillMenu();
+    //
+    UFUNCTION()
+    void OpenSetting();
+    
+    void CloseSetting();
+
+public:
+    FORCEINLINE UDefaultMenu* GetMainMenu()
+    {
+        return m_MainMenu;
+    }
 };

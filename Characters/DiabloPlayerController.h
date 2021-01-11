@@ -31,7 +31,7 @@ class DIABLOM_API ADiabloPlayerController : public APlayerController
 public:
 	ADiabloPlayerController();
 	 static  ADiabloPlayerController* Get;
-	
+
 protected:
 	UPROPERTY()
 	UInventory* m_Inven;
@@ -59,12 +59,6 @@ protected:
 	TArray<UDamageTextWidgetComponent*> m_AryDmgWC;
 
 	int m_DmgIndex;
-	//able skill tree
-	//learned skill tree
-	//current SkillSlot
-	//Equipment slot
-	//키를 눌러서 선택된 슬롯의 함수만 불리게
-	//위젯도 만들어서 초기화 시킬것
 protected:
 	virtual void BeginPlay() override;
 
@@ -84,6 +78,8 @@ protected:
 
 	void OnPlayerRevived(AUnitPawn* player);
 
+	void PlayerMeshChange(int slot,FItemInstance& item);
+	
 public:
 	void PrintStat();
 
@@ -95,35 +91,21 @@ public:
 
 	bool PickUpItem(ADroppedItem* pickupItem);
 
-	UFUNCTION(BlueprintCallable)
-	void OpenMainMenu();
-	UFUNCTION(BlueprintCallable)
-	void CloseMainMenu();
+public:
+	void OnWidgetOpenClose(bool isOpen);
+	
 	UFUNCTION(BlueprintCallable)
 	void OnDeviceBackKey();
 	//
-	UFUNCTION(BlueprintCallable)
-    void OpenMapSelectMenu(bool isDgCleared);
-	UFUNCTION(BlueprintCallable)
-    void CloseMapSelectMenu();
+	void ShowDamageNumber(const float local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target
 
-	void PlayerMeshChange(int slot,FItemInstance& item);
-	//
-	//배울수 있는 스킬
-	//배운 스킬
-	//슬롯에 장착한 스킬
-	//
-	//인벤토리
-	//
-	//장비장착슬롯
+	void ShowDamageText(const FString stringWant,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target
 
+	UMainCanvas* GetMainCanvas();
 
-	//아이템의 인스턴스는 어떻게되는가?
-
-	//아이템의 구성? 아이콘,기본 이름,메쉬,기본공격력?
-	//생성할때 옵션과 공격력 방어력 추가
-	//이 변수값을 어빌리티로 올려줘야함
-
+	UFUNCTION()
+    void BackToSelectMenu();
+    
 public:
 	FORCEINLINE UInventory* GetInven() const
 	{
@@ -145,30 +127,5 @@ public:
 	}
 
 	APlayerDiabloCharacter* GetPlayerPawn();
-
-	void ShowDamageNumber(const float local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target
-	
-	void HideFocusStatusWidget();
-	
-	void ShowFocusStatusWidget(AUnitPawn* unit);
-	
-	UFUNCTION(BlueprintCallable)
-	void UpdateMinimap(UMaterialInterface* mapMat);
-
-
-	UFUNCTION(BlueprintCallable)
-    void ShowShopMenu(AShopKeeper* shopKeeper);
-
-	UFUNCTION(BlueprintCallable)
-    void ShowStorageMenu();
-	
-	void HideMinimap();
-	
-	void ShowMinimap();
-
-	UDiaShopPanel* GetShopPanelWidget();
-
-	UFUNCTION()
-	void BackToSelectMenu();
 
 };

@@ -20,6 +20,9 @@ public:
 	UPlayerBaseAttack();
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float m_fLevelPerDamageRate;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FGameplayTag m_TagEventEndAbility;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)

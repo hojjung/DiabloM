@@ -80,7 +80,7 @@ void UPlayerStatusBar::StopAutoPlay()
     m_AutoPlayButton->SetCheckedState(ECheckBoxState::Unchecked);
 }
 
-void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon)
+void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon,UMainCanvas* mainCanvas)
 {
     m_StaminaBar->SetVisibility(ESlateVisibility::Collapsed);
     m_ManaBar->SetVisibility(ESlateVisibility::Collapsed);
@@ -113,7 +113,7 @@ void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon)
     DiaAttri->m_OnStatChanged.AddUObject(this, &UPlayerStatusBar::SetHealthBarProgressV);
     DiaAttri->m_OnStatChanged.AddUObject(this, &UPlayerStatusBar::SetResourceBarProgressV);
 
-    m_InvenOpenButton->OnClicked.AddDynamic(diaCon, &ADiabloPlayerController::OpenMainMenu);
+    m_InvenOpenButton->OnClicked.AddDynamic(diaCon->GetMainCanvas(), &UMainCanvas::OpenMainMenu);
 
     SetHealthBarProgressV(diaCon->GetPlayerPawn());
     SetResourceBarProgressV(diaCon->GetPlayerPawn());
@@ -135,6 +135,12 @@ void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon)
     StopAutoPlay();
 
     diaCon->GetPlayerPawn()->m_OnMove.AddUObject(this,&UPlayerStatusBar::StopAutoPlay);
+
+    m_SkillUseCanvas->m_InteractButton->OnClicked.AddDynamic(mainCanvas,&UMainCanvas::Interaction);
+
+    m_SkillUseCanvas->m_PotionButton->OnClicked.AddDynamic(mainCanvas,&UMainCanvas::DrinkPotion);
+
+    m_SkillMenuOpenButton->OnClicked.AddDynamic(mainCanvas,&UMainCanvas::OpenSkillMenu);
 }
 
 void UPlayerStatusBar::SetHealthBarProgressV(AUnitPawn* pawn)
@@ -179,12 +185,13 @@ void UPlayerStatusBar::ShowPlayerHUD()
      m_HpBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
      m_SelectedBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
      m_Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-     m_InteractButton->SetVisibility(ESlateVisibility::Visible);
-     m_PotionButton->SetVisibility(ESlateVisibility::Visible);
+     m_SkillUseCanvas->m_InteractButton->SetVisibility(ESlateVisibility::Visible);
+     m_SkillUseCanvas->m_PotionButton->SetVisibility(ESlateVisibility::Visible);
      m_SkillMenuOpenButton->SetVisibility(ESlateVisibility::Visible);
      m_SkillUseCanvas->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-     //m_DiaMonInfo->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+     m_DiaMonInfo->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
      m_ExpBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+     m_AutoPlayButton->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UPlayerStatusBar::HidePlayerHUD()
@@ -194,12 +201,13 @@ void UPlayerStatusBar::HidePlayerHUD()
     m_HpBar->SetVisibility(ESlateVisibility::Hidden);
     m_SelectedBar->SetVisibility(ESlateVisibility::Hidden);
     m_Minimap->SetVisibility(ESlateVisibility::Hidden);
-    m_InteractButton->SetVisibility(ESlateVisibility::Hidden);
-    m_PotionButton->SetVisibility(ESlateVisibility::Hidden);
+    m_SkillUseCanvas->m_InteractButton->SetVisibility(ESlateVisibility::Hidden);
+    m_SkillUseCanvas->m_PotionButton->SetVisibility(ESlateVisibility::Hidden);
     m_SkillMenuOpenButton->SetVisibility(ESlateVisibility::Hidden);
     m_SkillUseCanvas->SetVisibility(ESlateVisibility::Hidden);
-   // m_DiaMonInfo->SetVisibility(ESlateVisibility::Hidden);
+    m_DiaMonInfo->SetVisibility(ESlateVisibility::Hidden);
     m_ExpBar->SetVisibility(ESlateVisibility::Hidden);
+    m_AutoPlayButton->SetVisibility(ESlateVisibility::Hidden);
 }
 
 

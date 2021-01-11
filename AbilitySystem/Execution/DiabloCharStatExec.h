@@ -17,7 +17,7 @@ class DIABLOM_API UDiabloCharStatExec : public UGameplayEffectExecutionCalculati
 public:
 	UDiabloCharStatExec();
 
-	virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, OUT FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
+	virtual bool Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, OUT FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
 
 	
 };

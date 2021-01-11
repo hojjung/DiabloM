@@ -290,6 +290,7 @@ void UDefaultMenu::CloseItemPopup()
 
 void UDefaultMenu::OpenStorage()
 {
+    this->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_StoragePanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_StatPanel->SetVisibility(ESlateVisibility::Collapsed);
     m_bIsStorageOpened = true;
@@ -297,6 +298,7 @@ void UDefaultMenu::OpenStorage()
 
 void UDefaultMenu::CloseStorage()
 {
+    this->SetVisibility(ESlateVisibility::Hidden);
     m_StoragePanel->SetVisibility(ESlateVisibility::Collapsed);
     m_StatPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_bIsStorageOpened = false;
@@ -304,6 +306,7 @@ void UDefaultMenu::CloseStorage()
 
 void UDefaultMenu::OpenShopMenu(AShopKeeper* shopKeeper)
 {
+    this->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_StatPanel->SetVisibility(ESlateVisibility::Collapsed);
     m_ShopPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_ShopPanel->UpdatePanel(shopKeeper);
@@ -312,6 +315,7 @@ void UDefaultMenu::OpenShopMenu(AShopKeeper* shopKeeper)
 
 void UDefaultMenu::CloseShopMenu()
 {
+    this->SetVisibility(ESlateVisibility::Hidden);
     m_StatPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_ShopPanel->SetVisibility(ESlateVisibility::Collapsed);
     m_ShopPanel->ClearPanel();
@@ -325,6 +329,7 @@ UDiaShopPanel* UDefaultMenu::GetShopPanelWidget()
 
 void UDefaultMenu::OpenSkillPanel()
 {
+    this->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_SkillPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_TalentPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_InvenGridPanel->SetVisibility(ESlateVisibility::Collapsed);
@@ -336,6 +341,7 @@ void UDefaultMenu::OpenSkillPanel()
 
 void UDefaultMenu::CloseSkillPanel()
 {
+    this->SetVisibility(ESlateVisibility::Hidden);
     m_SkillPanel->SetVisibility(ESlateVisibility::Collapsed);
     m_TalentPanel->SetVisibility(ESlateVisibility::Collapsed);
     m_InvenGridPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -373,4 +379,5 @@ void UDefaultMenu::OpenTalentPopup(const FGeometry& geo, UTechnologyAsset* talen
     }
     m_TalentPopup->SetTalentPopupWidget(Cast<UDiaTechnologyAsset>( talent),geo);
 }
+
 

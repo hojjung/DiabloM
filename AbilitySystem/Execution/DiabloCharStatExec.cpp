@@ -162,7 +162,7 @@ UDiabloCharStatExec::UDiabloCharStatExec()
     RelevantAttributesToCapture.Add(GetCharStatStatics().ExpBonusPerDef);
 }
 
-void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
+bool UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
                                                  OUT FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
     UAbilitySystemComponent* TargetAbilitySystemComponent = ExecutionParams.GetTargetAbilitySystemComponent();
@@ -329,4 +329,6 @@ void UDiabloCharStatExec::Execute_Implementation(const FGameplayEffectCustomExec
     //     FGameplayModifierEvaluatedData(GetCharStatStatics().MaxRageProperty, EGameplayModOp::Additive, MaxRage));
     // OutExecutionOutput.AddOutputModifier(
     //     FGameplayModifierEvaluatedData(GetCharStatStatics().MaxStaminaProperty, EGameplayModOp::Additive, MaxStamina));
+
+	return true;
 }

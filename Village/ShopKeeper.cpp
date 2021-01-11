@@ -56,5 +56,6 @@ void AShopKeeper::SetItemFromDataTable2()
 void AShopKeeper::Interact(AActor* instigator)
 {
     TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
-    DiaPC->ShowShopMenu(this);
+    
+    DiaPC->GetMainCanvas()->OpenBasicShopMenu(this);
 }

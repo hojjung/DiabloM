@@ -12,7 +12,7 @@ AStorage::AStorage(const FObjectInitializer& objInit):Super(objInit)
 void AStorage::Interact(AActor* instigator)
 {
     TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
-    DiaPC->ShowStorageMenu();
+    DiaPC->GetMainCanvas()->OpenStorageMenu();
 
 }
 

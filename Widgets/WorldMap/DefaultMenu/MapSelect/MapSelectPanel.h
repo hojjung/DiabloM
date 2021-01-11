@@ -47,8 +47,6 @@ protected:
 	UButton* m_BtnRiteDG;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnEventDG;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnClose;
 
 	//m_BtnClose
 protected:

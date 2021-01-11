@@ -33,7 +33,7 @@ UDiabloMobRewardExec::UDiabloMobRewardExec()
 	RelevantAttributesToCapture.Add(GetRewardStatic().ExpBonusPerDef);
 }
 
-void UDiabloMobRewardExec::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
+bool UDiabloMobRewardExec::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
                                                   FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
 	UAbilitySystemComponent* SourceAbilitySystemComponent = ExecutionParams.GetSourceAbilitySystemComponent();
@@ -59,4 +59,5 @@ void UDiabloMobRewardExec::Execute_Implementation(const FGameplayEffectCustomExe
 
 	ADiabloPlayerController::Get->GetPlayerPawn()->EarnExp(XpResult);
 
+	return true;
 }

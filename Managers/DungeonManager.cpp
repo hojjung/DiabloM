@@ -104,7 +104,7 @@ void UDungeonManager::PortalToVillage(bool isDgCleared)
 
     m_bIsPlayerInDungeon=false;
 
-    ADiabloPlayerController::Get->HideMinimap();//UI Set Brush Tick add
+    ADiabloPlayerController::Get->GetMainCanvas()->CloseMinimap();//UI Set Brush Tick add
     //
     
 }
@@ -134,7 +134,8 @@ void UDungeonManager::PortalToRecentDungeon()
 
     
     m_bIsPlayerInDungeon=true;
-    ADiabloPlayerController::Get->ShowMinimap();
+    
+    ADiabloPlayerController::Get->GetMainCanvas()->OpenMinimap();
 }
 
 void UDungeonManager::ClearDungeon()
@@ -165,7 +166,7 @@ void UDungeonManager::ClearDungeon()
 
     RewardManager->EnqueAllActors(false);
     
-    ADiabloPlayerController::Get->HideMinimap();//UI Set Brush Tick a
+    ADiabloPlayerController::Get->GetMainCanvas()->CloseMinimap();//UI Set Brush Tick a
 }
 
 void UDungeonManager::RestartDungeon()
@@ -288,9 +289,9 @@ void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
     
     m_MatMinimap = UGridFlowMiniMap::Get->CreateMaterialInstance();
     
-    ADiabloPlayerController::Get->UpdateMinimap(m_MatMinimap);//UI Set Brush Tick add
+    ADiabloPlayerController::Get->GetMainCanvas()->UpdateMinimap(m_MatMinimap);//UI Set Brush Tick add
 
-    ADiabloPlayerController::Get->CloseMapSelectMenu();
+    ADiabloPlayerController::Get->GetMainCanvas()->CloseMapMenu();
     
     PRINTF("OnNavCookComplete");
 

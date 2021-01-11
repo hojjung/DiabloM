@@ -78,20 +78,6 @@ public:
     FGameplayTag TagTookIceDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookIceDmg"));
     FGameplayTag TagTookPoisonDamage = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.TookPoisonDmg"));
     FGameplayTag TagLifeStealHeal = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.HpHeal"));
-
-    //이방식의 문제점은 무엇인가
-    //스킬의 상수가 문제다.
-    //속성공격의 상수 수치 어떻게 전달시킴?
-    //결국 옛날방식이랑 같잔아 본질적으로
-    //다시 속성데미지 존재하게?
-    //대신 데미지 보너슨 여기서 계산하자
-    //회피와 블록킹도 여기서 가능해보임
-    //받은데미지 0 만들어주면 되잔아
-    //어트리뷰트 생김새도 현행유지
-    //초기화도 여기서
-
-    //어트리뷰트는 브로드캐스팅과 클램핑만 하면됨
-    //브로드 캐스팅도 사실상 끝났다.
 };
 
 static const DiabloDamageStatics& GetDamageStatics()
@@ -132,7 +118,7 @@ UDiabloDamageExec::UDiabloDamageExec()
     
 }
 
-void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
+bool UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
                                                OUT FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
     UAbilitySystemComponent* SourceAbilitySystemComponent = ExecutionParams.GetSourceAbilitySystemComponent();
@@ -150,12 +136,17 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
 
     if(SourceUnit==nullptr ||TargetUnit==nullptr)
     {
-        return;
+        return false;
     }
 
     if(TargetActor->IsPendingKill()||SourceUnit->IsPendingKill())
     {
-        return;
+        return false;
+    }
+
+    if(!TargetUnit->IsAlive())
+    {
+        return false;
     }
 
     const int AttackerLevel = SourceUnit->GetCharacterLevel();
@@ -180,7 +171,6 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
     float LResElec = 0.f;
     float LResCold = 0.f;
     //
-    float LBashChance = 0.f;
     float LCriticalChance = 0.f;
     float LCriticalDamage = 0.f;
     float LDmgReduction = 0.f;
@@ -194,12 +184,9 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
                                                                LAccuracy);
     ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetDamageStatics().BlockChanceDef, EvaluationParameters,
                                                                LBlockChance);
-
-   
     //
     if (!CanHitBaseAttack(LAvoid, LAccuracy, AttackerLevel))
     {
-        PRINTF("Avoid!");
         OutExecutionOutput.AddOutputModifier(
             FGameplayModifierEvaluatedData(GetDamageStatics().TookPhysDamageProperty, EGameplayModOp::Override, 0.f));
         OutExecutionOutput.AddOutputModifier(
@@ -216,12 +203,11 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
             float SuccessPer100 = CalcuSameLevelAvgAccuracy(LAvoid, SourceUnit);
             ADiabloPlayerController::Get->ShowDamageNumber(100.f - SuccessPer100, TargetUnit, EDamagePopup::Miss);
         }
-        return;
+        return false;
     }
     //
     if (CheckOnerPercentRand(LBlockChance))
     {
-        PRINTF("Blocked!");
         OutExecutionOutput.AddOutputModifier(
             FGameplayModifierEvaluatedData(GetDamageStatics().TookPhysDamageProperty, EGameplayModOp::Override, 0.f));
         OutExecutionOutput.AddOutputModifier(
@@ -233,7 +219,11 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
         OutExecutionOutput.AddOutputModifier(
             FGameplayModifierEvaluatedData(GetDamageStatics().TookPoisonDamageProperty, EGameplayModOp::Override, 0.f));
 
-        return;
+        if (Cast<APlayerDiabloCharacter>(SourceUnit))
+        {
+            ADiabloPlayerController::Get->ShowDamageText("Blocked", TargetUnit, EDamagePopup::Blocked);
+        }
+        return false;
     }
     //
     LTookPhysDamage   = Spec.GetSetByCallerMagnitude(GetDamageStatics().TagTookPhysDamage, false, 0.0f);
@@ -303,16 +293,6 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
 
     LTookPhysDamage *= CalcPhysReduction(DefenseTargetLevel, AttackerLevel, LPhysicalDefense);
 
-    if (LTookPhysDamage>0.f&&CheckOnerPercentRand(LBashChance))
-    {
-        PRINTF("BaSher! Stun!");
-        FGameplayEffectContextHandle Context = SourceAbilitySystemComponent->MakeEffectContext();
-        FGameplayEffectSpecHandle EffectSpecHandle =SourceAbilitySystemComponent->MakeOutgoingSpec(
-          m_GEBasherStun, SourceUnit->GetCharacterLevel(),Context);
-        SourceAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*EffectSpecHandle.Data, TargetAbilitySystemComponent);
-        //Basher Need
-    }
-
     if (LTookPhysDamage>0.f&&LLifeSteal > 0.f)
     {
         float HealthGain = LTookPhysDamage * LLifeSteal;
@@ -350,7 +330,7 @@ void UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
         FGameplayModifierEvaluatedData(GetDamageStatics().TookPoisonDamageProperty, EGameplayModOp::Additive,
                                        LTookPoisonDamage));
 
-  
+  return  true;
 }
 
 

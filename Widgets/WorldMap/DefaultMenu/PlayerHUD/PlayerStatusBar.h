@@ -42,10 +42,7 @@ protected:
 	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UCheckBox* m_AutoPlayButton;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_InteractButton;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_PotionButton;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_SkillMenuOpenButton;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -65,7 +62,7 @@ protected:
 	
 	FTextFormat m_HpFormat;
 public:
-	void Init(ADiabloPlayerController* diaCon);
+	void Init(ADiabloPlayerController* diaCon,UMainCanvas* mainCanvas);
 
 	void SetHealthBarProgressV(AUnitPawn* pawn);
 

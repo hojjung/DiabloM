@@ -23,7 +23,6 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	: Super(objInit.SetDefaultSubobjectClass<UPlayerDiabloAttribute>("AttributeSet00")
 	               .SetDefaultSubobjectClass<UPlayerDiabloAbilitySystemComp>("AbilitySystemComponent00"))
 {
-	m_fBonusDamage = 1.f;
 	m_DissolveCam = CreateDefaultSubobject<UCameraDissolve>("CamDissolve00");
 	m_DissolveCam->SetupAttachment(RootComponent);
 	m_DissolveCam->SetRelativeRotation(FRotator(-50.f, 0.f, 0.f));
@@ -327,11 +326,6 @@ void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius
 	m_PlayerSense->SetFocusRange(focusRange);
 }
 
-void APlayerDiabloCharacter::SetBonusDamage(float v)
-{
-	m_fBonusDamage = v;
-}
-
 void APlayerDiabloCharacter::OnAttackPressed()
 {
 	m_bIsAttackInputPressed = true;
@@ -495,8 +489,8 @@ void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 
 	if (!target)
 	{
-		Cast<ADiabloPlayerController>(GetController())->HideFocusStatusWidget();
 		m_FocusedEnemy = nullptr;
+		m_OnFocusTarget.Broadcast(nullptr);
 		HideOutlineOnTarget();
 		m_FocusedTargetDie.Reset();
 		return;
@@ -517,7 +511,7 @@ void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 
 	ShowOutlineOnTarget(Unit);
 
-	Cast<ADiabloPlayerController>(GetController())->ShowFocusStatusWidget(Unit);
+	m_OnFocusTarget.Broadcast(Unit);
 
 	m_FocusedEnemy = Cast<AUnitPawn>(target);
 
@@ -580,10 +574,11 @@ ADiabloPlayerController* APlayerDiabloCharacter::GetDiaController()
 
 void APlayerDiabloCharacter::Die()
 {
-	if (m_bIsDead) //Sometime call manytime
+	if (m_bIsDead)//Sometime call manytime
 	{
 		return;
 	}
+	
 	m_bIsDead = true;
 
 	m_bUseFSM = false;
@@ -599,10 +594,13 @@ void APlayerDiabloCharacter::Die()
 	m_PlayerSense->SetSensingUpdatesEnabled(false);
 
 	GetDiaAbilitySystem()->CancelAbilities();
+	
 	GetDiaAbilitySystem()->ClearAllAbilities();
 
 	FGameplayTagContainer EffectTagsToRemove;
+	
 	EffectTagsToRemove.AddTag(m_TagEffectRemoveOnDeath);
+	
 	int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
 
 	GetDiaAbilitySystem()->AddLooseGameplayTag(m_TagDead);
@@ -617,9 +615,7 @@ void APlayerDiabloCharacter::Die()
 		{
 			FTimerHandle TimerHandle_OnTimer;
 
-			GetWorldTimerManager().SetTimer(TimerHandle_OnTimer, this, &APlayerDiabloCharacter::OnDeathAnimEnd,
-			                                AnimLength,
-			                                false);
+			GetWorldTimerManager().SetTimer(TimerHandle_OnTimer, this, &APlayerDiabloCharacter::OnDeathAnimEnd,AnimLength,false);
 		}
 	}
 	else
@@ -664,11 +660,6 @@ void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target) //wrapper
 	FocusTarget(nullptr);
 }
 
-void APlayerDiabloCharacter::EndAttack()
-{
-	Super::EndAttack();
-	m_fBonusDamage = 1.f;
-}
 
 FVector APlayerDiabloCharacter::GetLastSeenLocation()
 {
@@ -716,45 +707,58 @@ UPlayerDiabloAttribute* APlayerDiabloCharacter::GetPlayerAttribute()
 	return Cast<UPlayerDiabloAttribute>(GetAttributeSet());
 }
 
-void APlayerDiabloCharacter::PlayColorEffect(const FLinearColor& colorWant)//애초에 사용된적이 없음
+void APlayerDiabloCharacter::PlayColorEffect(const FLinearColor& colorWant,float effectLength)//애초에 사용된적이 없음
 {
 	FVector ColorV = UKismetMathLibrary::Conv_LinearColorToVector(colorWant);
 	FName ColorParamName = "EffectColor";
 	FName TimeParamName = "StartTime";
-	float TimeSec =UGameplayStatics::GetTimeSeconds(GetWorld());
+	FName EffectLengthParamName = "EffectLength";
+	
+	float TimeSec = UGameplayStatics::GetTimeSeconds(GetWorld());
 
 	m_SkBody->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
 	m_SkBody->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
+	m_SkBody->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 	
 	m_SkFace->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
 	m_SkFace->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
+	m_SkFace->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 
 	m_SkHair->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
 	m_SkHair->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
+	m_SkHair->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 
 	m_SkGlove->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
 	m_SkGlove->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
+	m_SkGlove->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 
 	m_SkShoe->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
 	m_SkShoe->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
+	m_SkShoe->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 
 	m_SkHeadGear->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
 	m_SkHeadGear->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
+	m_SkHeadGear->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 
 	m_SkShoulderPad->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
 	m_SkShoulderPad->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
+	m_SkShoulderPad->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 
 	m_SkBelt->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
 	m_SkBelt->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
+	m_SkBelt->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 
 	m_StBackpack->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
 	m_StBackpack->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
+	m_StBackpack->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 	
 	m_StRightWeapon->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
 	m_StRightWeapon->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
+	m_StRightWeapon->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 	
 	m_StLeftWeapon->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
 	m_StLeftWeapon->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
+	m_StLeftWeapon->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 }
 
 

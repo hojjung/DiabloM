@@ -15,7 +15,7 @@ void ADgToVillagePortal::Interact(AActor* instigator)
 {
 	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
 
-	DiaPC.Get()->OpenMapSelectMenu(true);
+	DiaPC.Get()->GetMainCanvas()->OpenMapMenu(true);
 
 	//맵선택 위젯 보여줘야함
 	//DungeonM->PortalToVillage();

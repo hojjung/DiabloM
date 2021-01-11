@@ -24,6 +24,7 @@ void UJoystick::NativeOnInitialized()
 	m_fDragRadiusSqr = m_fDragRadius*m_fDragRadius;
 }
 
+
 void UJoystick::UpdateTouchInput(FVector2D input)
 {
 	m_SlotActualDragger->SetPosition(input);
@@ -83,26 +84,16 @@ void UJoystick::UpdateTouchInput(FVector2D input)
 	PRINTF("Dist:%f",Dist);
 }
 
-FReply UJoystick::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
+FReply UJoystick::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
 {
 	FReply Result = Super::NativeOnMouseButtonDown(InGeometry, InGestureEvent);
 	
-	m_bIsPressed = true;
-
-	FVector Loc = ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation();
-	
-	FRotator Rot(0.f,0.f,0.f);
-	
-	FActorSpawnParameters Param;
-	
-	Param.bNoFail=true;
-	
-	m_Actor = ADiabloPlayerController::Get->GetWorld()->SpawnActor<AActor>(m_ClassTest,Loc,Rot,Param);	
+	StartJoystickDrag();	
 
 	return Result;
 }
 
-FReply UJoystick::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+FReply UJoystick::NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	FReply ASD =Super::NativeOnMouseMove(InGeometry, InMouseEvent);
 
@@ -118,11 +109,53 @@ FReply UJoystick::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerE
 	return  ASD;
 }
 
-FReply UJoystick::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+FReply UJoystick::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
 {
-	FReply DD =Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+	FReply ASD =Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
 	
+	EndJoystickDrag();
+
+	return ASD;
+}
+
+void UJoystick::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+	
+	EndJoystickDrag();
+}
+
+void UJoystick::StartJoystickDrag()
+{
+	if(m_bIsPressed)
+	{
+		return;
+	}
+	m_bIsPressed = true;
+
+	m_ActualDragger->SetRenderScale(FVector2D(2.5f,2.5f));
+
+	FVector Loc = ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation();
+	
+	FRotator Rot(0.f,0.f,0.f);
+	
+	FActorSpawnParameters Param;
+	
+	Param.bNoFail=true;
+	
+	m_Actor = ADiabloPlayerController::Get->GetWorld()->SpawnActor<AActor>(m_ClassTest,Loc,Rot,Param);
+}
+
+
+void UJoystick::EndJoystickDrag()
+{
+	if(!m_bIsPressed)
+	{
+		return;
+	}
 	m_bIsPressed = false;
+
+	m_ActualDragger->SetRenderScale(FVector2D(1.0f,1.0f));
 
 	UpdateTouchInput(m_StartPickerPos);
 
@@ -130,7 +163,4 @@ FReply UJoystick::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPoin
 	{
 		m_Actor->Destroy();
 	}
-	
-	return DD;
 }
-

@@ -62,7 +62,6 @@ protected:
 	UDiaSkillPopup* m_SkillPopup;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaTalentPopup* m_TalentPopup;
-	
 protected:
 	UPROPERTY()
 	ADiabloPlayerController* m_PlayerCon;
@@ -95,7 +94,7 @@ public:
 	void Init(ADiabloPlayerController* playerCon, APlayerDiabloCharacter* playerChar,  UEquipmentSystem* equipment,UInventory* inven,TArray<UInventory*>* aryStorage);
 
 	void OpenMainMenu();
-
+	
 	void CloseMainMenu();
 
 	void CompareItem(UItemPopupInfo* wantEquip, UItemPopupInfo* equippedOld);
@@ -132,6 +131,5 @@ public:
 	void OpenTalentPopup(const FGeometry& geo,UTechnologyAsset* talent);
 
 	friend UMainCanvas;
-
 };
 

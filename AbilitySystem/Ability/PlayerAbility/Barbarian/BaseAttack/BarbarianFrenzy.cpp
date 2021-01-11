@@ -26,7 +26,7 @@ void UBarbarianFrenzy::EventReceived(FGameplayTag EventTag, FGameplayEventData E
 
 	if (EventTag == m_TagEventBaseAttack)
 	{
-		if (!PlayerChar||!TargetChar||!TargetChar->IsAlive()||!CheckAttackRange(EventData.Target))
+		if (!PlayerChar||!TargetChar||!TargetChar->IsAlive())
 		{
 			return;
 		}
@@ -42,19 +42,19 @@ void UBarbarianFrenzy::DealDamageToTarget(const AUnitPawn* TargetChar, APlayerDi
 	FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
         m_GETargetDamage, GetAbilityLevel());
 
-	float PhysDmg=PlayerChar->GetAttributeSet()->GetPhysicalDamage()*PlayerChar->GetBonusDamage();
+	float PhysDmg=PlayerChar->GetAttributeSet()->GetPhysicalDamage();
 	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPhysDamage,PhysDmg);
 
-	float FireDmg=PlayerChar->GetAttributeSet()->GetAtkFire()*PlayerChar->GetBonusDamage();
+	float FireDmg=PlayerChar->GetAttributeSet()->GetAtkFire();
 	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookFireDamage,FireDmg);
 
-	float ElecDmg=PlayerChar->GetAttributeSet()->GetAtkElec()*PlayerChar->GetBonusDamage();
+	float ElecDmg=PlayerChar->GetAttributeSet()->GetAtkElec();
 	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookElecDamage,ElecDmg);
 
-	float PoisonDmg=PlayerChar->GetAttributeSet()->GetAtkPoison()*PlayerChar->GetBonusDamage();
+	float PoisonDmg=PlayerChar->GetAttributeSet()->GetAtkPoison();
 	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPoisonDamage,PoisonDmg);
 
-	float IceDmg=PlayerChar->GetAttributeSet()->GetAtkCold()*PlayerChar->GetBonusDamage();
+	float IceDmg=PlayerChar->GetAttributeSet()->GetAtkCold();
 	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookIceDamage,IceDmg);
 
 	PlayerChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data,TargetChar->GetDiaAbilitySystem());

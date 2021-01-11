@@ -301,7 +301,7 @@ void UMapInfoPopup::PortalToVillage()
 {
 	m_DgManager->PortalToVillage(true);
 	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
-	DiaPC.Get()->CloseMapSelectMenu();
+	DiaPC.Get()->GetMainCanvas()->CloseMapMenu();
 }
 
 void UMapInfoPopup::SetCountdownEnterDg(float wantDelay)

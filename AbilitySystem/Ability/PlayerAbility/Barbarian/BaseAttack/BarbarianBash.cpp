@@ -44,33 +44,39 @@ void UBarbarianBash::EventReceived(FGameplayTag EventTag, FGameplayEventData Eve
 			return;
 		}
 
-		DealDamageToTarget(TargetChar, PlayerChar);
-
-		TryGiveBashEffect(TargetChar, PlayerChar);
+		if(DealDamageToTarget(TargetChar, PlayerChar))
+		{
+			TryGiveBashEffect(TargetChar, PlayerChar);
+		}
 	}
 }
 
-void UBarbarianBash::DealDamageToTarget(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar)
+bool UBarbarianBash::DealDamageToTarget(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar)
 {
 	FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
         m_GETargetDamage, GetAbilityLevel());
 
-	float PhysDmg=PlayerChar->GetAttributeSet()->GetPhysicalDamage()*PlayerChar->GetBonusDamage();
-	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPhysDamage,PhysDmg);
+	float Rate = m_fLevelPerDamageRate * GetAbilityLevel();
+		
+	float PhysDmg=PlayerChar->GetAttributeSet()->GetPhysicalDamage();
+	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPhysDamage,PhysDmg*Rate);
 
-	float FireDmg=PlayerChar->GetAttributeSet()->GetAtkFire()*PlayerChar->GetBonusDamage();
-	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookFireDamage,FireDmg);
+	float FireDmg=PlayerChar->GetAttributeSet()->GetAtkFire();
+	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookFireDamage,FireDmg*Rate);
 
-	float ElecDmg=PlayerChar->GetAttributeSet()->GetAtkElec()*PlayerChar->GetBonusDamage();
-	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookElecDamage,ElecDmg);
+	float ElecDmg=PlayerChar->GetAttributeSet()->GetAtkElec();
+	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookElecDamage,ElecDmg*Rate);
 
-	float PoisonDmg=PlayerChar->GetAttributeSet()->GetAtkPoison()*PlayerChar->GetBonusDamage();
-	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPoisonDamage,PoisonDmg);
+	float PoisonDmg=PlayerChar->GetAttributeSet()->GetAtkPoison();
+	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPoisonDamage,PoisonDmg*Rate);
 
-	float IceDmg=PlayerChar->GetAttributeSet()->GetAtkCold()*PlayerChar->GetBonusDamage();
-	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookIceDamage,IceDmg);
+	float IceDmg=PlayerChar->GetAttributeSet()->GetAtkCold();
+	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookIceDamage,IceDmg*Rate);
 
-	PlayerChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data,TargetChar->GetDiaAbilitySystem());
+	FActiveGameplayEffectHandle Result = PlayerChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToTarget(
+		*DamageEffectSpecHandle.Data, TargetChar->GetDiaAbilitySystem());
+
+	return Result.bPassedFiltersAndWasExecuted;
 }
 
 void UBarbarianBash::TryGiveBashEffect(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar)

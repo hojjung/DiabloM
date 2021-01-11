@@ -35,9 +35,7 @@ protected:
 
 	float CalcuSameLevelAvgAccuracy(float targetAvoidChance, AUnitPawn* instigator) const; //맞을 확률
 
-	
-	virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, OUT FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
-
+	virtual bool Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, OUT FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
 };
 
 

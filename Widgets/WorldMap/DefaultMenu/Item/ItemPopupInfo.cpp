@@ -6,6 +6,7 @@
 #include "Animation/UMGSequencePlayer.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Managers/DiabloGameMode.h"
+#include "Widgets/WorldMap/DefaultMenu/DefaultMenu.h"
 #include "Widgets/WorldMap/DefaultMenu/Storage/DiaStorageGridPanel.h"
 
 
@@ -168,7 +169,7 @@ void UItemPopupInfo::BuyItem()
         return;
     }
 
-    if(ADiabloPlayerController::Get->GetShopPanelWidget()->BuyItemAuto(m_SelectedItem))
+    if(ADiabloPlayerController::Get->GetMainCanvas()->GetMainMenu()->GetShopPanelWidget()->BuyItemAuto(m_SelectedItem))
     {
         PlayHideInfoAnim();
         m_OnActionEnd.Broadcast();
@@ -186,7 +187,7 @@ void UItemPopupInfo::SellItem()
         return;
     }
 
-    if(ADiabloPlayerController::Get->GetShopPanelWidget()->SellItemAuto(-1,m_SelectedItem))
+    if(ADiabloPlayerController::Get->GetMainCanvas()->GetMainMenu()->GetShopPanelWidget()->SellItemAuto(-1,m_SelectedItem))
     {
         PlayHideInfoAnim();
         m_OnActionEnd.Broadcast();

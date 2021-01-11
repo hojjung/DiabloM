@@ -21,6 +21,7 @@ enum class EDamagePopup: uint8
     CritcalRight,
     PlayerHurt,
     Miss,
+	Blocked,
     Length
 };
 UCLASS()

@@ -30,4 +30,8 @@ public:
 	UDiaSkillUseButton* m_SkillBtn4;
 	UPROPERTY()
 	TArray<UDiaSkillUseButton*> m_AryButtons;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_InteractButton;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_PotionButton;
 };

@@ -17,8 +17,6 @@ void UMapSelectPanel::Init()
 	m_BtnRiteDG->OnClicked.AddDynamic(this,&UMapSelectPanel::ShowRiteDG);
 	m_BtnEventDG->OnClicked.AddDynamic(this,&UMapSelectPanel::ShowEventDG);
 	//
-	m_BtnClose->OnClicked.AddDynamic(this,&UMapSelectPanel::CloseDgPanel);
-	
 	m_MapInfoPopup->Init();
 }
 
@@ -31,12 +29,14 @@ void UMapSelectPanel::InitDgButton(const FDungeonDataRow* dgData, UMapSelectButt
 
 void UMapSelectPanel::Open(bool isDgCleared)
 {
+	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	
 	if(isDgCleared)
 	{
 		m_MapInfoPopup->m_BtnBackToVillage->SetVisibility(ESlateVisibility::Visible);
 
 		OpenMapInfoPopup(m_CurrentDgData);
-		//auto존재하면 타이머 돌아감
+		
 		m_MapInfoPopup->TryAutoEnter();
 	}
 	else
@@ -101,11 +101,9 @@ void UMapSelectPanel::EventCowRoom()
 
 void UMapSelectPanel::CloseDgPanel()
 {
-	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
-	
-	DiaPC.Get()->CloseMapSelectMenu();
-
-	m_MapInfoPopup->ClosePopup();
-	
 	ShowMainDG();
+	
+	m_MapInfoPopup->ClosePopup();
+
+	SetVisibility(ESlateVisibility::Hidden);
 }

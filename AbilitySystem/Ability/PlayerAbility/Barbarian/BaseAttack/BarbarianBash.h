@@ -30,7 +30,7 @@ protected:
 	
 	virtual void EventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 	
-	void DealDamageToTarget(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar);
+	bool DealDamageToTarget(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar);
 
 	void TryGiveBashEffect(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar);
 };
