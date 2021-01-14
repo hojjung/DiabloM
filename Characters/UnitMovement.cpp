@@ -70,6 +70,8 @@ void UUnitMovement::MoveProceed(float DeltaTime)
         
         SafeMoveUpdatedComponent(MoveDelta, UpdatedComponent->GetComponentRotation(), true, Hit);
 
+        Hit.Normal.Z=0.f;
+        
         if (Hit.IsValidBlockingHit())
         {
             SlideAlongSurface(MoveDelta, 1.f - Hit.Time, Hit.Normal, Hit);

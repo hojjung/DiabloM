@@ -26,6 +26,7 @@ ACollisionInteract::ACollisionInteract(const FObjectInitializer& objInit)
 
 	m_CurrentNode=nullptr;
 	m_bIsVisible=true;
+	m_bIsActingForGame=false;
 }
 
 void ACollisionInteract::BeginPlay()

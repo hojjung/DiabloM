@@ -26,6 +26,7 @@ void UPlayerSensing::InitSense(APlayerDiabloCharacter* player)
 bool UPlayerSensing::TickTryFoundInteraction()
 {
     FVector TraceStart = m_OwnedPlayer->GetCapsule()->GetComponentLocation();
+    
     FVector TraceEnd = TraceStart + m_OwnedPlayer->GetCapsule()->GetForwardVector() * m_OwnedPlayer->m_fInteractRange;
     
     FHitResult OutHit;
@@ -43,7 +44,6 @@ bool UPlayerSensing::TickTryFoundInteraction()
         return false;
     }
     
-    
     IInteractable* FoundIntract = Cast<IInteractable>(OutHit.GetActor());
 
     m_OwnedPlayer->m_FocusedInteractable=TWeakInterfacePtr<IInteractable>( *FoundIntract);
@@ -53,9 +53,10 @@ bool UPlayerSensing::TickTryFoundInteraction()
 
 bool UPlayerSensing::TickTryFoundEnemy()
 {
-    
     FVector HalfSize = FVector(m_FocusRange, 75, 75);
+    
     FVector InitPos = m_OwnedPlayer->GetBodyMesh()->GetComponentLocation();
+    
     InitPos.Z += m_OwnedPlayer->GetCapsule()->GetScaledCapsuleHalfHeight();
 
     FVector TraceStart = InitPos + m_OwnedPlayer->GetCapsule()->GetForwardVector() * HalfSize.X;
@@ -75,8 +76,6 @@ bool UPlayerSensing::TickTryFoundEnemy()
     {
         return false;
     }
-
-    
 
     AMonsterPawn* FocusedUnit = GetCloseMonster(AryOutHit);//,프레임저하 심하고 차이가 없음//몬스터 많아지니까 돌진이 계속써짐
 

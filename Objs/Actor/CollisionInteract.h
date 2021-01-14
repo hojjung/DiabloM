@@ -23,6 +23,9 @@ class DIABLOM_API ACollisionInteract : public AActor,public IInteractable, publi
 public:
 	ACollisionInteract(const FObjectInitializer& objInit);
 
+public:
+	bool m_bIsActingForGame;
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	USphereComponent* m_CollSphere;
@@ -48,6 +51,7 @@ public:
 	{
 		return m_OnTaskEnd;
 	}
+
 
 public:
 	virtual FVector GetActorLocation() override ;

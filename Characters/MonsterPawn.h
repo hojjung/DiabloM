@@ -96,6 +96,11 @@ public:
 		return !GetMovementComponent()->Velocity.IsNearlyZero(0.01f);
 	}
 
+	UFUNCTION(BlueprintCallable)
+    void PlayHitFlash(float notUseDmg);
+	
 protected:
 	void UpdateBound();
+
+	
 };

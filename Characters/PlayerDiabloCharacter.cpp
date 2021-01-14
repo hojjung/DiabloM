@@ -456,6 +456,7 @@ void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)
 			return;
 		}
 	}
+	
 	m_FocusOutlinePawn = Unit;
 
 	m_FocusRenderer->SetHiddenInGame(false);
@@ -487,12 +488,13 @@ void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 {
 	Super::FocusTarget(target);
 
-	if (!target)
+	if (m_FocusedEnemy.Get()&&!target)
 	{
 		m_FocusedEnemy = nullptr;
 		m_OnFocusTarget.Broadcast(nullptr);
 		HideOutlineOnTarget();
 		m_FocusedTargetDie.Reset();
+		
 		return;
 	}
 
@@ -657,7 +659,10 @@ void APlayerDiabloCharacter::OnDeathAnimEnd()
 
 void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target) //wrapper
 {
-	FocusTarget(nullptr);
+	m_FocusedEnemy = nullptr;
+	m_OnFocusTarget.Broadcast(nullptr);
+	HideOutlineOnTarget();
+	m_FocusedTargetDie.Reset();
 }
 
 
@@ -826,6 +831,7 @@ void APlayerDiabloCharacter::TickAttack()
 	}
 
 	HomingRotateToTarget();
+	
 	DoBaseAttack();
 }
 

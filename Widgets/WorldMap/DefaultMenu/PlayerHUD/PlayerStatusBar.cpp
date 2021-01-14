@@ -189,7 +189,10 @@ void UPlayerStatusBar::ShowPlayerHUD()
      m_SkillUseCanvas->m_PotionButton->SetVisibility(ESlateVisibility::Visible);
      m_SkillMenuOpenButton->SetVisibility(ESlateVisibility::Visible);
      m_SkillUseCanvas->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-     m_DiaMonInfo->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+     if(Cast<APlayerDiabloCharacter>( m_PlayerComp->GetOwner())->GetFocusedTargetWeakPtr().Get())
+     {
+        m_DiaMonInfo->SetVisibility(ESlateVisibility::SelfHitTestInvisible); //이것은 타겟팅용이기때문에 무작정켜지면 안된다.
+     }
      m_ExpBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
      m_AutoPlayButton->SetVisibility(ESlateVisibility::Visible);
 }

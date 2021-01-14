@@ -65,16 +65,23 @@ struct FSkillData
 {
 	GENERATED_BODY()
 public:
-	FSkillData(): m_SkillAbility(nullptr), m_SkillIcon(nullptr)
+	FSkillData(): m_bIsJoystickDragger(false), m_bIsChargeable(false), m_nChargeCount(0), m_SkillAbility(nullptr),
+	              m_SkillIcon(nullptr)
 	{
-		m_eSkillDamageType =EDamageType::Physical;
-		m_nMinRequireLevel=0;
-		m_nMaxSkillLevel=15;
-		m_FormatSkillDesc = FText::FromString("Ex)% Attack Bonus {0}");//This is last format
-		m_FormatSkillCost = FText::FromString("Ex)Generate Fury: {0}");//This is last format
+		m_eSkillDamageType = EDamageType::Physical;
+		m_nMinRequireLevel = 0;
+		m_nMaxSkillLevel = 15;
+		m_FormatSkillDesc = FText::FromString("Ex)% Attack Bonus {0}"); //This is last format
+		m_FormatSkillCost = FText::FromString("Ex)Generate Fury: {0}"); //This is last format
 	}
 
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool m_bIsJoystickDragger;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool m_bIsChargeable;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "m_bIsChargeable"))
+	int m_nChargeCount;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UDiabloAbility> m_SkillAbility;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

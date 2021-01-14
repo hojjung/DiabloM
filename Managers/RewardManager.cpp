@@ -270,7 +270,7 @@ void URewardManager::GetNearestItem(const FVector& PawnPos, ADroppedItem*& outNe
 
 	for (ADroppedItem* DropItem : m_AryAllItemActors)
 	{
-		if (!DropItem || DropItem->IsHidden() || !DropItem->IsValidLowLevel() || DropItem == wantIgnore)
+		if (!DropItem || DropItem->IsHidden() || !DropItem->IsValidLowLevel() || DropItem == wantIgnore ||!DropItem->m_bIsActingForGame)
 		{
 			continue;
 		}
@@ -300,7 +300,7 @@ void URewardManager::GetNearestGold(const FVector& PawnPos, ADroppedGold*& outNe
 
 	for (ADroppedGold* DropGold : m_AryAllGoldActors)
 	{
-		if (!DropGold || DropGold->IsHidden() || !DropGold->IsValidLowLevel() || DropGold == wantIgnore)
+		if (!DropGold || DropGold->IsHidden() || !DropGold->IsValidLowLevel() || DropGold == wantIgnore||!DropGold->m_bIsActingForGame)
 		{
 			continue;
 		}
@@ -330,7 +330,7 @@ void URewardManager::GetNearestHp(const FVector& PawnPos, AHealthSphere*& outNea
 
 	for (AHealthSphere* DropHp : m_AryAllHpActors)
 	{
-		if (!DropHp || DropHp->IsHidden() || !DropHp->IsValidLowLevel() || DropHp == wantIgnore)
+		if (!DropHp || DropHp->IsHidden() || !DropHp->IsValidLowLevel() || DropHp == wantIgnore||!DropHp->m_bIsActingForGame)
 		{
 			continue;
 		}
@@ -411,6 +411,8 @@ ACollisionInteract* URewardManager::DropRandomPoint(APawn* dropCenterActor, floa
 
 	BezierCurveMove(targetActorToDrop, height, NewPos, dur, endCallback);
 
+	targetActorToDrop->m_bIsActingForGame=true;
+
 	return targetActorToDrop;
 }
 
@@ -484,6 +486,8 @@ void URewardManager::EnqueItemActor(ACollisionInteract* collActor)
 	Cast<ITickHideable>(collActor)->HideAll(false);
 	m_PoolItem.Enqueue(Cast<ADroppedItem>(collActor));
 	collActor->SetActorLocation(m_HidingPoint);
+	
+	collActor->m_bIsActingForGame=false;
 }
 
 void URewardManager::EnqueGoldActor(ACollisionInteract* collActor)
@@ -491,6 +495,8 @@ void URewardManager::EnqueGoldActor(ACollisionInteract* collActor)
 	Cast<ITickHideable>(collActor)->HideAll(false);
 	m_PoolGold.Enqueue(Cast<ADroppedGold>(collActor));
 	collActor->SetActorLocation(m_HidingPoint);
+
+	collActor->m_bIsActingForGame=false;
 }
 
 void URewardManager::EnqueHpSphereActor(ACollisionInteract* collActor)
@@ -498,6 +504,8 @@ void URewardManager::EnqueHpSphereActor(ACollisionInteract* collActor)
 	Cast<ITickHideable>(collActor)->HideAll(false);
 	m_PoolHp.Enqueue(Cast<AHealthSphere>(collActor));
 	collActor->SetActorLocation(m_HidingPoint);
+
+	collActor->m_bIsActingForGame=false;
 }
 
 ADroppedItem* URewardManager::GetDropItemActor()
@@ -519,6 +527,7 @@ ADroppedItem* URewardManager::GetDropItemActor()
 			m_nItemIndex = 0;
 		}
 	}
+
 
 	return DropItem;
 }

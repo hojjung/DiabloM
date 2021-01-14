@@ -151,11 +151,11 @@ void ADroppedGold::Interact(AActor* instigator)
 	}
 
 	if (m_OnTaskEnd.IsBound()) //Pooled
-		{
+	{
 		m_OnTaskEnd.Broadcast(this);
-		}
+	}
 	else //Not Pooled
-		{
+	{
 		Destroy();
-		}
+	}
 }

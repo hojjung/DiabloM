@@ -167,6 +167,10 @@ void UDungeonManager::ClearDungeon()
     RewardManager->EnqueAllActors(false);
     
     ADiabloPlayerController::Get->GetMainCanvas()->CloseMinimap();//UI Set Brush Tick a
+
+    ADiaDungeon* Dg = ADiabloGameMode::Get->GetDungeon();
+
+    Dg->DestroyDungeon();
 }
 
 void UDungeonManager::RestartDungeon()

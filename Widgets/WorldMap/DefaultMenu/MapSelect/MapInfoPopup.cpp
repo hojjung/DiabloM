@@ -163,37 +163,38 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 		}
 	}
 
-	for (const TSubclassOf<UDiabloAbility>& PlayerBuff : m_CurrentDgData->m_AryClassPlayerBuff)
-	{
-		UImageAndText* Widget = CreateImageText(PlayerBuff.GetDefaultObject()->m_AbilityIcon,
-		                                        PlayerBuff.GetDefaultObject()->m_ShowingName);
-
-		//m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_PlayerBuff)+1,Widget);
-	}
-
-	for (const TSubclassOf<UDiabloAbility>& PlayerDebuff : m_CurrentDgData->m_AryClassPlayerDebuff)
-	{
-		UImageAndText* Widget = CreateImageText(PlayerDebuff.GetDefaultObject()->m_AbilityIcon,
-		                                        PlayerDebuff.GetDefaultObject()->m_ShowingName);
-
-		//m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_PlayerDebuff)+1,Widget);
-	}
-
-	for (const TSubclassOf<UDiabloAbility>& MonsterBuff : m_CurrentDgData->m_AryClassMonsterBuff)
-	{
-		UImageAndText* Widget = CreateImageText(MonsterBuff.GetDefaultObject()->m_AbilityIcon,
-		                                        MonsterBuff.GetDefaultObject()->m_ShowingName);
-
-		//m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_MonsterBuff)+1,Widget);
-	}
-
-	for (const TSubclassOf<UDiabloAbility>& MonsterDebuff : m_CurrentDgData->m_AryClassMonsterDebuff)
-	{
-		UImageAndText* Widget = CreateImageText(MonsterDebuff.GetDefaultObject()->m_AbilityIcon,
-		                                        MonsterDebuff.GetDefaultObject()->m_ShowingName);
-
-		//m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_MonsterDebuff)+1,Widget);
-	}
+	//
+	// for (const TSubclassOf<UDiabloAbility>& PlayerBuff : m_CurrentDgData->m_AryClassPlayerBuff)
+	// {
+	// 	UImageAndText* Widget = CreateImageText(PlayerBuff.GetDefaultObject()->m_AbilityIcon,
+	// 	                                        PlayerBuff.GetDefaultObject()->m_ShowingName);
+	//
+	// 	//m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_PlayerBuff)+1,Widget);
+	// }
+	//
+	// for (const TSubclassOf<UDiabloAbility>& PlayerDebuff : m_CurrentDgData->m_AryClassPlayerDebuff)
+	// {
+	// 	UImageAndText* Widget = CreateImageText(PlayerDebuff.GetDefaultObject()->m_AbilityIcon,
+	// 	                                        PlayerDebuff.GetDefaultObject()->m_ShowingName);
+	//
+	// 	//m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_PlayerDebuff)+1,Widget);
+	// }
+	//
+	// for (const TSubclassOf<UDiabloAbility>& MonsterBuff : m_CurrentDgData->m_AryClassMonsterBuff)
+	// {
+	// 	UImageAndText* Widget = CreateImageText(MonsterBuff.GetDefaultObject()->m_AbilityIcon,
+	// 	                                        MonsterBuff.GetDefaultObject()->m_ShowingName);
+	//
+	// 	//m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_MonsterBuff)+1,Widget);
+	// }
+	//
+	// for (const TSubclassOf<UDiabloAbility>& MonsterDebuff : m_CurrentDgData->m_AryClassMonsterDebuff)
+	// {
+	// 	UImageAndText* Widget = CreateImageText(MonsterDebuff.GetDefaultObject()->m_AbilityIcon,
+	// 	                                        MonsterDebuff.GetDefaultObject()->m_ShowingName);
+	//
+	// 	//m_VerticalInfo2->InsertChildAt(m_VerticalInfo2->GetChildIndex(m_MonsterDebuff)+1,Widget);
+	// }
 }
 
 void UMapInfoPopup::SetAutoRepeat(bool b)

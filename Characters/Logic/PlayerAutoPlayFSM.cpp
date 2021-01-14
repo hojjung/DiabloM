@@ -107,7 +107,7 @@ void UPlayerAutoPlayFSM::OnSearchIdle()
 
 void UPlayerAutoPlayFSM::OnChaseItem()
 {
-	if (!m_FocusedInteract)
+	if (!m_FocusedInteract || !m_FocusedInteract->m_bIsActingForGame)
 	{
 		m_CurrentState = EFSM::SearchIdle;
 	}

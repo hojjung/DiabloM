@@ -148,11 +148,13 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level,UDungeonMan
     }
 
     RegisterToQuadTreeBound();
+    
     if(m_CurrentNode)
     {
         HideAll(false);
     }
 
+    m_AttributeSet->m_OnDmgTook.AddUObject(this,&AMonsterPawn::PlayHitFlash);
 }
 
 
@@ -362,4 +364,13 @@ void AMonsterPawn::UpdateBound()//여기하는중
         //ShowAll(true);
 
     }
+}
+
+void AMonsterPawn::PlayHitFlash(float notUseDmg)
+{
+	FName TimeParamName = "StartTime";
+	
+	float TimeSec = UGameplayStatics::GetTimeSeconds(GetWorld());
+
+	m_SkBody->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
 }
