@@ -16,7 +16,8 @@ class DIABLOM_API UMaterialProgressBar : public UUserWidget
 	
 public:
 	UMaterialProgressBar(const FObjectInitializer& objInit);
-
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FVector2D m_MatSize;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FName m_NameProgressValue;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(ExposeOnSpawn="true"))

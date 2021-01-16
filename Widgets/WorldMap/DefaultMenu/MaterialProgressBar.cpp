@@ -9,6 +9,7 @@ UMaterialProgressBar::UMaterialProgressBar(const FObjectInitializer& objInit):Su
 {
     m_MatWant=nullptr;
     m_MatInst=nullptr;
+    m_MatSize = FVector2D(32.f,32.f);
 }
 
 bool UMaterialProgressBar::Initialize()
@@ -27,6 +28,7 @@ void UMaterialProgressBar::SetMatToBrush()
 {
     FSlateBrush NewBrush;
     NewBrush.SetResourceObject(m_MatInst);
+    NewBrush.ImageSize = m_MatSize;
     m_ImageBar->SetBrush(NewBrush);
 }
 

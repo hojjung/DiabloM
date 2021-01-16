@@ -11,4 +11,5 @@ void UDiaSkillHotKeyPanel::NativeOnInitialized()
     m_AryButtons.Add(m_SkillBtn2);
     m_AryButtons.Add(m_SkillBtn3);
     m_AryButtons.Add(m_SkillBtn4);
+    m_AryButtons.Add(m_SkillBtn5);
 }

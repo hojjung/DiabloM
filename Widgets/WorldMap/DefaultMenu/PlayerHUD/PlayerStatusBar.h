@@ -32,11 +32,23 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMaterialProgressBar* m_HpBar;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UOverlay* m_StaminaOverlay;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMaterialProgressBar* m_StaminaBar;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_StaminaText;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UOverlay* m_ManaOverlay;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMaterialProgressBar* m_ManaBar;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_ManaText;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UOverlay* m_RageOverlay;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMaterialProgressBar* m_RageBar;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_RageText;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMinimapWidget* m_Minimap;
 	//
@@ -54,7 +66,11 @@ protected:
 	
 	TWeakObjectPtr<UPlayerDiabloAbilitySystemComp> m_PlayerComp;
 
-	TWeakObjectPtr<UMaterialProgressBar> m_SelectedBar;
+	TWeakObjectPtr<UOverlay> m_SelectedOverlay;
+	
+	TWeakObjectPtr<UMaterialProgressBar> m_SelectedResourceBar;
+
+	TWeakObjectPtr<UTextBlock> m_SelectedResourceText;
 
 	const FGameplayAttributeData* m_SelectedCurAttribute;
 	

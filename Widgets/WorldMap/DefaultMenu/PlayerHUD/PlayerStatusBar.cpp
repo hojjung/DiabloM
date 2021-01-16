@@ -82,33 +82,39 @@ void UPlayerStatusBar::StopAutoPlay()
 
 void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon,UMainCanvas* mainCanvas)
 {
-    m_StaminaBar->SetVisibility(ESlateVisibility::Collapsed);
-    m_ManaBar->SetVisibility(ESlateVisibility::Collapsed);
-    m_RageBar->SetVisibility(ESlateVisibility::Collapsed);
+    m_StaminaOverlay->SetVisibility(ESlateVisibility::Collapsed);
+    m_ManaOverlay->SetVisibility(ESlateVisibility::Collapsed);
+    m_RageOverlay->SetVisibility(ESlateVisibility::Collapsed);
 
     UPlayerDiabloAttribute* DiaAttri = Cast<UPlayerDiabloAttribute>(diaCon->GetPlayerPawn()->GetAttributeSet());
     m_PlayerComp = Cast<UPlayerDiabloAbilitySystemComp>(diaCon->GetPlayerPawn()->GetAbilitySystemComponent());
 
-    m_SelectedBar = m_RageBar;
+    m_SelectedOverlay = m_RageOverlay;
+    m_SelectedResourceBar = m_RageBar;
+    m_SelectedResourceText = m_RageText;
     m_SelectedCurAttribute = &DiaAttri->Rage;
     m_SelectedMaxAttribute = &DiaAttri->MaxRage;
     PRINTF("RageSet");
     if (DiaAttri->GetMaxMana() > 0)
     {
-        m_SelectedBar = m_ManaBar;
+        m_SelectedOverlay = m_ManaOverlay;
+        m_SelectedResourceBar = m_ManaBar;
+        m_SelectedResourceText = m_ManaText;
         m_SelectedCurAttribute = &DiaAttri->Mana;
         m_SelectedMaxAttribute = &DiaAttri->MaxMana;
         PRINTF("Nope Mana Set");
     }
     else if (DiaAttri->GetMaxStamina() > 0)
     {
-        m_SelectedBar = m_StaminaBar;
+        m_SelectedOverlay = m_StaminaOverlay;
+        m_SelectedResourceBar = m_StaminaBar;
+        m_SelectedResourceText = m_StaminaText;
         m_SelectedCurAttribute = &DiaAttri->Stamina;
         m_SelectedMaxAttribute = &DiaAttri->MaxStamina;
         PRINTF("Nope Stamina Set");
     }
 
-    m_SelectedBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    m_SelectedOverlay->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
     DiaAttri->m_OnStatChanged.AddUObject(this, &UPlayerStatusBar::SetHealthBarProgressV);
     DiaAttri->m_OnStatChanged.AddUObject(this, &UPlayerStatusBar::SetResourceBarProgressV);
@@ -158,9 +164,23 @@ void UPlayerStatusBar::SetHealthBarProgressV(AUnitPawn* pawn)
 
 void UPlayerStatusBar::SetResourceBarProgressV(AUnitPawn* pawn)
 {
-    float Per = m_SelectedCurAttribute->GetCurrentValue() / m_SelectedMaxAttribute->GetCurrentValue();
+    float CR =m_SelectedCurAttribute->GetCurrentValue();
+    
+    float MR = m_SelectedMaxAttribute->GetCurrentValue();
+    
+    float Per = CR / MR;
+    
     Per = FMath::Clamp(Per, 0.f, 1.f);
-    m_SelectedBar->SetProgressValue(Per);
+    
+    m_SelectedResourceBar->SetProgressValue(Per);
+
+    FFormatOrderedArguments Args;
+
+    Args.Add(UDiaBlueprintFunctionLibrary::GetAlphabetText(CR));
+    
+    Args.Add(UDiaBlueprintFunctionLibrary::GetAlphabetText(MR));
+
+    m_SelectedResourceText->SetText(FText::Format(m_HpFormat,Args));
 }
 
 void UPlayerStatusBar::UpdateMinimap(UMaterialInterface* material_interface)
@@ -183,7 +203,7 @@ void UPlayerStatusBar::ShowPlayerHUD()
      m_InvenOpenButton->SetVisibility(ESlateVisibility::Visible);
      m_TextHp->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
      m_HpBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-     m_SelectedBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+     m_SelectedOverlay->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
      m_Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
      m_SkillUseCanvas->m_InteractButton->SetVisibility(ESlateVisibility::Visible);
      m_SkillUseCanvas->m_PotionButton->SetVisibility(ESlateVisibility::Visible);
@@ -202,7 +222,7 @@ void UPlayerStatusBar::HidePlayerHUD()
     m_InvenOpenButton->SetVisibility(ESlateVisibility::Hidden);
     m_TextHp->SetVisibility(ESlateVisibility::Hidden);
     m_HpBar->SetVisibility(ESlateVisibility::Hidden);
-    m_SelectedBar->SetVisibility(ESlateVisibility::Hidden);
+    m_SelectedOverlay->SetVisibility(ESlateVisibility::Hidden);
     m_Minimap->SetVisibility(ESlateVisibility::Hidden);
     m_SkillUseCanvas->m_InteractButton->SetVisibility(ESlateVisibility::Hidden);
     m_SkillUseCanvas->m_PotionButton->SetVisibility(ESlateVisibility::Hidden);

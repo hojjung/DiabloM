@@ -6,6 +6,8 @@
 
 UPlayerBaseAttack::UPlayerBaseAttack()
 {
+    m_fDashLimitSqr=0.f;
+    
     m_nSectionIndex = -1;
 
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
@@ -25,8 +27,6 @@ UPlayerBaseAttack::UPlayerBaseAttack()
 
     ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Combat.Ability.Skill")));
 
-    m_fDashLimitRange = 700.0f;
-    
     m_fDashTime=0.5f;
     
     m_AbilityInputID = EAbilityInputID::BaseAttack;
@@ -63,15 +63,20 @@ void UPlayerBaseAttack::TryDashAttack(const FGameplayAbilityActorInfo* ActorInfo
     Movement->SetMoveSpeedRatio(0.25f);
     
     float DistSqred;
+    
     FVector DashNormal;
     
     if(IsDashable(ActorInfo,DistSqred,DashNormal))
     {
         PlayAbilityAnimation(m_BaseAttackMotion,"DashAttack" ,2);
-    
-        float Accept=m_PlayerPawn->GetAcceptRadiusToOther();
-        float AcceptSqr=Accept*Accept;
-        DashAttack(Movement,DashNormal,FMath::Sqrt(DistSqred-AcceptSqr),m_fDashTime);
+
+        float DashLength = DistSqred - m_fDashAcceptSqr;
+
+        DashLength+=22500.f;
+
+        float DashPercent = DashLength/DistSqred;
+
+        DashAttack(Movement,DashNormal,FMath::Sqrt(DashLength),(m_fDashTime*DashPercent));
     }
     else
     {
@@ -111,10 +116,15 @@ void UPlayerBaseAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo
     ResetComboSection();
     
     //m_fAttackRange = m_OwnerUnit->GetAttackRange();
+    m_fAttackAngleCos = FMath::Cos(FMath::DegreesToRadians(m_fAttackAngle));
     
     m_fAttackRangeSqr = m_fAttackRange * m_fAttackRange;
     
-    m_fAttackAngleCos = FMath::Cos(FMath::DegreesToRadians(m_fAttackAngle));
+    float Accept = m_PlayerPawn->GetAcceptRadiusToOther() + m_fAttackRange;
+
+    m_fDashAcceptSqr = m_fAttackRangeSqr;//너무 가까우면 안함
+    
+    m_fDashLimitSqr = Accept*Accept;
 }
 
 void UPlayerBaseAttack::ResetComboSection()
@@ -180,6 +190,7 @@ UUnitMovement* UPlayerBaseAttack::GetMovement(APawn* want)
 void UPlayerBaseAttack::DashAttack(UUnitMovement* movementComp,FVector dashNormal, float dashLength, float dashTime)
 {
     FVector DeltaDash=dashNormal * (dashLength/m_fDashTime);
+    
     movementComp->SetDash(DeltaDash,dashTime);
 }
 
@@ -202,7 +213,7 @@ bool UPlayerBaseAttack::IsDashable(const FGameplayAbilityActorInfo* ActorInfo,fl
     
     outDashNormal=(Location2 -Location1).GetSafeNormal();
     
-    return DistSqr2D >m_fDashLimitRange*m_fDashLimitRange; 
+    return DistSqr2D >m_fDashLimitSqr; 
 }
 
 bool UPlayerBaseAttack::CheckAttackRange(const AActor* other) const

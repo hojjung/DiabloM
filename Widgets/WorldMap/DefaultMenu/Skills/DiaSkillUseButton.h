@@ -34,7 +34,9 @@ protected:
 protected:
 	int m_nIndex;
 
-	float m_fMaxCD; 
+	float m_fMaxCD;
+
+	bool m_bIsPressing;
 	
 	FSkillDataSpec* m_EquippedSkillSpec;
 
@@ -50,9 +52,15 @@ public:
 	void ClearCooldown();
 
 	UFUNCTION()
+	void OnPressBtn();
+
+	UFUNCTION()
+    void OnReleaseBtn();
+	
 	void UseSkill();
 	
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 };

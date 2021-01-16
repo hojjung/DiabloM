@@ -19,7 +19,9 @@ void UBarbarianBash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                      const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
+	
+	m_bIsGained = false;
+	
 	TryDashAttack(ActorInfo);
 }
 
@@ -47,8 +49,28 @@ void UBarbarianBash::EventReceived(FGameplayTag EventTag, FGameplayEventData Eve
 		if(DealDamageToTarget(TargetChar, PlayerChar))
 		{
 			TryGiveBashEffect(TargetChar, PlayerChar);
+			//gain resource
+
+			if(m_bIsGained)
+			{
+				return;
+			}
+			
+			FGameplayEffectSpecHandle EffectSpecHandle =MakeOutgoingGameplayEffectSpec(m_GEBaseAttackGainResource,1);
+
+			PlayerChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
+
+			m_bIsGained = true;
 		}
 	}
+}
+
+void UBarbarianBash::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	m_bIsGained = false;
 }
 
 bool UBarbarianBash::DealDamageToTarget(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar)
@@ -57,7 +79,7 @@ bool UBarbarianBash::DealDamageToTarget(const AUnitPawn* TargetChar, APlayerDiab
         m_GETargetDamage, GetAbilityLevel());
 
 	float Rate = m_fLevelPerDamageRate * GetAbilityLevel();
-		
+
 	float PhysDmg=PlayerChar->GetAttributeSet()->GetPhysicalDamage();
 	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPhysDamage,PhysDmg*Rate);
 

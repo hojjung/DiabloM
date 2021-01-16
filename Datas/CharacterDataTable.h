@@ -37,11 +37,11 @@ public:
 	TSubclassOf<UGameplayEffect> m_DefaultStatTable;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimSequenceBase* m_StunMontage;
+	UAnimMontage* m_StunMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimSequenceBase* m_DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_TookHitMontage;
+	UAnimSequenceBase* m_TookHitMontage;
 };
 
 

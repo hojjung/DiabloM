@@ -484,21 +484,27 @@ void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
     if(NewCount>0)
     {
         GetDiaAbilitySystem()->CancelAbilities();
+        
         SetBlockMove();
         
         if(m_StunMontage)
         {
-            
             PlayAnim(m_StunMontage,false);
         }
+        else
+        {
+            m_SkBody->bPauseAnims = true;
+        }
+
+//        m_fHitAnimCD = FMath::RandRange(3.5,5);
         
         return;
     }
+    //stun end
+
+    m_fHitAnimCD = FMath::RandRange(3.5f,5.f);
     
-    if(m_StunMontage)
-    {
-        PlayAnim(m_StunMontage,false);
-    }
+    m_SkBody->bPauseAnims = false;    
     
     SetUnblockMove();
 }
@@ -509,7 +515,7 @@ void AUnitPawn::PlayTookHitMontage()
     {
         PlayAnim(m_TookHitMontage,false);
 
-        m_fHitAnimCD = FMath::RandRange(3,10);
+        m_fHitAnimCD = FMath::RandRange(1.5f,2.5f);
     }
 }
 

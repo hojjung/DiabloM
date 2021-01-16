@@ -35,6 +35,10 @@ void UPlayerDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attrib
 	{
 		
 	}
+	else if (Attribute == GetRageAttribute())
+	{
+		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxRage());
+	}
 }
 void UPlayerDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCallbackData & Data)//Instant가 아니면 원래 안불림
 {
@@ -80,7 +84,7 @@ void UPlayerDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModC
 	}
 	else if (Data.EvaluatedData.Attribute == GetRageAttribute())
 	{
-		//NO
+		//NO?
 	}
 	else if (Data.EvaluatedData.Attribute == GetMaxRageAttribute())
 	{

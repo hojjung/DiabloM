@@ -10,11 +10,13 @@ UDiaSkillUseButton::UDiaSkillUseButton(const FObjectInitializer& objInit):Super(
 	m_GaSpec=nullptr;
 	m_EquippedSkillSpec=nullptr;
 	m_nIndex=-1;
+	m_bIsPressing =false;
 }
 
 void UDiaSkillUseButton::Init(UPlayerDiabloAbilitySystemComp* diaComp,int index)
 {
-	m_BtnSkill->OnClicked.AddDynamic(this,&UDiaSkillUseButton::UseSkill);
+	m_BtnSkill->OnPressed.AddDynamic(this,&UDiaSkillUseButton::OnPressBtn);
+	m_BtnSkill->OnReleased.AddDynamic(this,&UDiaSkillUseButton::OnReleaseBtn);
 	m_nIndex=index;
 	ClearSkillSpec();
 	m_PlayerDiaComp=diaComp;
@@ -68,6 +70,16 @@ void UDiaSkillUseButton::ClearCooldown()
 	m_SkillCooldown->SetCooldownProgress(0.f,0.f);
 }
 
+void UDiaSkillUseButton::OnPressBtn()
+{
+	m_bIsPressing =true;
+}
+
+void UDiaSkillUseButton::OnReleaseBtn()
+{
+	m_bIsPressing =false;
+}
+
 void UDiaSkillUseButton::UseSkill()
 {
     PRINTF("UseSkill");
@@ -112,6 +124,11 @@ void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	if(m_bIsPressing)
+	{
+		UseSkill();
+	}
+
 	if(!m_GaSpec||m_fMaxCD<=0.f)
 	{
 		return;
@@ -132,6 +149,7 @@ void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 	
 	m_EquippedSkillSpec->m_LearnBtn->SetCooldownProgress(CD,m_fMaxCD);//0이 끝임
 }
+
 
 //float CD = Spec->Ability->GetCooldownTimeRemaining();
 // if(m_GaSpec) = FindAbilitySpecFromHandle(Handle);

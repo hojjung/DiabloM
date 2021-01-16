@@ -1,14 +1,9 @@
-// My First Hack n Slash
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/PlayerAbility/BaseSkillTemplate/PlayerBaseAttack.h"
 #include "BarbarianBash.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class DIABLOM_API UBarbarianBash : public UPlayerBaseAttack
 {
@@ -18,10 +13,13 @@ protected:
 	TSubclassOf<UGameplayEffect> m_GETargetDamage;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TSubclassOf<UGameplayEffect> m_GETargetBashStun;
+	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	int m_nWantStunPercentMaxCount = 5;
 
 	float m_nfStunPercent;
+
+	bool m_bIsGained;
 	
 protected:
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
@@ -29,6 +27,8 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	
 	virtual void EventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
+
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 	
 	bool DealDamageToTarget(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar);
 

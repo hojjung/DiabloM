@@ -137,7 +137,8 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level,UDungeonMan
     }
     else
     {
-        SetActorTickEnabled(false); //Anim?
+        m_bUseFSM = false;
+        //SetActorTickEnabled(false); //Anim?
     }
 
     if (UnitData->m_BaseAttack)

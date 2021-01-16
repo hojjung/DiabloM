@@ -32,11 +32,11 @@ protected:
 	UAnimMontage* m_BaseAttackMotion;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TSubclassOf<UGameplayEffect> m_GEBaseAttackGainResource;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float m_fDashTime;
 	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float m_fDashLimitRange;
-
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float m_fAttackRange;
 	
@@ -56,6 +56,10 @@ protected:
 	FGameplayTag m_TagTookPoisonDamage;
 
 	TArray<FCompositeSection> m_AryMontageSections;
+
+	float m_fDashLimitSqr;
+
+	float m_fDashAcceptSqr;
 
 	float m_fAttackRangeSqr;
 	

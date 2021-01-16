@@ -198,7 +198,7 @@ bool UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
         OutExecutionOutput.AddOutputModifier(
             FGameplayModifierEvaluatedData(GetDamageStatics().TookPoisonDamageProperty, EGameplayModOp::Override, 0.f));
 
-        if (Cast<APlayerDiabloCharacter>(SourceUnit))
+        //if (Cast<APlayerDiabloCharacter>(SourceUnit))
         {
             float SuccessPer100 = CalcuSameLevelAvgAccuracy(LAvoid, SourceUnit);
             ADiabloPlayerController::Get->ShowDamageNumber(100.f - SuccessPer100, TargetUnit, EDamagePopup::Miss);
