@@ -14,11 +14,15 @@ Quadtree::Quadtree(const int maxDistance, FVector2D min, FVector2D max)
     InitialiseNodes(m_RootNode, min, max);
     float CellCount = FMath::Pow(2, maxDistance);
     FVector2D Diff = max -min; 
-    MinCellHeight=Diff.Y/CellCount;
-    MinCellWidth =Diff.X /CellCount;
+    m_fMinCellHeight=Diff.Y/CellCount;
+    m_fMinCellWidth =Diff.X /CellCount;
 
-    ForMinCellHeight =MinCellHeight * 1.0f;
-    ForMinCellWidth =MinCellWidth * 1.0f;
+    m_fForMinCellHeight =m_fMinCellHeight * 1.0f;
+    m_fForMinCellWidth =m_fMinCellWidth * 1.0f;
+
+    float Short =FMath::Min(m_fForMinCellHeight,m_fForMinCellWidth);
+    
+    m_fCellFindLength = Short * 0.5f;
 }
 
 Quadtree::~Quadtree()
@@ -121,6 +125,10 @@ void Quadtree::InitialiseNodes(TSharedPtr<QuadtreeNode> parentNode, FVector2D mi
         InitialiseNodes(tr, trMin, trMax);
         InitialiseNodes(tl, tlMin, tlMax);
     }
+    else
+    {
+        //last node
+    }
 }
 
 TSharedPtr<QuadtreeNode> Quadtree::CreateNode(TSharedPtr<QuadtreeNode> parent, FVector2D min, FVector2D max)
@@ -150,8 +158,60 @@ void Quadtree::NodeShowHide(TSharedPtr<QuadtreeNode>& OldNodeEntered,TSharedPtr<
     OldNodeEntered->ShowActors();
 }
 
-void Quadtree::TryShow9Cell(FVector&& centerPosition)
+void Quadtree::HideAllNode()
 {
+    //한번 보인 액터들은 틱이 안꺼지기 때문에 별로 도움되지 않는다
+    if(m_CenterNodeEntered)
+    {
+        m_CenterNodeEntered->HideActors();
+        m_CenterNodeEntered=nullptr;
+    }
+    if(m_NorthNodeEntered)
+    {
+        m_NorthNodeEntered->HideActors();
+        m_NorthNodeEntered=nullptr;
+    }
+    if(m_EastNodeEntered)
+    {
+        m_EastNodeEntered->HideActors();
+        m_EastNodeEntered=nullptr;
+    }
+    if(m_WestNodeEntered)
+    {
+        m_WestNodeEntered->HideActors();
+        m_WestNodeEntered=nullptr;
+    }
+    if(m_NorthEastNodeEntered)
+    {
+        m_NorthEastNodeEntered->HideActors();
+        m_NorthEastNodeEntered=nullptr;
+    }
+    if(m_NorthWestNodeEntered)
+    {
+        m_NorthWestNodeEntered->HideActors();
+        m_NorthWestNodeEntered=nullptr;
+    }
+    if(m_SouthEastNodeEntered)
+    {
+        m_SouthEastNodeEntered->HideActors();
+        m_SouthEastNodeEntered=nullptr;
+    }
+    if(m_SouthWestNodeEntered)
+    {
+        m_SouthWestNodeEntered->HideActors();
+        m_SouthWestNodeEntered=nullptr;
+    }
+    if(m_SouthNodeEntered)
+    {
+        m_SouthNodeEntered->HideActors();
+        m_SouthNodeEntered=nullptr;
+    }//문제 없는데
+}
+
+void Quadtree::TryShow9Cell(AActor* mover)
+{
+    FVector centerPosition = mover->GetActorLocation();
+    
     FVector2D CenterPos2D(centerPosition);
     FVector2D NorthPos2D=CenterPos2D;
     FVector2D SouthPos2D=CenterPos2D;
@@ -164,24 +224,24 @@ void Quadtree::TryShow9Cell(FVector&& centerPosition)
 
     
 
-    NorthPos2D.Y+=MinCellHeight;
-    SouthPos2D.Y-=MinCellHeight;
+    NorthPos2D.Y+=m_fMinCellHeight;
+    SouthPos2D.Y-=m_fMinCellHeight;
 
-    EastPos2D.X+=MinCellWidth;
-    WestPos2D.X-=MinCellWidth;
+    EastPos2D.X+=m_fMinCellWidth;
+    WestPos2D.X-=m_fMinCellWidth;
 
     //대각선
-    NorthEastPos2D.Y+=ForMinCellHeight;
-    NorthEastPos2D.X+=ForMinCellWidth;
+    NorthEastPos2D.Y+=m_fForMinCellHeight;
+    NorthEastPos2D.X+=m_fForMinCellWidth;
 
-    NorthWestPos2D.Y+=ForMinCellHeight;
-    NorthWestPos2D.X-=ForMinCellWidth;
+    NorthWestPos2D.Y+=m_fForMinCellHeight;
+    NorthWestPos2D.X-=m_fForMinCellWidth;
 
-    SouthWestPos2D.Y-=ForMinCellHeight;
-    SouthWestPos2D.X-=ForMinCellWidth;
+    SouthWestPos2D.Y-=m_fForMinCellHeight;
+    SouthWestPos2D.X-=m_fForMinCellWidth;
 
-    SouthEastPos2D.Y-=ForMinCellHeight;
-    SouthEastPos2D.X+=ForMinCellWidth;
+    SouthEastPos2D.Y-=m_fForMinCellHeight;
+    SouthEastPos2D.X+=m_fForMinCellWidth;
 
     TSharedPtr<QuadtreeNode> CenterNodeEntered    = GetMinNode(CenterPos2D);
     TSharedPtr<QuadtreeNode> NorthNodeEntered     = GetMinNode(NorthPos2D);
@@ -195,51 +255,7 @@ void Quadtree::TryShow9Cell(FVector&& centerPosition)
 
     if(CenterNodeEntered!=m_CenterNodeEntered)
     {
-        if(m_CenterNodeEntered)
-        {
-            m_CenterNodeEntered->HideActors();
-            m_CenterNodeEntered=nullptr;
-        }
-        if(m_NorthNodeEntered)
-        {
-            m_NorthNodeEntered->HideActors();
-            m_NorthNodeEntered=nullptr;
-        }
-        if(m_EastNodeEntered)
-        {
-            m_EastNodeEntered->HideActors();
-            m_EastNodeEntered=nullptr;
-        }
-        if(m_WestNodeEntered)
-        {
-            m_WestNodeEntered->HideActors();
-            m_WestNodeEntered=nullptr;
-        }
-        if(m_NorthEastNodeEntered)
-        {
-            m_NorthEastNodeEntered->HideActors();
-            m_NorthEastNodeEntered=nullptr;
-        }
-        if(m_NorthWestNodeEntered)
-        {
-            m_NorthWestNodeEntered->HideActors();
-            m_NorthWestNodeEntered=nullptr;
-        }
-        if(m_SouthEastNodeEntered)
-        {
-            m_SouthEastNodeEntered->HideActors();
-            m_SouthEastNodeEntered=nullptr;
-        }
-        if(m_SouthWestNodeEntered)
-        {
-            m_SouthWestNodeEntered->HideActors();
-            m_SouthWestNodeEntered=nullptr;
-        }
-        if(m_SouthNodeEntered)
-        {
-            m_SouthNodeEntered->HideActors();
-            m_SouthNodeEntered=nullptr;
-        }//문제 없는데
+        HideAllNode();
     
 
         NodeShowHide(m_CenterNodeEntered,CenterNodeEntered);
@@ -263,5 +279,52 @@ void Quadtree::TryShow9Cell(FVector&& centerPosition)
     }
 }
 
- 
- 
+void Quadtree::TryShow3Cell(AActor* mover)
+{
+    FVector CenterPosition = mover->GetActorLocation();
+
+    FVector forwardPosition = CenterPosition+(mover->GetActorForwardVector()*m_fCellFindLength);
+    
+    FVector2D CenterPos2D(CenterPosition);
+
+    FVector2D ForwardPos2D(forwardPosition);
+
+    TSharedPtr<QuadtreeNode> CenterNodeEntered    = GetMinNode(CenterPos2D);
+
+    if(CenterNodeEntered&&CenterNodeEntered != m_CurrentNode)
+    {
+        if(m_CurrentNode)
+        {
+            if(m_OldNode)
+            {
+                m_OldNode->HideActors();
+            }
+            
+            m_OldNode = m_CurrentNode;
+        }
+
+        m_CurrentNode = CenterNodeEntered;
+
+        m_CurrentNode->ShowActors();
+
+        
+    }
+
+    if(m_OldNode)
+        m_OldNode->DrawBoxAroundNode(mover->GetWorld(),FColor::Cyan);
+
+    if(m_CurrentNode)
+        m_CurrentNode->DrawBoxAroundNode(mover->GetWorld(),FColor::Cyan);
+
+    TSharedPtr<QuadtreeNode> ForwardNodeEntered    = GetMinNode(ForwardPos2D);
+    
+    if(ForwardNodeEntered)
+    {
+        ForwardNodeEntered->ShowActors();
+
+        ForwardNodeEntered->DrawBoxAroundNode(mover->GetWorld(),FColor::Cyan);
+    }
+
+    
+}
+

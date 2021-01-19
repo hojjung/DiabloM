@@ -179,6 +179,14 @@ void ADiabloGameMode::ClearQuadTree()
 	}
 }
 
+void ADiabloGameMode::HideAllTreeNodes()
+{
+	if(m_QuadTree)
+	{
+		m_QuadTree->HideAllNode();
+	}
+}
+
 void ADiabloGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
@@ -191,7 +199,7 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 	if(m_QuadTree)
 	{
 		//m_QuadTree->DrawBoxes(GetWorld());
-		m_QuadTree->TryShow9Cell(ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation());
+		m_QuadTree->TryShow3Cell(ADiabloPlayerController::Get->GetPlayerPawn());
 	}
 }
 

@@ -88,6 +88,7 @@ public:
 	void OnBtnReleaseHold();
 	
 	void SetMinimapMat(UMaterialInterface* material_interface);
+	
 	void HideCornerMinimap();
 
 	UFUNCTION()

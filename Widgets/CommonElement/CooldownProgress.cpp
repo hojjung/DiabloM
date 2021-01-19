@@ -9,13 +9,20 @@ UCooldownProgress::UCooldownProgress(const FObjectInitializer& obj):Super(obj)
     m_fFontSize=22.f;
 }
 
+void UCooldownProgress::SetFontSize(float size)
+{
+    m_TextCooldown->SetColorAndOpacity(m_ColorText);
+    FSlateFontInfo Font =m_TextCooldown->Font;
+    Font.Size=size;
+    m_TextCooldown->SetFont(Font);
+    
+    m_fFontSize=size;
+}
+
 void UCooldownProgress::NativePreConstruct()
 {
     Super::NativePreConstruct();
-    m_TextCooldown->SetColorAndOpacity(m_ColorText);
-    FSlateFontInfo Font =m_TextCooldown->Font;
-    Font.Size=m_fFontSize;
-    m_TextCooldown->SetFont(Font);
+    SetFontSize(m_fFontSize);
 }
 
 void UCooldownProgress::NativeOnInitialized()

@@ -38,17 +38,18 @@ private:
 	TSharedPtr<QuadtreeNode> CreateNode(TSharedPtr<QuadtreeNode> parent, FVector2D min, FVector2D max);
 	//
 	void NodeShowHide(TSharedPtr<QuadtreeNode>& OldNodeEntered, TSharedPtr<QuadtreeNode>& newNodeEntered);
+	
 
 private:
 	TSharedPtr<QuadtreeNode> m_RootNode;
 
 	int m_MaxDistance;
 
-	float MinCellHeight = 0;
-	float MinCellWidth = 0;
+	float m_fMinCellHeight = 0;
+	float m_fMinCellWidth = 0;
 
-	float ForMinCellHeight = 0; //대각선
-	float ForMinCellWidth = 0;
+	float m_fForMinCellHeight = 0; //대각선
+	float m_fForMinCellWidth = 0;
 
 	TSharedPtr<QuadtreeNode> m_CenterNodeEntered;
 	TSharedPtr<QuadtreeNode> m_NorthNodeEntered;
@@ -59,7 +60,17 @@ private:
 	TSharedPtr<QuadtreeNode> m_NorthWestNodeEntered;
 	TSharedPtr<QuadtreeNode> m_SouthEastNodeEntered;
 	TSharedPtr<QuadtreeNode> m_SouthWestNodeEntered;
+//////////////////////
+	float m_fCellFindLength =0.f;
+
+	TSharedPtr<QuadtreeNode> m_CurrentNode;
+
+	TSharedPtr<QuadtreeNode> m_OldNode;
 
 public:
-	void TryShow9Cell(FVector&& centerPosition);
+	void TryShow9Cell(AActor* mover);//플레이어의 현재와 전방,이전셀 3개만
+
+	void TryShow3Cell(AActor* mover);
+
+	void HideAllNode();
 };

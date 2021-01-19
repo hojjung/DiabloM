@@ -1,25 +1,23 @@
 #include "DiaSkillUseButton.h"
-
-
 #include "DiaDragDropSkill.h"
 #include "SkillLearnButton.h"
 
-UDiaSkillUseButton::UDiaSkillUseButton(const FObjectInitializer& objInit):Super(objInit)
+
+void UDiaSkillUseButton::Init(UPlayerDiabloAbilitySystemComp* diaComp,int index)
 {
 	m_fMaxCD=0.f;
 	m_GaSpec=nullptr;
 	m_EquippedSkillSpec=nullptr;
 	m_nIndex=-1;
 	m_bIsPressing =false;
-}
-
-void UDiaSkillUseButton::Init(UPlayerDiabloAbilitySystemComp* diaComp,int index)
-{
-	m_BtnSkill->OnPressed.AddDynamic(this,&UDiaSkillUseButton::OnPressBtn);
-	m_BtnSkill->OnReleased.AddDynamic(this,&UDiaSkillUseButton::OnReleaseBtn);
+	m_bIsDragSkill=false;
+	m_bIsSkillUsable=false;
 	m_nIndex=index;
 	ClearSkillSpec();
 	m_PlayerDiaComp=diaComp;
+	FSlateBrush Brush;
+	m_SkillIcon->SetBrush(Brush);
+	m_SkillIcon->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
 void UDiaSkillUseButton::SetSkillSpec(FSkillDataSpec* skillSpec)
@@ -38,29 +36,38 @@ void UDiaSkillUseButton::SetSkillSpec(FSkillDataSpec* skillSpec)
 	}
 	
 	m_EquippedSkillSpec=skillSpec;
+	
 	m_EquippedSkillSpec->m_nEquipIndex=m_nIndex;
 
-	FButtonStyle Style;
 	FSlateBrush DefaultStyle;
+	
 	DefaultStyle.SetResourceObject(m_EquippedSkillSpec->m_SkillDataPtr->m_SkillIcon);
 	
-	Style.Normal = DefaultStyle;
-	Style.Hovered= DefaultStyle;
-	DefaultStyle.TintColor = FSlateColor(FLinearColor(0.5f,0.5f,0.5f,1.f));
-	Style.Pressed= DefaultStyle;
-	m_BtnSkill->SetVisibility(ESlateVisibility::Visible);
-	m_BtnSkill->SetStyle(Style);
+	m_SkillIcon->SetBrush(DefaultStyle);
+	
+	//m_BtnSkill->SetVisibility(ESlateVisibility::Visible);
+
+	m_bIsSkillUsable = true;
+
+	m_bIsDragSkill = m_EquippedSkillSpec->m_SkillDataPtr->m_bIsJoystickDragger;
+
+	m_bIsDragSkill=true;
+
+	m_Joystick->SetUseDrag(true);//TEST
 
 	m_PlayerDiaComp->EquipSkill(m_EquippedSkillSpec);
-	
 }
 
 void UDiaSkillUseButton::ClearSkillSpec()
 {
-	m_BtnSkill->SetVisibility(ESlateVisibility::Hidden);
+	m_bIsSkillUsable = false;
 	m_GaSpec=nullptr;
 	m_EquippedSkillSpec=nullptr;
-	m_BtnSkill->SetStyle(FButtonStyle());
+	
+	FSlateBrush DefaultStyle;
+	
+	m_SkillIcon->SetBrush(DefaultStyle);
+	
 	ClearCooldown();
 }
 
@@ -72,18 +79,32 @@ void UDiaSkillUseButton::ClearCooldown()
 
 void UDiaSkillUseButton::OnPressBtn()
 {
+	if(m_bIsDragSkill)
+	{
+		return;
+	}
+	if(!m_bIsSkillUsable)
+	{
+		return;
+	}
 	m_bIsPressing =true;
 }
 
 void UDiaSkillUseButton::OnReleaseBtn()
 {
+	if(m_bIsDragSkill)
+	{
+		return;
+	}
+	if(!m_bIsSkillUsable)
+	{
+		return;
+	}
 	m_bIsPressing =false;
 }
 
 void UDiaSkillUseButton::UseSkill()
 {
-    PRINTF("UseSkill");
-
     FGameplayAbilitySpec* AbilSpec = m_PlayerDiaComp->UseSkill(m_EquippedSkillSpec);
 
 	if(!AbilSpec)
@@ -148,6 +169,28 @@ void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 	m_SkillCooldown->SetCooldownProgress(CD,m_fMaxCD);//0이 끝임
 	
 	m_EquippedSkillSpec->m_LearnBtn->SetCooldownProgress(CD,m_fMaxCD);//0이 끝임
+}
+
+FReply UDiaSkillUseButton::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
+{
+	FReply ASD = Super::NativeOnTouchStarted(InGeometry, InGestureEvent);
+	OnPressBtn();
+	return ASD;
+}
+
+FReply UDiaSkillUseButton::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
+{
+	FReply ASD = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
+	OnReleaseBtn();
+
+	return  ASD;
+}
+
+void UDiaSkillUseButton::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+
+	OnReleaseBtn();
 }
 
 

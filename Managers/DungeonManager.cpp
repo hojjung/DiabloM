@@ -71,7 +71,7 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 
     BuildDungeonLevel(m_CurrentDungeonData);
 
-    GetMoviePlayer()->PlayMovie();
+    //GetMoviePlayer()->PlayMovie();
 }
 
 
@@ -98,6 +98,7 @@ void UDungeonManager::PortalToVillage(bool isDgCleared)
     }
     
     APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
+    
     PlayerPawn->SetActorLocation(GetCurrentPlayerFeetLoc(),false,nullptr,ETeleportType::None);
     
     ADiabloPlayerController::Get->ClientForceGarbageCollection();
@@ -106,7 +107,7 @@ void UDungeonManager::PortalToVillage(bool isDgCleared)
 
     ADiabloPlayerController::Get->GetMainCanvas()->CloseMinimap();//UI Set Brush Tick add
     //
-    
+    ADiabloGameMode::Get->HideAllTreeNodes();
 }
 
 void UDungeonManager::PortalToRecentDungeon()
@@ -254,6 +255,8 @@ void UDungeonManager::BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData)
     ADiabloPlayerController::Get->SetInputMode(FInputModeGameOnly());
     ADiabloPlayerController::Get->bBlockInput=true;
     Dg->BuildDungeon();
+
+    GetMoviePlayer()->PlayMovie();
 }
 
 void UDungeonManager::OnDgBuildComplete(ADungeon* Dungeon)
@@ -303,7 +306,7 @@ void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
     
     ADiabloPlayerController::Get->SetInputMode(FInputModeGameAndUI());
     
-    GetMoviePlayer()->StopMovie();
+    //GetMoviePlayer()->StopMovie();
 }
 
 void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData)
@@ -331,8 +334,10 @@ void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* 
 
     m_nCurrentMonsterCount = SpawnManager->GetCurrentMonsters().Num();
     
-    m_nClearableCount = m_nCurrentMonsterCount *0.1f;
-    
+    m_nClearableCount = m_nCurrentMonsterCount *0.1f;//Test should be 0.85
+
+    PRINTF("Dgmanager-Spawn Point Count: %d",ADiabloGameMode::Get->GetDungeon()->GetArySpawnPoints().Num());
+    PRINTF("Dgmanager-Monster Spawned Count: %d",m_nCurrentMonsterCount);
     PRINTF("Dgmanager-Clearable Remain Count: %d",m_nClearableCount);
 }
 

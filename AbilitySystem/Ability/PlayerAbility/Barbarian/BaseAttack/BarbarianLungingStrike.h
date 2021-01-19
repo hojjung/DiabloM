@@ -13,5 +13,9 @@ UCLASS()
 class DIABLOM_API UBarbarianLungingStrike : public UPlayerBaseAttack
 {
 	GENERATED_BODY()
+protected:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TSubclassOf<UGameplayEffect> m_GEBaseAttackGainResource;
 	
+	bool m_bIsGained;
 };

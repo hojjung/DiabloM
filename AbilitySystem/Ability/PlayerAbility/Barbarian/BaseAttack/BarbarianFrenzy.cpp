@@ -37,28 +37,6 @@ void UBarbarianFrenzy::EventReceived(FGameplayTag EventTag, FGameplayEventData E
 	}	
 }
 
-void UBarbarianFrenzy::DealDamageToTarget(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar)
-{
-	FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
-        m_GETargetDamage, GetAbilityLevel());
-
-	float PhysDmg=PlayerChar->GetAttributeSet()->GetPhysicalDamage();
-	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPhysDamage,PhysDmg);
-
-	float FireDmg=PlayerChar->GetAttributeSet()->GetAtkFire();
-	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookFireDamage,FireDmg);
-
-	float ElecDmg=PlayerChar->GetAttributeSet()->GetAtkElec();
-	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookElecDamage,ElecDmg);
-
-	float PoisonDmg=PlayerChar->GetAttributeSet()->GetAtkPoison();
-	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPoisonDamage,PoisonDmg);
-
-	float IceDmg=PlayerChar->GetAttributeSet()->GetAtkCold();
-	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookIceDamage,IceDmg);
-
-	PlayerChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data,TargetChar->GetDiaAbilitySystem());
-}
 
 void UBarbarianFrenzy::GiveAttackSpeedBonusEffect(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar)
 {

@@ -30,9 +30,9 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	UAnimMontage* m_BaseAttackMotion;
-
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TSubclassOf<UGameplayEffect> m_GEBaseAttackGainResource;
+	TSubclassOf<UGameplayEffect> m_GETargetDamage;
+	
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float m_fDashTime;
@@ -85,6 +85,8 @@ protected:
 	bool IsDashable( const FGameplayAbilityActorInfo* ActorInfo,float& outDistSqr,FVector& outDashNormal);
 
 	bool CheckAttackRange(const AActor* other) const;
+	
+	virtual bool DealDamageToTarget(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar);
 	
 public:
 	void ResetComboSection();

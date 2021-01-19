@@ -17,8 +17,12 @@ class DIABLOM_API UCooldownProgress : public UUserWidget
 
 public:
     UCooldownProgress(const FObjectInitializer& obj);
+    
+
     virtual void NativePreConstruct() override;
+    
     virtual void NativeOnInitialized() override;
+    
 protected:
     UPROPERTY(EditAnywhere,BlueprintReadWrite)
     UMaterialInterface* m_MatTemplate;
@@ -28,7 +32,7 @@ protected:
     UTextBlock* m_TextCooldown;
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     FLinearColor m_ColorText;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float m_fFontSize;
     
 protected:
@@ -42,4 +46,6 @@ public:
     void StartCooldown();
     UFUNCTION(BlueprintCallable)
     void SetCooldownProgress(float currentCD,float maxCd);
+    UFUNCTION(BlueprintCallable)
+    void SetFontSize(float size);
 };

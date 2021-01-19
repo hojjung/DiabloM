@@ -10,6 +10,7 @@
 #include "Blueprint/UserWidget.h"
 #include "DiaSkillHotKeyPanel.generated.h"
 
+class ASkillIndicator;
 /**
  * 
  */
@@ -36,4 +37,12 @@ public:
 	UButton* m_InteractButton;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_PotionButton;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<ASkillIndicator> m_ClassIndicator;
+	UPROPERTY()
+	ASkillIndicator* m_Indicator;
+
+
+	virtual void NativeDestruct() override;
 };

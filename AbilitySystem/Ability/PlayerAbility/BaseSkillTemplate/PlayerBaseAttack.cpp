@@ -237,6 +237,34 @@ bool UPlayerBaseAttack::CheckAttackRange(const AActor* other) const
     return bAngle && bDist;
 }
 
+bool UPlayerBaseAttack::DealDamageToTarget(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar)
+{
+    FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
+            m_GETargetDamage, GetAbilityLevel());
+
+    float Rate = m_fLevelPerDamageRate * GetAbilityLevel();
+
+    float PhysDmg=PlayerChar->GetAttributeSet()->GetPhysicalDamage();
+    DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPhysDamage,PhysDmg*Rate);
+
+    float FireDmg=PlayerChar->GetAttributeSet()->GetAtkFire();
+    DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookFireDamage,FireDmg*Rate);
+
+    float ElecDmg=PlayerChar->GetAttributeSet()->GetAtkElec();
+    DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookElecDamage,ElecDmg*Rate);
+
+    float PoisonDmg=PlayerChar->GetAttributeSet()->GetAtkPoison();
+    DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPoisonDamage,PoisonDmg*Rate);
+
+    float IceDmg=PlayerChar->GetAttributeSet()->GetAtkCold();
+    DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookIceDamage,IceDmg*Rate);
+
+    FActiveGameplayEffectHandle Result = PlayerChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToTarget(
+        *DamageEffectSpecHandle.Data, TargetChar->GetDiaAbilitySystem());
+
+    return Result.bPassedFiltersAndWasExecuted;
+}
+
 void UPlayerBaseAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                    const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {

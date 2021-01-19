@@ -10,16 +10,17 @@ class DIABLOM_API UBarbarianBash : public UPlayerBaseAttack
 	GENERATED_BODY()
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TSubclassOf<UGameplayEffect> m_GETargetDamage;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TSubclassOf<UGameplayEffect> m_GETargetBashStun;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TSubclassOf<UGameplayEffect> m_GEBaseAttackGainResource;
+	
+	bool m_bIsGained;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	int m_nWantStunPercentMaxCount = 5;
 
 	float m_nfStunPercent;
-
-	bool m_bIsGained;
 	
 protected:
 	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
@@ -29,8 +30,6 @@ protected:
 	virtual void EventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
-	
-	bool DealDamageToTarget(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar);
 
 	void TryGiveBashEffect(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar);
 };

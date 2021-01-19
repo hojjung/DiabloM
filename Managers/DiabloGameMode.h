@@ -128,4 +128,6 @@ public:
 	void SetQuadTreeCoord(UGridFlowTilemap* dgTilemap,UGridFlowConfig* config);
 
 	void ClearQuadTree();
+
+	void HideAllTreeNodes();
 };

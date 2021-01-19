@@ -9,6 +9,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Datas/SkillDataTable.h"
 #include "Widgets/CommonElement/CooldownProgress.h"
+#include "Widgets/CommonElement/Joystick.h"
+
 
 #include "DiaSkillUseButton.generated.h"
 
@@ -21,13 +23,13 @@ class DIABLOM_API UDiaSkillUseButton : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UDiaSkillUseButton(const FObjectInitializer& objInit);
-
 	void Init(UPlayerDiabloAbilitySystemComp* diaComp,int index);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
-	UButton* m_BtnSkill;
+	UImage* m_SkillIcon;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
+	UJoystick* m_Joystick;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
 	UCooldownProgress* m_SkillCooldown;
 	
@@ -37,6 +39,10 @@ protected:
 	float m_fMaxCD;
 
 	bool m_bIsPressing;
+
+	bool m_bIsSkillUsable;
+
+	bool m_bIsDragSkill;
 	
 	FSkillDataSpec* m_EquippedSkillSpec;
 
@@ -47,6 +53,8 @@ protected:
 public:
 	void SetSkillSpec(FSkillDataSpec* skillSpec);
 
+	void UseSkill();
+	
 	void ClearSkillSpec();
 
 	void ClearCooldown();
@@ -57,10 +65,15 @@ public:
 	UFUNCTION()
     void OnReleaseBtn();
 	
-	void UseSkill();
 	
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	virtual FReply NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+
+	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
 };
