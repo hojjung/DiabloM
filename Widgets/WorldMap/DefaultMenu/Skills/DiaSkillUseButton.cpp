@@ -15,9 +15,8 @@ void UDiaSkillUseButton::Init(UPlayerDiabloAbilitySystemComp* diaComp,int index)
 	m_nIndex=index;
 	ClearSkillSpec();
 	m_PlayerDiaComp=diaComp;
-	FSlateBrush Brush;
-	m_SkillIcon->SetBrush(Brush);
-	m_SkillIcon->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+	m_Joystick->m_OnDropEnd.AddUObject(this,&UDiaSkillUseButton::UseSkill);
 }
 
 void UDiaSkillUseButton::SetSkillSpec(FSkillDataSpec* skillSpec)
@@ -39,21 +38,15 @@ void UDiaSkillUseButton::SetSkillSpec(FSkillDataSpec* skillSpec)
 	
 	m_EquippedSkillSpec->m_nEquipIndex=m_nIndex;
 
-	FSlateBrush DefaultStyle;
+	m_Joystick->SetIcon(m_EquippedSkillSpec->m_SkillDataPtr->m_SkillIcon);
 	
-	DefaultStyle.SetResourceObject(m_EquippedSkillSpec->m_SkillDataPtr->m_SkillIcon);
-	
-	m_SkillIcon->SetBrush(DefaultStyle);
-	
-	//m_BtnSkill->SetVisibility(ESlateVisibility::Visible);
-
 	m_bIsSkillUsable = true;
 
 	m_bIsDragSkill = m_EquippedSkillSpec->m_SkillDataPtr->m_bIsJoystickDragger;
 
 	m_bIsDragSkill=true;
 
-	m_Joystick->SetUseDrag(true);//TEST
+	m_Joystick->SetUseDrag(m_bIsDragSkill);//TEST
 
 	m_PlayerDiaComp->EquipSkill(m_EquippedSkillSpec);
 }
@@ -64,9 +57,7 @@ void UDiaSkillUseButton::ClearSkillSpec()
 	m_GaSpec=nullptr;
 	m_EquippedSkillSpec=nullptr;
 	
-	FSlateBrush DefaultStyle;
-	
-	m_SkillIcon->SetBrush(DefaultStyle);
+	m_Joystick->ClearIcon();
 	
 	ClearCooldown();
 }
@@ -79,28 +70,30 @@ void UDiaSkillUseButton::ClearCooldown()
 
 void UDiaSkillUseButton::OnPressBtn()
 {
-	if(m_bIsDragSkill)
-	{
-		return;
-	}
 	if(!m_bIsSkillUsable)
 	{
 		return;
 	}
+	
+	// if(m_bIsDragSkill)
+	// {
+	// 	return;
+	// }
+
 	m_bIsPressing =true;
+
+	m_OnPressed.Broadcast(this);
 }
 
 void UDiaSkillUseButton::OnReleaseBtn()
 {
-	if(m_bIsDragSkill)
-	{
-		return;
-	}
 	if(!m_bIsSkillUsable)
 	{
 		return;
 	}
 	m_bIsPressing =false;
+
+	m_OnReleased.Broadcast(this);
 }
 
 void UDiaSkillUseButton::UseSkill()
@@ -112,7 +105,7 @@ void UDiaSkillUseButton::UseSkill()
 		return;
 	}
 
-	m_GaSpec=AbilSpec;
+	m_GaSpec = AbilSpec;
 	
 	m_fMaxCD = m_GaSpec->Ability->GetCooldownTimeRemaining(m_PlayerDiaComp->AbilityActorInfo.Get());
 
@@ -145,7 +138,7 @@ void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	if(m_bIsPressing)
+	if(m_bIsPressing&&!m_bIsDragSkill)
 	{
 		UseSkill();
 	}

@@ -18,25 +18,17 @@ class DIABLOM_API UJoystick : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPressed,bool);
-	
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDrag,const FVector&);
-	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDragBP,const FVector&,coord01);
-	
-public:
 	UJoystick(const FObjectInitializer& objInit);
-	
-	FOnPressed m_OnPressChanged;
-	
-	FOnDrag m_OnDrag;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnDragBP m_OnDragBP;
+	DECLARE_MULTICAST_DELEGATE(FOnDrop);
+
+	FOnDrop m_OnDropEnd;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UCanvasPanel* m_Canvas;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
+	UImage* m_SkillIcon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UImage* m_Background;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -84,8 +76,10 @@ protected:
 	bool m_bIsPressed;
 	UPROPERTY()
 	bool m_bIsDragUse;
-
+	UPROPERTY()
 	float m_fMaximumRadius = 750.f;
+	UPROPERTY()
+	bool m_bIsSuccessDragged;//너무 짧게 드래그 되는것 방지용
 
 public:
 	void UpdateTouchInput(FVector2D input);
@@ -98,10 +92,6 @@ public:
 
 	virtual FReply NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
 
-	virtual void NativeOnMouseCaptureLost(const FCaptureLostEvent& CaptureLostEvent) override;
-
-	virtual void NativeOnFocusLost(const FFocusEvent& InFocusEvent) override;
-
 	virtual FReply NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	
 	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
@@ -109,4 +99,8 @@ public:
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	
 	void SetUseDrag(bool useDrag);
+
+	void SetIcon(UTexture2D* textureWant);
+
+	void ClearIcon();
 };

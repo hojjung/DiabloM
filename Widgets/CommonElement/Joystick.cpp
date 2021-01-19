@@ -11,6 +11,7 @@ UJoystick::UJoystick(const FObjectInitializer& objInit):Super(objInit)
 	m_fDragRadius=200.f;
 	m_bIsPressed=false;
 	m_bIsDragUse=true;//TEST 0119
+	m_bIsSuccessDragged=false;
 }
 
 void UJoystick::NativeOnInitialized()
@@ -30,6 +31,13 @@ void UJoystick::NativeOnInitialized()
 	m_fPickerRadiusSqr = m_fPickerRadius*m_fPickerRadius;
 
 	m_fDragRadiusSqr = m_fDragRadius*m_fDragRadius;
+
+	m_SkillIcon->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+	m_Picker->SetVisibility(ESlateVisibility::Hidden);
+
+	ClearIcon();
+	
 }
 
 void UJoystick::UpdateTouchInput(FVector2D input)
@@ -53,6 +61,7 @@ void UJoystick::UpdateTouchInput(FVector2D input)
 	if(PickerDeltaSqr > m_fDragRadiusSqr)
 	{
 		MaxDrag = m_StartPickerPos + PickerNormal * m_fDragRadius;
+		
 	}
 	else
 	{
@@ -64,10 +73,14 @@ void UJoystick::UpdateTouchInput(FVector2D input)
 		FVector2D LimitedPos = m_StartPickerPos + PickerNormal*m_fPickerRadius;
 		
 		m_SlotPicker->SetPosition(LimitedPos);
+
+		m_bIsSuccessDragged=true;
 	}
 	else
 	{
-		m_SlotPicker->SetPosition(ActualCursorPos);			
+		m_SlotPicker->SetPosition(ActualCursorPos);
+
+		m_bIsSuccessDragged=false;
 	}
 
 	FVector2D Diff = MaxDrag - m_StartPickerPos;
@@ -87,10 +100,6 @@ void UJoystick::UpdateTouchInput(FVector2D input)
 	if(ASkillIndicator::GetCurrent)
 	{
 		ASkillIndicator::GetCurrent->SetActorLocation(NewActorLocation);
-
-		m_OnDrag.Broadcast(NewActorLocation);
-	
-		m_OnDragBP.Broadcast(NewActorLocation);
 	}
 }
 
@@ -98,6 +107,7 @@ FReply UJoystick::NativeOnTouchStarted(const FGeometry& InGeometry, const FPoint
 {
 	FReply Result = Super::NativeOnMouseButtonDown(InGeometry, InGestureEvent);
 
+	
 	StartJoystickDrag();	
 
 	return Result;
@@ -117,19 +127,6 @@ FReply UJoystick::NativeOnTouchMoved(const FGeometry& InGeometry, const FPointer
 	UpdateTouchInput(m_CurrentCursorPos);
 
 	return  ASD;
-}
-
-void UJoystick::NativeOnMouseCaptureLost(const FCaptureLostEvent& CaptureLostEvent)
-{
-	Super::NativeOnMouseCaptureLost(CaptureLostEvent);
-
-	PRINTF("MouseCapture");
-}
-
-void UJoystick::NativeOnFocusLost(const FFocusEvent& InFocusEvent)
-{
-	Super::NativeOnFocusLost(InFocusEvent);
-	PRINTF("FocusLost");
 }
 
 FReply UJoystick::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
@@ -153,6 +150,16 @@ void UJoystick::SetUseDrag(bool useDrag)
 	m_bIsDragUse = useDrag;
 }
 
+void UJoystick::SetIcon(UTexture2D* textureWant)
+{
+	m_SkillIcon->SetBrushFromTexture(textureWant);
+}
+
+void UJoystick::ClearIcon()
+{
+	SetIcon(nullptr);
+}
+
 void UJoystick::StartJoystickDrag()
 {
 	if(!m_bIsDragUse)
@@ -167,14 +174,13 @@ void UJoystick::StartJoystickDrag()
 	
 	m_bIsPressed = true;
 
-	m_OnPressChanged.Broadcast(m_bIsPressed);
-
 	m_ActualDragger->SetRenderScale(FVector2D(2.5f,2.5f));
 
 	if(ASkillIndicator::GetCurrent)
 	{
 		ASkillIndicator::GetCurrent->SetActorHiddenInGame(false);
 	}
+	m_Picker->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
 
@@ -187,8 +193,6 @@ void UJoystick::EndJoystickDrag()
 	
 	m_bIsPressed = false;
 
-	m_OnPressChanged.Broadcast(m_bIsPressed);
-
 	m_ActualDragger->SetRenderScale(FVector2D(1.0f,1.0f));
 
 	m_SlotActualDragger->SetPosition(m_StartDraggerPos);
@@ -199,4 +203,12 @@ void UJoystick::EndJoystickDrag()
 	{
 		ASkillIndicator::GetCurrent->SetActorHiddenInGame(true);
 	}
+
+	m_Picker->SetVisibility(ESlateVisibility::Hidden);
+
+	if(m_bIsSuccessDragged)
+	{
+		m_OnDropEnd.Broadcast();
+	}
 }
+

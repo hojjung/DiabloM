@@ -687,9 +687,19 @@ void APlayerDiabloCharacter::GrantHpPotionAbility()
 	}
 }
 
-void APlayerDiabloCharacter::DrinkPotion()
+FGameplayAbilitySpec*  APlayerDiabloCharacter::DrinkPotion()
 {
-	GetDiaAbilitySystem()->TryActivateAbility(m_PotionHandle);
+	if (!m_PotionHandle.IsValid())
+	{
+		return nullptr;
+	}
+
+	if (GetDiaAbilitySystem()->TryActivateAbility(m_PotionHandle))
+	{
+		return GetDiaAbilitySystem()->FindAbilitySpecFromHandle(m_PotionHandle);
+	}
+
+	return nullptr;
 }
 
 void APlayerDiabloCharacter::UsePortal()

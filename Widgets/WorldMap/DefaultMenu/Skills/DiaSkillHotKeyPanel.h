@@ -8,6 +8,8 @@
 #include "DiaSkillUseButton.h"
 #include "ObjectMacros.h"
 #include "Blueprint/UserWidget.h"
+#include "Widgets/CommonElement/PotionUseBtn.h"
+
 #include "DiaSkillHotKeyPanel.generated.h"
 
 class ASkillIndicator;
@@ -31,18 +33,24 @@ public:
 	UDiaSkillUseButton* m_SkillBtn4;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDiaSkillUseButton* m_SkillBtn5;
-	UPROPERTY()
-	TArray<UDiaSkillUseButton*> m_AryButtons;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UPotionUseBtn* m_PotionButton;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_InteractButton;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_PotionButton;
+	UPROPERTY()
+	TArray<UDiaSkillUseButton*> m_ArySkillButtons;
+	UPROPERTY()
+	TArray<UWidget*> m_AryWidgets;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<ASkillIndicator> m_ClassIndicator;
 	UPROPERTY()
 	ASkillIndicator* m_Indicator;
 
+public:
+	void DisableAllKeys(UWidget* exceptThis);
+
+	void EnableAllKeys(UWidget* source);
 
 	virtual void NativeDestruct() override;
 };

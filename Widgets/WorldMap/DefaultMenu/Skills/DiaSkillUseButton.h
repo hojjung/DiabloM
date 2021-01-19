@@ -23,11 +23,15 @@ class DIABLOM_API UDiaSkillUseButton : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPressChange,UWidget*);
+
+	FOnPressChange m_OnPressed;
+
+	FOnPressChange m_OnReleased;
+	
 	void Init(UPlayerDiabloAbilitySystemComp* diaComp,int index);
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
-	UImage* m_SkillIcon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
 	UJoystick* m_Joystick;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")

@@ -20,7 +20,7 @@ void UPlayerStatusBar::EquipFromSaveData()
     {
         if(Skill.m_nEquipIndex>-1)
         {
-            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+            m_SkillUseCanvas->m_ArySkillButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
         }
     }
 
@@ -28,7 +28,7 @@ void UPlayerStatusBar::EquipFromSaveData()
     {
         if(Skill.m_nEquipIndex>-1)
         {
-            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+            m_SkillUseCanvas->m_ArySkillButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
         }
     }
 
@@ -37,7 +37,7 @@ void UPlayerStatusBar::EquipFromSaveData()
     {
         if(Skill.m_nEquipIndex>-1)
         {
-            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+            m_SkillUseCanvas->m_ArySkillButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
         }
     }
 
@@ -45,7 +45,7 @@ void UPlayerStatusBar::EquipFromSaveData()
     {
         if(Skill.m_nEquipIndex>-1)
         {
-            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+            m_SkillUseCanvas->m_ArySkillButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
         }
     }
 
@@ -54,7 +54,7 @@ void UPlayerStatusBar::EquipFromSaveData()
     {
         if(Skill.m_nEquipIndex>-1)
         {
-            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+            m_SkillUseCanvas->m_ArySkillButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
         }
     }
 
@@ -62,7 +62,7 @@ void UPlayerStatusBar::EquipFromSaveData()
     {
         if(Skill.m_nEquipIndex>-1)
         {
-            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+            m_SkillUseCanvas->m_ArySkillButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
         }
     }
 
@@ -70,7 +70,7 @@ void UPlayerStatusBar::EquipFromSaveData()
     {
         if(Skill.m_nEquipIndex>-1)
         {
-            m_SkillUseCanvas->m_AryButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
+            m_SkillUseCanvas->m_ArySkillButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
         }
     }
 }
@@ -128,10 +128,11 @@ void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon,UMainCanvas* mainCan
     m_PlayerComp->m_OnSkillChanged.AddUObject(this,&UPlayerStatusBar::UpdateSkillBtn);
     
 
-    for(int i=0; i<m_SkillUseCanvas->m_AryButtons.Num();i++)
+    for(int i=0; i<m_SkillUseCanvas->m_ArySkillButtons.Num();i++)
     {
-        m_SkillUseCanvas->m_AryButtons[i]->Init(m_PlayerComp.Get(),i);
+        m_SkillUseCanvas->m_ArySkillButtons[i]->Init(m_PlayerComp.Get(),i);
     }
+    m_SkillUseCanvas->m_PotionButton->Init(diaCon->GetPlayerPawn(),m_PlayerComp.Get());
 
     m_Minimap->Init();
     //
@@ -144,7 +145,7 @@ void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon,UMainCanvas* mainCan
 
     m_SkillUseCanvas->m_InteractButton->OnClicked.AddDynamic(mainCanvas,&UMainCanvas::Interaction);
 
-    m_SkillUseCanvas->m_PotionButton->OnClicked.AddDynamic(mainCanvas,&UMainCanvas::DrinkPotion);
+   // m_SkillUseCanvas->m_PotionButton->OnClicked.AddDynamic(mainCanvas,&UMainCanvas::DrinkPotion);
 
     m_SkillMenuOpenButton->OnClicked.AddDynamic(mainCanvas,&UMainCanvas::OpenSkillMenu);
 }
@@ -248,7 +249,7 @@ void UPlayerStatusBar::UpdateSkill(FSkillDataSpec* spec)
 
 void UPlayerStatusBar::UpdateSkillBtn(FSkillDataSpec* spec, int index)
 {
-    m_SkillUseCanvas->m_AryButtons[index]->ClearSkillSpec();
+    m_SkillUseCanvas->m_ArySkillButtons[index]->ClearSkillSpec();
 }
 
 void UPlayerStatusBar::SetAutoPlay(bool isAuto)

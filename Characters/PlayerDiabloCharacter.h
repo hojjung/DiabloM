@@ -305,7 +305,7 @@ public:
 	virtual bool IsAlive() const override;
 	
 	
-	void DrinkPotion();
+	FGameplayAbilitySpec* DrinkPotion();
 
 	void UsePortal();
 
