@@ -2,8 +2,7 @@
 #include "SaveLoadManager.h"
 
 void USaveSkill::SetSaveSkill(ESaveVersion saveVersion,int remainPoint,int spentPoint,TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2,
-                              TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5,
-                              TArray<FSkillDataSpec>& skill6)
+                              TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5)
 {
     m_SaveVersion=saveVersion;
 
@@ -16,14 +15,12 @@ void USaveSkill::SetSaveSkill(ESaveVersion saveVersion,int remainPoint,int spent
     m_ArySkillDataSpec3=skill3;
     m_ArySkillDataSpec4=skill4;
     m_ArySkillDataSpec5=skill5;
-    m_ArySkillDataSpec6=skill6;
     //
     ClearSkillAry(m_ArySkillDataSpec1);
     ClearSkillAry(m_ArySkillDataSpec2);
     ClearSkillAry(m_ArySkillDataSpec3);
     ClearSkillAry(m_ArySkillDataSpec4);
     ClearSkillAry(m_ArySkillDataSpec5);
-    ClearSkillAry(m_ArySkillDataSpec6);
 }
 
 void USaveSkill::ClearSkillAry(TArray<FSkillDataSpec>& skill)

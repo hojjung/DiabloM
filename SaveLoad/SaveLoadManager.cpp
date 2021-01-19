@@ -326,13 +326,12 @@ void USaveLoadManager::SaveShareStorage( const TArray<bool>& aryOpen,
 }
 
 void USaveLoadManager::SaveSkill(int slotIndex,int remainPoints,int spentPoints, TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2,
-    TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5,
-    TArray<FSkillDataSpec>& skill6)
+    TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5)
 {
     USaveSkill* SaveSkill = Cast<USaveSkill>(
      UGameplayStatics::CreateSaveGameObject(USaveSkill::StaticClass()));
 
-    SaveSkill->SetSaveSkill(m_SaveVersion,remainPoints,spentPoints,skill1,skill2,skill3,skill4,skill5,skill6);
+    SaveSkill->SetSaveSkill(m_SaveVersion,remainPoints,spentPoints,skill1,skill2,skill3,skill4,skill5);
 
     UGameplayStatics::SaveGameToSlot(SaveSkill, m_SkillSlotName, slotIndex);
 
@@ -533,8 +532,7 @@ void USaveLoadManager::SetLoadedSkillDataToPlayer(int slot_index)
             m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec2,
             m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec3,
             m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec4,
-            m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec5,
-            m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec6);
+            m_AryLoadedSkills[slot_index]->m_ArySkillDataSpec5);
     //
     
 }
@@ -645,15 +643,9 @@ void USaveLoadManager::SetSpecDataForSkillInst(int slotIndex, const FSkillDataHa
         skill4.Emplace(FSkillDataSpec(0, &SkillData));
     }
     
-    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryMasterySkillBelt)
-    {
-        skill5.Emplace(FSkillDataSpec(0,&SkillData));
-    }
-    
     for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryUltimateSkillBelt)
     {
-        skill6.Emplace(FSkillDataSpec(0, &SkillData));
+        skill5.Emplace(FSkillDataSpec(0, &SkillData));
     }
-
 }
 

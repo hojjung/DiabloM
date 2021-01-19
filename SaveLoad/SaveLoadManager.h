@@ -92,8 +92,7 @@ public:
     void SaveStorage(int slotIndex,const TArray<bool>& aryOpen,const TArray<TArray<FItemInstance>>& aryItems);
     void SaveShareStorage(const TArray<bool>& aryOpen,const TArray<TArray<FItemInstance>>& aryItems);
     void SaveSkill(int slotIndex,int remainPoints,int spentPoints,TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2,
-    TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5,
-    TArray<FSkillDataSpec>& skill6);
+    TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5);
     //
     void LoadInventory(int slotIndex);
     void LoadEquipment(int slotIndex);

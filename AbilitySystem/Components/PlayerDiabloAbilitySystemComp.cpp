@@ -13,7 +13,6 @@ UPlayerDiabloAbilitySystemComp::UPlayerDiabloAbilitySystemComp()
     m_AryPowerSkill.Reset();
     m_AryDefensvieSkill.Reset();
     m_ArySpecialSkill.Reset();
-    m_AryMasterySkill.Reset();
     m_AryUltimateSkill.Reset();
     m_nSkillPoints = 10; //Test
     m_nTotalSkillPointSpents = 0;
@@ -28,28 +27,22 @@ void UPlayerDiabloAbilitySystemComp::BeginPlay()
     m_PlayerPawn = Cast<APlayerDiabloCharacter>(GetOwner());
     
     m_TechManager= NewObject<UTechTreeManager>();
-
-    
 }
-
 
 int UPlayerDiabloAbilitySystemComp::GetSkillPoints()
 {
     return m_nSkillPoints;
 }
 
-
 void UPlayerDiabloAbilitySystemComp::SetLoadedSkillData(TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2,
                                                         TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4,
-                                                        TArray<FSkillDataSpec>& skill5,
-                                                        TArray<FSkillDataSpec>& skill6)
+                                                        TArray<FSkillDataSpec>& skill5)
 {
     SetSkillFromSaveData(m_AryBaseSkill, skill1);
     SetSkillFromSaveData(m_AryPowerSkill, skill2);
     SetSkillFromSaveData(m_AryDefensvieSkill, skill3);
     SetSkillFromSaveData(m_ArySpecialSkill, skill4);
-    SetSkillFromSaveData(m_AryMasterySkill, skill5);
-    SetSkillFromSaveData(m_AryUltimateSkill, skill6);
+    SetSkillFromSaveData(m_AryUltimateSkill, skill5);
 }
 
 bool UPlayerDiabloAbilitySystemComp::LevelupSkill(FSkillDataSpec* skillSpec)
@@ -166,10 +159,6 @@ void UPlayerDiabloAbilitySystemComp::CreateClassSkillSpecs(const FSkillDataHandl
         m_AryDefensvieSkill.Emplace(FSkillDataSpec(0, &SkillData));
     }
 
-    for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryMasterySkillBelt)
-    {
-        m_AryMasterySkill.Emplace(FSkillDataSpec(0, &SkillData));
-    }
     for (const FSkillData& SkillData : m_SkillDataTableRow->m_AryPowerSkillBelt)
     {
         m_AryPowerSkill.Emplace(FSkillDataSpec(0, &SkillData));
@@ -252,6 +241,10 @@ void UPlayerDiabloAbilitySystemComp::OnTalentLevelChanged(UTechnologyAsset* tech
 void UPlayerDiabloAbilitySystemComp::SetSkillFromSaveData(TArray<FSkillDataSpec>& my,
                                                           const TArray<FSkillDataSpec>& loadedData)
 {
+    if(loadedData.Num()<=0)
+    {
+        return;
+    }
     for (int i = 0; i < my.Num(); i++)
     {
         my[i].m_nCurrentLevel = loadedData[i].m_nCurrentLevel;

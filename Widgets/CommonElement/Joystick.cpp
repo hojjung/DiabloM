@@ -10,7 +10,7 @@ UJoystick::UJoystick(const FObjectInitializer& objInit):Super(objInit)
 	m_fPickerRadius=64.f;
 	m_fDragRadius=200.f;
 	m_bIsPressed=false;
-	m_bIsDragUse=true;//TEST 0119
+	m_bIsDragUse=false;
 	m_bIsSuccessDragged=false;
 }
 

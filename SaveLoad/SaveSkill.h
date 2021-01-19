@@ -33,16 +33,13 @@ public:
 	TArray<FSkillDataSpec> m_ArySkillDataSpec4;
 	UPROPERTY(EditAnywhere)
 	TArray<FSkillDataSpec> m_ArySkillDataSpec5;
-	UPROPERTY(EditAnywhere)
-	TArray<FSkillDataSpec> m_ArySkillDataSpec6;
 
 public:
 	void SetSaveSkill(ESaveVersion saveVersion,int remainPoint,int spentPoint,TArray<FSkillDataSpec>& skill1,
 		TArray<FSkillDataSpec>& skill2,
 		TArray<FSkillDataSpec>& skill3,
 		TArray<FSkillDataSpec>& skill4,
-		TArray<FSkillDataSpec>& skill5,
-		TArray<FSkillDataSpec>& skill6);
+		TArray<FSkillDataSpec>& skill5);
 
 
 private:

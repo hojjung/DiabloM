@@ -27,8 +27,11 @@ public:
 	static UPlayerDiabloAbilitySystemComp*Get;
 
 	DECLARE_MULTICAST_DELEGATE(FOnTalentChanged);
+	
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnSkillLevelup,FSkillDataSpec*);
+	
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSkillChanged,FSkillDataSpec*,int);
+	
 	UPlayerDiabloAbilitySystemComp();
 
 public:
@@ -57,8 +60,6 @@ protected:
 
 	TArray<FSkillDataSpec> m_ArySpecialSkill;
 
-	TArray<FSkillDataSpec> m_AryMasterySkill;
-
 	TArray<FSkillDataSpec> m_AryUltimateSkill;
 
 	int m_nSkillPoints;
@@ -80,8 +81,7 @@ public:
         TArray<FSkillDataSpec>& skill2,
         TArray<FSkillDataSpec>& skill3,
         TArray<FSkillDataSpec>& skill4,
-        TArray<FSkillDataSpec>& skill5,
-        TArray<FSkillDataSpec>& skill6);
+        TArray<FSkillDataSpec>& skill5);
 	bool LevelupSkill(FSkillDataSpec* skillSpec);
 
 	void EquipSkill(FSkillDataSpec* skillSpec);

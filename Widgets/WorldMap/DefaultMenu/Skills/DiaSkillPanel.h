@@ -26,8 +26,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
 	UTextBlock* m_TextSpecialSkillName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
-	UTextBlock* m_TextMasterySkillName;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
 	UTextBlock* m_TextUltimateSkillName;
 	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
@@ -38,8 +36,6 @@ protected:
 	UHorizontalBox* m_DefenseSkillBelt;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
 	UHorizontalBox* m_SpeicalSkillBelt;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
-	UHorizontalBox* m_MasterySkillBelt;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
 	UHorizontalBox* m_UltimateSkillBelt;
 	//

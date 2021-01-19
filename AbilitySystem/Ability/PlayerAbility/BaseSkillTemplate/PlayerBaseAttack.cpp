@@ -104,6 +104,10 @@ void UPlayerBaseAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     {
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
     }
+    if(!m_BaseAttackMotion)
+    {
+        EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+    }
 
 }
 
@@ -111,7 +115,8 @@ void UPlayerBaseAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo
 {
     Super::OnGiveAbility(ActorInfo, Spec);
 
-    m_AryMontageSections = m_BaseAttackMotion->GetArySections();
+    if(m_BaseAttackMotion)
+        m_AryMontageSections = m_BaseAttackMotion->GetArySections();
     
     ResetComboSection();
     

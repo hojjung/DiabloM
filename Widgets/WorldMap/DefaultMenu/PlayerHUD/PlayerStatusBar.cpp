@@ -58,14 +58,6 @@ void UPlayerStatusBar::EquipFromSaveData()
         }
     }
 
-    for(FSkillDataSpec& Skill : m_PlayerComp->m_AryMasterySkill)
-    {
-        if(Skill.m_nEquipIndex>-1)
-        {
-            m_SkillUseCanvas->m_ArySkillButtons[Skill.m_nEquipIndex]->SetSkillSpec(&Skill);
-        }
-    }
-
     for(FSkillDataSpec& Skill : m_PlayerComp->m_AryUltimateSkill)
     {
         if(Skill.m_nEquipIndex>-1)

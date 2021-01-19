@@ -278,11 +278,6 @@ public:
 	TArray<FSkillData> m_ArySpecialSkillBelt;
 	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FText m_MasterySkillBeltName;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FSkillData> m_AryMasterySkillBelt;
-	//
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText m_UltimateSkillBeltName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FSkillData> m_AryUltimateSkillBelt;

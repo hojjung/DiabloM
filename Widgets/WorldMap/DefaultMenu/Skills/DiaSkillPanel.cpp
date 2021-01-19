@@ -12,7 +12,6 @@ void UDiaSkillPanel::Init(UPlayerDiabloAbilitySystemComp* playerSkillComp)
 	m_TextPowerSkillName->SetText(m_PlayerSkillComp->GetSkillDataTableRow()->m_PowerSkillBeltName);
 	m_TextDefensiveSkillName->SetText(m_PlayerSkillComp->GetSkillDataTableRow()->m_DefensiveSkillBeltName);
 	m_TextSpecialSkillName->SetText(m_PlayerSkillComp->GetSkillDataTableRow()->m_SpecialSkillBeltName);
-	m_TextMasterySkillName->SetText(m_PlayerSkillComp->GetSkillDataTableRow()->m_MasterySkillBeltName);
 	m_TextUltimateSkillName->SetText(m_PlayerSkillComp->GetSkillDataTableRow()->m_UltimateSkillBeltName);
 
 	m_ResetButton->OnClicked.AddDynamic(this,&UDiaSkillPanel::ResetSkillPoint);
@@ -34,11 +33,6 @@ void UDiaSkillPanel::Init(UPlayerDiabloAbilitySystemComp* playerSkillComp)
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_ArySpecialSkill)
 	{
 		m_SpeicalSkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec,m_PlayerSkillComp));
-	}
-	//
-	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryMasterySkill)
-	{
-		m_MasterySkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec,m_PlayerSkillComp));
 	}
 	//
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryUltimateSkill)
@@ -88,13 +82,6 @@ void UDiaSkillPanel::ResetSkillPoint()
 	}
 	//
 	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_ArySpecialSkill)
-	{
-		m_PlayerSkillComp->UnequipSkill(&SkillSpec);
-		LearnedLevel+=SkillSpec.m_nCurrentLevel;
-		SkillSpec.m_nCurrentLevel=0;
-	}
-	//
-	for(FSkillDataSpec& SkillSpec : m_PlayerSkillComp->m_AryMasterySkill)
 	{
 		m_PlayerSkillComp->UnequipSkill(&SkillSpec);
 		LearnedLevel+=SkillSpec.m_nCurrentLevel;

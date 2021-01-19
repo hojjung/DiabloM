@@ -76,8 +76,7 @@ void UDiabloCheatManager::SaveSkill()
 		Gas->m_AryBaseSkill,
 		Gas->m_AryPowerSkill,
 		Gas->m_AryDefensvieSkill,
-		Gas->m_AryPowerSkill,
-		Gas->m_AryMasterySkill,
+		Gas->m_ArySpecialSkill,
 		Gas->m_AryUltimateSkill);
 }
 
