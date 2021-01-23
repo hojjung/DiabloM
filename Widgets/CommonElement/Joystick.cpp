@@ -3,6 +3,8 @@
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Kismet/KismetInputLibrary.h"
+#include "Managers/DiabloGameInstance.h"
+#include "Managers/DungeonManager.h"
 
 UJoystick::UJoystick(const FObjectInitializer& objInit):Super(objInit)
 {
@@ -40,8 +42,49 @@ void UJoystick::NativeOnInitialized()
 	
 }
 
+void UJoystick::SetIndicatorLocation(FVector NewActorLocation)
+{
+	if(!ASkillIndicator::GetCurrent)
+	{
+		return;
+	}
+	
+	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+	
+	if(!NavSys)
+	{
+		return;
+	}
+	
+	FNavLocation OutLoc;
+
+	APlayerDiabloCharacter* Dia = ADiabloPlayerController::Get->GetPlayerPawn();
+
+	FHitResult Hit;
+	
+	FQuat QQ = Dia->GetCapsule()->GetComponentRotation().Quaternion();
+
+	FCollisionShape Shape =FCollisionShape();
+	//Shape.SetCapsule(Dia->GetCapsule()->Ext);
+	
+	if(Dia->GetCapsule()->SweepComponent(Hit,NewActorLocation,NewActorLocation,QQ,Shape,false))
+	{
+		PRINTF("Sweep!");
+	}
+	
+	if(!NavSys->ProjectPointToNavigation(NewActorLocation,OutLoc))
+	{
+		//ASkillIndicator::GetCurrent->SetActorLocation(OutLoc.Location);			
+	}
+	else
+	{
+		ASkillIndicator::GetCurrent->SetActorLocation(NewActorLocation);//Danger?
+	}
+}
+
 void UJoystick::UpdateTouchInput(FVector2D input)
 {
+	PRINTF("Unput:%s",*input.ToString());
 	m_BGHalfSize = GetCachedGeometry().GetDrawSize() / 2.f;
 	
 	m_BGHalfSize /=GetCachedGeometry().Scale;
@@ -97,10 +140,7 @@ void UJoystick::UpdateTouchInput(FVector2D input)
 
 	FVector NewActorLocation = PlayerLocation - CalcLoc;
 
-	if(ASkillIndicator::GetCurrent)
-	{
-		ASkillIndicator::GetCurrent->SetActorLocation(NewActorLocation);
-	}
+	SetIndicatorLocation(NewActorLocation);
 }
 
 FReply UJoystick::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
@@ -123,7 +163,7 @@ FReply UJoystick::NativeOnTouchMoved(const FGeometry& InGeometry, const FPointer
 	}
 	
 	m_CurrentCursorPos = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
-
+	
 	UpdateTouchInput(m_CurrentCursorPos);
 
 	return  ASD;
@@ -202,6 +242,20 @@ void UJoystick::EndJoystickDrag()
 	if(ASkillIndicator::GetCurrent)
 	{
 		ASkillIndicator::GetCurrent->SetActorHiddenInGame(true);
+		
+		UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+		
+		if(NavSys)
+		{
+			FNavLocation OutLoc;
+
+			m_bIsSuccessDragged = NavSys->ProjectPointToNavigation(ASkillIndicator::GetCurrent->GetActorLocation(),OutLoc);
+
+			if(!m_bIsSuccessDragged)
+			{
+				PRINTF("DragFail");
+			}
+		}
 	}
 
 	m_Picker->SetVisibility(ESlateVisibility::Hidden);

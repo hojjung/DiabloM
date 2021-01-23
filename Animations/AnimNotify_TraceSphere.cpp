@@ -13,13 +13,11 @@ void UAnimNotify_TraceSphere::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 {
 	AActor* Instigator = Cast<AActor>( MeshComp->GetOwner());
 	
-	FVector StartTrace = Instigator->GetActorLocation();
+	FVector StartTrace = (Instigator->GetActorForwardVector() * m_fRange) +Instigator->GetActorLocation();
 	
-	FVector EndTrace = (Instigator->GetActorForwardVector() * m_fRange) + StartTrace;
-
 	TArray<FHitResult> Hits;
 
-	if(!UKismetSystemLibrary::SphereTraceMultiForObjects(Instigator,StartTrace,EndTrace,m_fSphereRadius,
+	if(!UKismetSystemLibrary::SphereTraceMultiForObjects(Instigator,StartTrace,StartTrace,m_fSphereRadius,
         m_ObjType,false,m_IgnoreActors,EDrawDebugTrace::ForOneFrame,Hits,true))
 	{
 		return;

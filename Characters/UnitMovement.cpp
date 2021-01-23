@@ -23,6 +23,60 @@ UUnitMovement::UUnitMovement()
     m_RotateSpeed=FRotator(0,240.f,0);
 }
 
+float UUnitMovement::SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult& Hit,
+    bool bHandleImpact)
+{
+    if (!Hit.bBlockingHit)
+    {
+        return 0.f;
+    }
+
+    float PercentTimeApplied = 0.f;
+    const FVector OldHitNormal = Normal;
+
+    FVector SlideDelta = ComputeSlideVector(Delta, Time, Normal, Hit);
+
+    if ((SlideDelta | Delta) > 0.f)
+    {
+        const FQuat Rotation = UpdatedComponent->GetComponentQuat();
+        SafeMoveUpdatedComponent(SlideDelta, Rotation, true, Hit);
+
+        const float FirstHitPercent = Hit.Time;
+        PercentTimeApplied = FirstHitPercent;
+        if (Hit.IsValidBlockingHit())
+        {
+            // Notify first impact
+            if (bHandleImpact)
+            {
+                HandleImpact(Hit, FirstHitPercent * Time, SlideDelta);
+            }
+
+            // Compute new slide normal when hitting multiple surfaces.
+            TwoWallAdjust(SlideDelta, Hit, OldHitNormal);
+            SlideDelta.Z=0.f;
+
+            // Only proceed if the new direction is of significant length and not in reverse of original attempted move.
+            if (!SlideDelta.IsNearlyZero(1e-3f) && (SlideDelta | Delta) > 0.f)
+            {
+                // Perform second move
+                SafeMoveUpdatedComponent(SlideDelta, Rotation, true, Hit);
+                const float SecondHitPercent = Hit.Time * (1.f - FirstHitPercent);
+                PercentTimeApplied += SecondHitPercent;
+
+                // Notify second impact
+                if (bHandleImpact && Hit.bBlockingHit)
+                {
+                    HandleImpact(Hit, SecondHitPercent * Time, SlideDelta);
+                }
+            }
+        }
+
+        return FMath::Clamp(PercentTimeApplied, 0.f, 1.f);
+    }
+
+    return 0.f;
+}
+
 void UUnitMovement::BeginPlay()
 {
     Super::BeginPlay();
@@ -71,10 +125,16 @@ void UUnitMovement::MoveProceed(float DeltaTime)
         SafeMoveUpdatedComponent(MoveDelta, UpdatedComponent->GetComponentRotation(), true, Hit);
 
         Hit.Normal.Z=0.f;
+        Hit.ImpactNormal.Z=0.f;
         
         if (Hit.IsValidBlockingHit())
         {
             SlideAlongSurface(MoveDelta, 1.f - Hit.Time, Hit.Normal, Hit);
+        }
+        
+        if(Hit.bStartPenetrating)
+        {
+            PRINTF("StartPenet!");    
         }
     }
 }

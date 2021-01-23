@@ -20,6 +20,8 @@ public:
 	UPlayerBaseAttack();
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float m_fDuringMoveSpeedModifier;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float m_fLevelPerDamageRate;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -90,6 +92,12 @@ protected:
 	
 public:
 	void ResetComboSection();
+
+	UFUNCTION()
+	virtual void OnCancelledWrapper();
+
+	UFUNCTION()
+    virtual void OnCompletedWrapper();
 	
 	UFUNCTION()
     void OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData);

@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/PlayerAbility/BaseSkillTemplate/PlayerBaseAttack.h"
-#include "BarbarianPrimalAxe.generated.h"
+#include "BarbarianStomp.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UBarbarianPrimalAxe : public UPlayerBaseAttack
+class DIABLOM_API UBarbarianStomp : public UPlayerBaseAttack
 {
 	GENERATED_BODY()
 	

@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/PlayerAbility/BaseSkillTemplate/PlayerBaseAttack.h"
-#include "BarbarianWhirlwind.generated.h"
+#include "BarbarianDeathblow.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UBarbarianWhirlwind : public UPlayerBaseAttack
+class DIABLOM_API UBarbarianDeathblow : public UPlayerBaseAttack
 {
 	GENERATED_BODY()
-
+	
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	

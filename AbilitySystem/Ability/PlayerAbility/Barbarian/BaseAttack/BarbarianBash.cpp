@@ -50,7 +50,6 @@ void UBarbarianBash::EventReceived(FGameplayTag EventTag, FGameplayEventData Eve
 		if(DealDamageToTarget(TargetChar, PlayerChar))
 		{
 			TryGiveBashEffect(TargetChar, PlayerChar);
-			//gain resource
 
 			if(m_bIsGained)
 			{

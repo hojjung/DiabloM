@@ -22,7 +22,9 @@ ADiabloGameMode::ADiabloGameMode()
 	
 	DefaultPawnClass = APlayerDiabloCharacter::StaticClass();
 
-	m_ItemActionManager=CreateDefaultSubobject<UActionManagerComponent>("ActionManager");
+	m_ItemDropActionManager=CreateDefaultSubobject<UActionManagerComponent>("ItemActionManager");
+
+	m_PlayerActionManager=CreateDefaultSubobject<UActionManagerComponent>("PlayerActionManager");
 
 	m_fMinimapTextureSize=1024.f;
 	m_fMinimapOutlineThickness=4.0f;
@@ -175,7 +177,6 @@ void ADiabloGameMode::ClearQuadTree()
 	if(m_QuadTree.Get())
 	{
 		m_QuadTree.Reset();
-
 	}
 }
 

@@ -6,6 +6,8 @@ AShopKeeper::AShopKeeper(const FObjectInitializer& objInit):Super(objInit)
 {
     m_MeshShopKeeper = CreateDefaultSubobject<USkeletalMeshComponent>("Mesh00");
     m_MeshShopKeeper->SetupAttachment(m_Capsule);
+    m_MeshShopKeeper->SetRelativeLocation(FVector::ZeroVector);
+    m_MeshShopKeeper->SetConstraintMode(EDOFMode::None);
 }
 
 void AShopKeeper::BeginPlay()

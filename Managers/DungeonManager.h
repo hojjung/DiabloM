@@ -32,8 +32,6 @@ public:
 	int m_nCurrentMonsterCount;
 
 	int m_nClearableCount;
-	
-	
 
 protected:
 	UPROPERTY()
@@ -55,6 +53,8 @@ protected:
 	int m_nDungeonType;
 	
 	int m_nPointIndex;
+
+	int m_nCurrentDgLevel;
 
 	bool m_bIsPlayerInDungeon;
 

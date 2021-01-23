@@ -1,6 +1,4 @@
 #include "MapInfoPopup.h"
-
-
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/DiabloGameInstance.h"
@@ -61,9 +59,11 @@ void UMapInfoPopup::SetMonsterAndItemLevel(const FDungeonDataRow* dg_data)
 	FFormatOrderedArguments Args2;
 
 	int MinLevel = MonsterLevel - 3;
+	
 	int MaxLevel = MonsterLevel + 1;
 
 	Args2.Add(FMath::Max(MinLevel, 1));
+	
 	Args2.Add(FMath::Min(MaxLevel,MAXLEVEL));
 
 	m_DropItemLevel->SetString(FText::Format(m_FormatItemLevel, Args2));
@@ -100,12 +100,12 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 	m_DgName->SetText(m_CurrentDgData->m_DgShowName);
 
 	SetMonsterAndItemLevel(m_CurrentDgData);
-
-
 	//얼마나 느릴까 이함수는
 
 	bool bIsAlreadyAdd = false;
+	
 	const FMonsterHordeHandle& Horde = m_CurrentDgData->m_Horde;
+	
 	for (const FMonsterSelect& MobSelect : Horde.GetRow<FMonsterHordeRow>("")->m_AryMonsterEntity)
 	{
 		for (const FItemDropData& DropItem : MobSelect.m_MonsterEntity.GetRow<FMonsterTable>("")->

@@ -25,7 +25,7 @@ UCameraDissolve::UCameraDissolve()
     m_bWasBlocked = false;
     m_fCastSphereRadius=12.f;
     //
-
+    m_CameraLagSpeed=10.f;
 
     TargetArmLength = 1000.0f;
 
@@ -60,7 +60,7 @@ void UCameraDissolve::TickComponent(float DeltaTime, ELevelTick TickType, FActor
     {
         return;
     }
-    UpdateDesiredArmLocation();
+    UpdateDesiredArmLocation(DeltaTime);
     ExecuteDissolve(DeltaTime);
 }
 
@@ -138,7 +138,7 @@ FTransform UCameraDissolve::GetSocketTransform(FName InSocketName, ERelativeTran
     return RelativeTransform;
 }
 
-void UCameraDissolve::UpdateDesiredArmLocation()
+void UCameraDissolve::UpdateDesiredArmLocation(float DeltaTime)
 {
     m_CompOrigin = GetComponentLocation() ;
     m_MatParamInstance->SetVectorParameterValue("Position1", m_CompOrigin+m_CastOffset);
@@ -170,9 +170,13 @@ void UCameraDissolve::UpdateDesiredArmLocation()
 
     m_bWasBlocked = Result.bBlockingHit;
 
+    m_TargetPos = FMath::VInterpTo(m_PreviousPos, m_TargetPos, DeltaTime, m_CameraLagSpeed);
+
     FTransform WorldCamTM(DesiredRot, m_TargetPos);
     FTransform RelCamTM = WorldCamTM.GetRelativeTransform(GetComponentTransform());
     m_RelativeSocketLocation = RelCamTM.GetLocation();
     m_RelativeSocketRotation = RelCamTM.GetRotation();
+
+    m_PreviousPos = m_TargetPos;
     UpdateChildTransforms();
 }

@@ -122,7 +122,7 @@ void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon,UMainCanvas* mainCan
 
     for(int i=0; i<m_SkillUseCanvas->m_ArySkillButtons.Num();i++)
     {
-        m_SkillUseCanvas->m_ArySkillButtons[i]->Init(m_PlayerComp.Get(),i);
+        m_SkillUseCanvas->m_ArySkillButtons[i]->Init(diaCon->GetPlayerPawn(),m_PlayerComp.Get(),i);
     }
     m_SkillUseCanvas->m_PotionButton->Init(diaCon->GetPlayerPawn(),m_PlayerComp.Get());
 

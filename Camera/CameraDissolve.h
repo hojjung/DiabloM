@@ -23,6 +23,8 @@ protected:
 
 	FVector m_TargetPos;
 
+	FVector m_PreviousPos;
+
 	bool m_bWasBlocked;
 
 	float m_fDissolvingTime;
@@ -41,6 +43,8 @@ protected:
 	float m_fCastSphereRadius;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 	FVector m_CastOffset;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Lag, meta=( ClampMin="0.0", ClampMax="1000.0", UIMin = "0.0", UIMax = "1000.0"))
+	float m_CameraLagSpeed;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
@@ -70,5 +74,5 @@ protected:
 	void SetValueParameter();
 	//
 
-	virtual void UpdateDesiredArmLocation();
+	virtual void UpdateDesiredArmLocation(float DeltaTime);
 };

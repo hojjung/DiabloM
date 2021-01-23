@@ -30,5 +30,5 @@ public:
 	TArray<FItemInstance> m_AryStorageItems5;
 	
 public:
-	void SetSaveShareStorage(ESaveVersion saveV,const TArray<bool>& aryOpen34,const TArray<TArray<FItemInstance>>& aryItems);
+	void SetSaveShareStorage(ESaveVersion saveV,const TArray<bool>& aryOpen34,const TArray<UInventory*>& aryItems);
 };

@@ -16,9 +16,6 @@ class DIABLOM_API UBarbarianFrenzy : public UPlayerBaseAttack
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	FGameplayTag m_TagEventTrace;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TSubclassOf<UGameplayEffect> m_GEInstigatorAttackSpeedBuff;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TSubclassOf<UGameplayEffect> m_GEBaseAttackGainResource;
@@ -26,9 +23,13 @@ protected:
 	bool m_bIsGained;
 	
 protected:
+	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	
 	virtual void EventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
-	
+
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+
 	void GiveAttackSpeedBonusEffect(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar);
 };

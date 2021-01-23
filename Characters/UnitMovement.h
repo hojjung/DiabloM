@@ -60,6 +60,9 @@ protected://pathfollow
 
 	FVector m_DashDelta;
 
+protected:
+	virtual float SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult &Hit, bool bHandleImpact = false) override;
+
 public:
 	virtual void BeginPlay() override;
 	

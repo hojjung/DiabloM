@@ -1,17 +1,17 @@
-#include "BarbarianFlay.h"
+#include "BarbarianRupture.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Characters/UnitPawn.h"
 
-void UBarbarianFlay::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+void UBarbarianRupture::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                      const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                      const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	m_bIsGained = false;
+
 	TryDashAttack(ActorInfo);
 }
 
-void UBarbarianFlay::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
+void UBarbarianRupture::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	const AUnitPawn* TargetChar=Cast<AUnitPawn>( EventData.Target);
 	APlayerDiabloCharacter* PlayerChar=Cast<APlayerDiabloCharacter>(GetAvatarActorFromActorInfo());
@@ -34,26 +34,23 @@ void UBarbarianFlay::EventReceived(FGameplayTag EventTag, FGameplayEventData Eve
 
 		if(DealDamageToTarget(TargetChar, PlayerChar))
 		{
-			if(m_bIsGained)
-			{
-				return;
-			}
-			
-			FGameplayEffectSpecHandle EffectSpecHandle =MakeOutgoingGameplayEffectSpec(m_GEBaseAttackGainResource,1);
-
-			PlayerChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
-
-			m_bIsGained = true;
+			DealBleedEffectToTarget(TargetChar, PlayerChar);
 		}
 	}
 }
 
-void UBarbarianFlay::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+
+void UBarbarianRupture::DealBleedEffectToTarget(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar)
 {
-	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	FGameplayEffectSpecHandle BleedEffectSpecHandle = MakeOutgoingGameplayEffectSpec(
+        m_GETargetBleeding, GetAbilityLevel());
+	
+	float Rate = m_fLevelPerBleedingDamage * GetAbilityLevel();
 
-	m_bIsGained = false;
+	float PhysDmg=PlayerChar->GetAttributeSet()->GetPhysicalDamage();
+	
+	BleedEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_TagTookPhysDamage,PhysDmg*Rate);
+
+	PlayerChar->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToTarget(*BleedEffectSpecHandle.Data,TargetChar->GetDiaAbilitySystem());
+
 }
-
-

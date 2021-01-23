@@ -1,11 +1,12 @@
 // My First Hack n Slash
 
 
-#include "BarbarianWhirlwind.h"
+#include "BarbarianDeathblow.h"
+
 
 #include "Characters/UnitPawn.h"
 
-void UBarbarianWhirlwind::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+void UBarbarianDeathblow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                           const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                           const FGameplayEventData* TriggerEventData)
 {
@@ -14,7 +15,7 @@ void UBarbarianWhirlwind::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	TryNormalAttack();
 }
 
-void UBarbarianWhirlwind::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
+void UBarbarianDeathblow::EventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	Super::EventReceived(EventTag, EventData);
 	

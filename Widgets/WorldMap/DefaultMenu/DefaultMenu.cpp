@@ -131,6 +131,7 @@ void UDefaultMenu::OpenMainMenu()
 void UDefaultMenu::CloseMainMenu()
 {
     this->SetVisibility((ESlateVisibility::Hidden));
+    
     CloseItemPopup();
 
     if(m_bIsSkillOpened)
@@ -256,15 +257,12 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
     {
         m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Withdraw, itemInst);
         m_AryItemPopup[Count]->SetPanelPosition(geo, Count, false);
-        PRINTF("StashOpen");
     }
     else if (IsShopOpen) //창고 클릭일때
     {
         m_AryItemPopup[Count]->ShowInfoPanel(EPopupType::Buy, itemInst);
         m_AryItemPopup[Count]->SetPanelPosition(geo, Count, false);
-        PRINTF("ShopOpen");
     }
-
 
     m_bIsPopupOpened = true;
 }

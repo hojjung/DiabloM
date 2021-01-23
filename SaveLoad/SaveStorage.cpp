@@ -4,7 +4,7 @@
 #include "SaveStorage.h"
 
 void USaveStorage::SetSaveStorage(ESaveVersion saveV, const TArray<bool>& aryOpen,
-    const TArray<TArray<FItemInstance>>& aryItems012)
+    const TArray<UInventory*>& aryItems)
 {
     m_SaveVersion=saveV;
     
@@ -12,9 +12,9 @@ void USaveStorage::SetSaveStorage(ESaveVersion saveV, const TArray<bool>& aryOpe
     m_bShareStorage2Opened=aryOpen[1];
     m_bShareStorage3Opened=aryOpen[2];
     
-    m_AryStorageItems1=aryItems012[0];
-    m_AryStorageItems2=aryItems012[1];
-    m_AryStorageItems3=aryItems012[2];
+    m_AryStorageItems1=aryItems[0]->GetItemAry();
+    m_AryStorageItems2=aryItems[1]->GetItemAry();
+    m_AryStorageItems3=aryItems[2]->GetItemAry();
 
     for(auto& Item : m_AryStorageItems1)
     {

@@ -6,6 +6,8 @@
 
 UPlayerBaseAttack::UPlayerBaseAttack()
 {
+    m_fDuringMoveSpeedModifier=0.25f;
+    
     m_fDashLimitSqr=0.f;
     
     m_nSectionIndex = -1;
@@ -57,10 +59,11 @@ void UPlayerBaseAttack::PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName 
 void UPlayerBaseAttack::TryDashAttack(const FGameplayAbilityActorInfo* ActorInfo)
 {
     float AttackSpeed = m_PlayerPawn->GetAttackSpeed();
+    PRINTF("AttackSpeed:%f",AttackSpeed);
     
     auto* Movement=GetMovement(m_PlayerPawn);
     
-    Movement->SetMoveSpeedRatio(0.25f);
+    Movement->SetMoveSpeedRatio(m_fDuringMoveSpeedModifier);
     
     float DistSqred;
     
@@ -90,7 +93,7 @@ void UPlayerBaseAttack::TryNormalAttack()
     
     auto* Movement=GetMovement(m_PlayerPawn);
     
-    Movement->SetMoveSpeedRatio(0.25f);
+    Movement->SetMoveSpeedRatio(m_fDuringMoveSpeedModifier);
     
     PlayAbilityAnimation(m_BaseAttackMotion,GetSectionName() ,AttackSpeed);
 }
@@ -135,6 +138,16 @@ void UPlayerBaseAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo
 void UPlayerBaseAttack::ResetComboSection()
 {
     m_nSectionIndex = 0;
+}
+
+void UPlayerBaseAttack::OnCancelledWrapper()
+{
+    OnCancelled(FGameplayTag(),FGameplayEventData());
+}
+
+void UPlayerBaseAttack::OnCompletedWrapper()
+{
+    OnCompleted(FGameplayTag(),FGameplayEventData());
 }
 
 void UPlayerBaseAttack::OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData)

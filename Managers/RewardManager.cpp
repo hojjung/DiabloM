@@ -181,7 +181,7 @@ void URewardManager::EnqueAllActors(bool dgOpen) //애초에 이게 문제 될�
 		return;
 	}
 
-	ADiabloGameMode::Get->GetItemActionManager()->CompleteAll();
+	ADiabloGameMode::Get->GetItemDropActionManager()->CompleteAll();
 
 	m_PoolItem.Empty();
 
@@ -430,7 +430,7 @@ void URewardManager::BezierCurveMove(AActor* target, float height, FVector desti
 		PathAction->m_OnComplete = *endCallback;
 	}
 
-	ADiabloGameMode::Get->GetItemActionManager()->RunAction(PathAction);
+	ADiabloGameMode::Get->GetItemDropActionManager()->AddAction(PathAction);
 }
 
 FVector URewardManager::GetQuadControlPoint(FVector start, FVector end, float height)

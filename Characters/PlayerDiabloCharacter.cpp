@@ -597,7 +597,7 @@ void APlayerDiabloCharacter::Die()
 
 	GetDiaAbilitySystem()->CancelAbilities();
 	
-	GetDiaAbilitySystem()->ClearAllAbilities();
+	//GetDiaAbilitySystem()->ClearAllAbilities();
 
 	FGameplayTagContainer EffectTagsToRemove;
 	
@@ -634,11 +634,11 @@ void APlayerDiabloCharacter::Revive()
 
 	GetDiaAbilitySystem()->RemoveLooseGameplayTag(m_TagDead);
 	//
-	GrantHpRegenAbility();
-	GrantBaseAttackAbility();
-	GrantHpPotionAbility();
-	GrantResourceRegenAbility();
-	GrantPortalAbility();
+	// GrantHpRegenAbility();
+	// GrantBaseAttackAbility();
+	// GrantHpPotionAbility();
+	// GrantResourceRegenAbility();
+	// GrantPortalAbility();
 	//
 	GetCapsule()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMovementComponent()->SetActive(true);

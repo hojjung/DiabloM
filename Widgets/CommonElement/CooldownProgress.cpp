@@ -36,12 +36,15 @@ void UCooldownProgress::NativeOnInitialized()
 
 void UCooldownProgress::CreateRenderMat()
 {
-    m_MatInst = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this,m_MatTemplate,"MatCreated");
+    UMaterialInstanceDynamic* DynMaterial = UMaterialInstanceDynamic::Create(m_MatTemplate, this);
+    m_MatInst = DynMaterial;//UKismetMaterialLibrary::CreateDynamicMaterialInstance(this,m_MatTemplate,"MatCreated");
     
     if(m_MatInst)
     {
         m_ImageCooldown->SetBrushFromMaterial(m_MatInst);
     }
+
+    
 }
 
 void UCooldownProgress::StartCooldown()

@@ -33,7 +33,10 @@ protected:
 	UPostProcessComponent* m_PostProcess;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	UActionManagerComponent* m_ItemActionManager;
+	UActionManagerComponent* m_ItemDropActionManager;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	UActionManagerComponent* m_PlayerActionManager;
 	
 	UPROPERTY(VisibleAnywhere)
 	APortal* m_PlayerVillageSpawn;
@@ -109,9 +112,14 @@ public:
 	
 	APortal* GetSpawnPoint();
 
-	FORCEINLINE UActionManagerComponent* GetItemActionManager()
+	FORCEINLINE UActionManagerComponent* GetItemDropActionManager()
 	{
-		return m_ItemActionManager;
+		return m_ItemDropActionManager;
+	}
+
+	FORCEINLINE UActionManagerComponent* GetPlayerActionManager()
+	{
+		return m_PlayerActionManager;
 	}
 
 

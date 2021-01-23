@@ -245,7 +245,7 @@ void UPlayerDiabloAbilitySystemComp::SetSkillFromSaveData(TArray<FSkillDataSpec>
     {
         return;
     }
-    for (int i = 0; i < my.Num(); i++)
+    for (int i = 0; i < loadedData.Num(); i++)
     {
         my[i].m_nCurrentLevel = loadedData[i].m_nCurrentLevel;
         my[i].m_nEquipIndex = loadedData[i].m_nEquipIndex;

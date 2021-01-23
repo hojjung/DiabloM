@@ -59,8 +59,11 @@ void UPlayerDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModC
 		TargetCharacter = Cast<AUnitPawn>(TargetActor);
 	}
 
-
-	if (Data.EvaluatedData.Attribute == GetHealthRegenAttribute())
+	if (Data.EvaluatedData.Attribute == GetAttackSpeedAttribute())
+	{
+		PRINTF("PlayerAtt:%f",GetAttackSpeed());
+	}
+	else if (Data.EvaluatedData.Attribute == GetHealthRegenAttribute())
 	{
 	}
 	else if (Data.EvaluatedData.Attribute == GetManaAttribute())

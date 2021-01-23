@@ -91,6 +91,9 @@ void UDiabloCheatManager::SaveInven()
 	TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
 	
 	USaveLoadManager::Get->SaveInventory(UPlayerCreateManager::Get->m_CurrentSelectSlot,DiaPC->GetInven()->GetItemAry());
+
+	
+	USaveLoadManager::Get->SaveStorage(UPlayerCreateManager::Get->m_CurrentSelectSlot,DiaPC->GetStorageOpenAry(),DiaPC->GetStorageAry());
 }
 
 void UDiabloCheatManager::LoadInven()

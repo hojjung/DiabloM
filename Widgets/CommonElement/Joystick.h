@@ -89,6 +89,7 @@ public:
 	void EndJoystickDrag();
 
 	virtual void NativeOnInitialized() override;
+	void SetIndicatorLocation(FVector NewActorLocation);
 
 	virtual FReply NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
 

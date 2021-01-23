@@ -89,8 +89,8 @@ public:
     void SaveEquipment(int slotIndex,const TArray<FItemInstance>& aryItem);
     void SetEquipSaveDataFromCreation(const FCurrentCharData& charData,TArray<FItemInstance>& newEquipAry);
     void SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex,FName classID,float exp=0.f,float gold=0.f);
-    void SaveStorage(int slotIndex,const TArray<bool>& aryOpen,const TArray<TArray<FItemInstance>>& aryItems);
-    void SaveShareStorage(const TArray<bool>& aryOpen,const TArray<TArray<FItemInstance>>& aryItems);
+    void SaveStorage(int slotIndex,const TArray<bool>& aryOpen,const TArray<UInventory*>& aryItems);
+    void SaveShareStorage(const TArray<bool>& aryOpen,const TArray<UInventory*>& aryItems);
     void SaveSkill(int slotIndex,int remainPoints,int spentPoints,TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2,
     TArray<FSkillDataSpec>& skill3, TArray<FSkillDataSpec>& skill4, TArray<FSkillDataSpec>& skill5);
     //
@@ -119,8 +119,6 @@ public:
 
     void SetLoadedSkillDataToPlayer(int slot_index);
 
-    void SetLoadedTalentDataToPlayer(int slot_index);
-    
     void CreateSetPlayerCharacter();
     
     const TArray<USaveCharacterStatus*>& GetLoadedChars() const;

@@ -57,8 +57,12 @@ void UDungeonManager::CreateQuadTreeBound()
 
 void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 {
+    m_nCurrentDgLevel= level;
     
-    
+    if(m_CurrentDungeonData)
+    {
+        ClearDungeon();
+    }
     BindOnDgDelegate();
     
     m_nPointIndex=0;
@@ -71,7 +75,7 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 
     BuildDungeonLevel(m_CurrentDungeonData);
 
-    //GetMoviePlayer()->PlayMovie();
+    GetMoviePlayer()->PlayMovie();
 }
 
 
@@ -100,7 +104,7 @@ void UDungeonManager::PortalToVillage(bool isDgCleared)
     APlayerDiabloCharacter* PlayerPawn = ADiabloPlayerController::Get->GetPlayerPawn();
     
     PlayerPawn->SetActorLocation(GetCurrentPlayerFeetLoc(),false,nullptr,ETeleportType::None);
-    
+
     ADiabloPlayerController::Get->ClientForceGarbageCollection();
 
     m_bIsPlayerInDungeon=false;
@@ -129,11 +133,10 @@ void UDungeonManager::PortalToRecentDungeon()
         Loc=NavLoc.Location;
     }
     
-    
     Loc.Z+=PlayerPawn->GetCapsule()->GetScaledCapsuleHalfHeight();
+    
     PlayerPawn->SetActorLocation(Loc,false,nullptr,ETeleportType::None);
 
-    
     m_bIsPlayerInDungeon=true;
     
     ADiabloPlayerController::Get->GetMainCanvas()->OpenMinimap();
@@ -176,13 +179,13 @@ void UDungeonManager::ClearDungeon()
 
 void UDungeonManager::RestartDungeon()
 {
-    ClearDungeon();
+    CreateDefaultInfinityDungeon(m_nCurrentDgLevel);
     
-    SpawnMonstersToDungeon(m_nMonsterLevel, m_CurrentDungeonData);
+    //SpawnMonstersToDungeon(m_nMonsterLevel, m_CurrentDungeonData);
     
-    PortalToRecentDungeon();
+    //PortalToRecentDungeon();
     
-    m_OnPortalCreate.Broadcast(true);
+    //m_OnPortalCreate.Broadcast(true);
 }
 
 bool UDungeonManager::IsDungeonOpened()
@@ -250,13 +253,9 @@ void UDungeonManager::BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData)
     
      Config->GridSize = FVector(200.f,200.f,100.f);
     
-    
-    
-    ADiabloPlayerController::Get->SetInputMode(FInputModeGameOnly());
     ADiabloPlayerController::Get->bBlockInput=true;
+    
     Dg->BuildDungeon();
-
-    GetMoviePlayer()->PlayMovie();
 }
 
 void UDungeonManager::OnDgBuildComplete(ADungeon* Dungeon)
@@ -304,9 +303,9 @@ void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
 
     ADiabloPlayerController::Get->bBlockInput=false;
     
-    ADiabloPlayerController::Get->SetInputMode(FInputModeGameAndUI());
+    //ADiabloPlayerController::Get->SetInputMode(FInputModeGameAndUI());
     
-    //GetMoviePlayer()->StopMovie();
+    GetMoviePlayer()->StopMovie();
 }
 
 void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData)

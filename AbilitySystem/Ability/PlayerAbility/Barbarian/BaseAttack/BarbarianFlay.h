@@ -16,10 +16,6 @@ class DIABLOM_API UBarbarianFlay : public UPlayerBaseAttack
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float m_fLevelPerBleedingDamage;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TSubclassOf<UGameplayEffect> m_GETargetBleeding;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TSubclassOf<UGameplayEffect> m_GEBaseAttackGainResource;
 	
 	bool m_bIsGained;
@@ -28,7 +24,6 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	
 	virtual void EventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
-	
-	void DealBleedEffectToTarget(const AUnitPawn* TargetChar, APlayerDiabloCharacter* PlayerChar);
 
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 };

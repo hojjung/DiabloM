@@ -16,14 +16,14 @@ void UAnimNotify_TraceBox::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 {
 	AActor* Instigator = Cast<AActor>( MeshComp->GetOwner());
 	
-	FVector StartTrace = Instigator->GetActorLocation();
+	FVector StartTrace = Instigator->GetActorLocation() +(Instigator->GetActorForwardVector() * m_fRange);
 	
-	FVector EndTrace = (Instigator->GetActorForwardVector() * m_fRange) + StartTrace;
+	//FVector EndTrace = (Instigator->GetActorForwardVector() * m_fRange) + StartTrace;
 
 	TArray<FHitResult> Hits;
 
-	if(!UKismetSystemLibrary::BoxTraceMultiForObjects(Instigator,StartTrace,EndTrace,m_BoxHalfSize,Instigator->GetActorRotation(),
-		m_ObjType,false,m_IgnoreActors,EDrawDebugTrace::ForOneFrame,Hits,true))
+	if(!UKismetSystemLibrary::BoxTraceMultiForObjects(Instigator,StartTrace,StartTrace,m_BoxHalfSize,Instigator->GetActorRotation(),
+		m_ObjType,false,m_IgnoreActors,EDrawDebugTrace::ForDuration,Hits,true))
 	{
 		return;
 	}
@@ -34,6 +34,7 @@ void UAnimNotify_TraceBox::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	{
 		return;
 	}
+	PRINTF("HitCount:%d",Hits.Num());
 
 	for(FHitResult& Hitten : Hits)
 	{

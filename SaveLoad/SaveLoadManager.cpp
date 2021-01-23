@@ -293,7 +293,7 @@ void USaveLoadManager::LoadCharStat(int index)
 }
 
 void USaveLoadManager::SaveStorage(int slotIndex, const TArray<bool>& aryOpen,
-    const TArray<TArray<FItemInstance>>& aryItems)
+    const TArray<UInventory*>& aryItems)
 {
     USaveStorage* SaveStorage = Cast<USaveStorage>(
      UGameplayStatics::CreateSaveGameObject(USaveStorage::StaticClass()));
@@ -310,7 +310,7 @@ void USaveLoadManager::SaveStorage(int slotIndex, const TArray<bool>& aryOpen,
 }
 
 void USaveLoadManager::SaveShareStorage( const TArray<bool>& aryOpen,
-    const TArray<TArray<FItemInstance>>& aryItems)
+    const TArray<UInventory*>& aryItems)
 {
     //
     USaveShareStorage* SaveShareStorage = Cast<USaveShareStorage>(
@@ -347,20 +347,21 @@ void USaveLoadManager::LoadStorage(int slotIndex)
     if(!LoadStorage)//for ALready Made Player
     {
         PRINTF("No StorageLoad-CreateNew");
-        TArray<TArray<FItemInstance>> AryAryStorage;
-        AryAryStorage.Init(TArray<FItemInstance>(),3);
-        int i=0;
-        while (i<3)
-        {
-            AryAryStorage[i].Init(FItemInstance(),INVEN_X*INVEN_Y);
-
-            i++;
-        }
-        //Open bool
-        TArray<bool> AryDgOpen;
-        AryDgOpen.Init(false,5);
-        AryDgOpen[0]=true;
-        SaveStorage(slotIndex,AryDgOpen,AryAryStorage);
+        return;
+        // TArray<TArray<FItemInstance>> AryAryStorage;
+        // AryAryStorage.Init(TArray<FItemInstance>(),3);
+        // int i=0;
+        // while (i<3)
+        // {
+        //     AryAryStorage[i].Init(FItemInstance(),INVEN_X*INVEN_Y);
+        //
+        //     i++;
+        // }
+        // //Open bool
+        // TArray<bool> AryDgOpen;
+        // AryDgOpen.Init(false,5);
+        // AryDgOpen[0]=true;
+        // SaveStorage(slotIndex,AryDgOpen,AryAryStorage);
         LoadStorage=m_AryLoadedStorage[slotIndex];
     }
 
@@ -389,15 +390,16 @@ void USaveLoadManager::LoadShareStorage()
     if(!LoadShareStorage)//for ALready Made Player
       {
         PRINTF("No ShareStorageLoad-CreateNew");
-        TArray<TArray<FItemInstance>> AryAryStorage;
-        AryAryStorage.Init(TArray<FItemInstance>(),5);
-        AryAryStorage[3].Init(FItemInstance(),STORAGE_X*STORAGE_Y);
-        AryAryStorage[4].Init(FItemInstance(),STORAGE_X*STORAGE_Y);
-        //Open bool
-        TArray<bool> AryDgOpen;
-        AryDgOpen.Init(false,5);
-        //
-        SaveShareStorage(AryDgOpen,AryAryStorage);
+        return;
+        // TArray<TArray<FItemInstance>> AryAryStorage;
+        // AryAryStorage.Init(TArray<FItemInstance>(),5);
+        // AryAryStorage[3].Init(FItemInstance(),STORAGE_X*STORAGE_Y);
+        // AryAryStorage[4].Init(FItemInstance(),STORAGE_X*STORAGE_Y);
+        // //Open bool
+        // TArray<bool> AryDgOpen;
+        // AryDgOpen.Init(false,5);
+        // //
+        // SaveShareStorage(AryDgOpen,AryAryStorage);
         LoadShareStorage=m_LoadShareStorage;
         //계정 공유 bool 배열 어디에서?
       }
@@ -437,19 +439,19 @@ int USaveLoadManager::CreateNewCharacter(UPlayerCreateManager* plManager)
     AryInven.Init(FItemInstance(),MaxInven);
     SaveInventory(PlayerIndex,AryInven);
     //
-    TArray<TArray<FItemInstance>> AryAryStorage;
-    AryAryStorage.Init(TArray<FItemInstance>(),5);
-    int i=0;
-    while (i<5)
-    {
-        AryAryStorage[i].Init(FItemInstance(),MaxInven);
-
-        i++;
-    }
-    TArray<bool> AryDgOpen;
-    AryDgOpen.Init(false,5);
-    AryDgOpen[0]=true;
-    SaveStorage(PlayerIndex,AryDgOpen,AryAryStorage);
+    // TArray<TArray<FItemInstance>> AryAryStorage;
+    // AryAryStorage.Init(TArray<FItemInstance>(),5);
+    // int i=0;
+    // while (i<5)
+    // {
+    //     AryAryStorage[i].Init(FItemInstance(),MaxInven);
+    //
+    //     i++;
+    // }
+    // TArray<bool> AryDgOpen;
+    // AryDgOpen.Init(false,5);
+    // AryDgOpen[0]=true;
+    // SaveStorage(PlayerIndex,AryDgOpen,AryAryStorage);
     //스킬 Save가 필요한가?
     // TArray<FSkillDataSpec> Skill1;
     // TArray<FSkillDataSpec> Skill2;
@@ -488,6 +490,19 @@ void USaveLoadManager::SetLoadedInvenDataToPlayer(int slotIndex)
 void USaveLoadManager::SetLoadedStorageDataToPlayer(int slot_index)
 {
     TWeakObjectPtr<ADiabloPlayerController> DiaPC = ADiabloPlayerController::Get;
+
+    TArray<bool>& AryDgOpen = DiaPC->GetStorageOpenAry();
+    
+    if(!m_AryLoadedStorage[slot_index])
+    {
+        AryDgOpen[0]=true;
+        AryDgOpen[1]=true;
+        AryDgOpen[2]=false;
+        AryDgOpen[3]=true;
+        AryDgOpen[4]=false;
+
+        return;
+    }
     //
     DiaPC->GetStorageAry()[0]->SetItemAry(m_AryLoadedStorage[slot_index]->m_AryStorageItems1);
     DiaPC->GetStorageAry()[1]->SetItemAry(m_AryLoadedStorage[slot_index]->m_AryStorageItems2);
@@ -495,7 +510,7 @@ void USaveLoadManager::SetLoadedStorageDataToPlayer(int slot_index)
     DiaPC->GetStorageAry()[3]->SetItemAry(m_LoadShareStorage->m_AryStorageItems4);
     DiaPC->GetStorageAry()[4]->SetItemAry(m_LoadShareStorage->m_AryStorageItems5);
     //
-    auto& AryDgOpen =DiaPC->GetStorageOpenAry();
+   
     AryDgOpen[0]=m_AryLoadedStorage[slot_index]->m_bShareStorage1Opened;
     AryDgOpen[1]=m_AryLoadedStorage[slot_index]->m_bShareStorage2Opened;
     AryDgOpen[2]=m_AryLoadedStorage[slot_index]->m_bShareStorage3Opened;
@@ -536,6 +551,7 @@ void USaveLoadManager::SetLoadedSkillDataToPlayer(int slot_index)
     //
     
 }
+
 
 void USaveLoadManager::CreateSetPlayerCharacter()
 {

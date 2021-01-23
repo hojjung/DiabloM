@@ -1,9 +1,10 @@
 #include "DiaSkillUseButton.h"
 #include "DiaDragDropSkill.h"
 #include "SkillLearnButton.h"
+#include "Characters/PlayerDiabloCharacter.h"
 
 
-void UDiaSkillUseButton::Init(UPlayerDiabloAbilitySystemComp* diaComp,int index)
+void UDiaSkillUseButton::Init(APlayerDiabloCharacter* diaPlayer,UPlayerDiabloAbilitySystemComp* diaComp,int index)
 {
 	m_fMaxCD=0.f;
 	m_GaSpec=nullptr;
@@ -13,8 +14,12 @@ void UDiaSkillUseButton::Init(UPlayerDiabloAbilitySystemComp* diaComp,int index)
 	m_bIsDragSkill=false;
 	m_bIsSkillUsable=false;
 	m_nIndex=index;
+	
 	ClearSkillSpec();
+	
 	m_PlayerDiaComp=diaComp;
+	
+	m_PlayerPawn=diaPlayer;
 
 	m_Joystick->m_OnDropEnd.AddUObject(this,&UDiaSkillUseButton::UseSkill);
 }
@@ -52,7 +57,9 @@ void UDiaSkillUseButton::SetSkillSpec(FSkillDataSpec* skillSpec)
 void UDiaSkillUseButton::ClearSkillSpec()
 {
 	m_bIsSkillUsable = false;
+	
 	m_GaSpec=nullptr;
+	
 	m_EquippedSkillSpec=nullptr;
 	
 	m_Joystick->ClearIcon();
@@ -63,6 +70,7 @@ void UDiaSkillUseButton::ClearSkillSpec()
 void UDiaSkillUseButton::ClearCooldown()
 {
 	m_fMaxCD=0.f;
+	
 	m_SkillCooldown->SetCooldownProgress(0.f,0.f);
 }
 
@@ -73,14 +81,12 @@ void UDiaSkillUseButton::OnPressBtn()
 		return;
 	}
 	
-	// if(m_bIsDragSkill)
-	// {
-	// 	return;
-	// }
+	if(m_bIsDragSkill)
+	{
+		m_OnPressed.Broadcast(this);
+	}
 
 	m_bIsPressing =true;
-
-	m_OnPressed.Broadcast(this);
 }
 
 void UDiaSkillUseButton::OnReleaseBtn()
@@ -91,7 +97,10 @@ void UDiaSkillUseButton::OnReleaseBtn()
 	}
 	m_bIsPressing =false;
 
-	m_OnReleased.Broadcast(this);
+	if(m_bIsDragSkill)
+	{
+		m_OnReleased.Broadcast(this);
+	}
 }
 
 void UDiaSkillUseButton::UseSkill()
@@ -106,8 +115,8 @@ void UDiaSkillUseButton::UseSkill()
 	m_GaSpec = AbilSpec;
 	
 	m_fMaxCD = m_GaSpec->Ability->GetCooldownTimeRemaining(m_PlayerDiaComp->AbilityActorInfo.Get());
-
-	if(m_fMaxCD>0.f)
+	
+	if(m_fMaxCD>0.f && m_fCurrentCD<=0.f)
 	{
 		m_SkillCooldown->StartCooldown();
 		
@@ -138,7 +147,9 @@ void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 
 	if(m_bIsPressing&&!m_bIsDragSkill)
 	{
-		UseSkill();
+		m_PlayerPawn->HomingRotateToTarget();
+		
+		UseSkill();	
 	}
 
 	if(!m_GaSpec||m_fMaxCD<=0.f)
@@ -146,9 +157,9 @@ void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 		return;
 	}
 
-	float CD = m_GaSpec->Ability->GetCooldownTimeRemaining(m_PlayerDiaComp->AbilityActorInfo.Get());
+	m_fCurrentCD = m_GaSpec->Ability->GetCooldownTimeRemaining(m_PlayerDiaComp->AbilityActorInfo.Get());
 	
-	if(CD<=0.f)
+	if(m_fCurrentCD<=0.f)
 	{
 		ClearCooldown();
 		
@@ -157,21 +168,24 @@ void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 		return;
 	}
 	
-	m_SkillCooldown->SetCooldownProgress(CD,m_fMaxCD);//0이 끝임
+	m_SkillCooldown->SetCooldownProgress(m_fCurrentCD,m_fMaxCD);//0이 끝임
 	
-	m_EquippedSkillSpec->m_LearnBtn->SetCooldownProgress(CD,m_fMaxCD);//0이 끝임
+	m_EquippedSkillSpec->m_LearnBtn->SetCooldownProgress(m_fCurrentCD,m_fMaxCD);//0이 끝임
 }
 
 FReply UDiaSkillUseButton::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
 {
 	FReply ASD = Super::NativeOnTouchStarted(InGeometry, InGestureEvent);
+	
 	OnPressBtn();
+	
 	return ASD;
 }
 
 FReply UDiaSkillUseButton::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
 {
 	FReply ASD = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
+	
 	OnReleaseBtn();
 
 	return  ASD;

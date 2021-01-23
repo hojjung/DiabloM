@@ -107,20 +107,10 @@ void UDiabloGameInstance::SaveAllPlayerInfo()
     USaveLoadManager::Get->SaveCharacterStat(UPlayerCreateManager::Get->m_CurrentSelectSlot, Lev, Name, Face, Hair,
                                              USaveLoadManager::Get->GetCurrentPlayerClassName(), DiaPl->m_fCurrentExp,DiaPl->m_fCurrentGold);
 
-    TArray<UInventory*> Storage = DiaPC->GetStorageAry();
-    TArray<TArray<FItemInstance>> StorageItemInst;
-    StorageItemInst.Init(TArray<FItemInstance>(),5);
-
-    int j=0;
-    while (j<5)
-    {
-        StorageItemInst[j]=Storage[j]->GetItemAry();
-        j++;
-    }
     
-    USaveLoadManager::Get->SaveStorage(UPlayerCreateManager::Get->m_CurrentSelectSlot,DiaPC->GetStorageOpenAry(),StorageItemInst);
+    USaveLoadManager::Get->SaveStorage(UPlayerCreateManager::Get->m_CurrentSelectSlot,DiaPC->GetStorageOpenAry(),DiaPC->GetStorageAry());
 
-    USaveLoadManager::Get->SaveShareStorage(DiaPC->GetStorageOpenAry(),StorageItemInst);
+    USaveLoadManager::Get->SaveShareStorage(DiaPC->GetStorageOpenAry(),DiaPC->GetStorageAry());
 }
 
 bool UDiabloGameInstance::IsDungeonOpened()

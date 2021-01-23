@@ -29,7 +29,7 @@ public:
 
 	FOnPressChange m_OnReleased;
 	
-	void Init(UPlayerDiabloAbilitySystemComp* diaComp,int index);
+	void Init(APlayerDiabloCharacter* diaPlayer,UPlayerDiabloAbilitySystemComp* diaComp,int index);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
@@ -42,6 +42,8 @@ protected:
 
 	float m_fMaxCD;
 
+	float m_fCurrentCD;
+
 	bool m_bIsPressing;
 
 	bool m_bIsSkillUsable;
@@ -53,6 +55,8 @@ protected:
 	FGameplayAbilitySpec* m_GaSpec;
 	
 	TWeakObjectPtr<UPlayerDiabloAbilitySystemComp> m_PlayerDiaComp;
+
+	TWeakObjectPtr<APlayerDiabloCharacter> m_PlayerPawn;
 	
 public:
 	void SetSkillSpec(FSkillDataSpec* skillSpec);
