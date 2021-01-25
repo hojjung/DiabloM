@@ -1,6 +1,7 @@
 #include "DiaSkillUseButton.h"
 #include "DiaDragDropSkill.h"
 #include "SkillLearnButton.h"
+#include "AbilitySystem/Ability/PlayerAbility/BaseSkillTemplate/PlayerBaseAttack.h"
 #include "Characters/PlayerDiabloCharacter.h"
 
 
@@ -84,6 +85,12 @@ void UDiaSkillUseButton::OnPressBtn()
 	if(m_bIsDragSkill)
 	{
 		m_OnPressed.Broadcast(this);
+
+		float Radius =  Cast< UPlayerBaseAttack>( m_EquippedSkillSpec->m_SkillDataPtr->m_SkillAbility->GetDefaultObject())->GetRadius();
+
+		m_Joystick->SetRadius(Radius);
+
+		PRINTF("Radius:%f",Radius);
 	}
 
 	m_bIsPressing =true;

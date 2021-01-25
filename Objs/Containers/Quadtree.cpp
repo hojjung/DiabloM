@@ -66,6 +66,25 @@ int Quadtree::GetMaxDistance() const
     return m_MaxDistance;
 }
 
+bool Quadtree::CheckActorInVisibleNode(ITickHideable* actor)
+{
+    // return (actor->GetCurrentNode()==m_CurrentNode.Get())||
+    //     (actor->GetCurrentNode()==m_OldRearNode.Get())||
+    //         (actor->GetCurrentNode()==m_OldForwardNode.Get());
+
+
+    return (actor->GetCurrentNode()==m_CenterNodeEntered.Get())||
+        (actor->GetCurrentNode()==m_NorthNodeEntered.Get())||
+            (actor->GetCurrentNode()==m_SouthNodeEntered.Get())||
+     (actor->GetCurrentNode()==m_EastNodeEntered.Get())||
+     (actor->GetCurrentNode()==m_WestNodeEntered.Get())||
+         (actor->GetCurrentNode()==m_NorthEastNodeEntered.Get())||
+     (actor->GetCurrentNode()==m_NorthWestNodeEntered.Get())||
+     (actor->GetCurrentNode()==m_SouthEastNodeEntered.Get())||
+         (actor->GetCurrentNode()==m_SouthWestNodeEntered.Get());
+}
+
+
 
 void Quadtree::InitialiseNodes(TSharedPtr<QuadtreeNode> parentNode, FVector2D min, FVector2D max)
 {
@@ -289,42 +308,53 @@ void Quadtree::TryShow3Cell(AActor* mover)
 
     FVector2D ForwardPos2D(forwardPosition);
 
-    TSharedPtr<QuadtreeNode> CenterNodeEntered    = GetMinNode(CenterPos2D);
+    TSharedPtr<QuadtreeNode> CenterNodeEntered = GetMinNode(CenterPos2D);
 
     if(CenterNodeEntered&&CenterNodeEntered != m_CurrentNode)
     {
         if(m_CurrentNode)
         {
-            if(m_OldNode)
+            if(m_OldRearNode)
             {
-                m_OldNode->HideActors();
+                m_OldRearNode->HideActors();
             }
             
-            m_OldNode = m_CurrentNode;
+            m_OldRearNode = m_CurrentNode;
         }
 
         m_CurrentNode = CenterNodeEntered;
 
         m_CurrentNode->ShowActors();
 
-        
+
     }
 
-    if(m_OldNode)
-        m_OldNode->DrawBoxAroundNode(mover->GetWorld(),FColor::Cyan);
-
-    if(m_CurrentNode)
-        m_CurrentNode->DrawBoxAroundNode(mover->GetWorld(),FColor::Cyan);
-
     TSharedPtr<QuadtreeNode> ForwardNodeEntered    = GetMinNode(ForwardPos2D);
+
+    if(m_OldForwardNode && m_OldForwardNode!=ForwardNodeEntered && m_OldForwardNode!=m_CurrentNode&&m_OldForwardNode!=m_OldRearNode)
+    {
+        m_OldForwardNode->HideActors();
+    }
     
     if(ForwardNodeEntered)
     {
-        ForwardNodeEntered->ShowActors();
-
-        ForwardNodeEntered->DrawBoxAroundNode(mover->GetWorld(),FColor::Cyan);
+        m_OldForwardNode = ForwardNodeEntered;
+        
+        m_OldForwardNode->ShowActors();
     }
 
-    
+    if(m_OldForwardNode)
+    {
+        m_OldForwardNode->DrawBoxAroundNode(mover->GetWorld(),FColor::Red);
+    }
+    if(m_OldRearNode)
+    {
+        m_OldRearNode->DrawBoxAroundNode(mover->GetWorld(),FColor::Red);
+    }
+    if(m_CurrentNode)
+    {
+        m_CurrentNode->DrawBoxAroundNode(mover->GetWorld(),FColor::Red);
+    }
+
 }
 

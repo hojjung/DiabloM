@@ -81,6 +81,8 @@ protected:
 	UPROPERTY()
 	bool m_bIsSuccessDragged;//너무 짧게 드래그 되는것 방지용
 
+	float m_fRadius;
+
 public:
 	void UpdateTouchInput(FVector2D input);
 	
@@ -104,4 +106,6 @@ public:
 	void SetIcon(UTexture2D* textureWant);
 
 	void ClearIcon();
+
+	void SetRadius(float radius);
 };

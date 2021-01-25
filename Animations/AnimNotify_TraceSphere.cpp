@@ -12,6 +12,11 @@ UAnimNotify_TraceSphere::UAnimNotify_TraceSphere()
 void UAnimNotify_TraceSphere::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
 	AActor* Instigator = Cast<AActor>( MeshComp->GetOwner());
+
+	if(!Instigator)
+	{
+		return;
+	}
 	
 	FVector StartTrace = (Instigator->GetActorForwardVector() * m_fRange) +Instigator->GetActorLocation();
 	

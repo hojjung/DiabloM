@@ -8,6 +8,7 @@
 
 AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 {
+    m_bIsStun = false;
     m_TagStun= FGameplayTag::RequestGameplayTag(FName("State.Debuff.Stun"));
     m_TagEffectRemoveOnDeath = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.RemoveOnDeath"));
     m_TagDead = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
@@ -20,7 +21,8 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
     m_Capsule->CanCharacterStepUpOn = ECB_No;
     m_Capsule->SetShouldUpdatePhysicsVolume(true);
     m_Capsule->SetCanEverAffectNavigation(false);
-    m_Capsule->bDynamicObstacle = true;
+    m_Capsule->bDynamicObstacle = false;
+    m_Capsule->AreaClass = nullptr; 
     RootComponent = m_Capsule;
 
     m_Movement = CreateDefaultSubobject<UUnitMovement>("Movement00");
@@ -44,7 +46,8 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
     m_fMoveAcceptRadius = 100.f;
    
     m_fHitAnimCD=-1.f;
-    //Test
+
+    //GetMovementComponent()->NavAgentProps.
 }
 
 
@@ -283,6 +286,11 @@ void AUnitPawn::OnDeathAnimEnd()
     Destroy();
 }
 
+void AUnitPawn::UpdateMoveSpeed() const
+{
+    Cast<UUnitMovement>(GetMovementComponent())->SetMoveSpeed(GetMoveSpeed());
+}
+
 float AUnitPawn::GetAcceptRadiusToOther()
 {
     float MyCapsule =GetCapsule()->GetScaledCapsuleRadius();
@@ -343,14 +351,20 @@ UDiabloAbilitySystemComp* AUnitPawn::GetDiaAbilitySystem() const
     return m_AbilitySystemComponent;
 }
 
-void AUnitPawn::DoBaseAttack()
+bool AUnitPawn::DoBaseAttack()
 {
-    GetDiaAbilitySystem()->TryActivateAbility(m_BaseAttackHandle);
+    return GetDiaAbilitySystem()->TryActivateAbility(m_BaseAttackHandle);
 }
 
 FRotator AUnitPawn::GetHomingRotToTarget()
 {
+    
     FRotator NewRot = GetActorRotation();
+
+    if(m_bIsStun)
+    {
+        return NewRot;
+    }
 
     if (!m_FocusedEnemy.Get())
     {
@@ -496,7 +510,7 @@ void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
             m_SkBody->bPauseAnims = true;
         }
 
-//        m_fHitAnimCD = FMath::RandRange(3.5,5);
+        m_bIsStun = true;
         
         return;
     }
@@ -504,7 +518,9 @@ void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 
     m_fHitAnimCD = FMath::RandRange(3.5f,5.f);
     
-    m_SkBody->bPauseAnims = false;    
+    m_SkBody->bPauseAnims = false;
+
+    m_bIsStun = false;
     
     SetUnblockMove();
 }

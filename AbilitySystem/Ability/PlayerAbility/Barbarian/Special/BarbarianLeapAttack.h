@@ -29,8 +29,7 @@ protected:
 	UParticleSystem* m_StompParticle;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<TEnumAsByte<EObjectTypeQuery>> m_AryTraceType;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float m_fRadius;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float m_fHeight;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -63,4 +62,6 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+
+
 };

@@ -8,6 +8,7 @@
 
 UJoystick::UJoystick(const FObjectInitializer& objInit):Super(objInit)
 {
+	m_fRadius = 300.f;
 	m_fCamRotate=-45.f;
 	m_fPickerRadius=64.f;
 	m_fDragRadius=200.f;
@@ -48,6 +49,8 @@ void UJoystick::SetIndicatorLocation(FVector NewActorLocation)
 	{
 		return;
 	}
+
+	ASkillIndicator::GetCurrent->SetRadiusScale(m_fRadius);
 	
 	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 	
@@ -64,7 +67,7 @@ void UJoystick::SetIndicatorLocation(FVector NewActorLocation)
 	
 	FQuat QQ = Dia->GetCapsule()->GetComponentRotation().Quaternion();
 
-	FCollisionShape Shape =FCollisionShape();
+	FCollisionShape Shape = FCollisionShape();
 	//Shape.SetCapsule(Dia->GetCapsule()->Ext);
 	
 	if(Dia->GetCapsule()->SweepComponent(Hit,NewActorLocation,NewActorLocation,QQ,Shape,false))
@@ -200,6 +203,11 @@ void UJoystick::ClearIcon()
 	SetIcon(nullptr);
 }
 
+void UJoystick::SetRadius(float radius)
+{
+	m_fRadius = radius;
+}
+
 void UJoystick::StartJoystickDrag()
 {
 	if(!m_bIsDragUse)
@@ -264,5 +272,7 @@ void UJoystick::EndJoystickDrag()
 	{
 		m_OnDropEnd.Broadcast();
 	}
+
+	SetRadius(100.f);
 }
 

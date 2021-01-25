@@ -58,16 +58,19 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_StBackpack->CastShadow = false;
 	m_StBackpack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	m_StBackpack->SetupAttachment(m_SkBody, "Backpack");
+	m_StBackpack->SetCanEverAffectNavigation(false);
 
 	m_StRightWeapon = CreateDefaultSubobject<UStaticMeshComponent>("StMeshRightHand");
 	m_StRightWeapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	m_StRightWeapon->SetupAttachment(m_SkBody, "RightWeaponShield");
 	m_StRightWeapon->CastShadow = true;
+	m_StRightWeapon->SetCanEverAffectNavigation(false);
 
 	m_StLeftWeapon = CreateDefaultSubobject<UStaticMeshComponent>("StMeshLeftHand");
 	m_StLeftWeapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	m_StLeftWeapon->SetupAttachment(m_SkBody, "LeftWeaponShield");
 	m_StLeftWeapon->CastShadow = true;
+	m_StLeftWeapon->SetCanEverAffectNavigation(false);
 
 	m_fCurrentExp = 0.f;
 
@@ -135,6 +138,11 @@ void APlayerDiabloCharacter::GrantResourceRegenAbility()
 	else if (DiaAttri->GetMaxStamina() && m_GAPlayerStaminaRegen)
 	{
 		FGameplayAbilitySpec Spec = FGameplayAbilitySpec(m_GAPlayerStaminaRegen, GetCharacterLevel(), -1, this);
+		m_ResourceRegenHandle = GetDiaAbilitySystem()->GiveAbility(Spec);
+	}
+	else if (DiaAttri->GetMaxRage() && m_GAPlayerRageRegen)
+	{
+		FGameplayAbilitySpec Spec = FGameplayAbilitySpec(m_GAPlayerRageRegen, GetCharacterLevel(), -1, this);
 		m_ResourceRegenHandle = GetDiaAbilitySystem()->GiveAbility(Spec);
 	}
 }
@@ -634,11 +642,12 @@ void APlayerDiabloCharacter::Revive()
 
 	GetDiaAbilitySystem()->RemoveLooseGameplayTag(m_TagDead);
 	//
-	// GrantHpRegenAbility();
+	GrantHpRegenAbility();
+	GrantPortalAbility();
+	GrantHpPotionAbility();
+	GrantResourceRegenAbility();
+	
 	// GrantBaseAttackAbility();
-	// GrantHpPotionAbility();
-	// GrantResourceRegenAbility();
-	// GrantPortalAbility();
 	//
 	GetCapsule()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMovementComponent()->SetActive(true);
@@ -669,6 +678,15 @@ void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target) //wrapper
 FVector APlayerDiabloCharacter::GetLastSeenLocation()
 {
 	return m_PlayerSense->m_LastSeenLocation;
+}
+
+void APlayerDiabloCharacter::UpdateRegenAbility()
+{
+	if(m_ResourceRegenHandle.IsValid())
+	{
+		GetDiaAbilitySystem()->CancelAbilityHandle(m_ResourceRegenHandle);
+	}
+	GrantResourceRegenAbility();
 }
 
 bool APlayerDiabloCharacter::IsAlive() const

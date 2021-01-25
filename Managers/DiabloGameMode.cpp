@@ -188,6 +188,11 @@ void ADiabloGameMode::HideAllTreeNodes()
 	}
 }
 
+bool ADiabloGameMode::CheckActorInVisibleNode(ITickHideable* actor)
+{
+	return m_QuadTree->CheckActorInVisibleNode(actor);
+}
+
 void ADiabloGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
@@ -199,8 +204,7 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 
 	if(m_QuadTree)
 	{
-		//m_QuadTree->DrawBoxes(GetWorld());
-		m_QuadTree->TryShow3Cell(ADiabloPlayerController::Get->GetPlayerPawn());
+		m_QuadTree->TryShow9Cell(ADiabloPlayerController::Get->GetPlayerPawn());
 	}
 }
 

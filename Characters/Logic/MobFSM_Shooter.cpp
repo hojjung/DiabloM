@@ -128,6 +128,8 @@ void UMobFSM_Shooter::OnChase()
 		if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
 		{
 			m_CurrentState = EFSM::TryShoot;
+
+			return;
 		}
 	}
 	else //안보일때,안보이는채로 시간이 너무길면
@@ -174,6 +176,40 @@ void UMobFSM_Shooter::OnTryShoot()
 		m_OwnerMonster->FocusTarget(nullptr);
 
 		return;
+	}
+
+	EPathFollowingStatus::Type Status = m_OwnerMonster->GetPfComp()->GetStatus();
+
+	bool CanSeeTarget = m_OwnerMonster->CanSeeTarget();
+	
+	if(!CanSeeTarget)
+	{
+		if(Status == EPathFollowingStatus::Moving)
+		{
+			return;
+		}
+
+		
+		FNavLocation Result;
+
+		FVector Dest;
+		
+		if (m_OwnerMonster->m_NavSys->GetRandomPointInNavigableRadius(m_OwnerMonster->GetLastSeenLocation(), 300.f, Result))
+		{
+			Dest = Result.Location;
+		}
+
+		if(m_OwnerMonster->MoveToLocation(Dest) == EPathFollowingRequestResult::Type::AlreadyAtGoal)
+		{
+			DecisionByDistance();
+		}
+		
+		return;
+	}
+
+	if(Status == EPathFollowingStatus::Moving)
+	{
+		m_OwnerMonster->StopMove();
 	}
 
 	if (!m_OwnerMonster->IsDotAngleAcceptForTarget(m_fAcceptRotationDot)) //각안나오면 돌림

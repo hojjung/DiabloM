@@ -40,8 +40,7 @@ void UDiaSkillPanel::Init(UPlayerDiabloAbilitySystemComp* playerSkillComp)
 		m_UltimateSkillBelt->AddChildToHorizontalBox(CreateSkillButton(SkillSpec,m_PlayerSkillComp));
 	}
 	//
-	UpdateAvailablePoint();
-	UpdateTotalPoint();
+	UpdateAllWidget();
 	//LevelLoad and update
 	m_PlayerSkillComp->m_OnSkillLevelChanged.AddUObject(this,&UDiaSkillPanel::UpdateAllWidgetWrap);
 }

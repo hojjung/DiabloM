@@ -71,7 +71,9 @@ void UMonsterBaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle H
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
     }
 
-    PlayAbilityAnimation(m_BaseAttackMotion, NAME_None, 1);
+    float AttackSpeed = m_MonsterPawn->GetAttackSpeed();
+    
+    PlayAbilityAnimation(m_BaseAttackMotion, NAME_None, AttackSpeed);
 }
 
 void UMonsterBaseMeleeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo,

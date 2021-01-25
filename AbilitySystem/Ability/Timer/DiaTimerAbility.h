@@ -28,7 +28,7 @@ protected:
     FTimerHandle m_TimerHandle_OnTimer;
 
     FGameplayEffectSpecHandle m_TimerEffectSpecHandle;
-    
+
 protected:
     virtual void SetGameEffectSpec();
     
@@ -50,8 +50,6 @@ protected:
     virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                             const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
                             bool bWasCancelled) override;
-
-    virtual void CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility) override;
 };
 
 

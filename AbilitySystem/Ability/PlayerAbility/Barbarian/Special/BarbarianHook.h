@@ -4,21 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/PlayerAbility/BaseSkillTemplate/PlayerBaseAttack.h"
-#include "BarbarianWarCryFear.generated.h"
+#include "BarbarianHook.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UBarbarianWarCryFear : public UPlayerBaseAttack
+class DIABLOM_API UBarbarianHook : public UPlayerBaseAttack
 {
 	GENERATED_BODY()
+
+	//트레이스 당한적들을
+	//끌고옴
+	//
+protected:
 	
-	protected:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TSubclassOf<UGameplayEffect> m_GETargetDebuff;
-	
-	protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	
 	virtual void EventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;

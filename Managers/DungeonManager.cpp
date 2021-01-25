@@ -75,7 +75,7 @@ void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 
     BuildDungeonLevel(m_CurrentDungeonData);
 
-    GetMoviePlayer()->PlayMovie();
+    //GetMoviePlayer()->PlayMovie();
 }
 
 
@@ -264,8 +264,10 @@ void UDungeonManager::OnDgBuildComplete(ADungeon* Dungeon)
     UNavigationSystemBase* NavSystems = (Dungeon->GetWorld()->GetNavigationSystem());
     check(NavSystems);
     UNavigationSystemV1* NavV1 = Cast<UNavigationSystemV1>(NavSystems);
+    //NavV1->SetGenerationMode(ERuntimeGenerationType::Dynamic);
     NavV1->OnNavigationGenerationFinishedDelegate.Clear();
     NavV1->OnNavigationGenerationFinishedDelegate.AddDynamic(this, &UDungeonManager::OnNavCookComplete);
+    //NavV1->Build();
 }
 
 ADgToVillagePortal* UDungeonManager::GetDgCompletePortalOpen()
@@ -280,6 +282,7 @@ void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
     check(NavSystems);
     UNavigationSystemV1* NavV1 = Cast<UNavigationSystemV1>(NavSystems);
     NavV1->OnNavigationGenerationFinishedDelegate.Clear();
+    //NavV1->SetGenerationMode(ERuntimeGenerationType::Static);
     
     m_RecentDungeonFeetLoc=ADiabloGameMode::Get->GetDungeon()->GetStartPoint();
     
@@ -305,7 +308,7 @@ void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
     
     //ADiabloPlayerController::Get->SetInputMode(FInputModeGameAndUI());
     
-    GetMoviePlayer()->StopMovie();
+    //GetMoviePlayer()->StopMovie();
 }
 
 void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData)

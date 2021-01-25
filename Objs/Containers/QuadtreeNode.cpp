@@ -108,7 +108,8 @@ void QuadtreeNode::DrawBoxAroundNode(UWorld* world, FColor colour)
     FVector centre = {m_BoundingBox->GetCenter().X, m_BoundingBox->GetCenter().Y, 100.f};
     FVector extent = {m_BoundingBox->GetExtent().X, m_BoundingBox->GetExtent().Y, 0.0f};
 
-    DrawDebugBox(world, centre, extent, m_bVisible? FColor::Red:colour,false,-1,m_bVisible?1:0,m_bVisible?20.f:0);
+    DrawDebugBox(world, centre, extent, colour,false,-1,1,10.f);
+   //DrawDebugBox(world, centre, extent, m_bVisible? FColor::Red:colour,false,-1,m_bVisible?1:0,m_bVisible?20.f:0); DrawDebugBox(world, centre, extent, m_bVisible? FColor::Red:colour,false,-1,m_bVisible?1:0,m_bVisible?20.f:0);
 
     for (TSharedPtr<QuadtreeNode, ESPMode::Fast>& node : m_ChildNodes)
     {

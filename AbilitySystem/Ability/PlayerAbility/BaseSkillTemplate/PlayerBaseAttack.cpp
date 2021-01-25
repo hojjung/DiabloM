@@ -59,6 +59,7 @@ void UPlayerBaseAttack::PlayAbilityAnimation(UAnimMontage* MontageToPlay, FName 
 void UPlayerBaseAttack::TryDashAttack(const FGameplayAbilityActorInfo* ActorInfo)
 {
     float AttackSpeed = m_PlayerPawn->GetAttackSpeed();
+    
     PRINTF("AttackSpeed:%f",AttackSpeed);
     
     auto* Movement=GetMovement(m_PlayerPawn);
@@ -79,7 +80,7 @@ void UPlayerBaseAttack::TryDashAttack(const FGameplayAbilityActorInfo* ActorInfo
 
         float DashPercent = DashLength/DistSqred;
 
-        DashAttack(Movement,DashNormal,FMath::Sqrt(DashLength),(m_fDashTime*DashPercent));
+        SetDash(Movement,DashNormal,FMath::Sqrt(DashLength),(m_fDashTime*DashPercent));
     }
     else
     {
@@ -205,7 +206,7 @@ UUnitMovement* UPlayerBaseAttack::GetMovement(APawn* want)
     return Cast<UUnitMovement>(want->GetMovementComponent());
 }
 
-void UPlayerBaseAttack::DashAttack(UUnitMovement* movementComp,FVector dashNormal, float dashLength, float dashTime)
+void UPlayerBaseAttack::SetDash(UUnitMovement* movementComp,FVector dashNormal, float dashLength, float dashTime)
 {
     FVector DeltaDash=dashNormal * (dashLength/m_fDashTime);
     

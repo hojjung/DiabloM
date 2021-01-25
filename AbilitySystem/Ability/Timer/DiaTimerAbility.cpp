@@ -1,4 +1,6 @@
 #include "DiaTimerAbility.h"
+
+#include "Characters/PlayerDiabloCharacter.h"
 #include "Characters/UnitPawn.h"
 #include "Perception/PawnSensingComponent.h"
 
@@ -28,14 +30,16 @@ void UDiaTimerAbility::SetSensingUpdatesEnabled(const bool bEnabled)
     }
 }
 
+
 void UDiaTimerAbility::SetGameEffectSpec()
 {
     m_TimerEffectSpecHandle=MakeOutgoingGameplayEffectSpec(
       m_EffectWant_SetByCaller, GetAbilityLevel());
 
     float Value=GetAttributeWantFrom();
-   m_TimerEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(
-   m_GamePlayTagSetByCaller,Value);
+    
+   m_TimerEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(m_GamePlayTagSetByCaller,Value);
+    
     PRINTF("Timer Value:%f",Value);
 }
 
@@ -112,14 +116,9 @@ void UDiaTimerAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,
                                   const FGameplayAbilityActivationInfo ActivationInfo,
                                   bool bReplicateEndAbility, bool bWasCancelled)
 {
-   // Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);    
+    Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+    
     SetSensingUpdatesEnabled(false);
+
 }
 
-void UDiaTimerAbility::CancelAbility(const FGameplayAbilitySpecHandle Handle,
-    const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
-    bool bReplicateCancelAbility)
-{
-   // Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
-    SetSensingUpdatesEnabled(false);
-}

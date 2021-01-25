@@ -138,4 +138,6 @@ public:
 	void ClearQuadTree();
 
 	void HideAllTreeNodes();
+
+	bool CheckActorInVisibleNode(ITickHideable* actor);
 };

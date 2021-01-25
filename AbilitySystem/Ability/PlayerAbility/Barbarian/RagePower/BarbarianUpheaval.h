@@ -13,5 +13,9 @@ UCLASS()
 class DIABLOM_API UBarbarianUpheaval : public UPlayerBaseAttack
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	
+	virtual void EventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 };

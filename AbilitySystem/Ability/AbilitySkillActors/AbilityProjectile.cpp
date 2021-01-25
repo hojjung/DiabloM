@@ -63,6 +63,8 @@ void AAbilityProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 	if(!UnitPawn)
 	{
+		PRINTF("Overlapped:%s",*OtherActor->GetName());
+		ShootEnd();
 		return;
 	}
 

@@ -97,6 +97,8 @@ protected:
 
     float m_fHitAnimCD;
 
+    bool m_bIsStun;
+
     FGameplayAbilitySpecHandle m_BaseAttackHandle;
 
 protected:
@@ -118,6 +120,8 @@ protected:
 
     virtual void OnDeathAnimEnd();
 public:
+    void UpdateMoveSpeed() const;
+    
     float GetAcceptRadiusToOther();
 
     float GetAcceptRadiusSelfOnly();
@@ -162,7 +166,7 @@ public:
         return m_Capsule;
     }
 
-    void DoBaseAttack();
+    bool DoBaseAttack();
     
     FRotator GetHomingRotToTarget();
 
@@ -263,6 +267,11 @@ public: //AttributeGetter
     FORCEINLINE ETeamID GetTeamID()
     {
         return m_TeamID;
+    }
+
+    FORCEINLINE bool GetIsStun()
+    {
+        return m_bIsStun;
     }
 };
 

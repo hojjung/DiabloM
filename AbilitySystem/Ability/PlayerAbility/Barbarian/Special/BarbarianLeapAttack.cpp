@@ -61,7 +61,9 @@ void UBarbarianLeapAttack::TraceStomp()
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),m_StompParticle,PlayerPoint);
 
-	UGameplayStatics::SpawnSoundAtLocation(GetWorld(),m_StompSound,PlayerPoint);
+	FRotator Rot;
+	
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(),m_StompSound,PlayerPoint,Rot,3.5f);
 
 	TArray<AActor*> OutActor;
 		

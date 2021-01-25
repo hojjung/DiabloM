@@ -5,6 +5,7 @@
 #include "DiabloM.h"
 #include "AbilitySystem/Ability/PlayerAbility/PlayerUsePortal.h"
 #include "AbilitySystem/Ability/PlayerAbility/Regen/PlayerManaRegenAbility.h"
+#include "AbilitySystem/Ability/PlayerAbility/Regen/PlayerRageRegenAbility.h"
 #include "AbilitySystem/Ability/PlayerAbility/Regen/PlayerStaminaRegenAbility.h"
 #include "Animations/DiaAniminstance.h"
 #include "Characters/UnitPawn.h"
@@ -50,8 +51,8 @@ protected:
 	TSubclassOf<UPlayerManaRegenAbility> m_GAPlayerManaRegen;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TSubclassOf<UPlayerStaminaRegenAbility> m_GAPlayerStaminaRegen;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	//TSubclassOf<UPlayerManaRegenAbility> m_GAPlayerRageRegen;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	TSubclassOf<UPlayerRageRegenAbility> m_GAPlayerRageRegen;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TSubclassOf<UPlayerHealthPotion> m_GAPlayerHealthPotion;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
@@ -294,6 +295,8 @@ public:
 	}
 
 	virtual FVector GetLastSeenLocation() override;
+	
+	void UpdateRegenAbility();
 
 	friend UDiabloGameInstance;
 

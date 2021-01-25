@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/PlayerAbility/BaseSkillTemplate/PlayerBaseAttack.h"
-#include "BarbarianUndyingRage.generated.h"
+#include "BarbarianBerserkMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UBarbarianUndyingRage : public UPlayerBaseAttack
+class DIABLOM_API UBarbarianBerserkMode : public UPlayerBaseAttack
 {
 	GENERATED_BODY()
 	

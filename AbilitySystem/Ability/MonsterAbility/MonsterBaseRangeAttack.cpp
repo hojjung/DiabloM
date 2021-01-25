@@ -4,6 +4,7 @@
 #include "AbilitySystem/Task/PlayMontageAndWaitForEvent.h"
 #include "Characters/MonsterPawn.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Managers/DiabloGameInstance.h"
 
 UMonsterBaseRangeAttack::UMonsterBaseRangeAttack()
 {
@@ -73,7 +74,9 @@ void UMonsterBaseRangeAttack::ActivateAbility(const FGameplayAbilitySpecHandle H
         EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
     }
 
-    PlayAbilityAnimation(m_BaseAttackMotion, NAME_None, 1);
+    float AttackSpeed = m_MonsterPawn->GetAttackSpeed();
+    
+    PlayAbilityAnimation(m_BaseAttackMotion, NAME_None, AttackSpeed);
 }
 
 void UMonsterBaseRangeAttack::CreateBulletPool(const FGameplayAbilityActorInfo* ActorInfo)
@@ -90,7 +93,7 @@ void UMonsterBaseRangeAttack::CreateBulletPool(const FGameplayAbilityActorInfo* 
     
     while(i++<3)
     {
-        AAbilityProjectile* SpawnedBullet = ActorInfo->OwnerActor->GetWorld()->SpawnActor<AAbilityProjectile>(
+        AAbilityProjectile* SpawnedBullet = m_MonsterPawn->GetWorld()->SpawnActor<AAbilityProjectile>(
             m_ClassBullet, Location, Rot, Param);
         
         m_AryMissle.Emplace(SpawnedBullet);
@@ -153,6 +156,7 @@ void UMonsterBaseRangeAttack::EventReceived(FGameplayTag EventTag, FGameplayEven
         AAbilityProjectile* Projectile = GetBullet();
 
         Projectile->SetActorRotation(Rotation);
+        
         Projectile->SetActorLocation(Mob->GetActorLocation());
 
         //Projectile->SetActorTransform(MuzzleTransform);

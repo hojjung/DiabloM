@@ -31,10 +31,6 @@ void UBaseDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attribut
 {
     Super::PreAttributeChange(Attribute, NewValue);
 
-    if (NewValue <= 0.f)
-    {
-        return;
-    }
 
     if (Attribute == GetMaxHealthAttribute())
     {
@@ -42,35 +38,35 @@ void UBaseDiabloAttribute::PreAttributeChange(const FGameplayAttribute& Attribut
     }
     else if (Attribute == GetMoveSpeedAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 150, 10000);
+        NewValue = FMath::Clamp<float>(NewValue, 50, 10000);
     }
     else if (Attribute == GetAttackSpeedAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 0.1, 3);
+        NewValue = FMath::Clamp<float>(NewValue, -3.f, 3.f);
     }
     else if (Attribute == GetDamagePerAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 0.f, 3.f);
+        NewValue = FMath::Clamp<float>(NewValue, -3.f, 3.f);
     }
     else if (Attribute == GetDefensePerAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.90f);
+        NewValue = FMath::Clamp<float>(NewValue, -0.9f, 0.90f);
     }//마이너스 저항력으로 추가 데미지 받을수 있어야함
     else if (Attribute == GetResColdAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.90f);
+        NewValue = FMath::Clamp<float>(NewValue, -0.9f, 0.90f);
     }
     else if (Attribute == GetResPoisonAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.90f);
+        NewValue = FMath::Clamp<float>(NewValue, -0.9f, 0.90f);
     }
     else if (Attribute == GetResFireAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.90f);
+        NewValue = FMath::Clamp<float>(NewValue, -0.9f, 0.90f);
     }
     else if (Attribute == GetResElecAttribute())
     {
-        NewValue = FMath::Clamp<float>(NewValue, 0.0f, 0.90f);
+        NewValue = FMath::Clamp<float>(NewValue, -0.9f, 0.90f);
     }
     else if (Attribute == GetPhysicalDamageAttribute())
     {
@@ -241,7 +237,7 @@ void UBaseDiabloAttribute::PostGameplayEffectExecute(const FGameplayEffectModCal
     {
         if (TargetCharacter)
         {
-            Cast<UUnitMovement>(TargetCharacter->GetMovementComponent())->SetMoveSpeed(GetMoveSpeed());
+            TargetCharacter->UpdateMoveSpeed();
         }
     }
     else if (Data.EvaluatedData.Attribute == GetPhysicalDamageAttribute())

@@ -30,6 +30,8 @@ public:
 
 
 	int GetMaxDistance() const;
+	
+	bool CheckActorInVisibleNode(ITickHideable* actor);
 
 
 private:
@@ -65,7 +67,9 @@ private:
 
 	TSharedPtr<QuadtreeNode> m_CurrentNode;
 
-	TSharedPtr<QuadtreeNode> m_OldNode;
+	TSharedPtr<QuadtreeNode> m_OldRearNode;
+
+	TSharedPtr<QuadtreeNode> m_OldForwardNode;
 
 public:
 	void TryShow9Cell(AActor* mover);//플레이어의 현재와 전방,이전셀 3개만

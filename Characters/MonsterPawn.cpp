@@ -33,6 +33,7 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     m_StShadow->SetRelativeLocation(FVector(0,0,5.f));
     m_StShadow->SetRelativeScale3D(FVector(3.f,3.f,3.f));
     m_StShadow->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    m_StShadow->SetCanEverAffectNavigation(false);
     //
     static ConstructorHelpers::FClassFinder<UUserWidget> FoundHpBar(
              TEXT("WidgetBlueprint'/Game/Blueprints/Widgets/Elements/WB_ProgressBarParents.WB_ProgressBarParents_C'"));
@@ -44,6 +45,7 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     m_WorldHpBar->SetWidgetSpace(EWidgetSpace::Screen);
     m_WorldHpBar->SetupAttachment(m_Capsule);
     m_WorldHpBar->SetRelativeLocation(FVector(0,0,90));
+    m_WorldHpBar->SetCanEverAffectNavigation(false);
     //m_WorldHpBar->Screen
     //
     m_Movement->NavAgentProps.AgentHeight=88.f;
@@ -56,12 +58,12 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
 
 void AMonsterPawn::ShowStatusBar()
 {
-    m_WorldHpBar->SetVisibility(true);
+    m_WorldHpBar->SetHiddenInGame(false);
 }
 
 void AMonsterPawn::HideStatusBar()
 {
-    m_WorldHpBar->SetVisibility(false);
+    m_WorldHpBar->SetHiddenInGame(true);
 }
 
 bool AMonsterPawn::IsStatusBarActive()
@@ -320,8 +322,9 @@ void AMonsterPawn::HideAll(bool hasBeenShowed)
         m_MonsterSense->SetSensingUpdatesEnabled(false);
         m_PFComp->SetComponentTickEnabled(false);
         
-    }
     m_SkBody->SetComponentTickEnabled(false);
+        
+    }
     m_StShadow->SetComponentTickEnabled(false);
     m_WorldHpBar->SetComponentTickEnabled(false);
     
@@ -329,7 +332,7 @@ void AMonsterPawn::HideAll(bool hasBeenShowed)
 
     SetActorHiddenInGame(true);
     m_bIsVisible=false;
-
+    HideStatusBar();
 }
 
 void AMonsterPawn::SetNode(QuadtreeNode* quadtree_node)
@@ -344,26 +347,32 @@ QuadtreeNode* AMonsterPawn::GetCurrentNode()
 }
 
 
-void AMonsterPawn::UpdateBound()//여기하는중
+void AMonsterPawn::UpdateBound() //여기하는중,하는중이였네,
 {
-    if(m_CurrentNode)//TODO Need Erase
+    if (m_CurrentNode) //TODO Need Erase
     {
-        if(!GetCurrentNode()->IsPositionInsideNode(GetActorLocation()))
+        if (!GetCurrentNode()->IsPositionInsideNode(GetActorLocation()))//현재 노드 밖으로 캐릭터가 나갔다.
         {
             RegisterToQuadTreeBound();
 
-            if(m_CurrentNode)//Succed register tree
+            if(!m_CurrentNode)
+             {
+                return;//Fail
+             }
+
+            if(ADiabloGameMode::Get->CheckActorInVisibleNode(this))
             {
                 ShowAll(true);
             }
+            else
+            {
+                HideAll(true);
+            }
         }
     }
-    else//out of bound
+    else
     {
         RegisterToQuadTreeBound();
-
-        //ShowAll(true);
-
     }
 }
 

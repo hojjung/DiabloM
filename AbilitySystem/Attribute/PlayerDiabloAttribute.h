@@ -18,8 +18,9 @@ public:
 	UPlayerDiabloAttribute();
 
 	static UPlayerDiabloAttribute* Get;
-	
+
 public:
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	FGameplayAttributeData HealthRegen;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, HealthRegen)

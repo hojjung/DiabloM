@@ -20,6 +20,8 @@ public:
 	UPlayerBaseAttack();
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float m_fRadius;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float m_fDuringMoveSpeedModifier;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float m_fLevelPerDamageRate;
@@ -78,7 +80,7 @@ protected:
 	void TryDashAttack(const FGameplayAbilityActorInfo* ActorInfo);
 	void TryNormalAttack();
 
-	void DashAttack(UUnitMovement* movementComp,FVector dashNormal,float dashLength,float dashTime);
+	void SetDash(UUnitMovement* movementComp,FVector dashNormal,float dashLength,float dashTime);
 	
 	FName GetSectionName();
 	
@@ -108,6 +110,11 @@ public:
 	UFUNCTION()
     virtual void EventReceived(FGameplayTag EventTag, FGameplayEventData EventData);
 
+public:
+	FORCEINLINE float GetRadius()
+	{
+		return m_fRadius;
+	}
 };
 
 
