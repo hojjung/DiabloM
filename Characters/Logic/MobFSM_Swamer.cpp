@@ -26,6 +26,8 @@ void UMobFSM_Swamer::Init(AUnitPawn* pawnUnit)
 
 void UMobFSM_Swamer::TickFSM()
 {
+	QUICK_SCOPE_CYCLE_COUNTER(MOBFSM_Swamer_TickFSM);
+	
 	(this->*m_AryStateFunction[static_cast<int>(m_CurrentState)])();
 }
 

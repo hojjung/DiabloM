@@ -6,6 +6,8 @@
 
 ACollisionInteract::ACollisionInteract(const FObjectInitializer& objInit)
 {
+	m_fVolume=1.f;
+	
 	PrimaryActorTick.bCanEverTick = false;
 	m_CollSphere = CreateDefaultSubobject<USphereComponent>("Coll00");
 	m_CollSphere->SetCollisionProfileName("PickupItem");
@@ -88,6 +90,16 @@ void ACollisionInteract::SetNode(QuadtreeNode* quadtree_node)
 QuadtreeNode* ACollisionInteract::GetCurrentNode()
 {
 	return m_CurrentNode;
+}
+
+void ACollisionInteract::PlaySound()
+{
+	if(!m_DropSound)
+	{
+		return;
+	}
+	
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(),m_DropSound,GetActorLocation(),GetActorRotation(),m_fVolume);
 }
 
 

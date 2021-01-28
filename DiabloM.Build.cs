@@ -38,6 +38,10 @@ public class DiabloM : ModuleRules
             "TechTree",
             "OnlineSubsystem",
             "EasyActionPlugin",
+            "PlayFab",
+            "PlayFabCpp",
+            "PlayFabCommon",
+            "MobileUtils"
         });
         if (Target.Platform == UnrealTargetPlatform.Android)
         {

@@ -15,6 +15,7 @@ class DIABLOM_API ADroppedItem : public ACollisionInteract
 public:
 	ADroppedItem(const FObjectInitializer& objInit);
 protected:
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Item")
 	UBillboardComponent* m_Imposter;
 	UPROPERTY(EditAnywhere, Category = "Item")

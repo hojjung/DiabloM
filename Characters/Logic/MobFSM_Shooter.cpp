@@ -47,6 +47,8 @@ void UMobFSM_Shooter::Init(AUnitPawn* pawnUnit)
 
 void UMobFSM_Shooter::TickFSM()
 {
+	QUICK_SCOPE_CYCLE_COUNTER(MOBFSM_Shooter_TickFSM);
+	
 	if(m_OwnerMonster->GetFocusedTarget())
 	{
 		m_fTargetDistSqr = FVector::DistSquared2D(m_OwnerMonster->GetActorLocation(), m_OwnerMonster->GetFocusedTarget()->GetActorLocation());

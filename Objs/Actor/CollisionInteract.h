@@ -27,6 +27,10 @@ public:
 	bool m_bIsActingForGame;
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Item")
+	float m_fVolume;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Item")
+	USoundBase* m_DropSound;
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	USphereComponent* m_CollSphere;
 	UPROPERTY(VisibleAnywhere, Category = "Item")
@@ -65,6 +69,8 @@ public:
 	virtual void SetNode(QuadtreeNode* quadtree_node) override;
 
 	virtual QuadtreeNode* GetCurrentNode() override;
+
+	void PlaySound();
 };
 
 

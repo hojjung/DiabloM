@@ -26,7 +26,8 @@ class UPlayerHealthPotion;
 class UPlayerHpRegenAbility;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
 DECLARE_MULTICAST_DELEGATE(FOnMove);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnFocusTargetChanged,AUnitPawn*)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnFocusTargetChanged,AUnitPawn*);
+DECLARE_MULTICAST_DELEGATE(FOnPlVisualChanged);
 UCLASS()
 class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 {
@@ -43,6 +44,8 @@ public:
 	FOnMove m_OnMove;
 
 	FOnFocusTargetChanged m_OnFocusTarget;
+
+	FOnPlVisualChanged m_OnPlayerVisualChanged;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")

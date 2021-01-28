@@ -53,8 +53,6 @@ void UDungeonManager::CreateQuadTreeBound()
     ADiabloGameMode::Get->SetQuadTreeCoord(GridTileMap,Config);
 }
 
-
-
 void UDungeonManager::CreateDefaultInfinityDungeon(int level)
 {
     m_nCurrentDgLevel= level;

@@ -10,7 +10,7 @@
 #include "PlayerVisual.generated.h"
 
 struct FCurrentCharData;
-
+class USceneCaptureComponent2D;
 UCLASS()
 class DIABLOM_API APlayerVisual : public APawn
 {
@@ -42,6 +42,10 @@ protected:
 	UStaticMeshComponent* m_MeshRightHand;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UStaticMeshComponent* m_MeshLeftHand;
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	USceneCaptureComponent2D* m_Capture;
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	USpringArmComponent* m_Spring;
 	
 protected:
 	UPROPERTY()
@@ -58,7 +62,7 @@ protected:
 protected:
 	virtual void BeginPlay() override;
 	
-	void CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName);
+	void CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName,USceneComponent* root);
 	
 	void OnMeshVisualChanged(const FCurrentCharData& charData);//TODO Add Slot reader,1003
 

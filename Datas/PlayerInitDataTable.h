@@ -202,6 +202,10 @@ public:
     const FItemData*     m_CurrentRightWeapon;
     const FItemData*     m_CurrentLeftWeapon;
 
+    int m_nIndexHair;
+
+    int m_nIndexFace;
+
     FName m_ClassID;
     //
     void Clear()

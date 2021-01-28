@@ -13,7 +13,7 @@ void URewardManager::CreateActorPool()
 	m_nGoldIndex = 0;
 	m_nHpIndex = 0;
 
-	CreateAllItemPool(75, 40, 4); //75/40/4
+	CreateAllItemPool(35, 15, 4); //75/40/4
 }
 
 void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMonsterItemDropRow& dropData, int level)

@@ -4,10 +4,12 @@
 #include "StartMap/PlayerCreateManager.h"
 #include "MonsterSpawnManager.h"
 #include "DungeonManager.h"
+#include "PlayfabManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Datas/ShopItemTable.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Item/Inventory.h"
+#include "PlayfabManager.h"
 
 
 UDiabloGameInstance* UDiabloGameInstance::Get = nullptr;
@@ -48,6 +50,11 @@ void UDiabloGameInstance::Init()
     UKismetSystemLibrary::ControlScreensaver(false);
     //
     m_DungeonManager->GetOnDungeonCreate().AddUObject(m_RewardManager,&URewardManager::EnqueAllActors);
+    //
+
+    m_PlayfabManager = NewObject<UPlayfabManager>();
+
+    m_PlayfabManager->Init();
 }
 
 

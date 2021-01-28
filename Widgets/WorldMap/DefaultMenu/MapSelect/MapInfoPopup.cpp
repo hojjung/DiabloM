@@ -71,6 +71,11 @@ void UMapInfoPopup::SetMonsterAndItemLevel(const FDungeonDataRow* dg_data)
 
 void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 {
+	if(dg_data->m_Horde.IsNull())
+	{
+		return;
+	}
+	
 	if (m_CurrentDgData != dg_data)//던전 데이터 바뀌면 레벨 초기화
 	{
 		m_nCurrentDgLevel = 1;
@@ -105,6 +110,8 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 	bool bIsAlreadyAdd = false;
 	
 	const FMonsterHordeHandle& Horde = m_CurrentDgData->m_Horde;
+
+	
 	
 	for (const FMonsterSelect& MobSelect : Horde.GetRow<FMonsterHordeRow>("")->m_AryMonsterEntity)
 	{

@@ -191,6 +191,8 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
 	GrantHpPotionAbility();
 	GrantResourceRegenAbility();
 	GrantPortalAbility();
+
+	m_OnPlayerVisualChanged.Broadcast();
 }
 
 void APlayerDiabloCharacter::BeginPlay()
@@ -200,6 +202,13 @@ void APlayerDiabloCharacter::BeginPlay()
 	if (m_bIsManualInit)
 	{
 		Init();
+	}
+
+	UPlayerCreateManager* PlManager = UDiabloGameInstance::Get->GetPlCreateManager();
+
+	if(PlManager)
+	{
+		m_OnPlayerVisualChanged.AddUObject(PlManager,&UPlayerCreateManager::SetCurrentDataWithPlayer);
 	}
 }
 
@@ -270,6 +279,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEqui
 
 		if (CreateItemActor(meshItem, &m_RightWeapon, &m_StRightWeapon))
 		{
+			m_OnPlayerVisualChanged.Broadcast();
 			return;
 		}
 
@@ -280,6 +290,7 @@ void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEqui
 
 		if (CreateItemActor(meshItem, &m_LeftWeapon, &m_StLeftWeapon))
 		{
+			m_OnPlayerVisualChanged.Broadcast();
 			return;
 		}
 
@@ -289,6 +300,8 @@ void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEqui
 	default:
 		;
 	}
+
+	m_OnPlayerVisualChanged.Broadcast();
 }
 
 void APlayerDiabloCharacter::RemoveAllEffect()

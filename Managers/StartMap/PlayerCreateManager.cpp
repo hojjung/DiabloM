@@ -108,7 +108,9 @@ void UPlayerCreateManager::SetCurrentDataFromSaveFile(const USaveCharacterStatus
     m_CurrentCharData.m_CurrentBody=save_equipment->m_EquipAry[(int)ESlotsEquipAry::Torso].m_ItemData;
     m_CurrentCharData.m_CurrentHelmet = save_equipment->m_EquipAry[(int)ESlotsEquipAry::Head].m_ItemData;
     m_CurrentCharData.m_CurrentHair=GetHair(char_stat->m_IndexHair,m_CurrentCharData.m_CurrentHelmet);
+    m_CurrentCharData.m_nIndexHair = char_stat->m_IndexHair;
     m_CurrentCharData.m_CurrentFace=GetFace(char_stat->m_IndexFace);
+    m_CurrentCharData.m_nIndexFace = char_stat->m_IndexFace;
     m_CurrentCharData.m_CurrentShoe= save_equipment->m_EquipAry[(int)ESlotsEquipAry::Leg].m_ItemData;
     m_CurrentCharData.m_CurrentGlove= save_equipment->m_EquipAry[(int)ESlotsEquipAry::Hand].m_ItemData;
     m_CurrentCharData.m_CurrentShoulder= save_equipment->m_EquipAry[(int)ESlotsEquipAry::Shoulder].m_ItemData;
@@ -270,5 +272,32 @@ USkeletalMesh* UPlayerCreateManager::GetHair(int index,bool hasHelMet)
 const FCurrentCharData& UPlayerCreateManager::GetCurrentCharData() const
 {
     return m_CurrentCharData;
+}
+
+void UPlayerCreateManager::SetCurrentDataWithPlayer()
+{
+    UEquipmentSystem* Equip = ADiabloPlayerController::Get->GetEquipment();
+    
+    m_CurrentCharData.m_CurrentBody=Equip->GetItem((int)ESlotsEquipAry::Torso).m_ItemData;
+    
+    m_CurrentCharData.m_CurrentHelmet = Equip->GetItem((int)ESlotsEquipAry::Head).m_ItemData;
+    
+    m_CurrentCharData.m_CurrentHair=GetHair(m_CurrentCharData.m_nIndexHair,m_CurrentCharData.m_CurrentHelmet);
+    
+    m_CurrentCharData.m_CurrentFace=GetFace(m_CurrentCharData.m_nIndexFace);
+    
+    m_CurrentCharData.m_CurrentShoe=  Equip->GetItem((int)ESlotsEquipAry::Leg).m_ItemData;
+    
+    m_CurrentCharData.m_CurrentGlove=  Equip->GetItem((int)ESlotsEquipAry::Hand).m_ItemData;
+    
+    m_CurrentCharData.m_CurrentShoulder=  Equip->GetItem((int)ESlotsEquipAry::Shoulder).m_ItemData;
+    
+    m_CurrentCharData.m_CurrentBelt=  Equip->GetItem((int)ESlotsEquipAry::Waist).m_ItemData;
+    
+    m_CurrentCharData.m_CurrentRightWeapon=  Equip->GetItem((int)ESlotsEquipAry::WeaponRight).m_ItemData;
+    
+    m_CurrentCharData.m_CurrentLeftWeapon=  Equip->GetItem((int)ESlotsEquipAry::WeaponLeft).m_ItemData;
+
+    OnDataChanged();
 }
 

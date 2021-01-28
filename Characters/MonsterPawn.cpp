@@ -321,10 +321,9 @@ void AMonsterPawn::HideAll(bool hasBeenShowed)
         m_Movement->SetComponentTickEnabled(false);
         m_MonsterSense->SetSensingUpdatesEnabled(false);
         m_PFComp->SetComponentTickEnabled(false);
-        
-    m_SkBody->SetComponentTickEnabled(false);
-        
     }
+    
+    m_SkBody->SetComponentTickEnabled(false);//이게여기있으면 몬스터 애니가 멈춤//그래도 퍼포먼스
     m_StShadow->SetComponentTickEnabled(false);
     m_WorldHpBar->SetComponentTickEnabled(false);
     

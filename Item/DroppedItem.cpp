@@ -166,6 +166,8 @@ void ADroppedItem::DropEnd()
     m_bIsDropEnd = true;
     
     RegisterToQuadTreeBound();
+
+    PlaySound();
 }
 
 void ADroppedItem::ShowAll(bool hasBeenShowed)

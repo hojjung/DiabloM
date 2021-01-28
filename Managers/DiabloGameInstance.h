@@ -10,6 +10,7 @@
 #include "DiabloGameInstance.generated.h"
 
 
+class UPlayfabManager;
 struct FShopItemSell;
 class APlayerVisual;
 class UStartMenuCanvas;
@@ -41,6 +42,8 @@ protected:
 	UDungeonManager* m_DungeonManager;
 	UPROPERTY()
 	URewardManager* m_RewardManager;
+	UPROPERTY()
+	UPlayfabManager* m_PlayfabManager;
 	
 protected:
 	virtual void Init() override;

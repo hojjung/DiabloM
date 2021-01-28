@@ -9,6 +9,7 @@
 #include "MoviePlayer.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Characters/DiabloPlayerController.h"
+#include "Characters/StartMap/PlayerVisual.h"
 #include "Objs/Actor/DiaDungeon.h"
 #include "Village/Portal.h"
 
@@ -51,6 +52,23 @@ ADiabloGameMode::ADiabloGameMode()
 
 }
 
+void ADiabloGameMode::SpawnVisualPlayer()
+{
+	FVector Faraway(20000,20000,20000);
+
+	FRotator Rot;
+
+	FActorSpawnParameters Param;
+	
+	m_PlayerVisual = GetWorld()->SpawnActor<APlayerVisual>(m_ClassVisualActor,Faraway,Rot,Param);
+
+	m_PlayerVisual->ShowMesh();
+
+	m_PlayerVisual->SetActorRelativeRotation(FRotator(0,0,90.f));
+
+	ADiabloPlayerController::Get->GetPlayerPawn()->m_OnPlayerVisualChanged.Broadcast();
+}
+
 void ADiabloGameMode::InitRewardManager()
 {
 	URewardManager* RewardManager = UDiabloGameInstance::Get->GetRewardManager();
@@ -87,7 +105,6 @@ void ADiabloGameMode::StartPlay()
 
 	InitRewardManager();
 	
-	
 	//ㄴBeginPlay Before
 	Super::StartPlay();
 
@@ -96,6 +113,9 @@ void ADiabloGameMode::StartPlay()
 	InitMinimap();
 
 	GetMoviePlayer()->StopMovie();
+
+	SpawnVisualPlayer();
+	
 }
 
 void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)

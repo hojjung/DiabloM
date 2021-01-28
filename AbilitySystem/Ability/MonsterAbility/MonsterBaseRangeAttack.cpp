@@ -87,11 +87,14 @@ void UMonsterBaseRangeAttack::CreateBulletPool(const FGameplayAbilityActorInfo* 
     FVector Location = ActorInfo->OwnerActor->GetActorLocation();
     
     FRotator Rot(0.f,0.f,0.f);
+    
     FActorSpawnParameters Param;
+    
     Param.bNoFail = true;
+    
     Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
     
-    while(i++<3)
+    while(i++<2)
     {
         AAbilityProjectile* SpawnedBullet = m_MonsterPawn->GetWorld()->SpawnActor<AAbilityProjectile>(
             m_ClassBullet, Location, Rot, Param);

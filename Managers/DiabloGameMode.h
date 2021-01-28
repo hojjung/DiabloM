@@ -12,6 +12,7 @@
 
 #include "DiabloGameMode.generated.h"
 
+class APlayerVisual;
 class UGridFlowMiniMap;
 class ADiaDungeon;
 class APortal;
@@ -29,6 +30,9 @@ public:
 	ADiabloGameMode();
 	
 protected:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TSubclassOf<APlayerVisual> m_ClassVisualActor;
+	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UPostProcessComponent* m_PostProcess;
 	
@@ -87,10 +91,15 @@ protected:
 	
 	UPROPERTY()
 	ADiaDungeon* m_MapDungeonActor;
+
+	UPROPERTY()
+	APlayerVisual* m_PlayerVisual;
 	
 	//FDelta m_OnTick;
 	
 protected:
+	void SpawnVisualPlayer();
+	
 	void InitRewardManager();
 	
 	void InitMinimap();

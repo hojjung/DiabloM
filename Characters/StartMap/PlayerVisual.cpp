@@ -6,6 +6,8 @@
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/StartMap/PlayerCreateManager.h"
 #include "Animation/AnimSequence.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "Engine/TextureRenderTarget2D.h"
 // Sets default values
 APlayerVisual::APlayerVisual()
 {
@@ -18,15 +20,20 @@ APlayerVisual::APlayerVisual()
     m_AnimSeq = FoundAnim.Object;
 
     //init skMesh
-    CreateSkMeshComponent(&m_MeshBody, "SkMeshRoot");
-    RootComponent = m_MeshBody;
-    CreateSkMeshComponent(&m_MeshFace, "SkMesh01");
-    CreateSkMeshComponent(&m_MeshHair, "SkMesh02");
-    CreateSkMeshComponent(&m_MeshBelt, "SkMesh03");
-    CreateSkMeshComponent(&m_MeshGlove, "SkMesh04");
-    CreateSkMeshComponent(&m_MeshShoe, "SkMesh05");
-    CreateSkMeshComponent(&m_MeshShoulderPad, "SkMesh06");
-    CreateSkMeshComponent(&m_MeshHeadGear, "SkMesh07");
+    RootComponent = CreateDefaultSubobject<USceneComponent>("Root");
+    
+    CreateSkMeshComponent(&m_MeshBody, "SkMeshRoot",RootComponent);
+    
+    m_MeshBody->SetRelativeLocation(FVector(0,0,-80.f));
+    m_MeshBody->SetRelativeRotation(FRotator(0,90.f,0.f));
+    
+    CreateSkMeshComponent(&m_MeshFace, "SkMesh01",m_MeshBody);
+    CreateSkMeshComponent(&m_MeshHair, "SkMesh02",m_MeshBody);
+    CreateSkMeshComponent(&m_MeshBelt, "SkMesh03",m_MeshBody);
+    CreateSkMeshComponent(&m_MeshGlove, "SkMesh04",m_MeshBody);
+    CreateSkMeshComponent(&m_MeshShoe, "SkMesh05",m_MeshBody);
+    CreateSkMeshComponent(&m_MeshShoulderPad, "SkMesh06",m_MeshBody);
+    CreateSkMeshComponent(&m_MeshHeadGear, "SkMesh07",m_MeshBody);
     //init stMesh
     m_MeshBackpack = CreateDefaultSubobject<UStaticMeshComponent>("StMeshBackpack");
     m_MeshBackpack->CastShadow=false;
@@ -64,9 +71,35 @@ APlayerVisual::APlayerVisual()
     m_DefaultGloveMesh= FoundMesh2.Object;
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundMesh3(TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/ModularBodyParts/Shoe01SK.Shoe01SK'"));
     m_DefaultShoeMesh= FoundMesh3.Object;
+
+    //
+    m_Spring = CreateDefaultSubobject<USpringArmComponent>("Spring");
+    m_Spring->SetupAttachment(RootComponent);
+    m_Spring->TargetArmLength=260.f;
+    m_Spring->SetRelativeRotation(FRotator(-2.5f,0.f,0.f));
+
+    m_Capture = CreateDefaultSubobject<USceneCaptureComponent2D>("Capture2D");
+
+    m_Capture->FOVAngle = 45.f;
+    
+    m_Capture->SetupAttachment(m_Spring);
+    m_Capture->SetRelativeLocation(FVector(0.f,0.f,20.f));
+    //TextureRenderTarget2D'/Game/03_VisualEffect/T_PlayerVisual.T_PlayerVisual'
+    static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> FoundTexture(TEXT("TextureRenderTarget2D'/Game/03_VisualEffect/T_PlayerVisual.T_PlayerVisual'"));
+    m_Capture->TextureTarget = FoundTexture.Object;
+    
+    m_Capture->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_RenderScenePrimitives;
+
+    m_Capture->CaptureSource = ESceneCaptureSource::SCS_SceneColorHDR;
+
+    m_Capture->MaxViewDistanceOverride =1000.f;
+
+    //SetTickableWhenPaused(true);
+
+    m_Capture->SetTickableWhenPaused(true);
 }
 
-void APlayerVisual::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp, FName keyName)
+void APlayerVisual::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp, FName keyName,USceneComponent* root)
 {
     (*refSkComp) = CreateDefaultSubobject<USkeletalMeshComponent>(keyName);
     (*refSkComp)->bOwnerNoSee = false;
@@ -74,12 +107,13 @@ void APlayerVisual::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp, FN
     (*refSkComp)->bCastDynamicShadow = false; //chanage for mobile
     (*refSkComp)->bAffectDynamicIndirectLighting = true;
     (*refSkComp)->PrimaryComponentTick.TickGroup = TG_PrePhysics;
-    (*refSkComp)->SetupAttachment(RootComponent);
+    (*refSkComp)->SetupAttachment(root);
     (*refSkComp)->SetCollisionProfileName("CharacterMesh");
     (*refSkComp)->SetGenerateOverlapEvents(false);
     (*refSkComp)->SetCanEverAffectNavigation(false);
     (*refSkComp)->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     (*refSkComp)->CastShadow=false;
+    (*refSkComp)->SetTickableWhenPaused(true);
 }
 
 void APlayerVisual::BeginPlay()
@@ -90,6 +124,8 @@ void APlayerVisual::BeginPlay()
     m_PlCreateManager->m_OnStartCreation.BindUObject(this, &APlayerVisual::ShowMesh);
     
     HideMesh();
+
+    m_Capture->ShowOnlyActorComponents(this);
 }
 
 void APlayerVisual::SetBodyAnim()

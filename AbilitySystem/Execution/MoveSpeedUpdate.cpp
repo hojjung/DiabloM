@@ -8,16 +8,25 @@
 bool UMoveSpeedUpdate::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
                                               FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
-	UAbilitySystemComponent* SourceAbilitySystemComponent = ExecutionParams.GetSourceAbilitySystemComponent();
-	AActor* SourceActor = SourceAbilitySystemComponent ? SourceAbilitySystemComponent->AvatarActor : nullptr;
-	APlayerDiabloCharacter* Player = Cast<APlayerDiabloCharacter>(SourceActor);
+	UAbilitySystemComponent* TargetAbilitySystemComponent = ExecutionParams.GetTargetAbilitySystemComponent();
+	AActor* TargetActor = TargetAbilitySystemComponent ? TargetAbilitySystemComponent->AvatarActor : nullptr;
 
-	if(!Player)
+	PRINTF("MoveSpeedUpdate1");
+	if(!TargetActor)
 	{
 		return false;
 	}
 
-	Player->UpdateMoveSpeed();
+	PRINTF("MoveSpeedUpdate2");
+	
+	AUnitPawn* Unit = Cast<AUnitPawn>(TargetActor);
+
+	if(!Unit)
+	{
+		return false;
+	}
+	PRINTF("MoveSpeedUpdate3");
+	Unit->UpdateMoveSpeed();
 
 	return true;
 }

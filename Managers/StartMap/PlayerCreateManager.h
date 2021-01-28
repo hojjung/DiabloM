@@ -62,12 +62,14 @@ public:
 
     void OnDataChanged(); //바뀔때마다 비쥬얼을 업데이트함
 
-    FORCEINLINE const FCurrentCharData& GetCurrentCharData()
+    FORCEINLINE FCurrentCharData& GetCurrentCharData()
     {
         return m_CurrentCharData;
     }
 
     void SetCurrentDataFromSaveFile(const USaveCharacterStatus* char_stat,const USaveEquipment* save_equipment);
+
+    
 public:
     void DecreaseHair();
     void IncreaseHair();
@@ -86,4 +88,6 @@ public:
     USkeletalMesh* GetHair(int index,bool hasHelMet);
 
     const FCurrentCharData& GetCurrentCharData() const;
+
+    void SetCurrentDataWithPlayer();
 };
