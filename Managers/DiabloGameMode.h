@@ -111,6 +111,9 @@ protected:
 	void SetDungeonInstanceFromMap();
 	
 	virtual void Tick(float DeltaSeconds) override;
+
+	void SetVisibleVisualActor(bool able);
+	
 	
 public:
 	virtual void StartPlay() override;
@@ -150,3 +153,5 @@ public:
 
 	bool CheckActorInVisibleNode(ITickHideable* actor);
 };
+
+

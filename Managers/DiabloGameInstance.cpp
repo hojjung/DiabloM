@@ -54,7 +54,7 @@ void UDiabloGameInstance::Init()
 
     m_PlayfabManager = NewObject<UPlayfabManager>();
 
-    m_PlayfabManager->Init();
+    //m_PlayfabManager->Init();
 }
 
 

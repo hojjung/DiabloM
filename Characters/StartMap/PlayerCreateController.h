@@ -25,7 +25,6 @@ protected:
 	UPROPERTY()
 	UStartMenuCanvas* m_StartCanvas;
 	
-	
 public:
 	virtual void BeginPlay() override;
 	

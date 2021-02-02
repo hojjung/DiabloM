@@ -7,9 +7,11 @@
 #include "GridFlowTilemap.h"
 #include "MonsterSpawnManager.h"
 #include "MoviePlayer.h"
+#include "PlayfabManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/StartMap/PlayerVisual.h"
+#include "GameFramework/PlayerState.h"
 #include "Objs/Actor/DiaDungeon.h"
 #include "Village/Portal.h"
 
@@ -62,11 +64,13 @@ void ADiabloGameMode::SpawnVisualPlayer()
 	
 	m_PlayerVisual = GetWorld()->SpawnActor<APlayerVisual>(m_ClassVisualActor,Faraway,Rot,Param);
 
-	m_PlayerVisual->ShowMesh();
+	//m_PlayerVisual->ShowMesh();
 
 	m_PlayerVisual->SetActorRelativeRotation(FRotator(0,0,90.f));
 
 	ADiabloPlayerController::Get->GetPlayerPawn()->m_OnPlayerVisualChanged.Broadcast();
+
+	ADiabloPlayerController::Get->GetMainCanvas()->m_OnWidgetOpenClose.AddUObject(this,&ADiabloGameMode::SetVisibleVisualActor);
 }
 
 void ADiabloGameMode::InitRewardManager()
@@ -112,9 +116,29 @@ void ADiabloGameMode::StartPlay()
 
 	InitMinimap();
 
-	GetMoviePlayer()->StopMovie();
+	//GetMoviePlayer()->StopMovie();
 
 	SpawnVisualPlayer();
+
+	auto* State = UGameplayStatics::GetPlayerController(this,0)->PlayerState;
+
+	if(State)
+	{
+		PRINTF("Player ID:%d", UGameplayStatics::GetPlayerController(this,0)->PlayerState->GetUniqueID());
+	}
+	else
+	{
+		PRINTF("State Null");
+	}
+
+	if(ADiabloPlayerController::Get->PlayerState)
+	{
+		PRINTF("11");
+	}
+	else
+	{
+		PRINTF("22");
+	}
 	
 }
 
@@ -124,6 +148,10 @@ void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 
 	m_QuadTree.Reset();
+
+	//Login(ADiabloPlayerController::Get,ENetRole::ROLE_Authority,);
+	//Logout(ADiabloPlayerController::Get);
+	PRINTF("LogoutNeed");
 }
 
 void ADiabloGameMode::SetDungeonInstanceFromMap()
@@ -232,4 +260,16 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 ADiaDungeon* ADiabloGameMode::GetDungeon()
 {
 	return m_MapDungeonActor;
+}
+
+void ADiabloGameMode::SetVisibleVisualActor(bool able)
+{
+	if(able)
+	{
+		m_PlayerVisual->ShowMeshWithTick();
+	}
+	else
+	{
+		m_PlayerVisual->HideMeshWithTick();
+	}
 }

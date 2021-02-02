@@ -29,7 +29,6 @@ void APlayerCreateController::InitWidget()
     m_StartCanvas = CreateWidget<UStartMenuCanvas>(this, m_ClassStartMenu, "StartMenu00");
     m_StartCanvas->AddToViewport();
     m_StartCanvas->InitStartMenu();
-
 }
 
 APlayerVisual* APlayerCreateController::GetPlayerVisual()

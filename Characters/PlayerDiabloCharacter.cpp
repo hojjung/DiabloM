@@ -199,10 +199,6 @@ void APlayerDiabloCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (m_bIsManualInit)
-	{
-		Init();
-	}
 
 	UPlayerCreateManager* PlManager = UDiabloGameInstance::Get->GetPlCreateManager();
 
@@ -210,6 +206,8 @@ void APlayerDiabloCharacter::BeginPlay()
 	{
 		m_OnPlayerVisualChanged.AddUObject(PlManager,&UPlayerCreateManager::SetCurrentDataWithPlayer);
 	}
+
+	Cast<ADiabloPlayerController>( GetController())->InitPlCtrlAndWidget();
 }
 
 void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)

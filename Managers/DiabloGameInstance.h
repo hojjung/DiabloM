@@ -45,6 +45,7 @@ protected:
 	UPROPERTY()
 	UPlayfabManager* m_PlayfabManager;
 	
+	
 protected:
 	virtual void Init() override;
 	
@@ -80,6 +81,10 @@ public:
 	FORCEINLINE URewardManager* GetRewardManager()
 	{
 		return   m_RewardManager;
+	}
+	FORCEINLINE UPlayfabManager* GetPlayfabManager()
+	{
+		return   m_PlayfabManager;
 	}
 	//TEST 1017
 	UFUNCTION(BlueprintCallable)

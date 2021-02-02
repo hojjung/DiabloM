@@ -30,7 +30,8 @@ class DIABLOM_API ADiabloPlayerController : public APlayerController
 	
 public:
 	ADiabloPlayerController();
-	 static  ADiabloPlayerController* Get;
+	
+	static  ADiabloPlayerController* Get;
 
 protected:
 	UPROPERTY()
@@ -60,8 +61,6 @@ protected:
 
 	int m_DmgIndex;
 protected:
-	virtual void BeginPlay() override;
-
 	void InitWidget();
 
 	void CreateDmgWC(int count);
@@ -128,4 +127,5 @@ public:
 
 	APlayerDiabloCharacter* GetPlayerPawn();
 
+	void InitPlCtrlAndWidget();
 };

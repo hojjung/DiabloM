@@ -79,5 +79,7 @@ public:
 
 	void HideMesh();
 
-	
+	void ShowMeshWithTick();
+
+	void HideMeshWithTick();
 };

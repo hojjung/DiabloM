@@ -1,4 +1,6 @@
 #include "DiabloPlayerController.h"
+
+#include "OnlineSubsystem.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloCheatManager.h"
 #include "Datas/ItemDataTable.h"
@@ -27,11 +29,9 @@ ADiabloPlayerController::ADiabloPlayerController()
 
 }
 
-void ADiabloPlayerController::BeginPlay()
+void ADiabloPlayerController::InitPlCtrlAndWidget()
 {
-	Super::BeginPlay();
-
-	check( m_ClassDmgText);
+	check(m_ClassDmgText);
 	GetPlayerPawn()->Init();
 	m_Inven = NewObject<UInventory>();
 	m_Inven->InitInven(INVEN_X,INVEN_Y);
@@ -115,6 +115,7 @@ void ADiabloPlayerController::ExitGame()
 {
 	PRINTF("Exit");
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
+
 }
 
 void ADiabloPlayerController::OnPlayerDied(AUnitPawn* player)

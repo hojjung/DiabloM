@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+using System.IO;
 using UnrealBuildTool;
 
 public class DiabloM : ModuleRules
@@ -25,6 +26,7 @@ public class DiabloM : ModuleRules
             "NavigationSystem",
             "EasyActionPlugin",
             "RenderCore",
+            "OnlineSubsystem", "OnlineSubsystemUtils",
             "MoviePlayer",
         });
 
@@ -36,18 +38,21 @@ public class DiabloM : ModuleRules
             "DialoguePlugin",
             "DungeonArchitectRuntime",
             "TechTree",
-            "OnlineSubsystem",
+            "OnlineSubsystem","OnlineSubsystemUtils",
             "EasyActionPlugin",
             "PlayFab",
             "PlayFabCpp",
             "PlayFabCommon",
             "MobileUtils"
         });
+
         if (Target.Platform == UnrealTargetPlatform.Android)
         {
-            //PrivateDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "OnlineSubsystem" });
-            DynamicallyLoadedModuleNames.Add("OnlineSubsystemGooglePlay");
+            PrivateDependencyModuleNames.Add("OnlineSubsystemGooglePlay");
+            string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
+            AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "Android_UPL.xml"));
         }
+        
     }
 
 }

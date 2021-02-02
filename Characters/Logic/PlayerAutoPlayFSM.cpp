@@ -31,11 +31,11 @@ void UPlayerAutoPlayFSM::TickFSM(float deltaTime)
 {
 	(this->*m_AryStateFunction[static_cast<int>(m_CurrentState)])();
 
-	if (m_FocusedInteract)
-	{
-		DrawDebugLine(m_OwnedPlayer->GetWorld(), m_OwnedPlayer->GetActorLocation(),
-		              m_FocusedInteract->GetActorLocation(), FColor::Red);
-	}
+	//if (m_FocusedInteract)
+	//{
+	//	DrawDebugLine(m_OwnedPlayer->GetWorld(), m_OwnedPlayer->GetActorLocation(),
+	//	              m_FocusedInteract->GetActorLocation(), FColor::Red);
+	//}
 }
 
 void UPlayerAutoPlayFSM::OnSearchIdle()

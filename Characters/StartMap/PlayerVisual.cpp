@@ -214,6 +214,18 @@ void APlayerVisual::ShowMesh()
     m_MeshBackpack->SetVisibility(true);
     m_MeshRightHand->SetVisibility(true);
     m_MeshLeftHand->SetVisibility(true);
+    
+    m_MeshBody->SetComponentTickEnabled(true);
+    m_MeshFace->SetComponentTickEnabled(true);
+    m_MeshBelt->SetComponentTickEnabled(true);
+    m_MeshGlove->SetComponentTickEnabled(true);
+    m_MeshShoe->SetComponentTickEnabled(true);
+    m_MeshHeadGear->SetComponentTickEnabled(true);
+    m_MeshShoulderPad->SetComponentTickEnabled(true);
+    m_MeshHair->SetComponentTickEnabled(true);
+    m_MeshBackpack->SetComponentTickEnabled(true);
+    m_MeshRightHand->SetComponentTickEnabled(true);
+    m_MeshLeftHand->SetComponentTickEnabled(true);
 
     PRINTF("ShowMesh");
 }
@@ -238,11 +250,79 @@ void APlayerVisual::HideMesh()
     m_MeshLeftHand->SetVisibility(false);
     m_MeshLeftHand->SetStaticMesh(nullptr);
 
+    m_MeshBody->SetComponentTickEnabled(false);
+    m_MeshFace->SetComponentTickEnabled(false);
+    m_MeshBelt->SetComponentTickEnabled(false);
+    m_MeshGlove->SetComponentTickEnabled(false);
+    m_MeshShoe->SetComponentTickEnabled(false);
+    m_MeshHeadGear->SetComponentTickEnabled(false);
+    m_MeshShoulderPad->SetComponentTickEnabled(false);
+    m_MeshHair->SetComponentTickEnabled(false);
+    m_MeshBackpack->SetComponentTickEnabled(false);
+    m_MeshRightHand->SetComponentTickEnabled(false);
+    m_MeshLeftHand->SetComponentTickEnabled(false);
+
 
     SetDefaultBodyMesh();
     SetDefaultGloveMesh();
     SetDefaultShoeMesh();
 
     PRINTF("HideMesh");
+}
+
+void APlayerVisual::ShowMeshWithTick()
+{
+    m_MeshBody->SetVisibility(true);
+    m_MeshFace->SetVisibility(true);
+    m_MeshBelt->SetVisibility(true);
+    m_MeshGlove->SetVisibility(true);
+    m_MeshShoe->SetVisibility(true);
+    m_MeshHeadGear->SetVisibility(true);
+    m_MeshShoulderPad->SetVisibility(true);
+    m_MeshHair->SetVisibility(true);
+    m_MeshBackpack->SetVisibility(true);
+    m_MeshRightHand->SetVisibility(true);
+    m_MeshLeftHand->SetVisibility(true);
+    
+    m_MeshBody->SetComponentTickEnabled(true);
+    m_MeshFace->SetComponentTickEnabled(true);
+    m_MeshBelt->SetComponentTickEnabled(true);
+    m_MeshGlove->SetComponentTickEnabled(true);
+    m_MeshShoe->SetComponentTickEnabled(true);
+    m_MeshHeadGear->SetComponentTickEnabled(true);
+    m_MeshShoulderPad->SetComponentTickEnabled(true);
+    m_MeshHair->SetComponentTickEnabled(true);
+    m_MeshBackpack->SetComponentTickEnabled(true);
+    m_MeshRightHand->SetComponentTickEnabled(true);
+    m_MeshLeftHand->SetComponentTickEnabled(true);
+
+}
+
+void APlayerVisual::HideMeshWithTick()
+{
+    m_MeshBody->SetVisibility(false);
+    m_MeshFace->SetVisibility(false);
+    m_MeshBelt->SetVisibility(false);
+    m_MeshGlove->SetVisibility(false);
+    m_MeshShoe->SetVisibility(false);
+    m_MeshHeadGear->SetVisibility(false);
+    m_MeshShoulderPad->SetVisibility(false);
+    m_MeshHair->SetVisibility(false);
+    m_MeshBackpack->SetVisibility(false);
+    m_MeshRightHand->SetVisibility(false);
+    m_MeshLeftHand->SetVisibility(false);
+
+    m_MeshBody->SetComponentTickEnabled(false);
+    m_MeshFace->SetComponentTickEnabled(false);
+    m_MeshBelt->SetComponentTickEnabled(false);
+    m_MeshGlove->SetComponentTickEnabled(false);
+    m_MeshShoe->SetComponentTickEnabled(false);
+    m_MeshHeadGear->SetComponentTickEnabled(false);
+    m_MeshShoulderPad->SetComponentTickEnabled(false);
+    m_MeshHair->SetComponentTickEnabled(false);
+    m_MeshBackpack->SetComponentTickEnabled(false);
+    m_MeshRightHand->SetComponentTickEnabled(false);
+    m_MeshLeftHand->SetComponentTickEnabled(false);
+
 }
 

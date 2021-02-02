@@ -62,8 +62,6 @@ protected:
 	TSubclassOf<UPlayerUsePortal> m_GAPlayerPortal;
 	//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	bool m_bIsManualInit=false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TArray<TEnumAsByte< EObjectTypeQuery>> m_AryTargetingObjectType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	UMaterialInstance* m_OutLineMat;
