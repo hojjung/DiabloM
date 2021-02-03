@@ -314,7 +314,7 @@ TSharedPtr<QuadtreeNode> QuadtreeNode::GetMinNode(FVector2D position)
 }
 
 
-ITickHideable* QuadtreeNode::GetNearestActor(FVector2D position)
+ITickHideable* QuadtreeNode::GetNearestActor(FVector2D& position)//문제는 몬스터와 아이템이 구분되야함,일단 가까운것부터 처리?
 {
     TUniquePtr<FGenericPlatformMath> genericMaths(MakeUnique<FGenericPlatformMath>());
 
@@ -326,7 +326,6 @@ ITickHideable* QuadtreeNode::GetNearestActor(FVector2D position)
         // Explore each platform element
         for (TWeakInterfacePtr<ITickHideable> platform : GetRootNode()->GetAllElements())
         {
-            // If result hasn't been initialised yet, don't bother processing, just assume this is the closest platform
             if (result == nullptr)
             {
                 result = platform;
@@ -356,4 +355,9 @@ ITickHideable* QuadtreeNode::GetNearestActor(FVector2D position)
     }
     
     return result.Get();
+}
+
+ITickHideable* QuadtreeNode::GetNearestActor(FVector2D&& position)
+{
+    return GetNearestActor(position);
 }

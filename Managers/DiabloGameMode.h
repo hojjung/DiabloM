@@ -152,6 +152,10 @@ public:
 	void HideAllTreeNodes();
 
 	bool CheckActorInVisibleNode(ITickHideable* actor);
+
+	ITickHideable* GetNearestActor(FVector2D& position);
+
+	ITickHideable* GetNearestActor(FVector2D&& position);
 };
 
 

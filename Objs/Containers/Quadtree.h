@@ -40,7 +40,8 @@ private:
 	TSharedPtr<QuadtreeNode> CreateNode(TSharedPtr<QuadtreeNode> parent, FVector2D min, FVector2D max);
 	//
 	void NodeShowHide(TSharedPtr<QuadtreeNode>& OldNodeEntered, TSharedPtr<QuadtreeNode>& newNodeEntered);
-	
+
+	//GetNearestActor
 
 private:
 	TSharedPtr<QuadtreeNode> m_RootNode;
@@ -77,4 +78,8 @@ public:
 	void TryShow3Cell(AActor* mover);
 
 	void HideAllNode();
+
+	ITickHideable* GetNearestActor(FVector2D& position);
+
+	ITickHideable* GetNearestActor(FVector2D&& position);
 };

@@ -227,6 +227,16 @@ void Quadtree::HideAllNode()
     }//문제 없는데
 }
 
+ITickHideable* Quadtree::GetNearestActor(FVector2D& position)
+{
+    return GetRootNode()->GetNearestActor(position);
+}
+
+ITickHideable* Quadtree::GetNearestActor(FVector2D&& position)
+{
+    return GetRootNode()->GetNearestActor(position);
+}
+
 void Quadtree::TryShow9Cell(AActor* mover)
 {
     FVector centerPosition = mover->GetActorLocation();

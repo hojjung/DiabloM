@@ -116,7 +116,7 @@ void ADiabloGameMode::StartPlay()
 
 	InitMinimap();
 
-	//GetMoviePlayer()->StopMovie();
+	GetMoviePlayer()->StopMovie();
 
 	SpawnVisualPlayer();
 
@@ -239,6 +239,16 @@ void ADiabloGameMode::HideAllTreeNodes()
 bool ADiabloGameMode::CheckActorInVisibleNode(ITickHideable* actor)
 {
 	return m_QuadTree->CheckActorInVisibleNode(actor);
+}
+
+ITickHideable* ADiabloGameMode::GetNearestActor(FVector2D& position)
+{
+	return m_QuadTree->GetNearestActor(position);
+}
+
+ITickHideable* ADiabloGameMode::GetNearestActor(FVector2D&& position)
+{
+	return m_QuadTree->GetNearestActor(position);
 }
 
 void ADiabloGameMode::Tick(float DeltaSeconds)

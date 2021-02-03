@@ -75,12 +75,12 @@ APlayerVisual::APlayerVisual()
     //
     m_Spring = CreateDefaultSubobject<USpringArmComponent>("Spring");
     m_Spring->SetupAttachment(RootComponent);
-    m_Spring->TargetArmLength=260.f;
-    m_Spring->SetRelativeRotation(FRotator(-2.5f,0.f,0.f));
+    m_Spring->TargetArmLength=60.f;
+    m_Spring->SetRelativeRotation(FRotator(0.f,0.f,0.f));
 
     m_Capture = CreateDefaultSubobject<USceneCaptureComponent2D>("Capture2D");
 
-    m_Capture->FOVAngle = 45.f;
+    m_Capture->FOVAngle = 110.f;
     
     m_Capture->SetupAttachment(m_Spring);
     m_Capture->SetRelativeLocation(FVector(0.f,0.f,20.f));

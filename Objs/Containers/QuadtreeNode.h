@@ -91,7 +91,7 @@ private:
     /** Get the node which contains a given position. */
 
     /** Acquire the nearest platform to a position. */
-    ITickHideable* GetNearestActor(FVector2D position);
+    
 private:
     /** The bounding box for this node. */
     TSharedPtr<FBox2D> m_BoundingBox;
@@ -118,5 +118,9 @@ private:
 
 public:
     TArray<TSharedPtr<QuadtreeNode>> m_Siblings;
+
+    ITickHideable* GetNearestActor(FVector2D& position);
+
+    ITickHideable* GetNearestActor(FVector2D&& position);
 };
 
