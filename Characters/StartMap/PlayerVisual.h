@@ -23,26 +23,6 @@ protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	USkeletalMeshComponent* m_MeshBody;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	USkeletalMeshComponent* m_MeshFace;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	USkeletalMeshComponent* m_MeshBelt;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	USkeletalMeshComponent* m_MeshGlove;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	USkeletalMeshComponent* m_MeshShoe;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	USkeletalMeshComponent* m_MeshHeadGear;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	USkeletalMeshComponent* m_MeshShoulderPad;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	USkeletalMeshComponent* m_MeshHair;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	UStaticMeshComponent* m_MeshBackpack;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	UStaticMeshComponent* m_MeshRightHand;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	UStaticMeshComponent* m_MeshLeftHand;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	USceneCaptureComponent2D* m_Capture;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	USpringArmComponent* m_Spring;
@@ -53,11 +33,7 @@ protected:
 	UPROPERTY()
 	UAnimSequence* m_AnimSeq;
 	UPROPERTY()
-	USkeletalMesh* m_DefaultBodyMesh;
-	UPROPERTY()
-	USkeletalMesh* m_DefaultGloveMesh;
-	UPROPERTY()
-	USkeletalMesh* m_DefaultShoeMesh;
+	UTextureRenderTarget2D* m_CaptureTexture;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -68,12 +44,6 @@ protected:
 
 	void SetBodyAnim();
 
-	void SetDefaultBodyMesh();
-
-	void SetDefaultShoeMesh();
-
-	void SetDefaultGloveMesh();
-	
 public:
 	void ShowMesh();
 

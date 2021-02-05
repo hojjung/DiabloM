@@ -91,8 +91,6 @@ protected:
 
 	TSet<const FItemData*> m_AryItemData;
 
-	TSet<const FUniqueEquipData*> m_AryUniqueItemData;
-
 	FTextFormat m_FormatMonsterLevel;
 	
 	FTextFormat m_FormatItemLevel;

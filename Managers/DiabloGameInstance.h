@@ -50,9 +50,7 @@ protected:
 	virtual void Init() override;
 	
 public:
-	FItemInstance CreateItem(FName id,float magicItemBonus=0.f,float rareItemBonus=0.f,float epicItemBonus=0.f,int itemLevel=1.f);
-
-	FItemInstance CreateUniqueItem(const FUniqueEquipData* uniqueItem,int itemLevel=1);
+	FItemInstance CreateItem(FName id,int itemLevel=1.f);
 
 	FItemInstance CreateItemManual(const FShopItemSell& itemSell);
 

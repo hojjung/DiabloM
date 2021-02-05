@@ -58,14 +58,9 @@ void UDiabloGameInstance::Init()
 }
 
 
-FItemInstance UDiabloGameInstance::CreateItem(FName id,float magicItemBonus,float rareItemBonus,float epicItemBonus,int itemLevel)
+FItemInstance UDiabloGameInstance::CreateItem(FName id,int itemLevel)
 {
-    return m_ItemManager->CreateItemInstance(id,magicItemBonus,rareItemBonus,epicItemBonus,itemLevel);
-}
-
-FItemInstance UDiabloGameInstance::CreateUniqueItem(const FUniqueEquipData* uniqueItem,int itemLevel)
-{
-    return m_ItemManager->CreateUniqueItem(uniqueItem,itemLevel);
+    return m_ItemManager->CreateItemInstance(id,itemLevel);
 }
 
 FItemInstance UDiabloGameInstance::CreateItemManual(const FShopItemSell& itemSell)

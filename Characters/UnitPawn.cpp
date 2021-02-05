@@ -60,19 +60,17 @@ void AUnitPawn::CreateSkMeshComponent(USceneComponent* rootWant, USkeletalMeshCo
     (*refSkComp)->bAffectDynamicIndirectLighting = true;
     (*refSkComp)->PrimaryComponentTick.TickGroup = TG_PrePhysics;
     (*refSkComp)->SetupAttachment(rootWant);
-    (*refSkComp)->SetCollisionProfileName("CharacterMesh");
+    (*refSkComp)->SetCollisionProfileName("NoCollision");
     (*refSkComp)->SetGenerateOverlapEvents(false);
     (*refSkComp)->SetCanEverAffectNavigation(false);
 
-    (*refSkComp)->CastShadow = false;
-    (*refSkComp)->bCastDynamicShadow = false;
+    (*refSkComp)->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
+
     (*refSkComp)->bReceiveMobileCSMShadows = false;
 
     (*refSkComp)->bEnableUpdateRateOptimizations=true;
 
     (*refSkComp)->bComponentUseFixedSkelBounds=true;
-
-    
 }
 
 // Called when the game starts or when spawned

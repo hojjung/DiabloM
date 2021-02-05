@@ -6,6 +6,7 @@
 #include "AbilitySystem/GameEffect/ItemOptionGameEffect.h"
 #include "Animations/DiaAniminstance.h"
 #include "Datas/OptionDataTable.h"
+#include "Item/EquipmentActor.h"
 #include "Item/ItemHolder.h"
 //#include "Item/Weapon.h"
 #include "ItemDataTable.generated.h"
@@ -86,7 +87,7 @@ public:
         m_AryOptionCount.Add(1);
         m_AryOptionCount.Add(2);
         m_TierID = "SetSameTableID";
-        m_fGoldCostRate=0.9f;
+        m_fSellValueRate=0.9f;
     }
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -102,7 +103,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "1", UIMin = "1"))
     float m_fBonusPowerRate;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "1", UIMin = "1"))
-    float m_fGoldCostRate;
+    float m_fSellValueRate;
 
 };
 
@@ -117,32 +118,41 @@ public:
 
 
 USTRUCT(BlueprintType)
-struct FItemType : public FTableRowBase
+struct FItemType : public FTableRowBase//not only equipment item
 {
     GENERATED_BODY()
 public:
     FItemType();
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     UTexture2D* m_ItemTypeIcon;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UStaticMesh* m_DropItemMesh;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName m_TypeID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_ShowingName;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    bool m_bEquipable;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    bool m_bStackable;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "m_bStackable"))
+    int m_nInitStack;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "m_bStackable"))
+    int m_nMaxStack;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots",EditCondition = "m_bEquipable"))
     int32 m_EquipableSlot;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots"))
-    int32 m_EquipInterruptSlot;//like says twohand sword,LeftHand is interrupt slot
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TSubclassOf<AWeapon> m_EquipmentBP;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    float m_MainOptionBonusRate;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    float m_SellCostRate;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots",EditCondition = "m_bEquipable"))
+    int32 m_EquipInterruptSlot;
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FOptionHandle m_MainOption;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "m_bEquipable"))
     TArray<FOptionRollData> m_SubOptions;
-  
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    float m_fSellValueRate;
+    
+public:
     FORCEINLINE TArray<FOptionHandle> GetAvailableOptions(int level) const
     {
         TArray<FOptionHandle> AryOptions;
@@ -157,7 +167,7 @@ public:
 
         return AryOptions;
     }
-    //equipable class
+    
 };
 
 
@@ -178,48 +188,20 @@ public:
     FText m_FlavorText;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FItemTypeHandle m_ItemType;
-    //무기 같은건 소켓과 액터
-    //무기는 스켈레탈 스태틱 둘다 있지 않나? 미리 박아놓으면 소켓이고 뭐고 할게 없다
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    USkeletalMesh* m_SkEquipment;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    UStaticMesh* m_StEquipment;
-    //하지만 방어구 또한 어디로 들어갈지 알아야한다.
-    //방어구는 아님
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    bool m_bEquipable;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    bool m_bStackable;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    int m_nInitStack;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    int m_nMaxStack;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    float m_nDefaultSellValue;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    UStaticMesh* m_ItemMesh;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     UTexture* m_ItemIcon;
-
-
-};
-
-USTRUCT(BlueprintType) //���̵�,Ƽ��
-struct FUniqueEquipData : public FItemData
-{
-    GENERATED_BODY()
-
-public:
-    FUniqueEquipData();
-
-public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FItemTierHandle m_UniqueItemTierHandle;
+    FItemTierHandle m_ItemTierHandle;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<FOptionHandle> m_UniqueOptions;//세트 아이템은 옵션 이펙트로 세트 구현할것
-    
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TSubclassOf<AEquipmentActor> m_EquipmentBP;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FName m_EquipSocketName;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    float m_nDefaultSellValue;
 };
+
 
 USTRUCT(BlueprintType)
 struct FItemInstance
@@ -271,17 +253,17 @@ public:
 
     bool CheckCanStack() const
     {
-        return m_nCurrentStack < m_ItemData->m_nMaxStack;
+        return m_nCurrentStack < m_ItemData->m_ItemType.GetRow<FItemType>("")->m_nMaxStack;
     }
     
     bool GetIsStackable() const
     {
-        return m_ItemData->m_bStackable;
+        return m_ItemData->m_ItemType.GetRow<FItemType>("")->m_bStackable;
     }
 
     int GetMaxStack()
     {
-        return m_ItemData->m_nMaxStack;
+        return m_ItemData->m_ItemType.GetRow<FItemType>("")->m_nMaxStack;
     }
 
     void ClearData()
@@ -300,12 +282,12 @@ public:
 
     float GetFullStackSellValue() const
     {
-        return ((m_ItemTier->m_fGoldCostRate*m_nItemLevel*m_ItemData->m_ItemType.GetRow<FItemType>("")->m_MainOptionBonusRate)+m_ItemData->m_nDefaultSellValue) * m_nCurrentStack;
+        return ((m_ItemTier->m_fSellValueRate*m_nItemLevel*m_ItemData->m_ItemType.GetRow<FItemType>("")->m_fSellValueRate)+m_ItemData->m_nDefaultSellValue) * m_nCurrentStack;
     }
 
     float GetOneStackSellValue() const
     {
-        return (m_ItemTier->m_fGoldCostRate*m_nItemLevel*m_ItemData->m_ItemType.GetRow<FItemType>("")->m_MainOptionBonusRate)+m_ItemData->m_nDefaultSellValue;
+        return (m_ItemTier->m_fSellValueRate*m_nItemLevel*m_ItemData->m_ItemType.GetRow<FItemType>("")->m_fSellValueRate)+m_ItemData->m_nDefaultSellValue;
     }
 
     bool IsHighValue() const
@@ -332,21 +314,11 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_ShowingText;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    float m_fStancePriority;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<FItemTypeHandle> m_AryRightHandNeed;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TArray<FItemTypeHandle> m_AryLeftHandNeed;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<UDiaAniminstance> m_StanceAnimation;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TSubclassOf<UPlayerDiabloAbility> m_BaseAttackAbility;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    float m_fViewAngle;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    float m_fViewRadius;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    float m_fFocusRange;
 };
 
 //float viewAngle, float viewRadius, float focusRange
@@ -364,8 +336,6 @@ class DIABLOM_API UItemDataTable : public UObject
     static  UDataTable* GetItemTable;
 
     static  UDataTable* GetItemTypeTable;
-
-    static  UDataTable* GetUniqueItemTypeTable;
 
     static  UDataTable* GetAnimStanceTable;
 
@@ -387,10 +357,6 @@ class DIABLOM_API UItemDataTable : public UObject
 
     static const FAnimStance* GetAnimStancePtr(FName id);
 
-    static const FUniqueEquipData& GetUniqueItem(FName id);
-
-    static const FUniqueEquipData* GetUniqueItemPtr(FName id);
-    
 };
 
 
@@ -404,17 +370,6 @@ public:
         DataTable=UItemDataTable::GetItemTable;
     }
 
-};
-
-USTRUCT(BlueprintType)
-struct FUniqueItemDataHandle :public FDataTableRowHandle
-{
-    GENERATED_USTRUCT_BODY()
-public:
-    FUniqueItemDataHandle()
-    {
-        DataTable=UItemDataTable::GetUniqueItemTypeTable;
-    }
 };
 
 USTRUCT(BlueprintType)

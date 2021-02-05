@@ -31,7 +31,7 @@ enum class ESlotsEquipAry: uint8
 struct FEquipSlot
 {
 public:
-    FEquipSlot(): m_bIsOccupied(false),m_Slot(), m_EquippedType(nullptr)
+    FEquipSlot(): m_bIsOccupied(false), m_Slot(), m_EquippedType(nullptr), m_EquipActor(nullptr)
     {
     }
 
@@ -49,6 +49,8 @@ public:
     FActiveGameplayEffectHandle m_OptionHandle;
 
     TArray<FGameplayAbilitySpecHandle> m_AryAbilitySpec;
+
+    AEquipmentActor* m_EquipActor;
     
     void ClearSlot()
     {
@@ -93,8 +95,9 @@ protected:
 
     FOnItemSlotChanged m_ItemChanged;
 
-    FOnEquipSlotChanged m_EquipSlotChanged;
+    FOnEquipped m_EquipMeshChanged;
 
+    FOnEquipSlotChanged m_EquipSlotChanged;
 
 public:
     FOnItemEuipChanged m_OnOptionChanged;
@@ -119,6 +122,10 @@ public:
 
     FItemInstance& GetItem(ESlotsEquipAry index);
 
+    FEquipSlot* GetSlot(ESlotsEquipAry index);
+
+    FEquipSlot* GetSlot(int index);
+
     void PrintEquipStats();
 
     const FItemType* GetEquippedItemType(ESlotsEquipAry slot);
@@ -141,6 +148,12 @@ public:
         return m_EquipSlotChanged;
     }
 
+    FOnEquipped& GetEquipMeshChanged()
+    {
+        return m_EquipMeshChanged;
+    }
+
+
     const FAnimStance* GetCurrentStance() const
     {
         return m_CurrentStance;
@@ -155,3 +168,4 @@ protected:
     void SetUnequipItemToSlots(TArray<TArray<FItemTypeHandle>>&& aryAryItemType);
 };
 //TArray<TArray<FItemTypeHandle>>
+

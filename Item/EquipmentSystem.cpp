@@ -223,6 +223,45 @@ void UEquipmentSystem::SetUnequipItemToSlots(TArray<TArray<FItemTypeHandle>>&& a
 void UEquipmentSystem::OnItemSlotChanged(int index)
 {
     CalculateAnimStance();
+
+    if (GetItem(index).IsEmpty())
+    {
+        if(GetSlot(index)->m_EquipActor)
+        {
+            GetSlot(index)->m_EquipActor->Destroy();
+            
+            GetSlot(index)->m_EquipActor=nullptr;
+        }
+
+        m_EquipMeshChanged.Broadcast(nullptr, NAME_None);
+        m_ItemChanged.Broadcast(index, GetItem(index));
+        return;
+    }
+
+    if (!GetSlot(index)->m_EquipActor)
+    {
+        if(!GetItem(index).m_ItemData->m_EquipmentBP)
+        {
+            m_EquipMeshChanged.Broadcast(nullptr, NAME_None);
+            m_ItemChanged.Broadcast(index, GetItem(index));
+            
+            return;
+        }
+        FActorSpawnParameters Param;
+
+        Param.Instigator = ADiabloPlayerController::Get->GetPlayerPawn();
+
+        Param.bNoFail = true;
+
+        AEquipmentActor* EquipmentActorCreated = GetWorld()->SpawnActor<AEquipmentActor>(
+            GetItem(index).m_ItemData->m_EquipmentBP, Param);
+
+        m_EquipMeshChanged.Broadcast(EquipmentActorCreated, GetItem(index).m_ItemData->m_EquipSocketName);
+        m_ItemChanged.Broadcast(index, GetItem(index));
+        return;
+    }
+
+    m_EquipMeshChanged.Broadcast(GetSlot(index)->m_EquipActor, GetItem(index).m_ItemData->m_EquipSocketName);
     m_ItemChanged.Broadcast(index, GetItem(index));
 }
 
@@ -369,6 +408,16 @@ FItemInstance& UEquipmentSystem::GetItem(int index)
 FItemInstance& UEquipmentSystem::GetItem(ESlotsEquipAry index)
 {
     return m_ArySlots[(int)index]->m_Item;
+}
+
+FEquipSlot* UEquipmentSystem::GetSlot(ESlotsEquipAry index)
+{
+    return m_ArySlots[(int)index];
+}
+
+FEquipSlot* UEquipmentSystem::GetSlot(int index)
+{
+    return m_ArySlots[index];
 }
 
 void UEquipmentSystem::PrintEquipStats()

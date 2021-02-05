@@ -19,15 +19,15 @@ UCameraDissolve::UCameraDissolve()
     m_fDissloveAmount = 0.f;
     m_fDissolveMaxAmount = 0.35f;
     m_fDissolveHoleRadius = 0.f;
-    m_fDissolveHoleMaxRadius = 150.f;
+    m_fDissolveHoleMaxRadius = 250;
     m_fDissolvingTime = 0.5f;
     m_fTimer = 0.f;
     m_bWasBlocked = false;
-    m_fCastSphereRadius=12.f;
+    m_fCastSphereRadius=75;
     //
     m_CameraLagSpeed=10.f;
 
-    TargetArmLength = 1000.0f;
+    TargetArmLength = 2200;
 
     m_RelativeSocketRotation = FQuat::Identity;
 
@@ -60,6 +60,8 @@ void UCameraDissolve::TickComponent(float DeltaTime, ELevelTick TickType, FActor
     {
         return;
     }
+    m_MatParamInstance->SetVectorParameterValue("Position3", GetOwner()->GetActorLocation());
+    
     UpdateDesiredArmLocation(DeltaTime);
     ExecuteDissolve(DeltaTime);
 }
@@ -100,7 +102,7 @@ void UCameraDissolve::ExecuteDissolve(float DeltaTime)
 
 void UCameraDissolve::SetPosParameter()
 {
-    //m_MatParamInstance->SetVectorParameterValue("Position1", m_CompOrigin);
+    
     m_MatParamInstance->SetVectorParameterValue("Position2", m_TargetPos);
 }
 

@@ -37,7 +37,7 @@ void ADiabloPlayerController::InitPlCtrlAndWidget()
 	m_Inven->InitInven(INVEN_X,INVEN_Y);
 	m_EquipSystem = NewObject<UEquipmentSystem>();
 	m_EquipSystem->Init(GetPlayerPawn()->GetDiaAbilitySystem());
-	m_EquipSystem->GetItemChangeCallback().AddUObject(this,&ADiabloPlayerController::PlayerMeshChange);
+	m_EquipSystem->GetEquipMeshChanged().AddUObject(this,&ADiabloPlayerController::PlayerMeshChange);
 	
 	m_AryStorage.Reset();
 	int i=0;
@@ -53,6 +53,7 @@ void ADiabloPlayerController::InitPlCtrlAndWidget()
 	USaveLoadManager::Get->CreateSetPlayerCharacter();//Set Every SaveFile to Load
 	InitWidget();
 }
+
 
 void ADiabloPlayerController::InitWidget()
 {
@@ -132,6 +133,11 @@ void ADiabloPlayerController::OnPlayerRevived(AUnitPawn* player)
 	APlayerController::SetVirtualJoystickVisibility(true);
 }
 
+void ADiabloPlayerController::PlayerMeshChange(AEquipmentActor* equipActor, FName socket)
+{
+	GetPlayerPawn()->EquipMesh(equipActor,socket);
+}
+
 void ADiabloPlayerController::PrintStat()
 {
 	Cast<APlayerDiabloCharacter>(GetPawn())->PrintStats();
@@ -165,10 +171,6 @@ void ADiabloPlayerController::OnDeviceBackKey()
 	ExitGame();
 }
 
-void ADiabloPlayerController::PlayerMeshChange(int slot, FItemInstance& item)
-{
-	GetPlayerPawn()->EquipMesh(&item,static_cast<ESlotsEquipAry>(slot));
-}
 
 void ADiabloPlayerController::OnWidgetOpenClose(bool isOpen)
 {

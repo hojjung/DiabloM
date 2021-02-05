@@ -19,7 +19,7 @@ class DIABLOM_API UUnitMovement : public UPawnMovementComponent,  public IRVOAvo
 public:
 	UUnitMovement();
 
-protected:
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float m_AvoidanceWeight;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")

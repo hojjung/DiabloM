@@ -295,7 +295,7 @@ void UItemPopupInfo::ShowInfoPanel(EPopupType popupType, FItemInstance& itemInst
     SetColorTier(itemInst);
     SetItemText(itemInst,popupType);
 
-    if(itemInst.m_ItemData->m_bEquipable)
+    if(itemInst.m_ItemData->m_ItemType.GetRow<FItemType>("")->m_bEquipable)
     {
         SetOptionTexts(itemInst);
     }

@@ -48,7 +48,7 @@ ADiabloGameMode::ADiabloGameMode()
 	m_MinimapFogOfWarExploreTexture=FoundFogTexture.Object;
 
 	//m_FOWMaterialTemplate
-	m_PostProcess=CreateDefaultSubobject<UPostProcessComponent>("PostProcess");
+	//m_PostProcess=CreateDefaultSubobject<UPostProcessComponent>("PostProcess");
 
 	m_nDepth=3;
 
@@ -56,21 +56,19 @@ ADiabloGameMode::ADiabloGameMode()
 
 void ADiabloGameMode::SpawnVisualPlayer()
 {
-	FVector Faraway(20000,20000,20000);
+	FVector Faraway(-20000,-20000,-20000);
 
-	FRotator Rot;
+	FRotator Rot =FRotator(-20,-10,0.f);
 
 	FActorSpawnParameters Param;
 	
 	m_PlayerVisual = GetWorld()->SpawnActor<APlayerVisual>(m_ClassVisualActor,Faraway,Rot,Param);
 
-	//m_PlayerVisual->ShowMesh();
-
-	m_PlayerVisual->SetActorRelativeRotation(FRotator(0,0,90.f));
-
 	ADiabloPlayerController::Get->GetPlayerPawn()->m_OnPlayerVisualChanged.Broadcast();
 
 	ADiabloPlayerController::Get->GetMainCanvas()->m_OnWidgetOpenClose.AddUObject(this,&ADiabloGameMode::SetVisibleVisualActor);
+
+	m_PlayerVisual->HideMeshWithTick();
 }
 
 void ADiabloGameMode::InitRewardManager()
@@ -119,27 +117,6 @@ void ADiabloGameMode::StartPlay()
 	GetMoviePlayer()->StopMovie();
 
 	SpawnVisualPlayer();
-
-	auto* State = UGameplayStatics::GetPlayerController(this,0)->PlayerState;
-
-	if(State)
-	{
-		PRINTF("Player ID:%d", UGameplayStatics::GetPlayerController(this,0)->PlayerState->GetUniqueID());
-	}
-	else
-	{
-		PRINTF("State Null");
-	}
-
-	if(ADiabloPlayerController::Get->PlayerState)
-	{
-		PRINTF("11");
-	}
-	else
-	{
-		PRINTF("22");
-	}
-	
 }
 
 void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -280,6 +257,6 @@ void ADiabloGameMode::SetVisibleVisualActor(bool able)
 	}
 	else
 	{
-		m_PlayerVisual->HideMeshWithTick();
+	 	m_PlayerVisual->HideMeshWithTick();
 	}
 }

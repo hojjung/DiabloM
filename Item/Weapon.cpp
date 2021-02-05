@@ -32,14 +32,14 @@ void AWeapon::InitWeapon(APlayerDiabloCharacter* pl, const FItemInstance* itemIn
 
 	m_ItemInstPtr=itemInst;
 
-	if(m_ItemInstPtr->m_ItemData->m_StEquipment)
-	{
-		m_StMeshWeapon->SetStaticMesh(m_ItemInstPtr->m_ItemData->m_StEquipment);
-	}
-	else if(m_ItemInstPtr->m_ItemData->m_SkEquipment)
-	{
-		m_SkMeshWeapon->SetSkeletalMesh(m_ItemInstPtr->m_ItemData->m_SkEquipment);
-	}
+	// if(m_ItemInstPtr->m_ItemData->m_StEquipment)
+	// {
+	// 	m_StMeshWeapon->SetStaticMesh(m_ItemInstPtr->m_ItemData->m_StEquipment);
+	// }
+	// else if(m_ItemInstPtr->m_ItemData->m_SkEquipment)
+	// {
+	// 	m_SkMeshWeapon->SetSkeletalMesh(m_ItemInstPtr->m_ItemData->m_SkEquipment);
+	// }
 
 	//addition scale
 

@@ -33,8 +33,8 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSubclassOf<APlayerVisual> m_ClassVisualActor;
 	
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-	UPostProcessComponent* m_PostProcess;
+	//UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	//UPostProcessComponent* m_PostProcess;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UActionManagerComponent* m_ItemDropActionManager;

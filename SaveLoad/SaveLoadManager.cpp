@@ -191,35 +191,7 @@ void USaveLoadManager::SetEquipSaveDataFromCreation(const FCurrentCharData& char
     newEquipAry.Init(FItemInstance(), static_cast<int>(ESlotsEquipAry::Length));
     //9
 
-    if (charData.m_CurrentHelmet)
-    {
-        CreateSetEquipSlotItem(newEquipAry, charData.m_CurrentHelmet->m_ItemID, ESlotsEquipAry::Head);
-    }
-    if (charData.m_CurrentBody)
-    {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentBody->m_ItemID, ESlotsEquipAry::Torso);
-    }
-    if (charData.m_CurrentGlove)
-    {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentGlove->m_ItemID, ESlotsEquipAry::Hand);
-    }
-    if (charData.m_CurrentShoe)
-    {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentShoe->m_ItemID, ESlotsEquipAry::Leg);
-    }
-    if (charData.m_CurrentShoulder)
-    {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentShoulder->m_ItemID, ESlotsEquipAry::Shoulder);
-    }
-    //if(charData.m_CurrentBackpack)
-    {
-        //TODO BackPack? 
-    }
-    if (charData.m_CurrentBelt)
-    {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentBelt->m_ItemID, ESlotsEquipAry::Waist);
-    }
-    
+
     if (charData.m_CurrentRightWeapon)
     {
         CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentRightWeapon->m_ItemID, ESlotsEquipAry::WeaponRight);
@@ -256,8 +228,6 @@ void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameTex
     SaveCharStat->m_nLevel = level;
     SaveCharStat->m_TextName = nameText.ToString();
     SaveCharStat->m_SaveVersion = m_SaveVersion;
-    SaveCharStat->m_IndexFace = faceIndex;
-    SaveCharStat->m_IndexHair = hairIndex;
     SaveCharStat->m_fExp=exp;
     SaveCharStat->m_ClassName=classID;
     SaveCharStat->m_fGold = gold;
@@ -433,7 +403,7 @@ int USaveLoadManager::CreateNewCharacter(UPlayerCreateManager* plManager)
     TArray<FItemInstance> AryEquip;
     SetEquipSaveDataFromCreation(plManager->GetCurrentCharData(),AryEquip);
     SaveEquipment(PlayerIndex,AryEquip);
-    SaveCharacterStat(PlayerIndex,1,plManager->m_CurrentTextName,plManager->m_IndexFace,plManager->m_IndexHair,plManager->GetCurrentCharData().m_ClassID);
+    //SaveCharacterStat(PlayerIndex,1,plManager->m_CurrentTextName,plManager->m_IndexFace,plManager->m_IndexHair,plManager->GetCurrentCharData().m_ClassID);
     
     TArray<FItemInstance> AryInven;
     AryInven.Init(FItemInstance(),MaxInven);
@@ -607,11 +577,6 @@ void USaveLoadManager::LoadItemDataForInstance(TArray<FItemInstance>& itemAry,ES
 
         ItemInst.m_ItemData = UItemDataTable::GetItemDataPtr(ItemInst.m_ItemID);
 
-        if(ItemInst.m_ItemData==nullptr)
-        {
-            ItemInst.m_ItemData = UItemDataTable::GetUniqueItemPtr(ItemInst.m_ItemID);    
-        }
-        
         ItemInst.m_ItemTier = UItemDataTable::GetItemTierPtr(ItemInst.m_TierID);
 
         if(ItemInst.m_ItemTier==nullptr)

@@ -54,6 +54,8 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     static ConstructorHelpers::FClassFinder<UGameplayEffect> FoundGEExp(
     TEXT("Blueprint'/Game/Blueprints/Abilities/GameEffect/GE_EXP.GE_EXP_C'"));
     m_GEExpReward = FoundGEExp.Class;
+
+    m_SkBody->CastShadow = false;
 }
 
 void AMonsterPawn::ShowStatusBar()

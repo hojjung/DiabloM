@@ -142,32 +142,6 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 			}
 		}
 
-		for (const FUniqueItemDropData& UniqueDropItem : MobSelect.m_MonsterEntity.GetRow<FMonsterTable>("")->
-		                                                           m_RewardDropTableHandle.GetRow<FMonsterItemDropRow>(
-			                                                           "")->m_AropDropUniqueItems)
-		{
-			const FUniqueEquipData* UniqueData = UniqueDropItem.m_DropHandle.GetRow<FUniqueEquipData>("");
-
-			m_AryUniqueItemData.Add(UniqueData, &bIsAlreadyAdd);
-
-			if (!bIsAlreadyAdd)
-			{
-				UImageAndText* Widget = CreateImageText(UniqueData->m_ItemIcon, UniqueData->m_ShowingName);
-
-				m_VerticalInfo3->AddChildToVerticalBox(Widget);
-			}
-
-			m_AryItemTypes.Add(&UniqueData->m_ItemType, &bIsAlreadyAdd);
-
-			if (!bIsAlreadyAdd)
-			{
-				const FItemType* ItemTypeFound = UniqueData->m_ItemType.GetRow<FItemType>("");
-
-				UImageAndText* Widget = CreateImageText(ItemTypeFound->m_ItemTypeIcon, ItemTypeFound->m_ShowingName);
-
-				m_VerticalInfo1->AddChildToVerticalBox(Widget);
-			}
-		}
 	}
 
 	//
@@ -231,8 +205,6 @@ void UMapInfoPopup::ClosePopup()
 	m_AryImageTextCreated.Reset();
 	m_AryItemData.Reset();
 	m_AryItemTypes.Reset();
-	m_AryUniqueItemData.Reset();
-
 	//m_CurrentDgData=nullptr;
 
 	SetVisibility(ESlateVisibility::Hidden);

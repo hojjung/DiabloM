@@ -20,28 +20,11 @@ void UItemManager::Init(UDiabloGameInstance* gameInstance)
     PRINTF("UItemManager Init");
 }
 
-FItemInstance UItemManager::CreateItemInstance(FName id, float magicItemBonus, float rareItemBonus, float epicItemBonus,
-                                               int itemLevel)
+FItemInstance UItemManager::CreateItemInstance(FName id,int itemLevel)
 {
     const FItemData* ItemData = UItemDataTable::GetItemDataPtr(id);
 
-    const FItemTier& TierRolled = GetDefaultTierRoll();
-
-    int TierMaxOptionCount = TierRolled.m_AryOptionCount.GetRandom();
-
-    float TierBonusValue = TierRolled.m_fBonusPowerRate;
-
-    TArray<FOptionSpec> RandomOptionForItem;
-
-    CreateRandomOption(*ItemData, RandomOptionForItem, TierMaxOptionCount, TierBonusValue, itemLevel);
-
-    return FItemInstance(ItemData, TierRolled.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, itemLevel);
-}
-
-FItemInstance UItemManager::CreateUniqueItem(const FUniqueEquipData* unique_item, int item_level)
-{
-    const FItemTier& Tier = *unique_item->m_UniqueItemTierHandle.GetRow<FItemTier>("FailedTOGetUniqueTier");
-    
+    const FItemTier& Tier = *ItemData->m_ItemTierHandle.GetRow<FItemTier>("NoTierHandleInItem");
 
     int TierMaxOptionCount = Tier.m_AryOptionCount.GetRandom();
 
@@ -49,69 +32,23 @@ FItemInstance UItemManager::CreateUniqueItem(const FUniqueEquipData* unique_item
 
     TArray<FOptionSpec> RandomOptionForItem;
 
-    CreateRandomOptionWithUnique(*unique_item, RandomOptionForItem, TierMaxOptionCount, TierBonusValue, item_level);
+    CreateRandomOption(*ItemData, RandomOptionForItem, TierMaxOptionCount, TierBonusValue, itemLevel);
 
-    return FItemInstance(unique_item, Tier.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, item_level);
+    return FItemInstance(ItemData, Tier.m_TierID, m_nCurrentIndex, this, RandomOptionForItem, itemLevel);
 }
 
-
-bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption, int TierMaxOption,
-                                      float bonus, int level)
-{
-    if (itemData.m_bStackable || !itemData.m_bEquipable)
-    {
-        PRINTF("ItemOption - the item is not equipment");
-        return false;
-    }
-
-
-    FItemType* ItemTT = itemData.m_ItemType.GetRow<FItemType>("");
-
-    FOptionSpec MainOp = ItemTT->m_MainOption.GetRow<FOption>("")->MakeOptionInst(level);
-
-    MainOp.m_fValue *= ItemTT->m_MainOptionBonusRate;
-
-    MainOp.m_fValue *= bonus;
-
-    outOption.Add(MainOp);
-    //
-    TArray<FOptionHandle> AryAvailableOptions = ItemTT->GetAvailableOptions(level);
-
-    int NumMaxOption = AryAvailableOptions.Num();
-
-    if (NumMaxOption <= 0 || TierMaxOption <= 0)
-    {
-        return false;
-    }
-
-    int OptionRandomCount = FMath::Rand() % TierMaxOption; //생성할 옵션의 개수는 등급과 옵션의 개수에 따라 상이하다.
-
-    OptionRandomCount = FMath::Min<int>(OptionRandomCount, NumMaxOption);
-
-    CreateIntAryForShuffle(OptionRandomCount, AryAvailableOptions);
-    //옵션 랜덤이 프라이오리티 및 중복 안되야함
-    for (FOptionHandle OO : AryAvailableOptions) //옵션 랜덤카운트 만큼만 넣어야함? 이대로면 무조건 넣는거아님?
-    {
-        outOption.Add(OO.GetRow<FOption>("")->MakeOptionInst(level));
-    }
-
-    return true;
-}
-
-bool UItemManager::CreateRandomOptionWithUnique(const FUniqueEquipData& itemData, TArray<FOptionSpec>& outOption,
+bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption,
                                                 int TierMaxOption, float bonus, int level)
 {
-    if (itemData.m_bStackable || !itemData.m_bEquipable)
+    if (itemData.m_ItemType.GetRow<FItemType>("")->m_bStackable || !itemData.m_ItemType.GetRow<FItemType>("")->m_bEquipable)
     {
         PRINTF("ItemOption - the item is not equipment");
         return false;
     }
 
-    FItemType* ItemTT = itemData.m_ItemType.GetRow<FItemType>("");
+    FItemType* ItemType = itemData.m_ItemType.GetRow<FItemType>("");
 
-    FOptionSpec MainOp = ItemTT->m_MainOption.GetRow<FOption>("")->MakeOptionInst(level);
-
-    MainOp.m_fValue *= ItemTT->m_MainOptionBonusRate;
+    FOptionSpec MainOp = ItemType->m_MainOption.GetRow<FOption>("")->MakeOptionInst(level);
 
     MainOp.m_fValue *= bonus;
 
@@ -124,7 +61,7 @@ bool UItemManager::CreateRandomOptionWithUnique(const FUniqueEquipData& itemData
         outOption.Add(UniqueOptionSpec); //유니크 옵션 표시 어떻게?
     }
     //
-    TArray<FOptionHandle> AryAvailableOptions = ItemTT->GetAvailableOptions(level);
+    TArray<FOptionHandle> AryAvailableOptions = ItemType->GetAvailableOptions(level);
 
     int NumMaxOption = AryAvailableOptions.Num();
 
@@ -221,28 +158,7 @@ const FItemTier& UItemManager::GetDefaultTierRoll() const
 
 FItemInstance UItemManager::CreateItemManual(const FShopItemSell& item_sell) //cant make unique
 {
-    const FItemData* ItemDataFromTable = item_sell.m_ItemData.GetRow<FItemData>("");
-
-    bool IsEquipItem = ItemDataFromTable->m_bEquipable;
-
-    const FItemTier* Tier = nullptr;
-
-    FName TierId = NAME_None;
-    
-    bool AutoTier = item_sell.m_bAutoTier;
-    
-    if (!AutoTier)
-    {
-        Tier = item_sell.m_ItemTier.GetRow<FItemTier>("");
-    }
-    else
-    {
-        Tier = &GetDefaultTierRoll();
-    }
-
     int ItemLevel = ADiabloPlayerController::Get->GetPlayerPawn()->GetCharacterLevel();
-
-    TArray<FOptionSpec> AryOp;
 
     bool AutoLevel = item_sell.m_bAutoLevel;
 
@@ -251,18 +167,7 @@ FItemInstance UItemManager::CreateItemManual(const FShopItemSell& item_sell) //c
         ItemLevel = item_sell.m_nLevel;
     }
 
-    if (IsEquipItem)
-    {
-        int TierMaxOptionCount = (*Tier).m_AryOptionCount.GetRandom();
-
-        float TierBonusValue = (*Tier).m_fBonusPowerRate;
-
-        CreateRandomOption(*ItemDataFromTable, AryOp, TierMaxOptionCount, TierBonusValue, ItemLevel);
-    }
-
-    TierId = Tier->m_TierID;
-
-    FItemInstance Inst = FItemInstance(ItemDataFromTable, TierId, m_nCurrentIndex, this, AryOp, ItemLevel);
+    FItemInstance Inst = CreateItemInstance(item_sell.m_ItemData.GetRow<FItemData>("")->m_ItemID,ItemLevel);
 
     return Inst;
 }

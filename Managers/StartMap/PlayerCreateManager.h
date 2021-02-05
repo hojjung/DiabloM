@@ -21,12 +21,8 @@ class DIABLOM_API UPlayerCreateManager : public UObject
 	
 public:
     ~UPlayerCreateManager();
-    void SetFaceFromSetting();
     void InitArraysFromTable();
-    void SetPerkFromSetting();
     void SetItemFromSetting();
-    void SetHairFromSetting();
-    void SetArmorFromSetting();
 
     static UPlayerCreateManager* Get;
 	
@@ -35,20 +31,12 @@ protected:
 
 public:
     FText m_CurrentTextName;
-    TArray<FPlayerHairRow*> m_AryHair;
-    TArray<FPlayerFaceRow*> m_AryFace;
-    TArray<FPlayerArmorRow*> m_AryArmor;
-    TArray<FPlayerItemRow*> m_AryItem;
-    TArray<FPlayerPerkRow*> m_AryPerk;
     //
-    int m_IndexHair;
-    int m_IndexFace;
-    int m_IndexArmor;
-    int m_IndexWeapon;
     int m_IndexItem;
-    int m_IndexPerk;
-
+    
     int m_CurrentSelectSlot;
+
+    TArray<FPlayerInitItemTableRow*> m_AryInitItem;
 
     //
 public:
@@ -68,25 +56,14 @@ public:
     }
 
     void SetCurrentDataFromSaveFile(const USaveCharacterStatus* char_stat,const USaveEquipment* save_equipment);
-
     
 public:
-    void DecreaseHair();
-    void IncreaseHair();
-    void DecreaseFace();
-    void IncreaseFace();
-    void DecreaseArmor();//이게 직업선택이 되야함
-    void IncreaseArmor();
     void DecreaseItem();
+    
     void IncreaseItem();
-    void DecreasePerk();
-    void IncreasePerk();
     
     int DoneCreateCharcter();
     
-    USkeletalMesh* GetFace(int index);
-    USkeletalMesh* GetHair(int index,bool hasHelMet);
-
     const FCurrentCharData& GetCurrentCharData() const;
 
     void SetCurrentDataWithPlayer();

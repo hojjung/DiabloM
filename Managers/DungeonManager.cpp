@@ -110,6 +110,7 @@ void UDungeonManager::PortalToVillage(bool isDgCleared)
     ADiabloPlayerController::Get->GetMainCanvas()->CloseMinimap();//UI Set Brush Tick add
     //
     ADiabloGameMode::Get->HideAllTreeNodes();
+
 }
 
 void UDungeonManager::PortalToRecentDungeon()
@@ -138,6 +139,7 @@ void UDungeonManager::PortalToRecentDungeon()
     m_bIsPlayerInDungeon=true;
     
     ADiabloPlayerController::Get->GetMainCanvas()->OpenMinimap();
+
 }
 
 void UDungeonManager::ClearDungeon()

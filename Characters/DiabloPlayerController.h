@@ -77,7 +77,7 @@ protected:
 
 	void OnPlayerRevived(AUnitPawn* player);
 
-	void PlayerMeshChange(int slot,FItemInstance& item);
+	void PlayerMeshChange(AEquipmentActor* equipActor,FName socket);
 	
 public:
 	void PrintStat();
@@ -89,6 +89,7 @@ public:
 	bool AddItem(FItemInstance itemInst);
 
 	bool PickUpItem(ADroppedItem* pickupItem);
+
 
 public:
 	void OnWidgetOpenClose(bool isOpen);
@@ -128,4 +129,5 @@ public:
 	APlayerDiabloCharacter* GetPlayerPawn();
 
 	void InitPlCtrlAndWidget();
+
 };

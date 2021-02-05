@@ -6,7 +6,6 @@ UDataTable* UItemDataTable::GetTierTable = nullptr;
 UDataTable* UItemDataTable::GetItemTable = nullptr;
 UDataTable* UItemDataTable::GetItemTypeTable = nullptr;
 UDataTable* UItemDataTable::GetAnimStanceTable = nullptr;
-UDataTable* UItemDataTable::GetUniqueItemTypeTable = nullptr;
 //GetUniqueItemTypeTable
 
 FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIndex, IItemHolder* holder,
@@ -14,7 +13,7 @@ FItemInstance::FItemInstance(const FItemData* itemData, FName tierID, int gridIn
 {
     m_ItemData = itemData;
     m_ItemID = m_ItemData->m_ItemID;
-    m_nCurrentStack = m_ItemData->m_nInitStack;
+    m_nCurrentStack = m_ItemData->m_ItemType.GetRow<FItemType>("")->m_nInitStack;
     m_nGridIndex = gridIndex;
     m_Holder = holder;
     m_AryOptions = aryUseEffect;
@@ -54,12 +53,6 @@ UItemDataTable::UItemDataTable()
     static ConstructorHelpers::FObjectFinder<UDataTable> FoundAnimTable(
       TEXT("DataTable'/Game/DataTables/Items/AnimStanceTable.AnimStanceTable'"));
     UItemDataTable::GetAnimStanceTable = FoundAnimTable.Object;
-
-    static ConstructorHelpers::FObjectFinder<UDataTable> FoundUnique(
-      TEXT("DataTable'/Game/DataTables/Items/UniqueItemTable.UniqueItemTable'"));
-    UItemDataTable::GetUniqueItemTypeTable=FoundUnique.Object;
-
-    
 }
 
 const FItemTier& UItemDataTable::GetItemTier(FName id)
@@ -102,16 +95,6 @@ const FAnimStance* UItemDataTable::GetAnimStancePtr(FName id)
     return GetAnimStanceTable->FindRow<FAnimStance>(id, "");
 }
 
-const FUniqueEquipData& UItemDataTable::GetUniqueItem(FName id)
-{
-    return *GetUniqueItemTypeTable->FindRow<FUniqueEquipData>(id, "");
-}
-
-const FUniqueEquipData* UItemDataTable::GetUniqueItemPtr(FName id)
-{
-    return GetUniqueItemTypeTable->FindRow<FUniqueEquipData>(id, "");
-}
-
 
 FItemTypeHandle::FItemTypeHandle()
 {
@@ -124,42 +107,28 @@ FItemTierHandle::FItemTierHandle()
     DataTable = UItemDataTable::GetTierTable;
 }
 
-FItemType::FItemType(): m_ItemTypeIcon(nullptr), m_EquipableSlot(), m_EquipInterruptSlot(), m_MainOptionBonusRate(1.f)
+FItemType::FItemType(): m_ItemTypeIcon(nullptr), m_DropItemMesh(nullptr), m_bEquipable(false), m_bStackable(false),
+                        m_nInitStack(1),
+                        m_nMaxStack(99),
+                        m_EquipableSlot(),
+                        m_EquipInterruptSlot()
 {
-    m_SellCostRate = 1.f;
+    m_fSellValueRate = 1.f;
     m_TypeID = "SetSameWithRowID";
     m_ShowingName = FText::FromString("ShowNameExOneHandSword");
 }
 
-FItemData::FItemData(): m_SkEquipment(nullptr), m_StEquipment(nullptr), m_ItemMesh(nullptr), m_ItemIcon(nullptr)
+FItemData::FItemData(): m_ItemIcon(nullptr)
 {
-    m_bStackable = true;
-    m_nInitStack = 1;
-    m_nMaxStack = 99; 
-
     m_nDefaultSellValue = 100;
     
-    m_bEquipable = true;
-
     m_ItemID = "NeedName";
     m_ItemType.DataTable = UItemDataTable::GetItemTypeTable;
 }
 
-FUniqueEquipData::FUniqueEquipData()
-{
-    m_bEquipable=true;
-    m_bStackable=false;
-}
-
 FAnimStance::FAnimStance()
 {
-    m_BaseAttackAbility = UPlayerBaseAttack::StaticClass();
-    m_fStancePriority = 1.0f;
     m_AryRightHandNeed.Add(FItemTypeHandle());
     m_AryLeftHandNeed.Add(FItemTypeHandle());
-
-    m_fViewAngle=50.f;
-    m_fViewRadius=1200.f;
-    m_fFocusRange=400.f;
 }
 

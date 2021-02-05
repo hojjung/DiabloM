@@ -75,11 +75,7 @@ void UStartMenuCanvas::CreationStart()
     m_CharCreate->StartCreation();
     Cast<APlayerCreateController>( GetOwningPlayer())->GetPlayerVisual()->ShowMesh();
     UPlayerCreateManager::Get->ClearIndex();
-    UPlayerCreateManager::Get->SetArmorFromSetting();
-    UPlayerCreateManager::Get->SetFaceFromSetting();
-    UPlayerCreateManager::Get->SetPerkFromSetting();
     UPlayerCreateManager::Get->SetItemFromSetting();
-    UPlayerCreateManager::Get->SetHairFromSetting();
     UPlayerCreateManager::Get->OnDataChanged();
 
     m_bIsCreationOpened=true;

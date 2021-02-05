@@ -178,7 +178,7 @@ void UDefaultMenu::OpenItemPopup(const FGeometry& geo, FItemInstance& itemInst)
         CloseItemPopup();
     }
 
-    bool IsEquipable = itemInst.m_ItemData->m_bEquipable;
+    bool IsEquipable = itemInst.m_ItemData->m_ItemType.GetRow<FItemType>("")->m_bEquipable;
 
     bool IsStashOpen = m_bIsStorageOpened;
 

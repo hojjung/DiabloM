@@ -28,7 +28,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
 DECLARE_MULTICAST_DELEGATE(FOnMove);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFocusTargetChanged,AUnitPawn*);
 DECLARE_MULTICAST_DELEGATE(FOnPlVisualChanged);
-UCLASS()
+UCLASS( BlueprintType, Blueprintable)
 class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 {
 	GENERATED_BODY()
@@ -63,56 +63,18 @@ protected:
 	//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TArray<TEnumAsByte< EObjectTypeQuery>> m_AryTargetingObjectType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	UMaterialInstance* m_OutLineMat;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player")
 	float m_fInteractRange;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UCameraDissolve* m_DissolveCam;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UCameraComponent* m_TopCamera;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	USkeletalMeshComponent* m_SkFace;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	USkeletalMeshComponent* m_SkHair;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	USkeletalMeshComponent* m_SkGlove;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	USkeletalMeshComponent* m_SkShoe;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	USkeletalMeshComponent* m_SkHeadGear;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	USkeletalMeshComponent* m_SkShoulderPad;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	USkeletalMeshComponent* m_SkBelt;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	UStaticMeshComponent* m_StBackpack;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	UStaticMeshComponent* m_StRightWeapon;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
-	UStaticMeshComponent* m_StLeftWeapon;
 	//
 protected:
 	UPROPERTY()
 	UPlayerSensing* m_PlayerSense;
 	UPROPERTY()
 	UPlayerAutoPlayFSM* m_PlayerAutoPlay;
-	UPROPERTY()
-	USkeletalMeshComponent* m_FocusRenderer;
-	UPROPERTY()
-	USkeletalMesh* m_DefaultFullHairMesh;
-	UPROPERTY()
-	USkeletalMesh* m_DefaultHalfHairMesh;
-	UPROPERTY()
-	USkeletalMesh* m_DefaultBodyMesh;
-	UPROPERTY()
-	USkeletalMesh* m_DefaultGloveMesh;
-	UPROPERTY()
-	USkeletalMesh* m_DefaultShoeMesh;
-	UPROPERTY()
-	AWeapon* m_RightWeapon;
-	UPROPERTY()
-	AWeapon* m_LeftWeapon;
 	UPROPERTY()
 	TArray< AActor*> m_AryIgnoreActor;
 	UPROPERTY()
@@ -122,7 +84,7 @@ protected:
 	UPROPERTY()
 	TArray<TSubclassOf<UDiabloAbility>> m_GrantedItemAbilities;
 	UPROPERTY()
-	TSubclassOf<UPlayerBaseAttack> m_PlayerBaseAttack;
+	UMaterialInterface* m_FogMat;
 	
 	TWeakInterfacePtr<IInteractable> m_FocusedInteractable;
 	
@@ -194,15 +156,6 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	void SetFullHairMesh();
-
-	void SetHalfHairMesh();
-
-	void SetDefaultBodyMesh();
-
-	void SetDefaultShoeMesh();
-
-	void SetDefaultGloveMesh();
 
 	bool CreateItemActor(const FItemInstance* itemInst,AWeapon** wantCachePointer,UStaticMeshComponent** attachRoot);
 
@@ -210,8 +163,6 @@ protected:
 
 	void SetLoadedData(const USaveCharacterStatus* loadedSaveData);
 	
-	void SetBaseAttackAbility(const FAnimStance* animStance);
-
 	void SetBaseAttackData(float viewAngle,float viewRadius,float focusRange);
 public:
 	void Init();
@@ -233,7 +184,7 @@ public:
 	
 	void HideOutlineOnTarget();
 
-	void EquipMesh(const FItemInstance* meshItem,ESlotsEquipAry slotWant);
+	void EquipMesh(AEquipmentActor* equipActor, FName socket);
 	
 	virtual bool SetCharacterLevel(int NewLevel)override;
 	
@@ -325,8 +276,6 @@ public:
 public:
 	void GrantHpPotionAbility();
 	
-	void GrantBaseAttackAbility();
-	
 	void GrantHpRegenAbility();
 	
 	void GrantResourceRegenAbility();
@@ -356,5 +305,6 @@ public:
 	friend UDiaStatPanel;
 
     void SetAutoPlay(bool useAuto);
+
 };
 

@@ -31,11 +31,9 @@ public:
     UPROPERTY(EditAnywhere)
     float m_fExp=0;
     UPROPERTY(EditAnywhere)
-    int m_IndexHair=0;
-    UPROPERTY(EditAnywhere)
-    int m_IndexFace=0;
-    UPROPERTY(EditAnywhere)
     FName m_ClassName;
+    UPROPERTY(EditAnywhere)
+    int m_IndexSkin=0;
     UPROPERTY(EditAnywhere)
     float m_fGold;
 

@@ -11,7 +11,7 @@ class DIABLOM_API UCameraDissolve : public USceneComponent
 {
 	GENERATED_BODY()
 
-	public:
+public:
 	UCameraDissolve();
 
 protected:

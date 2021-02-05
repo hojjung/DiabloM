@@ -16,6 +16,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Item")
    	UParticleSystemComponent* m_ParticleEffect;
 	
+	
 protected:
 	virtual void BeginPlay() override; // need binding
 

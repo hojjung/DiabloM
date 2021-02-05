@@ -20,21 +20,11 @@ public:
     UCharSelect* m_CharSelect;
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-    UPartSelect* m_HairSelect;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-    UPartSelect* m_FaceSelect;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-    UPartSelect* m_ArmorSelect;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-    UPartSelect* m_ItemSelect;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-    UPartSelect* m_PerkSelect;
+    UPartSelect* m_ClassItemSelect;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UEditableText* m_NameBox;
-    
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
     UButton* m_BtnContinue;
-
     
 protected:
     UPROPERTY()
@@ -48,25 +38,9 @@ public:
     void OnVisualChanged(const FCurrentCharData& visual_change);
 
     UFUNCTION()
-    void DecreaseHair();
-    UFUNCTION()
-    void IncreaseHair();
-    UFUNCTION()
-    void DecreaseFace();
-    UFUNCTION()
-    void IncreaseFace();
-    UFUNCTION()
-    void DecreaseArmor();
-    UFUNCTION()
-    void IncreaseArmor();
-    UFUNCTION()
     void DecreaseItem();
     UFUNCTION()
     void IncreaseItem();
-    UFUNCTION()
-    void DecreasePerk();
-    UFUNCTION()
-    void IncreasePerk();
 
     UFUNCTION()
     void UpdateNameText(const FText& text);//ETextCommit::Type

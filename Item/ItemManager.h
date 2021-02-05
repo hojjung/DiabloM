@@ -28,19 +28,15 @@ protected:
 
     float m_fTierMaxRate;
 protected:
-    bool CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption,float bonus,int level);
-
-    bool CreateRandomOptionWithUnique(const FUniqueEquipData& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption,float bonus,int level);    
+    bool CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption,float bonus,int level);    
 
     void CreateIntAryForShuffle(int maxAryLen, TArray<FOptionHandle>& outOptionAry);
 
 public:
     void Init(UDiabloGameInstance* gameInstance);
 
-    FItemInstance CreateItemInstance(FName id,float magicItemBonus=0.f,float rareItemBonus=0.f,float epicItemBonus=0.f,int itemLevel=1);
+    FItemInstance CreateItemInstance(FName id,int itemLevel=1);
 
-    FItemInstance CreateUniqueItem(const FUniqueEquipData* unique_item, int item_level);
-    
     FItemInstance CreateItemManual(const FShopItemSell& item_sell);
     
     virtual FOnItemSlotChanged& GetItemChangeCallback() override

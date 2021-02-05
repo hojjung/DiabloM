@@ -81,6 +81,8 @@ public:
 	//2. Equipable ItemType,지금은 모든 장비타입을 낄수 있으니까, 못끼는 테이블을 만들면 된다
 	//3. SkillTable
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<USkeletalMesh*> m_AryPlayerSkin;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FItemTypeHandle> m_AryUnequipHead;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FItemTypeHandle> m_AryUnequipNeck;

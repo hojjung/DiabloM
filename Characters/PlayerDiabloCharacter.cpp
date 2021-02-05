@@ -23,60 +23,52 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	: Super(objInit.SetDefaultSubobjectClass<UPlayerDiabloAttribute>("AttributeSet00")
 	               .SetDefaultSubobjectClass<UPlayerDiabloAbilitySystemComp>("AbilitySystemComponent00"))
 {
+	m_Capsule->SetCapsuleSize(55,88);
+	
+	
 	m_DissolveCam = CreateDefaultSubobject<UCameraDissolve>("CamDissolve00");
 	m_DissolveCam->SetupAttachment(RootComponent);
-	m_DissolveCam->SetRelativeRotation(FRotator(-50.f, 0.f, 0.f));
+	m_DissolveCam->SetRelativeRotation(FRotator(-42.f, 45.f, 0.f));
+	m_DissolveCam->SetRelativeLocation(FVector(0,0,0.f));
 	//
 	m_TopCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera00");
 	m_TopCamera->SetupAttachment(m_DissolveCam);
+	m_TopCamera->FieldOfView = 60.f;
+	
+	
 
 	m_fInteractRange = 300.f;
 	//
-	CreateSkMeshComponent(m_SkBody, &m_SkFace, "SkMesh01");
-	CreateSkMeshComponent(m_SkBody, &m_SkHair, "SkMesh02");
-	CreateSkMeshComponent(m_SkBody, &m_SkBelt, "SkMesh03");
-	CreateSkMeshComponent(m_SkBody, &m_SkGlove, "SkMesh04");
-	CreateSkMeshComponent(m_SkBody, &m_SkShoe, "SkMesh05");
-	CreateSkMeshComponent(m_SkBody, &m_SkShoulderPad, "SkMesh06");
-	CreateSkMeshComponent(m_SkBody, &m_SkHeadGear, "SkMesh07");
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundMesh1(
-		TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/ModularBodyParts/Cloth01SK.Cloth01SK'"));
-	m_DefaultBodyMesh = FoundMesh1.Object;
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundMesh2(
-		TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/ModularBodyParts/Glove01SK.Glove01SK'"));
-	m_DefaultGloveMesh = FoundMesh2.Object;
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundMesh3(
-		TEXT("SkeletalMesh'/Game/Models/ModularCharacter/Meshes/ModularBodyParts/Shoe01SK.Shoe01SK'"));
-	m_DefaultShoeMesh = FoundMesh3.Object;
-
-	m_SkBody->bCastDynamicShadow = false;
-	m_SkBody->CastShadow = false;
+	m_SkBody->bCastDynamicShadow = true;
+	m_SkBody->CastShadow = true;
 	m_SkBody->bReceiveMobileCSMShadows = false;
-
-	m_StBackpack = CreateDefaultSubobject<UStaticMeshComponent>("StMeshBackpack");
-	m_StBackpack->CastShadow = false;
-	m_StBackpack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	m_StBackpack->SetupAttachment(m_SkBody, "Backpack");
-	m_StBackpack->SetCanEverAffectNavigation(false);
-
-	m_StRightWeapon = CreateDefaultSubobject<UStaticMeshComponent>("StMeshRightHand");
-	m_StRightWeapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	m_StRightWeapon->SetupAttachment(m_SkBody, "RightWeaponShield");
-	m_StRightWeapon->CastShadow = true;
-	m_StRightWeapon->SetCanEverAffectNavigation(false);
-
-	m_StLeftWeapon = CreateDefaultSubobject<UStaticMeshComponent>("StMeshLeftHand");
-	m_StLeftWeapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	m_StLeftWeapon->SetupAttachment(m_SkBody, "LeftWeaponShield");
-	m_StLeftWeapon->CastShadow = true;
-	m_StLeftWeapon->SetCanEverAffectNavigation(false);
+	m_SkBody->SetRelativeLocation(FVector(0,0,-80.f));
+	m_SkBody->SetRelativeRotation(FRotator(0,-90.f,-0.f));
 
 	m_fCurrentExp = 0.f;
 
 	m_fMaxExp = 0.f;
 
 	m_bIsDead = false;
+
+	m_Movement->SetRVOAvoidanceWeight(0.5f);
+
+	m_Movement->m_RotateSpeed = FRotator(0.f,650.f,0.f);
+	
+	
+//Material'/Game/03_VisualEffect/M_Fog.M_Fog'
+	static ConstructorHelpers::FObjectFinder<UMaterial> FoundMat(TEXT("Material'/Game/03_VisualEffect/M_Fog.M_Fog'"));
+	m_FogMat = FoundMat.Object;
+
+	//m_GAPlayerHealthRegen
+	//m_GAPlayerManaRegen
+	//m_GAPlayerStaminaRegen
+	//m_GAPlayerRageRegen
+	//m_GAPlayerHealthPotion
+	//m_GAPlayerPortal
+	//m_AryTargetingObjectType
+	//m_fInteractRange
 }
 
 
@@ -86,34 +78,23 @@ void APlayerDiabloCharacter::Init()
 	m_AryIgnoreActor.Add(this);
 	m_AryIgnoreActor.Add(m_PlayerCon);
 	//
-	m_FocusRenderer = NewObject<USkeletalMeshComponent>(this, USkeletalMeshComponent::StaticClass());
-	m_FocusRenderer->RegisterComponent();
-	m_FocusRenderer->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	m_FocusRenderer->SetHiddenInGame(true);
-	//
 	m_PlayerSense = NewObject<UPlayerSensing>(this, UPlayerSensing::StaticClass());
 	m_PlayerSense->InitSense(this);
 	m_PlayerSense->OnSeePawn.BindUObject(this, &APlayerDiabloCharacter::OnSeeTarget);
 	m_PlayerSense->OnCantSeePawn.BindUObject(this, &APlayerDiabloCharacter::OnCantSeeTarget);
 	m_PlayerSense->OnSeePawnBlocked.BindUObject(this, &APlayerDiabloCharacter::OnCanSeeTargetBlock);
 	//
-	m_SkFace->SetMasterPoseComponent(m_SkBody);
-	m_SkHair->SetMasterPoseComponent(m_SkBody);
-	m_SkGlove->SetMasterPoseComponent(m_SkBody);
-	m_SkShoe->SetMasterPoseComponent(m_SkBody);
-	m_SkHeadGear->SetMasterPoseComponent(m_SkBody);
-	m_SkShoulderPad->SetMasterPoseComponent(m_SkBody);
-	m_SkBelt->SetMasterPoseComponent(m_SkBody);
-	//
-	SetDefaultBodyMesh();
-	SetDefaultGloveMesh();
-	SetFullHairMesh();
-	SetDefaultShoeMesh();
-	//
 	m_DissolveCam->Init(m_TopCamera);
+	FWeightedBlendable Blend;
+	Blend.Weight = 1.f;
+	Blend.Object = m_FogMat;
+	//m_TopCamera->PostProcessSettings.WeightedBlendables.Array.Add(Blend);
+	m_TopCamera->SetPostProcessBlendWeight(1.f);
 	//
 	m_PlayerAutoPlay=NewObject<UPlayerAutoPlayFSM>(this,UPlayerAutoPlayFSM::StaticClass());
 	m_PlayerAutoPlay->Init(this);
+
+	m_PlayerCon->SetViewTarget(this);
 }
 
 
@@ -167,11 +148,6 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
 		m_nCharacterLevel = 1;
 	}
 
-	m_SkFace->SetSkeletalMesh(UPlayerCreateManager::Get->GetFace(loadedSaveData->m_IndexFace));
-	m_DefaultFullHairMesh = UPlayerCreateManager::Get->GetHair(loadedSaveData->m_IndexHair, false);
-	m_DefaultHalfHairMesh = UPlayerCreateManager::Get->GetHair(loadedSaveData->m_IndexHair, true);
-	//
-	m_SkHair->SetSkeletalMesh(m_DefaultFullHairMesh); //later equipment will doit
 	m_TextUnitName = FText::FromString(loadedSaveData->m_TextName);
 	//
 	m_PlayerEntityData = UCharacterDataTable::GetPlayerEntityPtr(loadedSaveData->m_ClassName);
@@ -191,6 +167,16 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
 	GrantHpPotionAbility();
 	GrantResourceRegenAbility();
 	GrantPortalAbility();
+
+	if(m_PlayerEntityData->m_AryPlayerSkin.IsValidIndex(loadedSaveData->m_IndexSkin))
+	{
+		m_SkBody->SetSkeletalMesh(m_PlayerEntityData->m_AryPlayerSkin[loadedSaveData->m_IndexSkin]);
+	}
+	else
+	{
+		m_SkBody->SetSkeletalMesh(m_PlayerEntityData->m_AryPlayerSkin[0]);
+		PRINTF("PlayerSkinIndex Wrong,Zero Base Set");
+	}
 
 	m_OnPlayerVisualChanged.Broadcast();
 }
@@ -219,85 +205,19 @@ void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
 	m_OnExpGaugeChanged.Broadcast(m_fCurrentExp / m_fMaxExp);
 }
 
-void APlayerDiabloCharacter::EquipMesh(const FItemInstance* meshItem, ESlotsEquipAry slotWant)
+void APlayerDiabloCharacter::EquipMesh(AEquipmentActor* equipActor, FName socket)
 {
-	TSubclassOf<AWeapon> ItemBP = nullptr;
-	switch (slotWant)
+	if(!equipActor)
 	{
-	case ESlotsEquipAry::Head:
-		if (meshItem->m_ItemData)
-		{
-			m_SkHeadGear->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
-			SetHalfHairMesh();
-		}
-		else
-		{
-			m_SkHeadGear->SetSkeletalMesh(nullptr);
-			SetFullHairMesh();
-		}
-		break;
-	case ESlotsEquipAry::Torso:
-		if (meshItem->m_ItemData)
-		{
-			m_SkBody->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
-		}
-		else
-		{
-			SetDefaultBodyMesh();
-		}
-
-		break;
-	case ESlotsEquipAry::Waist:
-		m_SkBelt->SetSkeletalMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_SkEquipment : nullptr);
-		break;
-	case ESlotsEquipAry::Leg:
-		if (meshItem->m_ItemData)
-		{
-			m_SkShoe->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
-		}
-		else
-		{
-			SetDefaultShoeMesh();
-		}
-		break;
-	case ESlotsEquipAry::Hand:
-		if (meshItem->m_ItemData)
-		{
-			m_SkGlove->SetSkeletalMesh(meshItem->m_ItemData->m_SkEquipment);
-		}
-		else
-		{
-			SetDefaultGloveMesh();
-		}
-		break;
-	case ESlotsEquipAry::Shoulder:
-		m_SkShoulderPad->SetSkeletalMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_SkEquipment : nullptr);
-		break;
-	case ESlotsEquipAry::WeaponRight:
-
-		if (CreateItemActor(meshItem, &m_RightWeapon, &m_StRightWeapon))
-		{
-			m_OnPlayerVisualChanged.Broadcast();
-			return;
-		}
-
-		m_StRightWeapon->SetStaticMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_StEquipment : nullptr);
-		//"RightWeaponShield"
-		break;
-	case ESlotsEquipAry::WeaponLeft:
-
-		if (CreateItemActor(meshItem, &m_LeftWeapon, &m_StLeftWeapon))
-		{
-			m_OnPlayerVisualChanged.Broadcast();
-			return;
-		}
-
-		m_StLeftWeapon->SetStaticMesh(meshItem->m_ItemData ? meshItem->m_ItemData->m_StEquipment : nullptr);
-
-		break;
-	default:
-		;
+		return;
 	}
+
+	FAttachmentTransformRules Rule(
+EAttachmentRule::SnapToTarget,
+EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,false);
+
+	equipActor->AttachToComponent(m_SkBody,Rule,socket);
 
 	m_OnPlayerVisualChanged.Broadcast();
 }
@@ -311,32 +231,6 @@ void APlayerDiabloCharacter::RemoveAllEffect()
 	PRINTF("RemoveAllEffect");
 }
 
-
-void APlayerDiabloCharacter::GrantBaseAttackAbility()
-{
-	m_BaseAttackHandle = GetDiaAbilitySystem()->GiveAbility(
-		FGameplayAbilitySpec(m_PlayerBaseAttack, GetCharacterLevel(),
-		                     static_cast<int32>(m_PlayerBaseAttack.GetDefaultObject()->m_AbilityInputID),
-		                     this));
-}
-
-void APlayerDiabloCharacter::SetBaseAttackAbility(const FAnimStance* animStance)
-{
-	if (m_BaseAttackHandle.IsValid())
-	{
-		GetDiaAbilitySystem()->ClearAbility(m_BaseAttackHandle);
-		m_PlayerBaseAttack = nullptr;
-	}
-
-	if (IsValid(animStance->m_BaseAttackAbility))
-	{
-		m_PlayerBaseAttack = animStance->m_BaseAttackAbility;
-
-		GrantBaseAttackAbility();
-	}
-
-	m_AlreadyHittenForIgnore.Reset();
-}
 
 void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius, float focusRange)
 {
@@ -360,18 +254,9 @@ void APlayerDiabloCharacter::SetAnimStance(const FAnimStance* animStance)
 	m_AnimStance = animStance;
 	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	m_SkBody->SetAnimInstanceClass(m_AnimStance->m_StanceAnimation);
-	FAttachmentTransformRules Rule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget,
-	                                                           EAttachmentRule::SnapToTarget,
-	                                                           EAttachmentRule::SnapToTarget, false);
-	m_StRightWeapon->AttachToComponent(m_SkBody, Rule, "RightWeaponShield");
-	m_StLeftWeapon->AttachToComponent(m_SkBody, Rule, "LeftWeaponShield");
-
-	//should Seprated
-	SetBaseAttackAbility(animStance);
-	SetBaseAttackData(animStance->m_fViewAngle, animStance->m_fViewRadius, animStance->m_fFocusRange);
+	
 	m_AlreadyHittenForIgnore.Reset();
 }
-
 
 void APlayerDiabloCharacter::EarnExp(float expEarned)
 {
@@ -478,17 +363,6 @@ void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)
 	
 	m_FocusOutlinePawn = Unit;
 
-	m_FocusRenderer->SetHiddenInGame(false);
-	m_FocusRenderer->AttachToComponent(Unit->GetBodyMesh(), FAttachmentTransformRules::KeepRelativeTransform);
-
-	m_FocusRenderer->SetSkeletalMesh(Unit->GetBodyMesh()->SkeletalMesh);
-
-	for (int i = 0; i < m_FocusRenderer->GetMaterials().Num(); i++)
-	{
-		m_FocusRenderer->SetMaterial(i, m_OutLineMat);
-	}
-
-	m_FocusRenderer->SetMasterPoseComponent(Unit->GetBodyMesh(), true);
 	PRINTF("ShowOutlineOnTarget");
 }
 
@@ -496,10 +370,6 @@ void APlayerDiabloCharacter::HideOutlineOnTarget()
 {
 	m_FocusOutlinePawn = nullptr;
 
-	m_FocusRenderer->SetHiddenInGame(true);
-	m_FocusRenderer->SetSkeletalMesh(nullptr);
-	m_FocusRenderer->GetMaterials().Reset();
-	m_FocusRenderer->AttachToComponent(GetBodyMesh(), FAttachmentTransformRules::KeepRelativeTransform);
 	PRINTF("HideOutlineOnTarget");
 }
 
@@ -763,46 +633,6 @@ void APlayerDiabloCharacter::PlayColorEffect(const FLinearColor& colorWant,float
 	m_SkBody->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
 	m_SkBody->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
 	m_SkBody->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
-	
-	m_SkFace->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
-	m_SkFace->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
-	m_SkFace->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
-
-	m_SkHair->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
-	m_SkHair->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
-	m_SkHair->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
-
-	m_SkGlove->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
-	m_SkGlove->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
-	m_SkGlove->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
-
-	m_SkShoe->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
-	m_SkShoe->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
-	m_SkShoe->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
-
-	m_SkHeadGear->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
-	m_SkHeadGear->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
-	m_SkHeadGear->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
-
-	m_SkShoulderPad->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
-	m_SkShoulderPad->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
-	m_SkShoulderPad->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
-
-	m_SkBelt->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
-	m_SkBelt->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
-	m_SkBelt->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
-
-	m_StBackpack->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
-	m_StBackpack->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
-	m_StBackpack->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
-	
-	m_StRightWeapon->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
-	m_StRightWeapon->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
-	m_StRightWeapon->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
-	
-	m_StLeftWeapon->SetVectorParameterValueOnMaterials(ColorParamName, ColorV);
-	m_StLeftWeapon->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
-	m_StLeftWeapon->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 }
 
 
@@ -837,6 +667,7 @@ void APlayerDiabloCharacter::SetAutoPlay(bool useAuto)
 	}
 	
 }
+
 
 void APlayerDiabloCharacter::Tick(float DeltaTime)
 {
@@ -920,81 +751,6 @@ void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	                                 &APlayerDiabloCharacter::OnAttackRelease);
 
 	BindASCInput();
-}
-
-
-void APlayerDiabloCharacter::SetFullHairMesh()
-{
-	m_SkHair->SetSkeletalMesh(m_DefaultFullHairMesh);
-}
-
-void APlayerDiabloCharacter::SetHalfHairMesh()
-{
-	m_SkHair->SetSkeletalMesh(m_DefaultHalfHairMesh);
-}
-
-void APlayerDiabloCharacter::SetDefaultBodyMesh()
-{
-	m_SkBody->SetSkeletalMesh(m_DefaultBodyMesh);
-}
-
-void APlayerDiabloCharacter::SetDefaultShoeMesh()
-{
-	m_SkShoe->SetSkeletalMesh(m_DefaultShoeMesh);
-}
-
-void APlayerDiabloCharacter::SetDefaultGloveMesh()
-{
-	m_SkGlove->SetSkeletalMesh(m_DefaultGloveMesh);
-}
-
-
-bool APlayerDiabloCharacter::CreateItemActor(const FItemInstance* itemInst, AWeapon** wantCachePointer,
-                                             UStaticMeshComponent** attachRoot)
-{
-	if ((*wantCachePointer))
-	{
-		m_AryIgnoreActor.Remove((*wantCachePointer));
-		(*wantCachePointer)->RemoveWeapon(this);
-		(*wantCachePointer)->Destroy();
-		(*wantCachePointer) = nullptr;
-	}
-
-	if (itemInst->IsEmpty())
-	{
-		return false;
-	}
-
-	auto ItemBP = itemInst->m_ItemData->m_ItemType.GetRow<FItemType>("")->m_EquipmentBP;
-
-	if (!ItemBP)
-	{
-		return false;
-	}
-
-	(*attachRoot)->SetStaticMesh(nullptr);
-
-	FActorSpawnParameters Params;
-
-	Params.Template = Cast<AActor>(ItemBP->GetDefaultObject());
-
-	FTransform Trans;
-
-	AWeapon* Weapon = Cast<AWeapon>(GetWorld()->SpawnActor(ItemBP, &Trans, Params));
-
-	FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget,
-	                                                            EAttachmentRule::SnapToTarget,
-	                                                            EAttachmentRule::SnapToTarget, false);
-
-	Weapon->InitWeapon(this, itemInst);
-
-	Weapon->AttachToComponent((*attachRoot), Rules);
-
-	(*wantCachePointer) = Weapon;
-
-	m_AryIgnoreActor.Add((*wantCachePointer));
-
-	return true;
 }
 
 void APlayerDiabloCharacter::BindASCInput()
