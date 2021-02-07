@@ -34,8 +34,6 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_TopCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera00");
 	m_TopCamera->SetupAttachment(m_DissolveCam);
 	m_TopCamera->FieldOfView = 60.f;
-	
-	
 
 	m_fInteractRange = 300.f;
 	//
@@ -61,13 +59,22 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	static ConstructorHelpers::FObjectFinder<UMaterial> FoundMat(TEXT("Material'/Game/03_VisualEffect/M_Fog.M_Fog'"));
 	m_FogMat = FoundMat.Object;
 
-	//m_GAPlayerHealthRegen
-	//m_GAPlayerManaRegen
-	//m_GAPlayerStaminaRegen
-	//m_GAPlayerRageRegen
-	//m_GAPlayerHealthPotion
-	//m_GAPlayerPortal
-	//m_AryTargetingObjectType
+	static ConstructorHelpers::FClassFinder<UDiabloAbility> Found1(TEXT("Blueprint'/Game/Blueprints/Abilities/Player/PlayerRegen/GA_PlayerHpRegen.GA_PlayerHpRegen_C'"));
+	static ConstructorHelpers::FClassFinder<UDiabloAbility> Found2(TEXT("Blueprint'/Game/Blueprints/Abilities/Player/PlayerRegen/GA_PlayerManaRegen.GA_PlayerManaRegen_C'"));
+	static ConstructorHelpers::FClassFinder<UDiabloAbility> Found3(TEXT("Blueprint'/Game/Blueprints/Abilities/Player/PlayerRegen/GA_PlayerStaminaRegen.GA_PlayerStaminaRegen_C'"));
+	static ConstructorHelpers::FClassFinder<UDiabloAbility> Found4(TEXT("Blueprint'/Game/Blueprints/Abilities/Player/PlayerRegen/GA_PlayerRageRegen.GA_PlayerRageRegen_C'"));
+	static ConstructorHelpers::FClassFinder<UDiabloAbility> Found5(TEXT("Blueprint'/Game/Blueprints/Abilities/Player/GA_PlayerPotion.GA_PlayerPotion_C'"));
+	static ConstructorHelpers::FClassFinder<UDiabloAbility> Found6(TEXT("Blueprint'/Game/Blueprints/Abilities/Player/GA_PlayerPortal.GA_PlayerPortal_C'"));
+
+	m_GAPlayerHealthRegen = Found1.Class;
+	m_GAPlayerManaRegen = Found2.Class;
+	m_GAPlayerStaminaRegen = Found3.Class;
+	m_GAPlayerRageRegen = Found4.Class;
+	m_GAPlayerHealthPotion = Found5.Class;
+	m_GAPlayerPortal = Found6.Class;
+	
+	m_AryTargetingObjectType.Reset();
+	m_AryTargetingObjectType.Add(EObjectTypeQuery::ObjectTypeQuery3);
 	//m_fInteractRange
 }
 
@@ -177,21 +184,11 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
 		m_SkBody->SetSkeletalMesh(m_PlayerEntityData->m_AryPlayerSkin[0]);
 		PRINTF("PlayerSkinIndex Wrong,Zero Base Set");
 	}
-
-	m_OnPlayerVisualChanged.Broadcast();
 }
 
 void APlayerDiabloCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-
-	UPlayerCreateManager* PlManager = UDiabloGameInstance::Get->GetPlCreateManager();
-
-	if(PlManager)
-	{
-		m_OnPlayerVisualChanged.AddUObject(PlManager,&UPlayerCreateManager::SetCurrentDataWithPlayer);
-	}
 
 	Cast<ADiabloPlayerController>( GetController())->InitPlCtrlAndWidget();
 }
@@ -203,23 +200,6 @@ void APlayerDiabloCharacter::LoadExp(const USaveCharacterStatus* loadedSaveData)
 	float RemainExp = m_fMaxExp - m_fCurrentExp;
 	m_OnRemainExpChanged.Broadcast(RemainExp);
 	m_OnExpGaugeChanged.Broadcast(m_fCurrentExp / m_fMaxExp);
-}
-
-void APlayerDiabloCharacter::EquipMesh(AEquipmentActor* equipActor, FName socket)
-{
-	if(!equipActor)
-	{
-		return;
-	}
-
-	FAttachmentTransformRules Rule(
-EAttachmentRule::SnapToTarget,
-EAttachmentRule::SnapToTarget,
-		EAttachmentRule::SnapToTarget,false);
-
-	equipActor->AttachToComponent(m_SkBody,Rule,socket);
-
-	m_OnPlayerVisualChanged.Broadcast();
 }
 
 void APlayerDiabloCharacter::RemoveAllEffect()

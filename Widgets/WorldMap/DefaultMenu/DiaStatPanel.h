@@ -125,8 +125,11 @@ protected:
 	UPlayerDiabloAttribute* m_AttributeSet;
 public:
 	void Init(APlayerDiabloCharacter* charPlayer);
-	void UpdateAllAttributeTextWrap();
+	
+	void UpdateAllAttributeTextWrap(int, FItemInstance&);
+	
 	void UpdateAllAttributeText(AUnitPawn* mobInfo);
+	
 protected:	
 	void UpdateLevel(float v);
     void UpdateRemainExp(float v);

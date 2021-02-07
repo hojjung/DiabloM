@@ -45,8 +45,6 @@ public:
 
 	FOnFocusTargetChanged m_OnFocusTarget;
 
-	FOnPlVisualChanged m_OnPlayerVisualChanged;
-
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TSubclassOf<UPlayerHpRegenAbility> m_GAPlayerHealthRegen;
@@ -184,7 +182,7 @@ public:
 	
 	void HideOutlineOnTarget();
 
-	void EquipMesh(AEquipmentActor* equipActor, FName socket);
+	void EquipMesh(TSubclassOf<AEquipmentActor> equipActor, FName socket);
 	
 	virtual bool SetCharacterLevel(int NewLevel)override;
 	

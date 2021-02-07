@@ -30,6 +30,7 @@ void UDiaInvenGridSlot::SetSlot(const FItemInstance & itemInstance)
 
 void UDiaInvenGridSlot::ClearSlot()
 {
+	PRINTF("UDiaInvenGridSlot::ClearSlot");
 	m_ImgSlotHighlight->SetVisibility(ESlateVisibility::Hidden);
 	m_TextItemStackCount->SetVisibility(ESlateVisibility::Hidden);
 	m_ImgItemEffectBG->SetVisibility(ESlateVisibility::Hidden);

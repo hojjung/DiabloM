@@ -47,10 +47,6 @@ void UDiabloCheatManager::PrintInventoryOld()
 	m_PlayerController->PrintInven();
 }
 
-void UDiabloCheatManager::PrintEquipment()
-{
-	m_PlayerController->PrintEquipment();
-}
 
 void UDiabloCheatManager::SaveTalent()
 {

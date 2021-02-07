@@ -41,6 +41,7 @@ public:
     //
 public:
     FOnVisualChange m_OnVisualChange;
+    
     FOnStartCreation m_OnStartCreation;
     
 public:

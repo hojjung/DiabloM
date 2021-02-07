@@ -34,7 +34,7 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
     
     m_PlayerStatusBar->Init(m_PlayerCon,this);
 
-    m_EquipSys->m_OnOptionChanged.AddUObject(this,&UMainCanvas::UpdateHpBar);
+    m_EquipSys->GetItemChangeCallback().AddUObject(this,&UMainCanvas::UpdateHpBar);
     //
     UPlayerDiabloAbilitySystemComp* PlayerGASComp=Cast<UPlayerDiabloAbilitySystemComp>(m_PlayerPawn->GetAbilitySystemComponent());
     
@@ -170,7 +170,7 @@ void UMainCanvas::UpdateExpGauge(float v)
     m_PlayerStatusBar->m_ExpBar->SetProgressValue(v);
 }
 
-void UMainCanvas::UpdateHpBar()
+void UMainCanvas::UpdateHpBar(int, FItemInstance&)
 {
     m_PlayerStatusBar->SetHealthBarProgressV(m_PlayerPawn);
 }

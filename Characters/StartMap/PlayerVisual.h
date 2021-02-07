@@ -34,15 +34,21 @@ protected:
 	UAnimSequence* m_AnimSeq;
 	UPROPERTY()
 	UTextureRenderTarget2D* m_CaptureTexture;
+	UPROPERTY()
+	TArray<AEquipmentActor*> m_AryVisualEquipment;
+
+	FDelegateHandle Handle1;
+
+	FDelegateHandle Handle2;
 	
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 	void CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName,USceneComponent* root);
 	
 	void OnMeshVisualChanged(const FCurrentCharData& charData);//TODO Add Slot reader,1003
-
-	void SetBodyAnim();
 
 public:
 	void ShowMesh();

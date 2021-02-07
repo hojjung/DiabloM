@@ -53,7 +53,7 @@ struct FItemTypeHandle :public FDataTableRowHandle
 
 //
 UENUM(meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class ESlots: uint32
+enum class ESlots: uint32 //use for bitmask
 {
     Head=1,
     Neck=2,

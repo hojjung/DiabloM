@@ -23,4 +23,5 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	static AEquipmentActor*  SpawnToMesh(USkeletalMeshComponent* skBody,TSubclassOf<AEquipmentActor> equipActor,FName socket);
 };

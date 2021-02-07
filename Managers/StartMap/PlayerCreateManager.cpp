@@ -35,9 +35,9 @@ void UPlayerCreateManager::SetItemFromSetting()
     m_CurrentCharData.m_ClassID=ClassEntity->m_NameID;
     m_CurrentCharData.m_TextNameClass = ClassEntity->m_ShowingName;
     m_CurrentCharData.m_CurrentSkin=m_AryInitItem[m_IndexItem]->m_CoolMesh;
-    m_CurrentCharData.m_CurrentRightWeapon=m_AryInitItem[m_IndexItem]->m_RightHandItem.GetRow<FItemData>("");
-    m_CurrentCharData.m_CurrentLeftWeapon=m_AryInitItem[m_IndexItem]->m_LeftHandItem.GetRow<FItemData>("");
-
+    //
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::WeaponRight] =m_AryInitItem[m_IndexItem]->m_RightHandItem.GetRow<FItemData>("");
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::WeaponLeft] =m_AryInitItem[m_IndexItem]->m_LeftHandItem.GetRow<FItemData>("");
     OnDataChanged();
 }
 //
@@ -52,12 +52,20 @@ void UPlayerCreateManager::SetCurrentDataFromSaveFile(const USaveCharacterStatus
     m_CurrentCharData.m_ClassID = char_stat->m_ClassName;
     m_CurrentCharData.m_TextNameClass = UCharacterDataTable::GetPlayerEntity(char_stat->m_ClassName).m_ShowingName;
     m_CurrentCharData.m_CurrentSkin=m_AryInitItem[m_IndexItem]->m_CoolMesh;
-    m_CurrentCharData.m_CurrentRightWeapon= save_equipment->m_EquipAry[(int)ESlotsEquipAry::WeaponRight].m_ItemData;
-    m_CurrentCharData.m_CurrentLeftWeapon= save_equipment->m_EquipAry[(int)ESlotsEquipAry::WeaponLeft].m_ItemData;
-
+    //
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Head       ] = save_equipment->m_EquipAry[(int)ESlotsEquipAry::Head].m_ItemData;
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Neck       ] = save_equipment->m_EquipAry[(int)ESlotsEquipAry::Neck].m_ItemData;
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Torso      ] = save_equipment->m_EquipAry[(int)ESlotsEquipAry::Torso].m_ItemData;
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Waist      ] = save_equipment->m_EquipAry[(int)ESlotsEquipAry::Waist].m_ItemData;
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Leg        ] = save_equipment->m_EquipAry[(int)ESlotsEquipAry::Leg].m_ItemData;
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Hand       ] = save_equipment->m_EquipAry[(int)ESlotsEquipAry::Hand].m_ItemData;
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Shoulder   ] = save_equipment->m_EquipAry[(int)ESlotsEquipAry::Shoulder].m_ItemData;
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::WeaponRight] = save_equipment->m_EquipAry[(int)ESlotsEquipAry::WeaponRight].m_ItemData;
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::WeaponLeft ] = save_equipment->m_EquipAry[(int)ESlotsEquipAry::WeaponLeft].m_ItemData;
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::FingerRight] =  save_equipment->m_EquipAry[(int)ESlotsEquipAry::FingerRight].m_ItemData;
+    m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::FingerLeft ] = save_equipment->m_EquipAry[(int)ESlotsEquipAry::FingerLeft].m_ItemData;
     OnDataChanged();
 }
-
 
 void UPlayerCreateManager::DecreaseItem()
 {
@@ -98,10 +106,20 @@ const FCurrentCharData& UPlayerCreateManager::GetCurrentCharData() const
 void UPlayerCreateManager::SetCurrentDataWithPlayer()
 {
     UEquipmentSystem* Equip = ADiabloPlayerController::Get->GetEquipment();
-    
-    m_CurrentCharData.m_CurrentRightWeapon=   Equip->GetItem((int)ESlotsEquipAry::WeaponRight).m_ItemData;
-    m_CurrentCharData.m_CurrentLeftWeapon=  Equip->GetItem((int)ESlotsEquipAry::WeaponLeft).m_ItemData;
 
+   m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Head       ]   = Equip->GetItem(ESlotsEquipAry::Head).m_ItemData;
+   m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Neck       ]  = Equip->GetItem(ESlotsEquipAry::Neck).m_ItemData;
+   m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Torso      ]  = Equip->GetItem(ESlotsEquipAry::Torso).m_ItemData;
+   m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Waist      ]  = Equip->GetItem(ESlotsEquipAry::Waist).m_ItemData;
+   m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Leg        ]  = Equip->GetItem(ESlotsEquipAry::Leg).m_ItemData;
+   m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Hand       ]  = Equip->GetItem(ESlotsEquipAry::Hand).m_ItemData;
+   m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::Shoulder   ]  = Equip->GetItem(ESlotsEquipAry::Shoulder).m_ItemData;
+   m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::WeaponRight]   = Equip->GetItem(ESlotsEquipAry::WeaponRight).m_ItemData;
+   m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::WeaponLeft ]   = Equip->GetItem(ESlotsEquipAry::WeaponLeft).m_ItemData;
+   m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::FingerRight]  = Equip->GetItem(ESlotsEquipAry::FingerRight).m_ItemData;
+   m_CurrentCharData.m_AryEquipItemData[(int)ESlotsEquipAry::FingerLeft ]  = Equip->GetItem(ESlotsEquipAry::FingerLeft).m_ItemData;
+
+    
     OnDataChanged();
 }
 

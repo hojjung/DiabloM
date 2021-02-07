@@ -95,12 +95,7 @@ protected:
 
     FOnItemSlotChanged m_ItemChanged;
 
-    FOnEquipped m_EquipMeshChanged;
-
-    FOnEquipSlotChanged m_EquipSlotChanged;
-
 public:
-    FOnItemEuipChanged m_OnOptionChanged;
     
     void Init(UDiabloAbilitySystemComp* abilitySysCompo);
 
@@ -126,8 +121,6 @@ public:
 
     FEquipSlot* GetSlot(int index);
 
-    void PrintEquipStats();
-
     const FItemType* GetEquippedItemType(ESlotsEquipAry slot);
 
     const FItemType* GetEquippedItemType(int slotIndex);
@@ -143,28 +136,16 @@ public:
         return m_ItemChanged;
     }
 
-    FOnEquipSlotChanged& GetEquipChanged()
-    {
-        return m_EquipSlotChanged;
-    }
-
-    FOnEquipped& GetEquipMeshChanged()
-    {
-        return m_EquipMeshChanged;
-    }
-
-
     const FAnimStance* GetCurrentStance() const
     {
         return m_CurrentStance;
     }
 
 protected:
-    void OnItemSlotChanged(int index);
+    void OnEquipItemChanged(int index);
     
     void CalculateAnimStance();
 
-    
     void SetUnequipItemToSlots(TArray<TArray<FItemTypeHandle>>&& aryAryItemType);
 };
 //TArray<TArray<FItemTypeHandle>>

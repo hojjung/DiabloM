@@ -77,36 +77,72 @@ void APlayerVisual::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp, FN
 void APlayerVisual::BeginPlay()
 {
     Super::BeginPlay();
+    
+    m_AryVisualEquipment.Init(nullptr,(int)ESlotsEquipAry::Length);
+    
     m_PlCreateManager = GetGameInstance<UDiabloGameInstance>()->GetPlCreateManager();
-    m_PlCreateManager->m_OnVisualChange.AddUObject(this, &APlayerVisual::OnMeshVisualChanged);
+    
+    Handle1 = m_PlCreateManager->m_OnVisualChange.AddUObject(this, &APlayerVisual::OnMeshVisualChanged);
+    
     m_PlCreateManager->m_OnStartCreation.BindUObject(this, &APlayerVisual::ShowMesh);
     
-    HideMesh();
-
-    
     m_Capture->PostProcessBlendWeight=0.f;
+    
     m_Capture->ShowOnlyActorComponents(this);
+    
+    HideMesh();
 }
 
-void APlayerVisual::SetBodyAnim()
+void APlayerVisual::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-    m_MeshBody->SetAnimation(m_AnimSeq);
-    m_MeshBody->Play(true);//body change = need animation update
+    Super::EndPlay(EndPlayReason);
+    m_PlCreateManager->m_OnVisualChange.Remove(Handle1);
+    m_PlCreateManager->m_OnStartCreation.Unbind();
 }
 
 void APlayerVisual::OnMeshVisualChanged(const FCurrentCharData& charData)
 {
     m_MeshBody->SetSkeletalMesh(charData.m_CurrentSkin);
-    SetBodyAnim();
+    m_AnimSeq = charData.m_CoolIdle;
+    m_MeshBody->SetAnimation(m_AnimSeq);
+    m_MeshBody->Play(true);//body change = need animation update
 
-    if(charData.m_CurrentRightWeapon)
-    {
-        
-    }
+    int Iter = (int)ESlotsEquipAry::Length;
 
-    if(charData.m_CurrentLeftWeapon)
+    for(int i=0; i< Iter;i++)
     {
+        const FItemData* Data = charData.m_AryEquipItemData[i];
         
+        if(!Data)
+        {
+            continue;
+        }
+
+        if (Data->m_EquipmentBP)//new item need spawn
+        {
+            if(m_AryVisualEquipment[i])
+            {
+                if(m_AryVisualEquipment[i]->GetClass() != Data->m_EquipmentBP)//이미 있는데 그것이 다를때
+                {
+                    m_AryVisualEquipment[i]->SetHidden(true);
+                    m_AryVisualEquipment[i]->Destroy();    
+                }
+                else
+                {
+                    continue;//이미 있고 같은 아이템이기 때문에 패스
+                }
+            }
+
+            m_AryVisualEquipment[i] = AEquipmentActor::SpawnToMesh(m_MeshBody,Data->m_EquipmentBP, Data->m_EquipSocketName);
+        }
+        else
+        {
+            if(m_AryVisualEquipment[i])//No Item, Remove Oldone
+            {
+                m_AryVisualEquipment[i]->SetHidden(true);
+                m_AryVisualEquipment[i]->Destroy();
+            }
+        }
     }
 }
 

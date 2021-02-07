@@ -94,7 +94,7 @@ public:
     //
     void UpdateExpGauge(float v);
 
-    void UpdateHpBar();
+    void UpdateHpBar(int, FItemInstance&);
     //
     void OpenMinimap();
 

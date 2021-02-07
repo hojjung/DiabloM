@@ -3,6 +3,8 @@
 #include "CharacterDataTable.h"
 #include "DiabloM.h"
 #include "ItemDataTable.h"
+#include "Item/EquipmentSystem.h"
+
 #include "PlayerInitDataTable.generated.h"
 
 
@@ -15,7 +17,7 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadOnly)
     USkeletalMesh* m_CoolMesh;
     UPROPERTY(EditAnywhere,BlueprintReadOnly)
-    UAnimBlueprint* m_StanceAnim;
+    UAnimSequence* m_CoolIdle;
     UPROPERTY(EditAnywhere,BlueprintReadOnly)
     FItemDataHandle m_RightHandItem;
     UPROPERTY(EditAnywhere,BlueprintReadOnly)
@@ -44,8 +46,10 @@ struct FCurrentCharData
     GENERATED_BODY()
 
 public:
-    FCurrentCharData(): m_CurrentSkin(nullptr), m_CurrentRightWeapon(nullptr), m_CurrentLeftWeapon(nullptr)
+    FCurrentCharData(): m_CurrentSkin(nullptr), m_CoolIdle(nullptr)
     {
+        m_AryEquipItemData.Reset();
+        m_AryEquipItemData.Init(nullptr, (int)ESlotsEquipAry::Length);
     }
 
     UPROPERTY()
@@ -54,17 +58,30 @@ public:
     FName m_ClassID;
     UPROPERTY()
     USkeletalMesh*   m_CurrentSkin;
+    UPROPERTY(EditAnywhere,BlueprintReadOnly)
+    UAnimSequence* m_CoolIdle;
     
-    const FItemData*     m_CurrentRightWeapon;
-    const FItemData*     m_CurrentLeftWeapon;
+    TArray<const FItemData*> m_AryEquipItemData;
+    
+    
     //
     void Clear()
     {
-        m_CurrentSkin=nullptr;         
-        m_CurrentRightWeapon=nullptr;  
-        m_CurrentLeftWeapon=nullptr;
+        m_CurrentSkin=nullptr;
+
+        m_CoolIdle =nullptr;
+        
+        for(const FItemData* itemData : m_AryEquipItemData)
+        {
+            itemData = nullptr;
+        }
 
         m_TextNameClass = FText();
         m_ClassID=NAME_None;
+    }
+
+    const FItemData* GetItemData(ESlotsEquipAry slot) const
+    {
+        return m_AryEquipItemData[static_cast<int>(slot)];
     }
 };

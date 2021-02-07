@@ -54,16 +54,17 @@ void UDiaStatPanel::Init(APlayerDiabloCharacter* charPlayer)
     m_Player = charPlayer;
     m_AttributeSet = Cast<UPlayerDiabloAttribute>(m_Player->GetAttributeSet());
     m_AttributeSet->m_OnStatChanged.AddUObject(this, &UDiaStatPanel::UpdateAllAttributeText);
-    ADiabloPlayerController::Get->GetEquipment()->m_OnOptionChanged.AddUObject(
+    ADiabloPlayerController::Get->GetEquipment()->GetItemChangeCallback().AddUObject(
         this, &UDiaStatPanel::UpdateAllAttributeTextWrap);
     m_Player->GetLevelDele().AddUObject(this, &UDiaStatPanel::UpdateLevel);
     m_Player->GetRemainExpDele().AddUObject(this, &UDiaStatPanel::UpdateRemainExp); //m_OnChangedExpRamain
 
     //
-    UpdateAllAttributeTextWrap();
+    FItemInstance param;
+    UpdateAllAttributeTextWrap(-1,param);
 }
 
-void UDiaStatPanel::UpdateAllAttributeTextWrap()
+void UDiaStatPanel::UpdateAllAttributeTextWrap(int, FItemInstance&)
 {
     UpdateLevel(m_Player->GetCharacterLevel());
     
@@ -128,7 +129,8 @@ void UDiaStatPanel::UpdateAllAttributeTextWrap()
 
 void UDiaStatPanel::UpdateAllAttributeText(AUnitPawn* mobInfo)
 {
-    UpdateAllAttributeTextWrap();
+    FItemInstance param;
+    UpdateAllAttributeTextWrap(-1,param);
 }
 
 void UDiaStatPanel::UpdateLevel(float v)

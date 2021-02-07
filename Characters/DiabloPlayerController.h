@@ -77,14 +77,10 @@ protected:
 
 	void OnPlayerRevived(AUnitPawn* player);
 
-	void PlayerMeshChange(AEquipmentActor* equipActor,FName socket);
-	
 public:
 	void PrintStat();
 
 	void PrintInven();
-
-	void PrintEquipment();
 
 	bool AddItem(FItemInstance itemInst);
 

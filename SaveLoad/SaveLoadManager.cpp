@@ -185,21 +185,55 @@ void USaveLoadManager::CreateSetEquipSlotItem(TArray<FItemInstance>& arrayUsing,
     arrayUsing[GridIndex].m_Holder = nullptr;
 }
 
+//Making New Item for NewPlayer
 void USaveLoadManager::SetEquipSaveDataFromCreation(const FCurrentCharData& charData,TArray<FItemInstance>& newEquipAry)
 {
     newEquipAry.Reserve(15);
     newEquipAry.Init(FItemInstance(), static_cast<int>(ESlotsEquipAry::Length));
     //9
-
-
-    if (charData.m_CurrentRightWeapon)
+    if (charData.GetItemData(ESlotsEquipAry::Head))
     {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentRightWeapon->m_ItemID, ESlotsEquipAry::WeaponRight);
+        CreateSetEquipSlotItem(newEquipAry,charData.GetItemData(ESlotsEquipAry::Head)->m_ItemID, ESlotsEquipAry::Head);
     }
-    
-    if (charData.m_CurrentLeftWeapon)
+    if (charData.GetItemData(ESlotsEquipAry::Neck))
     {
-        CreateSetEquipSlotItem(newEquipAry,charData.m_CurrentLeftWeapon->m_ItemID, ESlotsEquipAry::WeaponLeft);
+        CreateSetEquipSlotItem(newEquipAry,charData.GetItemData(ESlotsEquipAry::Neck)->m_ItemID, ESlotsEquipAry::Neck);
+    }
+    if (charData.GetItemData(ESlotsEquipAry::Torso))
+    {
+        CreateSetEquipSlotItem(newEquipAry,charData.GetItemData(ESlotsEquipAry::Torso)->m_ItemID, ESlotsEquipAry::Torso);
+    }
+    if (charData.GetItemData(ESlotsEquipAry::Waist))
+    {
+        CreateSetEquipSlotItem(newEquipAry,charData.GetItemData(ESlotsEquipAry::Waist)->m_ItemID, ESlotsEquipAry::Waist);
+    }
+    if (charData.GetItemData(ESlotsEquipAry::Leg))
+    {
+        CreateSetEquipSlotItem(newEquipAry,charData.GetItemData(ESlotsEquipAry::Leg)->m_ItemID, ESlotsEquipAry::Leg);
+    }
+    if (charData.GetItemData(ESlotsEquipAry::Hand))
+    {
+        CreateSetEquipSlotItem(newEquipAry,charData.GetItemData(ESlotsEquipAry::Hand)->m_ItemID, ESlotsEquipAry::Hand);
+    }
+    if (charData.GetItemData(ESlotsEquipAry::Shoulder))
+    {
+        CreateSetEquipSlotItem(newEquipAry,charData.GetItemData(ESlotsEquipAry::Shoulder)->m_ItemID, ESlotsEquipAry::Shoulder);
+    }
+    if (charData.GetItemData(ESlotsEquipAry::WeaponRight))
+    {
+        CreateSetEquipSlotItem(newEquipAry,charData.GetItemData(ESlotsEquipAry::WeaponRight)->m_ItemID, ESlotsEquipAry::WeaponRight);
+    }
+    if (charData.GetItemData(ESlotsEquipAry::WeaponLeft))
+    {
+        CreateSetEquipSlotItem(newEquipAry,charData.GetItemData(ESlotsEquipAry::WeaponLeft)->m_ItemID, ESlotsEquipAry::WeaponLeft);
+    }
+    if (charData.GetItemData(ESlotsEquipAry::FingerRight))
+    {
+        CreateSetEquipSlotItem(newEquipAry,charData.GetItemData(ESlotsEquipAry::FingerRight)->m_ItemID, ESlotsEquipAry::FingerRight);
+    }
+    if (charData.GetItemData(ESlotsEquipAry::FingerLeft))
+    {
+        CreateSetEquipSlotItem(newEquipAry,charData.GetItemData(ESlotsEquipAry::FingerLeft)->m_ItemID, ESlotsEquipAry::FingerLeft);
     }
 }
 

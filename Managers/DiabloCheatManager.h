@@ -41,8 +41,6 @@ public:
 	UFUNCTION(exec)
 	void PrintInventoryOld();
 	UFUNCTION(exec)
-	void PrintEquipment();
-	UFUNCTION(exec)
     void SaveTalent();
 	UFUNCTION(exec)
     void LoadTalent();

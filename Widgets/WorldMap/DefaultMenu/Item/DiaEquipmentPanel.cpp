@@ -59,13 +59,9 @@ void UDiaEquipmentPanel::Init(UEquipmentSystem * equipContainer)
 	m_SlotFingerLeft->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
 	m_SlotFingerRight->m_OnDragIndex.BindUObject(this, &UDiaEquipmentPanel::CheckItemEquipable);
 
-	
-
 	m_EquipSys->GetItemChangeCallback().AddUObject(this, &UDiaEquipmentPanel::UpdateSlot);
-	m_EquipSys->GetEquipChanged().AddUObject(this,&UDiaEquipmentPanel::UpdateEquipSlot);
-
+	
 	UDiaEquipmentPanel::GetEquipWidgetInst = this;
-
 
 	for(int i=0; i<m_EquipSys->GetArySlotPtr().Num();i++)
 	{
@@ -73,7 +69,7 @@ void UDiaEquipmentPanel::Init(UEquipmentSystem * equipContainer)
 		{
 			continue;
 		}
-		UpdateEquipSlot(m_EquipSys->GetItem(i),*m_EquipSys->GetArySlotPtr()[i]);
+		
 		UpdateSlot(i,m_EquipSys->GetItem(i));
 	}
 }
@@ -95,21 +91,27 @@ bool UDiaEquipmentPanel::CheckItemEquipable(int dropIndex, FItemInstance & drag)
 
 void UDiaEquipmentPanel::UpdateSlot(int index,  FItemInstance& itemInst)
 {
-	m_ArySlots[index]->SetSlot(m_EquipSys->GetItem(index));
-
-	//
-	
-	PRINTF("UpdateSlot EquipPanel");
-}
-void UDiaEquipmentPanel::UpdateEquipSlot(const FItemInstance& itemInst, const FEquipSlot& slot)
-{
-	if (slot.m_bIsOccupied && slot.m_Item.IsEmpty())
+	if(!itemInst.IsEmpty())
 	{
-		m_ArySlots[(int)slot.m_Slot]->UpdateItemVisual(itemInst);
-		m_ArySlots[(int)slot.m_Slot]->SetVisualColorTint(FLinearColor::Red);
+		PRINTF("UpdateSlot:%d-%s",index,*itemInst.m_ItemData->m_ShowingName.ToString());
 	}
 	else
 	{
-		m_ArySlots[(int)slot.m_Slot]->ClearSlot();
+		PRINTF("Not UpdateSlot:%d",index);
+	}
+	m_ArySlots[index]->SetSlot(m_EquipSys->GetItem(index));
+	m_ArySlots[index]->SetVisibility(ESlateVisibility::Visible);
+
+	return;
+	//
+	if (m_EquipSys->GetSlot(index)->m_bIsOccupied && m_EquipSys->GetSlot(index)->m_Item.IsEmpty())//양손검일때
+	{
+		m_ArySlots[index]->UpdateItemVisual(itemInst);
+		m_ArySlots[index]->SetVisualColorTint(FLinearColor::Red);
+		PRINTF("UDiaEquipmentPanel EquipPanel::Red?");	
+	}
+	else
+	{
+		m_ArySlots[index]->ClearSlot();
 	}
 }

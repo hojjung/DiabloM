@@ -273,6 +273,11 @@ public: //AttributeGetter
     {
         return m_bIsStun;
     }
+
+    FORCEINLINE USkeletalMeshComponent* GetSkMeshComp()
+    {
+        return m_SkBody;
+    }
 };
 
 

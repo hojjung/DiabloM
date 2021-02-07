@@ -8,6 +8,7 @@
 #include "Item/EquipmentSystem.h"
 #include "Item/DroppedItem.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
+#include "Managers/StartMap/PlayerCreateManager.h"
 
 
 ADiabloPlayerController*  ADiabloPlayerController::Get=nullptr;
@@ -25,8 +26,6 @@ ADiabloPlayerController::ADiabloPlayerController()
 	APlayerController::SetVirtualJoystickVisibility(true);
 
 	m_FormatMiss=FTextFormat::FromString("Miss-{0}%");
-
-
 }
 
 void ADiabloPlayerController::InitPlCtrlAndWidget()
@@ -37,7 +36,6 @@ void ADiabloPlayerController::InitPlCtrlAndWidget()
 	m_Inven->InitInven(INVEN_X,INVEN_Y);
 	m_EquipSystem = NewObject<UEquipmentSystem>();
 	m_EquipSystem->Init(GetPlayerPawn()->GetDiaAbilitySystem());
-	m_EquipSystem->GetEquipMeshChanged().AddUObject(this,&ADiabloPlayerController::PlayerMeshChange);
 	
 	m_AryStorage.Reset();
 	int i=0;
@@ -133,11 +131,6 @@ void ADiabloPlayerController::OnPlayerRevived(AUnitPawn* player)
 	APlayerController::SetVirtualJoystickVisibility(true);
 }
 
-void ADiabloPlayerController::PlayerMeshChange(AEquipmentActor* equipActor, FName socket)
-{
-	GetPlayerPawn()->EquipMesh(equipActor,socket);
-}
-
 void ADiabloPlayerController::PrintStat()
 {
 	Cast<APlayerDiabloCharacter>(GetPawn())->PrintStats();
@@ -148,10 +141,6 @@ void ADiabloPlayerController::PrintInven()
 	m_Inven->PrintInven();
 }
 
-void ADiabloPlayerController::PrintEquipment()
-{
-	m_EquipSystem->PrintEquipStats();
-}
 
 bool ADiabloPlayerController::AddItem(FItemInstance itemInst)
 {
