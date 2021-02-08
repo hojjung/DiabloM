@@ -64,7 +64,7 @@ void ADiabloGameMode::SpawnVisualPlayer()
 	
 	m_PlayerVisual = GetWorld()->SpawnActor<APlayerVisual>(m_ClassVisualActor,Faraway,Rot,Param);
 
-	UPlayerCreateManager::Get->SetCurrentDataWithPlayer();
+	UPlayerCreateManager::Get->SetCurrentDataFromSaveFile();
 
 	ADiabloPlayerController::Get->GetMainCanvas()->m_OnWidgetOpenClose.AddUObject(this,&ADiabloGameMode::SetVisibleVisualActor);
 

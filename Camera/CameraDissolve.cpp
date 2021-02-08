@@ -38,6 +38,8 @@ void UCameraDissolve::Init(USceneComponent* camWantFollow)
     m_TargetCam = camWantFollow;
     m_MatParamInstance = m_TargetCam->GetWorld()->GetParameterCollectionInstance(m_MatParamAsset);
     SetActive(true);
+
+    SetValueParameter();
 }
 
 void UCameraDissolve::StartDissolve()
@@ -60,7 +62,7 @@ void UCameraDissolve::TickComponent(float DeltaTime, ELevelTick TickType, FActor
     {
         return;
     }
-    m_MatParamInstance->SetVectorParameterValue("Position3", GetOwner()->GetActorLocation());
+    SetValueParameter();
     
     UpdateDesiredArmLocation(DeltaTime);
     ExecuteDissolve(DeltaTime);
@@ -69,11 +71,6 @@ void UCameraDissolve::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 void UCameraDissolve::ExecuteDissolve(float DeltaTime)
 {
-    // if (!m_MatParamInstance)
-    // {
-    //     return;
-    // }
-
     if (m_bWasBlocked)
     {
         SetPosParameter();
@@ -96,7 +93,7 @@ void UCameraDissolve::ExecuteDissolve(float DeltaTime)
             m_fDissolveHoleRadius = FMath::FInterpTo(m_fDissolveHoleRadius, 0.f, DeltaTime, 5);
         }
 
-        SetValueParameter();
+        
     }
 }
 
@@ -104,6 +101,35 @@ void UCameraDissolve::SetPosParameter()
 {
     
     m_MatParamInstance->SetVectorParameterValue("Position2", m_TargetPos);
+
+///////////////////////////////////
+    FLinearColor OutColor2;
+
+    if(m_MatParamInstance->GetVectorParameterValue("Position2",OutColor2))
+    {
+        PRINTF("CamPos2:%s",*OutColor2.ToString());    
+    }
+
+    FLinearColor OutColor1;
+
+    if(m_MatParamInstance->GetVectorParameterValue("Position1",OutColor1))
+    {
+        PRINTF("CamPos1:%s",*OutColor1.ToString());
+    }
+
+    float outAmount;
+    
+    if(m_MatParamInstance->GetScalarParameterValue("Amount", outAmount))
+    {
+        PRINTF("AMount:%f",outAmount);    
+    }
+
+    if(m_MatParamInstance->GetScalarParameterValue("Radius", outAmount))
+    {
+        PRINTF("Radius:%f",outAmount);    
+    }
+
+    
 }
 
 void UCameraDissolve::SetValueParameter()
@@ -149,6 +175,8 @@ void UCameraDissolve::UpdateDesiredArmLocation(float DeltaTime)
     m_TargetPos = m_CompOrigin;
 
     m_TargetPos -= DesiredRot.Vector() * TargetArmLength;
+
+    
 
     FCollisionQueryParams QueryParams(SCENE_QUERY_STAT(SpringArm), false, GetOwner());
     FHitResult Result;

@@ -65,7 +65,7 @@ void UCharSelect::FocusCharacter(int slotIndex)
     USaveCharacterStatus* CharStat = USaveLoadManager::Get->GetLoadedChars()[m_FocusedIndex];
     USaveEquipment* CharEquip = USaveLoadManager::Get->GetLoadedEquip()[m_FocusedIndex];
 
-    PlMa->SetCurrentDataFromSaveFile(CharStat,CharEquip);
+    PlMa->SetCurrentDataFromSaveFile();
 
     m_FocusedIndex=slotIndex;
     

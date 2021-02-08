@@ -28,10 +28,12 @@ enum class ESlotsEquipAry: uint8
     Length
 };
 
+USTRUCT()
 struct FEquipSlot
 {
+    GENERATED_BODY()
 public:
-    FEquipSlot(): m_bIsOccupied(false), m_Slot(), m_EquippedType(nullptr), m_EquipActor(nullptr)
+    FEquipSlot(): m_bIsOccupied(false), m_Slot(), m_EquippedType(nullptr), m_SpawnedEquipActor(nullptr)
     {
     }
 
@@ -49,13 +51,14 @@ public:
     FActiveGameplayEffectHandle m_OptionHandle;
 
     TArray<FGameplayAbilitySpecHandle> m_AryAbilitySpec;
-
-    AEquipmentActor* m_EquipActor;
+    UPROPERTY()
+    AEquipmentActor* m_SpawnedEquipActor;
     
     void ClearSlot()
     {
         m_Item.ClearData();
         m_EquippedType=nullptr;
+        m_SpawnedEquipActor=nullptr;
     }
 };
 

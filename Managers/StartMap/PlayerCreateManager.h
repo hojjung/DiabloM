@@ -56,7 +56,7 @@ public:
         return m_CurrentCharData;
     }
 
-    void SetCurrentDataFromSaveFile(const USaveCharacterStatus* char_stat,const USaveEquipment* save_equipment);
+    void SetCurrentDataFromSaveFile();
     
 public:
     void DecreaseItem();

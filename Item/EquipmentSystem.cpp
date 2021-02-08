@@ -149,6 +149,7 @@ void UEquipmentSystem::RemoveItemByIndex(int index)
 
 	m_ArySlots[index]->m_EquippedType = nullptr;
 	m_ArySlots[index]->m_Item.ClearData();
+	PRINTF("UEquipmentSystem::RemoveItemByIndex(int index):%d",index);
 	//
 	if (m_ArySlots[index]->m_OptionHandle.IsValid())
 	{
@@ -223,25 +224,18 @@ void UEquipmentSystem::OnEquipItemChanged(int index)
 
 	FName SocketName = GetItem(index).m_ItemData ? GetItem(index).m_ItemData->m_EquipSocketName : NAME_None;
 
-	if (GetItem(index).IsEmpty())
+	if (GetSlot(index)->m_SpawnedEquipActor)
 	{
-		PRINTF("UEquipmentSystem11");
-		if (GetSlot(index)->m_EquipActor)
-		{
-			GetSlot(index)->m_EquipActor->Destroy();
+		GetSlot(index)->m_SpawnedEquipActor->Destroy();
 
-			GetSlot(index)->m_EquipActor = nullptr;
-		}
+		GetSlot(index)->m_SpawnedEquipActor = nullptr;
 	}
-	else if (!GetSlot(index)->m_EquipActor && EquipClass)
+	
+	if(EquipClass)
 	{
-		PRINTF("UEquipmentSystem33");
-		
-		GetSlot(index)->m_EquipActor = AEquipmentActor::SpawnToMesh( ADiabloPlayerController::Get->GetPlayerPawn()->GetSkMeshComp(),EquipClass,SocketName);
+		GetSlot(index)->m_SpawnedEquipActor = AEquipmentActor::SpawnToMesh( ADiabloPlayerController::Get->GetPlayerPawn()->GetSkMeshComp(),EquipClass,SocketName);
 	}
-	
-	PRINTF("UEquipmentSystem44");
-	
+
 	UPlayerCreateManager::Get->SetCurrentDataWithPlayer();
 	
 	m_ItemChanged.Broadcast(index, GetItem(index));
