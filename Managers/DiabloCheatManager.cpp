@@ -123,10 +123,10 @@ void UDiabloCheatManager::SaveCharStat()
 	TWeakObjectPtr<APlayerDiabloCharacter> DiaPl = DiaPC->GetPlayerPawn();
 	FText Name = DiaPl->m_TextUnitName;
 	int Lev= DiaPl->GetCharacterLevel();
-	int Hair= DiaPl->m_HairIndex;
-	int Face= DiaPl->m_FaceIndex;
+	int skin= DiaPl->m_SkinIndex;
 	
-	USaveLoadManager::Get->SaveCharacterStat(UPlayerCreateManager::Get->m_CurrentSelectSlot,Lev,Name,Face,Hair,USaveLoadManager::Get->GetCurrentPlayerClassName(),DiaPl->m_fCurrentExp);
+	USaveLoadManager::Get->SaveCharacterStat(UPlayerCreateManager::Get->m_CurrentSelectSlot,Lev,Name,skin,
+		USaveLoadManager::Get->GetCurrentPlayerClassName(),DiaPl->m_fCurrentExp,DiaPl->m_fCurrentGold);
 }
 
 void UDiabloCheatManager::LoadCharStat()

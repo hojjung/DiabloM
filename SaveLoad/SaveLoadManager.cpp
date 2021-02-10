@@ -253,7 +253,7 @@ void USaveLoadManager::LoadEquipment(int slotIndex)
     PRINTF("LoadEquipment");
 }
 
-void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex,FName classID,float exp,float gold)
+void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameText, int skinIndex,FName classID,float exp,float gold)
 {
     USaveCharacterStatus* SaveCharStat = Cast<USaveCharacterStatus>(
         UGameplayStatics::CreateSaveGameObject(USaveCharacterStatus::StaticClass()));
@@ -265,6 +265,7 @@ void USaveLoadManager::SaveCharacterStat(int slotIndex, int level, FText nameTex
     SaveCharStat->m_fExp=exp;
     SaveCharStat->m_ClassName=classID;
     SaveCharStat->m_fGold = gold;
+    SaveCharStat->m_IndexSkin = skinIndex;
     //m_ClassName
 
     UGameplayStatics::SaveGameToSlot(SaveCharStat, m_CharSlotName, slotIndex);
@@ -437,7 +438,7 @@ int USaveLoadManager::CreateNewCharacter(UPlayerCreateManager* plManager)
     TArray<FItemInstance> AryEquip;
     SetEquipSaveDataFromCreation(plManager->GetCurrentCharData(),AryEquip);
     SaveEquipment(PlayerIndex,AryEquip);
-    //SaveCharacterStat(PlayerIndex,1,plManager->m_CurrentTextName,plManager->m_IndexFace,plManager->m_IndexHair,plManager->GetCurrentCharData().m_ClassID);
+    SaveCharacterStat(PlayerIndex,1,plManager->m_CurrentTextName,plManager->m_IndexItem,plManager->GetCurrentCharData().m_ClassID,0.f,1000.f);
     
     TArray<FItemInstance> AryInven;
     AryInven.Init(FItemInstance(),MaxInven);
@@ -463,9 +464,9 @@ int USaveLoadManager::CreateNewCharacter(UPlayerCreateManager* plManager)
     // TArray<FSkillDataSpec> Skill4;
     // TArray<FSkillDataSpec> Skill5;
     // TArray<FSkillDataSpec> Skill6;
-    // auto* PlayerEntityData = UCharacterDataTable::GetPlayerEntityPtr(m_AryLoadedCharacters[PlayerIndex]->m_ClassName);
-    // SetSpecDataForSkillInst(PlayerIndex,PlayerEntityData->m_ClassSkill,Skill1,Skill2,Skill3,Skill4,Skill5,Skill6);
-    // SaveSkill(PlayerIndex,Skill1,Skill2,Skill3,Skill4,Skill5,Skill6);
+    //auto* PlayerEntityData = UCharacterDataTable::GetPlayerEntityPtr(m_AryLoadedCharacters[PlayerIndex]->m_ClassName);
+    //SetSpecDataForSkillInst(PlayerIndex,PlayerEntityData->m_ClassSkill,Skill1,Skill2,Skill3,Skill4,Skill5,Skill6);
+    //SaveSkill(PlayerIndex,Skill1,Skill2,Skill3,Skill4,Skill5,Skill6);
     //
     m_OnDataCreated.ExecuteIfBound(m_AryLoadedCharacters[PlayerIndex]);
 

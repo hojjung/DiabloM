@@ -126,6 +126,8 @@ void UDefaultMenu::SetPopupDelegateToShopPanel(const TArray<UDiaShopGridSlot*>* 
 void UDefaultMenu::OpenMainMenu()
 {
     this->SetVisibility((ESlateVisibility::SelfHitTestInvisible));
+
+    UKismetSystemLibrary::HideAdBanner();
 }
 
 void UDefaultMenu::CloseMainMenu()
@@ -148,6 +150,8 @@ void UDefaultMenu::CloseMainMenu()
     {
         CloseShopMenu();
     }
+
+    UKismetSystemLibrary::ShowAdBanner(0,true);
 }
 
 void UDefaultMenu::CompareItem(UItemPopupInfo* wantEquip, UItemPopupInfo* equippedOld)

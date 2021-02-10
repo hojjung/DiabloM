@@ -98,6 +98,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
     void PlayHitFlash(float notUseDmg);
+
+	const FMonsterTable& GetMonsterDataTable() const;
 	
 protected:
 	void UpdateBound();

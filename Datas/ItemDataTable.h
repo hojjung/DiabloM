@@ -133,6 +133,10 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_ShowingName;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UParticleSystem* m_UseEffect;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    USoundBase* m_UseSound;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     bool m_bEquipable;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     bool m_bStackable;

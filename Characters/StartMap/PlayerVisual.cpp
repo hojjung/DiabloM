@@ -47,14 +47,14 @@ APlayerVisual::APlayerVisual()
 	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> FoundTexture(
 		TEXT("TextureRenderTarget2D'/Game/03_VisualEffect/T_PlayerVisual.T_PlayerVisual'"));
 	m_CaptureTexture = FoundTexture.Object;
-	m_Capture->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_RenderScenePrimitives;
+	m_Capture->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
 	m_Capture->CaptureSource = ESceneCaptureSource::SCS_SceneColorHDR; //SCS_SceneColorHDR
 	m_Capture->MaxViewDistanceOverride = 1000.f;
 	m_Capture->SetTickableWhenPaused(true);
 	m_Capture->ProjectionType = ECameraProjectionMode::Orthographic;
 	m_Capture->OrthoWidth = 150.f;
-
 	m_Capture->TextureTarget = m_CaptureTexture;
+
 }
 
 void APlayerVisual::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp, FName keyName, USceneComponent* root)
@@ -156,6 +156,7 @@ void APlayerVisual::ShowMeshWithTick()
 
 	m_MeshBody->SetComponentTickEnabled(true);
 
+	m_Capture->SetComponentTickEnabled(true);
 
 	PRINTF("ShowMeshWithTick");
 }
@@ -165,6 +166,8 @@ void APlayerVisual::HideMeshWithTick()
 	m_MeshBody->SetVisibility(false);
 
 	m_MeshBody->SetComponentTickEnabled(false);
+
+	m_Capture->SetComponentTickEnabled(false);
 
 	PRINTF("HideMeshWithTick");
 }

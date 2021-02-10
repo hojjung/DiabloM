@@ -88,7 +88,7 @@ public:
     void SaveInventory(int slotIndex, const TArray<FItemInstance>& aryItem);
     void SaveEquipment(int slotIndex,const TArray<FItemInstance>& aryItem);
     void SetEquipSaveDataFromCreation(const FCurrentCharData& charData,TArray<FItemInstance>& newEquipAry);
-    void SaveCharacterStat(int slotIndex, int level, FText nameText, int faceIndex, int hairIndex,FName classID,float exp=0.f,float gold=0.f);
+    void SaveCharacterStat(int slotIndex, int level, FText nameText, int skinIndex,FName classID,float exp,float gold);
     void SaveStorage(int slotIndex,const TArray<bool>& aryOpen,const TArray<UInventory*>& aryItems);
     void SaveShareStorage(const TArray<bool>& aryOpen,const TArray<UInventory*>& aryItems);
     void SaveSkill(int slotIndex,int remainPoints,int spentPoints,TArray<FSkillDataSpec>& skill1, TArray<FSkillDataSpec>& skill2,

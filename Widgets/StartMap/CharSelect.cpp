@@ -30,6 +30,7 @@ void UCharSelect::Init(USaveLoadManager* SaveLoadManagerOld)
 
 void UCharSelect::CreateCharInfo(const USaveCharacterStatus* charStats)
 {
+    check(charStats);
     UCharInfo* CharInfoCreated = CreateWidget<UCharInfo>(this, m_ClassCharInfo);
 
     CharInfoCreated->Init(charStats);

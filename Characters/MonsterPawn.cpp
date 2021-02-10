@@ -385,3 +385,8 @@ void AMonsterPawn::PlayHitFlash(float notUseDmg)
 
 	m_SkBody->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
 }
+
+const FMonsterTable& AMonsterPawn::GetMonsterDataTable() const
+{
+    return *m_MonsterUnitHandle.GetRow<FMonsterTable>("");
+}

@@ -51,6 +51,7 @@ public class DiabloM : ModuleRules
             PrivateDependencyModuleNames.Add("OnlineSubsystemGooglePlay");
             string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
             AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "Android_UPL.xml"));
+            PrivateDependencyModuleNames.Add("AndroidAdvertising");
         }
         
     }

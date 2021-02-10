@@ -100,13 +100,11 @@ void UDiabloGameInstance::SaveAllPlayerInfo()
 
     USaveLoadManager::Get->SaveEquipment(UPlayerCreateManager::Get->m_CurrentSelectSlot, AryEquip);
 
-
     FText Name = DiaPl->m_TextUnitName;
     int Lev = DiaPl->GetCharacterLevel();
-    int Hair = DiaPl->m_HairIndex;
-    int Face = DiaPl->m_FaceIndex;
+    int SkinIndex = DiaPl->m_SkinIndex;
 
-    USaveLoadManager::Get->SaveCharacterStat(UPlayerCreateManager::Get->m_CurrentSelectSlot, Lev, Name, Face, Hair,
+    USaveLoadManager::Get->SaveCharacterStat(UPlayerCreateManager::Get->m_CurrentSelectSlot, Lev, Name, SkinIndex,
                                              USaveLoadManager::Get->GetCurrentPlayerClassName(), DiaPl->m_fCurrentExp,DiaPl->m_fCurrentGold);
 
     

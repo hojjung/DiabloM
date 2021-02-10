@@ -51,9 +51,9 @@ struct FMonsterTypeRow : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FMonsterTypeRow()
+	FMonsterTypeRow(): m_HittenSound(nullptr), m_DeathSound(nullptr)
 	{
-		m_ShowingText=FText::FromString("LikeUndead,Animal");
+		m_ShowingText = FText::FromString("LikeUndead,Animal");
 	}
 
 public:
@@ -67,6 +67,10 @@ public:
 	FText m_MonsterDealing;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> m_BonusGE;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USoundBase* m_HittenSound;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USoundBase* m_DeathSound;
 	//MoreThings
 };
 

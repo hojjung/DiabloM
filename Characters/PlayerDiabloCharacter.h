@@ -81,8 +81,6 @@ protected:
 	TArray<TSubclassOf<UDiabloAbility>> m_GrantedMasteryAbilities;
 	UPROPERTY()
 	TArray<TSubclassOf<UDiabloAbility>> m_GrantedItemAbilities;
-	UPROPERTY()
-	UMaterialInterface* m_FogMat;
 	
 	TWeakInterfacePtr<IInteractable> m_FocusedInteractable;
 	
@@ -112,9 +110,7 @@ protected:
 
 	float m_fCurrentGold;
 
-	int m_FaceIndex;
-	
-	int m_HairIndex;
+	int m_SkinIndex;
 	
 	FOnFloatChange m_OnLevelChanged;
 	
@@ -154,9 +150,6 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-
-	bool CreateItemActor(const FItemInstance* itemInst,AWeapon** wantCachePointer,UStaticMeshComponent** attachRoot);
-
 	void BindASCInput();
 
 	void SetLoadedData(const USaveCharacterStatus* loadedSaveData);
@@ -164,6 +157,8 @@ protected:
 	void SetBaseAttackData(float viewAngle,float viewRadius,float focusRange);
 public:
 	void Init();
+
+	void LateInit();
 	
 	virtual void FocusTarget(AUnitPawn* target) override;
 	
@@ -182,8 +177,6 @@ public:
 	
 	void HideOutlineOnTarget();
 
-	void EquipMesh(TSubclassOf<AEquipmentActor> equipActor, FName socket);
-	
 	virtual bool SetCharacterLevel(int NewLevel)override;
 	
 	UPlayerBaseAttack* GetBaseAttackInst();

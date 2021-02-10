@@ -54,10 +54,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 
 	m_Movement->m_RotateSpeed = FRotator(0.f,650.f,0.f);
 	
-	
 //Material'/Game/03_VisualEffect/M_Fog.M_Fog'
-	static ConstructorHelpers::FObjectFinder<UMaterial> FoundMat(TEXT("Material'/Game/03_VisualEffect/M_Fog.M_Fog'"));
-	m_FogMat = FoundMat.Object;
 
 	static ConstructorHelpers::FClassFinder<UDiabloAbility> Found1(TEXT("Blueprint'/Game/Blueprints/Abilities/Player/PlayerRegen/GA_PlayerHpRegen.GA_PlayerHpRegen_C'"));
 	static ConstructorHelpers::FClassFinder<UDiabloAbility> Found2(TEXT("Blueprint'/Game/Blueprints/Abilities/Player/PlayerRegen/GA_PlayerManaRegen.GA_PlayerManaRegen_C'"));
@@ -91,17 +88,16 @@ void APlayerDiabloCharacter::Init()
 	m_PlayerSense->OnCantSeePawn.BindUObject(this, &APlayerDiabloCharacter::OnCantSeeTarget);
 	m_PlayerSense->OnSeePawnBlocked.BindUObject(this, &APlayerDiabloCharacter::OnCanSeeTargetBlock);
 	//
-	m_DissolveCam->Init(m_TopCamera);
-	FWeightedBlendable Blend;
-	Blend.Weight = 1.f;
-	Blend.Object = m_FogMat;
-	//m_TopCamera->PostProcessSettings.WeightedBlendables.Array.Add(Blend);
-	m_TopCamera->SetPostProcessBlendWeight(1.f);
-	//
 	m_PlayerAutoPlay=NewObject<UPlayerAutoPlayFSM>(this,UPlayerAutoPlayFSM::StaticClass());
 	m_PlayerAutoPlay->Init(this);
 
 	m_PlayerCon->SetViewTarget(this);
+
+}
+
+void APlayerDiabloCharacter::LateInit()
+{
+	m_DissolveCam->Init(m_TopCamera);
 }
 
 

@@ -3,6 +3,8 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
 #include "CameraDissolve.generated.h"
 
 
@@ -49,10 +51,8 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 	float TargetArmLength;
-	UPROPERTY()
+	UPROPERTY(Transient,VisibleAnywhere)
 	UMaterialParameterCollection* m_MatParamAsset;
-	UPROPERTY()
-	UMaterialParameterCollectionInstance* m_MatParamInstance;
 	UPROPERTY()
 	USceneComponent* m_TargetCam;
 
@@ -70,7 +70,6 @@ protected:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
-	void SetPosParameter();
 	void SetValueParameter();
 	//
 

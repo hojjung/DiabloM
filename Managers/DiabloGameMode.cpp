@@ -117,6 +117,10 @@ void ADiabloGameMode::StartPlay()
 	GetMoviePlayer()->StopMovie();
 
 	SpawnVisualPlayer();
+
+	ADiabloPlayerController::Get->GetPlayerPawn()->LateInit();
+
+	UKismetSystemLibrary::ShowAdBanner(0,true);
 }
 
 void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -203,6 +207,7 @@ void ADiabloGameMode::ClearQuadTree()
 	{
 		m_QuadTree.Reset();
 	}
+
 }
 
 void ADiabloGameMode::HideAllTreeNodes()
