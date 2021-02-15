@@ -14,7 +14,7 @@ UPlayerDiabloAbilitySystemComp::UPlayerDiabloAbilitySystemComp()
     m_AryDefensvieSkill.Reset();
     m_ArySpecialSkill.Reset();
     m_AryUltimateSkill.Reset();
-    m_nSkillPoints = 10; //Test
+    m_nSkillPoints = 20; //Test
     m_nTotalSkillPointSpents = 0;
 
     UPlayerDiabloAbilitySystemComp::Get=this;

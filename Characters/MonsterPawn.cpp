@@ -12,7 +12,6 @@
 AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit):
 Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
 {
-    m_fDropRadius = 400.f;
     m_bUseFSM = false;
     m_Movement->m_bUseRVO = true;
     SetActorTickEnabled(true);
@@ -21,7 +20,6 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     m_SkBody->SetRelativeLocation(FVector(0, 0, -90.f));
     m_SkBody->SetRelativeRotation(FRotator(0, -90.f, 0));
     m_bIsPlaced = false;
-    m_DropDataRow = nullptr;
     m_CurrentNode=nullptr;
     m_bIsVisible=true;
     //
@@ -105,14 +103,15 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level,UDungeonMan
     
     m_TookHitMontage = UnitData->m_TookHitMontage;
 
-    m_DropDataRow = UnitData->m_RewardDropTableHandle.GetRow<FMonsterItemDropRow>("");
-    
     m_TextUnitName = UnitData->m_ShowingName;
     
     m_SkBody->SetSkeletalMesh(UnitData->m_Mesh);
 
     m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+    
     m_SkBody->SetAnimInstanceClass(UnitData->m_AnimBP);
+    
+    //m_PhyAsset
     
     m_GEUnitStat = UnitData->m_DefaultStatTable; //몬스터 랜덤 데이터가 마치 아이템 옵션처럼 몬스터에게 붙어야한다.
 
@@ -176,6 +175,10 @@ void AMonsterPawn::GiveExpToPlayer()
 
 void AMonsterPawn::Die()
 {
+    FMonsterTypeRow* MobType = GetMonsterDataTable().m_TypeHandle.GetRow<FMonsterTypeRow>("");
+
+    UGameplayStatics::PlaySoundAtLocation(GetWorld(), MobType->m_DeathSound, GetActorLocation(), 1, 1);
+    
     if(GetCurrentNode())
     {
         GetCurrentNode()->RemoveElement(this);
@@ -214,17 +217,15 @@ void AMonsterPawn::Die()
     
     RequestDropRewards();
 
+    FTimerHandle TimerHandle_OnTimer;
+
     if (m_DeathMontage)
     {
         float AnimLength = PlayAnim(m_DeathMontage); //- 0.2f;
 
         if (GEngine->GetNetMode(GetWorld()) < NM_Client)
         {
-            FTimerHandle TimerHandle_OnTimer;
-
-            GetWorldTimerManager().SetTimer(TimerHandle_OnTimer, this, &AMonsterPawn::OnDeathAnimEnd,
-                                            AnimLength,
-                                            false);
+            GetWorldTimerManager().SetTimer(TimerHandle_OnTimer, this, &AMonsterPawn::OnDeathAnimEnd,AnimLength,false);
         }
     }
     else
@@ -235,12 +236,7 @@ void AMonsterPawn::Die()
 
 void AMonsterPawn::RequestDropRewards()
 {
-    if (!m_DropDataRow)
-    {
-        return;
-    }
-
-    UDiabloGameInstance::Get->GetRewardManager()->RequestMonsterDropItem(this, *m_DropDataRow, GetCharacterLevel());
+    UDiabloGameInstance::Get->GetRewardManager()->RequestMonsterDropItem(this, GetCharacterLevel());
 }
 
 void AMonsterPawn::OnDeathAnimEnd()
@@ -384,6 +380,19 @@ void AMonsterPawn::PlayHitFlash(float notUseDmg)
 	float TimeSec = UGameplayStatics::GetTimeSeconds(GetWorld());
 
 	m_SkBody->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
+
+    FMonsterTypeRow* MobType = GetMonsterDataTable().m_TypeHandle.GetRow<FMonsterTypeRow>("");
+
+    if (MobType->m_HittenSound)
+    {
+        if (MobType->m_HittenSound->IsLooping())
+        {
+            PRINTF("SoundISLooping");
+            return;
+        }
+
+        UGameplayStatics::PlaySoundAtLocation(GetWorld(), MobType->m_HittenSound, GetActorLocation(), 1, 1);
+    }
 }
 
 const FMonsterTable& AMonsterPawn::GetMonsterDataTable() const

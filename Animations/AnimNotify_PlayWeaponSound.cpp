@@ -19,9 +19,15 @@ void UAnimNotify_PlayWeaponSound::Notify(USkeletalMeshComponent* MeshComp, UAnim
 		return;
 	}
 
-	const FItemInstance& ItemInst = ADiabloPlayerController::Get->GetEquipment()->GetItem(SoundSourceSlot);
+	const FItemInstance* ItemInst = &ADiabloPlayerController::Get->GetEquipment()->GetItem(SoundSourceSlot);
 
-	const FItemType* ItemTypeCurrent = ItemInst.m_ItemData->m_ItemType.GetRow<FItemType>("");
+	if(!ItemInst)
+	{
+		return;
+	}
+
+
+	const FItemType* ItemTypeCurrent = ItemInst->m_ItemData->m_ItemType.GetRow<FItemType>("");
 
 	if(!ItemTypeCurrent)
 	{

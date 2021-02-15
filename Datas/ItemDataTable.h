@@ -204,6 +204,8 @@ public:
     FName m_EquipSocketName;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float m_nDefaultSellValue;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    int m_nDropRateCount;
 };
 
 

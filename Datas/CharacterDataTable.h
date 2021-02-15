@@ -4,7 +4,6 @@
 
 #include "DiabloM.h"
 #include "ItemDataTable.h"
-#include "MonsterItemDropTable.h"
 #include "AbilitySystem/AbilityTypes.h"
 #include "SkillDataTable.h"
 #include "TechnologyTree.h"
@@ -242,9 +241,8 @@ struct FMonsterTable : public FEntityTable
 	GENERATED_BODY()
 
 public:
-	FMonsterTable(): m_Mesh(nullptr),m_IdleAnim(nullptr),m_MoveAnim(nullptr)
+	FMonsterTable(): m_Mesh(nullptr), m_IdleAnim(nullptr), m_MoveAnim(nullptr)
 	{
-		
 	}
 
 public:
@@ -253,7 +251,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMonsterTypeHandle m_TypeHandle;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FMonsterItemDropRowHandle m_RewardDropTableHandle;
+	TArray<FItemDataHandle> m_AryRewardDropTableHandle;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UDiabloAbility> m_BaseAttack;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

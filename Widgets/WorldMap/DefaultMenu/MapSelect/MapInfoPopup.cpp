@@ -115,11 +115,9 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 	
 	for (const FMonsterSelect& MobSelect : Horde.GetRow<FMonsterHordeRow>("")->m_AryMonsterEntity)
 	{
-		for (const FItemDropData& DropItem : MobSelect.m_MonsterEntity.GetRow<FMonsterTable>("")->
-		                                               m_RewardDropTableHandle.GetRow<FMonsterItemDropRow>("")->
-		                                               m_AryDropItems)
+		for (const auto& DropItem : MobSelect.m_MonsterEntity.GetRow<FMonsterTable>("")->m_AryRewardDropTableHandle)
 		{
-			const FItemData* Data = DropItem.m_DropHandle.GetRow<FItemData>("");
+			const FItemData* Data = DropItem.GetRow<FItemData>("");
 
 			m_AryItemData.Add(Data, &bIsAlreadyAdd);
 

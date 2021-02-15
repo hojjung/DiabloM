@@ -10,6 +10,7 @@
 #include "Item/Inventory.h"
 #include "Item/ItemDrop.h"
 #include "Item/ItemPopupInfo.h"
+#include "Managers/PlayfabManager.h"
 #include "Shop/DiaShopGridSlot.h"
 #include "Skills/DiaSkillPopup.h"
 #include "Village/ShopKeeper.h"
@@ -127,7 +128,7 @@ void UDefaultMenu::OpenMainMenu()
 {
     this->SetVisibility((ESlateVisibility::SelfHitTestInvisible));
 
-    UKismetSystemLibrary::HideAdBanner();
+    UPlayfabManager::Get->ShowBannerAd(true);
 }
 
 void UDefaultMenu::CloseMainMenu()
@@ -151,7 +152,7 @@ void UDefaultMenu::CloseMainMenu()
         CloseShopMenu();
     }
 
-    UKismetSystemLibrary::ShowAdBanner(0,true);
+    UPlayfabManager::Get->ShowBannerAd(false);
 }
 
 void UDefaultMenu::CompareItem(UItemPopupInfo* wantEquip, UItemPopupInfo* equippedOld)
@@ -339,6 +340,8 @@ void UDefaultMenu::OpenSkillPanel()
     m_StatPanel->SetVisibility(ESlateVisibility::Collapsed);
     m_ItemDropPanel->SetVisibility(ESlateVisibility::Hidden);
     m_bIsSkillOpened=true;
+
+    UPlayfabManager::Get->ShowBannerAd(false);
 }
 
 void UDefaultMenu::CloseSkillPanel()
@@ -352,6 +355,8 @@ void UDefaultMenu::CloseSkillPanel()
     m_ItemDropPanel->SetVisibility(ESlateVisibility::Visible);
     m_bIsSkillOpened=false;
     m_SkillPopup->HidePopup();
+
+    UPlayfabManager::Get->ShowBannerAd(true);
 }
 
 void UDefaultMenu::OpenSkillPopup(const FGeometry& geo,FSkillDataSpec& skillSpec)

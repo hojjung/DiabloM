@@ -115,6 +115,11 @@ public:
 	{
 		return m_fRadius;
 	}
+
+	FORCEINLINE float GetRange()
+	{
+		return m_fAttackRange;
+	}
 };
 
 

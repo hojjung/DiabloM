@@ -77,7 +77,7 @@ protected:
 	UPROPERTY()
 	bool m_bIsDragUse;
 	UPROPERTY()
-	float m_fMaximumRadius = 750.f;
+	float m_fWorldActorRange = 750.f;
 	UPROPERTY()
 	bool m_bIsSuccessDragged;//너무 짧게 드래그 되는것 방지용
 
@@ -107,5 +107,5 @@ public:
 
 	void ClearIcon();
 
-	void SetRadius(float radius);
+	void SetRadius(float radius,float range);
 };

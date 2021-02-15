@@ -16,7 +16,6 @@
 
 USaveLoadManager* USaveLoadManager::Get = nullptr;
 
-
 USaveLoadManager::USaveLoadManager():
     m_InvenSlotName("Inventory"),
     m_EquipSlotName("Equipment"),

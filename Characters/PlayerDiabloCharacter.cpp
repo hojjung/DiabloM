@@ -34,6 +34,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_TopCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera00");
 	m_TopCamera->SetupAttachment(m_DissolveCam);
 	m_TopCamera->FieldOfView = 60.f;
+	//m_TopCamera->SetProjectionMode(ECameraProjectionMode::Orthographic);
 
 	m_fInteractRange = 300.f;
 	//
@@ -335,16 +336,26 @@ void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)
 		{
 			return;
 		}
+		
+		HideOutlineOnTarget();
 	}
 	
 	m_FocusOutlinePawn = Unit;
+	m_FocusOutlinePawn->GetSkMeshComp()->SetCustomDepthStencilValue(2);
+	m_FocusOutlinePawn->GetSkMeshComp()->SetRenderCustomDepth(true);
 
 	PRINTF("ShowOutlineOnTarget");
 }
 
 void APlayerDiabloCharacter::HideOutlineOnTarget()
 {
-	m_FocusOutlinePawn = nullptr;
+	if(!m_FocusOutlinePawn.Get())
+	{
+		return;	
+	}
+	
+	m_FocusOutlinePawn->GetSkMeshComp()->SetCustomDepthStencilValue(0);
+	m_FocusOutlinePawn->GetSkMeshComp()->SetRenderCustomDepth(false);
 
 	PRINTF("HideOutlineOnTarget");
 }
@@ -355,6 +366,7 @@ void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 
 	if (m_FocusedEnemy.Get()&&!target)
 	{
+		
 		m_FocusedEnemy = nullptr;
 		m_OnFocusTarget.Broadcast(nullptr);
 		HideOutlineOnTarget();
@@ -383,6 +395,7 @@ void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 	m_FocusedEnemy = Cast<AUnitPawn>(target);
 
 	m_FocusedTargetDie = m_FocusedEnemy->GetOnDied().AddUObject(this, &APlayerDiabloCharacter::ClearFocusedTarget);
+
 }
 
 void APlayerDiabloCharacter::OnSeeTarget(APawn* target)
@@ -525,9 +538,10 @@ void APlayerDiabloCharacter::OnDeathAnimEnd()
 
 void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target) //wrapper
 {
+	HideOutlineOnTarget();
 	m_FocusedEnemy = nullptr;
 	m_OnFocusTarget.Broadcast(nullptr);
-	HideOutlineOnTarget();
+	
 	m_FocusedTargetDie.Reset();
 }
 

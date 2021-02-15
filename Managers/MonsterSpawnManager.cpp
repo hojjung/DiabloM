@@ -113,7 +113,7 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 
     AMonsterPawn* Mob = m_CurrentWorld->SpawnActor<AMonsterPawn>(UCharacterDataTable::ClassMonsterPawn, loc,Rot, Param);
 
-    UGridFlowMiniMap::Get->AddTrackActor(m_IdEnemy,Mob);
+    //UGridFlowMiniMap::Get->AddTrackActor(m_IdEnemy,Mob);
 
     check(Mob);
 

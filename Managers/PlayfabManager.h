@@ -14,6 +14,10 @@ class DIABLOM_API UPlayfabManager : public UObject
 {
 	GENERATED_BODY()
 public:
+	static UPlayfabManager* Get;
+
+	~UPlayfabManager();
+	
 	bool m_bIsLogined = false;
 	
 	void Init();
@@ -23,6 +27,8 @@ public:
 	void OnError(const PlayFab::FPlayFabCppError& ErrorResult) const;
 
 	void HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqueId, const int ControllerIndex, const FOnlineError& error);
+
+	void ShowBannerAd(bool able);
 
 private:
 	void TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqueId);

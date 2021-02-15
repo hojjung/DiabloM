@@ -21,8 +21,10 @@ class DIABLOM_API URewardManager : public UObject
 {
 	GENERATED_BODY()
 	//아이템 액터 풀링 필요함 렉걸림
+public:
+	URewardManager();
 
-protected:	
+protected:
 	TQueue<ADroppedItem*> m_PoolItem;
 	
 	TQueue<ADroppedGold*> m_PoolGold;
@@ -43,10 +45,14 @@ protected:
 	int m_nGoldIndex;
 	UPROPERTY()
 	int m_nHpIndex;
+	//
+	UPROPERTY()
+	TArray<int> m_AryGoldCount;
+	
 public:
 	void CreateActorPool();
 	
-	void RequestMonsterDropItem(AMonsterPawn* dropActor,const FMonsterItemDropRow& dropData, int level);
+	void RequestMonsterDropItem(AMonsterPawn* dropActor, int level);
 
 	ADroppedItem* DropItemActor(APawn* dropCenterActor,float dropRadius,FItemInstance& myItem);
 

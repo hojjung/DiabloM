@@ -102,7 +102,11 @@ void UDiaStorageGridPanel::Init(TArray<UInventory*>* itemContainer)
     }
 
 
-
+    m_BtnPanel1->SetIsEnabled(ADiabloPlayerController::Get->GetStorageOpenAry()[0]);
+    m_BtnPanel2->SetIsEnabled(ADiabloPlayerController::Get->GetStorageOpenAry()[1]);
+    m_BtnPanel3->SetIsEnabled(ADiabloPlayerController::Get->GetStorageOpenAry()[2]);
+    m_BtnPanel4->SetIsEnabled(ADiabloPlayerController::Get->GetStorageOpenAry()[3]);
+    m_BtnPanel5->SetIsEnabled(ADiabloPlayerController::Get->GetStorageOpenAry()[4]);
 
 
     

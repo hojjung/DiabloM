@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "Characters/UnitPawn.h"
+#include "Objs/Interfaces/TickHideable.h"
 #include "Widgets/WorldMap/WorldWidget/FloatingStatusBarWidgetCompo.h"
 
 
@@ -40,9 +41,6 @@ protected:
 	UMonsterSensing* m_MonsterSense;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool m_bIsPlaced;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float m_fDropRadius;
-	FMonsterItemDropRow* m_DropDataRow;
 
 	QuadtreeNode* m_CurrentNode;
 

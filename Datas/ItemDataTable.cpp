@@ -124,6 +124,8 @@ FItemData::FItemData(): m_ItemIcon(nullptr)
     
     m_ItemID = "NeedName";
     m_ItemType.DataTable = UItemDataTable::GetItemTypeTable;
+
+    m_nDropRateCount = 10;
 }
 
 FAnimStance::FAnimStance()

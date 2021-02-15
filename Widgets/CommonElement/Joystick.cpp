@@ -87,7 +87,6 @@ void UJoystick::SetIndicatorLocation(FVector NewActorLocation)
 
 void UJoystick::UpdateTouchInput(FVector2D input)
 {
-	PRINTF("Unput:%s",*input.ToString());
 	m_BGHalfSize = GetCachedGeometry().GetDrawSize() / 2.f;
 	
 	m_BGHalfSize /=GetCachedGeometry().Scale;
@@ -137,7 +136,7 @@ void UJoystick::UpdateTouchInput(FVector2D input)
 
 	NormalDiff3 = NormalDiff3.RotateAngleAxis(m_fCamRotate,FVector::UpVector);
 	//
-	FVector CalcLoc = NormalDiff3 * m_fMaximumRadius;
+	FVector CalcLoc = NormalDiff3 * m_fWorldActorRange;
 	
 	FVector PlayerLocation =  ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation();
 
@@ -203,9 +202,10 @@ void UJoystick::ClearIcon()
 	SetIcon(nullptr);
 }
 
-void UJoystick::SetRadius(float radius)
+void UJoystick::SetRadius(float radius, float range)
 {
 	m_fRadius = radius;
+	m_fWorldActorRange = range;
 }
 
 void UJoystick::StartJoystickDrag()
@@ -273,6 +273,6 @@ void UJoystick::EndJoystickDrag()
 		m_OnDropEnd.Broadcast();
 	}
 
-	SetRadius(100.f);
+	SetRadius(100.f,750.f);
 }
 

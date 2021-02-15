@@ -5,11 +5,23 @@
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
 #include "PlayFabAdminDataModels.h"
+#include "PlayFabClientDataModels.h"
 #include "PlayFabUtilities.h"
 
+UPlayfabManager* UPlayfabManager::Get = nullptr;
+
+UPlayfabManager::~UPlayfabManager()
+{
+	if(UPlayfabManager::Get ==this)
+	{
+		UPlayfabManager::Get=nullptr;
+	}
+}
 
 void UPlayfabManager::Init()
 {
+	UPlayfabManager::Get = this;
+	
 	if (m_bIsLogined)
 	{
 		return;
@@ -96,6 +108,8 @@ void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqu
 		request.PlayerSecret = GetDefault<UPlayFabRuntimeSettings>()->DeveloperSecretKey;
 		request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
 
+		
+
 		bool Result = clientAPI->LoginWithGoogleAccount(request,
 		                                                PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
 			                                                this, &UPlayfabManager::OnSuccess),
@@ -126,6 +140,9 @@ void UPlayfabManager::OnSuccess(const PlayFab::ClientModels::FLoginResult& Resul
 	}
 
 	PRINTF("ID:%s", *Result.PlayFabId);
+	
+	PlayFab::ClientModels::FSetPlayerSecretRequest Req;
+
 }
 
 void UPlayfabManager::OnError(const PlayFab::FPlayFabCppError& ErrorResult) const
@@ -133,4 +150,17 @@ void UPlayfabManager::OnError(const PlayFab::FPlayFabCppError& ErrorResult) cons
 	PRINTF("Playfab Login Error Name:%s", *ErrorResult.ErrorName);
 	PRINTF("Playfab Login Error Message:%s", *ErrorResult.ErrorMessage);
 	PRINTF("Playfab Login Error Code:%s", *UPlayFabUtilities::getErrorText(ErrorResult.ErrorCode));
+}
+
+
+void UPlayfabManager::ShowBannerAd(bool able)
+{
+	if(able )//&& GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion
+	{
+		UKismetSystemLibrary::ShowAdBanner(0,true);
+	}
+	else
+	{
+		UKismetSystemLibrary::HideAdBanner();
+	}
 }

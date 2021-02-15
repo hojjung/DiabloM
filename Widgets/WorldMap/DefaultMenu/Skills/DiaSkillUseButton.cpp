@@ -86,9 +86,11 @@ void UDiaSkillUseButton::OnPressBtn()
 	{
 		m_OnPressed.Broadcast(this);
 
-		float Radius =  Cast< UPlayerBaseAttack>( m_EquippedSkillSpec->m_SkillDataPtr->m_SkillAbility->GetDefaultObject())->GetRadius();
+		UPlayerBaseAttack* SkillCDO = Cast< UPlayerBaseAttack>( m_EquippedSkillSpec->m_SkillDataPtr->m_SkillAbility->GetDefaultObject()); 
+		float Radius =  SkillCDO->GetRadius();
+		float Range =  SkillCDO->GetRange();
 
-		m_Joystick->SetRadius(Radius);
+		m_Joystick->SetRadius(Radius,Range);
 
 		PRINTF("Radius:%f",Radius);
 	}

@@ -53,7 +53,7 @@ APlayerVisual::APlayerVisual()
 	m_Capture->SetTickableWhenPaused(true);
 	m_Capture->ProjectionType = ECameraProjectionMode::Orthographic;
 	m_Capture->OrthoWidth = 150.f;
-	m_Capture->TextureTarget = m_CaptureTexture;
+	//m_Capture->TextureTarget = m_CaptureTexture;
 
 }
 

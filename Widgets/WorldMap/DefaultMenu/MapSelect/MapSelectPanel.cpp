@@ -1,6 +1,7 @@
 #include "MapSelectPanel.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DungeonManager.h"
+#include "Managers/PlayfabManager.h"
 
 
 void UMapSelectPanel::Init()
@@ -43,6 +44,8 @@ void UMapSelectPanel::Open(bool isDgCleared)
 	{
 		m_MapInfoPopup->m_BtnBackToVillage->SetVisibility(ESlateVisibility::Hidden);
 	}
+
+	UPlayfabManager::Get->ShowBannerAd(false);
 }
 
 UMapSelectButton* UMapSelectPanel::CreateDgBtn(const FDungeonDataRow* dgData)
@@ -106,4 +109,6 @@ void UMapSelectPanel::CloseDgPanel()
 	m_MapInfoPopup->ClosePopup();
 
 	SetVisibility(ESlateVisibility::Hidden);
+
+	UPlayfabManager::Get->ShowBannerAd(true);
 }

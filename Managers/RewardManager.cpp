@@ -2,8 +2,12 @@
 #include "CBezierCurve.h"
 #include "DiabloGameInstance.h"
 #include "DiabloGameMode.h"
-#include "Datas/MonsterItemDropTable.h"
 
+
+URewardManager::URewardManager()
+{
+	
+}
 
 void URewardManager::CreateActorPool()
 {
@@ -13,10 +17,22 @@ void URewardManager::CreateActorPool()
 	m_nGoldIndex = 0;
 	m_nHpIndex = 0;
 
-	CreateAllItemPool(35, 15, 4); //75/40/4
+	m_AryGoldCount.Reset();
+	m_AryGoldCount.Add(0);
+	m_AryGoldCount.Add(0);
+	m_AryGoldCount.Add(0);
+	m_AryGoldCount.Add(0);
+	m_AryGoldCount.Add(1);
+	m_AryGoldCount.Add(1);
+	m_AryGoldCount.Add(1);
+	m_AryGoldCount.Add(2);
+	m_AryGoldCount.Add(2);
+	m_AryGoldCount.Add(3);
+
+	CreateAllItemPool(35, 15, 7); //75/40/4
 }
 
-void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMonsterItemDropRow& dropData, int level)
+void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, int level)
 {
 	int MinItemLevel = level - 2;
 
@@ -25,79 +41,42 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, const FMons
 	int MaxItemLevel = level + 2;
 
 	MaxItemLevel = FMath::Min(MaxItemLevel,MAXLEVEL);
-
-	float MagicItemBonus = 0.f;
-
-	float RareItemBonus = 0.f;
-
-	float EpicItemBonus = 0.f;
-
-	float UniqueItemBonus = 0.f;
-	//
-	int CountHp = dropData.m_AryHpDropRand.GetRandom();
-
-	int IterHp = 0;
-
-	while (IterHp++ < CountHp)
-	{
-		DropHpSphereActor(dropActor, 600.f);
-	}
 	//
 	//Spawn Gold
+	
 	float GoldAmount = dropActor->GetAttributeSet()->GetGoldBounty();
 
 	if (GoldAmount > 0.f)
 	{
-		int CountGoldActor = FMath::RandRange(1, 3);
-		float GoldAmountEach = GoldAmount / CountGoldActor;
+		int CountGoldActor = m_AryGoldCount.GetRandom();
 
 		int IterGold = 0;
 
 		while (IterGold++ < CountGoldActor)
 		{
-			DropGoldActor(dropActor, 400.f, GoldAmountEach);
+			DropGoldActor(dropActor, 400.f, GoldAmount);
 		}
 	}
 	//
 	//Spawn Normal Item
-
-	int CountItem = dropData.m_AryItemDropRand.GetRandom();
-
-	if (CountItem > 0)
+	for(const FItemDataHandle& ItemDataHandle : dropActor->GetMonsterDataTable().m_AryRewardDropTableHandle)
 	{
-		int IterItem = 0;
+		FItemData* CurrentItemData = ItemDataHandle.GetRow<FItemData>("");
+		
+		float ItemPercent = 1.f - (1.f - 1.f / CurrentItemData->m_nDropRateCount);
+		
+		float Rand01 = FMath::RandRange(0.f,1.0f);
 
-		float MaxRate = 0.f;
-
-		//Max Setting
-		for (auto& ItemDataFromTable : dropData.m_AryDropItems)
+		if(ItemPercent < Rand01)
 		{
-			MaxRate += ItemDataFromTable.m_fDropRatePriority;
+			continue;
 		}
+			
+		int RandItemLevel = FMath::RandRange(MinItemLevel, MaxItemLevel);
 
-		//아이템 떨구는 개수
-		while (IterItem++ < CountItem)
-		{
-			float DropRateCount = 0.f;
+		FItemInstance CreatedItem = UDiabloGameInstance::Get->CreateItem(CurrentItemData->m_ItemID,RandItemLevel);
 
-			float RandomValue = FMath::RandRange(0.f, MaxRate);
-
-			for (const FItemDropData& ItemDataFromTable : dropData.m_AryDropItems)
-			{
-				DropRateCount += ItemDataFromTable.m_fDropRatePriority;
-
-				if (DropRateCount >= RandomValue)
-				{
-					int RandItemLevel = FMath::RandRange(MinItemLevel, MaxItemLevel);
-
-					FItemInstance CreatedItem = UDiabloGameInstance::Get->CreateItem(
-						ItemDataFromTable.m_DropHandle.RowName,
-						RandItemLevel);
-
-					DropItemActor(dropActor, 400.f, CreatedItem);
-				}
-			}
-		}
+		DropItemActor(dropActor, 400.f, CreatedItem);
 	}
 	//
 }
@@ -431,7 +410,7 @@ ACollisionInteract* URewardManager::SpawnInteractActor(TSubclassOf<ACollisionInt
 
 ADroppedItem* URewardManager::CreateDropItemActor()
 {
-	ADroppedItem* Created = Cast<ADroppedItem>(SpawnInteractActor(UMonsterItemDropTable::ClassDropItemActor));
+	ADroppedItem* Created = Cast<ADroppedItem>(SpawnInteractActor(ADroppedItem::StaticClass()));
 	Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueItemActor);
 	m_AryAllItemActors.Emplace(Created);
 	return Created;
@@ -439,7 +418,7 @@ ADroppedItem* URewardManager::CreateDropItemActor()
 
 ADroppedGold* URewardManager::CreateDropGoldActor()
 {
-	ADroppedGold* Created = Cast<ADroppedGold>(SpawnInteractActor(UMonsterItemDropTable::ClassDropGoldActor));
+	ADroppedGold* Created = Cast<ADroppedGold>(SpawnInteractActor(ADroppedGold::StaticClass()));
 	Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueGoldActor);
 	m_AryAllGoldActors.Emplace(Created);
 	return Created;
@@ -447,7 +426,7 @@ ADroppedGold* URewardManager::CreateDropGoldActor()
 
 AHealthSphere* URewardManager::CreateHealthActor()
 {
-	AHealthSphere* Created = Cast<AHealthSphere>(SpawnInteractActor(UMonsterItemDropTable::ClassDropHealthSphere));
+	AHealthSphere* Created = Cast<AHealthSphere>(SpawnInteractActor(AHealthSphere::StaticClass()));
 	Created->GetOnTaskEnd().AddUObject(this, &URewardManager::EnqueHpSphereActor);
 	m_AryAllHpActors.Emplace(Created);
 	return Created;

@@ -119,8 +119,6 @@ void ADiabloGameMode::StartPlay()
 	SpawnVisualPlayer();
 
 	ADiabloPlayerController::Get->GetPlayerPawn()->LateInit();
-
-	UKismetSystemLibrary::ShowAdBanner(0,true);
 }
 
 void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)

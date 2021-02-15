@@ -27,6 +27,8 @@ UPlayerBaseAttack::UPlayerBaseAttack()
     
     ActivationOwnedTags.AddTag(m_TagEventBaseAttack);
 
+    BlockAbilitiesWithTag.AddTag(FGameplayTag::RequestGameplayTag(FName("Combat.Ability.Skill")));
+    CancelAbilitiesWithTag.AddTag(FGameplayTag::RequestGameplayTag(FName("Combat.Ability.Skill")));
     ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Combat.Ability.Skill")));
 
     m_fDashTime=0.5f;
@@ -72,7 +74,7 @@ void UPlayerBaseAttack::TryDashAttack(const FGameplayAbilityActorInfo* ActorInfo
     
     if(IsDashable(ActorInfo,DistSqred,DashNormal))
     {
-        PlayAbilityAnimation(m_BaseAttackMotion,"DashAttack" ,2);
+        PlayAbilityAnimation(m_BaseAttackMotion,"Dash" ,2);
 
         float DashLength = DistSqred - m_fDashAcceptSqr;
 

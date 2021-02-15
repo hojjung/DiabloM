@@ -156,11 +156,6 @@ public:
 
     UAnimMontage* GetCurrentMontage();
 
-    USkeletalMeshComponent* GetBodyMesh()
-    {
-        return m_SkBody;
-    }
-
     FORCEINLINE UCapsuleComponent* GetCapsule()
     {
         return m_Capsule;

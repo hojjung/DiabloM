@@ -27,7 +27,7 @@ public class DiabloM : ModuleRules
             "EasyActionPlugin",
             "RenderCore",
             "OnlineSubsystem", "OnlineSubsystemUtils",
-            "MoviePlayer",
+            "MoviePlayer"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] { 

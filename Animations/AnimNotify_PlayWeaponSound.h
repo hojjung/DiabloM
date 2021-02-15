@@ -18,11 +18,11 @@ class DIABLOM_API UAnimNotify_PlayWeaponSound : public UAnimNotify
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimNotify", meta=(ExposeOnSpawn = true))
-	ESlotsEquipAry SoundSourceSlot;
+	ESlotsEquipAry SoundSourceSlot = ESlotsEquipAry::WeaponRight;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimNotify", meta=(ExposeOnSpawn = true))
-	float VolumeMultiplier;
+	float VolumeMultiplier=1.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimNotify", meta=(ExposeOnSpawn = true))
-	float PitchMultiplier;
+	float PitchMultiplier=1.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AnimNotify")
 	uint32 bFollow:1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimNotify", meta=(EditCondition="bFollow", ExposeOnSpawn = true))

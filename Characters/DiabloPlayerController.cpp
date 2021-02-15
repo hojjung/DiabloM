@@ -26,6 +26,21 @@ ADiabloPlayerController::ADiabloPlayerController()
 	APlayerController::SetVirtualJoystickVisibility(true);
 
 	m_FormatMiss=FTextFormat::FromString("Miss-{0}%");
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> FoundCanvas(
+    TEXT("WidgetBlueprint'/Game/Blueprints/Widgets/MainMenus/WB_MainCanvas.WB_MainCanvas_C'"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> FoundGameOver(
+    TEXT("WidgetBlueprint'/Game/Blueprints/Widgets/MainMenus/WB_GameOver.WB_GameOver_C'"));
+	static ConstructorHelpers::FClassFinder<UWidgetComponent> FoundDmgText(
+    TEXT("Blueprint'/Game/Blueprints/Widgets/WorldWidget/WC_DamageText.WC_DamageText_C'"));
+
+	m_ClassMainMenu = FoundCanvas.Class;
+	m_ClassGameOver = FoundGameOver.Class;
+	m_ClassDmgText = FoundDmgText.Class;
+	//
+	//
+	////WidgetBlueprint'/Game/Blueprints/Widgets/MainMenus/WB_GameOver.WB_GameOver'
+	//Blueprint'/Game/Blueprints/Widgets/WorldWidget/WC_DamageText.WC_DamageText'
 }
 
 void ADiabloPlayerController::InitPlCtrlAndWidget()
@@ -68,7 +83,7 @@ void ADiabloPlayerController::InitWidget()
 	PlayerPawn->GetOnDied().AddUObject(this,&ADiabloPlayerController::OnPlayerDied);
 	PlayerPawn->GetOnRevived().AddUObject(this,&ADiabloPlayerController::OnPlayerRevived);
 	
-	CreateDmgWC(15);
+	CreateDmgWC(25);
 }
 
 void ADiabloPlayerController::CreateDmgWC(int count)
