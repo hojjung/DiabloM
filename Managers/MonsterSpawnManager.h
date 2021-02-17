@@ -46,7 +46,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateWorld(UWorld* world);
 	UFUNCTION(BlueprintCallable)
-	bool SpawnIter(const FVector& centerSpawnLoc,const FMonsterHordeRow& selectedHorde,int level=1,UDungeonManager* dgSpawnedManager=nullptr);
+	bool SpawnIter(TArray<FTransform>& locAry,const FMonsterHordeRow& selectedHorde,int level=1,UDungeonManager* dgSpawnedManager=nullptr);
 	//
 
 	void Reset();

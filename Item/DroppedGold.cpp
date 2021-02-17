@@ -67,7 +67,7 @@ void ADroppedGold::DropEnd()
 }
 
 
-void ADroppedGold::ShowAll(bool hasBeenShowed)
+void ADroppedGold::ShowAll( )
 {
 	if (m_bIsVisible)
 	{
@@ -87,7 +87,7 @@ void ADroppedGold::ShowAll(bool hasBeenShowed)
 	m_bIsVisible = true;
 }
 
-void ADroppedGold::HideAll(bool hasBeenShowed)
+void ADroppedGold::HideAll( )
 {
 	if(!m_bIsVisible)
 	{
@@ -143,7 +143,7 @@ void ADroppedGold::Interact(AActor* instigator)
 
 	Char->EarnGold(m_fGoldAmount * AmountBounus);
 
-	HideAll(true);
+	HideAll();
 
 	if (GetCurrentNode())
 	{

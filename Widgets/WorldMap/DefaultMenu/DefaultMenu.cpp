@@ -128,7 +128,7 @@ void UDefaultMenu::OpenMainMenu()
 {
     this->SetVisibility((ESlateVisibility::SelfHitTestInvisible));
 
-    UPlayfabManager::Get->ShowBannerAd(true);
+    UPlayfabManager::Get->ShowBannerAd(false);
 }
 
 void UDefaultMenu::CloseMainMenu()
@@ -297,6 +297,8 @@ void UDefaultMenu::OpenStorage()
     m_StoragePanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_StatPanel->SetVisibility(ESlateVisibility::Collapsed);
     m_bIsStorageOpened = true;
+    
+    UPlayfabManager::Get->ShowBannerAd(false);
 }
 
 void UDefaultMenu::CloseStorage()
@@ -314,6 +316,8 @@ void UDefaultMenu::OpenShopMenu(AShopKeeper* shopKeeper)
     m_ShopPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
     m_ShopPanel->UpdatePanel(shopKeeper);
     m_bIsShopOpened = true;
+
+    UPlayfabManager::Get->ShowBannerAd(false);
 }
 
 void UDefaultMenu::CloseShopMenu()
@@ -356,7 +360,6 @@ void UDefaultMenu::CloseSkillPanel()
     m_bIsSkillOpened=false;
     m_SkillPopup->HidePopup();
 
-    UPlayfabManager::Get->ShowBannerAd(true);
 }
 
 void UDefaultMenu::OpenSkillPopup(const FGeometry& geo,FSkillDataSpec& skillSpec)

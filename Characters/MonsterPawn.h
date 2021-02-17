@@ -30,6 +30,8 @@ protected:
 	UFloatingStatusBarWidgetCompo* m_WorldHpBar;
 protected:
 	UPROPERTY()
+	UAnimMontage* m_SpawnAnim;
+	UPROPERTY()
 	UDungeonManager* m_SpawnedManager;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FMonsterEntityHandle m_MonsterUnitHandle;
@@ -45,6 +47,8 @@ protected:
 	QuadtreeNode* m_CurrentNode;
 
 	bool m_bIsVisible;
+
+	bool m_bHasShownEver;
 	
 public: //need more monster
     void ShowStatusBar();
@@ -80,9 +84,9 @@ public:
 
 	virtual void RegisterToQuadTreeBound() override ;
 
-	virtual void ShowAll(bool hasBeenShowed) override;
+	virtual void ShowAll() override;
 	
-	virtual void HideAll(bool hasBeenShowed) override;
+	virtual void HideAll() override;
 
 	virtual void SetNode(QuadtreeNode* quadtree_node)override;
 

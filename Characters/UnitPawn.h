@@ -65,9 +65,7 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "Character")
     UAnimSequenceBase* m_DeathMontage;
     UPROPERTY(VisibleAnywhere, Category = "Character")
-    UAnimMontage* m_StunMontage;
-    UPROPERTY(VisibleAnywhere, Category = "Character")
-    UAnimSequenceBase* m_TookHitMontage;
+    UAnimMontage* m_TookHitMontage;
     UPROPERTY(VisibleAnywhere, Category = "Character")
     TSubclassOf<UGameplayEffect> m_GEUnitStat;
     UPROPERTY(VisibleAnywhere, Category = "Character")

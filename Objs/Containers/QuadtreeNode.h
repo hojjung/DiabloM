@@ -112,8 +112,6 @@ private:
 
     /** The chance that there is to spawn an enemy on a node. */
 
-    bool m_bHasBeenShowed;
-
     bool m_bVisible;
 
 public:

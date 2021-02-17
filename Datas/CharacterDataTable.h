@@ -21,13 +21,12 @@ struct FEntityTable : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FEntityTable(): m_StunMontage(nullptr), m_DeathMontage(nullptr), m_TookHitMontage(nullptr)
+	FEntityTable(): m_DeathMontage(nullptr), m_TookHitMontage(nullptr)
 	{
 	}
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName m_NameID;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText m_ShowingName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -36,11 +35,9 @@ public:
 	TSubclassOf<UGameplayEffect> m_DefaultStatTable;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_StunMontage;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimSequenceBase* m_DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimSequenceBase* m_TookHitMontage;
+	UAnimMontage* m_TookHitMontage;
 };
 
 
@@ -80,9 +77,8 @@ struct FPlayerEntityTable : public FEntityTable
 	GENERATED_BODY()
 
 public:
-	//1. CharStat-Done
-	//2. Equipable ItemType,지금은 모든 장비타입을 낄수 있으니까, 못끼는 테이블을 만들면 된다
-	//3. SkillTable
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName m_NameID;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<USkeletalMesh*> m_AryPlayerSkin;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -241,7 +237,10 @@ struct FMonsterTable : public FEntityTable
 	GENERATED_BODY()
 
 public:
-	FMonsterTable(): m_Mesh(nullptr), m_IdleAnim(nullptr), m_MoveAnim(nullptr)
+	FMonsterTable(): m_Mesh(nullptr), m_fTierDropBonusNormal(0), m_fTierDropBonusMagic(0), m_fTierDropBonusRare(0),
+	                 m_fTierDropBonusLegend(0),
+	                 m_nDroptableRollCount(1), m_SpawnAnim(nullptr)
+
 	{
 	}
 
@@ -250,16 +249,25 @@ public:
 	USkeletalMesh* m_Mesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMonsterTypeHandle m_TypeHandle;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FItemDataHandle> m_AryRewardDropTableHandle;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.0", UIMax = "1.0"))
+	float m_fTierDropBonusNormal;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.0", UIMax = "1.0"))
+	float m_fTierDropBonusMagic;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.0", UIMax = "1.0"))
+	float m_fTierDropBonusRare;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.0", UIMax = "1.0"))
+	float m_fTierDropBonusLegend;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.0"))
+	int m_nDroptableRollCount;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UDiabloAbility> m_BaseAttack;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UMobFSMBase> m_MobFSM;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimSequenceBase* m_IdleAnim;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimSequenceBase* m_MoveAnim;
+	UAnimMontage* m_SpawnAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UAnimInstance> m_AnimBP;
 };
+
+//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+//TArray<FItemDataHandle> m_AryRewardDropTableHandle;

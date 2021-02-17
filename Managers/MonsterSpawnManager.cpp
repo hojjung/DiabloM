@@ -6,116 +6,117 @@
 
 UMonsterSpawnManager::UMonsterSpawnManager()
 {
-    m_CurrentWorld = nullptr;
-    m_NavSys = nullptr;
-    m_fSpawnRadius = 1200.f;
-    m_IdEnemy="enemy";
-    m_IdBossEnemy="boss";
-    m_IdSpecialEnemy="special";
+	m_CurrentWorld = nullptr;
+	m_NavSys = nullptr;
+	m_fSpawnRadius = 1200.f;
+	m_IdEnemy = "enemy";
+	m_IdBossEnemy = "boss";
+	m_IdSpecialEnemy = "special";
 }
 
 void UMonsterSpawnManager::UpdateWorld(UWorld* world)
 {
-    m_CurrentWorld = world;
-    m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(m_CurrentWorld);
+	m_CurrentWorld = world;
+	m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(m_CurrentWorld);
 }
 
-bool UMonsterSpawnManager::SpawnIter(const FVector& centerSpawnLoc,const FMonsterHordeRow& selectedHorde,
-                                      int level,UDungeonManager* dgSpawnedManager)
+bool UMonsterSpawnManager::SpawnIter(TArray<FTransform>& locAry, const FMonsterHordeRow& selectedHorde,
+                                     int level, UDungeonManager* dgSpawnedManager)
 {
-    for (const FMonsterSelect& MobSelected : selectedHorde.m_AryMonsterEntity) 
-    {
-        for (int MobCount = 0; MobCount < MobSelected.m_nCount; MobCount++)
-        {
-            FVector PointSpawn = GetRandomPoint(centerSpawnLoc, m_fSpawnRadius);
+	int IterMax = FMath::Min(selectedHorde.m_AryMonsterEntity.Num(),locAry.Num());
 
-            AMonsterPawn* SpawnedMob = SpawnMob(PointSpawn);
-        
-            if (!SpawnedMob)
-            {
-                continue;
-            }
+	for (int i = 0; i < IterMax; i++)
+	{
+		FVector PointSpawn = GetRandomPoint(locAry[i].GetLocation(), m_fSpawnRadius);
 
-            m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
+		AMonsterPawn* SpawnedMob = SpawnMob(PointSpawn);
 
-            SpawnedMob->InitMonster(MobSelected.m_MonsterEntity, level,dgSpawnedManager);
-        }
-    }
+		if (!SpawnedMob)
+		{
+			continue;
+		}
 
-    return true;
+		m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
+
+		SpawnedMob->InitMonster(selectedHorde.m_AryMonsterEntity[i].m_MonsterEntity, level, dgSpawnedManager);
+	}
+
+	return true;
 }
 
 void UMonsterSpawnManager::Reset()
 {
-    for(AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
-    {
-        if(!Mob)
-        {
-            continue;
-        }
-        Mob->Destroy();
-    }
-    
-    m_AryMonsterSpawnedCurrently.Reset();
+	for (AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
+	{
+		if (!Mob)
+		{
+			continue;
+		}
+		Mob->Destroy();
+	}
+
+	m_AryMonsterSpawnedCurrently.Reset();
 }
 
-AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos,bool bSeeHideObj,AMonsterPawn* ignoreActor)
+AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos, bool bSeeHideObj,
+                                                      AMonsterPawn* ignoreActor)
 {
-    float Dist = FLT_MAX;
-    
-    AMonsterPawn* ResultMob = nullptr;
+	float Dist = FLT_MAX;
 
-    for(AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
-    {
-        if(Mob == ignoreActor ||!Mob || (Mob->IsHidden()&&!bSeeHideObj) || !Mob->IsAlive())
-        {
-            continue;
-        }
-        
-        float DistNew =  FVector::DistSquared2D(Mob->GetActorLocation(),wantPos);
+	AMonsterPawn* ResultMob = nullptr;
 
-        if(Dist >= DistNew)
-        {
-            Dist = DistNew;
-            
-            ResultMob = Mob;    
-        }
-    }
+	for (AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
+	{
+		if (Mob == ignoreActor || !Mob || (Mob->IsHidden() && !bSeeHideObj) || !Mob->IsAlive())
+		{
+			continue;
+		}
 
-    return ResultMob;
+		float DistNew = FVector::DistSquared2D(Mob->GetActorLocation(), wantPos);
+
+		if (Dist >= DistNew)
+		{
+			Dist = DistNew;
+
+			ResultMob = Mob;
+		}
+	}
+
+	return ResultMob;
 }
 
 FVector UMonsterSpawnManager::GetRandomPoint(const FVector& loc, const float& radius)
 {
-    FNavLocation ResultLoc;
+	FNavLocation ResultLoc;
 
-    if (!m_NavSys->GetRandomReachablePointInRadius(loc, radius, ResultLoc))
-    {
-        //FAIL
-        return loc;
-    }
+	if (!m_NavSys->GetRandomReachablePointInRadius(loc, radius, ResultLoc))
+	{
+		//FAIL
+		return loc;
+	}
 
-    return ResultLoc;
+	return ResultLoc;
 }
 
 AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 {
-    check(UCharacterDataTable::ClassMonsterPawn);
-    
-    FActorSpawnParameters Param;
-    Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	check(UCharacterDataTable::ClassMonsterPawn);
 
-    Param.bNoFail = true;
-    loc.Z += 88.f;
-    //88
-    FRotator Rot;
-    Rot.Yaw=FMath::RandRange(0.f,360.f);
+	FActorSpawnParameters Param;
+	Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-    AMonsterPawn* Mob = m_CurrentWorld->SpawnActor<AMonsterPawn>(UCharacterDataTable::ClassMonsterPawn, loc,Rot, Param);
+	Param.bNoFail = true;
+	loc.Z += 88.f;
+	//88
+	FRotator Rot;
+	Rot.Yaw = FMath::RandRange(0.f, 360.f);
 
-    //UGridFlowMiniMap::Get->AddTrackActor(m_IdEnemy,Mob);
+	AMonsterPawn* Mob = m_CurrentWorld->SpawnActor<AMonsterPawn
+	>(UCharacterDataTable::ClassMonsterPawn, loc, Rot, Param);
 
-    check(Mob);
+	//UGridFlowMiniMap::Get->AddTrackActor(m_IdEnemy,Mob);
 
-    return Mob;
+	check(Mob);
+
+	return Mob;
 }

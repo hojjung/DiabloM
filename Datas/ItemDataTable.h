@@ -378,6 +378,8 @@ public:
 
 };
 
+
+
 USTRUCT(BlueprintType)
 struct FAnimStanceDataHandle :public FDataTableRowHandle
 {

@@ -2,6 +2,7 @@
 #include "CBezierCurve.h"
 #include "DiabloGameInstance.h"
 #include "DiabloGameMode.h"
+#include "DungeonManager.h"
 
 
 URewardManager::URewardManager()
@@ -54,29 +55,74 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, int level)
 
 		while (IterGold++ < CountGoldActor)
 		{
-			DropGoldActor(dropActor, 400.f, GoldAmount);
+			float NewAmount = FMath::RandRange(0.85f,1.15f)*GoldAmount;
+			DropGoldActor(dropActor, 400.f, NewAmount);
 		}
 	}
 	//
 	//Spawn Normal Item
-	for(const FItemDataHandle& ItemDataHandle : dropActor->GetMonsterDataTable().m_AryRewardDropTableHandle)
+	const FDungeonDropTable* CurrentDroptable = UDiabloGameInstance::Get->GetDungeonManager()->GetCurrentDropTable();
+
+	if(!CurrentDroptable)
 	{
-		FItemData* CurrentItemData = ItemDataHandle.GetRow<FItemData>("");
-		
-		float ItemPercent = 1.f - (1.f - 1.f / CurrentItemData->m_nDropRateCount);
-		
-		float Rand01 = FMath::RandRange(0.f,1.0f);
+		return;
+	}
 
-		if(ItemPercent < Rand01)
+	int Iter = dropActor->GetMonsterDataTable().m_nDroptableRollCount;
+
+	if(Iter<=0)
+	{
+		return;
+	}
+
+	float NormalDropRate=dropActor->GetMonsterDataTable().m_fTierDropBonusNormal;
+
+	float MagicDropRate=dropActor->GetMonsterDataTable().m_fTierDropBonusMagic;
+
+	float RareDropRate=dropActor->GetMonsterDataTable().m_fTierDropBonusRare;
+
+	float LegendDropRate=dropActor->GetMonsterDataTable().m_fTierDropBonusLegend;
+
+	for(int i=0; i<Iter;i++)
+	{
+		for(const FItemDataHandle& ItemDataHandle :CurrentDroptable->m_AryDropItems)
 		{
-			continue;
-		}
+			FItemData* CurrentItemData = ItemDataHandle.GetRow<FItemData>("");
+		
+			float ItemPercent = 1.f - (1.f - 1.f / CurrentItemData->m_nDropRateCount);
+
+			FItemTier* Tier = CurrentItemData->m_ItemTierHandle.GetRow<FItemTier>("");
+
+			if(Tier->m_TierID == "Normal")
+			{
+				ItemPercent+=NormalDropRate;
+			}
+			else if(Tier->m_TierID == "Magic")
+			{
+				ItemPercent+=MagicDropRate;
+			}
+			else if(Tier->m_TierID == "Rare")
+			{
+				ItemPercent+=RareDropRate;
+			}
+			else if(Tier->m_TierID == "Legend")
+			{
+				ItemPercent+=LegendDropRate;
+			}
+		
+			float Rand01 = FMath::RandRange(0.f,1.0f);
+
+			if(ItemPercent < Rand01)
+			{
+				continue;
+			}
 			
-		int RandItemLevel = FMath::RandRange(MinItemLevel, MaxItemLevel);
+			int RandItemLevel = FMath::RandRange(MinItemLevel, MaxItemLevel);
 
-		FItemInstance CreatedItem = UDiabloGameInstance::Get->CreateItem(CurrentItemData->m_ItemID,RandItemLevel);
+			FItemInstance CreatedItem = UDiabloGameInstance::Get->CreateItem(CurrentItemData->m_ItemID,RandItemLevel);
 
-		DropItemActor(dropActor, 400.f, CreatedItem);
+			DropItemActor(dropActor, 400.f, CreatedItem);
+		}
 	}
 	//
 }
@@ -434,7 +480,7 @@ AHealthSphere* URewardManager::CreateHealthActor()
 
 void URewardManager::EnqueItemActor(ACollisionInteract* collActor)
 {
-	Cast<ITickHideable>(collActor)->HideAll(false);
+	Cast<ITickHideable>(collActor)->HideAll();
 	m_PoolItem.Enqueue(Cast<ADroppedItem>(collActor));
 	collActor->SetActorLocation(m_HidingPoint);
 	
@@ -443,7 +489,7 @@ void URewardManager::EnqueItemActor(ACollisionInteract* collActor)
 
 void URewardManager::EnqueGoldActor(ACollisionInteract* collActor)
 {
-	Cast<ITickHideable>(collActor)->HideAll(false);
+	Cast<ITickHideable>(collActor)->HideAll();
 	m_PoolGold.Enqueue(Cast<ADroppedGold>(collActor));
 	collActor->SetActorLocation(m_HidingPoint);
 
@@ -452,7 +498,7 @@ void URewardManager::EnqueGoldActor(ACollisionInteract* collActor)
 
 void URewardManager::EnqueHpSphereActor(ACollisionInteract* collActor)
 {
-	Cast<ITickHideable>(collActor)->HideAll(false);
+	Cast<ITickHideable>(collActor)->HideAll();
 	m_PoolHp.Enqueue(Cast<AHealthSphere>(collActor));
 	collActor->SetActorLocation(m_HidingPoint);
 
@@ -469,7 +515,7 @@ ADroppedItem* URewardManager::GetDropItemActor()
 
 		DropItem = m_AryAllItemActors[m_nItemIndex++];
 
-		Cast<ITickHideable>(DropItem)->HideAll(false);
+		Cast<ITickHideable>(DropItem)->HideAll();
 
 		DropItem->SetActorLocation(m_HidingPoint);
 
@@ -493,7 +539,7 @@ ADroppedGold* URewardManager::GetDropGoldActor()
 
 		DropGold = m_AryAllGoldActors[m_nGoldIndex++];
 
-		Cast<ITickHideable>(DropGold)->HideAll(false);
+		Cast<ITickHideable>(DropGold)->HideAll();
 
 		DropGold->SetActorLocation(m_HidingPoint);
 
@@ -516,7 +562,7 @@ AHealthSphere* URewardManager::GetDropHealthActor()
 
 		DropHpSphere = m_AryAllHpActors[m_nHpIndex++];
 
-		Cast<ITickHideable>(DropHpSphere)->HideAll(false);
+		Cast<ITickHideable>(DropHpSphere)->HideAll();
 
 		DropHpSphere->SetActorLocation(m_HidingPoint);
 

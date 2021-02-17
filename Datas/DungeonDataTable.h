@@ -8,6 +8,30 @@
 #include "UObject/NoExportTypes.h"
 #include "DungeonDataTable.generated.h"
 
+USTRUCT(BlueprintType)//���̵�,Ƽ��
+struct FDungeonDropTable : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<FItemDataHandle> m_AryDropItems;
+};
+
+USTRUCT(BlueprintType)//���̵�,Ƽ��
+struct FDungeonDropTableHandle : public FDataTableRowHandle
+{
+	GENERATED_BODY()
+
+public:
+	FDungeonDropTableHandle()
+	{
+		DataTable = USpawnDataTable::GetHordeTable;
+	}
+};
+
+
+
 USTRUCT(BlueprintType)
 struct FMonsterHordeHandle :public FDataTableRowHandle
 {
@@ -34,7 +58,7 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	bool m_bIsInfinityDg=false;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FMonsterHordeHandle m_Horde;//이중한개의 호드만 사용
+	FMonsterHordeHandle m_Horde;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TArray<TSubclassOf<UDiabloAbility>> m_AryClassPlayerBuff;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -47,11 +71,15 @@ public:
 	FScalableFloat m_DgLevelTable;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FName m_IDDgTheme;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FDungeonDropTableHandle m_DgDroptableHandle;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FMonsterSelect m_BossMob;
 	
 
 	int StageLevelToDungeonLevel(int dgLv)const
 	{
-		return dgLv;
+		return m_DgLevelTable.GetValueAtLevel(dgLv);
 	}
 };
 
@@ -65,11 +93,17 @@ public:
 	UDungeonDataTable();
 public:
 	static  UDataTable* GetDungeonTable;
+
+	static  UDataTable* GetDungeonDropTable;
 	
 public:
 	static const FDungeonDataRow& GetDungeonData(FName id);
 
 	static const FDungeonDataRow* GetDungeonDataPtr(FName id);
+
+	static const FDungeonDropTable& GetDungeonDropData(FName id);
+
+	static const FDungeonDropTable* GetDungeonDropDataPtr(FName id);
 };
 
 USTRUCT(BlueprintType)
@@ -85,3 +119,5 @@ public:
 
 	
 };
+
+

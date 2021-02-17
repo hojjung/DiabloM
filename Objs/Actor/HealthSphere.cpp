@@ -62,7 +62,7 @@ void AHealthSphere::Interact(AActor* instigator)
     Char->GetDiaAbilitySystem()->ApplyGameplayEffectSpecToSelf(
         *EffectSpecHandle.Data);
 
-    HideAll(true);
+    HideAll();
 
     if (GetCurrentNode())
     {
@@ -84,7 +84,7 @@ void AHealthSphere::DropEnd()
     RegisterToQuadTreeBound();
 }
 
-void AHealthSphere::ShowAll(bool hasBeenShowed)
+void AHealthSphere::ShowAll()
 {
     if(m_bIsVisible)
     {
@@ -99,7 +99,7 @@ void AHealthSphere::ShowAll(bool hasBeenShowed)
     m_Particle->Activate();
 }
 
-void AHealthSphere::HideAll(bool hasBeenShowed)
+void AHealthSphere::HideAll()
 {
     if(!m_bIsVisible)
     {

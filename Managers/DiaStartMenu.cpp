@@ -10,8 +10,4 @@
 void ADiaStartMenu::StartPlay()
 {
 	Super::StartPlay();
-	
-	PRINTF("Player ID:%d", UGameplayStatics::GetPlayerController(this,0)->PlayerState->GetUniqueID());
-
-	UDiabloGameInstance::Get->GetPlayfabManager()->Init();
 }

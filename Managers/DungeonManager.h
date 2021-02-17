@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 
+
+#include "Datas/DungeonDataTable.h"
 #include "Objs/Actor/DiaDungeon.h"
 #include "Objs/Containers/Quadtree.h"
 #include "UObject/NoExportTypes.h"
@@ -61,8 +63,8 @@ protected:
 	FVector m_RecentDungeonFeetLoc;
 
 	FDungeonCreate m_OnPortalCreate;
-
 	
+	const FDungeonDropTable* m_CurrentDroptable;
 protected:
 	int StageLevelToDungeonType(int stageLevel);
 	
@@ -80,7 +82,6 @@ public:
 	int StageLevelToDungeonLevel(int stageLevel);
 	
 	void CreateQuadTreeBound();
-
 
 	UFUNCTION(BlueprintCallable)
 	void CreateDefaultInfinityDungeon(int level=1);
@@ -113,4 +114,9 @@ public:
 	void OnDgBuildComplete(ADungeon* Dungeon);
 
 	ADgToVillagePortal* GetDgCompletePortalOpen();
+	
+	const FDungeonDropTable* GetCurrentDropTable();
+
+	
+	
 };

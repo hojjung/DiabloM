@@ -42,7 +42,7 @@ void UMapInfoPopup::Init()
 	m_fTimerMaxDelay = -1.f;
 
 	m_ToggleAutoNext->OnCheckStateChanged.AddDynamic(this, &UMapInfoPopup::SetAutoNext);
-	
+
 	m_ToggleAutoRepeat->OnCheckStateChanged.AddDynamic(this, &UMapInfoPopup::SetAutoRepeat);
 }
 
@@ -59,11 +59,11 @@ void UMapInfoPopup::SetMonsterAndItemLevel(const FDungeonDataRow* dg_data)
 	FFormatOrderedArguments Args2;
 
 	int MinLevel = MonsterLevel - 3;
-	
+
 	int MaxLevel = MonsterLevel + 1;
 
 	Args2.Add(FMath::Max(MinLevel, 1));
-	
+
 	Args2.Add(FMath::Min(MaxLevel,MAXLEVEL));
 
 	m_DropItemLevel->SetString(FText::Format(m_FormatItemLevel, Args2));
@@ -71,19 +71,19 @@ void UMapInfoPopup::SetMonsterAndItemLevel(const FDungeonDataRow* dg_data)
 
 void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 {
-	if(dg_data->m_Horde.IsNull())
+	if (dg_data->m_Horde.IsNull())
 	{
 		return;
 	}
-	
-	if (m_CurrentDgData != dg_data)//던전 데이터 바뀌면 레벨 초기화
+
+	if (m_CurrentDgData != dg_data) //던전 데이터 바뀌면 레벨 초기화
 	{
 		m_nCurrentDgLevel = 1;
 
 		m_TextDgLevel->SetText(FText::AsNumber(m_nCurrentDgLevel));
 
 		m_nMaxDgLevel = 100; //need fix
-	}//정확히는 해당 던전 데이터가 가진 저장된 맥시멈을 가저와야함
+	} //정확히는 해당 던전 데이터가 가진 저장된 맥시멈을 가저와야함
 
 	m_CurrentDgData = dg_data;
 
@@ -97,7 +97,7 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 	{
 		float MaxLevel = m_CurrentDgData->m_DgLevelTable.GetMaxLevel();
 
-		PRINTF("MaxLevel:%f",MaxLevel);
+		PRINTF("MaxLevel:%f", MaxLevel);
 	}
 
 	m_DgIcon->SetBrushFromTexture(m_CurrentDgData->m_DgIcon);
@@ -108,38 +108,39 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 	//얼마나 느릴까 이함수는
 
 	bool bIsAlreadyAdd = false;
-	
+
 	const FMonsterHordeHandle& Horde = m_CurrentDgData->m_Horde;
 
-	
-	
-	for (const FMonsterSelect& MobSelect : Horde.GetRow<FMonsterHordeRow>("")->m_AryMonsterEntity)
+	const FDungeonDropTable* CurrentDropTable = UDiabloGameInstance::Get->GetDungeonManager()->GetCurrentDropTable();
+
+	if (!CurrentDropTable)
 	{
-		for (const auto& DropItem : MobSelect.m_MonsterEntity.GetRow<FMonsterTable>("")->m_AryRewardDropTableHandle)
+		return;
+	}
+
+	for (const FItemDataHandle& DropItem : CurrentDropTable->m_AryDropItems)
+	{
+		const FItemData* Data = DropItem.GetRow<FItemData>("");
+
+		m_AryItemData.Add(Data, &bIsAlreadyAdd);
+
+		if (!bIsAlreadyAdd)
 		{
-			const FItemData* Data = DropItem.GetRow<FItemData>("");
+			UImageAndText* Widget = CreateImageText(Data->m_ItemIcon, Data->m_ShowingName);
 
-			m_AryItemData.Add(Data, &bIsAlreadyAdd);
-
-			if (!bIsAlreadyAdd)
-			{
-				UImageAndText* Widget = CreateImageText(Data->m_ItemIcon, Data->m_ShowingName);
-
-				m_VerticalInfo3->AddChildToVerticalBox(Widget);
-			}
-
-			m_AryItemTypes.Add(&Data->m_ItemType, &bIsAlreadyAdd);
-
-			if (!bIsAlreadyAdd)
-			{
-				const FItemType* ItemTypeFound = Data->m_ItemType.GetRow<FItemType>("");
-
-				UImageAndText* Widget = CreateImageText(ItemTypeFound->m_ItemTypeIcon, ItemTypeFound->m_ShowingName);
-
-				m_VerticalInfo1->AddChildToVerticalBox(Widget);
-			}
+			m_VerticalInfo3->AddChildToVerticalBox(Widget);
 		}
 
+		m_AryItemTypes.Add(&Data->m_ItemType, &bIsAlreadyAdd);
+
+		if (!bIsAlreadyAdd)
+		{
+			const FItemType* ItemTypeFound = Data->m_ItemType.GetRow<FItemType>("");
+
+			UImageAndText* Widget = CreateImageText(ItemTypeFound->m_ItemTypeIcon, ItemTypeFound->m_ShowingName);
+
+			m_VerticalInfo1->AddChildToVerticalBox(Widget);
+		}
 	}
 
 	//
@@ -178,7 +179,7 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 
 void UMapInfoPopup::SetAutoRepeat(bool b)
 {
-	if(b)
+	if (b)
 	{
 		m_ToggleAutoNext->SetCheckedState(ECheckBoxState::Unchecked);
 	}
@@ -186,7 +187,7 @@ void UMapInfoPopup::SetAutoRepeat(bool b)
 
 void UMapInfoPopup::SetAutoNext(bool b)
 {
-	if(b)
+	if (b)
 	{
 		m_ToggleAutoRepeat->SetCheckedState(ECheckBoxState::Unchecked);
 	}
@@ -265,10 +266,10 @@ void UMapInfoPopup::EnterDungeon()
 	m_DgManager->CreateDefaultInfinityDungeon(m_nCurrentDgLevel); //결국 던전 또한 레벨넘기는것으로 바껴야함? 동적 제작해도 되지않나
 
 	bool Repeat = m_ToggleAutoRepeat->IsChecked();
-	
+
 	bool Next = m_ToggleAutoNext->IsChecked();
 
-	if(Repeat || Next)
+	if (Repeat || Next)
 	{
 		ADiabloPlayerController::Get->GetPlayerPawn()->SetAutoPlay(true);
 	}
@@ -290,32 +291,32 @@ void UMapInfoPopup::SetCountdownEnterDg(float wantDelay)
 void UMapInfoPopup::TryAutoEnter()
 {
 	bool Repeat = m_ToggleAutoRepeat->IsChecked();
-	
+
 	bool Next = m_ToggleAutoNext->IsChecked();
 
-	if(!Repeat&&!Next)
+	if (!Repeat && !Next)
 	{
 		PRINTF("MAPINFO -No Auto Setting,");
 		return;
 	}
-	if(Next)
+	if (Next)
 	{
 		IncreaseDgLv();
 
 		PRINTF("MAPINFO -NextStage");
 	}
-	
+
 	PRINTF("MAPINFO -Auto Timer Stage On");
-	
+
 	SetCountdownEnterDg(4.f);
-	
+
 	m_BtnCancelAutoStart->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMapInfoPopup::CancelCountdownAutoPlay()
 {
-	m_fTimerMaxDelay= -1.f;
-	
+	m_fTimerMaxDelay = -1.f;
+
 	m_BtnCancelAutoStart->SetVisibility(ESlateVisibility::Hidden);
 }
 
@@ -323,27 +324,27 @@ void UMapInfoPopup::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	if(m_fTimerMaxDelay<=0.f)
+	if (m_fTimerMaxDelay <= 0.f)
 	{
 		return;
 	}
 
 	m_fTimerMaxDelay -= InDeltaTime;
 
-	if(m_fTimerMaxDelay<=0.f)
+	if (m_fTimerMaxDelay <= 0.f)
 	{
 		EnterDungeon();
 
-		m_fTimerMaxDelay=0.f;
+		m_fTimerMaxDelay = 0.f;
 
 		return;
 	}
-	
+
 	FFormatOrderedArguments Args;
 
 	FNumberFormattingOptions OO;
-	OO.MaximumFractionalDigits =1;
-	Args.Add(FText::AsNumber(m_fTimerMaxDelay,&OO));
+	OO.MaximumFractionalDigits = 1;
+	Args.Add(FText::AsNumber(m_fTimerMaxDelay, &OO));
 
 	m_TextTimer->SetText(FText::Format(m_FormatAutoPlay, Args));
 }

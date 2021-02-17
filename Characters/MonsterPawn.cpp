@@ -12,6 +12,7 @@
 AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit):
 Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
 {
+    m_bHasShownEver=false;
     m_bUseFSM = false;
     m_Movement->m_bUseRVO = true;
     SetActorTickEnabled(true);
@@ -98,8 +99,8 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level,UDungeonMan
     const FMonsterTable* const UnitData = unitID.GetRow<FMonsterTable>("");
 
     m_DeathMontage = UnitData->m_DeathMontage;
-    
-    m_StunMontage = UnitData->m_StunMontage;
+
+    m_SpawnAnim = UnitData->m_SpawnAnim;
     
     m_TookHitMontage = UnitData->m_TookHitMontage;
 
@@ -155,7 +156,7 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level,UDungeonMan
     
     if(m_CurrentNode)
     {
-        HideAll(false);
+        HideAll();
     }
 
     m_AttributeSet->m_OnDmgTook.AddUObject(this,&AMonsterPawn::PlayHitFlash);
@@ -292,13 +293,23 @@ void AMonsterPawn::RegisterToQuadTreeBound()
     ADiabloGameMode::Get->RegisterQuadElement(this);
 }
 
-void AMonsterPawn::ShowAll(bool hasBeenShowed)
+void AMonsterPawn::ShowAll( )
 {
     if(m_bIsVisible)
     {
         return;	
     }
-	
+
+    if(!m_bHasShownEver)
+    {
+        m_bHasShownEver=true;
+
+        if(m_SpawnAnim)
+        {
+            PlayAnimMontage(m_SpawnAnim,1);    
+        }
+    }
+    
     SetActorHiddenInGame(false);
     SetActorEnableCollision(true);
     SetActorTickEnabled(true);
@@ -311,9 +322,9 @@ void AMonsterPawn::ShowAll(bool hasBeenShowed)
     m_bIsVisible=true;
 }
 
-void AMonsterPawn::HideAll(bool hasBeenShowed)
+void AMonsterPawn::HideAll()
 {
-    if(!hasBeenShowed)
+    if(!m_bHasShownEver)
     {
         SetActorTickEnabled(false);
         m_Movement->SetComponentTickEnabled(false);
@@ -359,11 +370,11 @@ void AMonsterPawn::UpdateBound() //여기하는중,하는중이였네,
 
             if(ADiabloGameMode::Get->CheckActorInVisibleNode(this))
             {
-                ShowAll(true);
+                ShowAll();
             }
             else
             {
-                HideAll(true);
+                HideAll();
             }
         }
     }

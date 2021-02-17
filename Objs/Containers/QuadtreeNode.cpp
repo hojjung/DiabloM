@@ -2,10 +2,9 @@
 #include "DrawDebugHelpers.h"
 #include "GenericPlatformMath.h"
 
-QuadtreeNode::QuadtreeNode(): m_eNodePosition(), m_bHasBeenShowed(false)
+QuadtreeNode::QuadtreeNode(): m_eNodePosition()
 {
     m_Elements.Reserve(100);
-    m_bHasBeenShowed = false;
     m_Siblings.Init(nullptr,4);
     m_bVisible=false;
 }
@@ -17,7 +16,6 @@ QuadtreeNode::QuadtreeNode(const QuadtreeNode& copy)
     m_BoundingBox = copy.m_BoundingBox;
     m_Elements = copy.m_Elements;
     m_ChildNodes = copy.m_ChildNodes;
-    m_bHasBeenShowed = false;
     m_bVisible=false;
 }
 
@@ -210,7 +208,7 @@ void QuadtreeNode::HideActors()
             {
                 continue;
             }
-            Eles->HideAll(m_bHasBeenShowed);
+            Eles->HideAll();
         }
     }
     else
@@ -227,20 +225,17 @@ void QuadtreeNode::ShowActors()
     if (!HasChildNodes())
     {
         m_bVisible=true;
-        
-        if (!m_bHasBeenShowed)
-        {
-            m_bHasBeenShowed = true;
-        }
-        
+
         for (TWeakInterfacePtr<ITickHideable> Eles : GetAllElements())
         {
             if(!Eles.IsValid())
             {
                 continue;
             }
-            Eles->ShowAll(m_bHasBeenShowed);
+            Eles->ShowAll();
         }
+
+        
     }
     else
     {

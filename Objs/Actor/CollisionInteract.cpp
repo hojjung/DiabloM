@@ -57,11 +57,11 @@ void ACollisionInteract::RegisterToQuadTreeBound()
 	}
 	if(GetCurrentNode()->IsPositionInsideNode(GetActorLocation()))
 	{
-		ShowAll(true);
+		ShowAll();
 	}
 }
 
-void ACollisionInteract::ShowAll(bool hasBeenShowed)
+void ACollisionInteract::ShowAll( )
 {
 	if(m_bIsVisible)
 	{
@@ -74,7 +74,7 @@ void ACollisionInteract::ShowAll(bool hasBeenShowed)
 	m_bIsVisible=true;
 }
 
-void ACollisionInteract::HideAll(bool hasBeenShowed)
+void ACollisionInteract::HideAll( )
 {
 	SetActorHiddenInGame(true);
 	SetActorEnableCollision(false);

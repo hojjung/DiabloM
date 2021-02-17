@@ -207,7 +207,7 @@ void UPlayerStatusBar::ShowPlayerHUD()
         m_DiaMonInfo->SetVisibility(ESlateVisibility::SelfHitTestInvisible); //이것은 타겟팅용이기때문에 무작정켜지면 안된다.
      }
      m_ExpBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-     m_AutoPlayButton->SetVisibility(ESlateVisibility::Visible);
+     //m_AutoPlayButton->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UPlayerStatusBar::HidePlayerHUD()
@@ -223,7 +223,7 @@ void UPlayerStatusBar::HidePlayerHUD()
     m_SkillUseCanvas->SetVisibility(ESlateVisibility::Hidden);
     m_DiaMonInfo->SetVisibility(ESlateVisibility::Hidden);
     m_ExpBar->SetVisibility(ESlateVisibility::Hidden);
-    m_AutoPlayButton->SetVisibility(ESlateVisibility::Hidden);
+    //m_AutoPlayButton->SetVisibility(ESlateVisibility::Hidden);
 }
 
 

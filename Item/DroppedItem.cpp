@@ -10,31 +10,35 @@ ADroppedItem::ADroppedItem(const FObjectInitializer& objInit): Super(objInit)
 {
     PrimaryActorTick.bCanEverTick=false;
     
-    static ConstructorHelpers::FObjectFinder<UTexture2D> FoundImposter(
-            TEXT("Texture2D'/Game/Sprite/Imposter/BagImposter.BagImposter'"));
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> FoundMesh(
+            TEXT("StaticMesh'/Game/Models/Props/Containers/MeshSack.MeshSack'"));
     
-    m_Imposter = CreateDefaultSubobject<UBillboardComponent>("ImposterTexture00");
-    m_Imposter->SetupAttachment(RootComponent);
-    m_Imposter->ScreenSize=1.f;
-    m_Imposter->bIsScreenSizeScaled=true;
-    m_Imposter->Sprite=FoundImposter.Object;
-    m_Imposter->SetRelativeLocation(FVector(0.f,0.f,30.f));
-    m_Imposter->SetRelativeScale3D(FVector(0.45f,0.45f,0.45f));
-    m_Imposter->SetReceivesDecals(false);
-    m_Imposter->SetCastShadow(false);
-    m_Imposter->bReceiveMobileCSMShadows=false;
+    m_MeshSack = CreateDefaultSubobject<UStaticMeshComponent>("MeshSack");
+    m_MeshSack->SetupAttachment(RootComponent);
+    m_MeshSack->SetRelativeLocation(FVector(0.f,0.f,30.f));
+    m_MeshSack->SetRelativeScale3D(FVector(2.f,2.f,2.f));
+    m_MeshSack->SetReceivesDecals(false);
+    m_MeshSack->SetCastShadow(false);
+    m_MeshSack->bReceiveMobileCSMShadows=false;
+    m_MeshSack->SetStaticMesh(FoundMesh.Object);
+    m_MeshSack->SetCollisionProfileName("NoCollision");
+    m_MeshSack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    
 
     static ConstructorHelpers::FClassFinder<UUserWidget> FoundWidgetNameCard(
             TEXT("WidgetBlueprint'/Game/Blueprints/Widgets/WorldWidget/WB_ItemNamecard.WB_ItemNamecard_C'"));
     m_WidgetNameCard->SetWidgetClass(FoundWidgetNameCard.Class);
 
     m_CollSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    m_CollSphere->SetSphereRadius(140);
     
     m_bIsDroppedInField = false;
 
     m_bIsDropEnd=false;
 
     m_WidgetNameCard->SetVisibility(false);
+
+    m_WidgetNameCard->SetRelativeLocation( FVector(0.f, 0.f, 140.f));
 }
 
 void ADroppedItem::BeginPlay()
@@ -64,7 +68,7 @@ void ADroppedItem::SetItemInstance(FItemInstance& itemInst)
 
     //
     SetActorHiddenInGame(false);
-    m_Imposter->SetHiddenInGame(false);
+    m_MeshSack->SetHiddenInGame(false);
     m_WidgetNameCard->SetVisibility(false);
 
     m_bIsOverlapAble = false;
@@ -115,7 +119,7 @@ void ADroppedItem::Interact(AActor* instigator)
     m_ItemInstance.ClearData(); //
     m_ItemInstance.SetGridNewIndex(-2);
 
-    HideAll(true);
+    HideAll();
 
     if (GetCurrentNode())
     {
@@ -170,7 +174,7 @@ void ADroppedItem::DropEnd()
     PlaySound();
 }
 
-void ADroppedItem::ShowAll(bool hasBeenShowed)
+void ADroppedItem::ShowAll()
 {
     if(m_bIsVisible)
     {
@@ -183,14 +187,14 @@ void ADroppedItem::ShowAll(bool hasBeenShowed)
 	
     m_WidgetNameCard->SetVisibility(true);
 
-    m_Imposter->SetHiddenInGame(false);
+    m_MeshSack->SetHiddenInGame(false);
     
-    m_Imposter->SetComponentTickEnabled(true);
+    m_MeshSack->SetComponentTickEnabled(true);
     
     m_bIsVisible=true;
 }
 
-void ADroppedItem::HideAll(bool hasBeenShowed)
+void ADroppedItem::HideAll( )
 {
     if(!m_bIsVisible)
     {
@@ -203,9 +207,9 @@ void ADroppedItem::HideAll(bool hasBeenShowed)
 	
     m_WidgetNameCard->SetVisibility(false);
 	
-    m_Imposter->SetHiddenInGame(true);
+    m_MeshSack->SetHiddenInGame(true);
 
-    m_Imposter->SetComponentTickEnabled(false);
+    m_MeshSack->SetComponentTickEnabled(false);
     
     m_bIsVisible=false;
 }

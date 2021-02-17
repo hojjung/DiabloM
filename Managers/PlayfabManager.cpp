@@ -20,13 +20,15 @@ UPlayfabManager::~UPlayfabManager()
 
 void UPlayfabManager::Init()
 {
-	UPlayfabManager::Get = this;
 	
 	if (m_bIsLogined)
 	{
 		return;
 	}
+	
 	m_bIsLogined = true;
+	
+	UPlayfabManager::Get = this;
 
 	if (UMobileUtilsBlueprintLibrary::CheckInternetConnection())
 	{

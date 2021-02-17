@@ -499,14 +499,7 @@ void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
         
         SetBlockMove();
         
-        if(m_StunMontage)
-        {
-            PlayAnim(m_StunMontage,false);
-        }
-        else
-        {
-            m_SkBody->bPauseAnims = true;
-        }
+       m_SkBody->bPauseAnims = true;
 
         m_bIsStun = true;
         
@@ -527,7 +520,7 @@ void AUnitPawn::PlayTookHitMontage()
 {
     if(m_TookHitMontage && m_fHitAnimCD<0.f)
     {
-        PlayAnim(m_TookHitMontage,false);
+        PlayAnimMontage(m_TookHitMontage,1);
 
         m_fHitAnimCD = FMath::RandRange(1.5f,2.5f);
     }

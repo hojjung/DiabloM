@@ -29,6 +29,8 @@ UDungeonManager::UDungeonManager(const FObjectInitializer& objInit):Super(objIni
     m_CurrentDgVillagePortal=nullptr;
     m_MatMinimap=nullptr;
     m_NamePortalID="DgPortal";
+
+    m_CurrentDroptable=nullptr;
 }
 
 void UDungeonManager::Init()
@@ -175,6 +177,8 @@ void UDungeonManager::ClearDungeon()
     ADiaDungeon* Dg = ADiabloGameMode::Get->GetDungeon();
 
     Dg->DestroyDungeon();
+
+    m_CurrentDroptable=nullptr;
 }
 
 void UDungeonManager::RestartDungeon()
@@ -238,6 +242,8 @@ void UDungeonManager::BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData)
 {
     ADiaDungeon* Dg = ADiabloGameMode::Get->GetDungeon();
 
+    m_CurrentDroptable = SelectedDungeonData->m_DgDroptableHandle.GetRow<FDungeonDropTable>("DgBuild-NoDroptable");
+
     Dg->Themes.Reset();
     Dg->Themes.Add(Dg->GetDgData(SelectedDungeonData->m_IDDgTheme).m_DgTheme);
     
@@ -273,6 +279,11 @@ void UDungeonManager::OnDgBuildComplete(ADungeon* Dungeon)
 ADgToVillagePortal* UDungeonManager::GetDgCompletePortalOpen()
 {
     return m_CurrentDgVillagePortal;
+}
+
+const FDungeonDropTable* UDungeonManager::GetCurrentDropTable()
+{
+    return m_CurrentDroptable;
 }
 
 void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
@@ -329,10 +340,7 @@ void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* 
     
     FMonsterHordeHandle& Horde = SelectedDungeonData->m_Horde;
 
-    for(const FTransform& PointTrans : ADiabloGameMode::Get->GetDungeon()->GetArySpawnPoints())
-    {
-        SpawnManager->SpawnIter(PointTrans.GetLocation(),*Horde.GetRow<FMonsterHordeRow>(""),MonsterLevel,this);    
-    }
+    SpawnManager->SpawnIter(ADiabloGameMode::Get->GetDungeon()->GetArySpawnPoints(),*Horde.GetRow<FMonsterHordeRow>(""),MonsterLevel,this);    
 
     m_nCurrentMonsterCount = SpawnManager->GetCurrentMonsters().Num();
     

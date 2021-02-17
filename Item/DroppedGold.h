@@ -37,9 +37,9 @@ public:
 
 	void DropEnd();
 
-	virtual void ShowAll(bool hasBeenShowed) override ;
+	virtual void ShowAll( ) override ;
     	
-	virtual void HideAll(bool hasBeenShowed) override ;
+	virtual void HideAll() override ;
 
 	
 };

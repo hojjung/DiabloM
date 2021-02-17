@@ -159,7 +159,6 @@ void APlayerDiabloCharacter::SetLoadedData(const USaveCharacterStatus* loadedSav
 	m_GEUnitStat = m_PlayerEntityData->m_DefaultStatTable;
 
 	m_DeathMontage = m_PlayerEntityData->m_DeathMontage;
-	m_StunMontage = m_PlayerEntityData->m_StunMontage;
 	m_TookHitMontage = m_PlayerEntityData->m_TookHitMontage;
 
 

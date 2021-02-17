@@ -62,9 +62,9 @@ public:
 
 	virtual void RegisterToQuadTreeBound() override ;
 
-	virtual void ShowAll(bool hasBeenShowed) override ;
+	virtual void ShowAll() override ;
 	
-	virtual void HideAll(bool hasBeenShowed) override ;
+	virtual void HideAll() override ;
 
 	virtual void SetNode(QuadtreeNode* quadtree_node) override;
 
