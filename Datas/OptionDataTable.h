@@ -78,8 +78,9 @@ public:
     //
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
     FGameplayTag m_TagAttribute;
-    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)//만일 이게 없으면?
     FScalableFloat m_fLevelPerValue;
+    //민맥스 레인지
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float m_fMinValue;//35 -> 35% -> 1.35
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -137,8 +138,15 @@ public:
 
         FOptionSpec NewOption;
 
-        NewOption.m_fValue = m_fLevelPerValue.GetValueAtLevel(level, &ContextString) * FMath::RandRange(m_fMinValue,m_fMaxValue);
-
+        if(!m_fLevelPerValue.Curve.IsNull())
+        {
+            NewOption.m_fValue = m_fLevelPerValue.GetValueAtLevel(level, &ContextString) * FMath::RandRange(m_fMinValue,m_fMaxValue);    
+        }
+        else
+        {
+            NewOption.m_fValue = FMath::RandRange(m_fMinValue,m_fMaxValue);//주로 10% ~ 20% 같은 옵션
+        }
+        
         NewOption.m_OptionID = m_OptionID;
 
         NewOption.m_DataOption = this;

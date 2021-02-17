@@ -29,8 +29,6 @@ protected:
 protected:
 	float CalcPhysReduction(int DefenseTargetLevel,int AttackerLevel, float PhysDefense) const;
 
-	bool CanHitBaseAttack(float targetAvoid,float instiAccuracy,int instiLevel) const;
-
 	bool CheckOnerPercentRand(float chanceMaxOne) const;
 
 	float CalcuSameLevelAvgAccuracy(float targetAvoidChance, AUnitPawn* instigator) const; //맞을 확률

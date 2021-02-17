@@ -20,25 +20,36 @@ void UMonsterSpawnManager::UpdateWorld(UWorld* world)
 	m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(m_CurrentWorld);
 }
 
-bool UMonsterSpawnManager::SpawnIter(TArray<FTransform>& locAry, const FMonsterHordeRow& selectedHorde,
-                                     int level, UDungeonManager* dgSpawnedManager)
+bool UMonsterSpawnManager::SpawnIter(TArray<FTransform>& locAry, const FDungeonStageData* selectedHorde, int level,
+	UDungeonManager* dgSpawnedManager)
 {
-	int IterMax = FMath::Min(selectedHorde.m_AryMonsterEntity.Num(),locAry.Num());
+	int IterMax = FMath::Min(selectedHorde->m_AryHorde.Num(),locAry.Num());
 
 	for (int i = 0; i < IterMax; i++)
 	{
-		FVector PointSpawn = GetRandomPoint(locAry[i].GetLocation(), m_fSpawnRadius);
-
-		AMonsterPawn* SpawnedMob = SpawnMob(PointSpawn);
-
-		if (!SpawnedMob)
+		for(int j =0; j<selectedHorde->m_AryHorde.Num();j++)
 		{
-			continue;
+			FMonsterHordeRow* MobHorde = selectedHorde->m_AryHorde[i].GetRow<FMonsterHordeRow>("");
+			
+			for(int k=0;k<MobHorde->m_AryMonsterEntity.Num();k++)
+			{
+				for(int l=0;MobHorde->m_AryMonsterEntity[k].m_nCount;l++)
+				{
+					FVector PointSpawn = GetRandomPoint(locAry[i].GetLocation(), m_fSpawnRadius);
+
+					AMonsterPawn* SpawnedMob = SpawnMob(PointSpawn);
+
+					if (!SpawnedMob)
+					{
+						continue;
+					}
+
+					m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
+					
+					SpawnedMob->InitMonster(MobHorde->m_AryMonsterEntity[k].m_MonsterEntity, level, dgSpawnedManager);
+				}
+			}
 		}
-
-		m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
-
-		SpawnedMob->InitMonster(selectedHorde.m_AryMonsterEntity[i].m_MonsterEntity, level, dgSpawnedManager);
 	}
 
 	return true;

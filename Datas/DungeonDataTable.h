@@ -5,6 +5,7 @@
 #include "DungeonThemeAsset.h"
 #include "GridFlowAsset.h"
 #include "SpawnDataTable.h"
+#include "Objs/Actor/DiaDungeon.h"
 #include "UObject/NoExportTypes.h"
 #include "DungeonDataTable.generated.h"
 
@@ -46,6 +47,30 @@ public:
 	
 };
 USTRUCT(BlueprintType)//���̵�,Ƽ��
+struct FDungeonStageData
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	FDgDataAsset m_DgAsset;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<TSubclassOf<UDiabloAbility>> m_AryClassPlayerBuff;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<TSubclassOf<UDiabloAbility>> m_AryClassPlayerDebuff;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<TSubclassOf<UDiabloAbility>> m_AryClassMonsterBuff;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<TSubclassOf<UDiabloAbility>> m_AryClassMonsterDebuff;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<FMonsterHordeHandle> m_AryHorde;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+    TArray<FDungeonDropTableHandle> m_AryDgDroptableHandle;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite)
+    FMonsterSelect m_BossMob;
+	//던전 테마와 그리드 플로우도 여기 필요함	
+};
+
+USTRUCT(BlueprintType)
 struct FDungeonDataRow : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -58,25 +83,10 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	bool m_bIsInfinityDg=false;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FMonsterHordeHandle m_Horde;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TArray<TSubclassOf<UDiabloAbility>> m_AryClassPlayerBuff;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TArray<TSubclassOf<UDiabloAbility>> m_AryClassPlayerDebuff;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TArray<TSubclassOf<UDiabloAbility>> m_AryClassMonsterBuff;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TArray<TSubclassOf<UDiabloAbility>> m_AryClassMonsterDebuff;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FScalableFloat m_DgLevelTable;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FName m_IDDgTheme;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FDungeonDropTableHandle m_DgDroptableHandle;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FMonsterSelect m_BossMob;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<FDungeonStageData> m_AryDgStageData;	
 	
-
 	int StageLevelToDungeonLevel(int dgLv)const
 	{
 		return m_DgLevelTable.GetValueAtLevel(dgLv);
@@ -110,14 +120,12 @@ USTRUCT(BlueprintType)
 struct FDgDataHandle :public FDataTableRowHandle
 {
 	GENERATED_USTRUCT_BODY()
+
 public:
-	
 	FDgDataHandle()
 	{
 		DataTable = UDungeonDataTable::GetDungeonTable;
 	}
-
-	
 };
 
 

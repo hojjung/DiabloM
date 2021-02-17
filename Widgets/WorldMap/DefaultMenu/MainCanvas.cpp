@@ -47,7 +47,8 @@ void UMainCanvas::Init(ADiabloPlayerController * playerCon, APlayerDiabloCharact
         LearnBtn->m_OnDragDetect.AddUObject(this,&UMainCanvas::OpenSkillHotkeyPanel);
         LearnBtn->m_OnDragEnd.AddUObject(this,&UMainCanvas::CloseSkillHotkeyPanel);
     }
-    
+
+    UpdateExpGauge(0.f);
     UpdateExpGauge(m_PlayerPawn->GetExpPercent());
     //
     m_MapSelect->Init();

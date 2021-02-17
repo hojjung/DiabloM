@@ -61,7 +61,16 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, int level)
 	}
 	//
 	//Spawn Normal Item
-	const FDungeonDropTable* CurrentDroptable = UDiabloGameInstance::Get->GetDungeonManager()->GetCurrentDropTable();
+	const TArray<FDungeonDropTableHandle>& DropDataAry = UDiabloGameInstance::Get->GetDungeonManager()->GetCurrentDgStageData()->m_AryDgDroptableHandle;
+
+	int DropTableIndex = dropActor->GetMonsterDataTable().m_nDropTableIndex;
+
+	if(DropTableIndex<0 || DropTableIndex>=DropDataAry.Num())
+	{
+		return;
+	}
+
+	const FDungeonDropTable* CurrentDroptable = DropDataAry[DropTableIndex].GetRow<FDungeonDropTable>("RewardManager-DungeonDropHandleNull");
 
 	if(!CurrentDroptable)
 	{

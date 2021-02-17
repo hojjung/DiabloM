@@ -71,7 +71,7 @@ void UMapInfoPopup::SetMonsterAndItemLevel(const FDungeonDataRow* dg_data)
 
 void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 {
-	if (dg_data->m_Horde.IsNull())
+	if (dg_data->m_AryDgStageData.Num() <= 0)
 	{
 		return;
 	}
@@ -109,37 +109,42 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 
 	bool bIsAlreadyAdd = false;
 
-	const FMonsterHordeHandle& Horde = m_CurrentDgData->m_Horde;
+	const TArray<FDungeonDropTableHandle>& DgDropTableAry = UDiabloGameInstance::Get->GetDungeonManager()->
+		GetCurrentDgStageData()->
+		m_AryDgDroptableHandle;
 
-	const FDungeonDropTable* CurrentDropTable = UDiabloGameInstance::Get->GetDungeonManager()->GetCurrentDropTable();
-
-	if (!CurrentDropTable)
+	for (const FDungeonDropTableHandle& DgDropTable : DgDropTableAry)
 	{
-		return;
-	}
+		const FDungeonDropTable* CurrentDropTable = DgDropTable.GetRow<FDungeonDropTable>("MapInfoPpp-DgDropTableNull");
 
-	for (const FItemDataHandle& DropItem : CurrentDropTable->m_AryDropItems)
-	{
-		const FItemData* Data = DropItem.GetRow<FItemData>("");
-
-		m_AryItemData.Add(Data, &bIsAlreadyAdd);
-
-		if (!bIsAlreadyAdd)
+		if (!CurrentDropTable)
 		{
-			UImageAndText* Widget = CreateImageText(Data->m_ItemIcon, Data->m_ShowingName);
-
-			m_VerticalInfo3->AddChildToVerticalBox(Widget);
+			continue;
 		}
 
-		m_AryItemTypes.Add(&Data->m_ItemType, &bIsAlreadyAdd);
-
-		if (!bIsAlreadyAdd)
+		for (const FItemDataHandle& DropItem : CurrentDropTable->m_AryDropItems)
 		{
-			const FItemType* ItemTypeFound = Data->m_ItemType.GetRow<FItemType>("");
+			const FItemData* Data = DropItem.GetRow<FItemData>("");
 
-			UImageAndText* Widget = CreateImageText(ItemTypeFound->m_ItemTypeIcon, ItemTypeFound->m_ShowingName);
+			m_AryItemData.Add(Data, &bIsAlreadyAdd);
 
-			m_VerticalInfo1->AddChildToVerticalBox(Widget);
+			if (!bIsAlreadyAdd)
+			{
+				UImageAndText* Widget = CreateImageText(Data->m_ItemIcon, Data->m_ShowingName);
+
+				m_VerticalInfo3->AddChildToVerticalBox(Widget);
+			}
+
+			m_AryItemTypes.Add(&Data->m_ItemType, &bIsAlreadyAdd);
+
+			if (!bIsAlreadyAdd)
+			{
+				const FItemType* ItemTypeFound = Data->m_ItemType.GetRow<FItemType>("");
+
+				UImageAndText* Widget = CreateImageText(ItemTypeFound->m_ItemTypeIcon, ItemTypeFound->m_ShowingName);
+
+				m_VerticalInfo1->AddChildToVerticalBox(Widget);
+			}
 		}
 	}
 

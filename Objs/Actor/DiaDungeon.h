@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 
 #include "GridFlowAsset.h"
 #include "Core/Dungeon.h"
@@ -14,8 +14,6 @@ struct FDgDataAsset
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FName m_Id;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UDungeonThemeAsset* m_DgTheme;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
@@ -35,15 +33,7 @@ public:
 public:
 	ADiaDungeon(const FObjectInitializer& ObjectInitializer);
 	
-protected:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	TArray<FDgDataAsset> m_AryDgDatas;
-	
-	TMap<FName,FDgDataAsset*> m_MapDgDatas; 
-	
 public:
-	void Init();
-	
 	bool IsMyActor(AActor* actor);
 
 	void ShuffleSpawnPoints(TArray<FTransform>& aryEmit,int iter=1) const;
@@ -52,5 +42,4 @@ public:
 
 	FVector GetStartPoint();
 
-	const FDgDataAsset& GetDgData(FName id);
 };

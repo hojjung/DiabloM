@@ -25,12 +25,11 @@ UDungeonManager::UDungeonManager(const FObjectInitializer& objInit):Super(objIni
     TEXT("Blueprint'/Game/Blueprints/VillageActors/BP_DgVillagePortal.BP_DgVillagePortal_C'"));
     //
     //
+    m_NamePortalID="DgPortal";
     m_ClassDgVillagePortal=FoundPortal.Class;
     m_CurrentDgVillagePortal=nullptr;
     m_MatMinimap=nullptr;
-    m_NamePortalID="DgPortal";
-
-    m_CurrentDroptable=nullptr;
+    m_CurrentDgData=nullptr;
 }
 
 void UDungeonManager::Init()
@@ -178,7 +177,7 @@ void UDungeonManager::ClearDungeon()
 
     Dg->DestroyDungeon();
 
-    m_CurrentDroptable=nullptr;
+    m_CurrentDgData=nullptr;
 }
 
 void UDungeonManager::RestartDungeon()
@@ -242,16 +241,16 @@ void UDungeonManager::BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData)
 {
     ADiaDungeon* Dg = ADiabloGameMode::Get->GetDungeon();
 
-    m_CurrentDroptable = SelectedDungeonData->m_DgDroptableHandle.GetRow<FDungeonDropTable>("DgBuild-NoDroptable");
+    m_CurrentDgData = &SelectedDungeonData->m_AryDgStageData[m_nCurrentDgLevel];
 
     Dg->Themes.Reset();
-    Dg->Themes.Add(Dg->GetDgData(SelectedDungeonData->m_IDDgTheme).m_DgTheme);
+    Dg->Themes.Add(m_CurrentDgData->m_DgAsset.m_DgTheme);
     
     Dg->SetBuilderClass(UGridFlowBuilder::StaticClass());
 
      UGridFlowConfig* Config = Cast< UGridFlowConfig>( Dg->GetConfig());
     
-     Config->GridFlow = Dg->GetDgData(SelectedDungeonData->m_IDDgTheme).m_DgGridFlow;
+     Config->GridFlow = m_CurrentDgData->m_DgAsset.m_DgGridFlow;
     
      Config->Instanced = true;
     
@@ -281,9 +280,9 @@ ADgToVillagePortal* UDungeonManager::GetDgCompletePortalOpen()
     return m_CurrentDgVillagePortal;
 }
 
-const FDungeonDropTable* UDungeonManager::GetCurrentDropTable()
+const FDungeonStageData* UDungeonManager::GetCurrentDgStageData()
 {
-    return m_CurrentDroptable;
+    return m_CurrentDgData;
 }
 
 void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
@@ -338,9 +337,7 @@ void UDungeonManager::SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* 
         return;
     }
     
-    FMonsterHordeHandle& Horde = SelectedDungeonData->m_Horde;
-
-    SpawnManager->SpawnIter(ADiabloGameMode::Get->GetDungeon()->GetArySpawnPoints(),*Horde.GetRow<FMonsterHordeRow>(""),MonsterLevel,this);    
+    SpawnManager->SpawnIter(ADiabloGameMode::Get->GetDungeon()->GetArySpawnPoints(),GetCurrentDgStageData(),MonsterLevel,this);    
 
     m_nCurrentMonsterCount = SpawnManager->GetCurrentMonsters().Num();
     

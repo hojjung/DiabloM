@@ -7,6 +7,7 @@
 #include "NavigationData.h"
 #include "NavigationSystem.h"
 #include "Characters/MonsterPawn.h"
+#include "Datas/DungeonDataTable.h"
 #include "Datas/SpawnDataTable.h"
 
 
@@ -45,8 +46,8 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateWorld(UWorld* world);
-	UFUNCTION(BlueprintCallable)
-	bool SpawnIter(TArray<FTransform>& locAry,const FMonsterHordeRow& selectedHorde,int level=1,UDungeonManager* dgSpawnedManager=nullptr);
+	
+	bool SpawnIter(TArray<FTransform>& locAry,const FDungeonStageData* selectedHorde,int level=1,UDungeonManager* dgSpawnedManager=nullptr);
 	//
 
 	void Reset();

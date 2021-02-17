@@ -184,7 +184,9 @@ bool UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetDamageStatics().BlockChanceDef, EvaluationParameters,
 	                                                           LBlockChance);
 	//
-	if (!CanHitBaseAttack(LAvoid, LAccuracy, AttackerLevel))
+	float SuccessPer100 = CalcuSameLevelAvgAccuracy(LAvoid, SourceUnit);
+	
+	if (!CheckOnerPercentRand(SuccessPer100))
 	{
 		OutExecutionOutput.AddOutputModifier(
 			FGameplayModifierEvaluatedData(GetDamageStatics().TookPhysDamageProperty, EGameplayModOp::Override, 0.f));
@@ -199,7 +201,6 @@ bool UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
 
 		//if (Cast<APlayerDiabloCharacter>(SourceUnit))
 		{
-			float SuccessPer100 = CalcuSameLevelAvgAccuracy(LAvoid, SourceUnit);
 			ADiabloPlayerController::Get->ShowDamageNumber(100.f - SuccessPer100, TargetUnit, EDamagePopup::Miss);
 		}
 		return false;
@@ -270,12 +271,14 @@ bool UDiabloDamageExec::Execute_Implementation(const FGameplayEffectCustomExecut
 	LTookElecDamage *= LDamagePer;
 	LTookIceDamage *= LDamagePer;
 	LTookPoisonDamage *= LDamagePer;
+	PRINTF("DamagePer:%f",LDamagePer);
+	PRINTF("LDefensePer:%f",LDefensePer);
 	// //
-	// LTookPhysDamage *= 1.f - LDefensePer; //1이면 안받음,0.9 ,
-	// LTookFireDamage *= 1.f - LDefensePer;
-	// LTookElecDamage *= 1.f - LDefensePer;
-	// LTookIceDamage *= 1.f - LDefensePer;
-	// LTookPoisonDamage *= 1.f - LDefensePer;
+	 LTookPhysDamage *= 1.f - LDefensePer; //1이면 안받음,0.9 ,
+	 LTookFireDamage *= 1.f - LDefensePer;
+	 LTookElecDamage *= 1.f - LDefensePer;
+	 LTookIceDamage *= 1.f - LDefensePer;
+	 LTookPoisonDamage *= 1.f - LDefensePer;
 	//
 	//LTookFireDamage *= 1.f - LResFire; //저항력 마이너스로 추가 피해 입힐때 데미지 팝업으로 표시해줘야함
 	//LTookElecDamage *= 1.f - LResElec;
@@ -356,45 +359,9 @@ float UDiabloDamageExec::CalcPhysReduction(int DefenseTargetLevel, const int Att
 	}
 }
 
-bool UDiabloDamageExec::CanHitBaseAttack(float targetAvoid, float instiAccuracy, int instiLevel) const
-{
-	float TargetAvoid = targetAvoid;
-	float BlockRate = FMath::RandRange(1.f, TargetAvoid); //21을 높이면 회피확률이 는다.
-	float InstigatorAccuracy = instiAccuracy;
-	float HitRate = (10.f + instiLevel + FMath::RandRange(0.f, InstigatorAccuracy)) -
-		FMath::RandRange(1.f, TargetAvoid + 1.f); //여기서 방관 적용 가능
-
-	if (BlockRate < HitRate)
-	{
-		//아무리 높아도 5%확률로 빗나감
-		return 1 != FMath::RandRange(1, 20);
-	}
-
-	//아무리 낮아도 5%확률로 맞음
-	return 1 == FMath::RandRange(1, 20);
-}
-
-
 float UDiabloDamageExec::CalcuSameLevelAvgAccuracy(float targetAvoidChance, AUnitPawn* instigator) const //맞을 확률
 {
-	//스텟에 표기되는건? 평균적 동레벨 상대 얘기
-	//MinBlock
-	float TargetAvoid = targetAvoidChance;
-	float A0 = (10 + instigator->GetCharacterLevel()) - TargetAvoid; //10
-	float A1 = (9 + instigator->GetCharacterLevel()) + instigator->GetAttributeSet()->GetAccuracy(); //9
-	float B0 = 1.f; //1
-	float B1 = 20.f + TargetAvoid; //20
-
-	float OuterRight = FMath::Max(B1, A1);
-	float OuterLeft = FMath::Min(B0, A0);
-	float InnerRight = FMath::Min(B1, A1);
-	float InnerLeft = FMath::Max(B0, A0);
-	float Percentage = FMath::Max(0.f, FMath::Min(
-		                              1.f, (InnerLeft - B0 + (InnerRight - InnerLeft) * 0.5f + OuterRight - B1) / (
-			                              OuterRight - OuterLeft)));
-
-	float Result = UDiaBlueprintFunctionLibrary::SetFloatPrecision((Percentage * 100), 1);
-	return FMath::Clamp(Result, 5.f, 95.f);
+	return FMath::Clamp(instigator->GetAttributeSet()->GetAccuracy() - targetAvoidChance,0.05f,0.95f);
 }
 
 bool UDiabloDamageExec::CheckOnerPercentRand(float chanceMaxOne) const

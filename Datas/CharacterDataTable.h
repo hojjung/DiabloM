@@ -239,7 +239,7 @@ struct FMonsterTable : public FEntityTable
 public:
 	FMonsterTable(): m_Mesh(nullptr), m_fTierDropBonusNormal(0), m_fTierDropBonusMagic(0), m_fTierDropBonusRare(0),
 	                 m_fTierDropBonusLegend(0),
-	                 m_nDroptableRollCount(1), m_SpawnAnim(nullptr)
+	                 m_nDroptableRollCount(1), m_nDropTableIndex(0), m_SpawnAnim(nullptr)
 
 	{
 	}
@@ -259,6 +259,8 @@ public:
 	float m_fTierDropBonusLegend;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.0"))
 	int m_nDroptableRollCount;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int m_nDropTableIndex;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UDiabloAbility> m_BaseAttack;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

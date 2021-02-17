@@ -140,6 +140,7 @@ void UPlayerStatusBar::Init(ADiabloPlayerController* diaCon,UMainCanvas* mainCan
    // m_SkillUseCanvas->m_PotionButton->OnClicked.AddDynamic(mainCanvas,&UMainCanvas::DrinkPotion);
 
     m_SkillMenuOpenButton->OnClicked.AddDynamic(mainCanvas,&UMainCanvas::OpenSkillMenu);
+    //
 }
 
 void UPlayerStatusBar::SetHealthBarProgressV(AUnitPawn* pawn)
@@ -248,3 +249,4 @@ void UPlayerStatusBar::SetAutoPlay(bool isAuto)
 {
     ADiabloPlayerController::Get->GetPlayerPawn()->SetAutoPlay(isAuto);
 }
+

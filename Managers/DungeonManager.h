@@ -64,7 +64,8 @@ protected:
 
 	FDungeonCreate m_OnPortalCreate;
 	
-	const FDungeonDropTable* m_CurrentDroptable;
+	const FDungeonStageData* m_CurrentDgData;
+	
 protected:
 	int StageLevelToDungeonType(int stageLevel);
 	
@@ -115,7 +116,7 @@ public:
 
 	ADgToVillagePortal* GetDgCompletePortalOpen();
 	
-	const FDungeonDropTable* GetCurrentDropTable();
+	const FDungeonStageData* GetCurrentDgStageData();
 
 	
 	
