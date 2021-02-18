@@ -26,7 +26,6 @@ protected:
 
     TArray<FItemTier*> m_AryItemTier;
 
-    float m_fTierMaxRate;
 protected:
     bool CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption,int TierMaxOption,float bonus,int level);    
 
@@ -43,8 +42,6 @@ public:
     {
         return m_OnItemGroundChanged;
     }
-
-    const FItemTier& GetDefaultTierRoll() const;
 
 
 private:

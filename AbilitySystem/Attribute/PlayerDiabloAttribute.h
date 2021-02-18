@@ -61,19 +61,19 @@ public:
 	FGameplayAttributeData RageRegen;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, RageRegen)
 
-	UPROPERTY(BlueprintReadOnly, Category = "CoreStats")
+	UPROPERTY(BlueprintReadOnly, Category = "CoreStats")//공격력증가
 	FGameplayAttributeData Str;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, Str)
 
-	UPROPERTY(BlueprintReadOnly, Category = "CoreStats")
+	UPROPERTY(BlueprintReadOnly, Category = "CoreStats")//방어력증가,치명타 증가
 	FGameplayAttributeData Dex;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, Dex)
 
-	UPROPERTY(BlueprintReadOnly, Category = "CoreStats")
+	UPROPERTY(BlueprintReadOnly, Category = "CoreStats")//리소스 생성량,전체저항력 증가
 	FGameplayAttributeData Int;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, Int)
 
-	UPROPERTY(BlueprintReadOnly, Category = "CoreStats")
+	UPROPERTY(BlueprintReadOnly, Category = "CoreStats")//체력 체력 리젠증가
 	FGameplayAttributeData Vit;
 	ATTRIBUTE_ACCESSORS(UPlayerDiabloAttribute, Vit)
 	//

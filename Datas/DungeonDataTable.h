@@ -52,8 +52,6 @@ struct FDungeonStageData
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FDgDataAsset m_DgAsset;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TArray<TSubclassOf<UDiabloAbility>> m_AryClassPlayerBuff;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TArray<TSubclassOf<UDiabloAbility>> m_AryClassPlayerDebuff;
@@ -65,8 +63,14 @@ public:
 	TArray<FMonsterHordeHandle> m_AryHorde;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
     TArray<FDungeonDropTableHandle> m_AryDgDroptableHandle;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	int m_nNamedMonsterCount =0;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<TSubclassOf<UDiabloAbility>> m_AryClassNamedMonsterBuff;
     UPROPERTY(EditAnywhere,BlueprintReadWrite)
     FMonsterSelect m_BossMob;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TArray<TSubclassOf<UDiabloAbility>> m_AryClassBossMonsterBuff;
 	//던전 테마와 그리드 플로우도 여기 필요함	
 };
 

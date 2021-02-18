@@ -77,7 +77,7 @@ struct FItemTier : public FTableRowBase
     GENERATED_BODY()
 
 public:
-    FItemTier(): m_fDefaultDropRate(0)
+    FItemTier()
     {
         m_fBonusPowerRate=1.f;
         m_ShowingName = FText::FromString("Normal");
@@ -94,8 +94,6 @@ public:
     FName m_TierID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FText m_ShowingName;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
-    float m_fDefaultDropRate;//there is no maximum
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FLinearColor m_TierColor;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -144,6 +142,8 @@ public:
     int m_nInitStack;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "m_bStackable"))
     int m_nMaxStack;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    float m_fMainTypeBonus;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots",EditCondition = "m_bEquipable"))
     int32 m_EquipableSlot;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Bitmask, BitmaskEnum = "ESlots",EditCondition = "m_bEquipable"))

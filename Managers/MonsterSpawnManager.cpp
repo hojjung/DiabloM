@@ -1,5 +1,6 @@
 #include "MonsterSpawnManager.h"
 #include "DiabloGameInstance.h"
+#include "DungeonManager.h"
 #include "EngineUtils.h"
 #include "GridFlowMiniMap.h"
 #include "Characters/DiabloPlayerController.h"
@@ -125,9 +126,27 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 	AMonsterPawn* Mob = m_CurrentWorld->SpawnActor<AMonsterPawn
 	>(UCharacterDataTable::ClassMonsterPawn, loc, Rot, Param);
 
-	//UGridFlowMiniMap::Get->AddTrackActor(m_IdEnemy,Mob);
+	UGridFlowMiniMap::Get->AddTrackActor(m_IdEnemy,Mob);
 
 	check(Mob);
 
 	return Mob;
+}
+
+void UMonsterSpawnManager::MakeNamedMonster(AMonsterPawn* mob)
+{
+	auto AryBuff =  UDiabloGameInstance::Get->GetDungeonManager()->GetCurrentDgStageData()->m_AryClassNamedMonsterBuff;
+
+	for(auto BB : AryBuff)
+	{
+		if (BB!=nullptr)
+		{
+			FGameplayAbilitySpec Spec = FGameplayAbilitySpec(BB, mob->GetCharacterLevel(), -1, this);
+			
+			mob->GetDiaAbilitySystem()->GiveAbility(Spec);
+		}
+	}
+
+	mob->SetActorScale3D(FVector(1.5f,1.5f,1.5f));
+	//material setting need
 }

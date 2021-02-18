@@ -113,6 +113,12 @@ void UMapInfoPopup::OpenPopup(const FDungeonDataRow* dg_data)
 		GetCurrentDgStageData()->
 		m_AryDgDroptableHandle;
 
+	if(DgDropTableAry.Num()<=0)
+	{
+		PRINTF("ERROR-MapInfoPP-NoDroptableARy");
+		return;
+	}
+
 	for (const FDungeonDropTableHandle& DgDropTable : DgDropTableAry)
 	{
 		const FDungeonDropTable* CurrentDropTable = DgDropTable.GetRow<FDungeonDropTable>("MapInfoPpp-DgDropTableNull");

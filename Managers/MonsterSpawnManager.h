@@ -42,6 +42,10 @@ protected:
 	FVector GetRandomPoint(const FVector& loc,const float& radius);
 	
 	AMonsterPawn* SpawnMob(FVector loc);
+
+	void MakeNamedMonster(AMonsterPawn* mob);
+
+	//void MakeBossMonster(AMonsterPawn* mob);
 	
 public:
 	UFUNCTION(BlueprintCallable)

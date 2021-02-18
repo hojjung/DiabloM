@@ -52,13 +52,15 @@ protected:
 public:
 	void CreateActorPool();
 	
+	void RequestGoldRop(FVector& dropCenter, float GoldAmount);
+
 	void RequestMonsterDropItem(AMonsterPawn* dropActor, int level);
 
-	ADroppedItem* DropItemActor(APawn* dropCenterActor,float dropRadius,FItemInstance& myItem);
+	ADroppedItem* DropItemActor(FVector& dropCenter,float dropRadius,FItemInstance& myItem);
 
-	ADroppedGold* DropGoldActor(APawn* dropCenterActor,float dropRadius,float goldAmount);
+	ADroppedGold* DropGoldActor(FVector& dropCenter,float dropRadius,float goldAmount);
 
-	AHealthSphere* DropHpSphereActor(APawn* dropCenterActor,float dropRadius);
+	AHealthSphere* DropHpSphereActor(FVector& dropCenter ,float dropRadius);
 
 	void EnqueAllActors(bool dgOpen);
 	
@@ -75,7 +77,7 @@ protected:
 
 	ACollisionInteract* SpawnInteractActor(TSubclassOf<ACollisionInteract> classWant);
 	
-	ACollisionInteract* DropRandomPoint(APawn* dropCenterActor,float dur,float dropRadius,ACollisionInteract* targetActorToDrop,float height,FOnEnd* endCallback=nullptr);
+	ACollisionInteract* DropRandomPoint(FVector& dropCenter,float dur,float dropRadius,ACollisionInteract* targetActorToDrop,float height,FOnEnd* endCallback=nullptr);
 	
 	void BezierCurveMove(AActor* target,float height,FVector destination,float dur,FOnEnd* endCallback=nullptr);
 

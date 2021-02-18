@@ -107,7 +107,9 @@ FItemTierHandle::FItemTierHandle()
     DataTable = UItemDataTable::GetTierTable;
 }
 
-FItemType::FItemType(): m_ItemTypeIcon(nullptr), m_DropItemMesh(nullptr), m_bEquipable(false), m_bStackable(false),
+FItemType::FItemType(): m_ItemTypeIcon(nullptr), m_DropItemMesh(nullptr), m_UseEffect(nullptr), m_UseSound(nullptr),
+                        m_bEquipable(false),
+                        m_bStackable(false),
                         m_nInitStack(1),
                         m_nMaxStack(99),
                         m_EquipableSlot(),
@@ -116,6 +118,7 @@ FItemType::FItemType(): m_ItemTypeIcon(nullptr), m_DropItemMesh(nullptr), m_bEqu
     m_fSellValueRate = 1.f;
     m_TypeID = "SetSameWithRowID";
     m_ShowingName = FText::FromString("ShowNameExOneHandSword");
+    m_fMainTypeBonus = 1.f;
 }
 
 FItemData::FItemData(): m_ItemIcon(nullptr)

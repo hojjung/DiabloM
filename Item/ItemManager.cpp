@@ -8,14 +8,9 @@ void UItemManager::Init(UDiabloGameInstance* gameInstance)
 {
     m_GameInstance = gameInstance;
     m_nCurrentIndex = 0;
-    m_fTierMaxRate = 0;
 
     UItemDataTable::GetTierTable->GetAllRows("Error", m_AryItemTier);
 
-    for (auto* ItemTier : m_AryItemTier)
-    {
-        m_fTierMaxRate += ItemTier->m_fDefaultDropRate;
-    }
 
     PRINTF("UItemManager Init");
 }
@@ -40,17 +35,20 @@ FItemInstance UItemManager::CreateItemInstance(FName id,int itemLevel)
 bool UItemManager::CreateRandomOption(const FItemData& itemData, TArray<FOptionSpec>& outOption,
                                                 int TierMaxOption, float bonus, int level)
 {
-    if (itemData.m_ItemType.GetRow<FItemType>("")->m_bStackable || !itemData.m_ItemType.GetRow<FItemType>("")->m_bEquipable)
+    FItemType* ItemType = itemData.m_ItemType.GetRow<FItemType>("");
+    
+    if (ItemType->m_bStackable || !ItemType->m_bEquipable)
     {
         PRINTF("ItemOption - the item is not equipment");
         return false;
     }
 
-    FItemType* ItemType = itemData.m_ItemType.GetRow<FItemType>("");
 
     FOptionSpec MainOp = ItemType->m_MainOption.GetRow<FOption>("")->MakeOptionInst(level);
 
     MainOp.m_fValue *= bonus;
+
+    MainOp.m_fValue *= ItemType->m_fMainTypeBonus;
 
     outOption.Add(MainOp);
     //
@@ -135,26 +133,6 @@ bool UItemManager::SwapMove(FItemInstance& Drop, FItemInstance& Drag)
     return true;
 }
 
-const FItemTier& UItemManager::GetDefaultTierRoll() const
-{
-    float RandomValue = FMath::RandRange(0.f, m_fTierMaxRate);
-    //76/100
-    float DropRateCount = 0.f;
-
-    for (auto* TierData : m_AryItemTier)
-    {
-        DropRateCount += TierData->m_fDefaultDropRate;
-
-        if (DropRateCount >= RandomValue)
-        {
-            return *TierData;
-        }
-    }
-
-    PRINTF("Error? - TierDrop Roll Fucked");
-
-    return *m_AryItemTier[0];
-}
 
 FItemInstance UItemManager::CreateItemManual(const FShopItemSell& item_sell) //cant make unique
 {

@@ -71,7 +71,8 @@ FItemInstance UDiabloGameInstance::CreateItemManual(const FShopItemSell& itemSel
 
 ADroppedItem* UDiabloGameInstance::DropItemActor(APawn* dropCenterActor, float dropRadius, FItemInstance& myItem)
 {
-    return m_RewardManager->DropItemActor(dropCenterActor,dropRadius,myItem);
+    FVector Loc = dropCenterActor->GetMovementComponent()->GetActorFeetLocation();
+    return m_RewardManager->DropItemActor(Loc,dropRadius,myItem);
 }
 
 void UDiabloGameInstance::CreateDungeon()

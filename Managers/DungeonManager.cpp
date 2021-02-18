@@ -239,6 +239,18 @@ int UDungeonManager::StageLevelToDungeonType(int stageLevel)
 
 void UDungeonManager::BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData)
 {
+    if(!SelectedDungeonData)
+    {
+        PRINTF("DManager-NoDgData");
+        return;
+    }
+
+    if(SelectedDungeonData->m_AryDgStageData.Num()<=0)
+    {
+        PRINTF("DManager-NoDgAryStageData");
+        return;
+    }
+    
     ADiaDungeon* Dg = ADiabloGameMode::Get->GetDungeon();
 
     m_CurrentDgData = &SelectedDungeonData->m_AryDgStageData[m_nCurrentDgLevel];
@@ -285,12 +297,19 @@ const FDungeonStageData* UDungeonManager::GetCurrentDgStageData()
     return m_CurrentDgData;
 }
 
-void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
+UNavigationSystemV1* UDungeonManager::GetCurrentDungeonNav()
 {
-    UWorld* World = ADiabloPlayerController::Get->GetWorld();
-    UNavigationSystemBase* NavSystems = (World->GetNavigationSystem());
+    UNavigationSystemBase* NavSystems = (ADiabloPlayerController::Get->GetWorld()->GetNavigationSystem());
     check(NavSystems);
     UNavigationSystemV1* NavV1 = Cast<UNavigationSystemV1>(NavSystems);
+
+    return NavV1;
+}
+
+void UDungeonManager::OnNavCookComplete(ANavigationData* NavData)
+{
+    
+    UNavigationSystemV1* NavV1 = GetCurrentDungeonNav();
     NavV1->OnNavigationGenerationFinishedDelegate.Clear();
     //NavV1->SetGenerationMode(ERuntimeGenerationType::Static);
     

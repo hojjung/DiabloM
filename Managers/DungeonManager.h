@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 
 
+
+#include "NavigationSystem.h"
 #include "Datas/DungeonDataTable.h"
 #include "Objs/Actor/DiaDungeon.h"
 #include "Objs/Containers/Quadtree.h"
@@ -119,5 +121,5 @@ public:
 	const FDungeonStageData* GetCurrentDgStageData();
 
 	
-	
+	UNavigationSystemV1* GetCurrentDungeonNav();
 };

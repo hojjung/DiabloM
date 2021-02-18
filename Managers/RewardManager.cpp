@@ -33,6 +33,22 @@ void URewardManager::CreateActorPool()
 	CreateAllItemPool(35, 15, 7); //75/40/4
 }
 
+void URewardManager::RequestGoldRop(FVector& dropCenter, float GoldAmount)
+{
+	if (GoldAmount > 0.f)
+	{
+		int CountGoldActor = m_AryGoldCount.GetRandom();
+
+		int IterGold = 0;
+
+		while (IterGold++ < CountGoldActor)
+		{
+			float NewAmount = FMath::RandRange(0.85f,1.15f)*GoldAmount;
+			DropGoldActor(dropCenter, 400.f, NewAmount);
+		}
+	}
+}
+
 void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, int level)
 {
 	int MinItemLevel = level - 2;
@@ -47,18 +63,8 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, int level)
 	
 	float GoldAmount = dropActor->GetAttributeSet()->GetGoldBounty();
 
-	if (GoldAmount > 0.f)
-	{
-		int CountGoldActor = m_AryGoldCount.GetRandom();
-
-		int IterGold = 0;
-
-		while (IterGold++ < CountGoldActor)
-		{
-			float NewAmount = FMath::RandRange(0.85f,1.15f)*GoldAmount;
-			DropGoldActor(dropActor, 400.f, NewAmount);
-		}
-	}
+	FVector MobLoc = dropActor->GetMovementComponent()->GetActorFeetLocation();
+	RequestGoldRop(MobLoc, GoldAmount);
 	//
 	//Spawn Normal Item
 	const TArray<FDungeonDropTableHandle>& DropDataAry = UDiabloGameInstance::Get->GetDungeonManager()->GetCurrentDgStageData()->m_AryDgDroptableHandle;
@@ -67,6 +73,7 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, int level)
 
 	if(DropTableIndex<0 || DropTableIndex>=DropDataAry.Num())
 	{
+		PRINTF("RewardManager-Error,DropTableIndex Outrange");
 		return;
 	}
 
@@ -77,7 +84,7 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, int level)
 		return;
 	}
 
-	int Iter = dropActor->GetMonsterDataTable().m_nDroptableRollCount;
+	int Iter =FMath::RandRange(1,dropActor->GetMonsterDataTable().m_nDroptableRollCount);
 
 	if(Iter<=0)
 	{
@@ -130,13 +137,13 @@ void URewardManager::RequestMonsterDropItem(AMonsterPawn* dropActor, int level)
 
 			FItemInstance CreatedItem = UDiabloGameInstance::Get->CreateItem(CurrentItemData->m_ItemID,RandItemLevel);
 
-			DropItemActor(dropActor, 400.f, CreatedItem);
+			DropItemActor(MobLoc, 400.f, CreatedItem);
 		}
 	}
 	//
 }
 
-ADroppedItem* URewardManager::DropItemActor(APawn* dropCenterActor, float dropRadius, FItemInstance& myItem)
+ADroppedItem* URewardManager::DropItemActor(FVector& dropCenter, float dropRadius, FItemInstance& myItem)
 {
 	ADroppedItem* DropItem = GetDropItemActor();
 
@@ -147,12 +154,12 @@ ADroppedItem* URewardManager::DropItemActor(APawn* dropCenterActor, float dropRa
 	FOnEnd OnDropEnd;
 	OnDropEnd.AddUObject(DropItem, &ADroppedItem::DropEnd);
 
-	DropRandomPoint(dropCenterActor, 0.8f, dropRadius, DropItem, 700.f, &OnDropEnd);
+	DropRandomPoint(dropCenter, 0.8f, dropRadius, DropItem, 700.f, &OnDropEnd);
 
 	return DropItem;
 }
 
-ADroppedGold* URewardManager::DropGoldActor(APawn* dropCenterActor, float dropRadius, float goldAmount)
+ADroppedGold* URewardManager::DropGoldActor(FVector& dropCenter, float dropRadius, float goldAmount)
 {
 	ADroppedGold* DropGold = GetDropGoldActor();
 
@@ -161,19 +168,19 @@ ADroppedGold* URewardManager::DropGoldActor(APawn* dropCenterActor, float dropRa
 	FOnEnd OnDropEnd;
 	OnDropEnd.AddUObject(DropGold, &ADroppedGold::DropEnd);
 
-	DropRandomPoint(dropCenterActor, 0.55f, dropRadius, DropGold, 450.f, &OnDropEnd);
+	DropRandomPoint(dropCenter, 0.55f, dropRadius, DropGold, 450.f, &OnDropEnd);
 
 	return DropGold;
 }
 
-AHealthSphere* URewardManager::DropHpSphereActor(APawn* dropCenterActor, float dropRadius)
+AHealthSphere* URewardManager::DropHpSphereActor(FVector& dropCenter, float dropRadius)
 {
 	AHealthSphere* DropHp = GetDropHealthActor();
 
 	FOnEnd OnDropEnd;
 	OnDropEnd.AddUObject(DropHp, &AHealthSphere::DropEnd);
 
-	DropRandomPoint(dropCenterActor, 0.35f, dropRadius, DropHp, 550.f, &OnDropEnd);
+	DropRandomPoint(dropCenter, 0.35f, dropRadius, DropHp, 550.f, &OnDropEnd);
 
 	DropHp->SetActorHiddenInGame(false); //이게 문제 아닐까//Set이 없기때문에해줌
 
@@ -389,11 +396,11 @@ void URewardManager::CreateAllItemPool(int itemPoolCount, int goldPoolCount, int
 	}
 }
 
-ACollisionInteract* URewardManager::DropRandomPoint(APawn* dropCenterActor, float dur, float dropRadius,
+ACollisionInteract* URewardManager::DropRandomPoint(FVector& dropCenter, float dur, float dropRadius,
                                                     ACollisionInteract* targetActorToDrop, float height,
                                                     FOnEnd* endCallback)
 {
-	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(dropCenterActor->GetWorld());
+	UNavigationSystemV1* NavSys = UDiabloGameInstance::Get->GetDungeonManager()->GetCurrentDungeonNav();
 
 	if (!NavSys)
 	{
@@ -402,7 +409,7 @@ ACollisionInteract* URewardManager::DropRandomPoint(APawn* dropCenterActor, floa
 		return nullptr;
 	}
 
-	FVector PosWant = dropCenterActor->GetMovementComponent()->GetActorFeetLocation();//for path find
+	FVector PosWant = dropCenter;//for path find
 
 	targetActorToDrop->SetActorLocation(PosWant);
 
