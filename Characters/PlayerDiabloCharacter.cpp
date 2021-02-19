@@ -28,12 +28,13 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	
 	m_DissolveCam = CreateDefaultSubobject<UCameraDissolve>("CamDissolve00");
 	m_DissolveCam->SetupAttachment(RootComponent);
-	m_DissolveCam->SetRelativeRotation(FRotator(-42.f, 45.f, 0.f));
+	m_DissolveCam->SetRelativeRotation(FRotator(-45.f, 45.f, 0.f));
 	m_DissolveCam->SetRelativeLocation(FVector(0,0,0.f));
+	m_DissolveCam->TargetArmLength = 1800.f;
 	//
 	m_TopCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera00");
 	m_TopCamera->SetupAttachment(m_DissolveCam);
-	m_TopCamera->FieldOfView = 60.f;
+	m_TopCamera->FieldOfView = 30.f;
 	//m_TopCamera->SetProjectionMode(ECameraProjectionMode::Orthographic);
 
 	m_fInteractRange = 300.f;

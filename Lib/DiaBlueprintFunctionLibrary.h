@@ -16,37 +16,54 @@ class DIABLOM_API UDiaBlueprintFunctionLibrary : public UBlueprintFunctionLibrar
 	GENERATED_BODY()
 
 public:
-	static const FText UnitSymbol[11];
+	static const int UnitSymbolMax = 11;
+	
+	static const FText UnitSymbol[UnitSymbolMax];
 
-	static FString GetAlphabetTextBigInt(TBigInt<512, false>& vWant)
+	static FString GetAlphabetTextBigInt(TBigInt<512, false>& vWant, int symbolCount = 0)
 	{
-		TBigInt<512, false> Thous = 10000;
-		
+		TBigInt<512, false> Mile = 10000;
+
 		TBigInt<512, false> Cache = vWant;
 
 		TBigInt<512, false> Remain;
-		
+
 		TArray<TBigInt<512, false>> NumList;
 
 		int Count = 0;
 
 		while (Cache >= 1) //Mile
 		{
-			Cache.DivideWithRemainder(Thous, Remain);
+			Cache.DivideWithRemainder(Mile, Remain);
 
 			NumList.Emplace(Remain.ToInt());
 
 			Count++;
 		}
-		
+
 		FString RetStr;
 
-		for(int i=Count-1; i>=0;i--)
+		int MaxIter = Count - 1;
+
+		int SymbolCounter =0;
+
+		for (int i = MaxIter; i >= 0; i--)
 		{
 			RetStr.Append(FString::FromInt(NumList[i].ToInt()));
-			RetStr.Append(UnitSymbol[i].ToString());
+
+			if (i < UnitSymbolMax) //자릿수초과시 그냥 합처서
+			{
+				RetStr.Append(UnitSymbol[i].ToString());
+				
+				SymbolCounter++;
+
+				if(symbolCount>0&&SymbolCounter>=symbolCount)
+				{
+					break;
+				}
+			}
 		}
-		
+
 		return RetStr;
 	}
 
@@ -127,6 +144,4 @@ public:
 
 		return FText::Format(FormatT, Args);
 	}
-
-	
 };

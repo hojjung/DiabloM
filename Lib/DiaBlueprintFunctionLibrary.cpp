@@ -1,6 +1,6 @@
 #include "DiaBlueprintFunctionLibrary.h"
 
-const  FText UDiaBlueprintFunctionLibrary::UnitSymbol[11] = {
+const  FText UDiaBlueprintFunctionLibrary::UnitSymbol[UnitSymbolMax] = {
     FText::FromString(""),
     FText::FromString("A/"),//만
     FText::FromString("B/"),//억
@@ -12,6 +12,7 @@ const  FText UDiaBlueprintFunctionLibrary::UnitSymbol[11] = {
     FText::FromString("H/"),//가
     FText::FromString("I/"),//구
     FText::FromString("J/")//간
+    //FText::FromString("K/")//간
     //정
     //재
     //극

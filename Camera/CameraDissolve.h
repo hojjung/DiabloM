@@ -47,10 +47,10 @@ protected:
 	FVector m_CastOffset;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Lag, meta=( ClampMin="0.0", ClampMax="1000.0", UIMin = "0.0", UIMax = "1000.0"))
 	float m_CameraLagSpeed;
-
-protected:
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 	float TargetArmLength;
+protected:
 	UPROPERTY(Transient,VisibleAnywhere)
 	UMaterialParameterCollection* m_MatParamAsset;
 	UPROPERTY()

@@ -60,7 +60,7 @@ void UDiabloGameInstance::Init()
 
     TBigInt<512,false>  BigIntTest;
 
-    BigIntTest.Set(9999999999999999999);//100경
+    BigIntTest.Set(99999999999999);//100경
 
     PRINTF( "BIGINT BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
     BigIntTest.Multiply(150);
@@ -77,17 +77,11 @@ void UDiabloGameInstance::Init()
     PRINTF( "BIGINT7 BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
     BigIntTest.MultiplyFast(9999);
     PRINTF( "BIGINT8 BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
+    BigIntTest.MultiplyFast(99999999999999);
+    PRINTF( "BIGINT9 BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
+    BigIntTest.MultiplyFast(999999999999999);
+    PRINTF( "BIGINT11 BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
 
-    uint32* BitBit = BigIntTest.GetBits();
-
-    uint32 SaveBit[2];
-    
-    SaveBit[0] = BitBit[0];
-    SaveBit[1] = BitBit[1];
-
-    TBigInt<512,false> LoadedNewBigInt(BitBit);
-    
-    PRINTF( "New BigInt:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(LoadedNewBigInt));
 }
 
 
