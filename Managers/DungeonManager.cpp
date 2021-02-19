@@ -256,13 +256,13 @@ void UDungeonManager::BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData)
     m_CurrentDgData = &SelectedDungeonData->m_AryDgStageData[m_nCurrentDgLevel];
 
     Dg->Themes.Reset();
-    Dg->Themes.Add(m_CurrentDgData->m_DgAsset.m_DgTheme);
+    //Dg->Themes.Add(m_CurrentDgData->m_DgAsset.m_DgTheme);
     
     Dg->SetBuilderClass(UGridFlowBuilder::StaticClass());
 
      UGridFlowConfig* Config = Cast< UGridFlowConfig>( Dg->GetConfig());
     
-     Config->GridFlow = m_CurrentDgData->m_DgAsset.m_DgGridFlow;
+     //Config->GridFlow = m_CurrentDgData->m_DgAsset.m_DgGridFlow;
     
      Config->Instanced = true;
     

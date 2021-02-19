@@ -1,5 +1,6 @@
 #include "DiabloGameInstance.h"
 #include "AbilitySystemGlobals.h"
+#include "BigInt.h"
 #include "NavigationSystem.h"
 #include "StartMap/PlayerCreateManager.h"
 #include "MonsterSpawnManager.h"
@@ -10,6 +11,7 @@
 #include "GameFramework/GameUserSettings.h"
 #include "Item/Inventory.h"
 #include "PlayfabManager.h"
+#include "Lib/DiaBlueprintFunctionLibrary.h"
 
 
 UDiabloGameInstance* UDiabloGameInstance::Get = nullptr;
@@ -55,6 +57,37 @@ void UDiabloGameInstance::Init()
     m_PlayfabManager = NewObject<UPlayfabManager>();
 
     m_PlayfabManager->Init();
+
+    TBigInt<512,false>  BigIntTest;
+
+    BigIntTest.Set(9999999999999999999);//100경
+
+    PRINTF( "BIGINT BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
+    BigIntTest.Multiply(150);
+    PRINTF( "BIGINT2 BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
+    BigIntTest.Multiply(150);
+    PRINTF( "BIGINT3 BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
+    BigIntTest.Multiply(150);
+    PRINTF( "BIGINT4 BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
+    BigIntTest.Multiply(150);
+    PRINTF( "BIGINT5 BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
+    BigIntTest.Multiply(150);
+    PRINTF( "BIGINT6 BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
+    BigIntTest.Multiply(150);
+    PRINTF( "BIGINT7 BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
+    BigIntTest.MultiplyFast(9999);
+    PRINTF( "BIGINT8 BigIntTest:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(BigIntTest));
+
+    uint32* BitBit = BigIntTest.GetBits();
+
+    uint32 SaveBit[2];
+    
+    SaveBit[0] = BitBit[0];
+    SaveBit[1] = BitBit[1];
+
+    TBigInt<512,false> LoadedNewBigInt(BitBit);
+    
+    PRINTF( "New BigInt:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(LoadedNewBigInt));
 }
 
 
