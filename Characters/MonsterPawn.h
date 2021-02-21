@@ -1,13 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
-
 #include "DiabloM.h"
 #include "Characters/UnitPawn.h"
-#include "Objs/Interfaces/TickHideable.h"
-#include "Widgets/WorldMap/WorldWidget/FloatingStatusBarWidgetCompo.h"
-
-
+#include "Widgets/CommonElement/FloatingStatusBarWidgetCompo.h"
 #include "MonsterPawn.generated.h"
 
 class UDungeonManager;
@@ -17,7 +11,7 @@ class UDungeonManager;
 class UMobFSMBase;
 class UMonsterSensing;
 UCLASS()
-class DIABLOM_API AMonsterPawn : public AUnitPawn,public ITickHideable
+class DIABLOM_API AMonsterPawn : public AUnitPawn
 {
 	GENERATED_BODY()
 public:
@@ -29,82 +23,56 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UFloatingStatusBarWidgetCompo* m_WorldHpBar;
 protected:
+	FTimerHandle m_DeathTimer;
+	UPROPERTY(VisibleAnywhere, Category = "Character")
+	UAnimMontage* m_DeathMontage;
+	UPROPERTY(VisibleAnywhere, Category = "Character")
+	UAnimMontage* m_TookHitMontage;
 	UPROPERTY()
 	UAnimMontage* m_SpawnAnim;
+	//UPROPERTY()
+	//UMonsterSensing* m_MonsterSense;
 	UPROPERTY()
-	UDungeonManager* m_SpawnedManager;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FMonsterEntityHandle m_MonsterUnitHandle;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<UGameplayEffect> m_GEExpReward;
+	USoundBase* m_HittenSound;
 	UPROPERTY()
-	UMobFSMBase* m_FSM;
-	UPROPERTY()
-	UMonsterSensing* m_MonsterSense;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool m_bIsPlaced;
+	USoundBase* m_DeathSound;
 
-	QuadtreeNode* m_CurrentNode;
+	bool m_bDeathAnimEnd;	
 
-	bool m_bIsVisible;
-
-	bool m_bHasShownEver;
-	
 public: //need more monster
-    void ShowStatusBar();
+	virtual void BeginPlay() override;
 	
-    void HideStatusBar();
+	virtual void Tick(float DeltaSeconds) override;
 	
     bool IsStatusBarActive();
 	
 	void UpdateHealthBar(float perOne);
-
-	virtual void BeginPlay() override;
-
-	virtual void Tick(float DeltaSeconds) override;
-
-	void InitMonster(FDataTableRowHandle unitID, int level=1,UDungeonManager* dgManager=nullptr);
-
-	void GiveExpToPlayer();
+	void HideStatusBar();
 
 	virtual void Die() override;
-	void RequestDropRewards();
+	
 	virtual void OnDeathAnimEnd() override;
+	void PlayHittenSound();
+	void ShowStatusBar();
 
-	void SetHealthPercentage(const FOnAttributeChangeData& data);
-
-	virtual void FocusTarget(AUnitPawn* target) override;
-
-	bool virtual CanSeeTarget() override;
+	virtual void TakeDmg(BigInt amount,AUnitPawn* attacker) override;
 
 	virtual FVector GetLastSeenLocation() override;
 
+	//void SetHealthPercentage(const FOnAttributeChangeData& data);
+	void PlayTookHitMontage();
+
+	virtual void FocusTarget(AUnitPawn* target) override;
+
 public:
-	virtual FVector GetActorLocation() override;
+    void PlayHitFlash();
 
-	virtual void RegisterToQuadTreeBound() override ;
+	void DataInject(const FMonsterEntity* monster_table, const BigInt& hp);
 
-	virtual void ShowAll() override;
-	
-	virtual void HideAll() override;
+	virtual bool IsAlive() const override;
 
-	virtual void SetNode(QuadtreeNode* quadtree_node)override;
+	bool IsReadyToPool();
 
-	virtual QuadtreeNode* GetCurrentNode()override;
+	void SetAcive(bool v);
 
-	UFUNCTION(BlueprintCallable)
-	bool IsMoving()
-	{
-		return !GetMovementComponent()->Velocity.IsNearlyZero(0.01f);
-	}
-
-	UFUNCTION(BlueprintCallable)
-    void PlayHitFlash(float notUseDmg);
-
-	const FMonsterTable& GetMonsterDataTable() const;
-	
-protected:
-	void UpdateBound();
-
-	
 };

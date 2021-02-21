@@ -2,6 +2,7 @@
 #include "DiabloM.h"
 #include "AnimInstanceProxy.h"
 #include "Animation/AnimInstance.h"
+#include "Characters/UnitPawn.h"
 #include "MobAnimInstance.generated.h"
 
 
@@ -33,7 +34,7 @@ public:
 	UPROPERTY(Transient,VisibleAnywhere,BlueprintReadWrite)
 	bool m_bIsMoving;
 	UPROPERTY()
-	AMonsterPawn* m_Owner;
+	AUnitPawn* m_Owner;
 	
 public:
 	virtual void NativeBeginPlay() override;

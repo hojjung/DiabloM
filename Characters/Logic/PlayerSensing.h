@@ -9,6 +9,7 @@
 #include "Engine/EngineTypes.h"
 #include "PlayerSensing.generated.h"
 
+class APlayerDiabloCharacter;
 /**
  * 
  */
@@ -27,7 +28,7 @@ public:
 
 public:
     UPlayerSensing();
-protected:
+public:
     float m_PeripheralVisionAngle;
 
     float m_PeripheralVisionCosine;
@@ -66,10 +67,6 @@ protected:
     float DistSqr(AActor* want);
 public:
     void InitSense(APlayerDiabloCharacter* player);
-
-    bool TickTryFoundInteraction();
-
-    bool TickTryFoundEnemy();
 
     void SetSensingInterval(const float NewSensingInterval);
 

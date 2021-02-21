@@ -6,7 +6,6 @@
 #include "CanvasPanel.h"
 #include "Image.h"
 #include "Blueprint/UserWidget.h"
-#include "Objs/Actor/SkillIndicator.h"
 
 #include "Joystick.generated.h"
 
@@ -41,8 +40,6 @@ protected:
 	float m_fPickerRadius;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float m_fDragRadius;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TSubclassOf<ASkillIndicator> m_ClassIndicator;
 
 protected:
 	UPROPERTY()

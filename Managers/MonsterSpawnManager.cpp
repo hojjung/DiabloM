@@ -2,11 +2,11 @@
 #include "DiabloGameInstance.h"
 #include "DungeonManager.h"
 #include "EngineUtils.h"
-#include "GridFlowMiniMap.h"
 #include "Characters/DiabloPlayerController.h"
 
 UMonsterSpawnManager::UMonsterSpawnManager()
 {
+	m_SensingInterval = 5.f;
 	m_CurrentWorld = nullptr;
 	m_NavSys = nullptr;
 	m_fSpawnRadius = 1200.f;
@@ -15,46 +15,103 @@ UMonsterSpawnManager::UMonsterSpawnManager()
 	m_IdSpecialEnemy = "special";
 }
 
-void UMonsterSpawnManager::UpdateWorld(UWorld* world)
+void UMonsterSpawnManager::StartSpawn(UWorld* world,const FDungeonDataTableRow* dgData)
 {
 	m_CurrentWorld = world;
+	
 	m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(m_CurrentWorld);
+
+	m_DgDataTable = dgData;
+
+	if(!m_DgDataTable)
+	{
+		return;
+	}
+	
+	Reset();
+
+	int i=0;
+
+	while (i++<m_nMonsterPoolCount)
+	{
+		AMonsterPawn* SpawnedMob = CreateMob(FVector::ZeroVector);
+		
+		m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
+
+		SpawnMob(FVector::ZeroVector);
+	}
+	
+	SetSensingUpdatesEnabled(true);
+}
+void UMonsterSpawnManager::SetSensingUpdatesEnabled(const bool bEnabled)
+{
+	if (bEnabled && m_SensingInterval > 0.f)
+	{
+		const float InitialDelay = (m_SensingInterval * FMath::SRand()) + KINDA_SMALL_NUMBER;
+        
+		SetTimer(InitialDelay);
+	}
+	else
+	{
+		SetTimer(0.f);
+	}
+}
+void UMonsterSpawnManager::SetTimer(const float TimeInterval)
+{
+	if (m_CurrentWorld && GEngine->GetNetMode(GetWorld()) < NM_Client)
+	{
+		m_CurrentWorld->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this, &UMonsterSpawnManager::OnTimer,
+                                                       TimeInterval,
+                                                       false);
+	}
 }
 
-bool UMonsterSpawnManager::SpawnIter(TArray<FTransform>& locAry, const FDungeonStageData* selectedHorde, int level,
-	UDungeonManager* dgSpawnedManager)
+void UMonsterSpawnManager::SetSensingInterval(const float newSensingInterval)
 {
-	int IterMax = FMath::Min(selectedHorde->m_AryHorde.Num(),locAry.Num());
-
-	for (int i = 0; i < IterMax; i++)
+	if (m_SensingInterval != newSensingInterval)
 	{
-		for(int j =0; j<selectedHorde->m_AryHorde.Num();j++)
+		m_SensingInterval = newSensingInterval;
+
+		if (m_CurrentWorld)
 		{
-			FMonsterHordeRow* MobHorde = selectedHorde->m_AryHorde[i].GetRow<FMonsterHordeRow>("");
-			
-			for(int k=0;k<MobHorde->m_AryMonsterEntity.Num();k++)
+			if (m_SensingInterval <= 0.f)
 			{
-				for(int l=0;MobHorde->m_AryMonsterEntity[k].m_nCount;l++)
+				SetTimer(0.f);
+			}
+			else
+			{
+				float CurrentElapsed = m_CurrentWorld->GetTimerManager().GetTimerElapsed(m_TimerHandle_OnTimer);
+
+				CurrentElapsed = FMath::Max(0.f, CurrentElapsed);
+
+				if (CurrentElapsed < m_SensingInterval)
 				{
-					FVector PointSpawn = GetRandomPoint(locAry[i].GetLocation(), m_fSpawnRadius);
-
-					AMonsterPawn* SpawnedMob = SpawnMob(PointSpawn);
-
-					if (!SpawnedMob)
-					{
-						continue;
-					}
-
-					m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
-					
-					SpawnedMob->InitMonster(MobHorde->m_AryMonsterEntity[k].m_MonsterEntity, level, dgSpawnedManager);
+					SetTimer(m_SensingInterval - CurrentElapsed);
+				}
+				else if (CurrentElapsed > m_SensingInterval)
+				{
+					SetTimer(KINDA_SMALL_NUMBER);
 				}
 			}
 		}
 	}
-
-	return true;
 }
+
+void UMonsterSpawnManager::OnTimer()
+{
+	if (!m_CurrentWorld)
+	{
+		return;
+	}
+	//Spawn
+	for(int i=0; i< 5;i++)
+	{
+	   SpawnMob(FVector::ZeroVector);
+	}
+    
+	SetTimer(m_SensingInterval);
+};
+
 
 void UMonsterSpawnManager::Reset()
 {
@@ -68,6 +125,62 @@ void UMonsterSpawnManager::Reset()
 	}
 
 	m_AryMonsterSpawnedCurrently.Reset();
+}
+
+AMonsterPawn* UMonsterSpawnManager::GetReadyMonster()
+{
+	AMonsterPawn* SelectedPawn = nullptr;
+
+	for(AMonsterPawn* MPawn : m_AryMonsterSpawnedCurrently)
+	{
+		if(MPawn->IsReadyToPool() && !MPawn->IsAlive())//죽은애만 데려옴
+		{
+			SelectedPawn = MPawn;
+			break;
+		}
+	}
+	
+	return SelectedPawn;
+}
+
+AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
+{
+	float MinX = loc.X - 500.f;
+	float MaxX = loc.X + 500.f;
+
+	float MinY = loc.Y - 500.f;
+	float MaxY = loc.Y + 500.f;
+
+	loc.X = FMath::RandRange(MinX,MaxX);
+	loc.Y = FMath::RandRange(MinY,MaxY);
+	
+	
+	FVector NewLoc = GetRandomPointFromNav(loc, 2000.f);
+	
+	const FMonsterEntityHandle& RandomMob = m_DgDataTable->m_AryMonster.GetRandom();
+
+	const FMonsterEntity* MonData = RandomMob.GetRow<FMonsterEntity>("");
+
+	AMonsterPawn* Mob = GetReadyMonster();
+
+	if(!Mob)
+	{
+		PRINTF("Skip Theres no available Monster");
+		return nullptr;
+	}
+
+	NewLoc.Z+= Mob->GetCapsule()->GetScaledCapsuleHalfHeight();
+
+	Mob->SetActorLocation(NewLoc);
+
+	Mob->DataInject(MonData,100.f);
+	
+	Mob->SetAcive(true);
+
+	PRINTF("SpawnedMob!");
+	//Calculate Health
+	
+	return Mob;
 }
 
 AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos, bool bSeeHideObj,
@@ -97,7 +210,7 @@ AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos, bo
 	return ResultMob;
 }
 
-FVector UMonsterSpawnManager::GetRandomPoint(const FVector& loc, const float& radius)
+FVector UMonsterSpawnManager::GetRandomPointFromNav(const FVector& loc, const float& radius)
 {
 	FNavLocation ResultLoc;
 
@@ -110,23 +223,22 @@ FVector UMonsterSpawnManager::GetRandomPoint(const FVector& loc, const float& ra
 	return ResultLoc;
 }
 
-AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
+AMonsterPawn* UMonsterSpawnManager::CreateMob(FVector loc)
 {
-	check(UCharacterDataTable::ClassMonsterPawn);
-
 	FActorSpawnParameters Param;
+	
 	Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	Param.bNoFail = true;
-	loc.Z += 88.f;
+	
 	//88
 	FRotator Rot;
-	Rot.Yaw = FMath::RandRange(0.f, 360.f);
+	Rot.Pitch=0.f;
+	Rot.Roll=0.f;
+	Rot.Yaw = FMath::RandRange(-360.f, 360.f);
 
-	AMonsterPawn* Mob = m_CurrentWorld->SpawnActor<AMonsterPawn
-	>(UCharacterDataTable::ClassMonsterPawn, loc, Rot, Param);
-
-	UGridFlowMiniMap::Get->AddTrackActor(m_IdEnemy,Mob);
+	AMonsterPawn* Mob = m_CurrentWorld->SpawnActor<AMonsterPawn>(AMonsterPawn::StaticClass(), loc, Rot, Param);
+	Mob->SetAcive(false);
 
 	check(Mob);
 
@@ -135,18 +247,5 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 
 void UMonsterSpawnManager::MakeNamedMonster(AMonsterPawn* mob)
 {
-	auto AryBuff =  UDiabloGameInstance::Get->GetDungeonManager()->GetCurrentDgStageData()->m_AryClassNamedMonsterBuff;
-
-	for(auto BB : AryBuff)
-	{
-		if (BB!=nullptr)
-		{
-			FGameplayAbilitySpec Spec = FGameplayAbilitySpec(BB, mob->GetCharacterLevel(), -1, this);
-			
-			mob->GetDiaAbilitySystem()->GiveAbility(Spec);
-		}
-	}
-
-	mob->SetActorScale3D(FVector(1.5f,1.5f,1.5f));
 	//material setting need
 }

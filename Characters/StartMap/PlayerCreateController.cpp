@@ -1,7 +1,6 @@
 #include "PlayerCreateController.h"
 #include "Managers/DiabloCheatManager.h"
 
-
 APlayerCreateController::APlayerCreateController()
 {
     APlayerController::SetVirtualJoystickVisibility(false);
@@ -9,8 +8,6 @@ APlayerCreateController::APlayerCreateController()
     bAutoManageActiveCameraTarget=false;
 
     bShowMouseCursor=true;
-    
-    m_ClassStartMenu=UStartMenuCanvas::StaticClass();
     
     CheatClass = UDiabloCheatManager::StaticClass();
 
@@ -26,9 +23,7 @@ void APlayerCreateController::BeginPlay()
 
 void APlayerCreateController::InitWidget()
 {
-    m_StartCanvas = CreateWidget<UStartMenuCanvas>(this, m_ClassStartMenu, "StartMenu00");
-    m_StartCanvas->AddToViewport();
-    m_StartCanvas->InitStartMenu();
+    
 }
 
 APlayerVisual* APlayerCreateController::GetPlayerVisual()
@@ -45,15 +40,15 @@ void APlayerCreateController::SetupInputComponent()
 
 void APlayerCreateController::OnDeviceBackKey()
 {
-    if(m_StartCanvas->m_bIsCreationOpened)
-    {
-        m_StartCanvas->m_CharCreate->BackCancel();
-    }
-    else if(m_StartCanvas->m_bIsSelectionOpened)
-    {
-        m_StartCanvas->ShowMainMenu();
-    }
-    else
+    // if(m_StartCanvas->m_bIsCreationOpened)
+    // {
+    //     m_StartCanvas->m_CharCreate->BackCancel();
+    // }
+    // else if(m_StartCanvas->m_bIsSelectionOpened)
+    // {
+    //     m_StartCanvas->ShowMainMenu();
+    // }
+    // else
     {
         ExitGame();
     }

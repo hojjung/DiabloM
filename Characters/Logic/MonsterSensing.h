@@ -26,31 +26,19 @@ public:
 	UMonsterSensing();
 	
 protected:
+	UPROPERTY()
+	AMonsterPawn* m_OwnedMob;
+	UPROPERTY()
+	APlayerDiabloCharacter*m_CurrentPlayer;
+	
 	float m_SightRadius;
 
 	float m_SensingInterval;
 
-	UPROPERTY()
-	AMonsterPawn* m_OwnedMob;
-
 	FVector m_LastPlayerSeen;
-
-public:
-	FSeePawnDelegate OnSeePawn;
-
-	FSeePawnDelegate OnCantSeePawn;
-
-	FSeePawnDelegate OnSeePawnBlocked;
 
 protected:
 	void SensePawn(APlayerDiabloCharacter& player);
-	
-
-	void OnTimer();
-
-	FTimerHandle m_TimerHandle_OnTimer;
-
-	void SetTimer(const float TimeDelay);
 
 	void UpdateAISensing();
 
@@ -58,6 +46,12 @@ protected:
 public:
 	void InitSense(AMonsterPawn* mobs);
 
+	void OnTimer();
+
+	FTimerHandle m_TimerHandle_OnTimer;
+
+	void SetTimer(const float TimeDelay);
+	
 	void SetSensingInterval(const float newSensingInterval);
 
 	void SetSensingUpdatesEnabled(const bool bEnabled);

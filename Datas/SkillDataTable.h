@@ -1,10 +1,5 @@
 #pragma once
 #include "DiabloM.h"
-#include "ItemDataTable.h"
-#include "AbilitySystem/Ability/DiabloAbility.h"
-#include "AbilitySystem/Attribute/PlayerDiabloAttribute.h"
-//#include "Widgets/WorldMap/DefaultMenu/Skills/SkillLearnButton.h"
-
 #include "SkillDataTable.generated.h"
 
 class USkillLearnButton;
@@ -24,8 +19,6 @@ public:
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FScalableFloat m_fScaleFloat;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool m_bIsLevelupable;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool m_bUseRandRange;
@@ -34,7 +27,7 @@ public:
 
 	FText GetRangeFormatText(int level) const
 	{
-		float Value = m_fScaleFloat.GetValueAtLevel(level);
+		float Value = level;
 		float MinValue = Value* (1.f-m_fRandRange);
 		float MaxValue = Value* (1.f+m_fRandRange);
 		FTextFormat RangeFormat = FText::FromString("{0}-{1}");
@@ -65,7 +58,7 @@ struct FSkillData
 {
 	GENERATED_BODY()
 public:
-	FSkillData(): m_bIsJoystickDragger(false), m_bIsChargeable(false), m_nChargeCount(0), m_SkillAbility(nullptr),
+	FSkillData(): m_bIsJoystickDragger(false), m_bIsChargeable(false), m_nChargeCount(0), 
 	              m_SkillIcon(nullptr)
 	{
 		m_eSkillDamageType = EDamageType::Physical;
@@ -82,8 +75,6 @@ public:
 	bool m_bIsChargeable;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "m_bIsChargeable"))
 	int m_nChargeCount;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UDiabloAbility> m_SkillAbility;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTexture2D* m_SkillIcon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -112,12 +103,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)//cost  표시 어떻게?
 	TArray<FLevelupableScaleFloat> m_ArySkillValue;//블프랑 코스트호환?//음수?
 	//
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FAnimStanceDataHandle m_RequireAnimStance;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FItemTypeHandle m_RequireMainWeaponType;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FItemTypeHandle m_RequireSubWeaponType;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText m_TextSkillAdditionalEffect;
 	//플레이어 어트리뷰트에 의해 줄어든 수치 어떻게?
@@ -135,7 +121,6 @@ struct FSkillDataSpec
 public:
 	FSkillDataSpec()
 	{
-		m_LearnBtn=nullptr;
 		m_SkillDataPtr = nullptr;
 		m_nEquipIndex=-1;
 		m_nCurrentLevel = 0;
@@ -143,7 +128,6 @@ public:
 	
 	FSkillDataSpec(int level,const FSkillData* skillData)
 	{
-		m_LearnBtn=nullptr;
 		m_SkillDataPtr = skillData;
 		m_nEquipIndex=-1;
 		m_nCurrentLevel = level;
@@ -157,8 +141,6 @@ public:
 	
 	const FSkillData* m_SkillDataPtr;
 
-	UPROPERTY()
-	USkillLearnButton* m_LearnBtn;
 
 public:
 	int GetRequireLearnLevel()
@@ -168,7 +150,7 @@ public:
 	
 	FText GetCostText() const
 	{
-		float Cost = m_SkillDataPtr->m_fSkillCost.m_fScaleFloat.GetValueAtLevel(m_nCurrentLevel);
+		float Cost = 1.f;
 		
 		FFormatOrderedArguments Args;
 
@@ -195,7 +177,7 @@ public:
 			}
 			else
 			{
-				Args.Add( SFloat.m_fScaleFloat.GetValueAtLevel(m_nCurrentLevel));
+				//Args.Add( SFloat.m_fScaleFloat.GetValueAtLevel(m_nCurrentLevel));
 			}
 		}
 		
@@ -214,12 +196,12 @@ public:
 
 		if(m_SkillDataPtr->m_fSkillCost.m_bIsLevelupable)
 		{
-			Args.Add(m_SkillDataPtr->m_fSkillCost.m_fScaleFloat.GetValueAtLevel(NextSkillLevel));
+			//Args.Add(m_SkillDataPtr->m_fSkillCost.m_fScaleFloat.GetValueAtLevel(NextSkillLevel));
 		}
 
 		if(m_SkillDataPtr->m_fSkillCD.m_bIsLevelupable)
 		{
-			Args.Add(m_SkillDataPtr->m_fSkillCD.m_fScaleFloat.GetValueAtLevel(NextSkillLevel));
+		//	Args.Add(m_SkillDataPtr->m_fSkillCD.m_fScaleFloat.GetValueAtLevel(NextSkillLevel));
 		}
 
 		for(auto& SFloat : m_SkillDataPtr->m_ArySkillValue)
@@ -235,7 +217,7 @@ public:
 			}
 			else
 			{
-				Args.Add( SFloat.m_fScaleFloat.GetValueAtLevel(NextSkillLevel));
+				//Args.Add( SFloat.m_fScaleFloat.GetValueAtLevel(NextSkillLevel));
 			}
 		}
  

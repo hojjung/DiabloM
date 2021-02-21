@@ -1,10 +1,9 @@
 #include "AnimNotify_SendGameEvent.h"
-#include "GameplayAbilityTypes.h"
 #include "Characters/UnitPawn.h"
 
 UAnimNotify_SendGameEvent::UAnimNotify_SendGameEvent()
 {
-    m_CachedAttackEvent=FGameplayTag::RequestGameplayTag("Combat.Ability.Skill.BaseAttack");//for spawn projectile
+    //m_CachedAttackEvent=FGameplayTag::RequestGameplayTag("Combat.Ability.Skill.BaseAttack");//for spawn projectile
 }
 
 void UAnimNotify_SendGameEvent::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
@@ -16,10 +15,4 @@ void UAnimNotify_SendGameEvent::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
         return;
     }
     
-    FGameplayEventData EventData;
-    
-    EventData.Instigator = Unit;
-    EventData.Target = Unit->GetFocusedTarget();//?
-
-    UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Unit,m_CachedAttackEvent,EventData);
 }

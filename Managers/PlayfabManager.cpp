@@ -1,42 +1,56 @@
 #include "PlayfabManager.h"
-#include "DiabloGameMode.h"
+
+#include "DiabloGameInstance.h"
+#include "DungeonManager.h"
 #include "Core/PlayFabClientAPI.h"
 #include "MobileUtilsBlueprintLibrary.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
 #include "PlayFabAdminDataModels.h"
 #include "PlayFabClientDataModels.h"
+#include "PlayFabServerDataModels.h"
 #include "PlayFabUtilities.h"
 
-UPlayfabManager* UPlayfabManager::Get = nullptr;
+using namespace PlayFab;
+
+UPlayfabManager::UPlayfabManager()
+{
+	m_bLoginProcessEnd = false;
+	//m_LoadedDgID ;//= "Stage1-1";
+	//m_LoadedPlayerClassID;// = "Warrior01";
+}
 
 UPlayfabManager::~UPlayfabManager()
 {
-	if(UPlayfabManager::Get ==this)
-	{
-		UPlayfabManager::Get=nullptr;
-	}
+	
+}
+
+void UPlayfabManager::LoadLocalDefaultData()
+{
+	m_LoadedDgID="Stage1-1";
+	m_LoadedPlayerClassID = "Warrior01";
+	m_bLoginProcessEnd = true;
 }
 
 void UPlayfabManager::Init()
 {
-	
 	if (m_bIsLogined)
 	{
 		return;
 	}
 	
-	m_bIsLogined = true;
-	
-	UPlayfabManager::Get = this;
 
+	
 	if (UMobileUtilsBlueprintLibrary::CheckInternetConnection())
 	{
 		PRINTF("Internet Connected");
 	}
 	else
 	{
-		PRINTF("Internet Fail");
+		PRINTF("Internet Fail-EndApp");
+
+		FGenericPlatformMisc::RequestExit(true);
+		return;
 	}
 
 	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
@@ -50,6 +64,8 @@ void UPlayfabManager::Init()
 
 	if (!ExternalUi)
 	{
+		PRINTF("noui-GoogleLogin Fail");
+		LoadLocalDefaultData();
 		return;
 	}
 
@@ -68,26 +84,18 @@ void UPlayfabManager::HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqu
 	else
 	{
 		PRINTF("GoogleLogin Fail");
+		
+		LoadLocalDefaultData();
 	}
 }
-
-
 
 void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqueId) //클라아이디를 키서명으로 바꿔봄
 {
 	if (UMobileUtilsBlueprintLibrary::CheckGooglePlayServices())
 	{
-		PRINTF("GooglePlay Connected - UniqueID:%s", *uniqueId->ToString());
-
 		IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
 
 		IOnlineIdentityPtr OnlineIdentity = Subsystem->GetIdentityInterface();
-
-		PRINTF("UserID:%s", *OnlineIdentity->GetPlayerNickname(*uniqueId));
-
-		PRINTF("TryGetUnique:%s", *OnlineIdentity->GetUniquePlayerId(0)->ToString());
-
-		PRINTF("AuthToken:%s", *OnlineIdentity->GetAuthToken(0));
 
 		auto Status = OnlineIdentity->GetLoginStatus(0);
 
@@ -98,6 +106,8 @@ void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqu
 		case ELoginStatus::UsingLocalProfile: PRINTF("LoginStatus:UsingLocalProfile");
 			break;
 		case ELoginStatus::LoggedIn: PRINTF("LoginStatus:LoggedIn");
+			m_bIsLogined = true;
+			m_bLoginProcessEnd = true;
 			break;
 		default: ;
 		}
@@ -110,13 +120,11 @@ void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqu
 		request.PlayerSecret = GetDefault<UPlayFabRuntimeSettings>()->DeveloperSecretKey;
 		request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
 
-		
-
 		bool Result = clientAPI->LoginWithGoogleAccount(request,
 		                                                PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
-			                                                this, &UPlayfabManager::OnSuccess),
+			                                                this, &UPlayfabManager::OnSuccessPlayfabLogin),
 		                                                PlayFab::FPlayFabErrorDelegate::CreateUObject(
-			                                                this, &UPlayfabManager::OnError)
+			                                                this, &UPlayfabManager::OnLoginErrorPlayfabReq)
 		);
 
 
@@ -131,8 +139,7 @@ void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqu
 	}
 }
 
-
-void UPlayfabManager::OnSuccess(const PlayFab::ClientModels::FLoginResult& Result) const
+void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result)
 {
 	PRINTF("Playfab Login Success");
 
@@ -142,22 +149,55 @@ void UPlayfabManager::OnSuccess(const PlayFab::ClientModels::FLoginResult& Resul
 	}
 
 	PRINTF("ID:%s", *Result.PlayFabId);
+
+	m_PlayfabID = Result.PlayFabId;
 	
-	PlayFab::ClientModels::FSetPlayerSecretRequest Req;
+	PlayFab::ClientModels::FGetUserDataRequest req;
+	
+	req.PlayFabId = m_PlayfabID;
+	
+	req.Keys.Add("DungeonID");
+	
+	req.Keys.Add("PlayerClassID");
 
+	clientAPI->GetUserData(req,
+		PlayFab::UPlayFabClientAPI::FGetUserDataDelegate::CreateUObject(this, &UPlayfabManager::OnSuccessGetUserData),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
-void UPlayfabManager::OnError(const PlayFab::FPlayFabCppError& ErrorResult) const
+void UPlayfabManager::OnLoginErrorPlayfabReq(const PlayFab::FPlayFabCppError& ErrorResult) 
 {
-	PRINTF("Playfab Login Error Name:%s", *ErrorResult.ErrorName);
-	PRINTF("Playfab Login Error Message:%s", *ErrorResult.ErrorMessage);
-	PRINTF("Playfab Login Error Code:%s", *UPlayFabUtilities::getErrorText(ErrorResult.ErrorCode));
+	PRINTF("PlayfabLogin Error Name:%s", *ErrorResult.ErrorName);
+	PRINTF("PlayfabLogin Error Message:%s", *ErrorResult.ErrorMessage);
+	PRINTF("PlayfabLogin Error Code:%s", *UPlayFabUtilities::getErrorText(ErrorResult.ErrorCode));
+
+	
 }
 
+void UPlayfabManager::OnErrorPlayfabReq(const PlayFab::FPlayFabCppError& ErrorResult)
+{	
+	PRINTF("PlayfabRequest Error Name:%s", *ErrorResult.ErrorName);
+	PRINTF("PlayfabRequest Error Message:%s", *ErrorResult.ErrorMessage);
+	PRINTF("PlayfabRequest Error Code:%s", *UPlayFabUtilities::getErrorText(ErrorResult.ErrorCode));
+}
+
+void UPlayfabManager::OnSuccessGetUserData(const PlayFab::ClientModels::FGetUserDataResult& result) 
+{
+	PRINTF("GetUserDataSuccess");
+	//
+	m_LoadedDgID =*result.Data["DungeonID"].Value;
+	m_LoadedPlayerClassID =*result.Data["PlayerClassID"].Value;
+	//
+	PRINTF("DGID: %s",*m_LoadedDgID.ToString());
+	PRINTF("PCID: %s",*m_LoadedPlayerClassID.ToString());
+	//
+	UDiabloGameInstance::Get->m_DungeonManager->LoadCurrentDungeonLevel(m_LoadedDgID,this);
+	UDiabloGameInstance::Get->m_PlayerClassManager->LoadPlayerClass(m_LoadedPlayerClassID);
+}
 
 void UPlayfabManager::ShowBannerAd(bool able)
 {
-	if(able )//&& GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion
+	if(able && !GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion)
 	{
 		UKismetSystemLibrary::ShowAdBanner(0,true);
 	}
@@ -166,3 +206,4 @@ void UPlayfabManager::ShowBannerAd(bool able)
 		UKismetSystemLibrary::HideAdBanner();
 	}
 }
+

@@ -47,10 +47,10 @@
 //
 #include "WidgetLayoutLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
-#include "AbilitySystemBlueprintLibrary.h"
 //
 #include "DrawDebugHelpers.h"
 //
+#include "BigInt.h"
 #include "Components/SceneComponent.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
@@ -117,5 +117,6 @@ static FString EnumToString(const FString& enumName, const T value)
 	return *(pEnum ? pEnum->GetNameStringByIndex(static_cast<uint8>(value)) : "NoEnum-Null");
 }
 
+typedef  TBigInt<480,true> BigInt;
 //#define LOCTEXT_NAMESPACE "FMyEditorExtensionModule"
 //#undef LOCTEXT_NAMESPACE

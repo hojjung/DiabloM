@@ -4,7 +4,6 @@
 
 UAnimNotify_TraceSphere::UAnimNotify_TraceSphere()
 {
-	m_CachedAttackEvent=FGameplayTag::RequestGameplayTag("Combat.Ability.Skill.BaseAttack");//for spawn projectile
 	m_fRange=600.f;
 	m_fSphereRadius=700.f;
 }
@@ -37,12 +36,5 @@ void UAnimNotify_TraceSphere::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 
 	for(FHitResult& Hitten : Hits)
 	{
-		FGameplayEventData EventData;
-		
-		EventData.Instigator = Unit;
-		
-		EventData.Target = Hitten.GetActor();//?
-
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Unit,m_CachedAttackEvent,EventData);
 	}
 }

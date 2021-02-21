@@ -6,12 +6,12 @@
 
 
 
+#include "GameplayTagContainer.h"
+#include "MonsterSpawnManager.h"
 #include "NavigationSystem.h"
+#include "PlayfabManager.h"
 #include "Datas/DungeonDataTable.h"
-#include "Objs/Actor/DiaDungeon.h"
-#include "Objs/Containers/Quadtree.h"
 #include "UObject/NoExportTypes.h"
-#include "Village/DgToVillagePortal.h"
 
 #include "DungeonManager.generated.h"
 
@@ -32,94 +32,20 @@ class DIABLOM_API UDungeonManager : public UObject
 public:
 	UDungeonManager(const FObjectInitializer& objInit);
 	
-public:
-	int m_nCurrentMonsterCount;
-
-	int m_nClearableCount;
-
 protected:
 	UPROPERTY()
-	TSubclassOf<ADgToVillagePortal> m_ClassDgVillagePortal;
-	UPROPERTY()
-	ADgToVillagePortal* m_CurrentDgVillagePortal;
+	UMonsterSpawnManager* m_MonsterManager;
 	
-	UPROPERTY(Transient)
-	UMaterialInterface* m_MatMinimap;
-	
-	TArray<FDungeonDataRow*> m_AryDungeonData;//던전 데이터는 돌려쓰면 됨
-	
-	FDungeonDataRow* m_CurrentDungeonData;
 
-	FName m_NamePortalID;
-
-	int m_nMonsterLevel;
-
-	int m_nDungeonType;
-	
-	int m_nPointIndex;
-
-	int m_nCurrentDgLevel;
-
-	bool m_bIsPlayerInDungeon;
-
-	FVector m_RecentDungeonFeetLoc;
-
-	FDungeonCreate m_OnPortalCreate;
-	
-	const FDungeonStageData* m_CurrentDgData;
-	
 protected:
-	int StageLevelToDungeonType(int stageLevel);
-	
-	void BuildDungeonLevel(FDungeonDataRow* SelectedDungeonData);
-	
-	void SpawnMonstersToDungeon(int MonsterLevel, FDungeonDataRow* SelectedDungeonData);
+	void LoadLevelComplete(UWorld* world);
 
-	void DungeonComplete();
-
-	void BindOnDgDelegate();
+public:
+	const FDungeonDataTableRow* m_CurrentDg;
 	
 public:
-	void Init();
+	void Init(UMonsterSpawnManager*  mMang);
 	
-	int StageLevelToDungeonLevel(int stageLevel);
-	
-	void CreateQuadTreeBound();
+	void LoadCurrentDungeonLevel(FName levelIDName,UObject* wrldctxt);
 
-	UFUNCTION(BlueprintCallable)
-	void CreateDefaultInfinityDungeon(int level=1);
-	UFUNCTION(BlueprintCallable)
-	void PortalToVillage(bool isDgCleared);
-	UFUNCTION(BlueprintCallable)
-	void PortalToRecentDungeon();
-	UFUNCTION(BlueprintCallable)
-    void RestartDungeon();
-	UFUNCTION(BlueprintCallable)
-	void ClearDungeon();
-	
-	bool IsDungeonOpened();
-
-	FORCEINLINE FDungeonCreate& GetOnDungeonCreate()
-	{
-		return m_OnPortalCreate;
-	}
-
-	bool IsPlayerInDg();
-
-	void MonsterDead();
-
-	FVector GetCurrentPlayerFeetLoc();
-
-	UFUNCTION()
-	void OnNavCookComplete(ANavigationData* NavData);
-	
-	UFUNCTION()
-	void OnDgBuildComplete(ADungeon* Dungeon);
-
-	ADgToVillagePortal* GetDgCompletePortalOpen();
-	
-	const FDungeonStageData* GetCurrentDgStageData();
-
-	
-	UNavigationSystemV1* GetCurrentDungeonNav();
 };

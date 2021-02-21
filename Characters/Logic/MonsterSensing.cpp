@@ -1,5 +1,4 @@
 #include "MonsterSensing.h"
-#include "Objs/Interfaces/Interactable.h"
 #include "NetworkingDistanceConstants.h"
 #include "Characters/UnitPawn.h"
 #include "Characters/PlayerDiabloCharacter.h"
@@ -14,14 +13,14 @@
 UMonsterSensing::UMonsterSensing()
 {
     m_OwnedMob=nullptr;
-    m_SightRadius = 1200.f;
+    m_SightRadius = 500.f;
     m_SensingInterval = 0.3f;
 }
 
 void UMonsterSensing::InitSense(AMonsterPawn* mobs)
 {
     m_OwnedMob = mobs;
-    
+    m_CurrentPlayer = Cast<APlayerDiabloCharacter>( UGameplayStatics::GetPlayerPawn(this,0));
     SetSensingUpdatesEnabled(true);
 }
 
@@ -126,6 +125,10 @@ void UMonsterSensing::SensePawn(APlayerDiabloCharacter& player)
             m_OwnedMob->FocusTarget(&player);
         }
     }
+    else
+    {
+        
+    }
 }
 
 bool UMonsterSensing::CouldSeePawn(APlayerDiabloCharacter* Other, bool bMaySkipChecks) const
@@ -145,8 +148,9 @@ bool UMonsterSensing::CouldSeePawn(APlayerDiabloCharacter* Other, bool bMaySkipC
     FVector const SelfToOther = OtherLoc - SensorLoc;
 
     float const SelfToOtherDistSquared = SelfToOther.SizeSquared();
+    float SS = FMath::Square(m_SightRadius);
     
-    if (SelfToOtherDistSquared > FMath::Square(m_SightRadius))
+    if (SelfToOtherDistSquared > SS)
     {
         return false;
     }
@@ -270,6 +274,6 @@ void UMonsterSensing::GetActorEyesViewPoint( FVector& out_Location, FRotator& ou
 
 APlayerDiabloCharacter* UMonsterSensing::GetPlayer()
 {
-    return ADiabloPlayerController::Get->GetPlayerPawn();
+    return m_CurrentPlayer;
 }
 

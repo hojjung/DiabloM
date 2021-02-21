@@ -8,7 +8,6 @@
 #include "NavigationSystem.h"
 #include "Characters/MonsterPawn.h"
 #include "Datas/DungeonDataTable.h"
-#include "Datas/SpawnDataTable.h"
 
 
 #include "MonsterSpawnManager.generated.h"
@@ -23,37 +22,48 @@ public:
 	UMonsterSpawnManager();
 	
 protected:
-	float m_fSpawnRadius;
+	static const int m_nMonsterPoolCount = 33;
 	UPROPERTY()
 	UNavigationSystemV1* m_NavSys;
 	UPROPERTY()
 	UWorld* m_CurrentWorld;
+	UPROPERTY()
+	TArray<AMonsterPawn*> m_AryMonsterSpawnedCurrently;
 
 	FName m_IdEnemy;
 
 	FName m_IdBossEnemy;
 
 	FName m_IdSpecialEnemy;
+	
+	const FDungeonDataTableRow* m_DgDataTable;
 
-	UPROPERTY()
-	TArray<AMonsterPawn*> m_AryMonsterSpawnedCurrently;
+	float m_fSpawnRadius;
+
+	float m_SensingInterval;
+	
+	FTimerHandle m_TimerHandle_OnTimer;
 	
 protected:
-	FVector GetRandomPoint(const FVector& loc,const float& radius);
+	FVector GetRandomPointFromNav(const FVector& loc,const float& radius);
 	
-	AMonsterPawn* SpawnMob(FVector loc);
+	AMonsterPawn* CreateMob(FVector loc);
 
 	void MakeNamedMonster(AMonsterPawn* mob);
-
 	//void MakeBossMonster(AMonsterPawn* mob);
+	AMonsterPawn* GetReadyMonster();
+
+	void OnTimer();
+
+	void SetTimer(const float TimeDelay);
+	
+	void SetSensingInterval(const float newSensingInterval);
+
+	void SetSensingUpdatesEnabled(const bool bEnabled);
 	
 public:
-	UFUNCTION(BlueprintCallable)
-	void UpdateWorld(UWorld* world);
+	AMonsterPawn* SpawnMob(FVector loc);
 	
-	bool SpawnIter(TArray<FTransform>& locAry,const FDungeonStageData* selectedHorde,int level=1,UDungeonManager* dgSpawnedManager=nullptr);
-	//
-
 	void Reset();
 
 	FORCEINLINE TArray<AMonsterPawn*>& GetCurrentMonsters()
@@ -62,5 +72,8 @@ public:
 	}
 
 	AMonsterPawn* GetNearestMonster(const FVector& wantPos,bool bSeeHideObj,AMonsterPawn* ignoreActor =nullptr);
+	
+	void StartSpawn(UWorld* world,const FDungeonDataTableRow* dgData);
 };
+
 

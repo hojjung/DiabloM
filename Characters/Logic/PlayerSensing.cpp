@@ -4,8 +4,11 @@
 #include "GameFramework/Controller.h"
 #include "Engine/Engine.h"
 #include "EngineUtils.h"
+#include "WeakInterfacePtr.h"
 #include "Characters/MonsterPawn.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Managers/DiabloGameInstance.h"
+#include "Managers/MonsterSpawnManager.h"
 
 UPlayerSensing::UPlayerSensing()
 {
@@ -22,86 +25,6 @@ void UPlayerSensing::InitSense(APlayerDiabloCharacter* player)
     SetPeripheralVisionAngle(m_PeripheralVisionAngle);
     SetSensingUpdatesEnabled(true);
 }
-
-bool UPlayerSensing::TickTryFoundInteraction()
-{
-    FVector TraceStart = m_OwnedPlayer->GetCapsule()->GetComponentLocation();
-    
-    FVector TraceEnd = TraceStart + m_OwnedPlayer->GetCapsule()->GetForwardVector() * m_OwnedPlayer->m_fInteractRange;
-    
-    FHitResult OutHit;
-    
-    if (!UKismetSystemLibrary::SphereTraceSingle(
-            GetWorld(),
-            TraceStart, TraceEnd, 100.f,
-            ETraceTypeQuery::TraceTypeQuery3, false, m_OwnedPlayer->m_AryIgnoreActor, EDrawDebugTrace::None, OutHit, true)
-        || !OutHit.GetActor())
-    {
-        if(m_OwnedPlayer->GetFocusInteractable())
-        {
-            m_OwnedPlayer->m_FocusedInteractable.Clear();
-        }
-        return false;
-    }
-    
-    IInteractable* FoundIntract = Cast<IInteractable>(OutHit.GetActor());
-
-    m_OwnedPlayer->m_FocusedInteractable=TWeakInterfacePtr<IInteractable>( *FoundIntract);
-
-    return true;
-}
-
-bool UPlayerSensing::TickTryFoundEnemy()
-{
-    FVector HalfSize = FVector(m_FocusRange, 75, 75);
-    
-    FVector InitPos = m_OwnedPlayer->GetSkMeshComp()->GetComponentLocation();
-    
-    InitPos.Z += m_OwnedPlayer->GetCapsule()->GetScaledCapsuleHalfHeight();
-
-    FVector TraceStart = InitPos + m_OwnedPlayer->GetCapsule()->GetForwardVector() * HalfSize.X;
-
-    FVector TraceEnd = TraceStart;
-
-    TArray <FHitResult> AryOutHit;
-    //FHitResult OutHit;
-
-    if (! UKismetSystemLibrary::BoxTraceMultiForObjects(
-            GetWorld(),
-            TraceStart, TraceEnd, HalfSize, m_OwnedPlayer->GetActorRotation(),
-            m_OwnedPlayer->GetAryTarget(), false, m_OwnedPlayer->GetAryIgnoreActor(), EDrawDebugTrace::ForOneFrame,
-            AryOutHit, true,
-            FLinearColor::Blue)
-        )
-    {
-        return false;
-    }
-
-    AMonsterPawn* FocusedUnit = GetCloseMonster(AryOutHit);//,프레임저하 심하고 차이가 없음//몬스터 많아지니까 돌진이 계속써짐
-
-    if(!FocusedUnit->IsAlive())
-    {
-        return false;
-    }
-    if (!HasLineOfSightTo(FocusedUnit))
-    {
-        return false;
-    }
-
-    if (m_OwnedPlayer->GetFocusedTarget()) //이미 있다면
-    {
-        if (FocusedUnit == m_OwnedPlayer->GetFocusedTarget()) //찾은애랑 이미 있는애랑 같으면 넘어감
-        {
-            return true;
-        }
-    }
-
-    m_OwnedPlayer->FocusTarget(FocusedUnit);
-
-    return true;
-}
-
-
 
 void UPlayerSensing::SetSensingUpdatesEnabled(const bool bEnabled)
 {
@@ -167,25 +90,10 @@ void UPlayerSensing::OnTimer()
         return;
     }
     
-    if (m_OwnedPlayer->GetFocusedTarget())//찾았으면?
-    {
-        bool CheckMonster= TickTryFoundEnemy();//꼬깔없는 포커싱
-        
-        if (!CouldSeePawn(m_OwnedPlayer->GetFocusedTarget(),false)&&!CheckMonster)//연산을 줄이려고 한듯
-        {
-            //즉포커싱으론 잡히는 상태인데
-            //꼬깔이 한테 안보이니까 꼬갈한테 보이게 하려고 이러는거?
-            m_OwnedPlayer->FocusTarget(nullptr);
-            UpdateAISensing();
-        }
-    }
-    else
-    {
-        UpdateAISensing();
-    }
+    UpdateAISensing();
+    
     SetTimer(m_SensingInterval);
 };
-
 
 
 bool UPlayerSensing::HasLineOfSightTo(const AActor* Other) const
@@ -203,7 +111,14 @@ bool UPlayerSensing::HasLineOfSightTo(const AActor* Other) const
 
 void UPlayerSensing::UpdateAISensing()
 {
-    for (AMonsterPawn* Pawn : TActorRange<AMonsterPawn>(m_OwnedPlayer->GetWorld()))
+    if(m_OwnedPlayer->GetFocusedTarget())
+    {
+        return;
+    }
+    
+    auto* Pawn =  UDiabloGameInstance::Get->m_MonsterSpawn->GetNearestMonster(m_OwnedPlayer->GetActorLocation(),false);
+
+    if(Pawn)
     {
         SensePawn(*Pawn);
     }
@@ -249,6 +164,7 @@ bool UPlayerSensing::CouldSeePawn(APawn* Other, bool bMaySkipChecks) const
     FVector const SelfToOther = OtherLoc - SensorLoc;
 
     float const SelfToOtherDistSquared = SelfToOther.SizeSquared();
+    
     if (SelfToOtherDistSquared > FMath::Square(m_SightRadius))
     {
         return false;
@@ -259,11 +175,7 @@ bool UPlayerSensing::CouldSeePawn(APawn* Other, bool bMaySkipChecks) const
         return false;
     }
     
-    FVector const SelfToOtherDir = SelfToOther.GetSafeNormal();
-    
-    FVector const MyFacingDir = GetSensorRotation().Vector();
-
-    return ((SelfToOtherDir | MyFacingDir) >= m_PeripheralVisionCosine);
+    return true;
 }
 
 

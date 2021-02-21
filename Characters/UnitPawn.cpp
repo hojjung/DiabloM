@@ -2,17 +2,15 @@
 #include "NavigationPath.h"
 #include "NavigationData.h"
 #include "NavigationSystem.h"
-#include "AbilitySystem/Components/DiabloAbilitySystemComp.h"
 #include "Managers/DiabloGameInstance.h"
-
+#include "Animations/MobAnimInstance.h"
 
 AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 {
-    m_bIsStun = false;
-    m_TagStun= FGameplayTag::RequestGameplayTag(FName("State.Debuff.Stun"));
-    m_TagEffectRemoveOnDeath = FGameplayTag::RequestGameplayTag(FName("Combat.Effect.RemoveOnDeath"));
-    m_TagDead = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
     //
+    m_fAttackSpeed = 1.f;
+    m_fAttackCDConstant = 0.5f;
+    m_fAttackRange=450.f;
     PrimaryActorTick.bCanEverTick = true;
     m_bUseFSM = false;
     m_Capsule = CreateDefaultSubobject<UCapsuleComponent>("Capsule00");
@@ -30,13 +28,6 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
 
     CreateSkMeshComponent(RootComponent, &m_SkBody, "SkMesh00");
     m_SkBody->bCastDynamicShadow = true;
-    m_nCharacterLevel = 1;
-    m_AbilitySystemComponent = CreateDefaultSubobject<UDiabloAbilitySystemComp>("AbilitySystemComponent00");
-    m_AbilitySystemComponent->SetIsReplicated(true); //bCachedIsNetSimulated
-    m_AbilitySystemComponent->RegisterGameplayTagEvent(m_TagStun,
-        EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AUnitPawn::StunTagChanged);
-
-    m_AttributeSet = CreateDefaultSubobject<UBaseDiabloAttribute>("AttributeSet00");
 
     m_PFComp = CreateDefaultSubobject<UPathFollowingComponent>(TEXT("PathFollowingComponent"));
     m_PFComp->SetMovementComponent(m_Movement);
@@ -286,7 +277,7 @@ void AUnitPawn::OnDeathAnimEnd()
 
 void AUnitPawn::UpdateMoveSpeed() const
 {
-    Cast<UUnitMovement>(GetMovementComponent())->SetMoveSpeed(GetMoveSpeed());
+    //Cast<UUnitMovement>(GetMovementComponent())->SetMoveSpeed(GetMoveSpeed());
 }
 
 float AUnitPawn::GetAcceptRadiusToOther()
@@ -308,27 +299,47 @@ bool AUnitPawn::CanSeeTarget()
         return false;
     }
 
+    if(!GetController())
+    {
+        PRINTF("UNIT-NoCon");
+        return  false;
+    }
+
     return GetController()->LineOfSightTo(GetFocusedTarget());
 }
 
-
-void AUnitPawn::StartAttack()
+void AUnitPawn::TryAttack()
 {
-    m_OnStartAttack.Broadcast();
+    if(m_BaseAttackAnim&&m_fAttackCD<0.f)
+    {
+        float AnimMongLen = PlayAnimMontage(m_BaseAttackAnim,1*m_fAttackSpeed,NAME_None);
+
+        m_fAttackCD = m_fAttackCDConstant;
+    }
 }
 
-void AUnitPawn::EndAttack()
+
+
+void AUnitPawn::TakeDmg(BigInt amount, AUnitPawn* attacker)
 {
-    m_OnEndAttack.Broadcast();
+    
 }
+
+void AUnitPawn::GetHP(BigInt& cH, BigInt& mH)
+{
+    cH = m_fCurrentHP;
+    mH = m_fMaxHP;
+}
+
 
 // Called every frame
 void AUnitPawn::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+    
     m_fTickDeltaTime = DeltaTime;
 
-    m_fHitAnimCD-=DeltaTime;
+    m_fAttackCD-=DeltaTime;
 }
 
 
@@ -344,25 +355,10 @@ void AUnitPawn::GetCapsuleSize(float& height, float& radius)
     radius = m_Capsule->GetScaledCapsuleRadius();
 }
 
-UDiabloAbilitySystemComp* AUnitPawn::GetDiaAbilitySystem() const
-{
-    return m_AbilitySystemComponent;
-}
-
-bool AUnitPawn::DoBaseAttack()
-{
-    return GetDiaAbilitySystem()->TryActivateAbility(m_BaseAttackHandle);
-}
-
 FRotator AUnitPawn::GetHomingRotToTarget()
 {
     
     FRotator NewRot = GetActorRotation();
-
-    if(m_bIsStun)
-    {
-        return NewRot;
-    }
 
     if (!m_FocusedEnemy.Get())
     {
@@ -412,63 +408,26 @@ bool AUnitPawn::IsDotAngleAcceptForTarget(float dotAngle)
     return ((SelfToOtherDir | MyFacingDir) >= dotAngle);
 }
 
-UAbilitySystemComponent* AUnitPawn::GetAbilitySystemComponent() const
-{
-    return GetDiaAbilitySystem();
-}
-
-
-void AUnitPawn::PrintStats()
-{
-    //m_AttributeSet->PrintStats();
-}
-
-
-float AUnitPawn::GetHealth() const
-{
-    return m_AttributeSet->GetHealth();
-}
-
 float AUnitPawn::GetHpPercentOne() const
 {
-    float Per = GetHealth() / GetMaxHealth();
-    Per = FMath::Clamp(Per, 0.f, 1.f);
-    return Per;
-}
+    BigInt CopiedCH = m_fCurrentHP;
 
-float AUnitPawn::GetMaxHealth() const
-{
-    return m_AttributeSet->GetMaxHealth();
-}
+    CopiedCH.Multiply(100);
 
-float AUnitPawn::GetMoveSpeed() const
-{
-    return m_AttributeSet->GetMoveSpeed();
-}
+    CopiedCH.Divide(m_fMaxHP);
+    
+    float Percent100 = CopiedCH.ToInt();
 
+    float Percent1 =  Percent100 / 100.f;
 
-
-bool AUnitPawn::SetCharacterLevel(int NewLevel)
-{
-    if (NewLevel > MAXLEVEL)
-        return false;
-
-    if (m_nCharacterLevel != NewLevel && NewLevel > 0)
-    {
-        m_nCharacterLevel = NewLevel;
-        SetUnitStatEffect();
-    }
-    return true;
+    Percent1 = FMath::Clamp(Percent1,0.f,1.f);
+    
+    return Percent1;
 }
 
 bool AUnitPawn::IsAlive() const
 {
-    return GetHealth() > 0.0f;
-}
-
-UBaseDiabloAttribute* AUnitPawn::GetAttributeSet() const
-{
-    return m_AttributeSet;
+    return true;
 }
 
 FVector AUnitPawn::GetVelocity() const
@@ -488,42 +447,33 @@ void AUnitPawn::SetBlockMove()
 
 void AUnitPawn::SetUnblockMove()
 {
-    Cast<UUnitMovement>( GetMovementComponent())->SetMoveSpeed(GetAttributeSet()->GetMoveSpeed());
+    //Cast<UUnitMovement>( GetMovementComponent())->SetMoveSpeed(GetAttributeSet()->GetMoveSpeed());
 }
 
-void AUnitPawn::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+
+float AUnitPawn::GetMoveSpeed()
 {
-    if(NewCount>0)
-    {
-        GetDiaAbilitySystem()->CancelAbilities();
-        
-        SetBlockMove();
-        
-       m_SkBody->bPauseAnims = true;
-
-        m_bIsStun = true;
-        
-        return;
-    }
-    //stun end
-
-    m_fHitAnimCD = FMath::RandRange(3.5f,5.f);
-    
-    m_SkBody->bPauseAnims = false;
-
-    m_bIsStun = false;
-    
-    SetUnblockMove();
+    return GetMovementComponent()->GetMaxSpeed();
 }
 
-void AUnitPawn::PlayTookHitMontage()
+bool AUnitPawn::IsMoving()
 {
-    if(m_TookHitMontage && m_fHitAnimCD<0.f)
-    {
-        PlayAnimMontage(m_TookHitMontage,1);
+    return !GetMovementComponent()->Velocity.IsNearlyZero(0.1f);
+}
 
-        m_fHitAnimCD = FMath::RandRange(1.5f,2.5f);
-    }
+float AUnitPawn::GetAttackSpeed()
+{
+    return m_fAttackSpeed;
+}
+
+float AUnitPawn::GetAttackRange()
+{
+    return m_fAttackRange;
+}
+
+FVector AUnitPawn::GetLastSeenLocation()
+{
+    return FVector::ZeroVector;
 }
 
 void AUnitPawn::FocusTarget(AUnitPawn* target)
@@ -590,28 +540,6 @@ void AUnitPawn::Die()
    
 }
 
-
-float AUnitPawn::GetAttackSpeed() const
-{
-    return m_AttributeSet->GetAttackSpeed();
-}
-
-float AUnitPawn::GetAttackRange() const
-{
-    return m_AttributeSet->GetAttackRange();
-}
-
-void AUnitPawn::SetUnitStatEffect()
-{
-    FGameplayEffectContextHandle EffectContext = m_AbilitySystemComponent->MakeEffectContext();
-    EffectContext.AddSourceObject(this);
-
-    FGameplayEffectSpecHandle NewHandle = m_AbilitySystemComponent->MakeOutgoingSpec(
-        m_GEUnitStat, GetCharacterLevel(), EffectContext);
-
-    FActiveGameplayEffectHandle ActiveGEHandle = m_AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(
-        *NewHandle.Data.Get(), m_AbilitySystemComponent);
-}
 
 void AUnitPawn::StopMove()
 {

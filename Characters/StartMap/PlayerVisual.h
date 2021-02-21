@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Engine/SkeletalMesh.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "GameFramework/Pawn.h"
-#include "Managers/StartMap/PlayerCreateManager.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Item/EquipmentActor.h"
+
 
 #include "PlayerVisual.generated.h"
 
-struct FCurrentCharData;
 class USceneCaptureComponent2D;
 UCLASS()
 class DIABLOM_API APlayerVisual : public APawn
@@ -29,8 +31,6 @@ protected:
 	
 protected:
 	UPROPERTY()
-	UPlayerCreateManager* m_PlCreateManager;//smartponter?
-	UPROPERTY()
 	UAnimSequence* m_AnimSeq;
 	UPROPERTY()
 	UTextureRenderTarget2D* m_CaptureTexture;
@@ -48,7 +48,7 @@ protected:
 	
 	void CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName,USceneComponent* root);
 	
-	void OnMeshVisualChanged(const FCurrentCharData& charData);//TODO Add Slot reader,1003
+	//void OnMeshVisualChanged(const FCurrentCharData& charData);//TODO Add Slot reader,1003
 
 public:
 	void ShowMesh();

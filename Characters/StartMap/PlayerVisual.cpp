@@ -4,7 +4,6 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SkinnedMeshComponent.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/StartMap/PlayerCreateManager.h"
 #include "Animation/AnimSequence.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Engine/TextureRenderTarget2D.h"
@@ -33,8 +32,6 @@ APlayerVisual::APlayerVisual()
 	//init MasterPose
 	//
 	m_MeshBody->SetAnimation(m_AnimSeq);
-	//
-	m_PlCreateManager = nullptr;
 	//
 	m_Spring = CreateDefaultSubobject<USpringArmComponent>("Spring");
 	m_Spring->SetupAttachment(RootComponent);
@@ -78,13 +75,13 @@ void APlayerVisual::BeginPlay()
 {
 	Super::BeginPlay();
 
-	m_AryVisualEquipment.Init(nullptr, (int)ESlotsEquipAry::Length);
+	//m_AryVisualEquipment.Init(nullptr, (int)ESlotsEquipAry::Length);
 
-	m_PlCreateManager = GetGameInstance<UDiabloGameInstance>()->GetPlCreateManager();
+	//m_PlCreateManager = GetGameInstance<UDiabloGameInstance>()->GetPlCreateManager();
 
-	Handle1 = m_PlCreateManager->m_OnVisualChange.AddUObject(this, &APlayerVisual::OnMeshVisualChanged);
+	//Handle1 = m_PlCreateManager->m_OnVisualChange.AddUObject(this, &APlayerVisual::OnMeshVisualChanged);
 
-	m_PlCreateManager->m_OnStartCreation.BindUObject(this, &APlayerVisual::ShowMesh);
+	//m_PlCreateManager->m_OnStartCreation.BindUObject(this, &APlayerVisual::ShowMesh);
 
 	m_Capture->PostProcessBlendWeight = 0.f;
 
@@ -96,40 +93,40 @@ void APlayerVisual::BeginPlay()
 void APlayerVisual::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-	m_PlCreateManager->m_OnVisualChange.Remove(Handle1);
-	m_PlCreateManager->m_OnStartCreation.Unbind();
+//	m_PlCreateManager->m_OnVisualChange.Remove(Handle1);
+	//m_PlCreateManager->m_OnStartCreation.Unbind();
 }
-
-void APlayerVisual::OnMeshVisualChanged(const FCurrentCharData& charData)
-{
-	m_MeshBody->SetSkeletalMesh(charData.m_CurrentSkin);
-	m_AnimSeq = charData.m_CoolIdle;
-	m_MeshBody->SetAnimation(m_AnimSeq);
-	m_MeshBody->Play(true); //body change = need animation update
-
-	int Iter = (int)ESlotsEquipAry::Length;
-
-	for (int i = 0; i < Iter; i++)
-	{
-		//이미 없다
-		const FItemData* Data = charData.m_AryEquipItemData[i];
-
-		if (m_AryVisualEquipment[i])
-		{
-			m_Capture->RemoveShowOnlyActorComponents(m_AryVisualEquipment[i]);
-			m_AryVisualEquipment[i]->SetHidden(true);
-			m_AryVisualEquipment[i]->Destroy();
-			m_AryVisualEquipment[i] = nullptr;
-		}
-		
-		if (Data&&Data->m_EquipmentBP) //new item need spawn
-		{
-			m_AryVisualEquipment[i] = AEquipmentActor::SpawnToMesh(m_MeshBody, Data->m_EquipmentBP,
-			                                                       Data->m_EquipSocketName);
-			m_Capture->ShowOnlyActorComponents(m_AryVisualEquipment[i]);
-		}
-	}
-}
+//
+// void APlayerVisual::OnMeshVisualChanged(const FCurrentCharData& charData)
+// {
+// 	m_MeshBody->SetSkeletalMesh(charData.m_CurrentSkin);
+// 	m_AnimSeq = charData.m_CoolIdle;
+// 	m_MeshBody->SetAnimation(m_AnimSeq);
+// 	m_MeshBody->Play(true); //body change = need animation update
+//
+// 	int Iter = (int)ESlotsEquipAry::Length;
+//
+// 	for (int i = 0; i < Iter; i++)
+// 	{
+// 		//이미 없다
+// 		const FItemData* Data = charData.m_AryEquipItemData[i];
+//
+// 		if (m_AryVisualEquipment[i])
+// 		{
+// 			m_Capture->RemoveShowOnlyActorComponents(m_AryVisualEquipment[i]);
+// 			m_AryVisualEquipment[i]->SetHidden(true);
+// 			m_AryVisualEquipment[i]->Destroy();
+// 			m_AryVisualEquipment[i] = nullptr;
+// 		}
+// 		
+// 		if (Data&&Data->m_EquipmentBP) //new item need spawn
+// 		{
+// 			m_AryVisualEquipment[i] = AEquipmentActor::SpawnToMesh(m_MeshBody, Data->m_EquipmentBP,
+// 			                                                       Data->m_EquipSocketName);
+// 			m_Capture->ShowOnlyActorComponents(m_AryVisualEquipment[i]);
+// 		}
+// 	}
+// }
 
 
 void APlayerVisual::ShowMesh()

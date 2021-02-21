@@ -4,10 +4,6 @@
 
 void UAnimNotify_CamShake::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
-	if(!ADiabloPlayerController::Get)
-	{
-		return;
-	}
 
 	if(!m_ClassCamShake)
 	{
@@ -27,5 +23,5 @@ void UAnimNotify_CamShake::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	// }
 
 	
-	ADiabloPlayerController::Get->ClientPlayCameraShake(m_ClassCamShake);	
+//	ADiabloPlayerController::Get->ClientPlayCameraShake(m_ClassCamShake);	
 }

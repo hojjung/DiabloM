@@ -1,8 +1,4 @@
-// My First Hack n Slash
-
-
 #include "MobAnimInstance.h"
-
 #include "Characters/MonsterPawn.h"
 
 void FMobAnimInstanceProxy::InitializeObjects(UAnimInstance* InAnimInstance)
@@ -21,7 +17,7 @@ void UMobAnimInstance::NativeBeginPlay()
 {
     Super::NativeBeginPlay();
     
-    m_Owner=Cast<AMonsterPawn>( TryGetPawnOwner());
+    m_Owner=Cast<AUnitPawn>( TryGetPawnOwner());
 }
 
 void UMobAnimInstance::UpdateMoveFlag()

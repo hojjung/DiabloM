@@ -3,27 +3,16 @@
 #pragma once
 
 #include "DiabloM.h"
-#include "AbilitySystem/Ability/PlayerAbility/PlayerUsePortal.h"
-#include "AbilitySystem/Ability/PlayerAbility/Regen/PlayerManaRegenAbility.h"
-#include "AbilitySystem/Ability/PlayerAbility/Regen/PlayerRageRegenAbility.h"
-#include "AbilitySystem/Ability/PlayerAbility/Regen/PlayerStaminaRegenAbility.h"
-#include "Animations/DiaAniminstance.h"
+#include "WeakInterfacePtr.h"
 #include "Characters/UnitPawn.h"
-#include "Logic/PlayerAutoPlayFSM.h"
 #include "Managers/DiabloCheatManager.h"
-#include "SaveLoad/SaveCharacterStatus.h"
 #include "PlayerDiabloCharacter.generated.h"
 
 class UDiaStatPanel;
-class IInteractable;
 class ADiabloPlayerController;
 class UCameraDissolve;
 class UPlayerSensing;
-class UPlayerBaseAttack;
 class UDefaultFSM;
-class UPlayerDiabloAttribute;
-class UPlayerHealthPotion;
-class UPlayerHpRegenAbility;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
 DECLARE_MULTICAST_DELEGATE(FOnMove);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFocusTargetChanged,AUnitPawn*);
@@ -34,7 +23,6 @@ class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 	GENERATED_BODY()
 	
 	friend UDiabloCheatManager;
-	friend USaveLoadManager;
 	friend UPlayerSensing;
 	friend UDiabloGameInstance;
 public:
@@ -47,22 +35,7 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	TSubclassOf<UPlayerHpRegenAbility> m_GAPlayerHealthRegen;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	TSubclassOf<UPlayerManaRegenAbility> m_GAPlayerManaRegen;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	TSubclassOf<UPlayerStaminaRegenAbility> m_GAPlayerStaminaRegen;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	TSubclassOf<UPlayerRageRegenAbility> m_GAPlayerRageRegen;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	TSubclassOf<UPlayerHealthPotion> m_GAPlayerHealthPotion;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
-	TSubclassOf<UPlayerUsePortal> m_GAPlayerPortal;
-	//
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TArray<TEnumAsByte< EObjectTypeQuery>> m_AryTargetingObjectType;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player")
-	float m_fInteractRange;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UCameraDissolve* m_DissolveCam;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
@@ -72,30 +45,12 @@ protected:
 	UPROPERTY()
 	UPlayerSensing* m_PlayerSense;
 	UPROPERTY()
-	UPlayerAutoPlayFSM* m_PlayerAutoPlay;
-	UPROPERTY()
 	TArray< AActor*> m_AryIgnoreActor;
 	UPROPERTY()
 	ADiabloPlayerController* m_PlayerCon;
-	UPROPERTY()
-	TArray<TSubclassOf<UDiabloAbility>> m_GrantedMasteryAbilities;
-	UPROPERTY()
-	TArray<TSubclassOf<UDiabloAbility>> m_GrantedItemAbilities;
-	
-	TWeakInterfacePtr<IInteractable> m_FocusedInteractable;
-	
-	const FAnimStance* m_AnimStance;
 	
 	const FPlayerEntityTable* m_PlayerEntityData;
 
-	FGameplayAbilitySpecHandle m_HpRegenHandle;
-
-	FGameplayAbilitySpecHandle m_ResourceRegenHandle;
-
-	FGameplayAbilitySpecHandle m_PotionHandle;
-
-	FGameplayAbilitySpecHandle m_PortalHandle;
-	
 	FDelegateHandle m_InventoryUpdateHandle;
     
 	FDelegateHandle m_InventoryLoadedHandle;
@@ -130,19 +85,15 @@ protected:
 	bool m_bIsDead;
 
 	TWeakObjectPtr<AUnitPawn> m_FocusOutlinePawn;;
-	//
+
+	const FPlayerEntityTable* m_PlayerData;
+
 protected:
-
 	virtual void BeginPlay() override;
-	void LoadExp(const USaveCharacterStatus* loadedSaveData);
-
+	
 	void MoveForward(float AxisValue);
 
 	void MoveRight(float AxisValue);
-	
-	
-
-	
 
 	virtual void Tick(float DeltaTime) override;
 	
@@ -150,15 +101,14 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	void BindASCInput();
-
-	void SetLoadedData(const USaveCharacterStatus* loadedSaveData);
-	
 	void SetBaseAttackData(float viewAngle,float viewRadius,float focusRange);
+
+	virtual FVector GetLastSeenLocation() override;
+
 public:
 	void Init();
 
-	void LateInit();
+	void PlayerClassDataInject(const FPlayerEntityTable* playerData);
 	
 	virtual void FocusTarget(AUnitPawn* target) override;
 	
@@ -177,14 +127,6 @@ public:
 	
 	void HideOutlineOnTarget();
 
-	virtual bool SetCharacterLevel(int NewLevel)override;
-	
-	UPlayerBaseAttack* GetBaseAttackInst();
-
-	void RemoveAllEffect();
-	
-	void SetAnimStance(const FAnimStance* animStance);
-
 	void EarnExp(float expEarned);
 
 	void EarnGold(float goldEarned);
@@ -193,11 +135,11 @@ public:
 	
 	bool SpendGold(float goldSpend);
 
+	float GetAttackSpeedMultiple();
+
     void OnSeeTarget(APawn* target);
 	
     void OnCantSeeTarget(APawn* target);
-	
-	void OnCanSeeTargetBlock(APawn* target);
 	
 	ADiabloPlayerController* GetDiaController();
 
@@ -237,8 +179,6 @@ public:
 		return m_AlreadyHittenForIgnore;
 	}
 
-	virtual FVector GetLastSeenLocation() override;
-	
 	void UpdateRegenAbility();
 
 	friend UDiabloGameInstance;
@@ -250,33 +190,14 @@ public:
 
 	virtual bool IsAlive() const override;
 	
-	
-	FGameplayAbilitySpec* DrinkPotion();
-
-	void UsePortal();
-
-	void CancelPortal();
-
 	float GetCastSpeed();
 
-	UPlayerDiabloAttribute* GetPlayerAttribute();
 
 	UFUNCTION(BlueprintCallable)
 	void PlayColorEffect(const FLinearColor& colorWant,float effectLength);
 	
 public:
-	void GrantHpPotionAbility();
-	
-	void GrantHpRegenAbility();
-	
-	void GrantResourceRegenAbility();
 
-	void GrantPortalAbility();
-
-	FORCEINLINE IInteractable* GetFocusInteractable()
-	{
-		return  m_FocusedInteractable.Get();
-	}
 	
 	FORCEINLINE float GetGold()
 	{
@@ -297,5 +218,7 @@ public:
 
     void SetAutoPlay(bool useAuto);
 
+	UFUNCTION(BlueprintCallable)
+	void ApplyDamageToTarget();
 };
 

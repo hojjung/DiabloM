@@ -1,28 +1,22 @@
 #include "MonsterPawn.h"
 #include "DiabloPlayerController.h"
-#include "DungeonMiniMap.h"
 #include "MobUnitMovement.h"
 #include "PlayerDiabloCharacter.h"
 #include "Logic/MonsterSensing.h"
-#include "Logic/MobFSMBase.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/DiabloGameMode.h"
 #include "Managers/DungeonManager.h"
 
 AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit):
 Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
 {
-    m_bHasShownEver=false;
-    m_bUseFSM = false;
+    m_bDeathAnimEnd=true;
+    m_bUseFSM = true;
     m_Movement->m_bUseRVO = true;
     SetActorTickEnabled(true);
     SetActorTickInterval(0.2f);
     GetCapsule()->SetCapsuleRadius(24.f);
     m_SkBody->SetRelativeLocation(FVector(0, 0, -90.f));
     m_SkBody->SetRelativeRotation(FRotator(0, -90.f, 0));
-    m_bIsPlaced = false;
-    m_CurrentNode=nullptr;
-    m_bIsVisible=true;
     //
     m_StShadow = CreateDefaultSubobject<UStaticMeshComponent>("StShadow");
     static ConstructorHelpers::FObjectFinder<UStaticMesh> FoundSt(
@@ -50,53 +44,39 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     m_Movement->NavAgentProps.AgentHeight=88.f;
     m_Movement->NavAgentProps.AgentRadius=24.f;
     //
-    static ConstructorHelpers::FClassFinder<UGameplayEffect> FoundGEExp(
-    TEXT("Blueprint'/Game/Blueprints/Abilities/GameEffect/GE_EXP.GE_EXP_C'"));
-    m_GEExpReward = FoundGEExp.Class;
 
     m_SkBody->CastShadow = false;
-}
 
-void AMonsterPawn::ShowStatusBar()
-{
-    m_WorldHpBar->SetHiddenInGame(false);
-}
+    m_TeamID = ETeamID::Monster;
 
-void AMonsterPawn::HideStatusBar()
-{
-    m_WorldHpBar->SetHiddenInGame(true);
-}
+    m_fCurrentHP = 0;
+    m_fMaxHP = 0;
+    //
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundSkMesh(
+              TEXT("SkeletalMesh'/Game/Models/ParagonMeshs/Greystone_SK.Greystone_SK'"));
 
-bool AMonsterPawn::IsStatusBarActive()
-{
-    return m_WorldHpBar->IsVisible();
-}
-
-void AMonsterPawn::UpdateHealthBar(float perOne)
-{
-    m_WorldHpBar->SetHealthPercentage(perOne);
+    m_SkBody->SetSkeletalMesh(FoundSkMesh.Object);
 }
 
 void AMonsterPawn::BeginPlay()
 {
     Super::BeginPlay();
-    if (m_bIsPlaced && !m_MonsterUnitHandle.IsNull())
-    {
-        InitMonster(m_MonsterUnitHandle, m_nCharacterLevel);
-    }
-    HideStatusBar();
+
+    m_TickFSM = NewObject<UFSMTick>(this, UFSMTick::StaticClass());
+    m_TickFSM->Init(this);
+    
+    m_WorldHpBar->SetComponentTickEnabled(false);
 }
 
-
-void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level,UDungeonManager* dgManager)
+void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp)
 {
-    m_TeamID = ETeamID::Monster;
+    m_bDeathAnimEnd = false;
     
-    m_SpawnedManager = dgManager;
+    GetWorldTimerManager().ClearTimer(m_DeathTimer);
     
-    m_MonsterUnitHandle.RowName = unitID.RowName;
-    
-    const FMonsterTable* const UnitData = unitID.GetRow<FMonsterTable>("");
+    const FMonsterEntity* const UnitData = monster_table;
+
+    m_BaseAttackAnim =  UnitData->m_BaseAttackAnim;
 
     m_DeathMontage = UnitData->m_DeathMontage;
 
@@ -111,122 +91,78 @@ void AMonsterPawn::InitMonster(FDataTableRowHandle unitID, int level,UDungeonMan
     m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
     
     m_SkBody->SetAnimInstanceClass(UnitData->m_AnimBP);
+
+    m_HittenSound = UnitData->m_HittenSound;
+
+    m_DeathSound = UnitData->m_DeathSound;
     
-    //m_PhyAsset
+
+    m_fAttackRange = UnitData->m_fAttackRange;
+
+    m_fAttackSpeed = UnitData->m_fAttackSpeed;
+
+    m_fMaxHP = hp;
     
-    m_GEUnitStat = UnitData->m_DefaultStatTable; //몬스터 랜덤 데이터가 마치 아이템 옵션처럼 몬스터에게 붙어야한다.
+    m_fCurrentHP = m_fMaxHP;
 
-    SetCharacterLevel(level);
-    
-    check(m_GEUnitStat);
-    
-    SetUnitStatEffect();
+    UpdateHealthBar(GetHpPercentOne());
 
-    GetDiaAbilitySystem()->GetGameplayAttributeValueChangeDelegate(GetAttributeSet()->GetHealthAttribute()).AddUObject(
-        this, &AMonsterPawn::SetHealthPercentage);
+    m_SkBody->SetScalarParameterValueOnMaterials("Visibility",1.f);
 
-    FOnAttributeChangeData NotUse;
-    SetHealthPercentage(NotUse);
-
-    m_MonsterSense = NewObject<UMonsterSensing>(this, UMonsterSensing::StaticClass());
-    m_MonsterSense->InitSense(this);
-
-    if (UnitData->m_MobFSM != nullptr)
+    if(m_SpawnAnim)
     {
-        m_FSM = NewObject<UMobFSMBase>(this, UnitData->m_MobFSM,UnitData->m_MobFSM->GetFName(), RF_NoFlags,UnitData->m_MobFSM->GetDefaultObject());
-        
-        m_FSM->Init(this);
-        
-        m_bUseFSM = true;
+        PlayAnimMontage(m_SpawnAnim);
     }
-    else
-    {
-        m_bUseFSM = false;
-        //SetActorTickEnabled(false); //Anim?
-    }
+    m_TickFSM->Init(this);
+}
 
-    if (UnitData->m_BaseAttack)
-    {
-        FGameplayAbilitySpec BaseAttackHandle(UnitData->m_BaseAttack, level, INDEX_NONE, this);
-        
-        m_BaseAttackHandle = GetDiaAbilitySystem()->GiveAbility(BaseAttackHandle);
-    }
+void AMonsterPawn::Tick(float DeltaSeconds)
+{
+    Super::Tick(DeltaSeconds);
 
-    RegisterToQuadTreeBound();
-    
-    if(m_CurrentNode)
-    {
-        HideAll();
-    }
+    m_fHitAnimCD-=DeltaSeconds;
 
-    m_AttributeSet->m_OnDmgTook.AddUObject(this,&AMonsterPawn::PlayHitFlash);
+    m_TickFSM->TickFSM();
+}
+
+bool AMonsterPawn::IsStatusBarActive()
+{
+    return m_WorldHpBar->IsComponentTickEnabled();
+}
+
+void AMonsterPawn::UpdateHealthBar(float perOne)
+{
+    m_WorldHpBar->SetHealthPercentage(perOne);
 }
 
 
-void AMonsterPawn::GiveExpToPlayer()
+void AMonsterPawn::HideStatusBar()
 {
-    FGameplayEffectContextHandle Context = GetDiaAbilitySystem()->MakeEffectContext();
-    FGameplayEffectSpecHandle ExpSpecHandle = GetDiaAbilitySystem()->MakeOutgoingSpec(
-        m_GEExpReward, GetCharacterLevel(), Context);
-
-    GetDiaAbilitySystem()->ApplyGameplayEffectSpecToTarget(*ExpSpecHandle.Data,
-                                                           ADiabloPlayerController::Get->GetPlayerPawn()->
-                                                           GetDiaAbilitySystem());
+    m_WorldHpBar->SetComponentTickEnabled(false);
+    m_WorldHpBar->SetHiddenInGame(true);
+    m_WorldHpBar->SetVisibility(false);
+    m_WorldHpBar->GetUserWidgetObject()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void AMonsterPawn::Die()
 {
-    FMonsterTypeRow* MobType = GetMonsterDataTable().m_TypeHandle.GetRow<FMonsterTypeRow>("");
-
-    UGameplayStatics::PlaySoundAtLocation(GetWorld(), MobType->m_DeathSound, GetActorLocation(), 1, 1);
+    UGameplayStatics::PlaySoundAtLocation(GetWorld(), m_DeathSound, GetActorLocation(), 1, 1);
     
-    if(GetCurrentNode())
-    {
-        GetCurrentNode()->RemoveElement(this);
-    }
-
-    if(m_SpawnedManager)
-    {
-        m_SpawnedManager->MonsterDead();
-    }
-
-    m_OnCharacterDied.Broadcast(this);
-
+    HideStatusBar();
+    
     SetActorTickEnabled(false);
-    
-    GetCapsule()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    
+    SetActorEnableCollision(false);
     GetMovementComponent()->SetActive(false);
     GetMovementComponent()->SetComponentTickEnabled(false);
-
-    m_bUseFSM = false;
+    FocusTarget(nullptr);
     
-    if (IsValid(GetDiaAbilitySystem()))
-    {
-        GetDiaAbilitySystem()->CancelAllAbilities();
-
-        FGameplayTagContainer EffectTagsToRemove;
-        EffectTagsToRemove.AddTag(m_TagEffectRemoveOnDeath);
-        int32 NumEffectsRemoved = GetDiaAbilitySystem()->RemoveActiveEffectsWithTags(EffectTagsToRemove);
-
-        GetDiaAbilitySystem()->AddLooseGameplayTag(m_TagDead);
-
-        GetDiaAbilitySystem()->RemoveGameplayCue(m_TagStun);
-    }
-
-    GiveExpToPlayer();
-    
-    RequestDropRewards();
-
-    FTimerHandle TimerHandle_OnTimer;
-
     if (m_DeathMontage)
     {
-        float AnimLength = PlayAnim(m_DeathMontage); //- 0.2f;
-
+        float AnimLength = PlayAnimMontage(m_DeathMontage) - 0.2f; //- 0.2f;
+    
         if (GEngine->GetNetMode(GetWorld()) < NM_Client)
         {
-            GetWorldTimerManager().SetTimer(TimerHandle_OnTimer, this, &AMonsterPawn::OnDeathAnimEnd,AnimLength,false);
+            GetWorldTimerManager().SetTimer(m_DeathTimer, this, &AMonsterPawn::OnDeathAnimEnd,AnimLength,false);
         }
     }
     else
@@ -235,156 +171,98 @@ void AMonsterPawn::Die()
     }
 }
 
-void AMonsterPawn::RequestDropRewards()
-{
-    UDiabloGameInstance::Get->GetRewardManager()->RequestMonsterDropItem(this, GetCharacterLevel());
-}
 
 void AMonsterPawn::OnDeathAnimEnd()
 {
-
-    Destroy();
+    FVector NewHide;
+    NewHide.X=0.f;
+    NewHide.Y=0.f;
+    NewHide.Z = 90000.f;
+    
+    m_fCurrentHP=-1;
+    
+    SetActorLocation(NewHide);
+    
+    StopAnimMontage(m_DeathMontage);
+    SetAcive(false);
+    m_bDeathAnimEnd = true;
+    //Destroy();
 }
 
-void AMonsterPawn::Tick(float DeltaSeconds)
+void AMonsterPawn::PlayHittenSound()
 {
-    Super::Tick(DeltaSeconds);
-
-    if (m_bUseFSM)
+    if (m_HittenSound)
     {
-        m_FSM->TickFSM();
+        if (m_HittenSound->IsLooping())
+        {
+            return;
+        }
+
+        UGameplayStatics::PlaySoundAtLocation(GetWorld(), m_HittenSound, GetActorLocation(), 1, 1);
+    }
+}
+
+void AMonsterPawn::ShowStatusBar()
+{
+    m_WorldHpBar->SetComponentTickEnabled(true);
+    m_WorldHpBar->SetHiddenInGame(false);
+    m_WorldHpBar->SetVisibility(true);
+    m_WorldHpBar->GetUserWidgetObject()->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+}
+
+void AMonsterPawn::TakeDmg(BigInt amount, AUnitPawn* attacker)
+{
+    if(!GetFocusedTarget())
+    {
+        FocusTarget(attacker);
     }
     
-    UpdateBound();
-}
+    PlayTookHitMontage();
+    PlayHitFlash();
+    PlayHittenSound();
 
-void AMonsterPawn::SetHealthPercentage(const FOnAttributeChangeData& data)
-{
+    if(!IsStatusBarActive())
+    {
+        ShowStatusBar();
+        PRINTF("TickT");
+    }
+        
+
+    m_fCurrentHP.Subtract(amount);
+
+    if(m_fCurrentHP.IsLessThanZero()||m_fCurrentHP.IsZero())
+    {
+        UpdateHealthBar(0.f);
+        Die();
+
+        return;
+    }
+
     UpdateHealthBar(GetHpPercentOne());
 }
+
+FVector AMonsterPawn::GetLastSeenLocation()
+{
+    return FVector::ZeroVector;
+}
+
+void AMonsterPawn::PlayTookHitMontage()
+{
+    if(m_TookHitMontage && m_fHitAnimCD<0.f)
+    {
+        PlayAnimMontage(m_TookHitMontage,1);
+
+        m_fHitAnimCD = FMath::RandRange(1.5f,2.5f);
+    }
+}
+
 
 void AMonsterPawn::FocusTarget(AUnitPawn* target)
 {
     m_FocusedEnemy = target;
 }
 
-bool AMonsterPawn::CanSeeTarget()
-{
-    if (!GetFocusedTarget())
-    {
-        return false;
-    }
-
-    return m_MonsterSense->LineOfSightTo(GetFocusedTarget(), FVector::ZeroVector, true);
-}
-
-FVector AMonsterPawn::GetLastSeenLocation()
-{
-    return m_MonsterSense->m_LastPlayerSeen;
-}
-
-FVector AMonsterPawn::GetActorLocation()
-{
-    return AActor::GetActorLocation();
-}
-
-void AMonsterPawn::RegisterToQuadTreeBound()
-{
-    ADiabloGameMode::Get->RegisterQuadElement(this);
-}
-
-void AMonsterPawn::ShowAll( )
-{
-    if(m_bIsVisible)
-    {
-        return;	
-    }
-
-    if(!m_bHasShownEver)
-    {
-        m_bHasShownEver=true;
-
-        if(m_SpawnAnim)
-        {
-            PlayAnimMontage(m_SpawnAnim,1);    
-        }
-    }
-    
-    SetActorHiddenInGame(false);
-    SetActorEnableCollision(true);
-    SetActorTickEnabled(true);
-    m_SkBody->SetComponentTickEnabled(true);
-    m_Movement->SetComponentTickEnabled(true);
-    m_MonsterSense->SetSensingUpdatesEnabled(true);
-    m_PFComp->SetComponentTickEnabled(true);
-    m_StShadow->SetComponentTickEnabled(true);
-    m_WorldHpBar->SetComponentTickEnabled(true);
-    m_bIsVisible=true;
-}
-
-void AMonsterPawn::HideAll()
-{
-    if(!m_bHasShownEver)
-    {
-        SetActorTickEnabled(false);
-        m_Movement->SetComponentTickEnabled(false);
-        m_MonsterSense->SetSensingUpdatesEnabled(false);
-        m_PFComp->SetComponentTickEnabled(false);
-    }
-    
-    m_SkBody->SetComponentTickEnabled(false);//이게여기있으면 몬스터 애니가 멈춤//그래도 퍼포먼스
-    m_StShadow->SetComponentTickEnabled(false);
-    m_WorldHpBar->SetComponentTickEnabled(false);
-    
-    SetActorEnableCollision(false);
-
-    SetActorHiddenInGame(true);
-    m_bIsVisible=false;
-    HideStatusBar();
-}
-
-void AMonsterPawn::SetNode(QuadtreeNode* quadtree_node)
-{
-    m_CurrentNode = quadtree_node;
-  
-}
-
-QuadtreeNode* AMonsterPawn::GetCurrentNode()
-{
-    return m_CurrentNode;
-}
-
-
-void AMonsterPawn::UpdateBound() //여기하는중,하는중이였네,
-{
-    if (m_CurrentNode) //TODO Need Erase
-    {
-        if (!GetCurrentNode()->IsPositionInsideNode(GetActorLocation()))//현재 노드 밖으로 캐릭터가 나갔다.
-        {
-            RegisterToQuadTreeBound();
-
-            if(!m_CurrentNode)
-             {
-                return;//Fail
-             }
-
-            if(ADiabloGameMode::Get->CheckActorInVisibleNode(this))
-            {
-                ShowAll();
-            }
-            else
-            {
-                HideAll();
-            }
-        }
-    }
-    else
-    {
-        RegisterToQuadTreeBound();
-    }
-}
-
-void AMonsterPawn::PlayHitFlash(float notUseDmg)
+void AMonsterPawn::PlayHitFlash()
 {
 	FName TimeParamName = "StartTime";
 	
@@ -392,21 +270,32 @@ void AMonsterPawn::PlayHitFlash(float notUseDmg)
 
 	m_SkBody->SetScalarParameterValueOnMaterials(TimeParamName, TimeSec);
 
-    FMonsterTypeRow* MobType = GetMonsterDataTable().m_TypeHandle.GetRow<FMonsterTypeRow>("");
+}
 
-    if (MobType->m_HittenSound)
+
+
+bool AMonsterPawn::IsAlive() const
+{
+    return !IsHidden() && m_fCurrentHP > 0 ; 
+}
+
+bool AMonsterPawn::IsReadyToPool()
+{
+    return m_bDeathAnimEnd;
+}
+
+void AMonsterPawn::SetAcive(bool v)
+{
+    SetActorHiddenInGame(!v);
+    SetActorEnableCollision(v);
+    SetActorTickEnabled(v);
+    GetMovementComponent()->SetActive(v);
+    GetMovementComponent()->SetComponentTickEnabled(v);
+    
+    if(!v)
     {
-        if (MobType->m_HittenSound->IsLooping())
-        {
-            PRINTF("SoundISLooping");
-            return;
-        }
-
-        UGameplayStatics::PlaySoundAtLocation(GetWorld(), MobType->m_HittenSound, GetActorLocation(), 1, 1);
+    //    HideStatusBar();
+        FocusTarget(nullptr);
     }
 }
 
-const FMonsterTable& AMonsterPawn::GetMonsterDataTable() const
-{
-    return *m_MonsterUnitHandle.GetRow<FMonsterTable>("");
-}

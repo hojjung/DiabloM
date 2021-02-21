@@ -27,8 +27,6 @@ protected:
 	APlayerDiabloCharacter* m_Player;
 	UPROPERTY()
 	UDiabloGameInstance* m_GameManager;
-	UPROPERTY()
-	TSubclassOf<UGameplayEffect> m_StunEffect;
 protected:
 	virtual void InitCheatManager() override;
 

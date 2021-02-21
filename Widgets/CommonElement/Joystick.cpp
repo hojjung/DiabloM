@@ -45,12 +45,6 @@ void UJoystick::NativeOnInitialized()
 
 void UJoystick::SetIndicatorLocation(FVector NewActorLocation)
 {
-	if(!ASkillIndicator::GetCurrent)
-	{
-		return;
-	}
-
-	ASkillIndicator::GetCurrent->SetRadiusScale(m_fRadius);
 	
 	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 	
@@ -61,19 +55,9 @@ void UJoystick::SetIndicatorLocation(FVector NewActorLocation)
 	
 	FNavLocation OutLoc;
 
-	APlayerDiabloCharacter* Dia = ADiabloPlayerController::Get->GetPlayerPawn();
 
 	FHitResult Hit;
 	
-	FQuat QQ = Dia->GetCapsule()->GetComponentRotation().Quaternion();
-
-	FCollisionShape Shape = FCollisionShape();
-	//Shape.SetCapsule(Dia->GetCapsule()->Ext);
-	
-	if(Dia->GetCapsule()->SweepComponent(Hit,NewActorLocation,NewActorLocation,QQ,Shape,false))
-	{
-		PRINTF("Sweep!");
-	}
 	
 	if(!NavSys->ProjectPointToNavigation(NewActorLocation,OutLoc))
 	{
@@ -81,7 +65,6 @@ void UJoystick::SetIndicatorLocation(FVector NewActorLocation)
 	}
 	else
 	{
-		ASkillIndicator::GetCurrent->SetActorLocation(NewActorLocation);//Danger?
 	}
 }
 
@@ -138,11 +121,8 @@ void UJoystick::UpdateTouchInput(FVector2D input)
 	//
 	FVector CalcLoc = NormalDiff3 * m_fWorldActorRange;
 	
-	FVector PlayerLocation =  ADiabloPlayerController::Get->GetPlayerPawn()->GetActorLocation();
 
-	FVector NewActorLocation = PlayerLocation - CalcLoc;
 
-	SetIndicatorLocation(NewActorLocation);
 }
 
 FReply UJoystick::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
@@ -224,10 +204,6 @@ void UJoystick::StartJoystickDrag()
 
 	m_ActualDragger->SetRenderScale(FVector2D(2.5f,2.5f));
 
-	if(ASkillIndicator::GetCurrent)
-	{
-		ASkillIndicator::GetCurrent->SetActorHiddenInGame(false);
-	}
 	m_Picker->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
@@ -247,24 +223,6 @@ void UJoystick::EndJoystickDrag()
 	
 	m_SlotPicker->SetPosition(m_StartPickerPos);
 	
-	if(ASkillIndicator::GetCurrent)
-	{
-		ASkillIndicator::GetCurrent->SetActorHiddenInGame(true);
-		
-		UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-		
-		if(NavSys)
-		{
-			FNavLocation OutLoc;
-
-			m_bIsSuccessDragged = NavSys->ProjectPointToNavigation(ASkillIndicator::GetCurrent->GetActorLocation(),OutLoc);
-
-			if(!m_bIsSuccessDragged)
-			{
-				PRINTF("DragFail");
-			}
-		}
-	}
 
 	m_Picker->SetVisibility(ESlateVisibility::Hidden);
 

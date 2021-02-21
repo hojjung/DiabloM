@@ -7,7 +7,6 @@
 
 UAnimNotify_TraceBox::UAnimNotify_TraceBox()
 {
-	m_CachedAttackEvent=FGameplayTag::RequestGameplayTag("Combat.Ability.Skill.BaseAttack");//for spawn projectile
 	m_fRange=600.f;
 	m_BoxHalfSize = FVector(300.f,200.f,100.f);
 }
@@ -38,12 +37,6 @@ void UAnimNotify_TraceBox::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 
 	for(FHitResult& Hitten : Hits)
 	{
-		FGameplayEventData EventData;
-		
-		EventData.Instigator = Unit;
-		
-		EventData.Target = Hitten.GetActor();//?
 
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Unit,m_CachedAttackEvent,EventData);
 	}
 }
