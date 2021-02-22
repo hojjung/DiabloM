@@ -19,7 +19,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_DissolveCam->SetupAttachment(RootComponent);
 	m_DissolveCam->SetRelativeRotation(FRotator(-50.f, 45.f, 0.f));
 	m_DissolveCam->SetRelativeLocation(FVector(0, 0, 0.f));
-	m_DissolveCam->TargetArmLength = 1800.f;
+	m_DissolveCam->TargetArmLength = 1400.f;
 	//
 	m_TopCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera00");
 	m_TopCamera->SetupAttachment(m_DissolveCam);
@@ -89,13 +89,22 @@ void APlayerDiabloCharacter::Init()
 
 void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerEntityTable* playerData)
 {
-	check(playerData);
+	//check(playerData);
+	if(!playerData)
+	{
+		PRINTF("DiaChar-NoPlData");
+		return;
+	}
 	m_PlayerData = playerData;
 	m_SkBody->SetSkeletalMesh(m_PlayerData->m_PlayerSkin);
 	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	m_SkBody->SetAnimInstanceClass(m_PlayerData->m_AnimBP);
 	m_fAttackSpeed = m_PlayerData->m_fAttackSpeedMultiple;
 	m_BaseAttackAnim = m_PlayerData->m_BaseAttackAnim;
+
+	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
+
+	m_nAccuracyLevel = 10;
 }
 
 void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius, float focusRange)
@@ -195,11 +204,6 @@ void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)
 {
 	if (m_FocusOutlinePawn.Get())
 	{
-		if (Unit == m_FocusOutlinePawn.Get())
-		{
-			return;
-		}
-
 		HideOutlineOnTarget();
 	}
 
@@ -257,11 +261,6 @@ void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 void APlayerDiabloCharacter::OnSeeTarget(APawn* target)
 {
 	AMonsterPawn* Unit = Cast<AMonsterPawn>(target);
-
-	if (m_FocusedEnemy.Get())
-	{
-		return;
-	}
 
 	FocusTarget(Unit);
 }
@@ -382,7 +381,7 @@ void APlayerDiabloCharacter::ApplyDamageToTarget()
 {
 	if(GetFocusedTarget())
 	{
-		GetFocusedTarget()->TakeDmg(12,this);
+		GetFocusedTarget()->TakeDmg(31,this);
 	}
 }
 

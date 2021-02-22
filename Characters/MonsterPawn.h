@@ -1,5 +1,6 @@
 #pragma once
 #include "DiabloM.h"
+#include "DiabloPlayerController.h"
 #include "Characters/UnitPawn.h"
 #include "Widgets/CommonElement/FloatingStatusBarWidgetCompo.h"
 #include "MonsterPawn.generated.h"
@@ -22,6 +23,10 @@ protected:
 	UStaticMeshComponent* m_StShadow;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UFloatingStatusBarWidgetCompo* m_WorldHpBar;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UAudioComponent* m_HittenAudio;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UAudioComponent* m_DeathAudio;
 protected:
 	FTimerHandle m_DeathTimer;
 	UPROPERTY(VisibleAnywhere, Category = "Character")
@@ -36,8 +41,12 @@ protected:
 	USoundBase* m_HittenSound;
 	UPROPERTY()
 	USoundBase* m_DeathSound;
+	UPROPERTY()
+	ADiabloPlayerController* m_PlCon;
 
-	bool m_bDeathAnimEnd;	
+	bool m_bDeathAnimEnd;
+
+	int m_nAvoidLevel;
 
 public: //need more monster
 	virtual void BeginPlay() override;
@@ -74,5 +83,9 @@ public:
 	bool IsReadyToPool();
 
 	void SetAcive(bool v);
+
+	bool CalculateAccuracy(int attackerAccu,float& missPercent);
+
+	float CalcuSameLevelAvgAccuracy(int attackerAccu);
 
 };

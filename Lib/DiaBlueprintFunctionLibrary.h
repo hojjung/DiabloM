@@ -20,15 +20,15 @@ public:
 	
 	static const FText UnitSymbol[UnitSymbolMax];
 
-	static FString GetAlphabetTextBigInt(TBigInt<512, false>& vWant, int symbolCount = 0)
+	static FString GetAlphabetTextBigInt(const BigInt & vWant, int symbolCount = 0)
 	{
-		TBigInt<512, false> Mile = 10000;
+		BigInt Mile = 10000;
 
-		TBigInt<512, false> Cache = vWant;
+		BigInt Cache = vWant;
 
-		TBigInt<512, false> Remain;
+		BigInt Remain;
 
-		TArray<TBigInt<512, false>> NumList;
+		TArray<BigInt> NumList;
 
 		int Count = 0;
 

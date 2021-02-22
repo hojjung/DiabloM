@@ -22,7 +22,7 @@ public:
 	TSubclassOf<UAnimInstance> m_AnimBP;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimMontage* m_BaseAttackAnim;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0", UIMax = "4.4"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0", UIMax = "3.3"))
 	float m_fAttackSpeedMultiple = 1.f;
 };
 
@@ -33,7 +33,7 @@ struct FMonsterEntity : public FTableRowBase
 
 public:
 	FMonsterEntity(): m_Mesh(nullptr),
-	                  m_nDroptableRollCount(1), m_nDropTableIndex(0), m_HittenSound(nullptr), m_DeathSound(nullptr),
+	                  m_nAvoidLevel(1), m_nDropTableIndex(0), m_HittenSound(nullptr), m_DeathSound(nullptr),
 	                  m_SpawnAnim(nullptr), m_BaseAttackAnim(nullptr),
 	                  m_DeathMontage(nullptr),
 	                  m_TookHitMontage(nullptr)
@@ -50,8 +50,8 @@ public:
 	float m_fAttackRange = 330.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.5"))
 	float m_fAttackSpeed = 0.5f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.0"))
-	int m_nDroptableRollCount;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0"))
+	int m_nAvoidLevel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int m_nDropTableIndex;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

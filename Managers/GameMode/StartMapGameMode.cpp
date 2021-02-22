@@ -16,9 +16,9 @@ void AStartMapGameMode::Tick(float DeltaSeconds)
 		return;	
 	}
 
-	FName currentPlayerClass = UDiabloGameInstance::Get->m_PlayfabManager->GetLoadedPlayerClassID();
+	FName currentPlayerClass = *UDiabloGameInstance::Get->m_PlayfabManager->GetLoadedPlayerClassID();
 	UDiabloGameInstance::Get->m_PlayerClassManager->LoadPlayerClass(currentPlayerClass);
 	//
-	FName currentDungeonID = UDiabloGameInstance::Get->m_PlayfabManager->GetLoadedDungeonID();
+	FName currentDungeonID = *UDiabloGameInstance::Get->m_PlayfabManager->GetLoadedDungeonID();
 	UDiabloGameInstance::Get->m_DungeonManager->LoadCurrentDungeonLevel(currentDungeonID,this);
 }

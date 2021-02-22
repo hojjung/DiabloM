@@ -6,7 +6,6 @@
 
 ADiabloPlayerController::ADiabloPlayerController()
 {
-	
 	CheatClass = UDiabloCheatManager::StaticClass();
 	m_DmgIndex=0;
 	bShowMouseCursor=true;
@@ -15,11 +14,19 @@ ADiabloPlayerController::ADiabloPlayerController()
 
 	m_FormatMiss=FTextFormat::FromString("Miss-{0}%");
 
-	
-	//
-	//
+	static ConstructorHelpers::FClassFinder<UDamageTextWidgetComponent> FoundW(
+   TEXT("Blueprint'/Game/Blueprints/NewWidget/WC_DamageText.WC_DamageText_C'"));
+	m_ClassDW=FoundW.Class;
+	//Blueprint'/Game/Blueprints/NewWidget/WC_DamageText.WC_DamageText'
 	////WidgetBlueprint'/Game/Blueprints/Widgets/MainMenus/WB_GameOver.WB_GameOver'
 	//Blueprint'/Game/Blueprints/Widgets/WorldWidget/WC_DamageText.WC_DamageText'
+}
+
+void ADiabloPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	InitWidget();
 }
 
 void ADiabloPlayerController::InitWidget()
@@ -34,7 +41,7 @@ void ADiabloPlayerController::CreateDmgWC(int count)
 	m_AryDmgWC.Reset();
 	for(int i=0; i<count;i++)
 	{
-		UDamageTextWidgetComponent* DamageText = NewObject<UDamageTextWidgetComponent>(GetPawn(), UDamageTextWidgetComponent::StaticClass());
+		UDamageTextWidgetComponent* DamageText = NewObject<UDamageTextWidgetComponent>(GetPawn(), m_ClassDW);
 		DamageText->RegisterComponent();
 		m_AryDmgWC.Add(DamageText);
 		DamageText->AttachToComponent(this->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
@@ -80,7 +87,7 @@ void ADiabloPlayerController::OnDeviceBackKey()
 	ExitGame();
 }
 
-void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup) //target
+void ADiabloPlayerController::ShowDamageNumber(const BigInt& local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup) //target
 {
 	UDamageTextWidgetComponent* DamageText = GetDmgWC();
 	
@@ -89,12 +96,12 @@ void ADiabloPlayerController::ShowDamageNumber(const float local_damage_done,AUn
 	if(dmgPopup==EDamagePopup::Miss)
 	{
 		FFormatOrderedArguments Args;
-		Args.Add(local_damage_done);
+		Args.Add(local_damage_done.ToInt());
 		DamageText->SetDamageText(FText::Format(m_FormatMiss,Args));//
 	}
 	else
 	{
-		DamageText->SetDamageText(UDiaBlueprintFunctionLibrary::GetAlphabetText(local_damage_done));//
+		DamageText->SetDamageText(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(local_damage_done)));//
 	}
 	
 	DamageText->StartAnimation(dmgPopup);
@@ -116,5 +123,66 @@ void ADiabloPlayerController::BackToSelectMenu()
 	PRINTF("Continue StartMenu");
 	ClientForceGarbageCollection();
 	UGameplayStatics::OpenLevel(GetWorld(),"StartMenu");
+}
+
+void ADiabloPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ADiabloPlayerController,m_CurrentMsg);
+}
+
+void ADiabloPlayerController::AttemptToSendChatMessage(const FString& msg)
+{
+	if(GetLocalRole() < ROLE_Authority)
+	{
+		ServerSendChatMsg(msg);
+	}
+	else
+	{
+		SendChatMsg(msg);
+	}
+}
+
+void ADiabloPlayerController::SendChatMsg(const FString& msg)
+{
+	m_CurrentMsg = msg;
+	UpdateChatText();
+	FTimerHandle DummyHandle;
+	GetWorldTimerManager().SetTimer(DummyHandle,this,&ADiabloPlayerController::ClearChatmsg,5.f);
+}
+
+void ADiabloPlayerController::ClearChatmsg()
+{
+	m_CurrentMsg="";
+	UpdateChatText();
+	
+}
+
+void ADiabloPlayerController::ServerSendChatMsg_Implementation(const FString& msg)
+{
+	SendChatMsg(msg);
+}
+
+bool ADiabloPlayerController::ServerSendChatMsg_Validate(const FString& msg)
+{
+	if(msg.Len()<255)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void ADiabloPlayerController::OnRep_CurrentMsg()
+{
+	UpdateChatText();
+}
+
+void ADiabloPlayerController::UpdateChatText()
+{
+	PRINTF("DiaChatUser(%p):%s",this,*m_CurrentMsg);
 }
 

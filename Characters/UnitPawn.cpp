@@ -314,7 +314,7 @@ void AUnitPawn::TryAttack()
     {
         float AnimMongLen = PlayAnimMontage(m_BaseAttackAnim,1*m_fAttackSpeed,NAME_None);
 
-        m_fAttackCD = m_fAttackCDConstant;
+        m_fAttackCD =m_fAttackCDConstant;
     }
 }
 
@@ -458,7 +458,7 @@ float AUnitPawn::GetMoveSpeed()
 
 bool AUnitPawn::IsMoving()
 {
-    return !GetMovementComponent()->Velocity.IsNearlyZero(0.1f);
+    return !GetMovementComponent()->Velocity.IsZero();
 }
 
 float AUnitPawn::GetAttackSpeed()

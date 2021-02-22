@@ -6,7 +6,7 @@ UDamageTextWidgetComponent::UDamageTextWidgetComponent()
 {
     //WidgetClass
     static ConstructorHelpers::FClassFinder<UUserWidget> FoundW(
-    TEXT("WidgetBlueprint'/Game/Blueprints/Widgets/WorldWidget/WB_DamageText.WB_DamageText_C'"));
+    TEXT("WidgetBlueprint'/Game/Blueprints/NewWidget/WB_DamageText.WB_DamageText_C'"));
     
     WidgetClass = FoundW.Class;
 

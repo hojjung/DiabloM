@@ -13,6 +13,12 @@
 
 using namespace PlayFab;
 
+const FString  UPlayfabManager::PlayfabDungeonIDKey = "DungeonID";
+
+const FString  UPlayfabManager::PlayfabPlayerClassIDKey = "PlayerClassID";
+
+
+
 UPlayfabManager::UPlayfabManager()
 {
 	m_bLoginProcessEnd = false;
@@ -156,9 +162,9 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 	
 	req.PlayFabId = m_PlayfabID;
 	
-	req.Keys.Add("DungeonID");
+	req.Keys.Add(PlayfabDungeonIDKey);
 	
-	req.Keys.Add("PlayerClassID");
+	req.Keys.Add(PlayfabPlayerClassIDKey);
 
 	clientAPI->GetUserData(req,
 		PlayFab::UPlayFabClientAPI::FGetUserDataDelegate::CreateUObject(this, &UPlayfabManager::OnSuccessGetUserData),
@@ -185,15 +191,16 @@ void UPlayfabManager::OnSuccessGetUserData(const PlayFab::ClientModels::FGetUser
 {
 	PRINTF("GetUserDataSuccess");
 	//
-	m_LoadedDgID =*result.Data["DungeonID"].Value;
-	m_LoadedPlayerClassID =*result.Data["PlayerClassID"].Value;
+	m_LoadedDgID =result.Data[PlayfabDungeonIDKey].Value;
+	m_LoadedPlayerClassID =result.Data[PlayfabPlayerClassIDKey].Value;
 	//
-	PRINTF("DGID: %s",*m_LoadedDgID.ToString());
-	PRINTF("PCID: %s",*m_LoadedPlayerClassID.ToString());
+	PRINTF("DGID: %s",*m_LoadedDgID);
+	PRINTF("PCID: %s",*m_LoadedPlayerClassID);
 	//
-	UDiabloGameInstance::Get->m_DungeonManager->LoadCurrentDungeonLevel(m_LoadedDgID,this);
-	UDiabloGameInstance::Get->m_PlayerClassManager->LoadPlayerClass(m_LoadedPlayerClassID);
+	UDiabloGameInstance::Get->m_DungeonManager->LoadCurrentDungeonLevel(*m_LoadedDgID,this);
+	UDiabloGameInstance::Get->m_PlayerClassManager->LoadPlayerClass(*m_LoadedPlayerClassID);
 }
+
 
 void UPlayfabManager::ShowBannerAd(bool able)
 {
@@ -207,3 +214,22 @@ void UPlayfabManager::ShowBannerAd(bool able)
 	}
 }
 
+void UPlayfabManager::RequestUpdatePlayer()
+{
+	PRINTF("Request Update PlayerData");
+	PlayFab::ClientModels::FUpdateUserDataRequest req;
+
+	req.Data.Add(PlayfabDungeonIDKey,m_LoadedDgID);
+	
+	req.Data.Add(PlayfabPlayerClassIDKey,m_LoadedPlayerClassID);
+
+	clientAPI->UpdateUserData(req,
+        PlayFab::UPlayFabClientAPI::FUpdateUserDataDelegate::CreateUObject(this, &UPlayfabManager::OnSuccessUpdateUserData),
+        PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::OnSuccessUpdateUserData(const PlayFab::ClientModels::FUpdateUserDataResult& result)
+{
+	PRINTF("Success - Request Update PlayerData");
+	
+}

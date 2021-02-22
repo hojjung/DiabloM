@@ -28,7 +28,7 @@ void UDungeonManager::LoadCurrentDungeonLevel(FName levelIDName,UObject* wrldctx
 		return;
 	}
 	
-	UGameplayStatics::OpenLevel(wrldctxt,m_CurrentDg->m_DgId,true);
+	UGameplayStatics::OpenLevel(wrldctxt,m_CurrentDg->m_DgId,true,"Listen");
 }
 
 void UDungeonManager::LoadLevelComplete(UWorld* world)

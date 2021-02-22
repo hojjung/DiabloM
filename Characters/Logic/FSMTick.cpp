@@ -21,7 +21,6 @@ void UFSMTick::Init(AUnitPawn* pawnUnit)
 
 	m_AryStateFunction[static_cast<int>(EFSM::Combat)] = &UFSMTick::OnCombat;
 
-	m_AryStateFunction[static_cast<int>(EFSM::Return)] = &UFSMTick::OnReturn;
 	//
 	m_StartPoint = m_OwnerMonster->GetActorLocation();
 }
@@ -89,7 +88,7 @@ void UFSMTick::OnCombat()
 {
 	if (!m_OwnerMonster->GetFocusedTarget() || !m_OwnerMonster->GetFocusedTarget()->IsAlive())
 	{
-		m_CurrentState = EFSM::Return;
+		m_CurrentState = EFSM::Idle;
 		m_OwnerMonster->FocusTarget(nullptr);
 
 		return;
@@ -113,18 +112,3 @@ void UFSMTick::TryAttack()
 	m_OwnerMonster->TryAttack();
 }
 
-void UFSMTick::OnReturn()
-{
-	if (m_OwnerMonster->GetFocusedTarget())
-	{
-		m_CurrentState = EFSM::Chase;
-		return;
-	}
-
-	FPathFollowingRequestResult Result = m_OwnerMonster->MoveToLocation(m_StartPoint);
-
-	if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
-	{
-		m_CurrentState = EFSM::Idle;
-	}
-}

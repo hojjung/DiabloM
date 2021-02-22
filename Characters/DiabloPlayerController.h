@@ -20,13 +20,21 @@ public:
 	ADiabloPlayerController();
 	
 protected:
-	FTextFormat m_FormatMiss;
-protected:
+	UPROPERTY()
+	TSubclassOf<UDamageTextWidgetComponent> m_ClassDW;
 	UPROPERTY()
 	TArray<UDamageTextWidgetComponent*> m_AryDmgWC;
-
+	
+	FTextFormat m_FormatMiss;
+	
 	int m_DmgIndex;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Transient,ReplicatedUsing = OnRep_CurrentMsg,Category="Chat")
+	FString m_CurrentMsg;
+	
 protected:
+	virtual void BeginPlay() override;
+	
 	void InitWidget();
 
 	void CreateDmgWC(int count);
@@ -43,12 +51,31 @@ public:
 	UFUNCTION()
 	void OnDeviceBackKey();
 	//
-	void ShowDamageNumber(const float local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target
+	void ShowDamageNumber(const BigInt& local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target
 
 	void ShowDamageText(const FString stringWant,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target
 
 	UFUNCTION()
     void BackToSelectMenu();
-    
 
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION(BlueprintCallable,Category="Chat")
+	void AttemptToSendChatMessage(const FString& msg);
+
+private://server only
+	void SendChatMsg(const FString& msg);
+
+	void ClearChatmsg();
+
+	UFUNCTION(Server,Reliable,WithValidation)
+	void ServerSendChatMsg(const FString& msg);
+	void ServerSendChatMsg_Implementation(const FString& msg);
+	bool ServerSendChatMsg_Validate(const FString& msg);
+	
+	UFUNCTION()
+    void OnRep_CurrentMsg();
+
+	void UpdateChatText();
 };

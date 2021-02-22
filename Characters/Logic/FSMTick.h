@@ -21,7 +21,6 @@ public:
 		Idle,
 		Chase,
 		Combat,
-		Return,
 		Length
 	};
 
@@ -46,10 +45,6 @@ protected:
 	FPtrState m_AryStateFunction[static_cast<int>(EFSM::Length)];
 
 protected:
-	
-
-	
-
 	void OnIdle();
 
 	void OnChase();
@@ -57,8 +52,6 @@ protected:
 	void OnCombat();
 
 	void TryAttack();
-
-	void OnReturn();
 
 public:
 	void Init(AUnitPawn* pawnUnit);

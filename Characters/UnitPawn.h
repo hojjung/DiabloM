@@ -54,6 +54,8 @@ protected:
     float m_fAttackRange;
 
     float m_fAttackSpeed;
+
+    int m_nAccuracyLevel;
 public:
     UPROPERTY()
     UAnimMontage* m_BaseAttackAnim;
@@ -197,7 +199,10 @@ public:
     
     bool IsMoving();
     
-    
+    FORCEINLINE int GetAccuLevel()
+    {
+        return m_nAccuracyLevel;
+    }
 
     
 };

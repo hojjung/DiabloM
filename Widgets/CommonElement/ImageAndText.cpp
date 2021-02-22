@@ -8,7 +8,7 @@ UImageAndText::UImageAndText(const FObjectInitializer& objInit) : Super(objInit)
 {
 	//Font'/Game/Fonts/FredokaOne-Regular_Font.FredokaOne-Regular_Font'
 	static ConstructorHelpers::FObjectFinder<UFont> FoundFont(
-		TEXT("Font'/Game/Fonts/FredokaOne-Regular_Font.FredokaOne-Regular_Font'"));
+		TEXT("Font'/Engine/EngineFonts/Roboto.Roboto'"));
 	m_FontWant = FoundFont.Object;
 
 	static ConstructorHelpers::FObjectFinder<UTexture2D> FoundTexture(

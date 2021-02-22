@@ -22,6 +22,10 @@ public:
 	void Init();
 
 	bool m_bLoginProcessEnd = false;
+
+	static const FString PlayfabDungeonIDKey;
+	
+	static const FString PlayfabPlayerClassIDKey;
 	
 protected:
 	void HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqueId, const int ControllerIndex, const FOnlineError& error);
@@ -35,6 +39,8 @@ protected:
 	void OnErrorPlayfabReq(const PlayFab::FPlayFabCppError& ErrorResult);
 
 	void OnSuccessGetUserData(const PlayFab::ClientModels::FGetUserDataResult& result) ;
+
+	void OnSuccessUpdateUserData(const PlayFab::ClientModels::FUpdateUserDataResult& result);
 	
 private:
 	PlayFabClientPtr clientAPI = nullptr;
@@ -44,13 +50,13 @@ private:
 	FString m_PlayfabID;
 	
 	UPROPERTY()
-	FName m_LoadedDgID;
+	FString m_LoadedDgID;
 	UPROPERTY()
-	FName m_LoadedPlayerClassID;
+	FString m_LoadedPlayerClassID;
 	UPROPERTY()
-	FName m_LoadedPlayerUpgradeID;
+	FString m_LoadedPlayerUpgradeID;
 	UPROPERTY()
-	FName m_LoadedUpgradeID;
+	FString m_LoadedUpgradeID;
 
 public:
 	bool GetIsLogined()
@@ -60,13 +66,15 @@ public:
 
 	void ShowBannerAd(bool able);
 
-	FORCEINLINE FName GetLoadedDungeonID() const
+	FORCEINLINE FString GetLoadedDungeonID() const
 	{
 		return  m_LoadedDgID;
 	}
 
-	FORCEINLINE FName GetLoadedPlayerClassID() const
+	FORCEINLINE FString GetLoadedPlayerClassID() const
 	{
 		return  m_LoadedPlayerClassID;
 	}
+
+	void RequestUpdatePlayer();
 };

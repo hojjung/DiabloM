@@ -54,6 +54,7 @@
 #include "Components/SceneComponent.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
+#include "Net/UnrealNetwork.h"
 //
 // #include "AbilitySystemComponent.h"
 // #include "AttributeSet.h"

@@ -2,6 +2,7 @@
 #include "DiabloPlayerController.h"
 #include "MobUnitMovement.h"
 #include "PlayerDiabloCharacter.h"
+#include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Logic/MonsterSensing.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DungeonManager.h"
@@ -9,6 +10,7 @@
 AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit):
 Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
 {
+    m_nAvoidLevel=0;
     m_bDeathAnimEnd=true;
     m_bUseFSM = true;
     m_Movement->m_bUseRVO = true;
@@ -39,6 +41,9 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     m_WorldHpBar->SetupAttachment(m_Capsule);
     m_WorldHpBar->SetRelativeLocation(FVector(0,0,90));
     m_WorldHpBar->SetCanEverAffectNavigation(false);
+    //
+    m_HittenAudio= CreateDefaultSubobject<UAudioComponent>("Audio01");
+    m_DeathAudio= CreateDefaultSubobject<UAudioComponent>("Audio022");
     //m_WorldHpBar->Screen
     //
     m_Movement->NavAgentProps.AgentHeight=88.f;
@@ -56,6 +61,7 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
               TEXT("SkeletalMesh'/Game/Models/ParagonMeshs/Greystone_SK.Greystone_SK'"));
 
     m_SkBody->SetSkeletalMesh(FoundSkMesh.Object);
+
 }
 
 void AMonsterPawn::BeginPlay()
@@ -66,6 +72,8 @@ void AMonsterPawn::BeginPlay()
     m_TickFSM->Init(this);
     
     m_WorldHpBar->SetComponentTickEnabled(false);
+
+    m_PlCon = Cast<ADiabloPlayerController>( UGameplayStatics::GetPlayerController(this,0));
 }
 
 void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp)
@@ -105,6 +113,8 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     
     m_fCurrentHP = m_fMaxHP;
 
+    m_nAvoidLevel = UnitData->m_nAvoidLevel;
+
     UpdateHealthBar(GetHpPercentOne());
 
     m_SkBody->SetScalarParameterValueOnMaterials("Visibility",1.f);
@@ -114,6 +124,9 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
         PlayAnimMontage(m_SpawnAnim);
     }
     m_TickFSM->Init(this);
+
+    m_HittenAudio->SetSound(m_HittenSound);
+    m_DeathAudio->SetSound(m_DeathSound);
 }
 
 void AMonsterPawn::Tick(float DeltaSeconds)
@@ -146,8 +159,9 @@ void AMonsterPawn::HideStatusBar()
 
 void AMonsterPawn::Die()
 {
-    UGameplayStatics::PlaySoundAtLocation(GetWorld(), m_DeathSound, GetActorLocation(), 1, 1);
+    //UGameplayStatics::PlaySoundAtLocation(GetWorld(), m_DeathSound, GetActorLocation(), 1, 1);
     
+    m_DeathAudio->Play();
     HideStatusBar();
     
     SetActorTickEnabled(false);
@@ -191,15 +205,7 @@ void AMonsterPawn::OnDeathAnimEnd()
 
 void AMonsterPawn::PlayHittenSound()
 {
-    if (m_HittenSound)
-    {
-        if (m_HittenSound->IsLooping())
-        {
-            return;
-        }
-
-        UGameplayStatics::PlaySoundAtLocation(GetWorld(), m_HittenSound, GetActorLocation(), 1, 1);
-    }
+    m_HittenAudio->Play();
 }
 
 void AMonsterPawn::ShowStatusBar()
@@ -216,6 +222,14 @@ void AMonsterPawn::TakeDmg(BigInt amount, AUnitPawn* attacker)
     {
         FocusTarget(attacker);
     }
+
+    float AccuPercent;
+    
+    if(!CalculateAccuracy(attacker->GetAccuLevel(),AccuPercent))
+    {
+        m_PlCon->ShowDamageNumber(100.f-AccuPercent,this,EDamagePopup::Miss);
+        return;
+    }
     
     PlayTookHitMontage();
     PlayHitFlash();
@@ -224,11 +238,11 @@ void AMonsterPawn::TakeDmg(BigInt amount, AUnitPawn* attacker)
     if(!IsStatusBarActive())
     {
         ShowStatusBar();
-        PRINTF("TickT");
     }
         
-
     m_fCurrentHP.Subtract(amount);
+
+    m_PlCon->ShowDamageNumber(amount,this,EDamagePopup::NormalRight);
 
     if(m_fCurrentHP.IsLessThanZero()||m_fCurrentHP.IsZero())
     {
@@ -239,6 +253,8 @@ void AMonsterPawn::TakeDmg(BigInt amount, AUnitPawn* attacker)
     }
 
     UpdateHealthBar(GetHpPercentOne());
+
+    
 }
 
 FVector AMonsterPawn::GetLastSeenLocation()
@@ -297,5 +313,50 @@ void AMonsterPawn::SetAcive(bool v)
     //    HideStatusBar();
         FocusTarget(nullptr);
     }
+}
+
+bool AMonsterPawn::CalculateAccuracy(int attackerAccu, float& missPercent)
+{
+    float TargetAvoid = m_nAvoidLevel;
+    float InstigatorAccuracy = attackerAccu;
+    
+    float BlockRate = FMath::RandRange(1.f, TargetAvoid); //21을 높이면 회피확률이 는다.
+    float HitRate = (10.f + FMath::RandRange(0.f, InstigatorAccuracy)) -
+        FMath::RandRange(1.f, TargetAvoid + 1.f); //여기서 방관 적용 가능
+
+    bool HitSuccess = false;
+    if (BlockRate < HitRate)
+    {
+        //아무리 높아도 5%확률로 빗나감
+        HitSuccess =  1 != FMath::RandRange(1, 20);
+    }
+    else
+    {
+        HitSuccess = 1 == FMath::RandRange(1, 20);
+    }
+
+    missPercent = CalcuSameLevelAvgAccuracy(attackerAccu);
+    //아무리 낮아도 5%확률로 맞음
+    return HitSuccess;
+}
+
+float AMonsterPawn::CalcuSameLevelAvgAccuracy(int attackerAccu)
+{
+    float TargetAvoid = m_nAvoidLevel;
+    float A0 = (10 ) - TargetAvoid; //10
+    float A1 = (9 ) + attackerAccu; //9
+    float B0 = 1.f; //1
+    float B1 = 20.f + TargetAvoid; //20
+
+    float OuterRight = FMath::Max(B1, A1);
+    float OuterLeft = FMath::Min(B0, A0);
+    float InnerRight = FMath::Min(B1, A1);
+    float InnerLeft = FMath::Max(B0, A0);
+    float Percentage = FMath::Max(0.f, FMath::Min(
+                                      1.f, (InnerLeft - B0 + (InnerRight - InnerLeft) * 0.5f + OuterRight - B1) / (
+                                          OuterRight - OuterLeft)));
+
+    float Result = UDiaBlueprintFunctionLibrary::SetFloatPrecision((Percentage * 100), 1);
+    return FMath::Clamp(Result, 5.f, 95.f);
 }
 
