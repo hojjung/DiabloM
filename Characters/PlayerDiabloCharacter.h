@@ -8,6 +8,7 @@
 #include "Managers/DiabloCheatManager.h"
 #include "PlayerDiabloCharacter.generated.h"
 
+class UPlayerUpgradeManager;
 class UDiaStatPanel;
 class ADiabloPlayerController;
 class UCameraDissolve;
@@ -42,6 +43,8 @@ protected:
 	UCameraComponent* m_TopCamera;
 	//
 protected:
+	UPROPERTY()
+	UPlayerUpgradeManager* m_PlUpgradeManager; 
 	UPROPERTY()
 	UPlayerSensing* m_PlayerSense;
 	UPROPERTY()
@@ -80,13 +83,15 @@ protected:
 	UPROPERTY()
 	TSet<AActor*> m_AlreadyHittenForIgnore;
 
-	bool m_bIsAttackInputPressed;
-
 	bool m_bIsDead;
 
 	TWeakObjectPtr<AUnitPawn> m_FocusOutlinePawn;;
 
 	const FPlayerEntityTable* m_PlayerData;
+
+	FTimerHandle m_AttackTimer;
+
+	bool m_bIsManualMove;
 
 protected:
 	virtual void BeginPlay() override;
@@ -97,27 +102,21 @@ protected:
 
 	virtual void Tick(float DeltaTime) override;
 	
-	void TickAttack();
-
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 	void SetBaseAttackData(float viewAngle,float viewRadius,float focusRange);
 
 	virtual FVector GetLastSeenLocation() override;
 
-public:
-	void Init();
+	virtual float TryAttack() override;
 
+public:
 	void PlayerClassDataInject(const FPlayerEntityTable* playerData);
 	
 	virtual void FocusTarget(AUnitPawn* target) override;
 	
 	UFUNCTION(BlueprintCallable)
     void Revive();
-	UFUNCTION(BlueprintCallable,Category="Interact")
-	void OnAttackPressed();
-	UFUNCTION(BlueprintCallable,Category="Interact")
-    void OnAttackRelease();
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
 	UFUNCTION(BlueprintCallable)
@@ -137,10 +136,6 @@ public:
 
 	float GetAttackSpeedMultiple();
 
-    void OnSeeTarget(APawn* target);
-	
-    void OnCantSeeTarget(APawn* target);
-	
 	ADiabloPlayerController* GetDiaController();
 
 	virtual void Die()override;
@@ -220,5 +215,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyDamageToTarget();
+
+	void ApplyMoveSpeedToOrigin();
 };
 

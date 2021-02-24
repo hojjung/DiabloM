@@ -7,9 +7,9 @@ void UFSMTick::Init(AUnitPawn* pawnUnit)
 {
 	m_fIdleTimer = -1.f;
 	m_fChaseFindTimer = -1.f;
-	m_OwnerMonster = Cast<AUnitPawn>(pawnUnit);
+	m_Owner = Cast<AUnitPawn>(pawnUnit);
 	
-	check(m_OwnerMonster);
+	check(m_Owner);
 
 	m_CurrentState = EFSM::Idle;
 	
@@ -22,7 +22,7 @@ void UFSMTick::Init(AUnitPawn* pawnUnit)
 	m_AryStateFunction[static_cast<int>(EFSM::Combat)] = &UFSMTick::OnCombat;
 
 	//
-	m_StartPoint = m_OwnerMonster->GetActorLocation();
+	m_StartPoint = m_Owner->GetActorLocation();
 }
 
 void UFSMTick::TickFSM()
@@ -34,7 +34,7 @@ void UFSMTick::TickFSM()
 
 void UFSMTick::OnIdle()
 {
-	if (m_OwnerMonster->GetFocusedTarget())
+	if (m_Owner->GetFocusedTarget())
 	{
 		//m_StartPoint=m_OwnerMonster->GetActorLocation();
 
@@ -43,11 +43,11 @@ void UFSMTick::OnIdle()
 		return;
 	}
 
-	EPathFollowingStatus::Type Status = m_OwnerMonster->GetPfComp()->GetStatus();
+	EPathFollowingStatus::Type Status = m_Owner->GetPfComp()->GetStatus();
 
 	if (m_fIdleTimer > 0.f)
 	{
-		m_fIdleTimer -= m_OwnerMonster->m_fTickDeltaTime;
+		m_fIdleTimer -= m_Owner->m_fTickDeltaTime;
 
 		if (EPathFollowingStatus::Idle == Status)
 		{
@@ -60,12 +60,12 @@ void UFSMTick::OnIdle()
 
 	if (EPathFollowingStatus::Idle == Status)
 	{
-		if (!m_OwnerMonster->m_NavSys->GetRandomPointInNavigableRadius(m_StartPoint, 500.f, Result))
+		if (!m_Owner->m_NavSys->GetRandomPointInNavigableRadius(m_StartPoint, 500.f, Result))
 		{
 			return;
 		}
 
-		m_OwnerMonster->MoveToLocation(Result);
+		m_Owner->MoveToLocation(Result);
 
 		m_fIdleTimer = FMath::FRandRange(3.f, 7.f);
 	}
@@ -75,29 +75,41 @@ void UFSMTick::OnChase()
 {
 	EPathFollowingRequestResult::Type Result = EPathFollowingRequestResult::Failed;
 
-	Result = m_OwnerMonster->MoveToActor(m_OwnerMonster->GetFocusedTarget());
+	if(!m_Owner->GetFocusedTarget() ||!m_Owner->GetFocusedTarget()->IsAlive())
+	{
+		m_CurrentState = EFSM::Idle;
+		return;
+	}
+
+	Result = m_Owner->MoveToActor(m_Owner->GetFocusedTarget());
 
 	if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
 	{
 		m_CurrentState = EFSM::Combat;
+	}
+	else if(Result == EPathFollowingRequestResult::Type::Failed)
+	{
+		//No nav path
+		//m_Owner->FocusTarget(nullptr);
+		//m_CurrentState = EFSM::Idle;
 	}
 	
 }
 
 void UFSMTick::OnCombat()
 {
-	if (!m_OwnerMonster->GetFocusedTarget() || !m_OwnerMonster->GetFocusedTarget()->IsAlive())
+	if (!m_Owner->GetFocusedTarget() || !m_Owner->GetFocusedTarget()->IsAlive())
 	{
 		m_CurrentState = EFSM::Idle;
-		m_OwnerMonster->FocusTarget(nullptr);
+		m_Owner->FocusTarget(nullptr);
 
 		return;
 	}
 
 	TryAttack();
 
-	float DistSqr = FVector::DistSquared(m_OwnerMonster->GetActorLocation(),
-	                                     m_OwnerMonster->GetFocusedTarget()->GetActorLocation());
+	float DistSqr = FVector::DistSquared(m_Owner->GetActorLocation(),
+	                                     m_Owner->GetFocusedTarget()->GetActorLocation());
 
 	if (DistSqr > GetAttackRange())
 	{
@@ -107,8 +119,8 @@ void UFSMTick::OnCombat()
 
 void UFSMTick::TryAttack()
 {
-	m_OwnerMonster->HomingRotateToTarget();
+	m_Owner->HomingRotateToTarget();
 
-	m_OwnerMonster->TryAttack();
+	m_Owner->TryAttack();
 }
 

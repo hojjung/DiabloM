@@ -13,8 +13,6 @@ UDungeonManager::UDungeonManager(const FObjectInitializer& objInit):Super(objIni
 
 void UDungeonManager::Init(UMonsterSpawnManager*  mMang)
 {
-	//FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &UMyGameInstance::BeginLoadingScreen);
-	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UDungeonManager::LoadLevelComplete);
 	m_MonsterManager = mMang; 
 }
 

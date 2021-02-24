@@ -22,7 +22,7 @@ public:
 	UMonsterSpawnManager();
 	
 protected:
-	static const int m_nMonsterPoolCount = 33;
+	static const int m_nMonsterPoolCount = 4;
 	UPROPERTY()
 	UNavigationSystemV1* m_NavSys;
 	UPROPERTY()
@@ -71,7 +71,7 @@ public:
 		return m_AryMonsterSpawnedCurrently;
 	}
 
-	AMonsterPawn* GetNearestMonster(const FVector& wantPos,bool bSeeHideObj,AMonsterPawn* ignoreActor =nullptr);
+	AMonsterPawn* GetNearestMonster(const FVector& wantPos);
 	
 	void StartSpawn(UWorld* world,const FDungeonDataTableRow* dgData);
 };

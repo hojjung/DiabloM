@@ -6,14 +6,16 @@
 #include "Logic/PlayerSensing.h"
 #include "Characters/MonsterPawn.h"
 #include "Animations/MobAnimInstance.h"
+#include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/PlayfabManager.h"
 
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
 	: Super(objInit)
 
 {
+	m_bIsManualMove=false;
+	
 	m_Capsule->SetCapsuleSize(55, 88);
-
 
 	m_DissolveCam = CreateDefaultSubobject<UCameraDissolve>("CamDissolve00");
 	m_DissolveCam->SetupAttachment(RootComponent);
@@ -48,7 +50,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 
 	m_Movement->m_RotateSpeed = FRotator(0.f, 650.f, 0.f);
 
-	m_Movement->SetMoveSpeed(610.f);
+	m_Movement->SetMoveSpeed(710.f);
 
 	//Material'/Game/03_VisualEffect/M_Fog.M_Fog'
 
@@ -61,23 +63,12 @@ void APlayerDiabloCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Init();
-
-	PlayerClassDataInject(UDiabloGameInstance::Get->m_PlayerClassManager->GetPlayerEntity());
-
-	SetAutoPlay(true);
-}
-
-void APlayerDiabloCharacter::Init()
-{
 	m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
 	m_AryIgnoreActor.Add(this);
 	m_AryIgnoreActor.Add(m_PlayerCon);
 	//
 	m_PlayerSense = NewObject<UPlayerSensing>(this, UPlayerSensing::StaticClass());
 	m_PlayerSense->InitSense(this);
-	m_PlayerSense->OnSeePawn.BindUObject(this, &APlayerDiabloCharacter::OnSeeTarget);
-	m_PlayerSense->OnCantSeePawn.BindUObject(this, &APlayerDiabloCharacter::OnCantSeeTarget);
 	//
 	m_PlayerCon->SetViewTarget(this);
 
@@ -85,6 +76,12 @@ void APlayerDiabloCharacter::Init()
 
 	m_TickFSM = NewObject<UFSMTick>(this, UFSMTick::StaticClass());
 	m_TickFSM->Init(this);
+
+	m_PlUpgradeManager = UDiabloGameInstance::Get->m_PlayerUpgradeManager;
+
+	PlayerClassDataInject(UDiabloGameInstance::Get->m_PlayerClassManager->GetPlayerEntity());
+
+	SetAutoPlay(true);
 }
 
 void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerEntityTable* playerData)
@@ -119,15 +116,20 @@ FVector APlayerDiabloCharacter::GetLastSeenLocation()
 	return m_PlayerSense->m_LastSeenLocation;
 }
 
-
-void APlayerDiabloCharacter::OnAttackPressed()
+float APlayerDiabloCharacter::TryAttack()
 {
-	m_bIsAttackInputPressed = true;
-}
+	m_Movement->SetMoveSpeedRatio(0.1f);
+	
+	if(m_BaseAttackAnim&&m_fAttackCD<0.f)
+	{
+		float AnimMongLen = PlayAnimMontage(m_BaseAttackAnim,1*m_fAttackSpeed,NAME_None);
 
-void APlayerDiabloCharacter::OnAttackRelease()
-{
-	m_bIsAttackInputPressed = false;
+		m_fAttackCD =m_fAttackCDConstant;
+
+		GetWorldTimerManager().SetTimer(m_AttackTimer, this, &APlayerDiabloCharacter::ApplyMoveSpeedToOrigin,m_fAttackCDConstant,false);
+	}
+
+	return 1.f;
 }
 
 void APlayerDiabloCharacter::EarnExp(float expEarned)
@@ -211,7 +213,6 @@ void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)
 	m_FocusOutlinePawn->GetSkMeshComp()->SetCustomDepthStencilValue(2);
 	m_FocusOutlinePawn->GetSkMeshComp()->SetRenderCustomDepth(true);
 
-	PRINTF("ShowOutlineOnTarget");
 }
 
 void APlayerDiabloCharacter::HideOutlineOnTarget()
@@ -224,7 +225,6 @@ void APlayerDiabloCharacter::HideOutlineOnTarget()
 	m_FocusOutlinePawn->GetSkMeshComp()->SetCustomDepthStencilValue(0);
 	m_FocusOutlinePawn->GetSkMeshComp()->SetRenderCustomDepth(false);
 
-	PRINTF("HideOutlineOnTarget");
 }
 
 void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
@@ -256,30 +256,6 @@ void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 	m_FocusedEnemy = Cast<AUnitPawn>(target);
 
 	//m_FocusedTargetDie = m_FocusedEnemy->GetOnDied().AddUObject(this, &APlayerDiabloCharacter::ClearFocusedTarget);
-}
-
-void APlayerDiabloCharacter::OnSeeTarget(APawn* target)
-{
-	AMonsterPawn* Unit = Cast<AMonsterPawn>(target);
-
-	FocusTarget(Unit);
-}
-
-void APlayerDiabloCharacter::OnCantSeeTarget(APawn* target)
-{
-	AMonsterPawn* Unit = Cast<AMonsterPawn>(target);
-
-	if (!m_FocusedEnemy.Get())
-	{
-		return;
-	}
-
-	if (m_FocusedEnemy != target)
-	{
-		return;
-	}
-
-	FocusTarget(nullptr);
 }
 
 
@@ -381,50 +357,59 @@ void APlayerDiabloCharacter::ApplyDamageToTarget()
 {
 	if(GetFocusedTarget())
 	{
-		GetFocusedTarget()->TakeDmg(31,this);
+		BigInt FinalDmg = m_PlUpgradeManager->GetPlAtkDmg01();
+
+		BigInt CriPercent100 = FMath::RandRange(0.f,100.f);
+
+		BigInt Cri01 = m_PlUpgradeManager->GetPlAtkCri01();
+
+		BigInt CDmg01 = m_PlUpgradeManager->GetPlAtkCDmg01();//백기준으로 해야함,1.5배는  1
+		//150
+		if(CriPercent100 <= Cri01)
+		{
+			FinalDmg.Multiply(100);
+			FinalDmg.Multiply(CDmg01);
+			FinalDmg.Divide(10000);
+			PRINTF("CriticalDamage:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(FinalDmg,2));
+		}
+		
+		GetFocusedTarget()->TakeDmg(FinalDmg,this);
 	}
 }
 
+void APlayerDiabloCharacter::ApplyMoveSpeedToOrigin()
+{
+	m_Movement->SetMoveSpeedRatio(1.f);
+}
 
 void APlayerDiabloCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	bool bIsMoveInputZero = m_Input.IsNearlyZero(0.1f);
+	
 	if (m_FocusedEnemy.Get())
 	{
-		if (!m_FocusedEnemy.Get()->IsAlive() || !m_PlayerSense->HasLineOfSightTo(m_FocusedEnemy.Get()))
+		DrawDebugLine(GetWorld(),GetActorLocation(),m_FocusedEnemy->GetActorLocation(),FColor::Red,false,-1,1,5.f);
+		
+		if (!m_bIsManualMove&&!bIsMoveInputZero)
 		{
-			FocusTarget(nullptr);
+			m_bIsManualMove = true;
+			GetMovementComponent()->StopMovementImmediately();
+			ApplyMoveSpeedToOrigin();
 		}
+
 	}
 
-	if (m_Input.IsNearlyZero(0.1f)&&m_bUseFSM)
+	if (bIsMoveInputZero&&m_bUseFSM)
 	{
+		m_bIsManualMove = false;
 		m_TickFSM->TickFSM();
 	}
-	else
-	{
-		if (m_FocusedEnemy.Get())
-		{
-			GetMovementComponent()->StopMovementImmediately();
-			FocusTarget(nullptr);
-		}
-	}
 
-
-	TickAttack();
+	
 }
 
-
-void APlayerDiabloCharacter::TickAttack()
-{
-	if (!m_bIsAttackInputPressed)
-	{
-		return;
-	}
-
-	HomingRotateToTarget();
-}
 
 void APlayerDiabloCharacter::MoveForward(float AxisValue)
 {
@@ -467,7 +452,5 @@ void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerDiabloCharacter::MoveRight);
 	PlayerInputComponent->BindAction("Interaction", EInputEvent::IE_Pressed, this,
 	                                 &APlayerDiabloCharacter::InteractWithTarget);
-	PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed, this, &APlayerDiabloCharacter::OnAttackPressed);
-	PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Released, this,
-	                                 &APlayerDiabloCharacter::OnAttackRelease);
+
 }

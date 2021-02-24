@@ -26,7 +26,7 @@ public:
 
 protected:
 	UPROPERTY()
-	AUnitPawn* m_OwnerMonster;
+	AUnitPawn* m_Owner;
 	
 	EFSM m_CurrentState;
 

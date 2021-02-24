@@ -44,16 +44,8 @@ public:
 
     FVector m_LastSeenLocation;
     
-public:
-    FSeePawnDelegate OnSeePawn;
-
-    FSeePawnDelegate OnCantSeePawn;
-
-    FSeePawnDelegate OnSeePawnBlocked;
 
 protected:
-    void SensePawn(AMonsterPawn& Pawn);
-
     void OnTimer();
 
     FTimerHandle TimerHandle_OnTimer;
@@ -62,7 +54,7 @@ protected:
 
     void UpdateAISensing();
 
-    AMonsterPawn* GetCloseMonster(const TArray<FHitResult>& aryMobs);
+    AMonsterPawn* GetNearestMonster(const TArray<FHitResult>& aryMobs);
 
     float DistSqr(AActor* want);
 public:
@@ -85,8 +77,6 @@ public:
     bool IsSensorActor(const AActor* Actor) const;
 
     bool ShouldCheckVisibilityOf(APawn* Pawn) const;
-
-    bool CouldSeePawn(APawn* Other, bool bMaySkipChecks = false) const;
 
     bool HasLineOfSightTo(const AActor* Other) const;
 

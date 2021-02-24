@@ -102,7 +102,7 @@ public://virtual
 
     bool virtual CanSeeTarget();
 
-    virtual void TryAttack();
+    virtual float TryAttack();
 
     virtual void TakeDmg(BigInt amount,AUnitPawn* attacker);
 

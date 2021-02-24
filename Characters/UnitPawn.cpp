@@ -308,16 +308,19 @@ bool AUnitPawn::CanSeeTarget()
     return GetController()->LineOfSightTo(GetFocusedTarget());
 }
 
-void AUnitPawn::TryAttack()
+float AUnitPawn::TryAttack()
 {
     if(m_BaseAttackAnim&&m_fAttackCD<0.f)
     {
         float AnimMongLen = PlayAnimMontage(m_BaseAttackAnim,1*m_fAttackSpeed,NAME_None);
 
         m_fAttackCD =m_fAttackCDConstant;
-    }
-}
 
+        return AnimMongLen;;
+    }
+
+    return 0.f;
+}
 
 
 void AUnitPawn::TakeDmg(BigInt amount, AUnitPawn* attacker)

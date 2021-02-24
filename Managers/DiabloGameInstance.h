@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "GoldManager.h"
 #include "PlayerClassManager.h"
 #include "PlayerUpgradeManager.h"
 
@@ -35,6 +36,8 @@ public:
 	UPlayerClassManager* m_PlayerClassManager;
 	UPROPERTY()
 	UPlayerUpgradeManager* m_PlayerUpgradeManager;
+	UPROPERTY()
+	UGoldManager* m_GoldManager;
 	
 protected:
 	virtual void Init() override;

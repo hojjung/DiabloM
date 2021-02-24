@@ -106,7 +106,10 @@ void UMonsterSpawnManager::OnTimer()
 	//Spawn
 	for(int i=0; i< 5;i++)
 	{
-	   SpawnMob(FVector::ZeroVector);
+	   if(!SpawnMob(FVector::ZeroVector))
+	   {
+		   break;
+	   }
 	}
     
 	SetTimer(m_SensingInterval);
@@ -133,7 +136,7 @@ AMonsterPawn* UMonsterSpawnManager::GetReadyMonster()
 
 	for(AMonsterPawn* MPawn : m_AryMonsterSpawnedCurrently)
 	{
-		if(MPawn->IsReadyToPool() && !MPawn->IsAlive())//죽은애만 데려옴
+		if(MPawn->IsReadyToPool())//죽은애만 데려옴
 		{
 			SelectedPawn = MPawn;
 			break;
@@ -175,7 +178,7 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 
 	Mob->DataInject(MonData,100.f);
 	
-	Mob->SetAcive(true);
+	
 
 	PRINTF("SpawnedMob!");
 	//Calculate Health
@@ -183,8 +186,7 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 	return Mob;
 }
 
-AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos, bool bSeeHideObj,
-                                                      AMonsterPawn* ignoreActor)
+AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos)
 {
 	float Dist = FLT_MAX;
 
@@ -192,7 +194,11 @@ AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos, bo
 
 	for (AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
 	{
-		if (Mob == ignoreActor || !Mob || (Mob->IsHidden() && !bSeeHideObj) || !Mob->IsAlive())
+		bool b2 = !Mob;
+		bool b3 = Mob->IsReadyToPool();//공중에있다는뜻
+		bool b4 = !Mob->IsAlive();
+		
+		if (b2||b3||b4)
 		{
 			continue;
 		}

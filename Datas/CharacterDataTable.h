@@ -47,6 +47,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USkeletalMesh* m_Mesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "200.0"))
+	float m_fMoveSpeed = 230.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "200.0"))
 	float m_fAttackRange = 330.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.5"))
 	float m_fAttackSpeed = 0.5f;

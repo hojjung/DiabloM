@@ -1,21 +1,25 @@
 #include "PlayfabManager.h"
-
 #include "DiabloGameInstance.h"
 #include "DungeonManager.h"
-#include "Core/PlayFabClientAPI.h"
 #include "MobileUtilsBlueprintLibrary.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
-#include "PlayFabAdminDataModels.h"
 #include "PlayFabClientDataModels.h"
-#include "PlayFabServerDataModels.h"
-#include "PlayFabUtilities.h"
+#include "PlayerUpgradeManager.h"
 
 using namespace PlayFab;
 
 const FString  UPlayfabManager::PlayfabDungeonIDKey = "DungeonID";
 
 const FString  UPlayfabManager::PlayfabPlayerClassIDKey = "PlayerClassID";
+
+const FString  UPlayfabManager::PlayerAtkDmg01Key = "PlayerAtkDmg01";
+
+const FString  UPlayfabManager::PlayerAtkCri01Key = "PlayerAtkCri01";
+
+const FString  UPlayfabManager::PlayerAtkCDmg01Key = "PlayerAtkCDmg01";
+
+const FString  UPlayfabManager::PlayerGoldKey = "PlayerGold";
 
 
 
@@ -31,11 +35,33 @@ UPlayfabManager::~UPlayfabManager()
 	
 }
 
+void UPlayfabManager::ShowBannerAd(bool able)
+{
+	if(able && !GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion)
+	{
+		UKismetSystemLibrary::ShowAdBanner(0,true);
+	}
+	else
+	{
+		UKismetSystemLibrary::HideAdBanner();
+	}
+}
+
 void UPlayfabManager::LoadLocalDefaultData()
 {
+	PRINTF("Use Local Default Data");
+	m_bLoginProcessEnd = true;
+	
 	m_LoadedDgID="Stage1-1";
 	m_LoadedPlayerClassID = "Warrior01";
-	m_bLoginProcessEnd = true;
+	m_nLoadedPlAtkDmg01 = 1;
+	m_nLoadedPlAtkCri01 = 1;
+	m_nLoadedPlAtkCDmg01= 1;
+
+	UDiabloGameInstance::Get->m_DungeonManager->LoadCurrentDungeonLevel(*m_LoadedDgID,this);
+	UDiabloGameInstance::Get->m_PlayerClassManager->LoadPlayerClass(*m_LoadedPlayerClassID);
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(this);
+	//UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(result.Data[PlayerGoldKey].Value); //just zero
 }
 
 void UPlayfabManager::Init()
@@ -44,8 +70,6 @@ void UPlayfabManager::Init()
 	{
 		return;
 	}
-	
-
 	
 	if (UMobileUtilsBlueprintLibrary::CheckInternetConnection())
 	{
@@ -77,6 +101,21 @@ void UPlayfabManager::Init()
 
 	ExternalUi->ShowLoginUI(0, false, false,
 	                        FOnLoginUIClosedDelegate::CreateUObject(this, &UPlayfabManager::HandleExternalUIClose));
+}
+
+int UPlayfabManager::GetPlAtkDmg01Lv()
+{
+	return m_nLoadedPlAtkDmg01;
+}
+
+int UPlayfabManager::GetPlAtkCri01Lv()
+{
+	return m_nLoadedPlAtkCri01;
+}
+
+int UPlayfabManager::GetPlAtkCDmg01Lv()
+{
+	return m_nLoadedPlAtkCDmg01;
 }
 
 void UPlayfabManager::HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqueId, const int ControllerIndex,
@@ -118,19 +157,19 @@ void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqu
 		default: ;
 		}
 
-		clientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
+		GetClientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
 
 		PlayFab::ClientModels::FLoginWithGoogleAccountRequest request;
 		request.CreateAccount = true;
 		request.ServerAuthCode = OnlineIdentity->GetAuthToken(0);
-		request.PlayerSecret = GetDefault<UPlayFabRuntimeSettings>()->DeveloperSecretKey;
+		//request.PlayerSecret = GetDefault<UPlayFabRuntimeSettings>()->DeveloperSecretKey;
 		request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
 
-		bool Result = clientAPI->LoginWithGoogleAccount(request,
+		bool Result = GetClientAPI->LoginWithGoogleAccount(request,
 		                                                PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
 			                                                this, &UPlayfabManager::OnSuccessPlayfabLogin),
 		                                                PlayFab::FPlayFabErrorDelegate::CreateUObject(
-			                                                this, &UPlayfabManager::OnLoginErrorPlayfabReq)
+			                                                this, &UPlayfabManager::OnErrorPlayfabReq)
 		);
 
 
@@ -158,78 +197,46 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 
 	m_PlayfabID = Result.PlayFabId;
 	
-	PlayFab::ClientModels::FGetUserDataRequest req;
+	FGetUsrDataReq req;
 	
+	//Request Data
 	req.PlayFabId = m_PlayfabID;
-	
 	req.Keys.Add(PlayfabDungeonIDKey);
-	
 	req.Keys.Add(PlayfabPlayerClassIDKey);
-
-	clientAPI->GetUserData(req,
-		PlayFab::UPlayFabClientAPI::FGetUserDataDelegate::CreateUObject(this, &UPlayfabManager::OnSuccessGetUserData),
-		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
-}
-
-void UPlayfabManager::OnLoginErrorPlayfabReq(const PlayFab::FPlayFabCppError& ErrorResult) 
-{
-	PRINTF("PlayfabLogin Error Name:%s", *ErrorResult.ErrorName);
-	PRINTF("PlayfabLogin Error Message:%s", *ErrorResult.ErrorMessage);
-	PRINTF("PlayfabLogin Error Code:%s", *UPlayFabUtilities::getErrorText(ErrorResult.ErrorCode));
-
+	req.Keys.Add(PlayerAtkDmg01Key);
+	req.Keys.Add(PlayerAtkCri01Key);
+	req.Keys.Add(PlayerAtkCDmg01Key);
+	req.Keys.Add(PlayerGoldKey);
 	
+
+	GetClientAPI->GetUserData(req,
+		FGetUsrDataDele::CreateUObject(this, &UPlayfabManager::OnSuccessGetUserData),
+		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+
 }
 
-void UPlayfabManager::OnErrorPlayfabReq(const PlayFab::FPlayFabCppError& ErrorResult)
+
+void UPlayfabManager::OnErrorPlayfabReq(const FFailRslt& ErrorResult)
 {	
 	PRINTF("PlayfabRequest Error Name:%s", *ErrorResult.ErrorName);
 	PRINTF("PlayfabRequest Error Message:%s", *ErrorResult.ErrorMessage);
 	PRINTF("PlayfabRequest Error Code:%s", *UPlayFabUtilities::getErrorText(ErrorResult.ErrorCode));
 }
 
-void UPlayfabManager::OnSuccessGetUserData(const PlayFab::ClientModels::FGetUserDataResult& result) 
+void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRSlt& result) 
 {
 	PRINTF("GetUserDataSuccess");
 	//
-	m_LoadedDgID =result.Data[PlayfabDungeonIDKey].Value;
-	m_LoadedPlayerClassID =result.Data[PlayfabPlayerClassIDKey].Value;
+	m_LoadedDgID = result.Data[PlayfabDungeonIDKey].Value;
+	m_LoadedPlayerClassID = result.Data[PlayfabPlayerClassIDKey].Value;
+	m_nLoadedPlAtkDmg01 = FCString::Atoi(*result.Data[PlayerAtkDmg01Key].Value);
+	m_nLoadedPlAtkCri01 = FCString::Atoi(*result.Data[PlayerAtkCri01Key].Value);
+	m_nLoadedPlAtkCDmg01 = FCString::Atoi(*result.Data[PlayerAtkCDmg01Key].Value);
 	//
-	PRINTF("DGID: %s",*m_LoadedDgID);
-	PRINTF("PCID: %s",*m_LoadedPlayerClassID);
-	//
+	UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(result.Data[PlayerGoldKey].Value);
 	UDiabloGameInstance::Get->m_DungeonManager->LoadCurrentDungeonLevel(*m_LoadedDgID,this);
 	UDiabloGameInstance::Get->m_PlayerClassManager->LoadPlayerClass(*m_LoadedPlayerClassID);
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(this);
 }
 
 
-void UPlayfabManager::ShowBannerAd(bool able)
-{
-	if(able && !GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion)
-	{
-		UKismetSystemLibrary::ShowAdBanner(0,true);
-	}
-	else
-	{
-		UKismetSystemLibrary::HideAdBanner();
-	}
-}
-
-void UPlayfabManager::RequestUpdatePlayer()
-{
-	PRINTF("Request Update PlayerData");
-	PlayFab::ClientModels::FUpdateUserDataRequest req;
-
-	req.Data.Add(PlayfabDungeonIDKey,m_LoadedDgID);
-	
-	req.Data.Add(PlayfabPlayerClassIDKey,m_LoadedPlayerClassID);
-
-	clientAPI->UpdateUserData(req,
-        PlayFab::UPlayFabClientAPI::FUpdateUserDataDelegate::CreateUObject(this, &UPlayfabManager::OnSuccessUpdateUserData),
-        PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
-}
-
-void UPlayfabManager::OnSuccessUpdateUserData(const PlayFab::ClientModels::FUpdateUserDataResult& result)
-{
-	PRINTF("Success - Request Update PlayerData");
-	
-}

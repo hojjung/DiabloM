@@ -36,16 +36,12 @@ protected:
 	UPROPERTY()
 	UMonsterSpawnManager* m_MonsterManager;
 	
-
-protected:
-	void LoadLevelComplete(UWorld* world);
-
-public:
 	const FDungeonDataTableRow* m_CurrentDg;
-	
+
 public:
 	void Init(UMonsterSpawnManager*  mMang);
 	
+	void LoadLevelComplete(UWorld* world);
+	
 	void LoadCurrentDungeonLevel(FName levelIDName,UObject* wrldctxt);
-
 };

@@ -83,6 +83,8 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     GetWorldTimerManager().ClearTimer(m_DeathTimer);
     
     const FMonsterEntity* const UnitData = monster_table;
+    
+    m_Movement->SetMoveSpeed(UnitData->m_fMoveSpeed);
 
     m_BaseAttackAnim =  UnitData->m_BaseAttackAnim;
 
@@ -127,6 +129,8 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
 
     m_HittenAudio->SetSound(m_HittenSound);
     m_DeathAudio->SetSound(m_DeathSound);
+
+    SetAcive(true);
 }
 
 void AMonsterPawn::Tick(float DeltaSeconds)
@@ -191,7 +195,7 @@ void AMonsterPawn::OnDeathAnimEnd()
     FVector NewHide;
     NewHide.X=0.f;
     NewHide.Y=0.f;
-    NewHide.Z = 90000.f;
+    NewHide.Z = 1000.f;
     
     m_fCurrentHP=-1;
     
@@ -292,7 +296,7 @@ void AMonsterPawn::PlayHitFlash()
 
 bool AMonsterPawn::IsAlive() const
 {
-    return !IsHidden() && m_fCurrentHP > 0 ; 
+    return m_fCurrentHP > 0 ; 
 }
 
 bool AMonsterPawn::IsReadyToPool()

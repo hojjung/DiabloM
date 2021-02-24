@@ -26,16 +26,15 @@ void UDiabloGameInstance::Init()
     m_MonsterSpawn = NewObject<UMonsterSpawnManager>();
     m_DungeonManager = NewObject<UDungeonManager>();
     m_DungeonManager->Init(m_MonsterSpawn);
+    m_PlayerUpgradeManager = NewObject<UPlayerUpgradeManager>();
+    m_PlayerClassManager = NewObject<UPlayerClassManager>();
+    m_GoldManager = NewObject<UGoldManager>();
     //
     m_PlayfabManager = NewObject<UPlayfabManager>();
     m_PlayfabManager->Init();
     //
-    m_PlayerClassManager = NewObject<UPlayerClassManager>();
     //
-    m_PlayerUpgradeManager = NewObject<UPlayerUpgradeManager>();
-    //
-    
-    UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(50.f);
+    UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(40.f);
     
     UGameUserSettings::GetGameUserSettings()->ApplySettings(true);
     

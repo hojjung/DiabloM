@@ -8,6 +8,7 @@
 #include "Characters/StartMap/PlayerVisual.h"
 #include "GameFramework/PlayerState.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/DungeonManager.h"
 #include "Widgets/MyHUD.h"
 
 ADiabloGameMode::ADiabloGameMode()
@@ -27,6 +28,8 @@ void ADiabloGameMode::StartPlay()
 	Super::StartPlay();
 
 	PRINTF("GameModeStartPlay");
+
+	UDiabloGameInstance::Get->m_DungeonManager->LoadLevelComplete(this->GetWorld());
 }
 
 void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
