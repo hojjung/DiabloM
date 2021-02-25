@@ -3,7 +3,7 @@
 #include "DiabloGameInstance.h"
 
 
-void UPlayerUpgradeManager::SetUpgradeDataFromServer(UPlayfabManager* plMan)
+void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& stat,const FString& skill)
 {
 	m_PlayfabManager = plMan;
 

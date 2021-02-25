@@ -17,5 +17,5 @@ void AStartMapGameMode::Tick(float DeltaSeconds)
 	}
 	//
 	FName currentDungeonID = *UDiabloGameInstance::Get->m_PlayfabManager->GetLoadedDungeonID();
-	UDiabloGameInstance::Get->m_DungeonManager->LoadCurrentDungeonLevel(currentDungeonID,this);
+	UDiabloGameInstance::Get->m_DungeonManager->SetDungeonLevel(currentDungeonID,this);
 }

@@ -164,7 +164,6 @@ protected:
 	void SetStringAccesoryUnlocked(FString acceUnlock);
 	
 public:
-	void SetEquipDataFromServer(UPlayfabManager* plMan);
-
+	void SetEquipDataFromServer(const FString& classSkin,const FString& weapon,const FString& wing,const FString& pet,const FString& acce);
 	
 };

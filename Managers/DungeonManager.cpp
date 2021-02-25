@@ -1,4 +1,6 @@
 #include "DungeonManager.h"
+
+#include "DiabloGameInstance.h"
 #include "GameplayTagContainer.h"
 #include "Engine/LevelStreaming.h"
 #include "UObject/UObjectGlobals.h"
@@ -16,7 +18,7 @@ void UDungeonManager::Init(UMonsterSpawnManager*  mMang)
 	m_MonsterManager = mMang; 
 }
 
-void UDungeonManager::LoadCurrentDungeonLevel(FName levelIDName,UObject* wrldctxt)
+void UDungeonManager::SetDungeonLevel(const FString& levelIDName)//need split
 {
 	m_CurrentDg = UDungeonDataTable::GetDungeonDataPtr(levelIDName);
 
@@ -26,7 +28,7 @@ void UDungeonManager::LoadCurrentDungeonLevel(FName levelIDName,UObject* wrldctx
 		return;
 	}
 	
-	UGameplayStatics::OpenLevel(wrldctxt,m_CurrentDg->m_DgId,true,"Listen");
+	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),m_CurrentDg->m_DgId,true,"Listen");
 }
 
 void UDungeonManager::LoadLevelComplete(UWorld* world)

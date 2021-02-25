@@ -7,26 +7,20 @@
 #include "OnlineSubsystemUtils.h"
 #include "PlayFabClientDataModels.h"
 #include "PlayerUpgradeManager.h"
+#include "PlayFabUtilities.h"
 
 using namespace PlayFab;
 //dungeon 1111200
-const FString  UPlayfabManager::PlayerAtkDmg01Key = "PlayerAtkDmg01";
-const FString  UPlayfabManager::PlayerAtkCri01Key = "PlayerAtkCri01";
-const FString  UPlayfabManager::PlayerAtkCDmg01Key = "PlayerAtkCDmg01";
-//
-const FString  UPlayfabManager::PlayerSkill01Key = "PlayerSkill01";
-const FString  UPlayfabManager::PlayerSkill02Key = "PlayerSkill02";
-const FString  UPlayfabManager::PlayerSkill03Key = "PlayerSkill03";
-//
-const FString  UPlayfabManager::PlayerClassKey = "PlayerClass";
-const FString  UPlayfabManager::PlayerWeaponKey = "PlayerWeapon";
-const FString  UPlayfabManager::PlayerWingKey = "PlayerWing";
-const FString  UPlayfabManager::PlayerPetKey = "PlayerPet";
-const FString  UPlayfabManager::PlayerAccessoryKey = "PlayerAccessory";
-//
-const FString  UPlayfabManager::DungeonUnlockKey = "DungeonUnlock";
-const FString  UPlayfabManager::PlayerGoldKey = "PlayerGold";
-//
+const FString  UPlayfabManager::Gold = "PlayerAtkDmg01";
+const FString  UPlayfabManager::Dg = "PlayerAtkCri01";
+const FString  UPlayfabManager::Stat = "PlayerAtkCDmg01";
+const FString  UPlayfabManager::Skill = "PlayerSkill01";
+
+const FString  UPlayfabManager::Class = "PlayerSkill02";
+const FString  UPlayfabManager::Weapon = "PlayerSkill03";
+const FString  UPlayfabManager::Wing = "PlayerClass";
+const FString  UPlayfabManager::Pet = "PlayerWeapon";
+const FString  UPlayfabManager::Accessory = "PlayerWing";
 
 
 UPlayfabManager::UPlayfabManager()
@@ -205,7 +199,7 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 	{
 		PRINTF("Playfab New Player Created");
 		FPlayerClassSpec PlayerClass;
-		m_LoadedPlayerClass =  PlayerClass.ParseToString();
+		m_LoadedClass =  PlayerClass.ParseToString();
 		
 		FEquipmentSpec Wing;
 		m_LoadedAccessory =  Wing.ParseToString();
@@ -228,23 +222,15 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 	
 	//Request Data
 	req.PlayFabId = m_PlayfabID;
-	req.Keys.Add(PlayerGoldKey);
-	req.Keys.Add(DungeonUnlockKey);
-	
-	req.Keys.Add(PlayerAtkDmg01Key);
-	req.Keys.Add(PlayerAtkCri01Key);
-	req.Keys.Add(PlayerAtkCDmg01Key);
-	
-	req.Keys.Add(PlayerSkill01Key);
-	req.Keys.Add(PlayerSkill02Key);
-	req.Keys.Add(PlayerSkill03Key);
-
-	req.Keys.Add(PlayerClassKey);
-	req.Keys.Add(PlayerWeaponKey);
-	req.Keys.Add(PlayerWingKey);
-	req.Keys.Add(PlayerPetKey);
-	req.Keys.Add(PlayerAccessoryKey);
-	
+	req.Keys.Add(Gold);
+	req.Keys.Add(Dg);
+	req.Keys.Add(Stat);
+	req.Keys.Add(Skill);
+	req.Keys.Add(Class);
+	req.Keys.Add(Weapon);
+	req.Keys.Add(Wing);
+	req.Keys.Add(Pet);
+	req.Keys.Add(Accessory);
 
 	GetClientAPI->GetUserData(req,
 		FGetUsrDataDele::CreateUObject(this, &UPlayfabManager::OnSuccessGetUserData),
@@ -264,24 +250,20 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRSlt& result)
 {
 	PRINTF("GetUserDataSuccess");
 	//
-	m_LoadedDgUnlockedID = result.Data[DungeonUnlockKey].Value;
+	m_LoadedGold = result.Data[Gold	].Value;
+	m_LoadedDg = result.Data[Dg		].Value;
+	m_LoadedStat = result.Data[Stat	].Value;
+	m_LoadedSkill = result.Data[Skill	].Value;
+	m_LoadedClass = result.Data[Class	].Value;
+	m_LoadedWeapon = result.Data[Weapon ].Value;
+	m_LoadedWing = result.Data[Wing	].Value;
+	m_LoadedPet = result.Data[Pet	].Value;
+	m_LoadedAccessory = result.Data[Accessory].Value;
 	//
-	
-	//
-	m_nLoadedPlAtkDmg01 = FCString::Atoi(*result.Data[PlayerAtkDmg01Key].Value);
-	m_nLoadedPlAtkCri01 = FCString::Atoi(*result.Data[PlayerAtkCri01Key].Value);
-	m_nLoadedPlAtkCDmg01 = FCString::Atoi(*result.Data[PlayerAtkCDmg01Key].Value);
-	//
-	m_nLoadedPlSkill01 = FCString::Atoi(*result.Data[PlayerSkill01Key].Value);
-	m_nLoadedPlSkill02 = FCString::Atoi(*result.Data[PlayerSkill02Key].Value);
-	m_nLoadedPlSkill03 = FCString::Atoi(*result.Data[PlayerSkill03Key].Value);
-	//
-	
-	//
-	UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(result.Data[PlayerGoldKey].Value);
-	UDiabloGameInstance::Get->m_DungeonManager->LoadCurrentDungeonLevel(*m_LoadedDgUnlockedID,this);
-	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(this);
-	UDiabloGameInstance::Get->m_EquipManager->SetEquipDataFromServer(this);
+	UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(m_LoadedGold);
+	UDiabloGameInstance::Get->m_DungeonManager->SetDungeonLevel(*m_LoadedDg);
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(m_LoadedStat,m_LoadedSkill);
+	UDiabloGameInstance::Get->m_EquipManager->SetEquipDataFromServer(m_LoadedClass,m_LoadedWeapon,m_LoadedWing,m_LoadedPet,m_LoadedAccessory);
 }
 
 

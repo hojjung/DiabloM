@@ -43,5 +43,5 @@ public:
 	
 	void LoadLevelComplete(UWorld* world);
 	
-	void LoadCurrentDungeonLevel(FName levelIDName,UObject* wrldctxt);
+	void SetDungeonLevel(const FString& levelIDName);
 };

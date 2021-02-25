@@ -142,18 +142,12 @@ void UEquipManager::SetStringAccesoryUnlocked(FString acceUnlock)
 	}
 }
 
-void UEquipManager::SetEquipDataFromServer(UPlayfabManager* plMan)
+void UEquipManager::SetEquipDataFromServer(const FString& classSkin,const FString& weapon,const FString& wing,const FString& pet,const FString& acce)
 {
 	//	
-	FString PlayerClassDataStr = plMan->m_LoadedPlayerClass;
-	FString PlayerWingDataStr = plMan->m_LoadedWing;
-	FString PlayerWeaponDataStr = plMan->m_LoadedWeapon;
-	FString PlayerAccessoryDataStr = plMan->m_LoadedAccessory;
-	FString PlayerPetDataStr = plMan->m_LoadedPet;
-	
-	SetStringSkinUnlocked(PlayerClassDataStr);
-	SetStringWingUnlocked(PlayerWingDataStr);
-	SetStringWeaponUnlocked(PlayerWeaponDataStr);
-	SetStringPetUnlocked(PlayerPetDataStr);
-	SetStringAccesoryUnlocked(PlayerAccessoryDataStr);
+	SetStringSkinUnlocked(classSkin);
+	SetStringWingUnlocked(wing);
+	SetStringWeaponUnlocked(weapon);
+	SetStringPetUnlocked(pet);
+	SetStringAccesoryUnlocked(acce);
 }

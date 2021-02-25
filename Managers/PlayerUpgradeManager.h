@@ -55,7 +55,7 @@ public:
 	FUpgradeSpec m_UpgradeSkill03;
 	
 public:
-	void SetUpgradeDataFromServer(UPlayfabManager* plMan);
+	void SetUpgradeDataFromServer(const FString& stat,const FString& skill);
 	//
 	void SetPlAtkDmg01();
 	void SetPlAtkCri01();
