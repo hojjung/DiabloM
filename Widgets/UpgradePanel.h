@@ -69,5 +69,15 @@ public:
 	UFUNCTION()
 	void UpgradeAtkDmg01();
 	UFUNCTION()
-	void OnUpgradeAtkDmg01();
+    void UpgradeAtkCri01();
+	UFUNCTION()
+    void UpgradeAtkCDmg01();
+	UFUNCTION()
+    void UpgradeSkill01();
+	UFUNCTION()
+    void UpgradeSkill02();
+	UFUNCTION()
+    void UpgradeSkill03();
+	UFUNCTION()
+	void OnUpgradeChanged();
 };

@@ -30,6 +30,7 @@ void ADiabloGameMode::StartPlay()
 	PRINTF("GameModeStartPlay");
 
 	UDiabloGameInstance::Get->m_DungeonManager->LoadLevelComplete(this->GetWorld());
+	m_PlManager = UDiabloGameInstance::Get->m_PlayfabManager;
 }
 
 void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -44,6 +45,8 @@ void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void ADiabloGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	m_PlManager->TickTryUpdateUserData(DeltaSeconds);
 }
 
 

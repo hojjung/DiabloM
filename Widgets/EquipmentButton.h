@@ -2,28 +2,21 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-
-#include "Button.h"
-#include "Image.h"
+#include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "CommonElement/ImageAndText.h"
-#include "Managers/PlayerUpgradeManager.h"
 
+#include "EquipmentButton.generated.h"
 
-#include "UpgradeButton.generated.h"
-
-struct FUpgradeDataRow;
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UUpgradeButton : public UUserWidget
+class DIABLOM_API UEquipmentButton : public UUserWidget
 {
 	GENERATED_BODY()
-	
 public:
-	UUpgradeButton(const FObjectInitializer& objInit);
+	UEquipmentButton(const FObjectInitializer& objInit);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -37,6 +30,8 @@ protected:
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnLvUp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnCombine;
 
 protected:
 	FTextFormat m_FormatName;	
@@ -52,6 +47,7 @@ protected:
 	FString m_DescFormat;
 	
 	void SetDescPreviewText(const FUpgradeSpec& data);
+	
 public:
 	void UpdateUpgradeable();
 	
@@ -59,7 +55,5 @@ public:
 
 	void SetCostText(const BigInt& v);
 
-
 	void UpdateLevelText(const FUpgradeSpec& data);
-
 };

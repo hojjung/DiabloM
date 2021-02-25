@@ -28,6 +28,8 @@ protected:
 	UPROPERTY()
 	UWorld* m_CurrentWorld;
 	UPROPERTY()
+	UParticleSystem* m_ParticleCoin;
+	UPROPERTY()
 	TArray<AMonsterPawn*> m_AryMonsterSpawnedCurrently;
 
 	FName m_IdEnemy;
@@ -60,6 +62,8 @@ protected:
 	void SetSensingInterval(const float newSensingInterval);
 
 	void SetSensingUpdatesEnabled(const bool bEnabled);
+
+	
 	
 public:
 	AMonsterPawn* SpawnMob(FVector loc);
@@ -74,6 +78,8 @@ public:
 	AMonsterPawn* GetNearestMonster(const FVector& wantPos);
 	
 	void StartSpawn(UWorld* world,const FDungeonDataTableRow* dgData);
+
+	
 };
 
 

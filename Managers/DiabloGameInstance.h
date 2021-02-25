@@ -1,8 +1,8 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "EquipManager.h"
 #include "GoldManager.h"
-#include "PlayerClassManager.h"
 #include "PlayerUpgradeManager.h"
 
 #include "DiabloGameInstance.generated.h"
@@ -33,9 +33,9 @@ public:
 	UPROPERTY()
 	UDungeonManager* m_DungeonManager;
 	UPROPERTY()
-	UPlayerClassManager* m_PlayerClassManager;
-	UPROPERTY()
 	UPlayerUpgradeManager* m_PlayerUpgradeManager;
+	UPROPERTY()
+	UEquipManager* m_EquipManager;
 	UPROPERTY()
 	UGoldManager* m_GoldManager;
 	

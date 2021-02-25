@@ -5,7 +5,7 @@
 void UDiaSkillUseButton::Init(int index)
 {
 	m_fMaxCD=0.f;
-	m_EquippedSkillSpec=nullptr;
+	//m_EquippedSkillSpec=nullptr;
 	m_nIndex=-1;
 	m_bIsPressing =false;
 	m_bIsDragSkill=false;
@@ -17,31 +17,31 @@ void UDiaSkillUseButton::Init(int index)
 	m_Joystick->m_OnDropEnd.AddUObject(this,&UDiaSkillUseButton::UseSkill);
 }
 
-void UDiaSkillUseButton::SetSkillSpec(FSkillDataSpec* skillSpec)
-{
-	if(m_EquippedSkillSpec)//버튼에 장착된 스킬 제거
-	{
-	}
-	
-	if(skillSpec->m_nEquipIndex>-1)// 드래그한 스킬을 다른곳에서 해제
-	{
-//		m_PlayerDiaComp->UnequipSkill(skillSpec);
-	}
-	
-	m_EquippedSkillSpec=skillSpec;
-	
-	m_EquippedSkillSpec->m_nEquipIndex=m_nIndex;
-
-	m_Joystick->SetIcon(m_EquippedSkillSpec->m_SkillDataPtr->m_SkillIcon);
-	
-	m_bIsSkillUsable = true;
-
-	m_bIsDragSkill = m_EquippedSkillSpec->m_SkillDataPtr->m_bIsJoystickDragger;
-
-	m_Joystick->SetUseDrag(m_bIsDragSkill);
-
-//	m_PlayerDiaComp->EquipSkill(m_EquippedSkillSpec);
-}
+// void UDiaSkillUseButton::SetSkillSpec(FSkillDataSpec* skillSpec)
+// {
+// 	if(m_EquippedSkillSpec)//버튼에 장착된 스킬 제거
+// 	{
+// 	}
+// 	
+// 	if(skillSpec->m_nEquipIndex>-1)// 드래그한 스킬을 다른곳에서 해제
+// 	{
+// //		m_PlayerDiaComp->UnequipSkill(skillSpec);
+// 	}
+// 	
+// 	m_EquippedSkillSpec=skillSpec;
+// 	
+// 	m_EquippedSkillSpec->m_nEquipIndex=m_nIndex;
+//
+// 	m_Joystick->SetIcon(m_EquippedSkillSpec->m_SkillDataPtr->m_SkillIcon);
+// 	
+// 	m_bIsSkillUsable = true;
+//
+// 	m_bIsDragSkill = m_EquippedSkillSpec->m_SkillDataPtr->m_bIsJoystickDragger;
+//
+// 	m_Joystick->SetUseDrag(m_bIsDragSkill);
+//
+// //	m_PlayerDiaComp->EquipSkill(m_EquippedSkillSpec);
+// }
 
 void UDiaSkillUseButton::ClearSkillSpec()
 {
@@ -49,7 +49,7 @@ void UDiaSkillUseButton::ClearSkillSpec()
 	
 //	m_GaSpec=nullptr;
 	
-	m_EquippedSkillSpec=nullptr;
+	//m_EquippedSkillSpec=nullptr;
 	
 	m_Joystick->ClearIcon();
 	

@@ -22,9 +22,7 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FText m_UpgradeShowName;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FText m_UpgradeDesc;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FString m_FormatStr = "TEST:{0}";
+	FString m_UpgradeDescFormat = "Current:{0}>>P{1}";
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	int m_nMaxLevel = 400;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -41,7 +39,7 @@ public:
 private:
 	float GetLevelBonus(int level) const
 	{
-		if(m_bUseLevelBonus)
+		if(!m_bUseLevelBonus)
 		{
 			return 1.f;
 		}
@@ -77,9 +75,13 @@ private:
 		{
 			return 256.f;
 		}
-		else 
+		else if(level < 1000)
 		{
 			return 512.f;
+		}
+		else 
+		{
+			return 1024.f;
 		}
 	}
 
@@ -110,7 +112,7 @@ public:
 
 	FText GetFormatDescPreview(int level) const
 	{
-		FTextFormat Format = FText::FromString(m_FormatStr);
+		FTextFormat Format = FText::FromString(m_UpgradeDescFormat);
 
 		FText Str1 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetValue(level)));
 		
@@ -118,9 +120,11 @@ public:
 		
 		Args.Add(Str1);
 
-		if(level+1<m_nMaxLevel)
+		int NewLevel = level+1;
+		
+		if(level<m_nMaxLevel)
 		{
-			FText Str2 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetValue(level+1)));
+			FText Str2 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetValue(NewLevel)));
 			
 			Args.Add(Str2);
 		}
@@ -149,9 +153,14 @@ public:
 	
 	static UDataTable* GetPlUpgradeTable;
 
+	static UDataTable* GetSkillUpgradeTable;
+
  public:
  	static const FUpgradeDataRow& GetPlUpgradeData(FName id);
 
  	static const FUpgradeDataRow* GetPlUpgradeDataPtr(FName id);
 
+	static const FUpgradeDataRow& GetSkillUpgradeData(FName id);
+
+	static const FUpgradeDataRow* GetSkillUpgradeDataPtr(FName id);
 };

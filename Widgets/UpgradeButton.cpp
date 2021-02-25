@@ -1,4 +1,6 @@
 #include "UpgradeButton.h"
+
+#include "Datas/PlayerUpgradeData.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/DiabloGameInstance.h"
 
@@ -15,7 +17,7 @@ void UUpgradeButton::UpdateUpgradeable()
 
 	if(CurrentPlayerGold<m_BigIntCost || m_nCurrentLevel >= m_nMaxLevel)
 	{
-		m_BtnLvUp->SetIsEnabled(false);
+		//m_BtnLvUp->SetIsEnabled(false);
 	}
 	else
 	{
@@ -25,12 +27,12 @@ void UUpgradeButton::UpdateUpgradeable()
 	//무겁지않을까
 }
 
-void UUpgradeButton::SetUpgradeVisual(UTexture2D* icon, const FText& tName, int currentLevel, int maxLevel)
+void UUpgradeButton::SetUpgradeVisual(const FUpgradeSpec& data)
 {
-	m_NameText = tName;
-	m_nMaxLevel=maxLevel;
-	m_ImgIcon->SetBrushFromTexture(icon);
-	UpdateLevelText(currentLevel);
+	m_NameText = data.m_UpgradeData->m_UpgradeShowName;
+	m_nMaxLevel = data.GetMaxLv();
+	m_ImgIcon->SetBrushFromTexture(data.m_UpgradeData->m_UpgradeIcon);
+	UpdateLevelText(data);
 }
 
 void UUpgradeButton::SetCostText(const BigInt& v)
@@ -40,14 +42,14 @@ void UUpgradeButton::SetCostText(const BigInt& v)
 	m_TextCost->SetString(TextWant);
 }
 
-void UUpgradeButton::SetDescPreviewText(const FText& tDesc)
+void UUpgradeButton::SetDescPreviewText(const FUpgradeSpec& data)
 {
-	m_TextDesc->SetText(tDesc);
+	m_TextDesc->SetText(data.m_UpgradeData->GetFormatDescPreview(data.m_nLv));
 }
 
-void UUpgradeButton::UpdateLevelText(int newV)
+void UUpgradeButton::UpdateLevelText(const FUpgradeSpec& data)
 {
-	m_nCurrentLevel= newV;
+	m_nCurrentLevel= data.m_nLv;
 	FFormatOrderedArguments Args;
 	Args.Add(m_NameText);
 	Args.Add(m_nCurrentLevel);
@@ -55,4 +57,7 @@ void UUpgradeButton::UpdateLevelText(int newV)
 	FText tt = FText::Format(m_FormatName,Args);
 	
 	m_TextName->SetText(tt);
+	
+	SetDescPreviewText(data);
+	SetCostText(data.m_Cost);
 }

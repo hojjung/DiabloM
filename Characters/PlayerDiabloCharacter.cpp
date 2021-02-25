@@ -57,6 +57,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_AryTargetingObjectType.Reset();
 	m_AryTargetingObjectType.Add(EObjectTypeQuery::ObjectTypeQuery3);
 	//m_fInteractRange
+	//SoundWave'/Game/Sound/Sword_Swing_1_1.Sword_Swing_1_1'
 }
 
 void APlayerDiabloCharacter::BeginPlay()
@@ -79,29 +80,9 @@ void APlayerDiabloCharacter::BeginPlay()
 
 	m_PlUpgradeManager = UDiabloGameInstance::Get->m_PlayerUpgradeManager;
 
-	PlayerClassDataInject(UDiabloGameInstance::Get->m_PlayerClassManager->GetPlayerEntity());
+	PlayerClassDataInject(UDiabloGameInstance::Get->m_EquipManager);
 
 	SetAutoPlay(true);
-}
-
-void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerEntityTable* playerData)
-{
-	//check(playerData);
-	if(!playerData)
-	{
-		PRINTF("DiaChar-NoPlData");
-		return;
-	}
-	m_PlayerData = playerData;
-	m_SkBody->SetSkeletalMesh(m_PlayerData->m_PlayerSkin);
-	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	m_SkBody->SetAnimInstanceClass(m_PlayerData->m_AnimBP);
-	m_fAttackSpeed = m_PlayerData->m_fAttackSpeedMultiple;
-	m_BaseAttackAnim = m_PlayerData->m_BaseAttackAnim;
-
-	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
-
-	m_nAccuracyLevel = 10;
 }
 
 void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius, float focusRange)
@@ -122,6 +103,7 @@ float APlayerDiabloCharacter::TryAttack()
 	
 	if(m_BaseAttackAnim&&m_fAttackCD<0.f)
 	{
+		
 		float AnimMongLen = PlayAnimMontage(m_BaseAttackAnim,1*m_fAttackSpeed,NAME_None);
 
 		m_fAttackCD =m_fAttackCDConstant;
@@ -130,6 +112,25 @@ float APlayerDiabloCharacter::TryAttack()
 	}
 
 	return 1.f;
+}
+
+void APlayerDiabloCharacter::PlayerClassDataInject(UEquipManager* manager)
+{
+	if(!manager)
+	{
+		PRINTF("DiaChar-NoPlData");
+		return;
+	}
+	m_PlayerData = manager->m_CurrentSelectedSkin->m_PlayerData;
+	m_SkBody->SetSkeletalMesh(m_PlayerData->m_PlayerSkin);
+	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	m_SkBody->SetAnimInstanceClass(m_PlayerData->m_AnimBP);
+	m_fAttackSpeed = m_PlayerData->m_fAttackSpeedMultiple;
+	m_BaseAttackAnim = m_PlayerData->m_BaseAttackAnim;
+
+	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
+
+	m_nAccuracyLevel = 10;
 }
 
 void APlayerDiabloCharacter::EarnExp(float expEarned)
@@ -357,13 +358,13 @@ void APlayerDiabloCharacter::ApplyDamageToTarget()
 {
 	if(GetFocusedTarget())
 	{
-		BigInt FinalDmg = m_PlUpgradeManager->GetPlAtkDmg01();
+		BigInt FinalDmg = m_PlUpgradeManager->m_UpgradeAtkDmg01.m_Value;
 
 		BigInt CriPercent100 = FMath::RandRange(0.f,100.f);
 
-		BigInt Cri01 = m_PlUpgradeManager->GetPlAtkCri01();
+		BigInt Cri01 = m_PlUpgradeManager->m_UpgradeAtkCri01.m_Value;
 
-		BigInt CDmg01 = m_PlUpgradeManager->GetPlAtkCDmg01();//백기준으로 해야함,1.5배는  1
+		BigInt CDmg01 = m_PlUpgradeManager->m_UpgradeAtkCDmg01.m_Value;//백기준으로 해야함,1.5배는  1
 		//150
 		if(CriPercent100 <= Cri01)
 		{

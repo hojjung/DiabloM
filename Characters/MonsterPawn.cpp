@@ -30,6 +30,7 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     m_StShadow->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     m_StShadow->SetCanEverAffectNavigation(false);
     //
+    //
     static ConstructorHelpers::FClassFinder<UUserWidget> FoundHpBar(
              TEXT("WidgetBlueprint'/Game/Blueprints/Widgets/Elements/WB_ProgressBarParents.WB_ProgressBarParents_C'"));
     m_WorldHpBar = CreateDefaultSubobject<UFloatingStatusBarWidgetCompo>("WorldHpBar");
@@ -43,7 +44,11 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     m_WorldHpBar->SetCanEverAffectNavigation(false);
     //
     m_HittenAudio= CreateDefaultSubobject<UAudioComponent>("Audio01");
-    m_DeathAudio= CreateDefaultSubobject<UAudioComponent>("Audio022");
+    m_HittenAudio->SetupAttachment(RootComponent);
+    m_DeathAudio= CreateDefaultSubobject<UAudioComponent>("Audio02");
+    m_DeathAudio->SetupAttachment(RootComponent);
+    m_CoinAudio= CreateDefaultSubobject<UAudioComponent>("Audio03");
+    m_CoinAudio->SetupAttachment(RootComponent);
     //m_WorldHpBar->Screen
     //
     m_Movement->NavAgentProps.AgentHeight=88.f;
@@ -62,6 +67,32 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
 
     m_SkBody->SetSkeletalMesh(FoundSkMesh.Object);
 
+    //ParticleSystem'/Game/03_VisualEffect/PS_CoinDrop.PS_CoinDrop'
+
+    static ConstructorHelpers::FObjectFinder<UParticleSystem> FoundCoinParticle(
+          TEXT("ParticleSystem'/Game/03_VisualEffect/PS_CoinDrop.PS_CoinDrop'"));
+    m_Particle = CreateDefaultSubobject<UParticleSystemComponent>("ParticleCoin01");
+    m_Particle->SetupAttachment(RootComponent);
+    m_Particle->SetTemplate(FoundCoinParticle.Object);
+    m_Particle->SetAutoActivate(false);
+    m_Particle->Deactivate();
+
+    //soundcoin//SoundWave'/Game/Sound/Coins_01.Coins_01'
+    static ConstructorHelpers::FObjectFinder<USoundBase> FoundSound1(
+          TEXT("SoundWave'/Game/Sound/Coins_01.Coins_01'"));
+    //soundhitten//SoundWave'/Game/Sound/Fantasy_Game_Weapon_Impact.Fantasy_Game_Weapon_Impact'
+    static ConstructorHelpers::FObjectFinder<USoundBase> FoundSound2(
+          TEXT("SoundWave'/Game/Sound/Fantasy_Game_Weapon_Impact.Fantasy_Game_Weapon_Impact'"));
+    //soundeath//SoundWave'/Game/Sound/Fantasy_Game_Creature_Growl_3.Fantasy_Game_Creature_Growl_3'
+    static ConstructorHelpers::FObjectFinder<USoundBase> FoundSound3(
+          TEXT("SoundWave'/Game/Sound/Fantasy_Game_Creature_Growl_3.Fantasy_Game_Creature_Growl_3'"));
+    m_HittenAudio->SetSound(FoundSound2.Object);
+    m_CoinAudio->SetSound(FoundSound1.Object);
+    m_DeathAudio->SetSound(FoundSound3.Object);
+    m_DeathAudio->SetAutoActivate(false);
+    m_HittenAudio->SetAutoActivate(false);
+    m_CoinAudio->SetAutoActivate(false);
+    m_CoinAudio->VolumeMultiplier = 10.f;
 }
 
 void AMonsterPawn::BeginPlay()
@@ -102,9 +133,6 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     
     m_SkBody->SetAnimInstanceClass(UnitData->m_AnimBP);
 
-    m_HittenSound = UnitData->m_HittenSound;
-
-    m_DeathSound = UnitData->m_DeathSound;
     
 
     m_fAttackRange = UnitData->m_fAttackRange;
@@ -127,8 +155,7 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     }
     m_TickFSM->Init(this);
 
-    m_HittenAudio->SetSound(m_HittenSound);
-    m_DeathAudio->SetSound(m_DeathSound);
+  
 
     SetAcive(true);
 }
@@ -164,7 +191,9 @@ void AMonsterPawn::HideStatusBar()
 void AMonsterPawn::Die()
 {
     //UGameplayStatics::PlaySoundAtLocation(GetWorld(), m_DeathSound, GetActorLocation(), 1, 1);
+    m_Particle->Activate(true);
     
+    m_CoinAudio->Play();
     m_DeathAudio->Play();
     HideStatusBar();
     
@@ -192,6 +221,7 @@ void AMonsterPawn::Die()
 
 void AMonsterPawn::OnDeathAnimEnd()
 {
+    m_Particle->Activate(false);
     FVector NewHide;
     NewHide.X=0.f;
     NewHide.Y=0.f;

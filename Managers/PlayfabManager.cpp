@@ -1,6 +1,7 @@
 #include "PlayfabManager.h"
 #include "DiabloGameInstance.h"
 #include "DungeonManager.h"
+#include "EquipManager.h"
 #include "MobileUtilsBlueprintLibrary.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
@@ -8,19 +9,24 @@
 #include "PlayerUpgradeManager.h"
 
 using namespace PlayFab;
-
-const FString  UPlayfabManager::PlayfabDungeonIDKey = "DungeonID";
-
-const FString  UPlayfabManager::PlayfabPlayerClassIDKey = "PlayerClassID";
-
+//dungeon 1111200
 const FString  UPlayfabManager::PlayerAtkDmg01Key = "PlayerAtkDmg01";
-
 const FString  UPlayfabManager::PlayerAtkCri01Key = "PlayerAtkCri01";
-
 const FString  UPlayfabManager::PlayerAtkCDmg01Key = "PlayerAtkCDmg01";
-
+//
+const FString  UPlayfabManager::PlayerSkill01Key = "PlayerSkill01";
+const FString  UPlayfabManager::PlayerSkill02Key = "PlayerSkill02";
+const FString  UPlayfabManager::PlayerSkill03Key = "PlayerSkill03";
+//
+const FString  UPlayfabManager::PlayerClassKey = "PlayerClass";
+const FString  UPlayfabManager::PlayerWeaponKey = "PlayerWeapon";
+const FString  UPlayfabManager::PlayerWingKey = "PlayerWing";
+const FString  UPlayfabManager::PlayerPetKey = "PlayerPet";
+const FString  UPlayfabManager::PlayerAccessoryKey = "PlayerAccessory";
+//
+const FString  UPlayfabManager::DungeonUnlockKey = "DungeonUnlock";
 const FString  UPlayfabManager::PlayerGoldKey = "PlayerGold";
-
+//
 
 
 UPlayfabManager::UPlayfabManager()
@@ -47,21 +53,19 @@ void UPlayfabManager::ShowBannerAd(bool able)
 	}
 }
 
-void UPlayfabManager::LoadLocalDefaultData()
+void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 {
-	PRINTF("Use Local Default Data");
-	m_bLoginProcessEnd = true;
-	
-	m_LoadedDgID="Stage1-1";
-	m_LoadedPlayerClassID = "Warrior01";
-	m_nLoadedPlAtkDmg01 = 1;
-	m_nLoadedPlAtkCri01 = 1;
-	m_nLoadedPlAtkCDmg01= 1;
+	m_fDeltaCounter+=deltaTime;
 
-	UDiabloGameInstance::Get->m_DungeonManager->LoadCurrentDungeonLevel(*m_LoadedDgID,this);
-	UDiabloGameInstance::Get->m_PlayerClassManager->LoadPlayerClass(*m_LoadedPlayerClassID);
-	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(this);
-	//UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(result.Data[PlayerGoldKey].Value); //just zero
+	if(m_fDeltaCounter<5.f)
+	{
+		return;
+	}
+	PRINTF("TryUpdateUserData");
+
+	m_fDeltaCounter = 0.f;
+
+	
 }
 
 void UPlayfabManager::Init()
@@ -90,6 +94,27 @@ void UPlayfabManager::Init()
 		return;
 	}
 
+
+	#if PLATFORM_WINDOWS
+	GetClientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
+
+	PlayFab::ClientModels::FLoginWithCustomIDRequest request;
+	request.CreateAccount = true;
+	request.CustomId = "JungPC TestID";
+	request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
+
+	bool Result = GetClientAPI->LoginWithCustomID(request,
+                                                    PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
+                                                        this, &UPlayfabManager::OnSuccessPlayfabLogin),
+                                                    PlayFab::FPlayFabErrorDelegate::CreateUObject(
+                                                        this, &UPlayfabManager::OnErrorPlayfabReq)
+    );
+
+
+	#endif
+	
+	#if PLATFORM_ANDROID
+	
 	IOnlineExternalUIPtr ExternalUi = Subsystem->GetExternalUIInterface();
 
 	if (!ExternalUi)
@@ -101,22 +126,10 @@ void UPlayfabManager::Init()
 
 	ExternalUi->ShowLoginUI(0, false, false,
 	                        FOnLoginUIClosedDelegate::CreateUObject(this, &UPlayfabManager::HandleExternalUIClose));
+    #endif
+
 }
 
-int UPlayfabManager::GetPlAtkDmg01Lv()
-{
-	return m_nLoadedPlAtkDmg01;
-}
-
-int UPlayfabManager::GetPlAtkCri01Lv()
-{
-	return m_nLoadedPlAtkCri01;
-}
-
-int UPlayfabManager::GetPlAtkCDmg01Lv()
-{
-	return m_nLoadedPlAtkCDmg01;
-}
 
 void UPlayfabManager::HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqueId, const int ControllerIndex,
                                             const FOnlineError& error)
@@ -129,8 +142,8 @@ void UPlayfabManager::HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqu
 	else
 	{
 		PRINTF("GoogleLogin Fail");
+		FGenericPlatformMisc::RequestExit(true);
 		
-		LoadLocalDefaultData();
 	}
 }
 
@@ -191,6 +204,20 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 	if (Result.NewlyCreated)
 	{
 		PRINTF("Playfab New Player Created");
+		FPlayerClassSpec PlayerClass;
+		m_LoadedPlayerClass =  PlayerClass.ParseToString();
+		
+		FEquipmentSpec Wing;
+		m_LoadedAccessory =  Wing.ParseToString();
+		
+		FEquipmentSpec Pet;
+		m_LoadedPet = Pet.ParseToString();
+		
+		FEquipmentSpec Weapon;
+		m_LoadedWeapon = Weapon.ParseToString();
+		
+		FEquipmentSpec Accessory;
+		m_LoadedAccessory = Accessory.ParseToString();
 	}
 
 	PRINTF("ID:%s", *Result.PlayFabId);
@@ -201,12 +228,22 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 	
 	//Request Data
 	req.PlayFabId = m_PlayfabID;
-	req.Keys.Add(PlayfabDungeonIDKey);
-	req.Keys.Add(PlayfabPlayerClassIDKey);
+	req.Keys.Add(PlayerGoldKey);
+	req.Keys.Add(DungeonUnlockKey);
+	
 	req.Keys.Add(PlayerAtkDmg01Key);
 	req.Keys.Add(PlayerAtkCri01Key);
 	req.Keys.Add(PlayerAtkCDmg01Key);
-	req.Keys.Add(PlayerGoldKey);
+	
+	req.Keys.Add(PlayerSkill01Key);
+	req.Keys.Add(PlayerSkill02Key);
+	req.Keys.Add(PlayerSkill03Key);
+
+	req.Keys.Add(PlayerClassKey);
+	req.Keys.Add(PlayerWeaponKey);
+	req.Keys.Add(PlayerWingKey);
+	req.Keys.Add(PlayerPetKey);
+	req.Keys.Add(PlayerAccessoryKey);
 	
 
 	GetClientAPI->GetUserData(req,
@@ -227,16 +264,24 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRSlt& result)
 {
 	PRINTF("GetUserDataSuccess");
 	//
-	m_LoadedDgID = result.Data[PlayfabDungeonIDKey].Value;
-	m_LoadedPlayerClassID = result.Data[PlayfabPlayerClassIDKey].Value;
+	m_LoadedDgUnlockedID = result.Data[DungeonUnlockKey].Value;
+	//
+	
+	//
 	m_nLoadedPlAtkDmg01 = FCString::Atoi(*result.Data[PlayerAtkDmg01Key].Value);
 	m_nLoadedPlAtkCri01 = FCString::Atoi(*result.Data[PlayerAtkCri01Key].Value);
 	m_nLoadedPlAtkCDmg01 = FCString::Atoi(*result.Data[PlayerAtkCDmg01Key].Value);
 	//
+	m_nLoadedPlSkill01 = FCString::Atoi(*result.Data[PlayerSkill01Key].Value);
+	m_nLoadedPlSkill02 = FCString::Atoi(*result.Data[PlayerSkill02Key].Value);
+	m_nLoadedPlSkill03 = FCString::Atoi(*result.Data[PlayerSkill03Key].Value);
+	//
+	
+	//
 	UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(result.Data[PlayerGoldKey].Value);
-	UDiabloGameInstance::Get->m_DungeonManager->LoadCurrentDungeonLevel(*m_LoadedDgID,this);
-	UDiabloGameInstance::Get->m_PlayerClassManager->LoadPlayerClass(*m_LoadedPlayerClassID);
+	UDiabloGameInstance::Get->m_DungeonManager->LoadCurrentDungeonLevel(*m_LoadedDgUnlockedID,this);
 	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(this);
+	UDiabloGameInstance::Get->m_EquipManager->SetEquipDataFromServer(this);
 }
 
 

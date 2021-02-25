@@ -27,8 +27,8 @@ void UDiabloGameInstance::Init()
     m_DungeonManager = NewObject<UDungeonManager>();
     m_DungeonManager->Init(m_MonsterSpawn);
     m_PlayerUpgradeManager = NewObject<UPlayerUpgradeManager>();
-    m_PlayerClassManager = NewObject<UPlayerClassManager>();
     m_GoldManager = NewObject<UGoldManager>();
+    m_EquipManager = NewObject<UEquipManager>();
     //
     m_PlayfabManager = NewObject<UPlayfabManager>();
     m_PlayfabManager->Init();

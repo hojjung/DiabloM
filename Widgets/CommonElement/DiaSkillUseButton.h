@@ -4,7 +4,6 @@
 #include "CoreMinimal.h"
 #include "TextBlock.h"
 #include "Blueprint/UserWidget.h"
-#include "Datas/SkillDataTable.h"
 #include "Widgets/CommonElement/CooldownProgress.h"
 #include "Widgets/CommonElement/Joystick.h"
 
@@ -47,11 +46,11 @@ protected:
 
 	bool m_bIsDragSkill;
 	
-	FSkillDataSpec* m_EquippedSkillSpec;
+	//FSkillDataSpec* m_EquippedSkillSpec;
 
 	
 public:
-	void SetSkillSpec(FSkillDataSpec* skillSpec);
+	//void SetSkillSpec(FSkillDataSpec* skillSpec);
 
 	void UseSkill();
 	

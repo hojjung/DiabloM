@@ -13,6 +13,9 @@ UMonsterSpawnManager::UMonsterSpawnManager()
 	m_IdEnemy = "enemy";
 	m_IdBossEnemy = "boss";
 	m_IdSpecialEnemy = "special";
+
+
+
 }
 
 void UMonsterSpawnManager::StartSpawn(UWorld* world,const FDungeonDataTableRow* dgData)

@@ -7,6 +7,8 @@
 #include "Components/PostProcessComponent.h"
 #include "GameFramework/GameMode.h"
 #include "Managers/MonsterSpawnManager.h"
+#include "Managers/PlayfabManager.h"
+
 
 #include "DiabloGameMode.generated.h"
 
@@ -24,7 +26,8 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UActionManagerComponent* m_PlayerActionManager;
-	
+	UPROPERTY()
+	UPlayfabManager* m_PlManager;
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 

@@ -27,6 +27,10 @@ protected:
 	UAudioComponent* m_HittenAudio;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UAudioComponent* m_DeathAudio;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UAudioComponent* m_CoinAudio;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UParticleSystemComponent* m_Particle;
 protected:
 	FTimerHandle m_DeathTimer;
 	UPROPERTY(VisibleAnywhere, Category = "Character")
@@ -37,10 +41,6 @@ protected:
 	UAnimMontage* m_SpawnAnim;
 	//UPROPERTY()
 	//UMonsterSensing* m_MonsterSense;
-	UPROPERTY()
-	USoundBase* m_HittenSound;
-	UPROPERTY()
-	USoundBase* m_DeathSound;
 	UPROPERTY()
 	ADiabloPlayerController* m_PlCon;
 

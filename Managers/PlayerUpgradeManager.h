@@ -6,13 +6,35 @@
 
 #include "DiabloM.h"
 #include "PlayfabManager.h"
+#include "Datas/PlayerUpgradeData.h"
 #include "UObject/NoExportTypes.h"
 #include "PlayerUpgradeManager.generated.h"
 
-struct FUpgradeDataRow;
 
 DECLARE_MULTICAST_DELEGATE(FOnUpgradeLevelChanged);
 
+USTRUCT()
+struct FUpgradeSpec
+{
+	GENERATED_BODY()
+public:
+	int m_nLv;
+	const FUpgradeDataRow* m_UpgradeData;
+	BigInt m_Value;
+	BigInt m_Cost;
+
+	void SetLevel(int v)
+	{
+		m_nLv = v;
+		m_Value = m_UpgradeData->GetValue(m_nLv);
+		m_Cost = m_UpgradeData->GetCost(m_nLv);
+	}
+
+	int GetMaxLv() const
+	{
+		return m_UpgradeData->m_nMaxLevel;
+	}
+};
 UCLASS()
 class DIABLOM_API UPlayerUpgradeManager : public UObject
 {
@@ -24,61 +46,30 @@ public:
 public:
 	UPROPERTY()
 	UPlayfabManager* m_PlayfabManager;
-	UPROPERTY()
-	int m_nPlAtkDmg01Lv;
-	UPROPERTY()
-	bool m_bIsPlAtkDmg01Able;
-	const FUpgradeDataRow* m_PlAtkDmg01Upgrade;
-	UPROPERTY()
-	int m_nPlAtkCri01Lv;
-	UPROPERTY()
-	bool m_bIsPlAtkCri01Able;
-	const FUpgradeDataRow* m_PlAtkCri01Upgrade;
-	UPROPERTY()
-	int m_nPlAtkCDmg01Lv;
-	UPROPERTY()
-	bool m_bIsPlAtkCDmg01Able;
-	const FUpgradeDataRow* m_PlAtkCDmg01Upgrade;
 	
-protected:
-	BigInt m_PlAtkDmg01;
-	BigInt m_PlAtkCri01;
-	BigInt m_PlAtkCDmg01;
-	
-protected:	
-	BigInt m_PlAtkDmg01Cost;
-	BigInt m_PlAtkCri01Cost;
-	BigInt m_PlAtkCDmg01Cost;
+	FUpgradeSpec m_UpgradeAtkDmg01;
+	FUpgradeSpec m_UpgradeAtkCri01;
+	FUpgradeSpec m_UpgradeAtkCDmg01;
+	FUpgradeSpec m_UpgradeSkill01;
+	FUpgradeSpec m_UpgradeSkill02;
+	FUpgradeSpec m_UpgradeSkill03;
 	
 public:
 	void SetUpgradeDataFromServer(UPlayfabManager* plMan);
+	//
 	void SetPlAtkDmg01();
 	void SetPlAtkCri01();
 	void SetPlAtkCDmg01();
+	void SetPlSkill01();
+	void SetPlSkill02();
+	void SetPlSkill03();
 	
-public:
-	void SetPlAtkDmg01Cost();
-	void SetPlAtkCri01Cost();
-	void SetPlAtkCDmgCost();
-
-public://value
-	BigInt& GetPlAtkDmg01();
-	BigInt& GetPlAtkCri01();
-	BigInt& GetPlAtkCDmg01();
-
-public://cost
-	BigInt& GetPlAtkDmg01Cost();
-	BigInt& GetPlAtkCri01Cost();
-	BigInt& GetPlAtkCDmg01Cost();
-
 	//UpgradeAtkDmg01
 public:
 	void UpgradeAtkDmg01();
-
-protected://callback
-	void OnGetPlAtk01DmgSuccess(const FGetUsrDataRSlt& result);
-	
-	void OnUpdatePlAtk01DmgSuccess(const FUpdateRslt& result);
-
-	void OnErrorPlayfabReq(const FFailRslt& errorResult);
+	void UpgradeAtkCri01();
+	void UpgradeAtkCDmg01();
+	void UpgradeSkill01();
+	void UpgradeSkill02();
+	void UpgradeSkill03();
 };

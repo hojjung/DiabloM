@@ -8,6 +8,7 @@
 #include "Managers/DiabloCheatManager.h"
 #include "PlayerDiabloCharacter.generated.h"
 
+class UEquipManager;
 class UPlayerUpgradeManager;
 class UDiaStatPanel;
 class ADiabloPlayerController;
@@ -111,7 +112,7 @@ protected:
 	virtual float TryAttack() override;
 
 public:
-	void PlayerClassDataInject(const FPlayerEntityTable* playerData);
+	void PlayerClassDataInject(UEquipManager* manager);
 	
 	virtual void FocusTarget(AUnitPawn* target) override;
 	

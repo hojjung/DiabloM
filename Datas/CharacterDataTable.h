@@ -1,13 +1,14 @@
 #pragma once
 #include "DiabloM.h"
-#include "SkillDataTable.h"
+#include "PlayerUpgradeData.h"
+#include "Item/EquipmentActor.h"
 #include "CharacterDataTable.generated.h"
 
 
 class AMonsterPawn;
 
 USTRUCT(BlueprintType)
-struct FPlayerEntityTable : public FTableRowBase
+struct FPlayerEntityTable : public FUpgradeDataRow
 {
 	GENERATED_BODY()
 
@@ -15,16 +16,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName m_NameID;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FText m_ShowingText;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USkeletalMesh* m_PlayerSkin = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UAnimInstance> m_AnimBP;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UAnimSequence* m_VisualIdleAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimMontage* m_BaseAttackAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0", UIMax = "3.3"))
 	float m_fAttackSpeedMultiple = 1.f;
 };
+
 
 USTRUCT(BlueprintType)
 struct FMonsterEntity : public FTableRowBase
@@ -33,7 +35,7 @@ struct FMonsterEntity : public FTableRowBase
 
 public:
 	FMonsterEntity(): m_Mesh(nullptr),
-	                  m_nAvoidLevel(1), m_nDropTableIndex(0), m_HittenSound(nullptr), m_DeathSound(nullptr),
+	                  m_nAvoidLevel(1), m_nDropTableIndex(0),
 	                  m_SpawnAnim(nullptr), m_BaseAttackAnim(nullptr),
 	                  m_DeathMontage(nullptr),
 	                  m_TookHitMontage(nullptr)
@@ -56,10 +58,6 @@ public:
 	int m_nAvoidLevel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int m_nDropTableIndex;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USoundBase* m_HittenSound;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USoundBase* m_DeathSound;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UAnimInstance> m_AnimBP;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
