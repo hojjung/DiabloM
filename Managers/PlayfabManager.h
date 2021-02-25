@@ -46,7 +46,7 @@ public:
 
 	void Init();
 
-	bool m_bLoginProcessEnd = false;
+	
 
 
 protected:
@@ -54,6 +54,7 @@ protected:
 	                           const FOnlineError& error);
 
 	void TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqueId);
+	void RequestGetUserData();
 
 	void OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result);
 
@@ -64,7 +65,9 @@ public:
 
 public:
 	UPROPERTY()
-	bool m_bIsLogined = false;
+	bool m_bLoginProcessStarted = false;
+	UPROPERTY()
+	bool m_bIsLoginCompleted = false;
 	UPROPERTY()
 	float m_fDeltaCounter;
 	UPROPERTY()
@@ -96,7 +99,7 @@ public:
 
 	bool GetIsLogined()
 	{
-		return m_bIsLogined;
+		return m_bIsLoginCompleted;
 	}
 
 	void ShowBannerAd(bool able);

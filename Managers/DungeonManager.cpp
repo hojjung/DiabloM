@@ -18,17 +18,41 @@ void UDungeonManager::Init(UMonsterSpawnManager*  mMang)
 	m_MonsterManager = mMang; 
 }
 
-void UDungeonManager::SetDungeonLevel(const FString& levelIDName)//need split
+void UDungeonManager::OpenLevel()
 {
-	m_CurrentDg = UDungeonDataTable::GetDungeonDataPtr(levelIDName);
+	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),m_CurrentDg->m_DgId,true,"Listen");
+}
+
+void UDungeonManager::SetDungeonLevel(const FString& dgUnlockAry)//need split
+{
+	UDungeonDataTable::GetDungeonTable->GetAllRows("",UDungeonDataTable::AryDgData);
+	
+	TArray<FString> AryDg;
+	
+	int Len = dgUnlockAry.ParseIntoArray(AryDg,TEXT(":"));
+	
+	m_AryDgUnlocked.Reserve(Len);
+
+	for(int i=0; i< Len; i++)
+	{
+		int IsUnlocked = FCString::Atoi(*AryDg[i]);
+
+		m_AryDgUnlocked.Add(IsUnlocked);
+
+		if(IsUnlocked>1)//selected
+		{
+			m_CurrentDg = UDungeonDataTable::AryDgData[i]; 
+		}
+	}
 
 	if(!m_CurrentDg)
 	{
+		m_CurrentDg = UDungeonDataTable::AryDgData[0];
 		PRINTF("DgManager-NoDgData");
 		return;
 	}
 	
-	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),m_CurrentDg->m_DgId,true,"Listen");
+	
 }
 
 void UDungeonManager::LoadLevelComplete(UWorld* world)

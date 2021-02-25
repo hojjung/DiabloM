@@ -36,6 +36,8 @@ public:
 	static  UDataTable* GetDungeonTable;
 
 public:
+	static TArray<FDungeonDataTableRow*> AryDgData;
+	
 	static const FDungeonDataTableRow& GetDungeonData(FName id);
 
 	static const FDungeonDataTableRow* GetDungeonDataPtr(FName id);

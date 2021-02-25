@@ -11,11 +11,15 @@ void AStartMapGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->m_bLoginProcessEnd)
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->m_bIsLoginCompleted)
 	{
 		return;	
 	}
-	//
-	FName currentDungeonID = *UDiabloGameInstance::Get->m_PlayfabManager->GetLoadedDungeonID();
-	UDiabloGameInstance::Get->m_DungeonManager->SetDungeonLevel(currentDungeonID,this);
+	
+	if(!m_bLock)
+	{
+		UDiabloGameInstance::Get->m_DungeonManager->OpenLevel();
+
+		m_bLock=true;
+	}
 }

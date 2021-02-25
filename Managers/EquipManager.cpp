@@ -13,6 +13,18 @@ UEquipManager::UEquipManager()
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundEntityTable(
           TEXT("DataTable'/Game/DataTables/Equipments/WeaponDataTable.WeaponDataTable'"));
 	GetWeaponDataTable = FoundEntityTable.Object;
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundEntityTable1(
+          TEXT("DataTable'/Game/DataTables/Equipments/WingDataTable.WingDataTable'"));
+	GetWingDataTable = FoundEntityTable1.Object;
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundEntityTable2(
+          TEXT("DataTable'/Game/DataTables/Equipments/PetDataTable.PetDataTable'"));
+	GetPetDataTable = FoundEntityTable2.Object;
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundEntityTable3(
+          TEXT("DataTable'/Game/DataTables/Equipments/AccessoryDataTable.AccessoryDataTable'"));
+	GetAcceeDataTable = FoundEntityTable3.Object;
+	//DataTable'/Game/DataTables/Equipments/WingDataTable.WingDataTable'
+	//DataTable'/Game/DataTables/Equipments/PetDataTable.PetDataTable'
+	//DataTable'/Game/DataTables/Equipments/AccessoryDataTable.AccessoryDataTable'
 }
 
 
@@ -39,9 +51,11 @@ void UEquipManager::SetStringSkinUnlocked(FString skinUnlock)//이 str에 모든
 	
 	TArray<FString> AryEachDatas;
 	
-	int Len = StringSplitEachItem(skinUnlock,AryEachDatas);
+	StringSplitEachItem(skinUnlock,AryEachDatas);
+
+	int Len = AryPlayerClass.Num();
 	
-	for(int i=0; i< Len;i++)
+	for(int i=0; i< AryPlayerClass.Num();i++)
 	{
 		FPlayerClassSpec PlSpec;
 		PlSpec.m_PlayerData = AryPlayerClass[i];
@@ -49,7 +63,7 @@ void UEquipManager::SetStringSkinUnlocked(FString skinUnlock)//이 str에 모든
 
 		m_AryPlayer.Add(PlSpec);
 
-		if(m_AryPlayer[i].m_nLv>1)
+		if(m_AryPlayer[i].m_nEquippedSlot>0)
 		{
 			m_CurrentSelectedSkin = &m_AryPlayer[i];		
 		}
@@ -69,7 +83,7 @@ void UEquipManager::SetStringWingUnlocked(FString wingUnlock)
 	
 	int Len = StringSplitEachItem(wingUnlock,AryEachDatas);
 	
-	for(int i=0; i< Len;i++)
+	for(int i=0; i< AryEquipDatas.Num();i++)
 	{
 		FEquipmentSpec EqSpec;
 		EqSpec.m_EquipData = AryEquipDatas[i];
@@ -90,7 +104,7 @@ void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
 	
 	int Len = StringSplitEachItem(weaponUnlock,AryEachDatas);
 	
-	for(int i=0; i< Len;i++)
+	for(int i=0; i< AryWeaponDatas.Num();i++)
 	{
 		FEquipmentSpec EqSpec;
 		EqSpec.m_EquipData = AryWeaponDatas[i];
@@ -111,7 +125,7 @@ void UEquipManager::SetStringPetUnlocked(FString petUnlock)
 	
 	int Len = StringSplitEachItem(petUnlock,AryEachDatas);
 	
-	for(int i=0; i< Len;i++)
+	for(int i=0; i< AryPetDatas.Num();i++)
 	{
 		FEquipmentSpec EqSpec;
 		EqSpec.m_EquipData = AryPetDatas[i];
@@ -132,7 +146,7 @@ void UEquipManager::SetStringAccesoryUnlocked(FString acceUnlock)
 	
 	int Len = StringSplitEachItem(acceUnlock,AryEachDatas);
 	
-	for(int i=0; i< Len;i++)
+	for(int i=0; i< AryAccessDatas.Num();i++)
 	{
 		FEquipmentSpec EqSpec;
 		EqSpec.m_EquipData = AryAccessDatas[i];

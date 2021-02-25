@@ -37,11 +37,15 @@ protected:
 	UMonsterSpawnManager* m_MonsterManager;
 	
 	const FDungeonDataTableRow* m_CurrentDg;
+	UPROPERTY()
+	TArray<int> m_AryDgUnlocked;
 
 public:
 	void Init(UMonsterSpawnManager*  mMang);
+
+	void OpenLevel();
 	
 	void LoadLevelComplete(UWorld* world);
 	
-	void SetDungeonLevel(const FString& levelIDName);
+	void SetDungeonLevel(const FString& dgUnlockAry);
 };

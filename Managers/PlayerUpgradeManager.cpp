@@ -5,58 +5,44 @@
 
 void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& stat,const FString& skill)
 {
-	m_PlayfabManager = plMan;
+	m_PlayfabManager = UDiabloGameInstance::Get->m_PlayfabManager;
 
-	FName id = *UPlayfabManager::PlayerAtkDmg01Key;
-	m_UpgradeAtkDmg01.m_UpgradeData = UPlayerUpgradeData::GetPlUpgradeDataPtr(id); //
-	id = *UPlayfabManager::PlayerAtkCri01Key;
-	m_UpgradeAtkCri01.m_UpgradeData =  UPlayerUpgradeData::GetPlUpgradeDataPtr(id);
-	id = *UPlayfabManager::PlayerAtkCDmg01Key;
-	m_UpgradeAtkCDmg01.m_UpgradeData = UPlayerUpgradeData::GetPlUpgradeDataPtr(id);
+   //"Dg":"1:1:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/
+   //0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/",
+   //"Stat":"1:0:0:0:0",
+   //"Skill":"0:0:0",
+   //"Gold":"0",
+   //"Class":"1:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:",
+   //"Weapon":"1:2:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:",
+   //"Wing":"0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:",
+   //"Pet":"0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:",
+   //"Accessory":"0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:"
 	//
-	id = *UPlayfabManager::PlayerSkill01Key;
-	m_UpgradeSkill01.m_UpgradeData = UPlayerUpgradeData::GetSkillUpgradeDataPtr(id);
-	id = *UPlayfabManager::PlayerSkill02Key;
-	m_UpgradeSkill02.m_UpgradeData = UPlayerUpgradeData::GetSkillUpgradeDataPtr(id);
-	id = *UPlayfabManager::PlayerSkill03Key;
-	m_UpgradeSkill03.m_UpgradeData = UPlayerUpgradeData::GetSkillUpgradeDataPtr(id);
+	TArray<FString> AryStat;
+	stat.ParseIntoArray(AryStat,TEXT(":"));
+
+	TArray<FString> ArySkill;
+	skill.ParseIntoArray(ArySkill,TEXT(":"));
+	//	
+	m_UpgradeAtkDmg01.m_UpgradeData = UPlayerUpgradeData::GetPlUpgradeDataPtr("AtkDmg01"); //
+	m_UpgradeAtkDmg01.SetLevel(FCString::Atoi(*AryStat[0]));
+	
+	m_UpgradeAtkCri01.m_UpgradeData =  UPlayerUpgradeData::GetPlUpgradeDataPtr("AtkCri01");
+	m_UpgradeAtkCri01.SetLevel(FCString::Atoi(*AryStat[1]));
+	
+	m_UpgradeAtkCDmg01.m_UpgradeData = UPlayerUpgradeData::GetPlUpgradeDataPtr("AtkCDmg01");
+	m_UpgradeAtkCDmg01.SetLevel(FCString::Atoi(*AryStat[2]));
+	
+	m_UpgradeSkill01.m_UpgradeData = UPlayerUpgradeData::GetSkillUpgradeDataPtr("Skill01");
+	m_UpgradeSkill01.SetLevel(FCString::Atoi(*ArySkill[0]));
+	
+	m_UpgradeSkill02.m_UpgradeData = UPlayerUpgradeData::GetSkillUpgradeDataPtr("Skill02");
+	m_UpgradeSkill02.SetLevel(FCString::Atoi(*ArySkill[1]));
+	
+	m_UpgradeSkill03.m_UpgradeData = UPlayerUpgradeData::GetSkillUpgradeDataPtr("Skill03");
+	m_UpgradeSkill02.SetLevel(FCString::Atoi(*ArySkill[2]));
 	//
-	SetPlAtkDmg01();
-	SetPlAtkCri01();
-	SetPlAtkCDmg01();
 }
-
-
-void UPlayerUpgradeManager::SetPlAtkDmg01()
-{
-	m_UpgradeAtkDmg01.SetLevel(m_PlayfabManager->m_nLoadedPlAtkDmg01);
-}
-
-void UPlayerUpgradeManager::SetPlAtkCri01()
-{
-	m_UpgradeAtkCri01.SetLevel(m_PlayfabManager->m_nLoadedPlAtkCri01);
-}
-
-void UPlayerUpgradeManager::SetPlAtkCDmg01()
-{
-	m_UpgradeAtkCDmg01.SetLevel(m_PlayfabManager->m_nLoadedPlAtkCDmg01);
-}
-
-void UPlayerUpgradeManager::SetPlSkill01()
-{
-	m_UpgradeSkill01.SetLevel(m_PlayfabManager->m_nLoadedPlSkill01);
-}
-
-void UPlayerUpgradeManager::SetPlSkill02()
-{
-	m_UpgradeSkill02.SetLevel(m_PlayfabManager->m_nLoadedPlSkill02);
-}
-
-void UPlayerUpgradeManager::SetPlSkill03()
-{
-	m_UpgradeSkill03.SetLevel(m_PlayfabManager->m_nLoadedPlSkill03);
-}
-
 
 void UPlayerUpgradeManager::UpgradeAtkDmg01()
 {
@@ -66,8 +52,7 @@ void UPlayerUpgradeManager::UpgradeAtkDmg01()
 		return;
 	}
 	//
-	m_PlayfabManager->m_nLoadedPlAtkDmg01++;
-	m_UpgradeAtkDmg01.SetLevel(m_PlayfabManager->m_nLoadedPlAtkDmg01);
+	m_UpgradeAtkDmg01.IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
 }
 
@@ -79,8 +64,7 @@ void UPlayerUpgradeManager::UpgradeAtkCri01()
 		return;
 	}
 	//
-	m_PlayfabManager->m_nLoadedPlAtkCri01++;
-	m_UpgradeAtkCri01.SetLevel(m_PlayfabManager->m_nLoadedPlAtkCri01);
+	m_UpgradeAtkCri01.IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
 }
 
@@ -92,8 +76,7 @@ void UPlayerUpgradeManager::UpgradeAtkCDmg01()
 		return;
 	}
 	//
-	m_PlayfabManager->m_nLoadedPlAtkCDmg01++;
-	m_UpgradeAtkCDmg01.SetLevel(m_PlayfabManager->m_nLoadedPlAtkCDmg01);
+	m_UpgradeAtkCDmg01.IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
 }
 
@@ -105,8 +88,7 @@ void UPlayerUpgradeManager::UpgradeSkill01()
 		return;
 	}
 	//
-	m_PlayfabManager->m_nLoadedPlSkill01++;
-	m_UpgradeSkill01.SetLevel(m_PlayfabManager->m_nLoadedPlSkill01);
+	m_UpgradeSkill01.IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
 }
 
@@ -118,8 +100,7 @@ void UPlayerUpgradeManager::UpgradeSkill02()
 		return;
 	}
 	//
-	m_PlayfabManager->m_nLoadedPlSkill02++;
-	m_UpgradeSkill02.SetLevel(m_PlayfabManager->m_nLoadedPlSkill02);
+	m_UpgradeSkill02.IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
 }
 
@@ -131,8 +112,7 @@ void UPlayerUpgradeManager::UpgradeSkill03()
 		return;
 	}
 	//
-	m_PlayfabManager->m_nLoadedPlSkill03++;
-	m_UpgradeSkill03.SetLevel(m_PlayfabManager->m_nLoadedPlSkill03);
+	m_UpgradeSkill03.IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
 }
 

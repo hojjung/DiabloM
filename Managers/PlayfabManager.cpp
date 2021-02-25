@@ -11,21 +11,20 @@
 
 using namespace PlayFab;
 //dungeon 1111200
-const FString  UPlayfabManager::Gold = "PlayerAtkDmg01";
-const FString  UPlayfabManager::Dg = "PlayerAtkCri01";
-const FString  UPlayfabManager::Stat = "PlayerAtkCDmg01";
-const FString  UPlayfabManager::Skill = "PlayerSkill01";
+const FString  UPlayfabManager::Gold = "Gold";
+const FString  UPlayfabManager::Dg = "Dg";
+const FString  UPlayfabManager::Stat = "Stat";
+const FString  UPlayfabManager::Skill = "Skill";
 
-const FString  UPlayfabManager::Class = "PlayerSkill02";
-const FString  UPlayfabManager::Weapon = "PlayerSkill03";
-const FString  UPlayfabManager::Wing = "PlayerClass";
-const FString  UPlayfabManager::Pet = "PlayerWeapon";
-const FString  UPlayfabManager::Accessory = "PlayerWing";
+const FString  UPlayfabManager::Class = "Class";
+const FString  UPlayfabManager::Weapon = "Weapon";
+const FString  UPlayfabManager::Wing = "Wing";
+const FString  UPlayfabManager::Pet = "Pet";
+const FString  UPlayfabManager::Accessory = "Accessory";
 
 
 UPlayfabManager::UPlayfabManager()
 {
-	m_bLoginProcessEnd = false;
 	//m_LoadedDgID ;//= "Stage1-1";
 	//m_LoadedPlayerClassID;// = "Warrior01";
 }
@@ -64,10 +63,12 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 
 void UPlayfabManager::Init()
 {
-	if (m_bIsLogined)
+	if (m_bLoginProcessStarted)
 	{
 		return;
 	}
+
+	m_bLoginProcessStarted = true;
 	
 	if (UMobileUtilsBlueprintLibrary::CheckInternetConnection())
 	{
@@ -94,7 +95,7 @@ void UPlayfabManager::Init()
 
 	PlayFab::ClientModels::FLoginWithCustomIDRequest request;
 	request.CreateAccount = true;
-	request.CustomId = "JungPC TestID";
+	request.CustomId = "JungPC TestID3";
 	request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
 
 	bool Result = GetClientAPI->LoginWithCustomID(request,
@@ -108,13 +109,12 @@ void UPlayfabManager::Init()
 	#endif
 	
 	#if PLATFORM_ANDROID
-	
+	PRINTF("PL-ANdroid");
 	IOnlineExternalUIPtr ExternalUi = Subsystem->GetExternalUIInterface();
 
 	if (!ExternalUi)
 	{
 		PRINTF("noui-GoogleLogin Fail");
-		LoadLocalDefaultData();
 		return;
 	}
 
@@ -158,8 +158,7 @@ void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqu
 		case ELoginStatus::UsingLocalProfile: PRINTF("LoginStatus:UsingLocalProfile");
 			break;
 		case ELoginStatus::LoggedIn: PRINTF("LoginStatus:LoggedIn");
-			m_bIsLogined = true;
-			m_bLoginProcessEnd = true;
+		
 			break;
 		default: ;
 		}
@@ -191,33 +190,31 @@ void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqu
 	}
 }
 
+
+
 void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result)
 {
 	PRINTF("Playfab Login Success");
-
-	if (Result.NewlyCreated)
-	{
-		PRINTF("Playfab New Player Created");
-		FPlayerClassSpec PlayerClass;
-		m_LoadedClass =  PlayerClass.ParseToString();
-		
-		FEquipmentSpec Wing;
-		m_LoadedAccessory =  Wing.ParseToString();
-		
-		FEquipmentSpec Pet;
-		m_LoadedPet = Pet.ParseToString();
-		
-		FEquipmentSpec Weapon;
-		m_LoadedWeapon = Weapon.ParseToString();
-		
-		FEquipmentSpec Accessory;
-		m_LoadedAccessory = Accessory.ParseToString();
-	}
 
 	PRINTF("ID:%s", *Result.PlayFabId);
 
 	m_PlayfabID = Result.PlayFabId;
 	
+	if (Result.NewlyCreated)
+	{
+		PRINTF("Playfab New Player Created");
+		PRINTF("Please Wait For Update Data");
+
+		FTimerHandle hh;
+		UDiabloGameInstance::Get->GetTimerManager().SetTimer(hh,this,&UPlayfabManager::RequestGetUserData,4,false);
+		return;
+	}
+
+	RequestGetUserData();
+}
+
+void UPlayfabManager::RequestGetUserData()
+{
 	FGetUsrDataReq req;
 	
 	//Request Data
@@ -233,9 +230,8 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 	req.Keys.Add(Accessory);
 
 	GetClientAPI->GetUserData(req,
-		FGetUsrDataDele::CreateUObject(this, &UPlayfabManager::OnSuccessGetUserData),
-		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
-
+                              FGetUsrDataDele::CreateUObject(this, &UPlayfabManager::OnSuccessGetUserData),
+                              FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
 
@@ -249,6 +245,11 @@ void UPlayfabManager::OnErrorPlayfabReq(const FFailRslt& ErrorResult)
 void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRSlt& result) 
 {
 	PRINTF("GetUserDataSuccess");
+	if(!result.Data.Num())
+	{
+		PRINTF("DataNull");
+		//Something Fucked
+	}
 	//
 	m_LoadedGold = result.Data[Gold	].Value;
 	m_LoadedDg = result.Data[Dg		].Value;
@@ -264,6 +265,9 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRSlt& result)
 	UDiabloGameInstance::Get->m_DungeonManager->SetDungeonLevel(*m_LoadedDg);
 	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(m_LoadedStat,m_LoadedSkill);
 	UDiabloGameInstance::Get->m_EquipManager->SetEquipDataFromServer(m_LoadedClass,m_LoadedWeapon,m_LoadedWing,m_LoadedPet,m_LoadedAccessory);
+
+
+	m_bIsLoginCompleted = true;
 }
 
 

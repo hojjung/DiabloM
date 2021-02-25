@@ -23,6 +23,12 @@ public:
 	BigInt m_Value;
 	BigInt m_Cost;
 
+	void IncreaseLevel()
+	{
+		m_nLv++;
+		SetLevel(m_nLv);
+	}
+
 	void SetLevel(int v)
 	{
 		m_nLv = v;
@@ -57,13 +63,6 @@ public:
 public:
 	void SetUpgradeDataFromServer(const FString& stat,const FString& skill);
 	//
-	void SetPlAtkDmg01();
-	void SetPlAtkCri01();
-	void SetPlAtkCDmg01();
-	void SetPlSkill01();
-	void SetPlSkill02();
-	void SetPlSkill03();
-	
 	//UpgradeAtkDmg01
 public:
 	void UpgradeAtkDmg01();
