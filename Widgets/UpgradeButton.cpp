@@ -60,4 +60,5 @@ void UUpgradeButton::UpdateLevelText(const FUpgradeSpec& data)
 	
 	SetDescPreviewText(data);
 	SetCostText(data.m_Cost);
+	UpdateUpgradeable();
 }

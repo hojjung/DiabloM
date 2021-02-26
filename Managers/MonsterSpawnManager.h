@@ -22,7 +22,7 @@ public:
 	UMonsterSpawnManager();
 	
 protected:
-	static const int m_nMonsterPoolCount = 4;
+	static const int m_nMonsterPoolCount = 11;
 	UPROPERTY()
 	UNavigationSystemV1* m_NavSys;
 	UPROPERTY()

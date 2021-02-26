@@ -42,6 +42,7 @@ struct FEquipmentSpec
 public:
 	int m_nLv =0;
 	int m_nEquippedSlot = 0;
+	int m_nStackCount = 0;
 	BigInt m_Value;
 	BigInt m_LvlUpCost;
 	const FEquipmentDataRow* m_EquipData;
@@ -66,6 +67,8 @@ public:
 		StrW.Append(":");
 		StrW.AppendInt(m_nEquippedSlot);
 		StrW.Append(":");
+		StrW.AppendInt(m_nStackCount);
+		StrW.Append(":");
 
 		return StrW;
 	}
@@ -78,6 +81,7 @@ public:
 
 		m_nLv = FCString::Atoi(*OutStrAry[0]);
 		m_nEquippedSlot = FCString::Atoi(*OutStrAry[1]);
+		m_nStackCount = FCString::Atoi(*OutStrAry[2]);
 	}
 	
 };
@@ -90,6 +94,7 @@ struct FPlayerClassSpec
 public:
 	int m_nLv =0;
 	int m_nEquippedSlot = 0;
+	int m_nStackCount = 0;
 	BigInt m_Value;
 	BigInt m_LvlUpCost;
 	const FPlayerEntityTable* m_PlayerData;
@@ -113,6 +118,8 @@ public:
 		StrW.Append(":");
 		StrW.AppendInt(m_nEquippedSlot);
 		StrW.Append(":");
+		StrW.AppendInt(m_nStackCount);
+		StrW.Append(":");
 
 		return StrW;
 	}
@@ -125,7 +132,10 @@ public:
 
 		m_nLv = FCString::Atoi(*OutStrAry[0]);
 		m_nEquippedSlot = FCString::Atoi(*OutStrAry[1]);
+		m_nStackCount = FCString::Atoi(*OutStrAry[2]);
 	}
+
+	
 	
 };
 
@@ -142,15 +152,25 @@ public:
 	static  UDataTable* GetPetDataTable;
 	static  UDataTable* GetAcceeDataTable;
 
-protected:
-	TArray<FPlayerClassSpec> m_AryPlayer;
+public:
+	TArray<FPlayerClassSpec> m_AryPlayerSkin;
 	TArray<FEquipmentSpec> m_AryWings;
 	TArray<FEquipmentSpec> m_AryWeapons;
 	TArray<FEquipmentSpec> m_AryPets;
 	TArray<FEquipmentSpec> m_AryAcce;
 
-public:
 	const FPlayerClassSpec* m_CurrentSelectedSkin;
+
+protected:
+	TArray<const FPlayerEntityTable*> m_AryPlayerClass;
+	
+	TArray<const FEquipmentDataRow*> m_AryEquipDatas;
+
+	TArray<const FEquipmentDataRow*> m_AryWeaponDatas;
+	
+	TArray<const FEquipmentDataRow*> m_AryAccessDatas;
+
+	TArray<const FEquipmentDataRow*> m_AryPetDatas;
 	
 protected:
 	void StringToIntAry(const FString& skinUnlock, TArray<int>& outContent) const;
@@ -166,4 +186,7 @@ protected:
 public:
 	void SetEquipDataFromServer(const FString& classSkin,const FString& weapon,const FString& wing,const FString& pet,const FString& acce);
 	
+	const FPlayerClassSpec* TryEquipSkin(const FPlayerClassSpec* player_class_spec);
+	
+	void TryEquipEquipment(const FEquipmentSpec* equipment_spec);
 };

@@ -96,11 +96,4 @@ void UUpgradePanel::OnUpgradeChanged()
 	m_UpgradeSkill01->UpdateLevelText(m_PlUpgrade->m_UpgradeSkill01);
 	m_UpgradeSkill02->UpdateLevelText(m_PlUpgrade->m_UpgradeSkill02);
 	m_UpgradeSkill03->UpdateLevelText(m_PlUpgrade->m_UpgradeSkill03);
-	//
-	m_UpgradeAtkDmg01->UpdateUpgradeable();
-	m_UpgradeAtkCri01->UpdateUpgradeable();
-	m_UpgradeAtkCDmg01->UpdateUpgradeable();
-	m_UpgradeSkill01->UpdateUpgradeable();
-	m_UpgradeSkill02->UpdateUpgradeable();
-	m_UpgradeSkill03->UpdateUpgradeable();
 }

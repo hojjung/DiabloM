@@ -1,6 +1,8 @@
 #include "EquipManager.h"
-#include "PlayfabManager.h"
 
+#include "DiabloGameInstance.h"
+#include "PlayfabManager.h"
+#include "Characters/PlayerDiabloCharacter.h"
 
 
 UDataTable* UEquipManager::GetWeaponDataTable = nullptr;
@@ -43,29 +45,27 @@ void UEquipManager::SetStringSkinUnlocked(FString skinUnlock)//이 str에 모든
 {
 	//내가 상수로 업데이트 시켰기때문에 순서자체가 스킨 데이터 순서임.
 	//숫자 01234를 데이터 테이블의 키값으로 사용해야하나
-	TArray<const FPlayerEntityTable*> AryPlayerClass;
+	UCharacterDataTable::GetPlayerEntityTable->GetAllRows("",m_AryPlayerClass);
 	
-	UCharacterDataTable::GetPlayerEntityTable->GetAllRows("",AryPlayerClass);
-	
-	m_AryPlayer.Reset();
+	m_AryPlayerSkin.Reset();
 	
 	TArray<FString> AryEachDatas;
 	
 	StringSplitEachItem(skinUnlock,AryEachDatas);
 
-	int Len = AryPlayerClass.Num();
+	int Len = m_AryPlayerClass.Num();
 	
-	for(int i=0; i< AryPlayerClass.Num();i++)
+	for(int i=0; i< m_AryPlayerClass.Num();i++)
 	{
 		FPlayerClassSpec PlSpec;
-		PlSpec.m_PlayerData = AryPlayerClass[i];
+		PlSpec.m_PlayerData = m_AryPlayerClass[i];
 		PlSpec.ParseFromString(AryEachDatas[i]);
 
-		m_AryPlayer.Add(PlSpec);
+		m_AryPlayerSkin.Add(PlSpec);
 
-		if(m_AryPlayer[i].m_nEquippedSlot>0)
+		if(m_AryPlayerSkin[i].m_nEquippedSlot>0)
 		{
-			m_CurrentSelectedSkin = &m_AryPlayer[i];		
+			m_CurrentSelectedSkin = &m_AryPlayerSkin[i];		
 		}
 	}
 }
@@ -75,18 +75,16 @@ void UEquipManager::SetStringWingUnlocked(FString wingUnlock)
 {
 	m_AryWings.Reset();
 	
-	TArray<const FEquipmentDataRow*> AryEquipDatas;
-	
-	UEquipManager::GetWingDataTable->GetAllRows("",AryEquipDatas);
+	UEquipManager::GetWingDataTable->GetAllRows("",m_AryEquipDatas);
 	
 	TArray<FString> AryEachDatas;
 	
 	int Len = StringSplitEachItem(wingUnlock,AryEachDatas);
 	
-	for(int i=0; i< AryEquipDatas.Num();i++)
+	for(int i=0; i< m_AryEquipDatas.Num();i++)
 	{
 		FEquipmentSpec EqSpec;
-		EqSpec.m_EquipData = AryEquipDatas[i];
+		EqSpec.m_EquipData = m_AryEquipDatas[i];
 		EqSpec.ParseFromString(AryEachDatas[i]);
 		m_AryWings.Add(EqSpec);
 	}
@@ -96,18 +94,16 @@ void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
 {
 	m_AryWeapons.Reset();
 	
-	TArray<const FEquipmentDataRow*> AryWeaponDatas;
-	
-	UEquipManager::GetWeaponDataTable->GetAllRows("",AryWeaponDatas);
+	UEquipManager::GetWeaponDataTable->GetAllRows("",m_AryWeaponDatas);
 	
 	TArray<FString> AryEachDatas;
 	
 	int Len = StringSplitEachItem(weaponUnlock,AryEachDatas);
 	
-	for(int i=0; i< AryWeaponDatas.Num();i++)
+	for(int i=0; i< m_AryWeaponDatas.Num();i++)
 	{
 		FEquipmentSpec EqSpec;
-		EqSpec.m_EquipData = AryWeaponDatas[i];
+		EqSpec.m_EquipData = m_AryWeaponDatas[i];
 		EqSpec.ParseFromString(AryEachDatas[i]);
 
 		m_AryWeapons.Add(EqSpec);
@@ -117,18 +113,17 @@ void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
 void UEquipManager::SetStringPetUnlocked(FString petUnlock)
 {
 	m_AryPets.Reset();
-	TArray<const FEquipmentDataRow*> AryPetDatas;
 	
-	UEquipManager::GetPetDataTable->GetAllRows("",AryPetDatas);
+	UEquipManager::GetPetDataTable->GetAllRows("",m_AryPetDatas);
 	
 	TArray<FString> AryEachDatas;
 	
 	int Len = StringSplitEachItem(petUnlock,AryEachDatas);
 	
-	for(int i=0; i< AryPetDatas.Num();i++)
+	for(int i=0; i< m_AryPetDatas.Num();i++)
 	{
 		FEquipmentSpec EqSpec;
-		EqSpec.m_EquipData = AryPetDatas[i];
+		EqSpec.m_EquipData = m_AryPetDatas[i];
 		EqSpec.ParseFromString(AryEachDatas[i]);
 
 		m_AryPets.Add(EqSpec);
@@ -138,18 +133,17 @@ void UEquipManager::SetStringPetUnlocked(FString petUnlock)
 void UEquipManager::SetStringAccesoryUnlocked(FString acceUnlock)
 {
 	m_AryAcce.Reset();
-	TArray<const FEquipmentDataRow*> AryAccessDatas;
 	
-	UEquipManager::GetAcceeDataTable->GetAllRows("",AryAccessDatas);
+	UEquipManager::GetAcceeDataTable->GetAllRows("",m_AryAccessDatas);
 	
 	TArray<FString> AryEachDatas;
 	
 	int Len = StringSplitEachItem(acceUnlock,AryEachDatas);
 	
-	for(int i=0; i< AryAccessDatas.Num();i++)
+	for(int i=0; i< m_AryAccessDatas.Num();i++)
 	{
 		FEquipmentSpec EqSpec;
-		EqSpec.m_EquipData = AryAccessDatas[i];
+		EqSpec.m_EquipData = m_AryAccessDatas[i];
 		EqSpec.ParseFromString(AryEachDatas[i]);
 
 		m_AryAcce.Add(EqSpec);
@@ -164,4 +158,27 @@ void UEquipManager::SetEquipDataFromServer(const FString& classSkin,const FStrin
 	SetStringWeaponUnlocked(weapon);
 	SetStringPetUnlocked(pet);
 	SetStringAccesoryUnlocked(acce);
+}
+
+const FPlayerClassSpec* UEquipManager::TryEquipSkin(const FPlayerClassSpec* player_class_spec)
+{
+	if(m_CurrentSelectedSkin == player_class_spec)
+	{
+		PRINTF("The Skin Is Same");
+		
+		return nullptr;
+	}
+
+	const FPlayerClassSpec* Removed = m_CurrentSelectedSkin;
+
+	m_CurrentSelectedSkin = player_class_spec;
+	
+	Cast<APlayerDiabloCharacter>( UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(),0))->PlayerClassDataInject(this);
+
+	return Removed;
+}
+
+void UEquipManager::TryEquipEquipment(const FEquipmentSpec* equipment_spec)
+{
+	
 }

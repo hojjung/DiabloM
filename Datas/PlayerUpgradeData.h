@@ -1,5 +1,3 @@
-// My First Hack n Slash
-
 #pragma once
 
 #include "DiabloM.h"
@@ -7,9 +5,11 @@
 #include "UObject/NoExportTypes.h"
 #include "PlayerUpgradeData.generated.h"
 
-/**
- * 스킬데이터 여기 합처사용?
- */
+UCLASS()
+class DIABLOM_API UPlayerUpgradeData : public UObject
+{
+	GENERATED_BODY()
+};
 
 USTRUCT(BlueprintType)
 struct FUpgradeDataRow : public FTableRowBase
@@ -86,7 +86,7 @@ private:
 	}
 
 public:
-	BigInt GetValue(int level) const
+	virtual BigInt GetValue(int level) const
 	{
 		level  = FMath::Clamp(level,level,m_nMaxLevel);
 		
@@ -110,7 +110,7 @@ public:
 		return Cost;
 	}
 
-	FText GetFormatDescPreview(int level) const
+	virtual FText GetFormatDescPreview(int level) const
 	{
 		FTextFormat Format = FText::FromString(m_UpgradeDescFormat);
 
@@ -143,24 +143,4 @@ public:
 
 
 
-UCLASS()
-class DIABLOM_API UPlayerUpgradeData : public UObject
-{
-	GENERATED_BODY()
 
-public:
-	UPlayerUpgradeData();
-	
-	static UDataTable* GetPlUpgradeTable;
-
-	static UDataTable* GetSkillUpgradeTable;
-
- public:
- 	static const FUpgradeDataRow& GetPlUpgradeData(FName id);
-
- 	static const FUpgradeDataRow* GetPlUpgradeDataPtr(FName id);
-
-	static const FUpgradeDataRow& GetSkillUpgradeData(FName id);
-
-	static const FUpgradeDataRow* GetSkillUpgradeDataPtr(FName id);
-};

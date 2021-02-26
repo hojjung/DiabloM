@@ -13,8 +13,8 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	: Super(objInit)
 
 {
-	m_bIsManualMove=false;
-	
+	m_bIsManualMove = false;
+
 	m_Capsule->SetCapsuleSize(55, 88);
 
 	m_DissolveCam = CreateDefaultSubobject<UCameraDissolve>("CamDissolve00");
@@ -97,26 +97,10 @@ FVector APlayerDiabloCharacter::GetLastSeenLocation()
 	return m_PlayerSense->m_LastSeenLocation;
 }
 
-float APlayerDiabloCharacter::TryAttack()
-{
-	m_Movement->SetMoveSpeedRatio(0.1f);
-	
-	if(m_BaseAttackAnim&&m_fAttackCD<0.f)
-	{
-		
-		float AnimMongLen = PlayAnimMontage(m_BaseAttackAnim,1*m_fAttackSpeed,NAME_None);
-
-		m_fAttackCD =m_fAttackCDConstant;
-
-		GetWorldTimerManager().SetTimer(m_AttackTimer, this, &APlayerDiabloCharacter::ApplyMoveSpeedToOrigin,m_fAttackCDConstant,false);
-	}
-
-	return 1.f;
-}
 
 void APlayerDiabloCharacter::PlayerClassDataInject(UEquipManager* manager)
 {
-	if(!manager)
+	if (!manager)
 	{
 		PRINTF("DiaChar-NoPlData");
 		return;
@@ -213,7 +197,6 @@ void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)
 	m_FocusOutlinePawn = Unit;
 	m_FocusOutlinePawn->GetSkMeshComp()->SetCustomDepthStencilValue(2);
 	m_FocusOutlinePawn->GetSkMeshComp()->SetRenderCustomDepth(true);
-
 }
 
 void APlayerDiabloCharacter::HideOutlineOnTarget()
@@ -225,7 +208,6 @@ void APlayerDiabloCharacter::HideOutlineOnTarget()
 
 	m_FocusOutlinePawn->GetSkMeshComp()->SetCustomDepthStencilValue(0);
 	m_FocusOutlinePawn->GetSkMeshComp()->SetRenderCustomDepth(false);
-
 }
 
 void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
@@ -267,7 +249,6 @@ ADiabloPlayerController* APlayerDiabloCharacter::GetDiaController()
 
 void APlayerDiabloCharacter::Die()
 {
-	
 }
 
 void APlayerDiabloCharacter::Revive()
@@ -354,29 +335,122 @@ void APlayerDiabloCharacter::SetAutoPlay(bool useAuto)
 	}
 }
 
+float APlayerDiabloCharacter::TryAttack()
+{
+	m_Movement->SetMoveSpeedRatio(0.1f);
+
+	if (m_BaseAttackAnim && m_fAttackCD < 0.f)
+	{
+		FName SectionName =  "Combo01";
+		char DmgType = 0;
+		//치명타인지
+
+		//마력폭발인지
+		//일반공격인지
+		BigInt CriPercent100 = FMath::RandRange(0.f, 100.f);
+		BigInt Cri01 = m_PlUpgradeManager->m_UpgradeAtkCri01.m_Value;
+		//마력폭발 일어나면 더위에
+
+		if (CriPercent100 <= Cri01)
+		{
+			SectionName = "MagicBomb";
+			DmgType = 3;
+		}//SectionName = "MagicBomb";
+		else
+		{
+			if (FMath::RandBool())
+			{
+				SectionName = "Combo02";
+				DmgType = 1;
+			}
+		}
+
+		m_QueDmgType.Enqueue(DmgType);
+
+		PlayAnimMontage(m_BaseAttackAnim, 1 * m_fAttackSpeed, SectionName);
+
+		float AnimMongLen = m_BaseAttackAnim->GetSectionLength(DmgType);
+
+		AnimMongLen /= m_fAttackSpeed;
+		
+		m_fAttackCD = m_fAttackCDConstant;
+
+		float SpeedDelay = AnimMongLen -0.1f;
+
+		if(SpeedDelay<m_fAttackCDConstant)
+		{
+			SpeedDelay = m_fAttackCDConstant;
+		}
+
+		GetWorldTimerManager().SetTimer(m_AttackTimer, this, &APlayerDiabloCharacter::ApplyMoveSpeedToOrigin,
+		                                SpeedDelay, false);
+	}
+
+	return 1.f;
+}
+
 void APlayerDiabloCharacter::ApplyDamageToTarget()
 {
-	if(GetFocusedTarget())
+	if (GetFocusedTarget())
 	{
 		BigInt FinalDmg = m_PlUpgradeManager->m_UpgradeAtkDmg01.m_Value;
 
-		BigInt CriPercent100 = FMath::RandRange(0.f,100.f);
-
-		BigInt Cri01 = m_PlUpgradeManager->m_UpgradeAtkCri01.m_Value;
-
-		BigInt CDmg01 = m_PlUpgradeManager->m_UpgradeAtkCDmg01.m_Value;//백기준으로 해야함,1.5배는  1
+		BigInt CDmg01 = m_PlUpgradeManager->m_UpgradeAtkCDmg01.m_Value; //백기준으로 해야함,1.5배는  1
 		//150
-		if(CriPercent100 <= Cri01)
+		char Type;
+		if(!m_QueDmgType.Dequeue(Type))
+		{
+			return;
+		}
+
+		if (Type == 3) //cri
 		{
 			FinalDmg.Multiply(100);
 			FinalDmg.Multiply(CDmg01);
 			FinalDmg.Divide(10000);
-			PRINTF("CriticalDamage:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(FinalDmg,2));
+			PRINTF("CriticalDamage:%s", *UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(FinalDmg,2));
 		}
-		
-		GetFocusedTarget()->TakeDmg(FinalDmg,this);
+
+		ApplyDamage(GetFocusedTarget(), FinalDmg);
 	}
 }
+
+void APlayerDiabloCharacter::ApplyDamageToTargets(TArray<FHitResult>& aryTargets)
+{
+	char Type;
+	if(!m_QueDmgType.Dequeue(Type))
+	{
+		return;
+	}
+
+	BigInt FinalDmg = m_PlUpgradeManager->m_UpgradeAtkDmg01.m_Value;
+
+	BigInt CDmg01 = m_PlUpgradeManager->m_UpgradeAtkCDmg01.m_Value; //백기준으로 해야함,1.5배는  1
+	//150
+	if (Type == 3) //cri
+	{
+		FinalDmg.Multiply(100);
+		FinalDmg.Multiply(CDmg01);
+		FinalDmg.Divide(10000);
+		PRINTF("CriticalDamage:%s", *UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(FinalDmg,2));
+	}
+	
+	for (auto& Mob : aryTargets)
+	{
+		AUnitPawn* Pawn = Cast<AUnitPawn>(Mob.GetActor());
+		
+		if (Pawn)
+		{
+			ApplyDamage(Pawn, FinalDmg);
+		}
+	}
+}
+
+void APlayerDiabloCharacter::ApplyDamage(AUnitPawn* target, const BigInt& finalDmg)
+{
+	target->TakeDmg(finalDmg, this);
+}
+
 
 void APlayerDiabloCharacter::ApplyMoveSpeedToOrigin()
 {
@@ -388,27 +462,25 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	bool bIsMoveInputZero = m_Input.IsNearlyZero(0.1f);
-	
+
 	if (m_FocusedEnemy.Get())
 	{
-		DrawDebugLine(GetWorld(),GetActorLocation(),m_FocusedEnemy->GetActorLocation(),FColor::Red,false,-1,1,5.f);
-		
-		if (!m_bIsManualMove&&!bIsMoveInputZero)
+		DrawDebugLine(GetWorld(), GetActorLocation(), m_FocusedEnemy->GetActorLocation(), FColor::Red, false, -1, 1,
+		              5.f);
+
+		if (!m_bIsManualMove && !bIsMoveInputZero)
 		{
 			m_bIsManualMove = true;
 			GetMovementComponent()->StopMovementImmediately();
 			ApplyMoveSpeedToOrigin();
 		}
-
 	}
 
-	if (bIsMoveInputZero&&m_bUseFSM)
+	if (bIsMoveInputZero && m_bUseFSM)
 	{
 		m_bIsManualMove = false;
 		m_TickFSM->TickFSM();
 	}
-
-	
 }
 
 
@@ -453,5 +525,4 @@ void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerDiabloCharacter::MoveRight);
 	PlayerInputComponent->BindAction("Interaction", EInputEvent::IE_Pressed, this,
 	                                 &APlayerDiabloCharacter::InteractWithTarget);
-
 }

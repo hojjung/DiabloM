@@ -52,14 +52,13 @@ protected:
 	FString m_DescFormat;
 	
 	void SetDescPreviewText(const FUpgradeSpec& data);
-public:
+	
 	void UpdateUpgradeable();
 	
+	void SetCostText(const BigInt& v);
+	
+public:
 	void SetUpgradeVisual(const FUpgradeSpec& data);
 
-	void SetCostText(const BigInt& v);
-
-
 	void UpdateLevelText(const FUpgradeSpec& data);
-
 };

@@ -1,5 +1,5 @@
 // My First Hack n Slash
 
 
-#include "WeaponManager.h"
+#include "EquipmentData.h"
 

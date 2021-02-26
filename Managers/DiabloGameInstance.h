@@ -42,6 +42,4 @@ public:
 protected:
 	virtual void Init() override;
 
-public:
-	void SaveAllPlayerInfo();
 };

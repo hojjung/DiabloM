@@ -206,7 +206,7 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 		PRINTF("Please Wait For Update Data");
 
 		FTimerHandle hh;
-		UDiabloGameInstance::Get->GetTimerManager().SetTimer(hh,this,&UPlayfabManager::RequestGetUserData,4,false);
+		UDiabloGameInstance::Get->GetTimerManager().SetTimer(hh,this,&UPlayfabManager::RequestGetUserData,2.5f,false);
 		return;
 	}
 

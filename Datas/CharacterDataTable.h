@@ -4,74 +4,7 @@
 #include "Item/EquipmentActor.h"
 #include "CharacterDataTable.generated.h"
 
-
 class AMonsterPawn;
-
-USTRUCT(BlueprintType)
-struct FPlayerEntityTable : public FUpgradeDataRow
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName m_NameID;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USkeletalMesh* m_PlayerSkin = nullptr;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UAnimInstance> m_AnimBP;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimSequence* m_VisualIdleAnim;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_BaseAttackAnim;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0", UIMax = "3.3"))
-	float m_fAttackSpeedMultiple = 1.f;
-};
-
-
-USTRUCT(BlueprintType)
-struct FMonsterEntity : public FTableRowBase
-{
-	GENERATED_BODY()
-
-public:
-	FMonsterEntity(): m_Mesh(nullptr),
-	                  m_nAvoidLevel(1), m_nDropTableIndex(0),
-	                  m_SpawnAnim(nullptr), m_BaseAttackAnim(nullptr),
-	                  m_DeathMontage(nullptr),
-	                  m_TookHitMontage(nullptr)
-
-	{
-	}
-
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FText m_ShowingName;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USkeletalMesh* m_Mesh;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "200.0"))
-	float m_fMoveSpeed = 230.f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "200.0"))
-	float m_fAttackRange = 330.f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.5"))
-	float m_fAttackSpeed = 0.5f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0"))
-	int m_nAvoidLevel;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int m_nDropTableIndex;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UAnimInstance> m_AnimBP;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_SpawnAnim;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_BaseAttackAnim;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_DeathMontage;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_TookHitMontage;
-};
-
-//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-//TArray<FItemDataHandle> m_AryRewardDropTableHandle;
 
 
 UCLASS()
@@ -79,29 +12,6 @@ class DIABLOM_API UCharacterDataTable : public UObject
 {
 	GENERATED_BODY()
 	
-	public:
-	UCharacterDataTable();
 
-public:
-	static  UDataTable* GetMonsterEntityTable;
-
-	static  UDataTable* GetPlayerEntityTable;
-
-public:
-	static const FMonsterEntity& GetMonster(FName id);
-
-	static const FMonsterEntity* GetMonsterPtr(FName id);
-
-	static const FPlayerEntityTable& GetPlayerEntity(FName id);
-	
-	static const FPlayerEntityTable* GetPlayerEntityPtr(FName id);
 };
 
-
-USTRUCT(BlueprintType)
-struct FMonsterEntityHandle :public FDataTableRowHandle
-{
-	GENERATED_USTRUCT_BODY()
-public:
-	FMonsterEntityHandle();
-};

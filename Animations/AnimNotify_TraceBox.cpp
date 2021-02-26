@@ -3,6 +3,8 @@
 
 #include "AnimNotify_TraceBox.h"
 
+
+#include "Characters/PlayerDiabloCharacter.h"
 #include "Characters/UnitPawn.h"
 
 UAnimNotify_TraceBox::UAnimNotify_TraceBox()
@@ -27,16 +29,15 @@ void UAnimNotify_TraceBox::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 		return;
 	}
 
-	AUnitPawn* Unit=Cast<AUnitPawn>( Instigator);
-	
-	if(!Unit)
+	PRINTF("HitCount:%d",Hits.Num());
+
+	APlayerDiabloCharacter* PL = Cast<APlayerDiabloCharacter>(Instigator);
+
+	if(!PL)
 	{
 		return;
 	}
-	PRINTF("HitCount:%d",Hits.Num());
 
-	for(FHitResult& Hitten : Hits)
-	{
+	PL->ApplyDamageToTargets(Hits);
 
-	}
 }

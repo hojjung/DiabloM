@@ -23,8 +23,6 @@ public:
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	float m_fRange;
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	FGameplayTag m_CachedAttackEvent;
-	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	FVector m_BoxHalfSize;
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	TArray<TEnumAsByte<EObjectTypeQuery>> m_ObjType;

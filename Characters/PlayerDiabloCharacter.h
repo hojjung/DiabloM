@@ -94,6 +94,8 @@ protected:
 
 	bool m_bIsManualMove;
 
+	TQueue<char> m_QueDmgType;
+
 protected:
 	virtual void BeginPlay() override;
 	
@@ -110,6 +112,8 @@ protected:
 	virtual FVector GetLastSeenLocation() override;
 
 	virtual float TryAttack() override;
+
+	void ApplyDamage(AUnitPawn* target,const BigInt& finalDmg);
 
 public:
 	void PlayerClassDataInject(UEquipManager* manager);
@@ -216,6 +220,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyDamageToTarget();
+	UFUNCTION(BlueprintCallable)
+    void ApplyDamageToTargets(TArray<FHitResult>& aryTargets);
 
 	void ApplyMoveSpeedToOrigin();
 };

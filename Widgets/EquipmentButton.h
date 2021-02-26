@@ -8,6 +8,9 @@
 
 #include "EquipmentButton.generated.h"
 
+struct FEquipmentSpec;
+struct FPlayerClassSpec;
+struct FUpgradeSpec;
 /**
  * 
  */
@@ -27,14 +30,23 @@ protected:
 	UTextBlock* m_TextDesc;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UImageAndText* m_TextCost;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextEquip;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextCombine;
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnEquip;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnLvUp;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnCombine;
 
+	
 protected:
-	FTextFormat m_FormatName;	
+	FTextFormat m_FormatName;
+
+	FTextFormat m_FormatCombine;
 
 	BigInt m_BigIntCost;
 
@@ -45,15 +57,34 @@ protected:
 	FText m_NameText;
 
 	FString m_DescFormat;
+
+	const FPlayerClassSpec* m_PlSkinData;
 	
-	void SetDescPreviewText(const FUpgradeSpec& data);
+	const FEquipmentSpec* m_EquipData;
+
+protected:
+	void SetDescPreviewText(const FPlayerClassSpec& data);
+
+	void SetDescPreviewText(const FEquipmentSpec& data);
 	
-public:
+	void SetCostText(const BigInt& v);
+	
 	void UpdateUpgradeable();
 	
-	void SetUpgradeVisual(const FUpgradeSpec& data);
+public:
+	void SetUpgradeVisual(const FEquipmentSpec& data);
+	
+	void UpdateLevelText(const FEquipmentSpec& data);
+	
+	void SetUpgradeVisual(const FPlayerClassSpec& data);
+	
+	void UpdateLevelText(const FPlayerClassSpec& data);
 
-	void SetCostText(const BigInt& v);
+	void SetEquipped(bool b);
 
-	void UpdateLevelText(const FUpgradeSpec& data);
+	void SetCombineText(int stack);
+
+	UFUNCTION()
+	void TryEquip();
+
 };

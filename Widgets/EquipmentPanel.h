@@ -3,9 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "Button.h"
+#include "EquipmentButton.h"
+#include "Overlay.h"
+#include "ScrollBox.h"
+#include "VerticalBox.h"
+#include "WidgetSwitcher.h"
 #include "Blueprint/UserWidget.h"
+#include "Managers/EquipManager.h"
+
 #include "EquipmentPanel.generated.h"
 
+struct FPlayerClassSpec;
 /**
  * 
  */
@@ -13,15 +23,88 @@ UCLASS()
 class DIABLOM_API UEquipmentPanel : public UUserWidget
 {
 	GENERATED_BODY()
-	//플레이어 클래스
-	//날개
-	//무기
-	//아가시온
-	//악세
+	
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UWidgetSwitcher* m_SwitcherPanel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnClose;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnClassSkin;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnWeapon;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnWing;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnAccessory1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnAccessory2;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnPet;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UOverlay* m_OverlaySkin;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UScrollBox* m_VertiSkin;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UOverlay* m_OverlayWeapon;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UScrollBox* m_VertiWeapon;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UOverlay* m_OverlayWing;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UScrollBox* m_VertiWing;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UOverlay* m_OverlayPet;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UScrollBox* m_VertiPet;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UOverlay* m_OverlayAccessory;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UScrollBox* m_VertiAccessory;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UEquipmentButton> m_ClassEquipBtn;
+	UPROPERTY()
+	TArray<UEquipmentButton*> m_AryPlSkinBtn;
+	UPROPERTY()
+	TArray<UEquipmentButton*> m_AryEqWingBtn;
+	UPROPERTY()
+	TArray<UEquipmentButton*> m_AryEqWeaponBtn;
+	UPROPERTY()
+	TArray<UEquipmentButton*> m_AryEqAccessoryBtn;
+	UPROPERTY()
+	TArray<UEquipmentButton*> m_AryEqPetBtn;
+	
+protected:
+	virtual void NativeOnInitialized() override;
 
-	//정통 알피지처럼 비쥬얼
-
-	//비쥬얼을 띄우는것부터먼저?
-	//비쥬얼과 패널은 분리되야함
-	//
+public:
+	UFUNCTION()
+	void ClosePanel();
+	UFUNCTION()
+    void SetPanelSkin();
+	UFUNCTION()
+    void SetPanelWing();
+	UFUNCTION()
+    void SetPanelPet();
+	UFUNCTION()
+    void SetPanelWeapon();
+	UFUNCTION()
+    void SetPanelAccessory();
+	
+	// UFUNCTION()
+ //    void UpgradePlSkin();
+	// UFUNCTION()
+ //    void UpgradeAtkCri01();
+	// UFUNCTION()
+ //    void UpgradeAtkCDmg01();
+	// UFUNCTION()
+ //    void UpgradeSkill01();
+	// UFUNCTION()
+ //    void UpgradeSkill02();
+	// UFUNCTION()
+ //    void UpgradeSkill03();
+	UFUNCTION()
+    void OnUpgradeChanged();
+	UFUNCTION()
+	void OnEquipPlayerSkin();
 };

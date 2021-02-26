@@ -1,5 +1,7 @@
 #include "AnimNotify_TraceSphere.h"
 
+
+#include "Characters/PlayerDiabloCharacter.h"
 #include "Characters/UnitPawn.h"
 
 UAnimNotify_TraceSphere::UAnimNotify_TraceSphere()
@@ -22,19 +24,18 @@ void UAnimNotify_TraceSphere::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 	TArray<FHitResult> Hits;
 
 	if(!UKismetSystemLibrary::SphereTraceMultiForObjects(Instigator,StartTrace,StartTrace,m_fSphereRadius,
-        m_ObjType,false,m_IgnoreActors,EDrawDebugTrace::ForOneFrame,Hits,true))
+        m_ObjType,false,m_IgnoreActors,EDrawDebugTrace::None,Hits,true))
 	{
 		return;
 	}
 
-	AUnitPawn* Unit=Cast<AUnitPawn>(Instigator);
-	
-	if(!Unit)
+
+	APlayerDiabloCharacter* PL = Cast<APlayerDiabloCharacter>(Instigator);
+
+	if(!PL)
 	{
 		return;
 	}
 
-	for(FHitResult& Hitten : Hits)
-	{
-	}
+	PL->ApplyDamageToTargets(Hits);
 }
