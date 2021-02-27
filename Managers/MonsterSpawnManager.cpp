@@ -163,9 +163,9 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 	
 	FVector NewLoc = GetRandomPointFromNav(loc, 2000.f);
 	
-	const FMonsterEntityHandle& RandomMob = m_DgDataTable->m_AryMonster.GetRandom();
+	const FMonsterEntityHandle& MobHandle = m_DgDataTable->m_Monster;
 
-	const FMonsterEntity* MonData = RandomMob.GetRow<FMonsterEntity>("");
+	const FMonsterEntity* MonData = MobHandle.GetRow<FMonsterEntity>("");
 
 	AMonsterPawn* Mob = GetReadyMonster();
 
@@ -179,12 +179,10 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 
 	Mob->SetActorLocation(NewLoc);
 
-	Mob->DataInject(MonData,100.f);
-	
-	
 
+	Mob->DataInject(MonData,m_DgDataTable->GetMobHp(),m_DgDataTable->GetMobGold(),EMonsterType::Normal,m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""));
+	
 	PRINTF("SpawnedMob!");
-	//Calculate Health
 	
 	return Mob;
 }

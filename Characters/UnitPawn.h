@@ -80,6 +80,8 @@ public:
 
     BigInt m_fMaxHP;
 
+    
+
 protected:
     virtual void BeginPlay() override;
 

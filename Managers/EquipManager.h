@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "Datas/CharacterDataTable.h"
+#include "Datas/EquipmentData.h"
 #include "UObject/NoExportTypes.h"
 #include "EquipManager.generated.h"
 
@@ -23,35 +24,27 @@ enum EEquipSlot
 };
 
 class UPlayfabManager;
-USTRUCT(BlueprintType)
-struct FEquipmentDataRow : public FUpgradeDataRow
-{
-	GENERATED_BODY()
 
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName m_NameID;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<AEquipmentActor> m_ClassEquipment = nullptr;
-};
 
 USTRUCT()
-struct FEquipmentSpec
+struct FWeaponSpec
 {
 	GENERATED_BODY()
 public:
 	int m_nLv =0;
-	int m_nEquippedSlot = 0;
+	int m_nIsEquipped = 0;
 	int m_nStackCount = 0;
 	BigInt m_Value;
 	BigInt m_LvlUpCost;
-	const FEquipmentDataRow* m_EquipData;
+	int m_nAccuracy = 1;
+	const FWeaponTable* m_EquipData;
 
 	void SetLevel(int v)
 	{
 		m_nLv = v;
-		m_Value = m_EquipData->GetValue(m_nLv);
+		m_Value = m_EquipData->GetDmgPer(m_nLv);
 		m_LvlUpCost = m_EquipData->GetCost(m_nLv);
+		m_nAccuracy = m_EquipData->GetAccuracy(m_nLv);
 	}
 
 	int GetMaxLv() const
@@ -59,13 +52,15 @@ public:
 		return m_EquipData->m_nMaxLevel;
 	}
 
+	
+
 	FString ParseToString()
 	{
 		FString StrW;
 		
 		StrW.AppendInt(m_nLv);
 		StrW.Append(":");
-		StrW.AppendInt(m_nEquippedSlot);
+		StrW.AppendInt(m_nIsEquipped);
 		StrW.Append(":");
 		StrW.AppendInt(m_nStackCount);
 		StrW.Append(":");
@@ -80,7 +75,7 @@ public:
 		str.ParseIntoArray(OutStrAry,TEXT(":"));
 
 		m_nLv = FCString::Atoi(*OutStrAry[0]);
-		m_nEquippedSlot = FCString::Atoi(*OutStrAry[1]);
+		m_nIsEquipped = FCString::Atoi(*OutStrAry[1]);
 		m_nStackCount = FCString::Atoi(*OutStrAry[2]);
 	}
 	
@@ -92,23 +87,103 @@ struct FPlayerClassSpec
 {
 	GENERATED_BODY()
 public:
-	int m_nLv =0;
-	int m_nEquippedSlot = 0;
+	int m_nIsUnlocked = 0;
+	int m_nIsEquipped = 0;
 	int m_nStackCount = 0;
-	BigInt m_Value;
-	BigInt m_LvlUpCost;
-	const FPlayerEntityTable* m_PlayerData;
+	float m_fAttackSpeed=1.f;
+	const FPlayerSkinTable* m_PlayerData;
 
-	void SetLevel(int v)
+	void SetValue()
 	{
-		m_nLv = v;
-		m_Value = m_PlayerData->GetValue(m_nLv);
-		m_LvlUpCost = m_PlayerData->GetCost(m_nLv);
+		m_fAttackSpeed = m_PlayerData->GetAtkSpdBonus();
 	}
 
-	int GetMaxLv() const
+	FString ParseToString()
 	{
-		return m_PlayerData->m_nMaxLevel;
+		FString StrW;
+		StrW.AppendInt(m_nIsUnlocked);
+		StrW.Append(":");
+		StrW.AppendInt(m_nIsEquipped);
+		StrW.Append(":");
+		StrW.AppendInt(m_nStackCount);
+		StrW.Append(":");
+
+		return StrW;
+	}
+
+	void ParseFromString(const FString& str)
+	{
+		TArray<FString> OutStrAry;
+	
+		str.ParseIntoArray(OutStrAry,TEXT(":"));
+
+		m_nIsUnlocked = FCString::Atoi(*OutStrAry[0]);
+		m_nIsEquipped = FCString::Atoi(*OutStrAry[1]);
+		m_nStackCount = FCString::Atoi(*OutStrAry[2]);
+	}
+};
+
+USTRUCT()
+struct FWingSpec
+{
+	GENERATED_BODY()
+public:
+	int m_nIsUnlocked = 0;
+	int m_nIsEquipped = 0;
+	int m_nStackCount = 0;
+	float m_fMoveSpeed=1.f;
+	const FWingTable* m_WingData;
+
+	void SetValue()
+	{
+		m_fMoveSpeed = m_WingData->GetMoveSpdBonus();
+	}
+
+	FString ParseToString()
+	{
+		FString StrW;
+		StrW.AppendInt(m_nIsUnlocked);
+		StrW.Append(":");
+		StrW.AppendInt(m_nIsEquipped);
+		StrW.Append(":");
+		StrW.AppendInt(m_nStackCount);
+		StrW.Append(":");
+
+		return StrW;
+	}
+
+	void ParseFromString(const FString& str)
+	{
+		TArray<FString> OutStrAry;
+	
+		str.ParseIntoArray(OutStrAry,TEXT(":"));
+
+		m_nIsUnlocked = FCString::Atoi(*OutStrAry[0]);
+		m_nIsEquipped = FCString::Atoi(*OutStrAry[1]);
+		m_nStackCount = FCString::Atoi(*OutStrAry[2]);
+	}
+};
+
+
+USTRUCT()
+struct FPetSpec
+{
+	GENERATED_BODY()
+public:
+	int m_nLv =0;
+	int m_nIsEquipped = 0;
+	int m_nStackCount = 0;
+	
+	BigInt m_GoldBonusValue;
+	BigInt m_LvlUpCost;
+	
+	const FPetTable* m_PetData;
+
+	void SetLevel(int lv)
+	{
+		m_nLv = lv;
+		m_GoldBonusValue = m_PetData->GetGoldBonusValue(m_nLv);
+		m_LvlUpCost = m_PetData->GetCost(m_nLv);
 	}
 
 	FString ParseToString()
@@ -116,7 +191,7 @@ public:
 		FString StrW;
 		StrW.AppendInt(m_nLv);
 		StrW.Append(":");
-		StrW.AppendInt(m_nEquippedSlot);
+		StrW.AppendInt(m_nIsEquipped);
 		StrW.Append(":");
 		StrW.AppendInt(m_nStackCount);
 		StrW.Append(":");
@@ -131,13 +206,58 @@ public:
 		str.ParseIntoArray(OutStrAry,TEXT(":"));
 
 		m_nLv = FCString::Atoi(*OutStrAry[0]);
-		m_nEquippedSlot = FCString::Atoi(*OutStrAry[1]);
+		m_nIsEquipped = FCString::Atoi(*OutStrAry[1]);
 		m_nStackCount = FCString::Atoi(*OutStrAry[2]);
 	}
-
-	
-	
 };
+
+USTRUCT()
+struct FAccessorySpec
+{
+	GENERATED_BODY()
+public:
+	int m_nLv =0;
+	int m_nIsEquipped = 0;
+	int m_nStackCount;
+	
+	BigInt m_Value;
+	int m_LvlUpCost;//combine level up
+	
+	const FAccessoryTable* m_AccessoryData;
+
+	void SetLevel(int lv)
+	{
+		m_nLv = lv;
+		m_Value = m_AccessoryData->GetValue(m_nLv);
+		m_LvlUpCost = m_AccessoryData->GetCost(m_nLv);
+	}
+
+	FString ParseToString()
+	{
+		FString StrW;
+		StrW.AppendInt(m_nLv);
+		StrW.Append(":");
+		StrW.AppendInt(m_nIsEquipped);
+		StrW.Append(":");
+		StrW.AppendInt(m_nStackCount);
+		StrW.Append(":");
+		
+		return StrW;
+	}
+
+	void ParseFromString(const FString& str)
+	{
+		TArray<FString> OutStrAry;
+	
+		str.ParseIntoArray(OutStrAry,TEXT(":"));
+
+		m_nLv = FCString::Atoi(*OutStrAry[0]);
+		m_nIsEquipped = FCString::Atoi(*OutStrAry[1]);
+		m_nStackCount = FCString::Atoi(*OutStrAry[2]);
+	}
+};
+
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnEquipChanged,int /*pre*/,int /*now*/);
 
 UCLASS()
 class DIABLOM_API UEquipManager : public UObject
@@ -146,35 +266,33 @@ class DIABLOM_API UEquipManager : public UObject
 	
 public:
 	UEquipManager();
-	
+
+	static  UDataTable* GetPlayerSkinDataTable;
 	static  UDataTable* GetWeaponDataTable;
 	static  UDataTable* GetWingDataTable;
 	static  UDataTable* GetPetDataTable;
 	static  UDataTable* GetAcceeDataTable;
 
 public:
+	FOnEquipChanged m_OnPlSkinChanged;
+	FOnEquipChanged m_OnWeaponChanged;
+	FOnEquipChanged m_OnWingChanged;
+	FOnEquipChanged m_OnPetChanged;
+	FOnEquipChanged m_OnAccessoryChanged;
+	
 	TArray<FPlayerClassSpec> m_AryPlayerSkin;
-	TArray<FEquipmentSpec> m_AryWings;
-	TArray<FEquipmentSpec> m_AryWeapons;
-	TArray<FEquipmentSpec> m_AryPets;
-	TArray<FEquipmentSpec> m_AryAcce;
+	TArray<FWingSpec> m_AryWings;
+	TArray<FWeaponSpec> m_AryWeapons;
+	TArray<FPetSpec> m_AryPets;
+	TArray<FAccessorySpec> m_AryAcce;
 
-	const FPlayerClassSpec* m_CurrentSelectedSkin;
+	int m_nSelectedSkin;
+	int m_nSelectedWing;
+	int m_nSelectedWeapon;
+	int m_nSelectedPet;
+	int m_nSelectedAccessory;
 
 protected:
-	TArray<const FPlayerEntityTable*> m_AryPlayerClass;
-	
-	TArray<const FEquipmentDataRow*> m_AryEquipDatas;
-
-	TArray<const FEquipmentDataRow*> m_AryWeaponDatas;
-	
-	TArray<const FEquipmentDataRow*> m_AryAccessDatas;
-
-	TArray<const FEquipmentDataRow*> m_AryPetDatas;
-	
-protected:
-	void StringToIntAry(const FString& skinUnlock, TArray<int>& outContent) const;
-
 	int StringSplitEachItem(const FString& equipDatas, TArray<FString>& outStrAry) const;
 
 	void SetStringSkinUnlocked(FString skinUnlock);
@@ -186,7 +304,13 @@ protected:
 public:
 	void SetEquipDataFromServer(const FString& classSkin,const FString& weapon,const FString& wing,const FString& pet,const FString& acce);
 	
-	const FPlayerClassSpec* TryEquipSkin(const FPlayerClassSpec* player_class_spec);
+	void TryEquipSkin(int index);
 	
-	void TryEquipEquipment(const FEquipmentSpec* equipment_spec);
+	void TryEquipWeapon(int index);
+
+	void TryEquipWing(int index);
+
+	void TryEquipPet(int index);
+
+	void TryEquipAccessory(int index);
 };

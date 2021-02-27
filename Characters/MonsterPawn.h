@@ -2,6 +2,7 @@
 #include "DiabloM.h"
 #include "DiabloPlayerController.h"
 #include "Characters/UnitPawn.h"
+#include "Datas/DungeonDataTable.h"
 #include "Widgets/CommonElement/FloatingStatusBarWidgetCompo.h"
 #include "MonsterPawn.generated.h"
 
@@ -11,6 +12,14 @@ class UDungeonManager;
  */
 class UMobFSMBase;
 class UMonsterSensing;
+
+UENUM()
+enum EMonsterType
+{
+	Normal,
+	Treasure,
+	Boss
+};
 UCLASS()
 class DIABLOM_API AMonsterPawn : public AUnitPawn
 {
@@ -18,6 +27,7 @@ class DIABLOM_API AMonsterPawn : public AUnitPawn
 public:
 	AMonsterPawn(const FObjectInitializer& objInit);
 
+	EMonsterType m_MonsterType;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* m_StShadow;
@@ -44,9 +54,18 @@ protected:
 	UPROPERTY()
 	ADiabloPlayerController* m_PlCon;
 
+	BigInt m_fGoldBounty;
+
+	const FItemDropTableRow* m_DropTable;
+
 	bool m_bDeathAnimEnd;
 
 	int m_nAvoidLevel;
+
+protected:
+	void RequestDropItem();
+
+	void RequestGetGoldBounty();
 
 public: //need more monster
 	virtual void BeginPlay() override;
@@ -76,7 +95,7 @@ public: //need more monster
 public:
     void PlayHitFlash();
 
-	void DataInject(const FMonsterEntity* monster_table, const BigInt& hp);
+	void DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,const FItemDropTableRow* dropTable);
 
 	virtual bool IsAlive() const override;
 

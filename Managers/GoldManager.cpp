@@ -7,6 +7,7 @@ void UGoldManager::SetCurrentGold(const FString& v)
 {
 	m_CurrentGold.Parse(v);
 	PRINTF("SetGold:%s",*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_CurrentGold));
+	m_OnGoldChanged.Broadcast();
 }
 
 void UGoldManager::AddGold(const BigInt& v)

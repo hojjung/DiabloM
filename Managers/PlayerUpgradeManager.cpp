@@ -1,22 +1,24 @@
 #include "PlayerUpgradeManager.h"
-
 #include "DiabloGameInstance.h"
 
+UDataTable* UPlayerUpgradeManager::StatUpgradeTable = nullptr;
+
+UDataTable* UPlayerUpgradeManager::SkillUpgradeTable = nullptr;
+
+UPlayerUpgradeManager::UPlayerUpgradeManager()
+{
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundSkillTable(
+              TEXT("DataTable'/Game/DataTables/Upgrade/PlayerDefaultSkillTable.PlayerDefaultSkillTable'"));
+	SkillUpgradeTable = FoundSkillTable.Object;
+	
+	 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundStatTable(
+	              TEXT("DataTable'/Game/DataTables/Upgrade/PlayerDefaultUpgradeTable.PlayerDefaultUpgradeTable'"));
+	StatUpgradeTable = FoundStatTable.Object;
+}
 
 void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& stat,const FString& skill)
 {
 	m_PlayfabManager = UDiabloGameInstance::Get->m_PlayfabManager;
-
-   //"Dg":"1:1:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/
-   //0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/0:0:0:0:0:0:0:0:0:0:/",
-   //"Stat":"1:0:0:0:0",
-   //"Skill":"0:0:0",
-   //"Gold":"0",
-   //"Class":"1:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:",
-   //"Weapon":"1:2:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:",
-   //"Wing":"0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:",
-   //"Pet":"0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:",
-   //"Accessory":"0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:"
 	//
 	TArray<FString> AryStat;
 	stat.ParseIntoArray(AryStat,TEXT(":"));
@@ -24,23 +26,23 @@ void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& stat,const F
 	TArray<FString> ArySkill;
 	skill.ParseIntoArray(ArySkill,TEXT(":"));
 	//	
-	m_UpgradeAtkDmg01.m_UpgradeData = UPlayerUpgradeData::GetPlUpgradeDataPtr("AtkDmg01"); //
+	m_UpgradeAtkDmg01.m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkDmg01",""); //
 	m_UpgradeAtkDmg01.SetLevel(FCString::Atoi(*AryStat[0]));
 	
-	m_UpgradeAtkCri01.m_UpgradeData =  UPlayerUpgradeData::GetPlUpgradeDataPtr("AtkCri01");
+	m_UpgradeAtkCri01.m_UpgradeData =  StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkCri01","");
 	m_UpgradeAtkCri01.SetLevel(FCString::Atoi(*AryStat[1]));
 	
-	m_UpgradeAtkCDmg01.m_UpgradeData = UPlayerUpgradeData::GetPlUpgradeDataPtr("AtkCDmg01");
+	m_UpgradeAtkCDmg01.m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkCDmg01","");
 	m_UpgradeAtkCDmg01.SetLevel(FCString::Atoi(*AryStat[2]));
-	
-	m_UpgradeSkill01.m_UpgradeData = UPlayerUpgradeData::GetSkillUpgradeDataPtr("Skill01");
+
+	m_UpgradeSkill01.m_UpgradeData = SkillUpgradeTable->FindRow<FUpgradeDataRow>("Skill01","");
 	m_UpgradeSkill01.SetLevel(FCString::Atoi(*ArySkill[0]));
 	
-	m_UpgradeSkill02.m_UpgradeData = UPlayerUpgradeData::GetSkillUpgradeDataPtr("Skill02");
+	m_UpgradeSkill02.m_UpgradeData = SkillUpgradeTable->FindRow<FUpgradeDataRow>("Skill02","");
 	m_UpgradeSkill02.SetLevel(FCString::Atoi(*ArySkill[1]));
 	
-	m_UpgradeSkill03.m_UpgradeData = UPlayerUpgradeData::GetSkillUpgradeDataPtr("Skill03");
-	m_UpgradeSkill02.SetLevel(FCString::Atoi(*ArySkill[2]));
+	m_UpgradeSkill03.m_UpgradeData = SkillUpgradeTable->FindRow<FUpgradeDataRow>("Skill03","");
+	m_UpgradeSkill03.SetLevel(FCString::Atoi(*ArySkill[2]));
 	//
 }
 

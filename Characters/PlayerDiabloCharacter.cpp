@@ -8,11 +8,13 @@
 #include "Animations/MobAnimInstance.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/PlayfabManager.h"
+#include "Managers/EquipManager.h"
 
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
 	: Super(objInit)
 
 {
+	m_nAccuracyLevel = 10;
 	m_bIsManualMove = false;
 
 	m_Capsule->SetCapsuleSize(55, 88);
@@ -80,7 +82,9 @@ void APlayerDiabloCharacter::BeginPlay()
 
 	m_PlUpgradeManager = UDiabloGameInstance::Get->m_PlayerUpgradeManager;
 
-	PlayerClassDataInject(UDiabloGameInstance::Get->m_EquipManager);
+	m_EquipManager = UDiabloGameInstance::Get->m_EquipManager;
+
+	PlayerClassDataInject(m_EquipManager->m_AryPlayerSkin[m_EquipManager->m_nSelectedSkin]);
 
 	SetAutoPlay(true);
 }
@@ -98,94 +102,73 @@ FVector APlayerDiabloCharacter::GetLastSeenLocation()
 }
 
 
-void APlayerDiabloCharacter::PlayerClassDataInject(UEquipManager* manager)
+void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
 {
-	if (!manager)
+	if (!spec.m_PlayerData)
 	{
-		PRINTF("DiaChar-NoPlData");
+		PRINTF("DiaChar-NoSkinSpec");
 		return;
 	}
-	m_PlayerData = manager->m_CurrentSelectedSkin->m_PlayerData;
-	m_SkBody->SetSkeletalMesh(m_PlayerData->m_PlayerSkin);
+	m_PlayerEntityData = &spec;
+	m_SkBody->SetSkeletalMesh(m_PlayerEntityData->m_PlayerData->m_PlayerSkin);
 	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	m_SkBody->SetAnimInstanceClass(m_PlayerData->m_AnimBP);
-	m_fAttackSpeed = m_PlayerData->m_fAttackSpeedMultiple;
-	m_BaseAttackAnim = m_PlayerData->m_BaseAttackAnim;
+	m_SkBody->SetAnimInstanceClass(m_PlayerEntityData->m_PlayerData->m_AnimBP);
+	m_fAttackSpeed = m_PlayerEntityData->m_PlayerData->m_fAttackSpeedMultiple;
+	m_BaseAttackAnim = m_PlayerEntityData->m_PlayerData->m_BaseAttackAnim;
 
 	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
-
-	m_nAccuracyLevel = 10;
 }
 
-void APlayerDiabloCharacter::EarnExp(float expEarned)
+void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
 {
-	PRINTF("ExpEarned:%f", expEarned);
-
-	m_fCurrentExp += expEarned;
-
-	float OverflowExp = m_fMaxExp - m_fCurrentExp;
-
-	if (OverflowExp <= 0.f)
+	if (!spec.m_EquipData)
 	{
-		//		if (!SetCharacterLevel(m_nCharacterLevel + 1))
-		{
-			m_OnRemainExpChanged.Broadcast(0.f);
-			m_OnExpGaugeChanged.Broadcast(0.f);
-			return;
-		}
-
-		m_fCurrentExp = 0.f;
-		//m_fMaxExp = GetPlayerAttribute()->GetMaxExpForLevelUp();
-
-		PRINTF("Next Exp Is: %f", m_fMaxExp);
-
-		EarnExp(FMath::Abs(OverflowExp));
+		PRINTF("DiaChar-NoWeaponSpec");
+		return;
 	}
 
-	m_OnRemainExpChanged.Broadcast(m_fMaxExp - m_fCurrentExp);
-	m_OnExpGaugeChanged.Broadcast(m_fCurrentExp / m_fMaxExp);
+	PRINTF("DiaChar-DataInject Weapon");
 }
 
-void APlayerDiabloCharacter::EarnGold(float goldEarned)
+void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
 {
-	m_fCurrentGold += goldEarned;
-	m_fCurrentGold = FMath::Clamp(m_fCurrentGold, m_fCurrentGold,MAXVALUE);
-	m_OnGoldChanged.Broadcast(m_fCurrentGold);
-	PRINTF("GoldGained:%f", goldEarned);
-	PRINTF("TotalGold:%f", m_fCurrentGold);
-}
-
-void APlayerDiabloCharacter::SetGold(float goldEarned)
-{
-	m_fCurrentGold = goldEarned;
-	m_fCurrentGold = FMath::Clamp(m_fCurrentGold, m_fCurrentGold,MAXVALUE);
-	m_OnGoldChanged.Broadcast(m_fCurrentGold);
-	PRINTF("LoadedTotalGold:%f", m_fCurrentGold);
-}
-
-bool APlayerDiabloCharacter::SpendGold(float goldSpend)
-{
-	float ValueResult = m_fCurrentGold - goldSpend;
-
-	if (ValueResult < 0)
+	if (!spec.m_WingData)
 	{
-		return false;
+		PRINTF("DiaChar-NoWingSpec");
+		return;
 	}
 
-	m_fCurrentGold = ValueResult;
-	m_OnGoldChanged.Broadcast(m_fCurrentGold);
-	return true;
+	PRINTF("DiaChar-DataInject Wing");
 }
+
+void APlayerDiabloCharacter::AccessoryDataInject(const FAccessorySpec& spec)
+{
+	if (!spec.m_AccessoryData)
+	{
+		PRINTF("DiaChar-NoAccessorySpec");
+		return;
+	}
+
+	PRINTF("DiaChar-DataInject Accesssory");
+}
+
+void APlayerDiabloCharacter::PetDataInject(const FPetSpec& spec)
+{
+	if (!spec.m_PetData)
+	{
+		PRINTF("DiaChar-NoPetSpec");
+		return;
+	}
+
+	PRINTF("DiaChar-DataInject Pet");
+}
+
 
 float APlayerDiabloCharacter::GetAttackSpeedMultiple()
 {
 	return m_fAttackSpeed;
 }
 
-void APlayerDiabloCharacter::ResetCombo()
-{
-	//GetBaseAttackInst()->ResetComboSection();
-}
 
 void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)
 {

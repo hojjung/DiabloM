@@ -6,11 +6,18 @@
 #include "UObject/UObjectGlobals.h"
 
 
+UDataTable* UDungeonManager::DungeonDataTable = nullptr;
+UDataTable* UDungeonManager::DropDataTable = nullptr;
+UDataTable* UDungeonManager::MonsterEntityTable = nullptr;
+
 UDungeonManager::UDungeonManager(const FObjectInitializer& objInit):Super(objInit)
 {
 	m_CurrentDg = nullptr;
 	m_MonsterManager = nullptr;
-
+	
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundDungeon(TEXT("DataTable'/Game/DataTables/Dungeon/DungeonData.DungeonData'"));
+	
+	DungeonDataTable = FoundDungeon.Object;
 }
 
 void UDungeonManager::Init(UMonsterSpawnManager*  mMang)
@@ -25,7 +32,7 @@ void UDungeonManager::OpenLevel()
 
 void UDungeonManager::SetDungeonLevel(const FString& dgUnlockAry)//need split
 {
-	UDungeonDataTable::GetDungeonTable->GetAllRows("",UDungeonDataTable::AryDgData);
+	DungeonDataTable->GetAllRows("",m_AryDgDataTable);
 	
 	TArray<FString> AryDg;
 	
@@ -41,18 +48,16 @@ void UDungeonManager::SetDungeonLevel(const FString& dgUnlockAry)//need split
 
 		if(IsUnlocked>1)//selected
 		{
-			m_CurrentDg = UDungeonDataTable::AryDgData[i]; 
+			m_CurrentDg = m_AryDgDataTable[i]; 
 		}
 	}
 
 	if(!m_CurrentDg)
 	{
-		m_CurrentDg = UDungeonDataTable::AryDgData[0];
+		m_CurrentDg = m_AryDgDataTable[0];
 		PRINTF("DgManager-NoDgData");
 		return;
 	}
-	
-	
 }
 
 void UDungeonManager::LoadLevelComplete(UWorld* world)

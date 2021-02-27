@@ -2,10 +2,13 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 
-#include "UpgradePanel.h"
 #include "Blueprint/UserWidget.h"
+#include "CommonElement/ImageAndText.h"
+#include "UpgradeMenu/UpgradePanel.h"
+
+
 #include "MainCanvas.generated.h"
 
 /**

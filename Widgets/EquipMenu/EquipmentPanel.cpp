@@ -4,6 +4,7 @@
 #include "EquipmentPanel.h"
 
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/EquipManager.h"
 
 void UEquipmentPanel::NativeOnInitialized()
 {
@@ -13,11 +14,13 @@ void UEquipmentPanel::NativeOnInitialized()
 
 	FMargin MargW = FMargin(12.f,12.f,12.f,12.f);
 
+	int Index = 0;
+
 	for(const FPlayerClassSpec& PlSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryPlayerSkin)
 	{
-		UEquipmentButton* EqBtn = CreateWidget<UEquipmentButton>(this,m_ClassEquipBtn);
+		UPlayerSkinEquipButton* EqBtn = CreateWidget<UPlayerSkinEquipButton>(this,m_ClassPlayerEquipBtn);
 
-		EqBtn->SetUpgradeVisual(PlSpec);
+		EqBtn->Init(PlSpec,Index++);
 		
 		m_AryPlSkinBtn.Add(EqBtn);
 
@@ -25,70 +28,90 @@ void UEquipmentPanel::NativeOnInitialized()
 
 		EqBtn->SetPadding(MargW);
 
-		if(PlSpec.m_nEquippedSlot>0)
-		{
-			EqBtn->SetEquipped(true);
-		}
-		else
-		{
-			EqBtn->SetEquipped(false);
-		}
-
-		if(PlSpec.m_nLv<1)
+		if(PlSpec.m_nIsUnlocked<1)
 		{
 			//EqBtn->m_BtnEquip->SetIsEnabled(false);
 		}
 	}
 
-	for(const FEquipmentSpec& EqSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryWings)
-	{
-		UEquipmentButton* EqBtn = CreateWidget<UEquipmentButton>(this,m_ClassEquipBtn);
+	Index = 0;
 
-		EqBtn->SetUpgradeVisual(EqSpec);
+	for(const FWingSpec& EqSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryWings)
+	{
+		UWingEquipButton* EqBtn = CreateWidget<UWingEquipButton>(this,m_ClassWingEquipBtn);
+
+		EqBtn->Init(EqSpec,Index++);
 		
 		m_AryEqWingBtn.Add(EqBtn);
 
 		m_VertiWing->AddChild(EqBtn);
 
 		EqBtn->SetPadding(MargW);
+
+		if(EqSpec.m_nIsUnlocked<1)
+		{
+			//EqBtn->m_BtnEquip->SetIsEnabled(false);
+		}
 	}
 
-	for(const FEquipmentSpec& EqSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryWeapons)
-	{
-		UEquipmentButton* EqBtn = CreateWidget<UEquipmentButton>(this,m_ClassEquipBtn);
+	Index++;
 
-		EqBtn->SetUpgradeVisual(EqSpec);
+	for(const FWeaponSpec& EqSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryWeapons)
+	{
+		UWeaponEquipButton* EqBtn = CreateWidget<UWeaponEquipButton>(this,m_ClassWeaponEquipBtn);
+
+		EqBtn->Init(EqSpec,Index);
 		
 		m_AryEqWeaponBtn.Add(EqBtn);
 
 		m_VertiWeapon->AddChild(EqBtn);
 
 		EqBtn->SetPadding(MargW);
+
+		if(EqSpec.m_nLv<1)
+		{
+			//EqBtn->m_BtnEquip->SetIsEnabled(false);
+		}
 	}
 
-	for(const FEquipmentSpec& EqSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryPets)
+	Index++;
+
+	for(const FPetSpec& EqSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryPets)
 	{
-		UEquipmentButton* EqBtn = CreateWidget<UEquipmentButton>(this,m_ClassEquipBtn);
-		EqBtn->SetUpgradeVisual(EqSpec);
+		UPetEquipButton* EqBtn = CreateWidget<UPetEquipButton>(this,m_ClassPetEquipBtn);
+		
+		EqBtn->Init(EqSpec,Index);
 		
 		m_AryEqPetBtn.Add(EqBtn);
 
 		m_VertiPet->AddChild(EqBtn);
 
 		EqBtn->SetPadding(MargW);
-	}
-	
-	for(const FEquipmentSpec& EqSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryAcce)
-	{
-		UEquipmentButton* EqBtn = CreateWidget<UEquipmentButton>(this,m_ClassEquipBtn);
 
-		EqBtn->SetUpgradeVisual(EqSpec);
+		if(EqSpec.m_nLv<1)
+		{
+			//EqBtn->m_BtnEquip->SetIsEnabled(false);
+		}
+	}
+
+	Index = 0;
+	
+	for(const FAccessorySpec& EqSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryAcce)
+	{
+		UAccessoryEquipButton* EqBtn = CreateWidget<UAccessoryEquipButton>(this,m_ClassAccessoryEquipBtn);
+
+		EqBtn->Init(EqSpec,Index++);
 		
 		m_AryEqAccessoryBtn.Add(EqBtn);
 
 		m_VertiAccessory->AddChild(EqBtn);
 
 		EqBtn->SetPadding(MargW);
+
+		if(EqSpec.m_nLv<1)
+		{
+			//EqBtn->m_BtnEquip->SetIsEnabled(false);
+		}
 	}
 
 	m_BtnClose->OnClicked.AddDynamic(this,&UEquipmentPanel::ClosePanel);
@@ -131,26 +154,4 @@ void UEquipmentPanel::SetPanelAccessory()
 	m_SwitcherPanel->SetActiveWidget(m_OverlayAccessory);
 }
 
-void UEquipmentPanel::OnUpgradeChanged()
-{
-	//m_UpgradeAtkDmg01->UpdateLevelText(m_PlUpgrade->m_UpgradeAtkDmg01);
-	//m_UpgradeAtkCri01->UpdateLevelText(m_PlUpgrade->m_UpgradeAtkCri01);
-	//m_UpgradeAtkCDmg01->UpdateLevelText(m_PlUpgrade->m_UpgradeAtkCDmg01);
-	////
-	//m_UpgradeSkill01->UpdateLevelText(m_PlUpgrade->m_UpgradeSkill01);
-	//m_UpgradeSkill02->UpdateLevelText(m_PlUpgrade->m_UpgradeSkill02);
-	//m_UpgradeSkill03->UpdateLevelText(m_PlUpgrade->m_UpgradeSkill03);
-	////
-	//m_UpgradeAtkDmg01->UpdateUpgradeable();
-	//m_UpgradeAtkCri01->UpdateUpgradeable();
-	//m_UpgradeAtkCDmg01->UpdateUpgradeable();
-	//m_UpgradeSkill01->UpdateUpgradeable();
-	//m_UpgradeSkill02->UpdateUpgradeable();
-	//m_UpgradeSkill03->UpdateUpgradeable();
-}
 
-void UEquipmentPanel::OnEquipPlayerSkin()
-{
-	//해당 버튼이 인스턴스를 알아야한다
-	//누굴 끼운건데?
-}

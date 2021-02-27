@@ -31,14 +31,26 @@ class DIABLOM_API UDungeonManager : public UObject
 
 public:
 	UDungeonManager(const FObjectInitializer& objInit);
-	
+
+	static UDataTable* DungeonDataTable;
+
+	static UDataTable* DropDataTable;
+
+	static UDataTable* MonsterEntityTable;
+
+	//FItemDropTableRow
+	//FMonsterEntity
 protected:
+	
+	TArray<const FDungeonDataTableRow*> m_AryDgDataTable;
+	
 	UPROPERTY()
 	UMonsterSpawnManager* m_MonsterManager;
 	
-	const FDungeonDataTableRow* m_CurrentDg;
 	UPROPERTY()
 	TArray<int> m_AryDgUnlocked;
+
+	const FDungeonDataTableRow* m_CurrentDg;
 
 public:
 	void Init(UMonsterSpawnManager*  mMang);

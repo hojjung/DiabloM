@@ -7,8 +7,9 @@
 #include "Button.h"
 #include "Image.h"
 #include "Blueprint/UserWidget.h"
-#include "CommonElement/ImageAndText.h"
 #include "Managers/PlayerUpgradeManager.h"
+#include "Widgets/CommonElement/ImageAndText.h"
+
 
 
 #include "UpgradeButton.generated.h"

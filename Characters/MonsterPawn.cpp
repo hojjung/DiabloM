@@ -107,8 +107,23 @@ void AMonsterPawn::BeginPlay()
     m_PlCon = Cast<ADiabloPlayerController>( UGameplayStatics::GetPlayerController(this,0));
 }
 
-void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp)
+void AMonsterPawn::RequestDropItem()
 {
+    PRINTF("RequestDropItem");
+}
+
+void AMonsterPawn::RequestGetGoldBounty()
+{
+    PRINTF("RequestGetGoldBounty");
+    UDiabloGameInstance::Get->m_GoldManager->AddGold(m_fGoldBounty);
+}
+
+void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,const FItemDropTableRow* dropTable)//droptable
+{
+    m_DropTable = dropTable;
+    
+    m_MonsterType = type;
+    
     m_bDeathAnimEnd = false;
     
     GetWorldTimerManager().ClearTimer(m_DeathTimer);
@@ -139,6 +154,8 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
 
     m_fAttackSpeed = UnitData->m_fAttackSpeed;
 
+    m_fGoldBounty = gold;
+
     m_fMaxHP = hp;
     
     m_fCurrentHP = m_fMaxHP;
@@ -156,7 +173,6 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     m_TickFSM->Init(this);
 
   
-
     SetAcive(true);
 }
 
@@ -190,8 +206,9 @@ void AMonsterPawn::HideStatusBar()
 
 void AMonsterPawn::Die()
 {
-    //UGameplayStatics::PlaySoundAtLocation(GetWorld(), m_DeathSound, GetActorLocation(), 1, 1);
     m_Particle->Activate(true);
+    RequestDropItem();
+    RequestGetGoldBounty();
     
     m_CoinAudio->Play();
     m_DeathAudio->Play();

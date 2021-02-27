@@ -4,22 +4,21 @@
 
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
-#include "CommonElement/ImageAndText.h"
+#include "Managers/EquipManager.h"
 
-#include "EquipmentButton.generated.h"
+#include "PlayerSkinEquipButton.generated.h"
 
-struct FEquipmentSpec;
-struct FPlayerClassSpec;
-struct FUpgradeSpec;
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UEquipmentButton : public UUserWidget
+class DIABLOM_API UPlayerSkinEquipButton : public UUserWidget
 {
 	GENERATED_BODY()
+
 public:
-	UEquipmentButton(const FObjectInitializer& objInit);
+	UPlayerSkinEquipButton(const FObjectInitializer& objInit);
+	
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -29,62 +28,35 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextDesc;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UImageAndText* m_TextCost;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextEquip;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextCombine;
+
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnEquip;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnLvUp;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnCombine;
 
-	
 protected:
-	FTextFormat m_FormatName;
-
 	FTextFormat m_FormatCombine;
 
-	BigInt m_BigIntCost;
+	const FPlayerClassSpec* m_SkinSpec;
 
-	int m_nCurrentLevel;
-
-	int m_nMaxLevel;
-
-	FText m_NameText;
-
-	FString m_DescFormat;
-
-	const FPlayerClassSpec* m_PlSkinData;
-	
-	const FEquipmentSpec* m_EquipData;
+	int m_nIndex;
 
 protected:
 	void SetDescPreviewText(const FPlayerClassSpec& data);
-
-	void SetDescPreviewText(const FEquipmentSpec& data);
-	
-	void SetCostText(const BigInt& v);
-	
-	void UpdateUpgradeable();
-	
-public:
-	void SetUpgradeVisual(const FEquipmentSpec& data);
-	
-	void UpdateLevelText(const FEquipmentSpec& data);
-	
-	void SetUpgradeVisual(const FPlayerClassSpec& data);
-	
-	void UpdateLevelText(const FPlayerClassSpec& data);
 
 	void SetEquipped(bool b);
 
 	void SetCombineText(int stack);
 
+public:
+	void Init(const FPlayerClassSpec& data, int index);
+
+	void UpdateEquipSkin();
+
 	UFUNCTION()
 	void TryEquip();
-
 };

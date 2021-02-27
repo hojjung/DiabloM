@@ -1,0 +1,90 @@
+
+#include "PetEquipButton.h"
+#include "EquipmentPanel.h"
+#include "Managers/DiabloGameInstance.h"
+
+#define LOCTEXT_NAMESPACE "PetEquipButton"
+
+UPetEquipButton::UPetEquipButton(const FObjectInitializer& objInit): Super(objInit), m_ImgIcon(nullptr),
+    m_TextName(nullptr),
+    m_TextDesc(nullptr),
+    m_TextEquip(nullptr),
+    m_TextCombine(nullptr), m_BtnEquip(nullptr),
+    m_BtnCombine(nullptr)
+{
+	m_FormatName= LOCTEXT("LevelName","{0}(Lv.{1})");//LOCTEXT("EquipText","Equipped!")m_FormatCombine= LOCTEXT("CombineText","Combine:0/5");//LOCTEXT("EquipText","Equipped!")
+	m_FormatCombine= LOCTEXT("CombineText","Combine:0/5");//LOCTEXT("EquipText","Equipped!")
+	m_nIndex = -1;
+	m_PetSpec = nullptr;
+}
+
+void UPetEquipButton::UpdateEquipAccessory()
+{
+	SetLevelNameText(*m_PetSpec);
+	SetDescPreviewText(*m_PetSpec);
+	SetEquipped(m_PetSpec->m_nIsEquipped);
+}
+
+void UPetEquipButton::SetLevelNameText(const FPetSpec& data)
+{
+	FFormatOrderedArguments Args;
+
+	Args.Add(data.m_PetData->m_ShowingName);
+	Args.Add(data.m_nLv);
+
+	FText tt = FText::Format(m_FormatName,Args);
+
+	m_TextName->SetText(tt);
+}
+
+void UPetEquipButton::Init(const FPetSpec& data, int index)
+{
+	m_PetSpec = &data;
+	m_TextName->SetText(m_PetSpec->m_PetData->m_ShowingName); 
+	m_nIndex = index;
+	m_BtnEquip->OnClicked.AddDynamic(this,&UPetEquipButton::TryEquip);
+	m_ImgIcon->SetBrushFromTexture(data.m_PetData->m_Icon);
+	UpdateEquipAccessory();
+}
+
+void UPetEquipButton::SetDescPreviewText(const FPetSpec& data)
+{
+	m_TextDesc->SetText(data.m_PetData->GetFormatDescPreview(data.m_nLv));
+}
+
+void UPetEquipButton::SetEquipped(bool b)
+{
+	if(b)
+	{
+		m_TextEquip->SetText(LOCTEXT("EquipText","Equipped!"));
+	}
+	else
+	{
+		m_TextEquip->SetText(LOCTEXT("EquipText","Equip"));
+	}
+}
+
+void UPetEquipButton::SetCombineText(int stack)
+{
+	FFormatOrderedArguments Args;
+	Args.Add(stack);
+
+	FText tt = FText::Format(m_FormatCombine,Args);
+	
+	m_TextCombine->SetText(tt);
+}
+
+
+void UPetEquipButton::TryEquip()
+{
+	if(m_PetSpec)
+	{
+		UDiabloGameInstance::Get->m_EquipManager->TryEquipPet(m_nIndex);
+	}
+	else
+	{
+		PRINTF("EqBtn-NoData");
+	}
+}
+
+#undef LOCTEXT_NAMESPACE

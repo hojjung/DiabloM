@@ -47,7 +47,13 @@ class DIABLOM_API UPlayerUpgradeManager : public UObject
 	GENERATED_BODY()
 	
 public:
+	UPlayerUpgradeManager();
+	
 	FOnUpgradeLevelChanged m_OnUpgradeChanged;
+
+	static UDataTable* StatUpgradeTable;
+
+	static UDataTable* SkillUpgradeTable;
 	
 public:
 	UPROPERTY()

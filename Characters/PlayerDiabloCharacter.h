@@ -6,8 +6,11 @@
 #include "WeakInterfacePtr.h"
 #include "Characters/UnitPawn.h"
 #include "Managers/DiabloCheatManager.h"
+#include "Managers/EquipManager.h"
+
 #include "PlayerDiabloCharacter.generated.h"
 
+struct FPlayerClassSpec;
 class UEquipManager;
 class UPlayerUpgradeManager;
 class UDiaStatPanel;
@@ -45,7 +48,9 @@ protected:
 	//
 protected:
 	UPROPERTY()
-	UPlayerUpgradeManager* m_PlUpgradeManager; 
+	UPlayerUpgradeManager* m_PlUpgradeManager;
+	UPROPERTY()
+	UEquipManager* m_EquipManager;
 	UPROPERTY()
 	UPlayerSensing* m_PlayerSense;
 	UPROPERTY()
@@ -53,7 +58,7 @@ protected:
 	UPROPERTY()
 	ADiabloPlayerController* m_PlayerCon;
 	
-	const FPlayerEntityTable* m_PlayerEntityData;
+	const FPlayerClassSpec* m_PlayerEntityData;
 
 	FDelegateHandle m_InventoryUpdateHandle;
     
@@ -88,8 +93,6 @@ protected:
 
 	TWeakObjectPtr<AUnitPawn> m_FocusOutlinePawn;;
 
-	const FPlayerEntityTable* m_PlayerData;
-
 	FTimerHandle m_AttackTimer;
 
 	bool m_bIsManualMove;
@@ -116,28 +119,27 @@ protected:
 	void ApplyDamage(AUnitPawn* target,const BigInt& finalDmg);
 
 public:
-	void PlayerClassDataInject(UEquipManager* manager);
+	void PlayerClassDataInject(const FPlayerClassSpec& spec);
 	
+	void WeaponDataInject(const FWeaponSpec& spec);
+	
+	void WingDataInject(const FWingSpec& spec);
+	
+	void AccessoryDataInject(const FAccessorySpec& spec);
+	
+	void PetDataInject(const FPetSpec& spec);
+
+public:
 	virtual void FocusTarget(AUnitPawn* target) override;
 	
 	UFUNCTION(BlueprintCallable)
     void Revive();
 	UFUNCTION(BlueprintCallable,Category="Interact")
 	void InteractWithTarget();
-	UFUNCTION(BlueprintCallable)
-    void ResetCombo();
 	
 	void ShowOutlineOnTarget(AUnitPawn* Unit);
 	
 	void HideOutlineOnTarget();
-
-	void EarnExp(float expEarned);
-
-	void EarnGold(float goldEarned);
-
-	void SetGold(float goldEarned);
-	
-	bool SpendGold(float goldSpend);
 
 	float GetAttackSpeedMultiple();
 
@@ -180,6 +182,7 @@ public:
 	}
 
 	void UpdateRegenAbility();
+	
 
 	friend UDiabloGameInstance;
 

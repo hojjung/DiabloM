@@ -4,12 +4,17 @@
 
 #include "CoreMinimal.h"
 
+
+#include "AccessoryEquipButton.h"
 #include "Button.h"
-#include "EquipmentButton.h"
 #include "Overlay.h"
+#include "PetEquipButton.h"
+#include "PlayerSkinEquipButton.h"
 #include "ScrollBox.h"
 #include "VerticalBox.h"
+#include "WeaponEquipButton.h"
 #include "WidgetSwitcher.h"
+#include "WingEquipButton.h"
 #include "Blueprint/UserWidget.h"
 #include "Managers/EquipManager.h"
 
@@ -61,18 +66,28 @@ protected:
 	UOverlay* m_OverlayAccessory;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UScrollBox* m_VertiAccessory;
+	
+protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UEquipmentButton> m_ClassEquipBtn;
+	TSubclassOf<UPlayerSkinEquipButton> m_ClassPlayerEquipBtn;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UWeaponEquipButton> m_ClassWeaponEquipBtn;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UWingEquipButton> m_ClassWingEquipBtn;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UPetEquipButton> m_ClassPetEquipBtn;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UAccessoryEquipButton> m_ClassAccessoryEquipBtn;
 	UPROPERTY()
-	TArray<UEquipmentButton*> m_AryPlSkinBtn;
+	TArray<UPlayerSkinEquipButton*> m_AryPlSkinBtn;
 	UPROPERTY()
-	TArray<UEquipmentButton*> m_AryEqWingBtn;
+	TArray<UWingEquipButton*> m_AryEqWingBtn;
 	UPROPERTY()
-	TArray<UEquipmentButton*> m_AryEqWeaponBtn;
+	TArray<UWeaponEquipButton*> m_AryEqWeaponBtn;
 	UPROPERTY()
-	TArray<UEquipmentButton*> m_AryEqAccessoryBtn;
+	TArray<UAccessoryEquipButton*> m_AryEqAccessoryBtn;
 	UPROPERTY()
-	TArray<UEquipmentButton*> m_AryEqPetBtn;
+	TArray<UPetEquipButton*> m_AryEqPetBtn;
 	
 protected:
 	virtual void NativeOnInitialized() override;
@@ -91,20 +106,4 @@ public:
 	UFUNCTION()
     void SetPanelAccessory();
 	
-	// UFUNCTION()
- //    void UpgradePlSkin();
-	// UFUNCTION()
- //    void UpgradeAtkCri01();
-	// UFUNCTION()
- //    void UpgradeAtkCDmg01();
-	// UFUNCTION()
- //    void UpgradeSkill01();
-	// UFUNCTION()
- //    void UpgradeSkill02();
-	// UFUNCTION()
- //    void UpgradeSkill03();
-	UFUNCTION()
-    void OnUpgradeChanged();
-	UFUNCTION()
-	void OnEquipPlayerSkin();
 };

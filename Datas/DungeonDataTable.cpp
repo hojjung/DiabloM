@@ -1,5 +1,7 @@
 #include "DungeonDataTable.h"
 
+#include "Managers/DungeonManager.h"
+
 //UDataTable* UDungeonDataTable::GetDungeonTable = nullptr;
 
 //TArray<FDungeonDataTableRow*> UDungeonDataTable::AryDgData;
@@ -13,3 +15,12 @@
 // 	
 // }
 
+FItemDropTableHandle::FItemDropTableHandle()
+{
+	DataTable = UDungeonManager::DropDataTable;
+}
+
+FMonsterEntityHandle::FMonsterEntityHandle()
+{
+	DataTable = UDungeonManager::MonsterEntityTable;
+}

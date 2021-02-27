@@ -1,0 +1,88 @@
+#include "AccessoryEquipButton.h"
+#include "EquipmentPanel.h"
+#include "Managers/DiabloGameInstance.h"
+
+#define LOCTEXT_NAMESPACE "AccessoryEquipButton"
+
+UAccessoryEquipButton::UAccessoryEquipButton(const FObjectInitializer& objInit): Super(objInit), m_ImgIcon(nullptr),
+    m_TextName(nullptr),
+    m_TextDesc(nullptr),
+    m_TextEquip(nullptr),
+    m_TextCombine(nullptr), m_BtnEquip(nullptr),
+    m_BtnCombine(nullptr)
+{
+	m_FormatCombine = LOCTEXT("CombineText", "Combine:0/5"); //LOCTEXT("EquipText","Equipped!")
+	m_nIndex = -1;
+	m_AccessorySpec = nullptr;
+}
+
+void UAccessoryEquipButton::UpdateEquipAccessory()
+{
+	SetLevelNameText(*m_AccessorySpec);
+	SetDescPreviewText(*m_AccessorySpec);
+	SetCombineText(m_AccessorySpec->m_nStackCount);
+	SetEquipped(m_AccessorySpec->m_nIsEquipped);
+}
+
+void UAccessoryEquipButton::SetLevelNameText(const FAccessorySpec& data)
+{
+	FFormatOrderedArguments Args;
+
+	Args.Add(data.m_AccessoryData->m_ShowingName);
+	Args.Add(data.m_nLv);
+
+	FText tt = FText::Format(m_FormatCombine,Args);
+
+	m_TextName->SetText(tt);
+}
+
+void UAccessoryEquipButton::Init(const FAccessorySpec& data, int index)
+{
+	m_AccessorySpec = &data;
+	m_TextName->SetText(m_AccessorySpec->m_AccessoryData->m_ShowingName); 
+	m_nIndex = index;
+	m_BtnEquip->OnClicked.AddDynamic(this,&UAccessoryEquipButton::TryEquip);
+	m_ImgIcon->SetBrushFromTexture(data.m_AccessoryData->m_Icon);
+	UpdateEquipAccessory();
+}
+
+void UAccessoryEquipButton::SetDescPreviewText(const FAccessorySpec& data)
+{
+	m_TextDesc->SetText(data.m_AccessoryData->GetFormatDescPreview(data.m_nLv));
+}
+
+void UAccessoryEquipButton::SetEquipped(bool b)
+{
+	if(b)
+	{
+		m_TextEquip->SetText(LOCTEXT("EquipText","Equipped!"));
+	}
+	else
+	{
+		m_TextEquip->SetText(LOCTEXT("EquipText","Equip"));
+	}
+}
+
+void UAccessoryEquipButton::SetCombineText(int stack)
+{
+	FFormatOrderedArguments Args;
+	Args.Add(stack);
+
+	FText tt = FText::Format(m_FormatCombine,Args);
+	
+	m_TextCombine->SetText(tt);
+}
+
+void UAccessoryEquipButton::TryEquip()
+{
+	if(m_AccessorySpec)
+	{
+		UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory(m_nIndex);
+	}
+	else
+	{
+		PRINTF("EqBtn-NoData");
+	}
+}
+
+#undef LOCTEXT_NAMESPACE
