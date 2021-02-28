@@ -16,19 +16,41 @@ void UEquipmentPanel::NativeOnInitialized()
 
 	int Index = 0;
 
+	APlayerController* PlCon = UGameplayStatics::GetPlayerController(UDiabloGameInstance::Get->GetWorld(),0);
+
 	for(const FPlayerClassSpec& PlSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryPlayerSkin)
 	{
-		UPlayerSkinEquipButton* EqBtn = CreateWidget<UPlayerSkinEquipButton>(this,m_ClassPlayerEquipBtn);
+		UPlayerSkinEquipButton* EqBtn1 = CreateWidget<UPlayerSkinEquipButton>(PlCon,m_ClassPlayerEquipBtn);
 
-		EqBtn->Init(PlSpec,Index++);
+		EqBtn1->Init(PlSpec,Index++);
 		
-		m_AryPlSkinBtn.Add(EqBtn);
+		m_AryPlSkinBtn.Add(EqBtn1);
 
-		m_VertiSkin->AddChild(EqBtn);
+		m_VertiSkin->AddChild(EqBtn1);
 
-		EqBtn->SetPadding(MargW);
+		EqBtn1->SetPadding(MargW);
 
 		if(PlSpec.m_nIsUnlocked<1)
+		{
+			//EqBtn1->m_BtnEquip->SetIsEnabled(false);
+		}
+	}
+
+	Index = 0;
+
+	for(const FWingSpec& EqSpec2 : UDiabloGameInstance::Get->m_EquipManager->m_AryWings)
+	{
+		UWingEquipButton* EqBtn2 = CreateWidget<UWingEquipButton>(PlCon,m_ClassWingEquipBtn);
+
+		EqBtn2->Init(EqSpec2,Index++);
+		
+		m_AryEqWingBtn.Add(EqBtn2);
+
+		m_VertiWing->AddChild(EqBtn2);
+
+		EqBtn2->SetPadding(MargW);
+
+		if(EqSpec2.m_nIsUnlocked<1)
 		{
 			//EqBtn->m_BtnEquip->SetIsEnabled(false);
 		}
@@ -36,59 +58,39 @@ void UEquipmentPanel::NativeOnInitialized()
 
 	Index = 0;
 
-	for(const FWingSpec& EqSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryWings)
+	for(const FWeaponSpec& EqSpec3 : UDiabloGameInstance::Get->m_EquipManager->m_AryWeapons)
 	{
-		UWingEquipButton* EqBtn = CreateWidget<UWingEquipButton>(this,m_ClassWingEquipBtn);
+		UWeaponEquipButton* EqBtn3 = CreateWidget<UWeaponEquipButton>(PlCon,m_ClassWeaponEquipBtn);
 
-		EqBtn->Init(EqSpec,Index++);
+		EqBtn3->Init(EqSpec3,Index++);
 		
-		m_AryEqWingBtn.Add(EqBtn);
+		m_AryEqWeaponBtn.Add(EqBtn3);
 
-		m_VertiWing->AddChild(EqBtn);
+		m_VertiWeapon->AddChild(EqBtn3);
 
-		EqBtn->SetPadding(MargW);
+		EqBtn3->SetPadding(MargW);
 
-		if(EqSpec.m_nIsUnlocked<1)
+		if(EqSpec3.m_nLv<1)
 		{
 			//EqBtn->m_BtnEquip->SetIsEnabled(false);
 		}
 	}
 
-	Index++;
+	Index = 0;
 
-	for(const FWeaponSpec& EqSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryWeapons)
+	for(const FPetSpec& EqSpec4 : UDiabloGameInstance::Get->m_EquipManager->m_AryPets)
 	{
-		UWeaponEquipButton* EqBtn = CreateWidget<UWeaponEquipButton>(this,m_ClassWeaponEquipBtn);
-
-		EqBtn->Init(EqSpec,Index);
+		UPetEquipButton* EqBtn4 = CreateWidget<UPetEquipButton>(PlCon,m_ClassPetEquipBtn);
 		
-		m_AryEqWeaponBtn.Add(EqBtn);
-
-		m_VertiWeapon->AddChild(EqBtn);
-
-		EqBtn->SetPadding(MargW);
-
-		if(EqSpec.m_nLv<1)
-		{
-			//EqBtn->m_BtnEquip->SetIsEnabled(false);
-		}
-	}
-
-	Index++;
-
-	for(const FPetSpec& EqSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryPets)
-	{
-		UPetEquipButton* EqBtn = CreateWidget<UPetEquipButton>(this,m_ClassPetEquipBtn);
+		EqBtn4->Init(EqSpec4,Index++);
 		
-		EqBtn->Init(EqSpec,Index);
-		
-		m_AryEqPetBtn.Add(EqBtn);
+		m_AryEqPetBtn.Add(EqBtn4);
 
-		m_VertiPet->AddChild(EqBtn);
+		m_VertiPet->AddChild(EqBtn4);
 
-		EqBtn->SetPadding(MargW);
+		EqBtn4->SetPadding(MargW);
 
-		if(EqSpec.m_nLv<1)
+		if(EqSpec4.m_nLv<1)
 		{
 			//EqBtn->m_BtnEquip->SetIsEnabled(false);
 		}
@@ -96,19 +98,21 @@ void UEquipmentPanel::NativeOnInitialized()
 
 	Index = 0;
 	
-	for(const FAccessorySpec& EqSpec : UDiabloGameInstance::Get->m_EquipManager->m_AryAcce)
+	for(const FAccessorySpec& EqSpec5 : UDiabloGameInstance::Get->m_EquipManager->m_AryAcce)
 	{
-		UAccessoryEquipButton* EqBtn = CreateWidget<UAccessoryEquipButton>(this,m_ClassAccessoryEquipBtn);
+		FName ID = *FString::Printf(TEXT("%p"), &EqSpec5);
 
-		EqBtn->Init(EqSpec,Index++);
+		UAccessoryEquipButton* EqBtn5 = CreateWidget<UAccessoryEquipButton>(PlCon,m_ClassAccessoryEquipBtn,ID);
+
+		EqBtn5->Init(EqSpec5,Index++);
 		
-		m_AryEqAccessoryBtn.Add(EqBtn);
+		m_AryEqAccessoryBtn.Add(EqBtn5);
 
-		m_VertiAccessory->AddChild(EqBtn);
+		m_VertiAccessory->AddChild(EqBtn5);
 
-		EqBtn->SetPadding(MargW);
+		EqBtn5->SetPadding(MargW);
 
-		if(EqSpec.m_nLv<1)
+		if(EqSpec5.m_nLv<1)
 		{
 			//EqBtn->m_BtnEquip->SetIsEnabled(false);
 		}
@@ -122,6 +126,57 @@ void UEquipmentPanel::NativeOnInitialized()
 	m_BtnPet->OnClicked.AddDynamic(this,&UEquipmentPanel::UEquipmentPanel::SetPanelPet);
 	m_BtnAccessory1->OnClicked.AddDynamic(this,&UEquipmentPanel::SetPanelAccessory);
 	m_BtnAccessory2->OnClicked.AddDynamic(this,&UEquipmentPanel::SetPanelAccessory);
+	//
+	UDiabloGameInstance::Get->m_EquipManager->m_OnAccessoryChanged1.AddUObject(this,&UEquipmentPanel::OnAccessoryChanged);
+	UDiabloGameInstance::Get->m_EquipManager->m_OnPlSkinChanged.AddUObject(this,&UEquipmentPanel::OnSkinChanged);
+	UDiabloGameInstance::Get->m_EquipManager->m_OnPetChanged.AddUObject(this,&UEquipmentPanel::OnPetChanged);
+	UDiabloGameInstance::Get->m_EquipManager->m_OnWeaponChanged.AddUObject(this,&UEquipmentPanel::OnWeaponChanged);
+	UDiabloGameInstance::Get->m_EquipManager->m_OnWingChanged.AddUObject(this,&UEquipmentPanel::OnWingChanged);
+}
+
+void UEquipmentPanel::OnSkinChanged(int pre, int next)
+{
+	if(pre>-1)
+	{
+		m_AryPlSkinBtn[pre]->UpdateEquipSkin();
+	}
+	m_AryPlSkinBtn[next]->UpdateEquipSkin();
+}
+
+void UEquipmentPanel::OnWeaponChanged(int pre, int next)
+{
+	if(pre>-1)
+	{
+		m_AryEqWeaponBtn[pre]->UpdateEquipWeapon();
+	}
+	m_AryEqWeaponBtn[next]->UpdateEquipWeapon();
+}
+
+void UEquipmentPanel::OnWingChanged(int pre, int next)
+{
+	if(pre>-1)
+	{
+		m_AryEqWingBtn[pre]->UpdateEquipWing();
+	}
+	m_AryEqWingBtn[next]->UpdateEquipWing();
+}
+
+void UEquipmentPanel::OnPetChanged(int pre, int next)
+{
+	if(pre>-1)
+	{
+		m_AryEqPetBtn[pre]->UpdateEquipPet();
+	}
+	m_AryEqPetBtn[next]->UpdateEquipPet();
+}
+
+void UEquipmentPanel::OnAccessoryChanged(int pre, int next)
+{
+	if(pre>-1)
+	{
+		m_AryEqAccessoryBtn[pre]->UpdateEquipAccessory();
+	}
+	m_AryEqAccessoryBtn[next]->UpdateEquipAccessory();
 }
 
 void UEquipmentPanel::ClosePanel()

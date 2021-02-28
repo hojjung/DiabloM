@@ -20,6 +20,7 @@ void UPlayerSkinEquipButton::UpdateEquipSkin()
 {
 	SetDescPreviewText(*m_SkinSpec);
 	SetCombineText(m_SkinSpec->m_nStackCount);
+	PRINTF("ASD : %d",m_SkinSpec->m_nIsEquipped);
 	SetEquipped(m_SkinSpec->m_nIsEquipped);
 }
 
@@ -42,11 +43,11 @@ void UPlayerSkinEquipButton::SetEquipped(bool b)
 {
 	if(b)
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipText","Equipped!"));
+		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","Equipped!"));
 	}
 	else
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipText","Equip"));
+		m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
 	}
 }
 

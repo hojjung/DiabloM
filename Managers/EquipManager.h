@@ -278,7 +278,8 @@ public:
 	FOnEquipChanged m_OnWeaponChanged;
 	FOnEquipChanged m_OnWingChanged;
 	FOnEquipChanged m_OnPetChanged;
-	FOnEquipChanged m_OnAccessoryChanged;
+	FOnEquipChanged m_OnAccessoryChanged1;
+	FOnEquipChanged m_OnAccessoryChanged2;
 	
 	TArray<FPlayerClassSpec> m_AryPlayerSkin;
 	TArray<FWingSpec> m_AryWings;
@@ -290,7 +291,8 @@ public:
 	int m_nSelectedWing;
 	int m_nSelectedWeapon;
 	int m_nSelectedPet;
-	int m_nSelectedAccessory;
+	int m_nSelectedAccessory1;
+	int m_nSelectedAccessory2;
 
 protected:
 	int StringSplitEachItem(const FString& equipDatas, TArray<FString>& outStrAry) const;
@@ -312,5 +314,7 @@ public:
 
 	void TryEquipPet(int index);
 
-	void TryEquipAccessory(int index);
+	void TryEquipAccessory1(int index);
+
+	void TryEquipAccessory2(int index);
 };

@@ -18,7 +18,6 @@ class DIABLOM_API UPlayerSkinEquipButton : public UUserWidget
 
 public:
 	UPlayerSkinEquipButton(const FObjectInitializer& objInit);
-	
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))

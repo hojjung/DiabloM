@@ -29,7 +29,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextEquip;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TextCombine;
+	UTextBlock* m_TextCost;
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -38,7 +38,9 @@ public:
 	UButton* m_BtnCombine;
 
 protected:
-	FTextFormat m_FormatCombine;
+	FTextFormat m_FormatName;
+	
+	FTextFormat m_FormatCost;
 
 	const FAccessorySpec* m_AccessorySpec;
 
@@ -49,7 +51,7 @@ protected:
 
 	void SetEquipped(bool b);
 
-	void SetCombineText(int stack);
+	void SetCostText(int stack);
 
 	void SetLevelNameText(const FAccessorySpec& data);
 

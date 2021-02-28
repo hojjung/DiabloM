@@ -5,6 +5,8 @@
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "Managers/EquipManager.h"
+#include "Widgets/CommonElement/ImageAndText.h"
+
 
 #include "WeaponEquipButton.generated.h"
 
@@ -17,8 +19,7 @@ class DIABLOM_API UWeaponEquipButton : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UWeaponEquipButton(const FObjectInitializer& objInit);
-	
+	virtual void NativeOnInitialized() override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -32,7 +33,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextCombine;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TextLevel;
+	UImageAndText* m_ImagTxtCost;
 	
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -59,7 +60,8 @@ protected:
 	void SetCombineText(int stack);
 
 	void SetLevelNameText(const FWeaponSpec& data);
-	
+	void SetCostText();
+
 public:
 	void Init(const FWeaponSpec& data,int index);
 

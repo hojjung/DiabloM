@@ -78,19 +78,30 @@ protected:
 	TSubclassOf<UPetEquipButton> m_ClassPetEquipBtn;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UAccessoryEquipButton> m_ClassAccessoryEquipBtn;
-	UPROPERTY()
+	UPROPERTY(Transient)
 	TArray<UPlayerSkinEquipButton*> m_AryPlSkinBtn;
-	UPROPERTY()
+	UPROPERTY(Transient)
 	TArray<UWingEquipButton*> m_AryEqWingBtn;
-	UPROPERTY()
+	UPROPERTY(Transient)
 	TArray<UWeaponEquipButton*> m_AryEqWeaponBtn;
-	UPROPERTY()
+	UPROPERTY(Transient)
 	TArray<UAccessoryEquipButton*> m_AryEqAccessoryBtn;
-	UPROPERTY()
+	UPROPERTY(Transient)
 	TArray<UPetEquipButton*> m_AryEqPetBtn;
 	
 protected:
 	virtual void NativeOnInitialized() override;
+
+	void OnSkinChanged(int pre,int next);
+
+	void OnWeaponChanged(int pre,int next);
+
+	void OnWingChanged(int pre,int next);
+
+	void OnPetChanged(int pre,int next);
+
+	void OnAccessoryChanged(int pre,int next);
+	
 
 public:
 	UFUNCTION()
@@ -105,5 +116,5 @@ public:
     void SetPanelWeapon();
 	UFUNCTION()
     void SetPanelAccessory();
-	
+
 };

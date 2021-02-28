@@ -37,11 +37,11 @@ void UWingEquipButton::SetEquipped(bool b)
 {
 	if(b)
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipText","Equipped!"));
+		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","Equipped!"));
 	}
 	else
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipText","Equip"));
+		m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
 	}
 }
 

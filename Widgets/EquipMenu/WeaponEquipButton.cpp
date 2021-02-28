@@ -6,34 +6,15 @@
 
 #define LOCTEXT_NAMESPACE "WeaponEquipButton"
 
-UWeaponEquipButton::UWeaponEquipButton(const FObjectInitializer& objInit):Super(objInit)
+
+void UWeaponEquipButton::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
 	m_FormatName= LOCTEXT("LevelName","{0}(Lv.{1})");//LOCTEXT("EquipText","Equipped!")
 	m_FormatCombine= LOCTEXT("CombineText","Combine:0/5");//LOCTEXT("EquipText","Equipped!")
 	m_nIndex=-1;
 	m_WeaponSpec = nullptr;
 }
-
-void UWeaponEquipButton::SetLevelNameText(const FWeaponSpec& data)
-{
-	FFormatOrderedArguments Args;
-
-	Args.Add(data.m_EquipData->m_ShowingText);
-	Args.Add(data.m_nLv);
-
-	FText tt = FText::Format(m_FormatCombine,Args);
-
-	m_TextName->SetText(tt);
-}
-
-void UWeaponEquipButton::UpdateEquipWeapon()
-{
-	SetLevelNameText(*m_WeaponSpec);
-	SetDescPreviewText(*m_WeaponSpec);
-	SetCombineText(m_WeaponSpec->m_nStackCount);
-	SetEquipped(m_WeaponSpec->m_nIsEquipped);
-}
-
 void UWeaponEquipButton::Init(const FWeaponSpec& data, int index)
 {
 	m_WeaponSpec = &data;
@@ -44,6 +25,34 @@ void UWeaponEquipButton::Init(const FWeaponSpec& data, int index)
 	UpdateEquipWeapon();
 }
 
+
+void UWeaponEquipButton::SetLevelNameText(const FWeaponSpec& data)
+{
+	FFormatOrderedArguments Args;
+
+	Args.Add(data.m_EquipData->m_ShowingText);
+	Args.Add(data.m_nLv);
+
+	FText tt = FText::Format(m_FormatName,Args);
+
+	m_TextName->SetText(tt);
+}
+
+void UWeaponEquipButton::SetCostText()
+{
+	m_ImagTxtCost->SetString(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_WeaponSpec->m_LvlUpCost,2)));
+}
+
+void UWeaponEquipButton::UpdateEquipWeapon()
+{
+	SetLevelNameText(*m_WeaponSpec);
+	SetDescPreviewText(*m_WeaponSpec);
+	SetCombineText(m_WeaponSpec->m_nStackCount);
+	SetEquipped(m_WeaponSpec->m_nIsEquipped);
+	SetCostText();
+}
+
+
 void UWeaponEquipButton::SetDescPreviewText(const FWeaponSpec& data)
 {
 	m_TextDesc->SetText(data.m_EquipData->GetFormatDescPreview(data.m_nLv));
@@ -53,11 +62,11 @@ void UWeaponEquipButton::SetEquipped(bool b)
 {
 	if(b)
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipText","Equipped!"));
+		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","Equipped!"));
 	}
 	else
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipText","Equip"));
+		m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
 	}
 }
 

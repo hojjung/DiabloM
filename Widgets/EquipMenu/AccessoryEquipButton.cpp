@@ -8,10 +8,11 @@ UAccessoryEquipButton::UAccessoryEquipButton(const FObjectInitializer& objInit):
     m_TextName(nullptr),
     m_TextDesc(nullptr),
     m_TextEquip(nullptr),
-    m_TextCombine(nullptr), m_BtnEquip(nullptr),
+    m_TextCost(nullptr), m_BtnEquip(nullptr),
     m_BtnCombine(nullptr)
 {
-	m_FormatCombine = LOCTEXT("CombineText", "Combine:0/5"); //LOCTEXT("EquipText","Equipped!")
+	m_FormatName= LOCTEXT("LevelName","{0}(Lv.{1})");
+	m_FormatCost = LOCTEXT("CombineText", "{0}/{1}"); //LOCTEXT("EquipText","Equipped!")
 	m_nIndex = -1;
 	m_AccessorySpec = nullptr;
 }
@@ -20,7 +21,7 @@ void UAccessoryEquipButton::UpdateEquipAccessory()
 {
 	SetLevelNameText(*m_AccessorySpec);
 	SetDescPreviewText(*m_AccessorySpec);
-	SetCombineText(m_AccessorySpec->m_nStackCount);
+	SetCostText(m_AccessorySpec->m_nStackCount);
 	SetEquipped(m_AccessorySpec->m_nIsEquipped);
 }
 
@@ -31,7 +32,7 @@ void UAccessoryEquipButton::SetLevelNameText(const FAccessorySpec& data)
 	Args.Add(data.m_AccessoryData->m_ShowingName);
 	Args.Add(data.m_nLv);
 
-	FText tt = FText::Format(m_FormatCombine,Args);
+	FText tt = FText::Format(m_FormatName,Args);
 
 	m_TextName->SetText(tt);
 }
@@ -55,29 +56,30 @@ void UAccessoryEquipButton::SetEquipped(bool b)
 {
 	if(b)
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipText","Equipped!"));
+		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","Equipped!"));
 	}
 	else
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipText","Equip"));
+		m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
 	}
 }
 
-void UAccessoryEquipButton::SetCombineText(int stack)
+void UAccessoryEquipButton::SetCostText(int stack)
 {
 	FFormatOrderedArguments Args;
 	Args.Add(stack);
+	Args.Add(m_AccessorySpec->m_LvlUpCost);
 
-	FText tt = FText::Format(m_FormatCombine,Args);
+	FText tt = FText::Format(m_FormatCost,Args);
 	
-	m_TextCombine->SetText(tt);
+	m_TextCost->SetText(tt);
 }
 
 void UAccessoryEquipButton::TryEquip()
 {
 	if(m_AccessorySpec)
 	{
-		UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory(m_nIndex);
+		UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory1(m_nIndex);
 	}
 	else
 	{

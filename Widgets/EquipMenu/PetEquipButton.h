@@ -5,6 +5,8 @@
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "Managers/EquipManager.h"
+#include "Widgets/CommonElement/ImageAndText.h"
+
 
 #include "PetEquipButton.generated.h"
 
@@ -30,6 +32,8 @@ protected:
 	UTextBlock* m_TextEquip;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextCombine;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_ImagTxtCost;
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -55,11 +59,13 @@ protected:
 	void SetCombineText(int stack);
 
 	void SetLevelNameText(const FPetSpec& data);
+
+	void SetCostText();
 	
 public:
 	void Init(const FPetSpec& data, int index);
 
-	void UpdateEquipAccessory();
+	void UpdateEquipPet();
 
 	UFUNCTION()
 	void TryEquip();

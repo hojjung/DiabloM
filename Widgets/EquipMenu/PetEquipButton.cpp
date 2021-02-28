@@ -18,11 +18,18 @@ UPetEquipButton::UPetEquipButton(const FObjectInitializer& objInit): Super(objIn
 	m_PetSpec = nullptr;
 }
 
-void UPetEquipButton::UpdateEquipAccessory()
+void UPetEquipButton::SetCostText()
+{
+	m_ImagTxtCost->SetString(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_PetSpec->m_LvlUpCost,2)));
+}
+
+void UPetEquipButton::UpdateEquipPet()
 {
 	SetLevelNameText(*m_PetSpec);
 	SetDescPreviewText(*m_PetSpec);
 	SetEquipped(m_PetSpec->m_nIsEquipped);
+	SetCostText();
+	SetCombineText(m_PetSpec->m_nStackCount);
 }
 
 void UPetEquipButton::SetLevelNameText(const FPetSpec& data)
@@ -44,7 +51,7 @@ void UPetEquipButton::Init(const FPetSpec& data, int index)
 	m_nIndex = index;
 	m_BtnEquip->OnClicked.AddDynamic(this,&UPetEquipButton::TryEquip);
 	m_ImgIcon->SetBrushFromTexture(data.m_PetData->m_Icon);
-	UpdateEquipAccessory();
+	UpdateEquipPet();
 }
 
 void UPetEquipButton::SetDescPreviewText(const FPetSpec& data)
@@ -56,11 +63,11 @@ void UPetEquipButton::SetEquipped(bool b)
 {
 	if(b)
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipText","Equipped!"));
+		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","Equipped!"));
 	}
 	else
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipText","Equip"));
+		m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
 	}
 }
 

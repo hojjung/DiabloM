@@ -24,8 +24,8 @@ public:
 	UTexture2D* m_Icon;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FText m_ShowingText;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FString m_UpgradeDescFormat = "Dmg Increase:{0}%>>P{1}%\nAccuracy Increase:{2}>>P{3}";
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly ,meta = (MultiLine = true))
+	FText m_UpgradeDescFormat =FText::FromString( "Dmg Increase:{0}%>>P{1}%\nAccuracy Increase:{2}>>P{3}");
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AEquipmentActor> m_VisualActor = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0"))
@@ -70,7 +70,7 @@ public:
 
 	FText GetFormatDescPreview(int level) const
 	{
-		FTextFormat Format = FText::FromString(m_UpgradeDescFormat);
+		FTextFormat Format = m_UpgradeDescFormat;
 
 		FFormatOrderedArguments Args;
 		
@@ -114,8 +114,8 @@ public:
 	FText m_ShowingName;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UTexture2D* m_Icon;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FString m_DescFormat = "Attack Speed Increase:{0}%";
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
+	FString m_DescFormat = "Attack Speed {0}%";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USkeletalMesh* m_PlayerSkin = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -158,7 +158,7 @@ public:
 	UTexture2D* m_WingIcon;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FText m_ShowingName;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
 	FString m_DescFormat = "Move Speed Increase:{0}%";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AEquipmentActor> m_VisualWingActor = nullptr;
@@ -194,7 +194,7 @@ public:
 	FText m_ShowingName;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UTexture2D* m_Icon;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
 	FString m_DescFormat = "Gold Gain Increase:{0}%";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USkeletalMesh* m_PetSkin = nullptr;
@@ -275,7 +275,7 @@ public:
 	FText m_ShowingName;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UTexture2D* m_Icon;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
 	FString m_UpgradeDescFormat = "Current:{0}>>P{1}";
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	int m_nMaxLevel = 100;
