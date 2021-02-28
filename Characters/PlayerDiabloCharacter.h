@@ -99,6 +99,9 @@ protected:
 
 	TQueue<char> m_QueDmgType;
 
+	UPROPERTY()
+	AEquipmentActor* m_CreatedWing;
+
 protected:
 	virtual void BeginPlay() override;
 	

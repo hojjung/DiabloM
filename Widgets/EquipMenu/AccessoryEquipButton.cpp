@@ -37,8 +37,9 @@ void UAccessoryEquipButton::SetLevelNameText(const FAccessorySpec& data)
 	m_TextName->SetText(tt);
 }
 
-void UAccessoryEquipButton::Init(const FAccessorySpec& data, int index)
+void UAccessoryEquipButton::Init(const FAccessorySpec& data, UEquipmentPanel* equipPanel,int index)
 {
+	m_ParentEquip = equipPanel;
 	m_AccessorySpec = &data;
 	m_TextName->SetText(m_AccessorySpec->m_AccessoryData->m_ShowingName); 
 	m_nIndex = index;
@@ -56,7 +57,14 @@ void UAccessoryEquipButton::SetEquipped(bool b)
 {
 	if(b)
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","Equipped!"));
+		if(m_ParentEquip->m_nAccessorySelector == 0)
+		{
+			m_TextEquip->SetText(LOCTEXT("EquipSuccessText1","Equipped-1"));
+		}
+		else if(m_ParentEquip->m_nAccessorySelector == 1)
+		{
+			m_TextEquip->SetText(LOCTEXT("EquipSuccessText2","Equipped-2"));
+		}
 	}
 	else
 	{
@@ -79,7 +87,14 @@ void UAccessoryEquipButton::TryEquip()
 {
 	if(m_AccessorySpec)
 	{
-		UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory1(m_nIndex);
+		if(m_ParentEquip->m_nAccessorySelector ==0)
+		{
+			UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory1(m_nIndex);	
+		}
+		else if(m_ParentEquip->m_nAccessorySelector ==1)
+		{
+			UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory2(m_nIndex);
+		}
 	}
 	else
 	{

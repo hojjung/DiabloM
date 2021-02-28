@@ -88,6 +88,12 @@ protected:
 	TArray<UAccessoryEquipButton*> m_AryEqAccessoryBtn;
 	UPROPERTY(Transient)
 	TArray<UPetEquipButton*> m_AryEqPetBtn;
+
+	FSlateBrush m_CachedNormal;
+
+	UButton** m_PtrBtn;
+public:
+	int m_nAccessorySelector = -1;
 	
 protected:
 	virtual void NativeOnInitialized() override;
@@ -101,7 +107,10 @@ protected:
 	void OnPetChanged(int pre,int next);
 
 	void OnAccessoryChanged(int pre,int next);
-	
+
+	void SetHoverImage(UButton** btnWant);
+
+	void SetNormalImage();
 
 public:
 	UFUNCTION()
@@ -115,6 +124,8 @@ public:
 	UFUNCTION()
     void SetPanelWeapon();
 	UFUNCTION()
-    void SetPanelAccessory();
+    void SetPanelAccessory1();
+	UFUNCTION()
+    void SetPanelAccessory2();
 
 };

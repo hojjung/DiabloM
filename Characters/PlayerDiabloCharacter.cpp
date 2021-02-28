@@ -139,6 +139,21 @@ void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
 	}
 
 	PRINTF("DiaChar-DataInject Wing");
+
+	if(m_CreatedWing)
+	{
+		m_CreatedWing->Destroy();
+	}
+
+	FActorSpawnParameters Param;
+
+	Param.bNoFail = true;
+	
+	m_CreatedWing = GetWorld()->SpawnActor<AEquipmentActor>(spec.m_WingData->m_ClassVisualWingActor,GetActorLocation(),GetActorRotation(),Param);
+
+	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::KeepRelative,false);
+	
+	m_CreatedWing->AttachToComponent(m_SkBody,Rule,"Wing");
 }
 
 void APlayerDiabloCharacter::AccessoryDataInject(const FAccessorySpec& spec)

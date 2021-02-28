@@ -161,7 +161,7 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
 	FString m_DescFormat = "Move Speed Increase:{0}%";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<AEquipmentActor> m_VisualWingActor = nullptr;
+	TSubclassOf<AEquipmentActor> m_ClassVisualWingActor = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0", UIMax = "3.3"))
 	float m_fWingMoveSpeedMultiple = 1.f;
 

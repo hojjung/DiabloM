@@ -8,6 +8,7 @@
 
 #include "AccessoryEquipButton.generated.h"
 
+class UEquipmentPanel;
 /**
  * 
  */
@@ -30,7 +31,8 @@ protected:
 	UTextBlock* m_TextEquip;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextCost;
-
+	UPROPERTY()
+	UEquipmentPanel* m_ParentEquip;
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnEquip;
@@ -56,7 +58,7 @@ protected:
 	void SetLevelNameText(const FAccessorySpec& data);
 
 public:
-	void Init(const FAccessorySpec& data, int index);
+	void Init(const FAccessorySpec& data, UEquipmentPanel* equipPanel, int index);
 
 	void UpdateEquipAccessory();
 

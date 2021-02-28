@@ -361,7 +361,7 @@ void UEquipManager::TryEquipAccessory2(int index)
 
 	Cast<APlayerDiabloCharacter>( UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(),0))->AccessoryDataInject(m_AryAcce[index]);
 
-	m_OnAccessoryChanged2.Broadcast(m_nSelectedAccessory2,index);
+	m_OnAccessoryChanged1.Broadcast(m_nSelectedAccessory2,index);//??
 
 	m_nSelectedAccessory2 = index;
 }

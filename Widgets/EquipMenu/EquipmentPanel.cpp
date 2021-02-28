@@ -104,7 +104,7 @@ void UEquipmentPanel::NativeOnInitialized()
 
 		UAccessoryEquipButton* EqBtn5 = CreateWidget<UAccessoryEquipButton>(PlCon,m_ClassAccessoryEquipBtn,ID);
 
-		EqBtn5->Init(EqSpec5,Index++);
+		EqBtn5->Init(EqSpec5,this,Index++);
 		
 		m_AryEqAccessoryBtn.Add(EqBtn5);
 
@@ -124,14 +124,17 @@ void UEquipmentPanel::NativeOnInitialized()
 	m_BtnWeapon->OnClicked.AddDynamic(this,&UEquipmentPanel::UEquipmentPanel::SetPanelWeapon);
 	m_BtnWing->OnClicked.AddDynamic(this,&UEquipmentPanel::UEquipmentPanel::SetPanelWing);
 	m_BtnPet->OnClicked.AddDynamic(this,&UEquipmentPanel::UEquipmentPanel::SetPanelPet);
-	m_BtnAccessory1->OnClicked.AddDynamic(this,&UEquipmentPanel::SetPanelAccessory);
-	m_BtnAccessory2->OnClicked.AddDynamic(this,&UEquipmentPanel::SetPanelAccessory);
+	m_BtnAccessory1->OnClicked.AddDynamic(this,&UEquipmentPanel::SetPanelAccessory1);
+	m_BtnAccessory2->OnClicked.AddDynamic(this,&UEquipmentPanel::SetPanelAccessory2);
 	//
 	UDiabloGameInstance::Get->m_EquipManager->m_OnAccessoryChanged1.AddUObject(this,&UEquipmentPanel::OnAccessoryChanged);
+	UDiabloGameInstance::Get->m_EquipManager->m_OnAccessoryChanged2.AddUObject(this,&UEquipmentPanel::OnAccessoryChanged);
 	UDiabloGameInstance::Get->m_EquipManager->m_OnPlSkinChanged.AddUObject(this,&UEquipmentPanel::OnSkinChanged);
 	UDiabloGameInstance::Get->m_EquipManager->m_OnPetChanged.AddUObject(this,&UEquipmentPanel::OnPetChanged);
 	UDiabloGameInstance::Get->m_EquipManager->m_OnWeaponChanged.AddUObject(this,&UEquipmentPanel::OnWeaponChanged);
 	UDiabloGameInstance::Get->m_EquipManager->m_OnWingChanged.AddUObject(this,&UEquipmentPanel::OnWingChanged);
+
+	SetPanelSkin();
 }
 
 void UEquipmentPanel::OnSkinChanged(int pre, int next)
@@ -179,6 +182,31 @@ void UEquipmentPanel::OnAccessoryChanged(int pre, int next)
 	m_AryEqAccessoryBtn[next]->UpdateEquipAccessory();
 }
 
+void UEquipmentPanel::SetHoverImage(UButton** btnWant)
+{
+	m_PtrBtn = btnWant;
+	
+	auto& Style = (*m_PtrBtn)->WidgetStyle;
+	
+	m_CachedNormal = Style.Normal; 
+	
+	Style.Normal = Style.Hovered;
+
+	(*m_PtrBtn)->SetStyle(Style);
+}
+
+void UEquipmentPanel::SetNormalImage()
+{
+	if(!m_PtrBtn)
+	{
+		return;
+	}
+	
+	(*m_PtrBtn)->WidgetStyle.Normal = m_CachedNormal;
+	
+	(*m_PtrBtn)->SetStyle((*m_PtrBtn)->WidgetStyle);
+}
+
 void UEquipmentPanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
@@ -187,26 +215,59 @@ void UEquipmentPanel::ClosePanel()
 void UEquipmentPanel::SetPanelSkin()
 {
 	m_SwitcherPanel->SetActiveWidget(m_OverlaySkin);
+
+	SetNormalImage();
+	
+	SetHoverImage(&m_BtnClassSkin);
 }
 
 void UEquipmentPanel::SetPanelWing()
 {
 	m_SwitcherPanel->SetActiveWidget(m_OverlayWing);
+
+	SetNormalImage();
+	
+	SetHoverImage(&m_BtnWing);
 }
 
 void UEquipmentPanel::SetPanelPet()
 {
 	m_SwitcherPanel->SetActiveWidget(m_OverlayPet);
+
+	SetNormalImage();
+	
+	SetHoverImage(&m_BtnPet);
 }
 
 void UEquipmentPanel::SetPanelWeapon()
 {
 	m_SwitcherPanel->SetActiveWidget(m_OverlayWeapon);
+
+	SetNormalImage();
+	
+	SetHoverImage(&m_BtnWeapon);
 }
 
-void UEquipmentPanel::SetPanelAccessory()
+void UEquipmentPanel::SetPanelAccessory1()
 {
 	m_SwitcherPanel->SetActiveWidget(m_OverlayAccessory);
+
+	m_nAccessorySelector = 0;
+
+	SetNormalImage();
+	
+	SetHoverImage(&m_BtnAccessory1);
+}
+
+void UEquipmentPanel::SetPanelAccessory2()
+{
+	m_SwitcherPanel->SetActiveWidget(m_OverlayAccessory);
+
+	m_nAccessorySelector = 1;
+
+	SetNormalImage();
+	
+	SetHoverImage(&m_BtnAccessory2);
 }
 
 
