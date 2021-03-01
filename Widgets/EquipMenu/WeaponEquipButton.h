@@ -69,4 +69,8 @@ public:
 	
 	UFUNCTION()
     void TryEquip();
+	UFUNCTION()
+    void TryCombine();
+	UFUNCTION()
+    void TryLvUp();
 };

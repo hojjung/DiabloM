@@ -21,7 +21,7 @@ void UUpgradePanel::NativeOnInitialized()
 	m_BtnSkill01->OnClicked.AddDynamic(this,&UUpgradePanel::SetPanel2);
 	m_BtnClose->OnClicked.AddDynamic(this,&UUpgradePanel::ClosePanel);
 	//upgradeAtkDmg01
-	m_UpgradeAtkDmg01->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeAtkDmg01);
+	m_UpgradeAtkDmg01->m_BtnLvUp->OnPressed.AddDynamic(this,&UUpgradePanel::UpgradeAtkDmg01);
 	m_UpgradeAtkDmg01->SetUpgradeVisual(m_PlUpgrade->m_UpgradeAtkDmg01);
 	//upgradeAtkCri01
 	m_UpgradeAtkCri01->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeAtkCri01);

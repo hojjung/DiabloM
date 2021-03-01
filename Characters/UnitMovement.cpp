@@ -97,7 +97,7 @@ void UUnitMovement::BeginPlay()
 
 void UUnitMovement::CalcVelocity(float DeltaTime)
 {
-    Velocity = ConsumeInputVector().GetClampedToSize(1.0f, 1.0f) * m_fMaxSpeed * m_fMoveSpeedRatio;
+    Velocity = ConsumeInputVector().GetClampedToSize(1.0f, 1.0f) * m_fMaxSpeed * m_fMoveSpeedRatio * m_fMoveSpeedMultiple;
 
     if (m_fDashDuration > 0.f)
     {

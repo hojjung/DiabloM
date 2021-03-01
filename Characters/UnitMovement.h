@@ -37,6 +37,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	int32 m_AvoidanceUID;
 
+	float m_fMoveSpeedMultiple = 1.f;
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	bool m_bUseRVO;

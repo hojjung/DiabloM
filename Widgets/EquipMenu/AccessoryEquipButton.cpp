@@ -44,8 +44,11 @@ void UAccessoryEquipButton::Init(const FAccessorySpec& data, UEquipmentPanel* eq
 	m_TextName->SetText(m_AccessorySpec->m_AccessoryData->m_ShowingName); 
 	m_nIndex = index;
 	m_BtnEquip->OnClicked.AddDynamic(this,&UAccessoryEquipButton::TryEquip);
+	m_BtnCombine->OnClicked.AddDynamic(this,&UAccessoryEquipButton::TryCombineLvUp);
 	m_ImgIcon->SetBrushFromTexture(data.m_AccessoryData->m_Icon);
 	UpdateEquipAccessory();
+
+	
 }
 
 void UAccessoryEquipButton::SetDescPreviewText(const FAccessorySpec& data)
@@ -53,22 +56,18 @@ void UAccessoryEquipButton::SetDescPreviewText(const FAccessorySpec& data)
 	m_TextDesc->SetText(data.m_AccessoryData->GetFormatDescPreview(data.m_nLv));
 }
 
-void UAccessoryEquipButton::SetEquipped(bool b)
+void UAccessoryEquipButton::SetEquipped(int index)
 {
-	if(b)
+	switch (index)
 	{
-		if(m_ParentEquip->m_nAccessorySelector == 0)
-		{
+		case 1:
 			m_TextEquip->SetText(LOCTEXT("EquipSuccessText1","Equipped-1"));
-		}
-		else if(m_ParentEquip->m_nAccessorySelector == 1)
-		{
+			break;
+		case 2:
 			m_TextEquip->SetText(LOCTEXT("EquipSuccessText2","Equipped-2"));
-		}
-	}
-	else
-	{
-		m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
+			break;
+		default:
+			m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
 	}
 }
 
@@ -94,6 +93,25 @@ void UAccessoryEquipButton::TryEquip()
 		else if(m_ParentEquip->m_nAccessorySelector ==1)
 		{
 			UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory2(m_nIndex);
+		}
+	}
+	else
+	{
+		PRINTF("EqBtn-NoData");
+	}
+}
+
+void UAccessoryEquipButton::TryCombineLvUp()
+{
+	if(m_AccessorySpec)
+	{
+		//if(m_ParentEquip->m_nAccessorySelector ==0)
+		//{
+		//	UDiabloGameInstance::Get->m_EquipManager->TryCombineLevelUpAccessory(m_nIndex);	
+		//}
+		//else if(m_ParentEquip->m_nAccessorySelector ==1)
+		{
+			UDiabloGameInstance::Get->m_EquipManager->TryCombineLevelUpAccessory(m_nIndex);
 		}
 	}
 	else

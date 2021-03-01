@@ -201,12 +201,7 @@ public:
     
     bool IsMoving();
     
-    FORCEINLINE int GetAccuLevel()
-    {
-        return m_nAccuracyLevel;
-    }
-
-    
+    virtual int GetAccuLevel();
 };
 
 

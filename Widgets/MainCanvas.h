@@ -75,4 +75,9 @@ public:
 	void SetActiveShopPanel();
 	UFUNCTION()
 	void SetActiveMenuPanel();
+
+	UFUNCTION()
+	void UpdateGoldUI();
 };
+
+

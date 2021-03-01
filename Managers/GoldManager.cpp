@@ -1,5 +1,7 @@
 #include "GoldManager.h"
 
+
+#include "DiabloGameInstance.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 
 
@@ -12,7 +14,16 @@ void UGoldManager::SetCurrentGold(const FString& v)
 
 void UGoldManager::AddGold(const BigInt& v)
 {
-	m_CurrentGold.Add(v);
+	BigInt FinalV = v;
+
+	if(UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet())
+	{
+		FinalV.Multiply(100);
+		FinalV.Multiply(UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet()->m_GoldBonusValue);
+		FinalV.Divide(10000);	
+	}
+	
+	m_CurrentGold.Add(FinalV);
 
 	m_OnGoldChanged.Broadcast();
 }

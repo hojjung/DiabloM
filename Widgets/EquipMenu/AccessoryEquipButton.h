@@ -51,7 +51,7 @@ protected:
 protected:
 	void SetDescPreviewText(const FAccessorySpec& data);
 
-	void SetEquipped(bool b);
+	void SetEquipped(int index);
 
 	void SetCostText(int stack);
 
@@ -64,4 +64,6 @@ public:
 
 	UFUNCTION()
 	void TryEquip();
+	UFUNCTION()
+	void TryCombineLvUp();
 };

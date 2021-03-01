@@ -40,12 +40,6 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 		TEXT("SkeletalMesh'/Game/Models/ParagonMeshs/Greystone_SK.Greystone_SK'"));
 	m_SkBody->SetSkeletalMesh(FoundSkMesh.Object);
 
-	//SkeletalMesh'/Game/Models/ParagonMeshs/Greystone_SK.Greystone_SK'
-
-	m_fCurrentExp = 0.f;
-
-	m_fMaxExp = 0.f;
-
 	m_bIsDead = false;
 
 	m_Movement->SetRVOAvoidanceWeight(0.5f);
@@ -79,14 +73,16 @@ void APlayerDiabloCharacter::BeginPlay()
 
 	m_TickFSM = NewObject<UFSMTick>(this, UFSMTick::StaticClass());
 	m_TickFSM->Init(this);
+	m_bUseFSM = true;
 
 	m_PlUpgradeManager = UDiabloGameInstance::Get->m_PlayerUpgradeManager;
 
 	m_EquipManager = UDiabloGameInstance::Get->m_EquipManager;
 
-	PlayerClassDataInject(m_EquipManager->m_AryPlayerSkin[m_EquipManager->m_nSelectedSkin]);
+	//PlayerClassDataInject(m_EquipManager->m_AryPlayerSkin[m_EquipManager->m_nSelectedSkin]);
+	m_EquipManager->ClearSelectedIndex();
+	m_EquipManager->EquipAll();
 
-	SetAutoPlay(true);
 }
 
 void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius, float focusRange)
@@ -127,7 +123,29 @@ void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
 		return;
 	}
 
-	PRINTF("DiaChar-DataInject Weapon");
+	PRINTF("DiaChar-DataInject wPo");
+
+	if(m_CreatedWeapon)
+	{
+		FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld,false);
+		m_CreatedWeapon->DetachFromActor(Rule);
+		m_CreatedWeapon->Destroy();
+	}
+
+	if(!spec.m_EquipData->m_ClassVisualActor)
+	{
+		return;
+	}
+
+	FActorSpawnParameters Param;
+
+	Param.bNoFail = true;
+	
+	m_CreatedWeapon = GetWorld()->SpawnActor<AEquipmentActor>(spec.m_EquipData->m_ClassVisualActor,GetActorLocation(),GetActorRotation(),Param);
+
+	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::KeepRelative,false);
+	
+	m_CreatedWeapon->AttachToComponent(m_SkBody,Rule,"Weapon");
 }
 
 void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
@@ -142,7 +160,15 @@ void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
 
 	if(m_CreatedWing)
 	{
+		FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld,false);
+		m_CreatedWing->DetachFromActor(Rule);
 		m_CreatedWing->Destroy();
+		m_Movement->m_fMoveSpeedMultiple = 1.f;
+	}
+
+	if(!spec.m_WingData->m_ClassVisualWingActor)
+	{
+		return;
 	}
 
 	FActorSpawnParameters Param;
@@ -154,6 +180,8 @@ void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
 	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::KeepRelative,false);
 	
 	m_CreatedWing->AttachToComponent(m_SkBody,Rule,"Wing");
+
+	m_Movement->m_fMoveSpeedMultiple = spec.m_WingData->GetMoveSpdBonus();
 }
 
 void APlayerDiabloCharacter::AccessoryDataInject(const FAccessorySpec& spec)
@@ -176,6 +204,28 @@ void APlayerDiabloCharacter::PetDataInject(const FPetSpec& spec)
 	}
 
 	PRINTF("DiaChar-DataInject Pet");
+
+	if(m_CreatedPet)
+	{
+		FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld,false);
+		m_CreatedPet->DetachFromActor(Rule);
+		m_CreatedPet->Destroy();
+	}
+
+	if(!spec.m_PetData->m_ClassPetSkin)
+	{
+		return;
+	}
+
+	FActorSpawnParameters Param;
+
+	Param.bNoFail = true;
+	
+	m_CreatedPet = GetWorld()->SpawnActor<AEquipmentActor>(spec.m_PetData->m_ClassPetSkin,GetActorLocation(),GetActorRotation(),Param);
+
+	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::KeepRelative,false);
+	
+	m_CreatedPet->AttachToComponent(m_SkBody,Rule,"Pet");
 }
 
 
@@ -217,7 +267,6 @@ void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 		m_FocusedEnemy = nullptr;
 		m_OnFocusTarget.Broadcast(nullptr);
 		HideOutlineOnTarget();
-		m_FocusedTargetDie.Reset();
 
 		return;
 	}
@@ -228,7 +277,6 @@ void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 	{
 		return;
 	}
-	m_FocusedTargetDie.Reset();
 
 	ShowOutlineOnTarget(Unit);
 
@@ -258,7 +306,6 @@ void APlayerDiabloCharacter::Revive()
 	GetMovementComponent()->SetActive(true);
 	SetActorTickEnabled(true);
 	m_PlayerSense->SetSensingUpdatesEnabled(true);
-	m_OnRevived.Broadcast(this);
 }
 
 
@@ -275,22 +322,11 @@ void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target) //wrapper
 	m_FocusedEnemy = nullptr;
 	m_OnFocusTarget.Broadcast(nullptr);
 
-	m_FocusedTargetDie.Reset();
-}
-
-
-void APlayerDiabloCharacter::UpdateRegenAbility()
-{
 }
 
 bool APlayerDiabloCharacter::IsAlive() const
 {
 	return !m_bIsDead || Super::IsAlive();
-}
-
-float APlayerDiabloCharacter::GetCastSpeed()
-{
-	return 1.f;
 }
 
 void APlayerDiabloCharacter::PlayColorEffect(const FLinearColor& colorWant, float effectLength) //애초에 사용된적이 없음
@@ -307,31 +343,6 @@ void APlayerDiabloCharacter::PlayColorEffect(const FLinearColor& colorWant, floa
 	m_SkBody->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 }
 
-
-void APlayerDiabloCharacter::InteractWithTarget()
-{
-}
-
-void APlayerDiabloCharacter::SetAutoPlay(bool useAuto)
-{
-	if (m_bUseFSM == useAuto)
-	{
-		return;
-	}
-
-	m_bUseFSM = useAuto;
-
-	StopMove();
-
-	if (m_bUseFSM)
-	{
-		PRINTF("UseAutoPlay");
-	}
-	else
-	{
-		PRINTF("NotuseAutoPlay");
-	}
-}
 
 float APlayerDiabloCharacter::TryAttack()
 {
@@ -387,52 +398,62 @@ float APlayerDiabloCharacter::TryAttack()
 	return 1.f;
 }
 
+bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg)
+{
+	char Type;
+	if(!m_QueDmgType.Dequeue(Type))
+	{
+		return false;
+	}
+
+	outDmg = m_PlUpgradeManager->m_UpgradeAtkDmg01.m_Value;
+	
+	outDmg.Multiply(100);
+	outDmg.Multiply(m_EquipManager->GetCurrentWeapon().m_Value);
+	outDmg.Divide(10000);
+
+	int Rand = FMath::RandRange(90,110);
+
+	outDmg.Multiply(100);
+	outDmg.Multiply(Rand);
+	outDmg.Divide(10000);
+
+	BigInt CDmg01 = m_PlUpgradeManager->m_UpgradeAtkCDmg01.m_Value; //백기준으로 해야함,1.5배는  1
+	//150
+	if (Type == 3) //cri
+		{
+		outDmg.Multiply(100);
+		outDmg.Multiply(CDmg01);
+		outDmg.Divide(10000);
+		}
+	return true;
+}
+
 void APlayerDiabloCharacter::ApplyDamageToTarget()
 {
 	if (GetFocusedTarget())
 	{
-		BigInt FinalDmg = m_PlUpgradeManager->m_UpgradeAtkDmg01.m_Value;
+		BigInt FinalDmg;
 
-		BigInt CDmg01 = m_PlUpgradeManager->m_UpgradeAtkCDmg01.m_Value; //백기준으로 해야함,1.5배는  1
-		//150
-		char Type;
-		if(!m_QueDmgType.Dequeue(Type))
+		if(!GetDmg(FinalDmg))
 		{
 			return;
-		}
-
-		if (Type == 3) //cri
-		{
-			FinalDmg.Multiply(100);
-			FinalDmg.Multiply(CDmg01);
-			FinalDmg.Divide(10000);
-			PRINTF("CriticalDamage:%s", *UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(FinalDmg,2));
 		}
 
 		ApplyDamage(GetFocusedTarget(), FinalDmg);
 	}
 }
 
+
 void APlayerDiabloCharacter::ApplyDamageToTargets(TArray<FHitResult>& aryTargets)
 {
-	char Type;
-	if(!m_QueDmgType.Dequeue(Type))
+	BigInt FinalDmg;
+	
+	if (!GetDmg(FinalDmg))
 	{
 		return;
 	}
 
-	BigInt FinalDmg = m_PlUpgradeManager->m_UpgradeAtkDmg01.m_Value;
-
-	BigInt CDmg01 = m_PlUpgradeManager->m_UpgradeAtkCDmg01.m_Value; //백기준으로 해야함,1.5배는  1
-	//150
-	if (Type == 3) //cri
-	{
-		FinalDmg.Multiply(100);
-		FinalDmg.Multiply(CDmg01);
-		FinalDmg.Divide(10000);
-		PRINTF("CriticalDamage:%s", *UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(FinalDmg,2));
-	}
-	
 	for (auto& Mob : aryTargets)
 	{
 		AUnitPawn* Pawn = Cast<AUnitPawn>(Mob.GetActor());
@@ -449,10 +470,14 @@ void APlayerDiabloCharacter::ApplyDamage(AUnitPawn* target, const BigInt& finalD
 	target->TakeDmg(finalDmg, this);
 }
 
-
 void APlayerDiabloCharacter::ApplyMoveSpeedToOrigin()
 {
 	m_Movement->SetMoveSpeedRatio(1.f);
+}
+
+int APlayerDiabloCharacter::GetAccuLevel()
+{
+	return  m_EquipManager->GetCurrentWeapon().m_nAccuracy;
 }
 
 void APlayerDiabloCharacter::Tick(float DeltaTime)
@@ -521,6 +546,4 @@ void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerDiabloCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerDiabloCharacter::MoveRight);
-	PlayerInputComponent->BindAction("Interaction", EInputEvent::IE_Pressed, this,
-	                                 &APlayerDiabloCharacter::InteractWithTarget);
 }

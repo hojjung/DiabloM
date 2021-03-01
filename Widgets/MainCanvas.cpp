@@ -3,6 +3,8 @@
 
 #include "MainCanvas.h"
 
+#include "Managers/DiabloGameInstance.h"
+
 void UMainCanvas::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -20,6 +22,10 @@ void UMainCanvas::NativeOnInitialized()
 	m_PanelGacha->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelShop->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
+
+	UDiabloGameInstance::Get->m_GoldManager->m_OnGoldChanged.AddUObject(this,&UMainCanvas::UpdateGoldUI);
+
+	UpdateGoldUI();
 }
 
 void UMainCanvas::SetActiveQuestPanel()
@@ -122,4 +128,9 @@ void UMainCanvas::SetActiveMenuPanel()
 	{
 		m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
 	}
+}
+
+void UMainCanvas::UpdateGoldUI()
+{
+	m_TextGold->SetText(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(UDiabloGameInstance::Get->m_GoldManager->GetCurrentGold(),2)));
 }

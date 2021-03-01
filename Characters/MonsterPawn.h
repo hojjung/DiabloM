@@ -95,7 +95,7 @@ public: //need more monster
 public:
     void PlayHitFlash();
 
-	void DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,const FItemDropTableRow* dropTable);
+	void DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,int avoidLevel,const FItemDropTableRow* dropTable);
 
 	virtual bool IsAlive() const override;
 
@@ -103,8 +103,6 @@ public:
 
 	void SetAcive(bool v);
 
-	bool CalculateAccuracy(int attackerAccu,float& missPercent);
-
-	float CalcuSameLevelAvgAccuracy(int attackerAccu);
+	int CalculateAccuracy(int attackerAccu);
 
 };

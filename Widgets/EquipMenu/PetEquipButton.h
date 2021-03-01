@@ -40,6 +40,8 @@ public:
 	UButton* m_BtnEquip;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnCombine;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnLvUp;
 
 protected:
 	FTextFormat m_FormatName;
@@ -69,4 +71,8 @@ public:
 
 	UFUNCTION()
 	void TryEquip();
+	UFUNCTION()
+    void TryCombine();
+	UFUNCTION()
+    void TryLvUp();
 };

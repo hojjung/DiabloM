@@ -464,6 +464,11 @@ bool AUnitPawn::IsMoving()
     return !GetMovementComponent()->Velocity.IsZero();
 }
 
+int AUnitPawn::GetAccuLevel()
+{
+    return 1;
+}
+
 float AUnitPawn::GetAttackSpeed()
 {
     return m_fAttackSpeed;

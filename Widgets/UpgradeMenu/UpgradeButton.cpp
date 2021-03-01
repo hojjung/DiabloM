@@ -39,7 +39,7 @@ void UUpgradeButton::SetCostText(const BigInt& v)
 {
 	m_BigIntCost = v;
 	FText TextWant = FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_BigIntCost,2));
-	m_TextCost->SetString(TextWant);
+	m_TextCost->SetText(TextWant);
 }
 
 void UUpgradeButton::SetDescPreviewText(const FUpgradeSpec& data)

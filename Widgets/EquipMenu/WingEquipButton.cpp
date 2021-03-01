@@ -6,7 +6,7 @@
 
 UWingEquipButton::UWingEquipButton(const FObjectInitializer& objInit):Super(objInit)
 {
-	m_FormatCombine= LOCTEXT("CombineText","Combine:0/5");//LOCTEXT("EquipText","Equipped!")
+	m_FormatCombine= LOCTEXT("CombineText","Combine:{0}/5");//LOCTEXT("EquipText","Equipped!")
 	m_nIndex=-1;
 	m_WingSpec = nullptr;
 }
@@ -24,6 +24,7 @@ void UWingEquipButton::Init(const FWingSpec& data, int index)
 	m_TextName->SetText(m_WingSpec->m_WingData->m_ShowingName); 
 	m_nIndex = index;
 	m_BtnEquip->OnClicked.AddDynamic(this,&UWingEquipButton::TryEquip);
+	m_BtnCombine->OnClicked.AddDynamic(this,&UWingEquipButton::TryCombine);
 	m_ImgIcon->SetBrushFromTexture(data.m_WingData->m_WingIcon);
 	UpdateEquipWing();
 }
@@ -60,6 +61,18 @@ void UWingEquipButton::TryEquip()
 	if(m_WingSpec)
 	{
 		UDiabloGameInstance::Get->m_EquipManager->TryEquipWing(m_nIndex);
+	}
+	else
+	{
+		PRINTF("EqBtn-NoData");
+	}
+}
+
+void UWingEquipButton::TryCombine()
+{
+	if(m_WingSpec)
+	{
+		UDiabloGameInstance::Get->m_EquipManager->TryCombineWing(m_nIndex);
 	}
 	else
 	{

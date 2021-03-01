@@ -109,16 +109,14 @@ void AMonsterPawn::BeginPlay()
 
 void AMonsterPawn::RequestDropItem()
 {
-    PRINTF("RequestDropItem");
 }
 
 void AMonsterPawn::RequestGetGoldBounty()
 {
-    PRINTF("RequestGetGoldBounty");
     UDiabloGameInstance::Get->m_GoldManager->AddGold(m_fGoldBounty);
 }
 
-void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,const FItemDropTableRow* dropTable)//droptable
+void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,int avoidLevel,const FItemDropTableRow* dropTable)//droptable
 {
     m_DropTable = dropTable;
     
@@ -160,7 +158,7 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     
     m_fCurrentHP = m_fMaxHP;
 
-    m_nAvoidLevel = UnitData->m_nAvoidLevel;
+    m_nAvoidLevel = avoidLevel;
 
     UpdateHealthBar(GetHpPercentOne());
 
@@ -274,11 +272,14 @@ void AMonsterPawn::TakeDmg(BigInt amount, AUnitPawn* attacker)
         FocusTarget(attacker);
     }
 
-    float AccuPercent;
+    float Accu = CalculateAccuracy(attacker->GetAccuLevel()) * 3.f;
+    //10이면 30프로로 맞춤,30이면 90프로로 맞춤
     
-    if(!CalculateAccuracy(attacker->GetAccuLevel(),AccuPercent))
+    float RandResult = FMath::RandRange(0.f,100.f);
+
+    if(RandResult > Accu)
     {
-        m_PlCon->ShowDamageNumber(100.f-AccuPercent,this,EDamagePopup::Miss);
+        m_PlCon->ShowDamageNumber(100.f-Accu,this,EDamagePopup::Miss);
         return;
     }
     
@@ -366,48 +367,14 @@ void AMonsterPawn::SetAcive(bool v)
     }
 }
 
-bool AMonsterPawn::CalculateAccuracy(int attackerAccu, float& missPercent)
+int AMonsterPawn::CalculateAccuracy(int attackerAccu)
 {
-    float TargetAvoid = m_nAvoidLevel;
-    float InstigatorAccuracy = attackerAccu;
-    
-    float BlockRate = FMath::RandRange(1.f, TargetAvoid); //21을 높이면 회피확률이 는다.
-    float HitRate = (10.f + FMath::RandRange(0.f, InstigatorAccuracy)) -
-        FMath::RandRange(1.f, TargetAvoid + 1.f); //여기서 방관 적용 가능
+    int TargetAvoid = m_nAvoidLevel;
 
-    bool HitSuccess = false;
-    if (BlockRate < HitRate)
-    {
-        //아무리 높아도 5%확률로 빗나감
-        HitSuccess =  1 != FMath::RandRange(1, 20);
-    }
-    else
-    {
-        HitSuccess = 1 == FMath::RandRange(1, 20);
-    }
+    int Result = attackerAccu - TargetAvoid;//130 - 100
 
-    missPercent = CalcuSameLevelAvgAccuracy(attackerAccu);
-    //아무리 낮아도 5%확률로 맞음
-    return HitSuccess;
-}
+    Result = FMath::Clamp(Result,10,30);
 
-float AMonsterPawn::CalcuSameLevelAvgAccuracy(int attackerAccu)
-{
-    float TargetAvoid = m_nAvoidLevel;
-    float A0 = (10 ) - TargetAvoid; //10
-    float A1 = (9 ) + attackerAccu; //9
-    float B0 = 1.f; //1
-    float B1 = 20.f + TargetAvoid; //20
-
-    float OuterRight = FMath::Max(B1, A1);
-    float OuterLeft = FMath::Min(B0, A0);
-    float InnerRight = FMath::Min(B1, A1);
-    float InnerLeft = FMath::Max(B0, A0);
-    float Percentage = FMath::Max(0.f, FMath::Min(
-                                      1.f, (InnerLeft - B0 + (InnerRight - InnerLeft) * 0.5f + OuterRight - B1) / (
-                                          OuterRight - OuterLeft)));
-
-    float Result = UDiaBlueprintFunctionLibrary::SetFloatPrecision((Percentage * 100), 1);
-    return FMath::Clamp(Result, 5.f, 95.f);
+    return Result;
 }
 

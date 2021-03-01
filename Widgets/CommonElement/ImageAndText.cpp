@@ -24,7 +24,7 @@ void UImageAndText::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 	//
-	SetString(m_StringWant);
+	SetText(m_StringWant);
 	//
 	FSlateBrush BrushWant;
 	BrushWant.SetImageSize(FVector2D(64.f,64.f));
@@ -53,7 +53,7 @@ void UImageAndText::SetIcon(UTexture* texture)
 	m_ImageIcon->SetBrush(BrushWant);
 }
 
-void UImageAndText::SetString(FText stringWant)
+void UImageAndText::SetText(FText stringWant)
 {
 	m_StringWant=stringWant;
 	m_TextStringShow->SetText(stringWant);

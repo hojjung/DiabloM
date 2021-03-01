@@ -11,7 +11,7 @@ UPlayerSkinEquipButton::UPlayerSkinEquipButton(const FObjectInitializer& objInit
 	m_TextCombine(nullptr), m_BtnEquip(nullptr),
 	m_BtnCombine(nullptr)
 {
-	m_FormatCombine = LOCTEXT("CombineText", "Combine:0/5"); //LOCTEXT("EquipText","Equipped!")
+	m_FormatCombine = LOCTEXT("CombineText", "Combine:{0}/5"); //LOCTEXT("EquipText","Equipped!")
 	m_nIndex = -1;
 	m_SkinSpec = nullptr;
 }
@@ -30,6 +30,7 @@ void UPlayerSkinEquipButton::Init(const FPlayerClassSpec& data, int index)
 	m_TextName->SetText(m_SkinSpec->m_PlayerData->m_ShowingName); 
 	m_nIndex = index;
 	m_BtnEquip->OnClicked.AddDynamic(this,&UPlayerSkinEquipButton::TryEquip);
+	m_BtnCombine->OnClicked.AddDynamic(this,&UPlayerSkinEquipButton::TryCombine);
 	m_ImgIcon->SetBrushFromTexture(data.m_PlayerData->m_Icon);
 	UpdateEquipSkin();
 }
@@ -66,6 +67,18 @@ void UPlayerSkinEquipButton::TryEquip()
 	if(m_SkinSpec)
 	{
 		UDiabloGameInstance::Get->m_EquipManager->TryEquipSkin(m_nIndex);
+	}
+	else
+	{
+		PRINTF("EqBtn-NoData");
+	}
+}
+
+void UPlayerSkinEquipButton::TryCombine()
+{
+	if(m_SkinSpec)
+	{
+		UDiabloGameInstance::Get->m_EquipManager->TryCombineSkin(m_nIndex);
 	}
 	else
 	{

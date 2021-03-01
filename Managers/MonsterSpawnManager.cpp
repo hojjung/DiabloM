@@ -171,7 +171,6 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 
 	if(!Mob)
 	{
-		PRINTF("Skip Theres no available Monster");
 		return nullptr;
 	}
 
@@ -180,9 +179,8 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 	Mob->SetActorLocation(NewLoc);
 
 
-	Mob->DataInject(MonData,m_DgDataTable->GetMobHp(),m_DgDataTable->GetMobGold(),EMonsterType::Normal,m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""));
+	Mob->DataInject(MonData,m_DgDataTable->GetMobHp(),m_DgDataTable->GetMobGold(),EMonsterType::Normal,m_DgDataTable->m_nAvoidLevel,m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""));
 	
-	PRINTF("SpawnedMob!");
 	
 	return Mob;
 }

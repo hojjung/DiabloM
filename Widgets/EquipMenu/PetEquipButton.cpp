@@ -13,14 +13,14 @@ UPetEquipButton::UPetEquipButton(const FObjectInitializer& objInit): Super(objIn
     m_BtnCombine(nullptr)
 {
 	m_FormatName= LOCTEXT("LevelName","{0}(Lv.{1})");//LOCTEXT("EquipText","Equipped!")m_FormatCombine= LOCTEXT("CombineText","Combine:0/5");//LOCTEXT("EquipText","Equipped!")
-	m_FormatCombine= LOCTEXT("CombineText","Combine:0/5");//LOCTEXT("EquipText","Equipped!")
+	m_FormatCombine= LOCTEXT("CombineText","Combine:{0}/5");//LOCTEXT("EquipText","Equipped!")
 	m_nIndex = -1;
 	m_PetSpec = nullptr;
 }
 
 void UPetEquipButton::SetCostText()
 {
-	m_ImagTxtCost->SetString(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_PetSpec->m_LvlUpCost,2)));
+	m_ImagTxtCost->SetText(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_PetSpec->m_LvlUpCost,2)));
 }
 
 void UPetEquipButton::UpdateEquipPet()
@@ -50,6 +50,8 @@ void UPetEquipButton::Init(const FPetSpec& data, int index)
 	m_TextName->SetText(m_PetSpec->m_PetData->m_ShowingName); 
 	m_nIndex = index;
 	m_BtnEquip->OnClicked.AddDynamic(this,&UPetEquipButton::TryEquip);
+	m_BtnCombine->OnClicked.AddDynamic(this,&UPetEquipButton::TryCombine);
+	m_BtnLvUp->OnClicked.AddDynamic(this,&UPetEquipButton::TryLvUp);
 	m_ImgIcon->SetBrushFromTexture(data.m_PetData->m_Icon);
 	UpdateEquipPet();
 }
@@ -87,6 +89,30 @@ void UPetEquipButton::TryEquip()
 	if(m_PetSpec)
 	{
 		UDiabloGameInstance::Get->m_EquipManager->TryEquipPet(m_nIndex);
+	}
+	else
+	{
+		PRINTF("EqBtn-NoData");
+	}
+}
+
+void UPetEquipButton::TryCombine()
+{
+	if(m_PetSpec)
+	{
+		UDiabloGameInstance::Get->m_EquipManager->TryCombinePet(m_nIndex);
+	}
+	else
+	{
+		PRINTF("EqBtn-NoData");
+	}
+}
+
+void UPetEquipButton::TryLvUp()
+{
+	if(m_PetSpec)
+	{
+		UDiabloGameInstance::Get->m_EquipManager->TryLvUpPet(m_nIndex);
 	}
 	else
 	{

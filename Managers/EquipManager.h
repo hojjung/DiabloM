@@ -3,10 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
-#include "Datas/CharacterDataTable.h"
 #include "Datas/EquipmentData.h"
-#include "UObject/NoExportTypes.h"
 #include "EquipManager.generated.h"
 
 UENUM()
@@ -131,13 +128,7 @@ public:
 	int m_nIsUnlocked = 0;
 	int m_nIsEquipped = 0;
 	int m_nStackCount = 0;
-	float m_fMoveSpeed=1.f;
 	const FWingTable* m_WingData;
-
-	void SetValue()
-	{
-		m_fMoveSpeed = m_WingData->GetMoveSpdBonus();
-	}
 
 	FString ParseToString()
 	{
@@ -272,6 +263,8 @@ public:
 	static  UDataTable* GetWingDataTable;
 	static  UDataTable* GetPetDataTable;
 	static  UDataTable* GetAcceeDataTable;
+	
+	void ClearSelectedIndex();
 
 public:
 	FOnEquipChanged m_OnPlSkinChanged;
@@ -294,17 +287,28 @@ public:
 	int m_nSelectedAccessory1;
 	int m_nSelectedAccessory2;
 
+	UPROPERTY()
+	UAccessoryOption* m_AcceSpec1;
+	UPROPERTY()
+	UAccessoryOption* m_AcceSpec2;
+
 protected:
 	int StringSplitEachItem(const FString& equipDatas, TArray<FString>& outStrAry) const;
-
-	void SetStringSkinUnlocked(FString skinUnlock);
-	void SetStringWingUnlocked(FString wingUnlock);
-	void SetStringWeaponUnlocked(FString weaponUnlock);
-	void SetStringPetUnlocked(FString petUnlock);
-	void SetStringAccesoryUnlocked(FString acceUnlock);
 	
+	void SetStringSkinUnlocked(FString skinUnlock);
+	
+	void SetStringWingUnlocked(FString wingUnlock);
+	
+	void SetStringWeaponUnlocked(FString weaponUnlock);
+	
+	void SetStringPetUnlocked(FString petUnlock);
+	
+	void SetStringAccesoryUnlocked(FString acceUnlock);
+
 public:
 	void SetEquipDataFromServer(const FString& classSkin,const FString& weapon,const FString& wing,const FString& pet,const FString& acce);
+
+	void EquipAll();
 	
 	void TryEquipSkin(int index);
 	
@@ -317,4 +321,34 @@ public:
 	void TryEquipAccessory1(int index);
 
 	void TryEquipAccessory2(int index);
+
+public:
+	bool TryCombineSkin(int index);
+	
+	bool TryCombineWing(int index);
+
+	bool TryCombineLevelUpAccessory(int index);
+
+	bool TryCombineWeapon(int index);
+
+	bool TryCombinePet(int index);
+
+public:
+	bool TryLvUpWeapon(int index);
+
+	bool TryLvUpPet(int index);
+
+	FORCEINLINE const FWeaponSpec& GetCurrentWeapon()
+	{
+		return m_AryWeapons[m_nSelectedWeapon];
+	}
+
+	FORCEINLINE const FPetSpec* GetCurrentPet()
+	{
+		if(m_nSelectedPet<0)
+		{
+			return nullptr;
+		}
+		return &m_AryPets[m_nSelectedPet];
+	}
 };

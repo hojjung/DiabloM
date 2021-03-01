@@ -1,6 +1,7 @@
 #pragma once
 #include "DiabloM.h"
 #include "Engine/DataTable.h"
+#include "Item/AccessoryOption.h"
 #include "Item/EquipmentActor.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "UObject/NoExportTypes.h"
@@ -27,7 +28,7 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly ,meta = (MultiLine = true))
 	FText m_UpgradeDescFormat =FText::FromString( "Dmg Increase:{0}%>>P{1}%\nAccuracy Increase:{2}>>P{3}");
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<AEquipmentActor> m_VisualActor = nullptr;
+	TSubclassOf<AEquipmentActor> m_ClassVisualActor = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0"))
 	float m_fBaseDmgPer = 1.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0"))
@@ -197,9 +198,7 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
 	FString m_DescFormat = "Gold Gain Increase:{0}%";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USkeletalMesh* m_PetSkin = nullptr;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimSequence* m_PetIdleAnim;
+	TSubclassOf<AEquipmentActor> m_ClassPetSkin;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	int m_nMaxLevel = 100;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -287,6 +286,8 @@ public:
 	float m_fBaseCost = 9;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	float m_fCostMultiFactor = 1.06f;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	TSubclassOf<UAccessoryOption> m_ClassAccessoryOp;
 	
 public:
 	virtual BigInt GetValue(int level) const

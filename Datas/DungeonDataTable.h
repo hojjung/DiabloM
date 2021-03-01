@@ -96,6 +96,8 @@ public:
 	float m_fBossMonsterRenderScale = 3.f;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(UIMin = "1.0"))
 	int m_nMonsterLevel;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	int m_nAvoidLevel=1;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(UIMin = "1.0"))
 	float m_fInitValue = 20;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)//인컴은 항상 선형적이다

@@ -6,10 +6,13 @@
 #include "WeakInterfacePtr.h"
 #include "Characters/UnitPawn.h"
 #include "Managers/DiabloCheatManager.h"
-#include "Managers/EquipManager.h"
 
 #include "PlayerDiabloCharacter.generated.h"
 
+struct FPetSpec;
+struct FAccessorySpec;
+struct FWingSpec;
+struct FWeaponSpec;
 struct FPlayerClassSpec;
 class UEquipManager;
 class UPlayerUpgradeManager;
@@ -60,31 +63,7 @@ protected:
 	
 	const FPlayerClassSpec* m_PlayerEntityData;
 
-	FDelegateHandle m_InventoryUpdateHandle;
-    
-	FDelegateHandle m_InventoryLoadedHandle;
-
-	FDelegateHandle m_FocusedTargetDie;
-	
 	FVector m_Input;
-
-	float m_fCurrentExp;
-	
-	float m_fMaxExp;
-
-	float m_fCurrentGold;
-
-	int m_SkinIndex;
-	
-	FOnFloatChange m_OnLevelChanged;
-	
-	FOnFloatChange m_OnExpGaugeChanged;
-	
-	FOnFloatChange m_OnRemainExpChanged;
-
-	FOnFloatChange m_OnGoldChanged;
-
-	FCharacterDiedDelegate m_OnRevived;
 
 	UPROPERTY()
 	TSet<AActor*> m_AlreadyHittenForIgnore;
@@ -101,7 +80,10 @@ protected:
 
 	UPROPERTY()
 	AEquipmentActor* m_CreatedWing;
-
+	UPROPERTY()
+	AEquipmentActor* m_CreatedWeapon;
+	UPROPERTY()
+	AEquipmentActor* m_CreatedPet;
 protected:
 	virtual void BeginPlay() override;
 	
@@ -121,6 +103,8 @@ protected:
 
 	void ApplyDamage(AUnitPawn* target,const BigInt& finalDmg);
 
+	bool GetDmg(BigInt& outDmg);
+
 public:
 	void PlayerClassDataInject(const FPlayerClassSpec& spec);
 	
@@ -137,8 +121,6 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
     void Revive();
-	UFUNCTION(BlueprintCallable,Category="Interact")
-	void InteractWithTarget();
 	
 	void ShowOutlineOnTarget(AUnitPawn* Unit);
 	
@@ -152,27 +134,12 @@ public:
 	
 	virtual void OnDeathAnimEnd()override;
 	
-	FORCEINLINE FOnFloatChange& GetLevelDele()
-	{
-		return m_OnLevelChanged;
-	}
-
-	FORCEINLINE FOnFloatChange& GetExpGaugeDele()
-	{
-		return m_OnExpGaugeChanged;
-	}
-
-	FORCEINLINE FOnFloatChange& GetRemainExpDele()
-	{
-		return m_OnRemainExpChanged;
-	}
-
 	FORCEINLINE const TArray<TEnumAsByte< EObjectTypeQuery>>& GetAryTarget()
 	{
 		return m_AryTargetingObjectType;
 	}
 
-	FORCEINLINE const TArray<AActor*> GetAryIgnoreActor()
+	FORCEINLINE const TArray<AActor*>& GetAryIgnoreActor()
 	{
 		return m_AryIgnoreActor;
 	}
@@ -184,45 +151,14 @@ public:
 		return m_AlreadyHittenForIgnore;
 	}
 
-	void UpdateRegenAbility();
-	
-
-	friend UDiabloGameInstance;
-
-	FORCEINLINE FCharacterDiedDelegate& GetOnRevived()
-	{
-		return m_OnRevived;
-	}
-
 	virtual bool IsAlive() const override;
 	
-	float GetCastSpeed();
-
-
 	UFUNCTION(BlueprintCallable)
 	void PlayColorEffect(const FLinearColor& colorWant,float effectLength);
 	
 public:
-
-	
-	FORCEINLINE float GetGold()
-	{
-		return m_fCurrentGold;
-	}
-
-	FORCEINLINE FOnFloatChange& GetOnGoldChanged()
-	{
-		return m_OnGoldChanged;
-	}
-
-	FORCEINLINE float GetExpPercent() const
-	{
-		return m_fCurrentExp / m_fMaxExp;
-	}
-	
+	friend UDiabloGameInstance;
 	friend UDiaStatPanel;
-
-    void SetAutoPlay(bool useAuto);
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyDamageToTarget();
@@ -230,5 +166,7 @@ public:
     void ApplyDamageToTargets(TArray<FHitResult>& aryTargets);
 
 	void ApplyMoveSpeedToOrigin();
+
+	virtual int GetAccuLevel() override;
 };
 
