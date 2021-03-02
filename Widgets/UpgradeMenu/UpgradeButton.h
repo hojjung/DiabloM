@@ -15,9 +15,7 @@
 #include "UpgradeButton.generated.h"
 
 struct FUpgradeDataRow;
-/**
- * 
- */
+DECLARE_DELEGATE(FOnCharge);
 UCLASS()
 class DIABLOM_API UUpgradeButton : public UUserWidget
 {
@@ -39,6 +37,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnLvUp;
 
+	FOnCharge m_OnCharge;
 protected:
 	FTextFormat m_FormatName;	
 
@@ -51,7 +50,12 @@ protected:
 	FText m_NameText;
 
 	FString m_DescFormat;
-	
+
+	float m_fDeltaCounter;
+
+	bool m_bChargeUpgrade;
+
+protected:
 	void SetDescPreviewText(const FUpgradeSpec& data);
 	
 	void UpdateUpgradeable();
@@ -59,7 +63,17 @@ protected:
 	void SetCostText(const BigInt& v);
 	
 public:
+	virtual void NativeOnInitialized() override;
+	
 	void SetUpgradeVisual(const FUpgradeSpec& data);
 
 	void UpdateLevelText(const FUpgradeSpec& data);
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	UFUNCTION()
+	void ChargeStart();
+
+	UFUNCTION()
+    void ChargeEnd();
 };

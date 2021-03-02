@@ -40,8 +40,8 @@ public:
 
 	//FItemDropTableRow
 	//FMonsterEntity
-protected:
 	
+protected:
 	TArray<const FDungeonDataTableRow*> m_AryDgDataTable;
 	
 	UPROPERTY()
@@ -52,6 +52,10 @@ protected:
 
 	const FDungeonDataTableRow* m_CurrentDg;
 
+	//보스는 10킬이후부터 생성?
+	//보스는 1회만 죽여야한다
+	//보스는 1회만?
+	//그럼 결국 던전이 킬카운트 가지고 있어야한다
 public:
 	void Init(UMonsterSpawnManager*  mMang);
 
@@ -60,4 +64,5 @@ public:
 	void LoadLevelComplete(UWorld* world);
 	
 	void SetDungeonLevel(const FString& dgUnlockAry);
+
 };

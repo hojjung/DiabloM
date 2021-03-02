@@ -29,7 +29,12 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_TopCamera->SetupAttachment(m_DissolveCam);
 	m_TopCamera->FieldOfView = 35.f;
 	//m_TopCamera->SetProjectionMode(ECameraProjectionMode::Orthographic);
-
+	//
+	m_PetComp = CreateDefaultSubobject<UChildActorComponent>("Child01");
+	m_PetComp->SetupAttachment(RootComponent);
+	m_PetComp->SetRelativeLocation(FVector(0,90,150));
+	m_PetComp->SetRelativeRotation(FRotator(0,-90,0));
+	//
 	m_SkBody->bCastDynamicShadow = true;
 	m_SkBody->CastShadow = true;
 	m_SkBody->bReceiveMobileCSMShadows = false;
@@ -205,27 +210,12 @@ void APlayerDiabloCharacter::PetDataInject(const FPetSpec& spec)
 
 	PRINTF("DiaChar-DataInject Pet");
 
-	if(m_CreatedPet)
-	{
-		FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld,false);
-		m_CreatedPet->DetachFromActor(Rule);
-		m_CreatedPet->Destroy();
-	}
-
 	if(!spec.m_PetData->m_ClassPetSkin)
 	{
 		return;
 	}
 
-	FActorSpawnParameters Param;
-
-	Param.bNoFail = true;
-	
-	m_CreatedPet = GetWorld()->SpawnActor<AEquipmentActor>(spec.m_PetData->m_ClassPetSkin,GetActorLocation(),GetActorRotation(),Param);
-
-	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::KeepRelative,false);
-	
-	m_CreatedPet->AttachToComponent(m_SkBody,Rule,"Pet");
+	m_PetComp->SetChildActorClass(spec.m_PetData->m_ClassPetSkin);
 }
 
 

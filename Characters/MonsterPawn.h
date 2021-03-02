@@ -20,6 +20,9 @@ enum EMonsterType
 	Treasure,
 	Boss
 };
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMonsterDead,AMonsterPawn*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMonsterHit,float);
 UCLASS()
 class DIABLOM_API AMonsterPawn : public AUnitPawn
 {
@@ -28,6 +31,10 @@ public:
 	AMonsterPawn(const FObjectInitializer& objInit);
 
 	EMonsterType m_MonsterType;
+	
+	FOnMonsterDead m_OnDead;
+
+	FOnMonsterHit m_OnTookDmg;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* m_StShadow;
@@ -41,6 +48,8 @@ protected:
 	UAudioComponent* m_CoinAudio;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UParticleSystemComponent* m_Particle;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UParticleSystemComponent* m_HitParticle;
 protected:
 	FTimerHandle m_DeathTimer;
 	UPROPERTY(VisibleAnywhere, Category = "Character")
@@ -95,7 +104,7 @@ public: //need more monster
 public:
     void PlayHitFlash();
 
-	void DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,int avoidLevel,const FItemDropTableRow* dropTable);
+	void DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,int avoidLevel,const FItemDropTableRow* dropTable,float statFactor =1.f,float scaleFactor=1.f);
 
 	virtual bool IsAlive() const override;
 

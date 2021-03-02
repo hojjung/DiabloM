@@ -76,6 +76,17 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     m_Particle->SetTemplate(FoundCoinParticle.Object);
     m_Particle->SetAutoActivate(false);
     m_Particle->Deactivate();
+    //
+    static ConstructorHelpers::FObjectFinder<UParticleSystem> FoundHitParticle(
+         TEXT("ParticleSystem'/Game/03_VisualEffect/P_Hit.P_Hit'"));
+    m_HitParticle = CreateDefaultSubobject<UParticleSystemComponent>("ParticleHit02");
+    m_HitParticle->SetupAttachment(RootComponent);
+    m_HitParticle->SetTemplate(FoundHitParticle.Object);
+    m_HitParticle->SetRelativeLocation(FVector(0,0,70.f));
+    m_HitParticle->SetAutoActivate(false);
+    m_HitParticle->SetRelativeScale3D(FVector(1));
+    m_HitParticle->Deactivate();
+    
 
     //soundcoin//SoundWave'/Game/Sound/Coins_01.Coins_01'
     static ConstructorHelpers::FObjectFinder<USoundBase> FoundSound1(
@@ -116,11 +127,18 @@ void AMonsterPawn::RequestGetGoldBounty()
     UDiabloGameInstance::Get->m_GoldManager->AddGold(m_fGoldBounty);
 }
 
-void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,int avoidLevel,const FItemDropTableRow* dropTable)//droptable
+void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,int avoidLevel,const FItemDropTableRow* dropTable,float statFactor ,float scaleFactor)//droptable
 {
     m_DropTable = dropTable;
     
     m_MonsterType = type;
+
+    if(m_MonsterType == EMonsterType::Boss)
+    {
+        
+        
+        FocusTarget(Cast<APlayerDiabloCharacter>( UGameplayStatics::GetPlayerPawn(this,0)));
+    }
     
     m_bDeathAnimEnd = false;
     
@@ -146,15 +164,15 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     
     m_SkBody->SetAnimInstanceClass(UnitData->m_AnimBP);
 
-    
-
     m_fAttackRange = UnitData->m_fAttackRange;
 
     m_fAttackSpeed = UnitData->m_fAttackSpeed;
 
     m_fGoldBounty = gold;
+    m_fGoldBounty.Multiply(statFactor);
 
     m_fMaxHP = hp;
+    m_fMaxHP.Multiply(statFactor);
     
     m_fCurrentHP = m_fMaxHP;
 
@@ -163,6 +181,8 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     UpdateHealthBar(GetHpPercentOne());
 
     m_SkBody->SetScalarParameterValueOnMaterials("Visibility",1.f);
+
+    m_SkBody->SetRelativeScale3D(FVector(scaleFactor));
 
     if(m_SpawnAnim)
     {
@@ -191,6 +211,7 @@ bool AMonsterPawn::IsStatusBarActive()
 void AMonsterPawn::UpdateHealthBar(float perOne)
 {
     m_WorldHpBar->SetHealthPercentage(perOne);
+    m_OnTookDmg.Broadcast(perOne);
 }
 
 
@@ -204,10 +225,11 @@ void AMonsterPawn::HideStatusBar()
 
 void AMonsterPawn::Die()
 {
-    m_Particle->Activate(true);
+    UDiabloGameInstance::Get->m_MonsterSpawn->AddKillCount();
     RequestDropItem();
     RequestGetGoldBounty();
     
+    m_Particle->Activate(true);
     m_CoinAudio->Play();
     m_DeathAudio->Play();
     HideStatusBar();
@@ -249,6 +271,8 @@ void AMonsterPawn::OnDeathAnimEnd()
     StopAnimMontage(m_DeathMontage);
     SetAcive(false);
     m_bDeathAnimEnd = true;
+
+    m_OnDead.Broadcast(this);
     //Destroy();
 }
 
@@ -286,8 +310,9 @@ void AMonsterPawn::TakeDmg(BigInt amount, AUnitPawn* attacker)
     PlayTookHitMontage();
     PlayHitFlash();
     PlayHittenSound();
+    m_HitParticle->Activate(true);
 
-    if(!IsStatusBarActive())
+    if(!IsStatusBarActive() && m_MonsterType != EMonsterType::Boss)
     {
         ShowStatusBar();
     }

@@ -21,22 +21,28 @@ void UUpgradePanel::NativeOnInitialized()
 	m_BtnSkill01->OnClicked.AddDynamic(this,&UUpgradePanel::SetPanel2);
 	m_BtnClose->OnClicked.AddDynamic(this,&UUpgradePanel::ClosePanel);
 	//upgradeAtkDmg01
-	m_UpgradeAtkDmg01->m_BtnLvUp->OnPressed.AddDynamic(this,&UUpgradePanel::UpgradeAtkDmg01);
+	m_UpgradeAtkDmg01->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeAtkDmg01);
+	m_UpgradeAtkDmg01->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeAtkDmg01);
 	m_UpgradeAtkDmg01->SetUpgradeVisual(m_PlUpgrade->m_UpgradeAtkDmg01);
 	//upgradeAtkCri01
 	m_UpgradeAtkCri01->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeAtkCri01);
+	m_UpgradeAtkCri01->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeAtkCri01);
 	m_UpgradeAtkCri01->SetUpgradeVisual(m_PlUpgrade->m_UpgradeAtkCri01);
 	//upgradeAtkCDmg01
 	m_UpgradeAtkCDmg01->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeAtkCDmg01);
+	m_UpgradeAtkCDmg01->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeAtkCDmg01);
 	m_UpgradeAtkCDmg01->SetUpgradeVisual(m_PlUpgrade->m_UpgradeAtkCDmg01);
 	//upgradeAtkCDmg01
 	m_UpgradeSkill01->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeSkill01);
+	m_UpgradeSkill01->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeSkill01);
 	m_UpgradeSkill01->SetUpgradeVisual(m_PlUpgrade->m_UpgradeSkill01);
 	//upgradeAtkCDmg01
 	m_UpgradeSkill02->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeSkill02);
+	m_UpgradeSkill02->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeSkill02);
 	m_UpgradeSkill02->SetUpgradeVisual(m_PlUpgrade->m_UpgradeSkill02);
 	//upgradeAtkCDmg01
 	m_UpgradeSkill03->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeSkill03);
+	m_UpgradeSkill03->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeSkill03);
 	m_UpgradeSkill03->SetUpgradeVisual(m_PlUpgrade->m_UpgradeSkill03);
 
 	OnUpgradeChanged();

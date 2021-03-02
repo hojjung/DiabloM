@@ -48,6 +48,8 @@ protected:
 	UCameraDissolve* m_DissolveCam;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UCameraComponent* m_TopCamera;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	UChildActorComponent* m_PetComp;
 	//
 protected:
 	UPROPERTY()

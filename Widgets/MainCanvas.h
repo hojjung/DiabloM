@@ -6,6 +6,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "CommonElement/ImageAndText.h"
+#include "CommonElement/MaterialProgressBar.h"
 #include "UpgradeMenu/UpgradePanel.h"
 
 
@@ -35,6 +36,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton*	     m_BtnGold;
 	//bar
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnBoss;
 	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UUserWidget*     m_PanelQuest;
@@ -62,6 +65,42 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnMenu;
 	//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UMaterialProgressBar* m_BarRage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TxtRageValue;
+	//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UOverlay* m_OverlayTime;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UMaterialProgressBar* m_BarTime;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TxtTime;
+	//	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UOverlay* m_OverlayBossHp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UMaterialProgressBar* m_BarBossHp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TxtBossHp;
+	//
+	float m_fMaxBossTime;
+	float m_fTimeCounter;
+	FTextFormat m_Format;
+protected:
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	
+	void ShowBossUI();
+	
+	void HideBossUI();
+
+	void UpdateBossHP(float per);
+
+	void UpdateBossText(BigInt cHp);
+
+	void UpdateTimer(float per,float cTime);
+
+	void SetBossTimer();
 public:
 	UFUNCTION()
 	void SetActiveQuestPanel();
@@ -78,6 +117,10 @@ public:
 
 	UFUNCTION()
 	void UpdateGoldUI();
+	UFUNCTION()
+	void SummonBoss();
+
+	void OnBossBattleEnd(bool b);
 };
 
 

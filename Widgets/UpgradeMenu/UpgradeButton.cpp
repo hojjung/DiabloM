@@ -9,6 +9,8 @@ UUpgradeButton::UUpgradeButton(const FObjectInitializer& objInit):Super(objInit)
 	m_FormatName = FText::FromString("{0}(Lv.{1})");
 	m_nCurrentLevel=1;
 	m_nMaxLevel=1;
+	m_fDeltaCounter=0.f;
+	m_bChargeUpgrade=false;
 }
 
 void UUpgradeButton::UpdateUpgradeable()
@@ -42,6 +44,14 @@ void UUpgradeButton::SetCostText(const BigInt& v)
 	m_TextCost->SetText(TextWant);
 }
 
+void UUpgradeButton::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradeButton::ChargeStart);
+	m_BtnLvUp->OnUnhovered.AddDynamic(this,&UUpgradeButton::ChargeEnd);
+	m_BtnLvUp->OnReleased.AddDynamic(this,&UUpgradeButton::ChargeEnd);
+}
+
 void UUpgradeButton::SetDescPreviewText(const FUpgradeSpec& data)
 {
 	m_TextDesc->SetText(data.m_UpgradeData->GetFormatDescPreview(data.m_nLv));
@@ -61,4 +71,35 @@ void UUpgradeButton::UpdateLevelText(const FUpgradeSpec& data)
 	SetDescPreviewText(data);
 	SetCostText(data.m_Cost);
 	UpdateUpgradeable();
+}
+
+void UUpgradeButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if(!m_bChargeUpgrade)
+	{
+		return;
+	}
+
+	m_fDeltaCounter+=InDeltaTime;
+
+	if(m_fDeltaCounter>0.15f)
+	{
+		m_fDeltaCounter= 0.f;
+		m_OnCharge.ExecuteIfBound();
+		//upgradeTick
+	}
+}
+
+void UUpgradeButton::ChargeStart()
+{
+	m_bChargeUpgrade = true;
+	m_fDeltaCounter= 0.f;
+}
+
+void UUpgradeButton::ChargeEnd()
+{
+	m_bChargeUpgrade = false;
+	m_fDeltaCounter= 0.f;
 }

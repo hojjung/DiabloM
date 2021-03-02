@@ -12,6 +12,7 @@
 
 #include "MonsterSpawnManager.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnBossBattleEnd,bool);
 UCLASS()
 class DIABLOM_API UMonsterSpawnManager : public UObject
 {
@@ -20,6 +21,8 @@ class DIABLOM_API UMonsterSpawnManager : public UObject
 
 public:
 	UMonsterSpawnManager();
+
+	FOnBossBattleEnd m_OnBossBattleEnd;
 	
 protected:
 	static const int m_nMonsterPoolCount = 11;
@@ -31,12 +34,20 @@ protected:
 	UParticleSystem* m_ParticleCoin;
 	UPROPERTY()
 	TArray<AMonsterPawn*> m_AryMonsterSpawnedCurrently;
+	UPROPERTY()
+	int m_nKillCount;
+	UPROPERTY()
+	AMonsterPawn* m_SpawnedBoss;
+	UPROPERTY()
+	TSubclassOf<UCameraShake> m_ClassShake;
 
 	FName m_IdEnemy;
 
 	FName m_IdBossEnemy;
 
 	FName m_IdSpecialEnemy;
+
+	bool m_bBossSpawned;
 	
 	const FDungeonDataTableRow* m_DgDataTable;
 
@@ -45,6 +56,8 @@ protected:
 	float m_SensingInterval;
 	
 	FTimerHandle m_TimerHandle_OnTimer;
+
+	
 	
 protected:
 	FVector GetRandomPointFromNav(const FVector& loc,const float& radius);
@@ -79,7 +92,21 @@ public:
 	
 	void StartSpawn(UWorld* world,const FDungeonDataTableRow* dgData);
 
-	
+	void AddKillCount();
+
+	void SpawnBossMob();
+
+	void FailBossKill();
+
+	AMonsterPawn* GetBossMob() const
+	{
+		return m_SpawnedBoss;
+	}
+
+	bool IsBossBattleIn()
+	{
+		return m_bBossSpawned && GetBossMob();
+	}
 };
 
 
