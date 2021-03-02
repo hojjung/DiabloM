@@ -29,30 +29,42 @@ void UMainCanvas::NativeOnInitialized()
 	UDiabloGameInstance::Get->m_MonsterSpawn->m_OnBossBattleEnd.AddUObject(this,&UMainCanvas::OnBossBattleEnd);
 	UpdateGoldUI();
 
-	m_fTimeCounter=0.f;
+	m_fBossDurationTimeCounter=0.f;
 
-	m_fMaxBossTime = 30.f;
+	m_fMaxBossDurationTime = 30.f;
+
+	m_fBossCooldownTimeCounter = 0.f;
+
+	m_fMaxBossCooldownTime = 45.f;
 
 	m_Format =FText::FromString("{0} Sec");
 
 	HideBossUI();
+	m_CDBoss->SetCooldownProgress(0,0);
 }
 
 void UMainCanvas::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	if(m_fBossCooldownTimeCounter>0)
+	{
+		m_fBossCooldownTimeCounter-=InDeltaTime;
+		
+		m_CDBoss->SetCooldownProgress(m_fBossCooldownTimeCounter,m_fMaxBossCooldownTime);
+	}
+
 	if(!UDiabloGameInstance::Get->m_MonsterSpawn->IsBossBattleIn())
 	{
 		return;
 	}
 
-	m_fTimeCounter+=InDeltaTime;
+	m_fBossDurationTimeCounter+=InDeltaTime;
 
-	float cTime = m_fMaxBossTime - m_fTimeCounter;
-	UpdateTimer(cTime/m_fMaxBossTime,cTime);
+	float cTime = m_fMaxBossDurationTime - m_fBossDurationTimeCounter;
+	UpdateTimer(cTime/m_fMaxBossDurationTime,cTime);
 
-	if(m_fTimeCounter>m_fMaxBossTime)
+	if(m_fBossDurationTimeCounter>m_fMaxBossDurationTime)
 	{
 		UDiabloGameInstance::Get->m_MonsterSpawn->FailBossKill();
 	}
@@ -113,7 +125,7 @@ void UMainCanvas::UpdateTimer(float per,float cTime)
 
 void UMainCanvas::SetBossTimer()
 {
-	m_fTimeCounter = 0.f;
+	m_fBossDurationTimeCounter = 0.f;
 }
 
 void UMainCanvas::SetActiveQuestPanel()
@@ -225,7 +237,7 @@ void UMainCanvas::UpdateGoldUI()
 
 void UMainCanvas::SummonBoss()
 {
-	if(UDiabloGameInstance::Get->m_MonsterSpawn->IsBossBattleIn())
+	if(UDiabloGameInstance::Get->m_MonsterSpawn->IsBossBattleIn() || m_fBossCooldownTimeCounter>0)
 	{
 		return;
 	}
@@ -237,7 +249,9 @@ void UMainCanvas::SummonBoss()
 
 void UMainCanvas::OnBossBattleEnd(bool b)
 {
-	
+	UpdateBossText(0);
+	HideBossUI();
+	SetBossTimer();
 	
 	if(b)
 	{
@@ -247,6 +261,8 @@ void UMainCanvas::OnBossBattleEnd(bool b)
 	}
 
 	PRINTF("BossFail");
-
+	
+	m_CDBoss->StartCooldown();
+	m_fBossCooldownTimeCounter = m_fMaxBossCooldownTime;
 	//실패시 쿨타임
 }

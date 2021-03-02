@@ -53,6 +53,12 @@ void UCooldownProgress::StartCooldown()
     m_ImageCooldown->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
+void UCooldownProgress::HideCooldown()
+{
+    m_TextCooldown->SetVisibility(ESlateVisibility::Collapsed);
+    m_ImageCooldown->SetVisibility(ESlateVisibility::Collapsed);
+}
+
 void UCooldownProgress::SetCooldownProgress(float currentCD, float maxCd)
 {
     if(currentCD<=0.f)

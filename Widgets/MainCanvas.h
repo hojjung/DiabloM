@@ -5,6 +5,7 @@
 #include "DiabloM.h"
 
 #include "Blueprint/UserWidget.h"
+#include "CommonElement/CooldownProgress.h"
 #include "CommonElement/ImageAndText.h"
 #include "CommonElement/MaterialProgressBar.h"
 #include "UpgradeMenu/UpgradePanel.h"
@@ -83,9 +84,13 @@ protected:
 	UMaterialProgressBar* m_BarBossHp;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TxtBossHp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UCooldownProgress* m_CDBoss;
 	//
-	float m_fMaxBossTime;
-	float m_fTimeCounter;
+	float m_fMaxBossCooldownTime;
+	float m_fBossCooldownTimeCounter;
+	float m_fMaxBossDurationTime;
+	float m_fBossDurationTimeCounter;
 	FTextFormat m_Format;
 protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;

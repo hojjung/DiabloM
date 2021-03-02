@@ -45,6 +45,8 @@ public:
     UFUNCTION(BlueprintCallable)
     void StartCooldown();
     UFUNCTION(BlueprintCallable)
+    void HideCooldown();
+    UFUNCTION(BlueprintCallable)
     void SetCooldownProgress(float currentCD,float maxCd);
     UFUNCTION(BlueprintCallable)
     void SetFontSize(float size);
