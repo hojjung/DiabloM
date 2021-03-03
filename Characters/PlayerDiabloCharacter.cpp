@@ -14,6 +14,10 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	: Super(objInit)
 
 {
+	m_fMaxRage=100;
+	m_fGainRagePer = 3;
+	m_fCurrentRage = 0;
+	
 	m_nAccuracyLevel = 10;
 	m_bIsManualMove = false;
 
@@ -473,6 +477,15 @@ int APlayerDiabloCharacter::GetAccuLevel()
 void APlayerDiabloCharacter::SetManualMoveLocation(FVector goalLocation)
 {
 	m_TickFSM->SetManualMove(goalLocation);
+}
+
+void APlayerDiabloCharacter::GainRagePoint()
+{
+	m_fCurrentRage+=m_fGainRagePer;
+
+	m_fCurrentRage = FMath::Clamp(m_fCurrentRage,0.f,m_fMaxRage);
+
+	m_OnRageChanged.Broadcast(m_fCurrentRage/m_fMaxRage);
 }
 
 

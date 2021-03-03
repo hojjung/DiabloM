@@ -43,3 +43,13 @@ void UDiabloGameInstance::Init()
     //
 }
 
+ADiabloPlayerController* UDiabloGameInstance::GetPlCon()
+{
+	return Cast<ADiabloPlayerController>( UGameplayStatics::GetPlayerController(GetWorld(),0));
+}
+
+APlayerDiabloCharacter* UDiabloGameInstance::GetPlChar()
+{
+     return Cast<APlayerDiabloCharacter>( UGameplayStatics::GetPlayerPawn(GetWorld(),0));
+}
+

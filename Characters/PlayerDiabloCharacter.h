@@ -43,6 +43,7 @@ public:
 
 	FOnFocusTargetChanged m_OnFocusTarget;
 
+	FOnFloatChange m_OnRageChanged;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TArray<TEnumAsByte< EObjectTypeQuery>> m_AryTargetingObjectType;
@@ -88,6 +89,12 @@ protected:
 	AEquipmentActor* m_CreatedWeapon;
 	UPROPERTY()
 	AEquipmentActor* m_CreatedPet;
+
+	float m_fMaxRage;
+
+	float m_fGainRagePer;
+
+	float m_fCurrentRage;
 protected:
 	virtual void BeginPlay() override;
 	
@@ -186,5 +193,7 @@ public:
 	friend UMonsterSpawnManager;
 
 	void SetManualMoveLocation(FVector goalLocation);
+
+	void GainRagePoint();
 };
 

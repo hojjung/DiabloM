@@ -100,6 +100,8 @@ protected:
 	
 	void HideBossUI();
 
+	void UpdateRageBar(float per);
+
 	void UpdateBossHP(float per);
 
 	void UpdateBossText(BigInt cHp);

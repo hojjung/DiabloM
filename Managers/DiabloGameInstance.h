@@ -42,4 +42,8 @@ public:
 protected:
 	virtual void Init() override;
 
+public:
+	ADiabloPlayerController* GetPlCon();
+	APlayerDiabloCharacter* GetPlChar();
+
 };

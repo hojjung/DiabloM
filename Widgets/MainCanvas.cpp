@@ -3,6 +3,8 @@
 
 #include "MainCanvas.h"
 
+
+#include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/MonsterSpawnManager.h"
 
@@ -39,6 +41,9 @@ void UMainCanvas::NativeOnInitialized()
 
 	HideBossUI();
 	m_CDBoss->SetCooldownProgress(0,0);
+
+	UDiabloGameInstance::Get->GetPlChar()->m_OnRageChanged.AddUObject(this,&UMainCanvas::UpdateRageBar);
+	UpdateRageBar(0.f);
 }
 
 void UMainCanvas::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -85,6 +90,11 @@ void UMainCanvas::HideBossUI()
 	m_BtnBoss->SetVisibility(ESlateVisibility::Visible);
 	m_OverlayTime->SetVisibility(ESlateVisibility::Collapsed);
 	m_OverlayBossHp->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UMainCanvas::UpdateRageBar(float per)
+{
+	m_BarRage->SetProgressValue(per);
 }
 
 void UMainCanvas::UpdateBossHP(float per)

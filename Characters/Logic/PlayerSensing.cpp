@@ -111,15 +111,13 @@ bool UPlayerSensing::HasLineOfSightTo(const AActor* Other) const
 
 void UPlayerSensing::UpdateAISensing()
 {
-	if(m_OwnedPlayer->GetFocusedTarget())
+
+	if (m_OwnedPlayer->GetIsManualMove())
 	{
-		if(!m_OwnedPlayer->GetFocusedTarget()->IsAlive())
-		{
-			return;
-		}
+		return;
 	}
 	
-	if (m_OwnedPlayer->GetIsManualMove())
+	if(m_OwnedPlayer->GetFocusedTarget())
 	{
 		return;
 	}
