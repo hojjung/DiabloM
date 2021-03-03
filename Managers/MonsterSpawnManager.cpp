@@ -3,6 +3,7 @@
 #include "DungeonManager.h"
 #include "EngineUtils.h"
 #include "Characters/DiabloPlayerController.h"
+#include "Characters/PlayerDiabloCharacter.h"
 
 UMonsterSpawnManager::UMonsterSpawnManager()
 {
@@ -195,6 +196,7 @@ AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos)
 	{
 		return m_SpawnedBoss;
 	}
+	
 	float Dist = FLT_MAX;
 
 	AMonsterPawn* ResultMob = nullptr;
@@ -316,6 +318,10 @@ void UMonsterSpawnManager::SpawnBossMob()
 	}
 
 	);
+	
+	APlayerDiabloCharacter* Pl = Cast<APlayerDiabloCharacter> (UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(),0));
+
+	Pl->FocusTarget(m_SpawnedBoss);
 
 	m_bBossSpawned = true;
 }

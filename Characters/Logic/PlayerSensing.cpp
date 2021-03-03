@@ -111,6 +111,19 @@ bool UPlayerSensing::HasLineOfSightTo(const AActor* Other) const
 
 void UPlayerSensing::UpdateAISensing()
 {
+	if(m_OwnedPlayer->GetFocusedTarget())
+	{
+		if(!m_OwnedPlayer->GetFocusedTarget()->IsAlive())
+		{
+			return;
+		}
+	}
+	
+	if (m_OwnedPlayer->GetIsManualMove())
+	{
+		return;
+	}
+	
 	auto* Pawn = UDiabloGameInstance::Get->m_MonsterSpawn->GetNearestMonster(m_OwnedPlayer->GetActorLocation());
 
 	if (m_OwnedPlayer->GetFocusedTarget() == Pawn)
@@ -158,29 +171,6 @@ bool UPlayerSensing::ShouldCheckVisibilityOf(APawn* Pawn) const
 	return !Pawn->IsHidden();
 }
 
-AMonsterPawn* UPlayerSensing::GetNearestMonster(const TArray<FHitResult>& aryMobs)
-{
-	if (aryMobs.Num() < 1)
-	{
-		return nullptr;
-	}
-
-	AActor* MinActor = aryMobs[0].GetActor();
-
-	float MinDist = DistSqr(MinActor);
-
-	for (int i = 1; i < aryMobs.Num(); i++)
-	{
-		float Dist = DistSqr(aryMobs[i].GetActor());
-		if (MinDist > Dist)
-		{
-			MinActor = aryMobs[i].GetActor();
-			MinDist = Dist;
-		}
-	}
-
-	return Cast<AMonsterPawn>(MinActor);
-}
 
 float UPlayerSensing::DistSqr(AActor* want)
 {

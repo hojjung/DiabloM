@@ -21,6 +21,7 @@ public:
 		Idle,
 		Chase,
 		Combat,
+		ManualMove,
 		Length
 	};
 
@@ -44,6 +45,8 @@ protected:
 
 	FPtrState m_AryStateFunction[static_cast<int>(EFSM::Length)];
 
+	FVector m_ManualMoveLocation;
+
 protected:
 	void OnIdle();
 
@@ -52,6 +55,8 @@ protected:
 	void OnCombat();
 
 	void TryAttack();
+
+	void OnManualMove();
 
 public:
 	void Init(AUnitPawn* pawnUnit);
@@ -67,4 +72,6 @@ public:
 	}
 
 	void TickFSM();
+
+	void SetManualMove(FVector goal);
 };

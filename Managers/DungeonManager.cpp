@@ -27,7 +27,7 @@ void UDungeonManager::Init(UMonsterSpawnManager*  mMang)
 
 void UDungeonManager::OpenLevel()
 {
-	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),m_CurrentDg->m_DgId,true,"Listen");
+	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),m_CurrentDg->m_DgId,true);
 }
 
 void UDungeonManager::SetDungeonLevel(const FString& dgUnlockAry)//need split
@@ -58,6 +58,11 @@ void UDungeonManager::SetDungeonLevel(const FString& dgUnlockAry)//need split
 		PRINTF("DgManager-NoDgData");
 		return;
 	}
+}
+
+void UDungeonManager::SelectDungeon(int index)
+{
+	m_CurrentDg = m_AryDgDataTable[index];
 }
 
 void UDungeonManager::LoadLevelComplete(UWorld* world)

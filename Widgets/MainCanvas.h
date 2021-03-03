@@ -8,6 +8,7 @@
 #include "CommonElement/CooldownProgress.h"
 #include "CommonElement/ImageAndText.h"
 #include "CommonElement/MaterialProgressBar.h"
+#include "MainMenu/MainMenuPanel.h"
 #include "UpgradeMenu/UpgradePanel.h"
 
 
@@ -51,7 +52,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UUserWidget*	 m_PanelShop;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUserWidget*     m_PanelMenu;
+	UMainMenuPanel*  m_PanelMenu;
 	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnQuest;

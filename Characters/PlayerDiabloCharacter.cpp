@@ -470,6 +470,12 @@ int APlayerDiabloCharacter::GetAccuLevel()
 	return  m_EquipManager->GetCurrentWeapon().m_nAccuracy;
 }
 
+void APlayerDiabloCharacter::SetManualMoveLocation(FVector goalLocation)
+{
+	m_TickFSM->SetManualMove(goalLocation);
+}
+
+
 void APlayerDiabloCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -486,6 +492,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 			m_bIsManualMove = true;
 			GetMovementComponent()->StopMovementImmediately();
 			ApplyMoveSpeedToOrigin();
+			FocusTarget(nullptr);
 		}
 	}
 

@@ -1,6 +1,9 @@
 #include "DiabloPlayerController.h"
+
+#include "MonsterPawn.h"
 #include "OnlineSubsystem.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Kismet/KismetInputLibrary.h"
 #include "Managers/DiabloCheatManager.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 
@@ -27,6 +30,18 @@ void ADiabloPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	InitWidget();
+}
+
+void ADiabloPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	m_AryIgnoreActors.Add(this);
+	m_AryIgnoreActors.Add(InPawn);
+
+	m_AryQuery.Add(EObjectTypeQuery::ObjectTypeQuery1);
+	m_AryQuery.Add(EObjectTypeQuery::ObjectTypeQuery2);
+	m_AryQuery.Add(EObjectTypeQuery::ObjectTypeQuery3);
 }
 
 void ADiabloPlayerController::InitWidget()
@@ -73,6 +88,7 @@ void ADiabloPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	InputComponent->BindAction("Exit", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::ExitGame);
 	InputComponent->BindAction("AndroidBack", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::OnDeviceBackKey);
+	InputComponent->BindAction("MouseClick", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::ClickActor);
 }
 
 void ADiabloPlayerController::ExitGame()
@@ -184,5 +200,52 @@ void ADiabloPlayerController::OnRep_CurrentMsg()
 void ADiabloPlayerController::UpdateChatText()
 {
 	PRINTF("DiaChatUser(%p):%s",this,*m_CurrentMsg);
+}
+
+void ADiabloPlayerController::ClickActor()
+{
+	APlayerDiabloCharacter* DiaPlayer = Cast<APlayerDiabloCharacter>( GetPawn());
+
+	
+	PRINTF("Clicked");
+	
+	FVector StartPos;
+	
+	FVector EndPos;
+
+	
+
+	
+	DeprojectMousePositionToWorld(StartPos,EndPos);
+
+	EndPos*=10000.f;
+
+	EndPos+=StartPos;
+
+	FHitResult Hits;
+
+	//StartPos = DiaPlayer->GetCameraLoc();
+
+	if(!UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(),
+		StartPos,EndPos,
+		m_AryQuery,
+		false,m_AryIgnoreActors,EDrawDebugTrace::ForOneFrame,Hits,true))
+	{
+		return;
+	}
+	PRINTF("ClickSuccess");
+
+	AMonsterPawn* Mob = Cast<AMonsterPawn>( Hits.Actor);
+
+	
+	if(!Mob)
+	{
+		DiaPlayer->FocusTarget(nullptr);
+		DiaPlayer->SetManualMoveLocation(Hits.Location);
+		return;
+	}
+
+	
+	DiaPlayer->FocusTarget(Mob);
 }
 

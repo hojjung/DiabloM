@@ -125,7 +125,7 @@ public:
 
     float GetAcceptRadiusSelfOnly();
     
-    FPathFollowingRequestResult MoveToLocation(FVector goalLocation,float additionalAcceptRadius=0.f);
+    virtual FPathFollowingRequestResult MoveToLocation(FVector goalLocation,float additionalAcceptRadius=0.f);
     
     FPathFollowingRequestResult MoveToActor(AActor* goalTarget,float additionalAcceptRadius=0.f);
 
@@ -202,6 +202,7 @@ public:
     bool IsMoving();
     
     virtual int GetAccuLevel();
+
 };
 
 

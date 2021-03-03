@@ -105,7 +105,7 @@ public:
 
 	bool IsBossBattleIn()
 	{
-		return m_bBossSpawned && GetBossMob();
+		return m_bBossSpawned && GetBossMob() && GetBossMob()->IsAlive();
 	}
 };
 

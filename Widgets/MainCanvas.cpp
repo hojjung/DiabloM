@@ -35,8 +35,6 @@ void UMainCanvas::NativeOnInitialized()
 
 	m_fBossCooldownTimeCounter = 0.f;
 
-	m_fMaxBossCooldownTime = 45.f;
-
 	m_Format =FText::FromString("{0} Sec");
 
 	HideBossUI();
@@ -97,8 +95,6 @@ void UMainCanvas::UpdateBossHP(float per)
 		if(UDiabloGameInstance::Get->m_MonsterSpawn->GetBossMob()->m_fCurrentHP.IsLessThanZero())
 		{
 			UpdateBossText(0);
-			HideBossUI();
-			SetBossTimer();
 		}
 		else
 		{
@@ -252,15 +248,17 @@ void UMainCanvas::OnBossBattleEnd(bool b)
 	UpdateBossText(0);
 	HideBossUI();
 	SetBossTimer();
-	
 	if(b)
 	{
 		PRINTF("BossSuccess");
-		//성공
-		return;
+		m_fMaxBossCooldownTime = 25.f;
+	}
+	else
+	{
+		PRINTF("BossFail");
+		m_fMaxBossCooldownTime = 45.f;
 	}
 
-	PRINTF("BossFail");
 	
 	m_CDBoss->StartCooldown();
 	m_fBossCooldownTimeCounter = m_fMaxBossCooldownTime;

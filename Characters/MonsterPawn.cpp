@@ -32,7 +32,7 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     //
     //
     static ConstructorHelpers::FClassFinder<UUserWidget> FoundHpBar(
-             TEXT("WidgetBlueprint'/Game/Blueprints/Widgets/Elements/WB_ProgressBarParents.WB_ProgressBarParents_C'"));
+             TEXT("WidgetBlueprint'/Game/Blueprints/NewWidget/WB_ProgressBarParents.WB_ProgressBarParents_C'"));
     m_WorldHpBar = CreateDefaultSubobject<UFloatingStatusBarWidgetCompo>("WorldHpBar");
     m_WorldHpBar->SetWidgetClass(FoundHpBar.Class);
     m_WorldHpBar->SetDrawSize(FVector2D(150.f,22.f));
@@ -225,6 +225,9 @@ void AMonsterPawn::HideStatusBar()
 
 void AMonsterPawn::Die()
 {
+    auto* Pawn =Cast<APlayerDiabloCharacter>( UGameplayStatics::GetPlayerPawn(GetWorld(),0));
+    Pawn->FocusTarget(nullptr);
+    
     UDiabloGameInstance::Get->m_MonsterSpawn->AddKillCount();
     RequestDropItem();
     RequestGetGoldBounty();
@@ -260,8 +263,8 @@ void AMonsterPawn::OnDeathAnimEnd()
 {
     m_Particle->Activate(false);
     FVector NewHide;
-    NewHide.X=0.f;
-    NewHide.Y=0.f;
+    NewHide.X=10000.f;
+    NewHide.Y=10000.f;
     NewHide.Z = 1000.f;
     
     m_fCurrentHP=-1;

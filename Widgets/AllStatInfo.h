@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "TextBlock.h"
 #include "Blueprint/UserWidget.h"
 #include "AllStatInfo.generated.h"
 

@@ -54,8 +54,6 @@ protected:
 
     void UpdateAISensing();
 
-    AMonsterPawn* GetNearestMonster(const TArray<FHitResult>& aryMobs);
-
     float DistSqr(AActor* want);
 public:
     void InitSense(APlayerDiabloCharacter* player);

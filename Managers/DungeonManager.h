@@ -65,4 +65,15 @@ public:
 	
 	void SetDungeonLevel(const FString& dgUnlockAry);
 
+	FORCEINLINE const TArray<const FDungeonDataTableRow*>& GetAryDgData() const
+	{
+		return m_AryDgDataTable;
+	}
+
+	FORCEINLINE const TArray<int>& GetAryDgUnlocked() const
+	{
+		return m_AryDgUnlocked;
+	}
+
+	void SelectDungeon(int index);
 };

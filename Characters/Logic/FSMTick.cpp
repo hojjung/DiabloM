@@ -21,6 +21,8 @@ void UFSMTick::Init(AUnitPawn* pawnUnit)
 
 	m_AryStateFunction[static_cast<int>(EFSM::Combat)] = &UFSMTick::OnCombat;
 
+	m_AryStateFunction[static_cast<int>(EFSM::ManualMove)] = &UFSMTick::OnManualMove;
+
 	//
 	m_StartPoint = m_Owner->GetActorLocation();
 }
@@ -30,6 +32,12 @@ void UFSMTick::TickFSM()
 	QUICK_SCOPE_CYCLE_COUNTER(MOBFSM_Swamer_TickFSM);
 
 	(this->*m_AryStateFunction[static_cast<int>(m_CurrentState)])();
+}
+
+void UFSMTick::SetManualMove(FVector goal)
+{
+	m_ManualMoveLocation = goal;
+	m_CurrentState = EFSM::ManualMove;
 }
 
 void UFSMTick::OnIdle()
@@ -122,5 +130,15 @@ void UFSMTick::TryAttack()
 	m_Owner->HomingRotateToTarget();
 
 	m_Owner->TryAttack();
+}
+
+void UFSMTick::OnManualMove()
+{
+	auto Result = m_Owner->MoveToLocation(m_ManualMoveLocation);
+
+	if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
+	{
+		m_CurrentState = EFSM::Idle;
+	}
 }
 

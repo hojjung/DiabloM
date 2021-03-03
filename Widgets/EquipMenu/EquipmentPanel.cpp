@@ -100,9 +100,7 @@ void UEquipmentPanel::NativeOnInitialized()
 	
 	for(const FAccessorySpec& EqSpec5 : UDiabloGameInstance::Get->m_EquipManager->m_AryAcce)
 	{
-		FName ID = *FString::Printf(TEXT("%p"), &EqSpec5);
-
-		UAccessoryEquipButton* EqBtn5 = CreateWidget<UAccessoryEquipButton>(PlCon,m_ClassAccessoryEquipBtn,ID);
+		UAccessoryEquipButton* EqBtn5 = CreateWidget<UAccessoryEquipButton>(PlCon,m_ClassAccessoryEquipBtn);
 
 		EqBtn5->Init(EqSpec5,this,Index++);
 		

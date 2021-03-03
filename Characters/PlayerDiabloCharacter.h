@@ -6,6 +6,8 @@
 #include "WeakInterfacePtr.h"
 #include "Characters/UnitPawn.h"
 #include "Managers/DiabloCheatManager.h"
+#include "Managers/MonsterSpawnManager.h"
+
 
 #include "PlayerDiabloCharacter.generated.h"
 
@@ -170,5 +172,19 @@ public:
 	void ApplyMoveSpeedToOrigin();
 
 	virtual int GetAccuLevel() override;
+
+	FVector GetCameraLoc() const
+	{
+		return m_TopCamera->GetComponentLocation();
+	}
+
+	bool GetIsManualMove() const
+	{
+		return m_bIsManualMove;
+	}
+
+	friend UMonsterSpawnManager;
+
+	void SetManualMoveLocation(FVector goalLocation);
 };
 

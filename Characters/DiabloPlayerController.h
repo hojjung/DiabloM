@@ -31,9 +31,14 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Transient,ReplicatedUsing = OnRep_CurrentMsg,Category="Chat")
 	FString m_CurrentMsg;
-	
+	UPROPERTY()
+	TArray<AActor*> m_AryIgnoreActors;
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> m_AryQuery;
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void OnPossess(APawn* InPawn) override;
 	
 	void InitWidget();
 
@@ -78,4 +83,8 @@ private://server only
     void OnRep_CurrentMsg();
 
 	void UpdateChatText();
+
+public:
+	UFUNCTION()
+	void ClickActor();
 };

@@ -47,9 +47,9 @@ void UUpgradeButton::SetCostText(const BigInt& v)
 void UUpgradeButton::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradeButton::ChargeStart);
+	m_BtnLvUp->OnHovered.AddDynamic(this,&UUpgradeButton::ChargeStart);
 	m_BtnLvUp->OnUnhovered.AddDynamic(this,&UUpgradeButton::ChargeEnd);
-	m_BtnLvUp->OnReleased.AddDynamic(this,&UUpgradeButton::ChargeEnd);
+	//m_BtnLvUp->OnReleased.AddDynamic(this,&UUpgradeButton::ChargeEnd);
 }
 
 void UUpgradeButton::SetDescPreviewText(const FUpgradeSpec& data)
