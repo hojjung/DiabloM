@@ -13,34 +13,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnUpgradeLevelChanged);
 
-USTRUCT()
-struct FUpgradeSpec
-{
-	GENERATED_BODY()
-public:
-	int m_nLv;
-	const FUpgradeDataRow* m_UpgradeData;
-	BigInt m_Value;
-	BigInt m_Cost;
 
-	void IncreaseLevel()
-	{
-		m_nLv++;
-		SetLevel(m_nLv);
-	}
-
-	void SetLevel(int v)
-	{
-		m_nLv = v;
-		m_Value = m_UpgradeData->GetValue(m_nLv);
-		m_Cost = m_UpgradeData->GetCost(m_nLv);
-	}
-
-	int GetMaxLv() const
-	{
-		return m_UpgradeData->m_nMaxLevel;
-	}
-};
 UCLASS()
 class DIABLOM_API UPlayerUpgradeManager : public UObject
 {
@@ -54,6 +27,10 @@ public:
 	static UDataTable* StatUpgradeTable;
 
 	static UDataTable* SkillUpgradeTable;
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSkillChanged,int,FSkillSpec*);
+
+	FOnSkillChanged m_OnSkillChanged;
 	
 public:
 	UPROPERTY()
@@ -62,9 +39,10 @@ public:
 	FUpgradeSpec m_UpgradeAtkDmg01;
 	FUpgradeSpec m_UpgradeAtkCri01;
 	FUpgradeSpec m_UpgradeAtkCDmg01;
-	FUpgradeSpec m_UpgradeSkill01;
-	FUpgradeSpec m_UpgradeSkill02;
-	FUpgradeSpec m_UpgradeSkill03;
+
+	TArray<FSkillSpec> m_AryUpgradeSkill;
+	
+	FSkillSpec* m_AryEquippedSkillSpec[4];
 	
 public:
 	void SetUpgradeDataFromServer(const FString& stat,const FString& skill);
@@ -77,4 +55,6 @@ public:
 	void UpgradeSkill01();
 	void UpgradeSkill02();
 	void UpgradeSkill03();
+	void EquipSkill(int index,  FSkillSpec* skill_spec);
+	void UnequipSkill(int index,  FSkillSpec* skill_spec);
 };

@@ -43,7 +43,7 @@ void UMainCanvas::NativeOnInitialized()
 	m_CDBoss->SetCooldownProgress(0,0);
 
 	UDiabloGameInstance::Get->GetPlChar()->m_OnRageChanged.AddUObject(this,&UMainCanvas::UpdateRageBar);
-	UpdateRageBar(0.f);
+
 }
 
 void UMainCanvas::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -92,9 +92,17 @@ void UMainCanvas::HideBossUI()
 	m_OverlayBossHp->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UMainCanvas::UpdateRageBar(float per)
+void UMainCanvas::UpdateRageBar(float cV,float mV)
 {
-	m_BarRage->SetProgressValue(per);
+	m_BarRage->SetProgressValue(cV/mV);
+
+	FTextFormat FormatRage =FText::FromString("{0}/{1}");
+
+	FFormatOrderedArguments Args;
+	Args.Add(cV);
+	Args.Add(mV);
+	
+	m_TxtRageValue->SetText(FText::Format(FormatRage,Args));
 }
 
 void UMainCanvas::UpdateBossHP(float per)

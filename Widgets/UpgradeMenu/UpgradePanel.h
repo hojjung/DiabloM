@@ -2,15 +2,16 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 
 
 #include "Button.h"
+#include "SkillUpgradeButton.h"
 #include "UpgradeButton.h"
 #include "WidgetSwitcher.h"
 #include "Blueprint/UserWidget.h"
 #include "Managers/PlayerUpgradeManager.h"
-
+#include "Widgets/SkillHotkeyPanel.h"
 #include "UpgradePanel.generated.h"
 
 /**
@@ -50,14 +51,20 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UUpgradeButton* m_UpgradeAtkCDmg01;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUpgradeButton* m_UpgradeSkill01;//배우기 제한있음
+	USkillUpgradeButton* m_UpgradeSkill01;//배우기 제한있음
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUpgradeButton* m_UpgradeSkill02;
+	USkillUpgradeButton* m_UpgradeSkill02;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUpgradeButton* m_UpgradeSkill03;
+	USkillUpgradeButton* m_UpgradeSkill03;
 	//switch 대상
 	UPROPERTY()
 	UPlayerUpgradeManager* m_PlUpgrade;
+	
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	USkillHotkeyPanel* m_SkillEquipBtnProxy;
+
+
 public:
 	UFUNCTION()
 	void SetPanel1();
@@ -80,4 +87,7 @@ public:
     void UpgradeSkill03();
 	UFUNCTION()
 	void OnUpgradeChanged();
+	void CloseSkillHotkeyPanel();
+	UFUNCTION()
+	void OnSkillEquipPressed(USkillUpgradeButton* btn);
 };

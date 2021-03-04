@@ -1,7 +1,5 @@
 #include "UpgradePanel.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Datas/PlayerUpgradeData.h"
-#include "Managers/PlayfabManager.h"
 
 UUpgradePanel::UUpgradePanel(const FObjectInitializer& objInit):Super(objInit)
 {
@@ -35,22 +33,29 @@ void UUpgradePanel::NativeOnInitialized()
 	//upgradeAtkCDmg01
 	m_UpgradeSkill01->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeSkill01);
 	m_UpgradeSkill01->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeSkill01);
-	m_UpgradeSkill01->SetUpgradeVisual(m_PlUpgrade->m_UpgradeSkill01);
+	m_UpgradeSkill01->Init(m_PlUpgrade->m_AryUpgradeSkill[0]);
 	//upgradeAtkCDmg01
 	m_UpgradeSkill02->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeSkill02);
 	m_UpgradeSkill02->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeSkill02);
-	m_UpgradeSkill02->SetUpgradeVisual(m_PlUpgrade->m_UpgradeSkill02);
+	m_UpgradeSkill02->Init(m_PlUpgrade->m_AryUpgradeSkill[1]);
 	//upgradeAtkCDmg01
 	m_UpgradeSkill03->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeSkill03);
 	m_UpgradeSkill03->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeSkill03);
-	m_UpgradeSkill03->SetUpgradeVisual(m_PlUpgrade->m_UpgradeSkill03);
+	m_UpgradeSkill03->Init(m_PlUpgrade->m_AryUpgradeSkill[2]);
+	//
+	m_UpgradeSkill01->m_OnClicked.AddUObject(this,&UUpgradePanel::OnSkillEquipPressed);
+	m_UpgradeSkill02->m_OnClicked.AddUObject(this,&UUpgradePanel::OnSkillEquipPressed);
+	m_UpgradeSkill03->m_OnClicked.AddUObject(this,&UUpgradePanel::OnSkillEquipPressed);
+	//
 
 	OnUpgradeChanged();
+	CloseSkillHotkeyPanel();
 }
 
 void UUpgradePanel::SetPanel1()
 {
 	m_SwitcherUpgradePanel->SetActiveWidgetIndex(0);
+	CloseSkillHotkeyPanel();
 }
 
 void UUpgradePanel::SetPanel2()
@@ -61,6 +66,8 @@ void UUpgradePanel::SetPanel2()
 void UUpgradePanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
+	
+	CloseSkillHotkeyPanel();
 }
 
 void UUpgradePanel::UpgradeAtkDmg01()
@@ -99,7 +106,40 @@ void UUpgradePanel::OnUpgradeChanged()
 	m_UpgradeAtkCri01->UpdateLevelText(m_PlUpgrade->m_UpgradeAtkCri01);
 	m_UpgradeAtkCDmg01->UpdateLevelText(m_PlUpgrade->m_UpgradeAtkCDmg01);
 	//
-	m_UpgradeSkill01->UpdateLevelText(m_PlUpgrade->m_UpgradeSkill01);
-	m_UpgradeSkill02->UpdateLevelText(m_PlUpgrade->m_UpgradeSkill02);
-	m_UpgradeSkill03->UpdateLevelText(m_PlUpgrade->m_UpgradeSkill03);
+	m_UpgradeSkill01->UpdateLevelText(m_PlUpgrade->m_AryUpgradeSkill[0]);
+	m_UpgradeSkill02->UpdateLevelText(m_PlUpgrade->m_AryUpgradeSkill[1]);
+	m_UpgradeSkill03->UpdateLevelText(m_PlUpgrade->m_AryUpgradeSkill[2]);
 }
+
+void UUpgradePanel::CloseSkillHotkeyPanel()
+{
+	m_SkillEquipBtnProxy->SetVisibility(ESlateVisibility::Collapsed);
+		
+	if(USkillUpgradeButton::CurrentSelected)
+	{
+		USkillUpgradeButton::CurrentSelected->SetNormalImage();
+		USkillUpgradeButton::CurrentSelected = nullptr;
+	}
+}
+
+void UUpgradePanel::OnSkillEquipPressed(USkillUpgradeButton* btn)//EquipPress
+{
+	PRINTF("EquipSkill");
+	if (USkillUpgradeButton::CurrentSelected == btn)
+	{
+		CloseSkillHotkeyPanel();
+	}
+	else
+	{
+		if(m_SkillEquipBtnProxy->GetVisibility()!=ESlateVisibility::SelfHitTestInvisible)
+		{
+			m_SkillEquipBtnProxy->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+			m_SkillEquipBtnProxy->PlayBlink();
+		}
+		USkillUpgradeButton::CurrentSelected=btn;
+		USkillUpgradeButton::CurrentSelected->SetHoverImage();
+	}
+	
+}
+
+

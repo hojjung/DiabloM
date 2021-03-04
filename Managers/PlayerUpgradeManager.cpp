@@ -35,15 +35,21 @@ void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& stat,const F
 	m_UpgradeAtkCDmg01.m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkCDmg01","");
 	m_UpgradeAtkCDmg01.SetLevel(FCString::Atoi(*AryStat[2]));
 
-	m_UpgradeSkill01.m_UpgradeData = SkillUpgradeTable->FindRow<FUpgradeDataRow>("Skill01","");
-	m_UpgradeSkill01.SetLevel(FCString::Atoi(*ArySkill[0]));
+	m_AryUpgradeSkill.Init(FSkillSpec(),4);
+
+	m_AryUpgradeSkill[0].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>("Skill01","");
+	m_AryUpgradeSkill[0].SetLevel(FCString::Atoi(*ArySkill[0]));
 	
-	m_UpgradeSkill02.m_UpgradeData = SkillUpgradeTable->FindRow<FUpgradeDataRow>("Skill02","");
-	m_UpgradeSkill02.SetLevel(FCString::Atoi(*ArySkill[1]));
+	m_AryUpgradeSkill[1].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>("Skill02","");
+	m_AryUpgradeSkill[1].SetLevel(FCString::Atoi(*ArySkill[1]));
 	
-	m_UpgradeSkill03.m_UpgradeData = SkillUpgradeTable->FindRow<FUpgradeDataRow>("Skill03","");
-	m_UpgradeSkill03.SetLevel(FCString::Atoi(*ArySkill[2]));
+	m_AryUpgradeSkill[2].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>("Skill03","");
+	m_AryUpgradeSkill[2].SetLevel(FCString::Atoi(*ArySkill[2]));
 	//
+	m_AryEquippedSkillSpec[0] = nullptr;
+	m_AryEquippedSkillSpec[1] = nullptr;
+	m_AryEquippedSkillSpec[2] = nullptr;
+	m_AryEquippedSkillSpec[3] = nullptr;
 }
 
 void UPlayerUpgradeManager::UpgradeAtkDmg01()
@@ -84,37 +90,57 @@ void UPlayerUpgradeManager::UpgradeAtkCDmg01()
 
 void UPlayerUpgradeManager::UpgradeSkill01()
 {
-	if (m_UpgradeSkill01.m_nLv >= m_UpgradeSkill01.GetMaxLv())
+	if (m_AryUpgradeSkill[0].m_nLv >= m_AryUpgradeSkill[0].GetMaxLv())
 	{
 		PRINTF("FAIL-UpgradeSkill01-MaxLevel");
 		return;
 	}
 	//
-	m_UpgradeSkill01.IncreaseLevel();
+	m_AryUpgradeSkill[0].IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
 }
 
 void UPlayerUpgradeManager::UpgradeSkill02()
 {
-	if (m_UpgradeSkill02.m_nLv >= m_UpgradeSkill02.GetMaxLv())
+	if (m_AryUpgradeSkill[1].m_nLv >= m_AryUpgradeSkill[1].GetMaxLv())
 	{
 		PRINTF("FAIL-UpgradeSkill01-MaxLevel");
 		return;
 	}
 	//
-	m_UpgradeSkill02.IncreaseLevel();
+	m_AryUpgradeSkill[1].IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
 }
 
 void UPlayerUpgradeManager::UpgradeSkill03()
 {
-	if (m_UpgradeSkill03.m_nLv >= m_UpgradeSkill03.GetMaxLv())
+	if (m_AryUpgradeSkill[2].m_nLv >= m_AryUpgradeSkill[2].GetMaxLv())
 	{
 		PRINTF("FAIL-UpgradeSkill03-MaxLevel");
 		return;
 	}
 	//
-	m_UpgradeSkill03.IncreaseLevel();
+	m_AryUpgradeSkill[2].IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
+}
+
+void UPlayerUpgradeManager::EquipSkill(int index, FSkillSpec* skill_spec)
+{
+	if(skill_spec->m_nIndex>-1)
+	{
+		int Index=skill_spec->m_nIndex; 
+		m_OnSkillChanged.Broadcast(Index,nullptr);
+		skill_spec->m_nIndex = -1;
+	}
+	m_AryEquippedSkillSpec[index] = skill_spec;
+	
+	m_OnSkillChanged.Broadcast(index,skill_spec);
+}
+
+void UPlayerUpgradeManager::UnequipSkill(int index, FSkillSpec* skill_spec)
+{
+	m_AryEquippedSkillSpec[index] = nullptr;
+	skill_spec->m_nIndex = -1;
+	m_OnSkillChanged.Broadcast(index,nullptr);
 }
 

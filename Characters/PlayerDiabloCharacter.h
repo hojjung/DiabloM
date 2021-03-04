@@ -24,6 +24,7 @@ class UCameraDissolve;
 class UPlayerSensing;
 class UDefaultFSM;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFloatChange,float);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnFloatChange2,float,float);
 DECLARE_MULTICAST_DELEGATE(FOnMove);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFocusTargetChanged,AUnitPawn*);
 DECLARE_MULTICAST_DELEGATE(FOnPlVisualChanged);
@@ -43,7 +44,8 @@ public:
 
 	FOnFocusTargetChanged m_OnFocusTarget;
 
-	FOnFloatChange m_OnRageChanged;
+	FOnFloatChange2 m_OnRageChanged;
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
 	TArray<TEnumAsByte< EObjectTypeQuery>> m_AryTargetingObjectType;

@@ -40,6 +40,12 @@ void UFSMTick::SetManualMove(FVector goal)
 	m_CurrentState = EFSM::ManualMove;
 }
 
+void UFSMTick::ForceSetStateIdle()
+{
+	m_CurrentState = EFSM::Idle;
+}
+
+
 void UFSMTick::OnIdle()
 {
 	if (m_Owner->GetFocusedTarget())
@@ -134,11 +140,21 @@ void UFSMTick::TryAttack()
 
 void UFSMTick::OnManualMove()
 {
+	
 	auto Result = m_Owner->MoveToLocation(m_ManualMoveLocation);
 
-	if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
+	if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal || Result == EPathFollowingRequestResult::Type::Failed)
 	{
 		m_CurrentState = EFSM::Idle;
+	}
+	else//some time already at goal not work
+	{
+		float Dist = FVector::DistSquared2D(m_Owner->GetActorLocation(),m_ManualMoveLocation);
+
+		if(Dist<40000.f)
+		{
+			m_CurrentState = EFSM::Idle;
+		}
 	}
 }
 

@@ -4,12 +4,16 @@
 #include "CoreMinimal.h"
 #include "TextBlock.h"
 #include "Blueprint/UserWidget.h"
+#include "Datas/PlayerUpgradeData.h"
 #include "Widgets/CommonElement/CooldownProgress.h"
 #include "Widgets/CommonElement/Joystick.h"
+#include "Widgets/UpgradeMenu/SkillUpgradeButton.h"
+
 
 
 #include "DiaSkillUseButton.generated.h"
 
+class USkillExecute;
 /**
  * 
  */
@@ -32,7 +36,8 @@ protected:
 	UJoystick* m_Joystick;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
 	UCooldownProgress* m_SkillCooldown;
-	
+	UPROPERTY()
+	USkillExecute* m_SkillInstance;
 protected:
 	int m_nIndex;
 
@@ -46,11 +51,11 @@ protected:
 
 	bool m_bIsDragSkill;
 	
-	//FSkillDataSpec* m_EquippedSkillSpec;
+	FSkillSpec* m_EquippedSkillSpec;
 
 	
 public:
-	//void SetSkillSpec(FSkillDataSpec* skillSpec);
+	void SetSkillSpec(FSkillSpec* skillSpec);
 
 	void UseSkill();
 	

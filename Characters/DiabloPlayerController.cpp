@@ -6,6 +6,7 @@
 #include "Kismet/KismetInputLibrary.h"
 #include "Managers/DiabloCheatManager.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
+#include "Managers/DiabloGameInstance.h"
 
 ADiabloPlayerController::ADiabloPlayerController()
 {
@@ -206,21 +207,21 @@ void ADiabloPlayerController::ClickActor()
 {
 	APlayerDiabloCharacter* DiaPlayer = Cast<APlayerDiabloCharacter>( GetPawn());
 
-	
 	PRINTF("Clicked");
 	
 	FVector StartPos;
 	
 	FVector EndPos;
 
-	
-
-	
 	DeprojectMousePositionToWorld(StartPos,EndPos);
 
 	EndPos*=10000.f;
 
 	EndPos+=StartPos;
+
+	FNavLocation Loc;
+
+
 
 	FHitResult Hits;
 
@@ -235,11 +236,18 @@ void ADiabloPlayerController::ClickActor()
 	}
 	PRINTF("ClickSuccess");
 
+
+
 	AMonsterPawn* Mob = Cast<AMonsterPawn>( Hits.Actor);
 
 	
 	if(!Mob)
 	{
+		if(!UDiabloGameInstance::Get->GetNavSys()->ProjectPointToNavigation(Hits.Location,Loc))
+		{
+			PRINTF("Not ReachAble");
+			return;
+		}
 		DiaPlayer->FocusTarget(nullptr);
 		DiaPlayer->SetManualMoveLocation(Hits.Location);
 		return;

@@ -74,4 +74,7 @@ public:
 	void TickFSM();
 
 	void SetManualMove(FVector goal);
+
+	void ForceSetStateIdle();
+
 };

@@ -55,7 +55,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 
 	m_Movement->m_RotateSpeed = FRotator(0.f, 650.f, 0.f);
 
-	m_Movement->SetMoveSpeed(710.f);
+	m_Movement->SetMoveSpeed(630.f);
 
 	//Material'/Game/03_VisualEffect/M_Fog.M_Fog'
 
@@ -92,6 +92,8 @@ void APlayerDiabloCharacter::BeginPlay()
 	m_EquipManager->ClearSelectedIndex();
 	m_EquipManager->EquipAll();
 
+
+	m_OnRageChanged.Broadcast(m_fCurrentRage,m_fMaxRage);
 }
 
 void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius, float focusRange)
@@ -485,7 +487,7 @@ void APlayerDiabloCharacter::GainRagePoint()
 
 	m_fCurrentRage = FMath::Clamp(m_fCurrentRage,0.f,m_fMaxRage);
 
-	m_OnRageChanged.Broadcast(m_fCurrentRage/m_fMaxRage);
+	m_OnRageChanged.Broadcast(m_fCurrentRage,m_fMaxRage);
 }
 
 
@@ -504,6 +506,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 		{
 			m_bIsManualMove = true;
 			GetMovementComponent()->StopMovementImmediately();
+			m_TickFSM->ForceSetStateIdle();
 			ApplyMoveSpeedToOrigin();
 			FocusTarget(nullptr);
 		}

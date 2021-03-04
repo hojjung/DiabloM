@@ -3,6 +3,7 @@
 #include "DiabloM.h"
 #include "EquipManager.h"
 #include "GoldManager.h"
+#include "NavigationSystem.h"
 #include "PlayerUpgradeManager.h"
 
 #include "DiabloGameInstance.generated.h"
@@ -44,6 +45,15 @@ protected:
 
 public:
 	ADiabloPlayerController* GetPlCon();
+	
 	APlayerDiabloCharacter* GetPlChar();
 
+	UNavigationSystemV1* GetNavSys();
+
+	
+
+public:
+	void SavePlayerSetting();
+
+	void LoadPlayerSetting();
 };

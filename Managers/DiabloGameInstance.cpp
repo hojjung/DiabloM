@@ -53,3 +53,18 @@ APlayerDiabloCharacter* UDiabloGameInstance::GetPlChar()
      return Cast<APlayerDiabloCharacter>( UGameplayStatics::GetPlayerPawn(GetWorld(),0));
 }
 
+UNavigationSystemV1* UDiabloGameInstance::GetNavSys()
+{
+	return Cast<UNavigationSystemV1>( GetWorld()->GetNavigationSystem());
+}
+
+void UDiabloGameInstance::SavePlayerSetting()
+{
+	
+}
+
+void UDiabloGameInstance::LoadPlayerSetting()
+{
+	
+}
+

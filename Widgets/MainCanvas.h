@@ -3,6 +3,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "SkillHotkeyPanel.h"
 
 #include "Blueprint/UserWidget.h"
 #include "CommonElement/CooldownProgress.h"
@@ -88,6 +89,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UCooldownProgress* m_CDBoss;
 	//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	USkillHotkeyPanel* m_SkillPanel;
+
+protected:
 	float m_fMaxBossCooldownTime;
 	float m_fBossCooldownTimeCounter;
 	float m_fMaxBossDurationTime;
@@ -100,7 +105,7 @@ protected:
 	
 	void HideBossUI();
 
-	void UpdateRageBar(float per);
+	void UpdateRageBar(float cV,float mV);
 
 	void UpdateBossHP(float per);
 
