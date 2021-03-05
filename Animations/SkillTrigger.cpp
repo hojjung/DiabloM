@@ -1,11 +1,10 @@
-#include "AnimNotify_PlayerAttack.h"
+#include "SkillTrigger.h"
+
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 
-
-void UAnimNotify_PlayerAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
+void USkillTrigger::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
-
 	if(!MeshComp->GetOwner())
 	{
 		return;
@@ -18,5 +17,5 @@ void UAnimNotify_PlayerAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 		return;
 	}
 
-	PL->ApplyDamageToTarget();
+	PL->TriggerSkill(m_SkillID);
 }

@@ -169,6 +169,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayColorEffect(const FLinearColor& colorWant,float effectLength);
 	
+	void TriggerSkill(const FName& name);
+
 public:
 	friend UDiabloGameInstance;
 	friend UDiaStatPanel;

@@ -339,6 +339,11 @@ void APlayerDiabloCharacter::PlayColorEffect(const FLinearColor& colorWant, floa
 	m_SkBody->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 }
 
+void APlayerDiabloCharacter::TriggerSkill(const FName& name)
+{
+	//
+}
+
 
 float APlayerDiabloCharacter::TryAttack()
 {

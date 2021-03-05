@@ -13,7 +13,6 @@
 
 #include "DiaSkillUseButton.generated.h"
 
-class USkillExecute;
 /**
  * 
  */
@@ -36,8 +35,6 @@ protected:
 	UJoystick* m_Joystick;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
 	UCooldownProgress* m_SkillCooldown;
-	UPROPERTY()
-	USkillExecute* m_SkillInstance;
 protected:
 	int m_nIndex;
 
@@ -68,7 +65,6 @@ public:
 
 	UFUNCTION()
     void OnReleaseBtn();
-	
 	
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
 

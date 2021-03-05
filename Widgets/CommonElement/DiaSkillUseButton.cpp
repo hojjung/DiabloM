@@ -2,7 +2,6 @@
 
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Skill/SkillExecute.h"
 #include "Widgets/UpgradeMenu/SkillUpgradeButton.h"
 
 
@@ -40,9 +39,8 @@ void UDiaSkillUseButton::SetSkillSpec(FSkillSpec* skillSpec)
 
 	m_Joystick->SetUseDrag(m_bIsDragSkill);
 
-	m_SkillInstance = NewObject<USkillExecute>();
 
-	m_SkillInstance->Init(m_EquippedSkillSpec);
+	
 }
 
 void UDiaSkillUseButton::ClearSkillSpec()
@@ -111,23 +109,18 @@ void UDiaSkillUseButton::OnReleaseBtn()
 
 void UDiaSkillUseButton::UseSkill()
 {
-	m_SkillInstance->StartExecuteSkill();
-	//    FGameplayAbilitySpec* AbilSpec = m_PlayerDiaComp->UseSkill(m_EquippedSkillSpec);
-	//
-	// if(!AbilSpec)
-	// {
-	// 	return;
-	// }
-	//
-	// m_GaSpec = AbilSpec;
-	//
-	// m_fMaxCD = m_GaSpec->Ability->GetCooldownTimeRemaining(m_PlayerDiaComp->AbilityActorInfo.Get());
+	//UseSkill
 
-	if (m_fMaxCD > 0.f && m_fCurrentCD <= 0.f)
+	m_fMaxCD = m_EquippedSkillSpec->m_SkillData->m_fSkillCoolTime;
+	
+	m_fCurrentCD = m_fMaxCD; 
+	
+	
+	if (m_fCurrentCD > 0.f)
 	{
+		m_SkillCooldown->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		m_SkillCooldown->StartCooldown();
-
-		//m_EquippedSkillSpec->m_LearnBtn->StartCooldown();
+		PRINTF("Cooldown Start : %f, %f",m_fCurrentCD,m_fMaxCD);
 	}
 }
 
@@ -154,6 +147,10 @@ void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 
 	if (m_bIsPressing && !m_bIsDragSkill)
 	{
+		if(m_fCurrentCD>0.f)
+		{
+			return;
+		}
 		UDiabloGameInstance::Get->GetPlChar()->HomingRotateToTarget();
 
 		UseSkill();
@@ -164,7 +161,7 @@ void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 		return;
 	}
 
-	m_fCurrentCD = 1.f;
+	m_fCurrentCD -= InDeltaTime;
 
 	if (m_fCurrentCD <= 0.f)
 	{

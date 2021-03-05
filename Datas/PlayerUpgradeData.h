@@ -177,6 +177,10 @@ struct FSkillUpgradeDataRow : public FTableRowBase
 
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UParticleSystem* m_SkillEffect;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	float m_fSkillCoolTime = 10.f;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UTexture2D* m_SkillIcon;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FText m_SkillShowName;
