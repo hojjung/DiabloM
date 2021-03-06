@@ -367,28 +367,33 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 	}
 	else if (name == "Skill01") //작은 범위 공격
 	{
+		DmgType =7;
+		
 		m_QueDmgType.Enqueue(DmgType);
 
 		ApplyDamageToTargets(*aryHits);
 	}
-	else if (name == "Skill02") //버프 이속
+	else if (name == "Buff01") //버프 공격
 	{
-		m_QueDmgType.Enqueue(DmgType);
 		StartBuff01(10);
 	}
-	else if (name == "Skill03") //휠윈드
+	else if (name == "Skill02") //휠윈드
 	{
+		DmgType =8;
+		
 		m_QueDmgType.Enqueue(DmgType);
 	}
-	else if (name == "Skill01") //큰 범위 공격
+	else if (name == "Skill03") //데스블로우
 	{
+		DmgType =9;
+		
 		m_QueDmgType.Enqueue(DmgType);
 	}
-	else if (name == "Buff01") //버프 공속
+	else if (name == "Buff02") //버프 공속
 	{
-		m_QueDmgType.Enqueue(DmgType);
 		StartBuff02(10);
 	}
+	
 }
 
 
@@ -500,19 +505,20 @@ bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg)
 		outDmg.Multiply(SDmg03);
 		outDmg.Divide(10000);
 	}
-	else if (Type == 7) //휠윈드
-	{
-		BigInt SDmg04 = m_PlUpgradeManager->GetSkillUp(ESkillType::WhirlWind).m_Value; //백기준으로 해야함,1.5배는  1
-		outDmg.Multiply(100);
-		outDmg.Multiply(SDmg04);
-		outDmg.Divide(10000);
-	}
-	else if (Type == 8) //스매시
+	else if (Type == 7)  //스매시
 	{
 		BigInt SDmg05 = m_PlUpgradeManager->GetSkillUp(ESkillType::MiniSlash).m_Value; //백기준으로 해야함,1.5배는  1
 		outDmg.Multiply(100);
 		outDmg.Multiply(SDmg05);
 		outDmg.Divide(10000);
+	}
+	else if (Type == 8)//휠윈드
+	{
+		BigInt SDmg04 = m_PlUpgradeManager->GetSkillUp(ESkillType::WhirlWind).m_Value; //백기준으로 해야함,1.5배는  1
+		outDmg.Multiply(100);
+		outDmg.Multiply(SDmg04);
+		outDmg.Divide(10000);
+	
 	}
 	else if (Type == 9) //데스블로우
 	{
@@ -530,7 +536,7 @@ void APlayerDiabloCharacter::StartBuff01(float sec)
 	m_fBuff01MaxTime = sec;
 
 	m_fBuff01DeltaCount = 0;
-	//
+	//공격력 수치로 증가
 }
 
 void APlayerDiabloCharacter::EndBuff01()
@@ -545,7 +551,7 @@ void APlayerDiabloCharacter::StartBuff02(float sec)
 	m_fBuff02MaxTime = sec;
 
 	m_fBuff02DeltaCount = 0;
-	
+	//공격속도 증가
 }
 
 void APlayerDiabloCharacter::EndBuff02()

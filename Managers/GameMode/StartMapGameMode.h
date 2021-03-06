@@ -17,6 +17,7 @@ class DIABLOM_API AStartMapGameMode : public AGameMode
 	GENERATED_BODY()
 
 public:
+	AStartMapGameMode();
 	bool m_bLock = false;
 	virtual void Tick(float DeltaSeconds) override;
 };

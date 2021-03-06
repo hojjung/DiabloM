@@ -27,6 +27,7 @@ class DIABLOM_API UPlayfabManager : public UObject
 {
 	GENERATED_BODY()
 public:
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayfabError,FString&);
 	//해금된 스테이지와 해금된 클래스,각클래스 업그레이드 레벨 다저장해야함
 	//다 숫자로 통일해주자? 테이블에서 어케 가져와
 	static const FString Gold;
@@ -39,6 +40,7 @@ public:
 	static const FString Pet;
 	static const FString Accessory;
 	//
+	FOnPlayfabError m_OnPlayfabError;
 public:
 	UPlayfabManager();
 
@@ -58,12 +60,14 @@ protected:
 
 	void OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result);
 
-
 	void OnSuccessGetUserData(const FGetUsrDataRSlt& result);
+	
 public:
 	void OnErrorPlayfabReq(const FFailRslt& ErrorResult);
 
 public:
+	UPROPERTY()
+	bool m_bIsNicknameSet = false;
 	UPROPERTY()
 	bool m_bLoginProcessStarted = false;
 	UPROPERTY()
@@ -107,4 +111,10 @@ public:
 	void TickTryUpdateUserData(float deltaTime);//should split
 	//the ui drity should update
 	//gold kill count separete need;
+
+	void RequestSetNickname(FString str);
+
+protected:
+	void OnNickNameSetSuccess(const  PlayFab::ClientModels::FUpdateUserTitleDisplayNameResult&);
+
 };
