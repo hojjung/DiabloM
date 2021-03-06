@@ -43,6 +43,7 @@ public:
 protected:
 	virtual void Init() override;
 
+
 public:
 	ADiabloPlayerController* GetPlCon();
 	
@@ -50,7 +51,9 @@ public:
 
 	UNavigationSystemV1* GetNavSys();
 
+	void RequestPopupText(FString txt);
 	
+	void RequestPopupText(FText txt);
 
 public:
 	void SavePlayerSetting();

@@ -203,6 +203,10 @@ public:
     
     virtual int GetAccuLevel();
 
+    UUnitMovement* GetMoveComp()
+    {
+        return m_Movement;
+    }
 };
 
 

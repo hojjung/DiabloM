@@ -6,7 +6,10 @@
 #include "PlayfabManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "GameFramework/GameUserSettings.h"
+#include "GameMode/DiabloGameMode.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
+#include "Widgets/MainCanvas.h"
+#include "Widgets/MyHUD.h"
 
 
 UDiabloGameInstance* UDiabloGameInstance::Get = nullptr;
@@ -56,6 +59,21 @@ APlayerDiabloCharacter* UDiabloGameInstance::GetPlChar()
 UNavigationSystemV1* UDiabloGameInstance::GetNavSys()
 {
 	return Cast<UNavigationSystemV1>( GetWorld()->GetNavigationSystem());
+}
+
+void UDiabloGameInstance::RequestPopupText(FString txt)
+{
+	RequestPopupText(FText::FromString(txt));
+}
+
+void UDiabloGameInstance::RequestPopupText(FText txt)
+{
+	if(!GetPlCon())
+	{
+		return;
+	}
+
+	Cast<AMyHUD>( GetPlCon()->GetHUD())->m_Canvas->ReqeustText(txt);
 }
 
 void UDiabloGameInstance::SavePlayerSetting()

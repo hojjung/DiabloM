@@ -36,4 +36,8 @@ public:
 	void PlayBlink();
 
 	void OnUpdateSkill(int index,FSkillSpec* skill_spec);
+
+	void OnCooldownStart(int index,FSkillSpec* skill_spec);
 };
+
+

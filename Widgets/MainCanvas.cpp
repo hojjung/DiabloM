@@ -5,6 +5,7 @@
 
 
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Engine/Canvas.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/MonsterSpawnManager.h"
 
@@ -44,6 +45,20 @@ void UMainCanvas::NativeOnInitialized()
 
 	UDiabloGameInstance::Get->GetPlChar()->m_OnRageChanged.AddUObject(this,&UMainCanvas::UpdateRageBar);
 
+}
+
+void UMainCanvas::ReqeustText(FText txt)
+{
+	PlayAnimation(m_ShowText);
+	
+	m_PopupText->ShowText(txt);
+
+	m_nIndex++;
+
+	if(m_nIndex>=5)
+	{
+		m_nIndex=0;
+	}
 }
 
 void UMainCanvas::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

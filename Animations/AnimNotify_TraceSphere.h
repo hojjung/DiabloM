@@ -19,7 +19,8 @@ class DIABLOM_API UAnimNotify_TraceSphere : public UAnimNotify
 	GENERATED_BODY()
 public:
 	UAnimNotify_TraceSphere();
-
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	FName m_ID="BaseAttack";
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	float m_fRange;
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)

@@ -19,6 +19,15 @@ void USkillHotkeyPanel::NativeOnInitialized()
 	m_ArySkillUse.Add(m_BtnSkillUse4);
 
 	UDiabloGameInstance::Get->m_PlayerUpgradeManager->m_OnSkillChanged.AddUObject(this,&USkillHotkeyPanel::OnUpdateSkill);
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->m_OnSkillUse.AddUObject(this,&USkillHotkeyPanel::OnCooldownStart);
+
+	int i =0;
+	for(FSkillSpec* SkillSpec : UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill())
+	{
+		OnUpdateSkill(i,SkillSpec);
+
+		i++;
+	}
 }
 
 
@@ -30,4 +39,8 @@ void USkillHotkeyPanel::PlayBlink()
 void USkillHotkeyPanel::OnUpdateSkill(int index, FSkillSpec* skill_spec)
 {
 	m_ArySkillUse[index]->SetSkillSpec(skill_spec);
+}
+void USkillHotkeyPanel::OnCooldownStart(int index, FSkillSpec* skill_spec)
+{
+	m_ArySkillUse[index]->TryStartCooldown();
 }

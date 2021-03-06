@@ -97,6 +97,15 @@ protected:
 	float m_fGainRagePer;
 
 	float m_fCurrentRage;
+
+	float m_fBuff01MaxTime;
+
+	float m_fBuff02MaxTime;
+
+	float m_fBuff01DeltaCount;
+
+	float m_fBuff02DeltaCount;
+	
 protected:
 	virtual void BeginPlay() override;
 	
@@ -117,6 +126,15 @@ protected:
 	void ApplyDamage(AUnitPawn* target,const BigInt& finalDmg);
 
 	bool GetDmg(BigInt& outDmg);
+
+	//
+	void StartBuff01(float sec);
+
+	void EndBuff01();
+
+	void StartBuff02(float sec);
+
+	void EndBuff02();
 
 public:
 	void PlayerClassDataInject(const FPlayerClassSpec& spec);
@@ -168,8 +186,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void PlayColorEffect(const FLinearColor& colorWant,float effectLength);
+
 	
-	void TriggerSkill(const FName& name);
+	void TriggerSkill(const FName& name,TArray<FHitResult>* aryHits=nullptr);
 
 public:
 	friend UDiabloGameInstance;
@@ -199,5 +218,13 @@ public:
 	void SetManualMoveLocation(FVector goalLocation);
 
 	void GainRagePoint();
+
+	bool SpendRagePoint(float rage);
+
+
+	float GetRage()
+	{
+		return m_fCurrentRage;
+	}
 };
 

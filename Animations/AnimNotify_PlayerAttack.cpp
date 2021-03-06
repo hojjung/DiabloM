@@ -18,5 +18,5 @@ void UAnimNotify_PlayerAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 		return;
 	}
 
-	PL->ApplyDamageToTarget();
+	PL->TriggerSkill(m_ID);
 }

@@ -135,9 +135,7 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
 
     if(m_MonsterType == EMonsterType::Boss)
     {
-        
-        
-        FocusTarget(Cast<APlayerDiabloCharacter>( UGameplayStatics::GetPlayerPawn(this,0)));
+        FocusTarget(Cast<AUnitPawn>( UGameplayStatics::GetPlayerPawn(this,0)));
     }
     
     m_bDeathAnimEnd = false;

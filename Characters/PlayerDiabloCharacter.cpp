@@ -14,10 +14,10 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	: Super(objInit)
 
 {
-	m_fMaxRage=100;
+	m_fMaxRage = 100;
 	m_fGainRagePer = 3;
 	m_fCurrentRage = 0;
-	
+
 	m_nAccuracyLevel = 10;
 	m_bIsManualMove = false;
 
@@ -36,8 +36,8 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	//
 	m_PetComp = CreateDefaultSubobject<UChildActorComponent>("Child01");
 	m_PetComp->SetupAttachment(RootComponent);
-	m_PetComp->SetRelativeLocation(FVector(0,90,150));
-	m_PetComp->SetRelativeRotation(FRotator(0,-90,0));
+	m_PetComp->SetRelativeLocation(FVector(0, 90, 150));
+	m_PetComp->SetRelativeRotation(FRotator(0, -90, 0));
 	//
 	m_SkBody->bCastDynamicShadow = true;
 	m_SkBody->CastShadow = true;
@@ -93,7 +93,9 @@ void APlayerDiabloCharacter::BeginPlay()
 	m_EquipManager->EquipAll();
 
 
-	m_OnRageChanged.Broadcast(m_fCurrentRage,m_fMaxRage);
+	m_OnRageChanged.Broadcast(m_fCurrentRage, m_fMaxRage);
+
+	//m_Movement->m_bUseRVO=true;
 }
 
 void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius, float focusRange)
@@ -107,6 +109,8 @@ FVector APlayerDiabloCharacter::GetLastSeenLocation()
 {
 	return m_PlayerSense->m_LastSeenLocation;
 }
+
+
 
 
 void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
@@ -136,14 +140,14 @@ void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
 
 	PRINTF("DiaChar-DataInject wPo");
 
-	if(m_CreatedWeapon)
+	if (m_CreatedWeapon)
 	{
-		FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld,false);
+		FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld, false);
 		m_CreatedWeapon->DetachFromActor(Rule);
 		m_CreatedWeapon->Destroy();
 	}
 
-	if(!spec.m_EquipData->m_ClassVisualActor)
+	if (!spec.m_EquipData->m_ClassVisualActor)
 	{
 		return;
 	}
@@ -151,12 +155,14 @@ void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
 	FActorSpawnParameters Param;
 
 	Param.bNoFail = true;
-	
-	m_CreatedWeapon = GetWorld()->SpawnActor<AEquipmentActor>(spec.m_EquipData->m_ClassVisualActor,GetActorLocation(),GetActorRotation(),Param);
 
-	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::KeepRelative,false);
-	
-	m_CreatedWeapon->AttachToComponent(m_SkBody,Rule,"Weapon");
+	m_CreatedWeapon = GetWorld()->SpawnActor<AEquipmentActor>(spec.m_EquipData->m_ClassVisualActor, GetActorLocation(),
+	                                                          GetActorRotation(), Param);
+
+	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
+	                               EAttachmentRule::KeepRelative, false);
+
+	m_CreatedWeapon->AttachToComponent(m_SkBody, Rule, "Weapon");
 }
 
 void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
@@ -169,15 +175,15 @@ void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
 
 	PRINTF("DiaChar-DataInject Wing");
 
-	if(m_CreatedWing)
+	if (m_CreatedWing)
 	{
-		FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld,false);
+		FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld, false);
 		m_CreatedWing->DetachFromActor(Rule);
 		m_CreatedWing->Destroy();
 		m_Movement->m_fMoveSpeedMultiple = 1.f;
 	}
 
-	if(!spec.m_WingData->m_ClassVisualWingActor)
+	if (!spec.m_WingData->m_ClassVisualWingActor)
 	{
 		return;
 	}
@@ -185,12 +191,14 @@ void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
 	FActorSpawnParameters Param;
 
 	Param.bNoFail = true;
-	
-	m_CreatedWing = GetWorld()->SpawnActor<AEquipmentActor>(spec.m_WingData->m_ClassVisualWingActor,GetActorLocation(),GetActorRotation(),Param);
 
-	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::KeepRelative,false);
-	
-	m_CreatedWing->AttachToComponent(m_SkBody,Rule,"Wing");
+	m_CreatedWing = GetWorld()->SpawnActor<AEquipmentActor>(spec.m_WingData->m_ClassVisualWingActor, GetActorLocation(),
+	                                                        GetActorRotation(), Param);
+
+	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
+	                               EAttachmentRule::KeepRelative, false);
+
+	m_CreatedWing->AttachToComponent(m_SkBody, Rule, "Wing");
 
 	m_Movement->m_fMoveSpeedMultiple = spec.m_WingData->GetMoveSpdBonus();
 }
@@ -216,7 +224,7 @@ void APlayerDiabloCharacter::PetDataInject(const FPetSpec& spec)
 
 	PRINTF("DiaChar-DataInject Pet");
 
-	if(!spec.m_PetData->m_ClassPetSkin)
+	if (!spec.m_PetData->m_ClassPetSkin)
 	{
 		return;
 	}
@@ -317,7 +325,6 @@ void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target) //wrapper
 	HideOutlineOnTarget();
 	m_FocusedEnemy = nullptr;
 	m_OnFocusTarget.Broadcast(nullptr);
-
 }
 
 bool APlayerDiabloCharacter::IsAlive() const
@@ -339,33 +346,78 @@ void APlayerDiabloCharacter::PlayColorEffect(const FLinearColor& colorWant, floa
 	m_SkBody->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 }
 
-void APlayerDiabloCharacter::TriggerSkill(const FName& name)
+void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>* aryHits)
 {
+	bool IsAOE = aryHits;
+	char DmgType = 0;
+	//TArray<FHitResult> 
 	//
+	if (name == "BaseAttack")
+	{
+		m_QueDmgType.Enqueue(DmgType);
+
+		if (IsAOE)
+		{
+			ApplyDamageToTargets(*aryHits);
+		}
+		else
+		{
+			ApplyDamageToTarget();
+		}
+	}
+	else if (name == "Skill01") //작은 범위 공격
+	{
+		m_QueDmgType.Enqueue(DmgType);
+
+		ApplyDamageToTargets(*aryHits);
+	}
+	else if (name == "Skill02") //버프 이속
+	{
+		m_QueDmgType.Enqueue(DmgType);
+		StartBuff01(10);
+	}
+	else if (name == "Skill03") //휠윈드
+	{
+		m_QueDmgType.Enqueue(DmgType);
+	}
+	else if (name == "Skill01") //큰 범위 공격
+	{
+		m_QueDmgType.Enqueue(DmgType);
+	}
+	else if (name == "Buff01") //버프 공속
+	{
+		m_QueDmgType.Enqueue(DmgType);
+		StartBuff02(10);
+	}
 }
 
 
 float APlayerDiabloCharacter::TryAttack()
 {
+	if (UDiabloGameInstance::Get->m_PlayerUpgradeManager->IsSkillCasting())
+	{
+		return 1.f;
+	}
+
 	m_Movement->SetMoveSpeedRatio(0.1f);
 
 	if (m_BaseAttackAnim && m_fAttackCD < 0.f)
 	{
-		FName SectionName =  "Combo01";
+		FName SectionName = "Combo01";
 		char DmgType = 0;
 		//치명타인지
 
 		//마력폭발인지
 		//일반공격인지
 		BigInt CriPercent100 = FMath::RandRange(0.f, 100.f);
-		BigInt Cri01 = m_PlUpgradeManager->m_UpgradeAtkCri01.m_Value;
+		BigInt Cri01 = m_PlUpgradeManager->GetAtkUp(EAttackType::Critical).m_Value;
 		//마력폭발 일어나면 더위에
 
 		if (CriPercent100 <= Cri01)
 		{
 			SectionName = "MagicBomb";
 			DmgType = 3;
-		}//SectionName = "MagicBomb";
+		} //SectionName = "MagicBomb";
 		else
 		{
 			if (FMath::RandBool())
@@ -382,12 +434,12 @@ float APlayerDiabloCharacter::TryAttack()
 		float AnimMongLen = m_BaseAttackAnim->GetSectionLength(DmgType);
 
 		AnimMongLen /= m_fAttackSpeed;
-		
+
 		m_fAttackCD = m_fAttackCDConstant;
 
-		float SpeedDelay = AnimMongLen -0.1f;
+		float SpeedDelay = AnimMongLen - 0.1f;
 
-		if(SpeedDelay<m_fAttackCDConstant)
+		if (SpeedDelay < m_fAttackCDConstant)
 		{
 			SpeedDelay = m_fAttackCDConstant;
 		}
@@ -402,32 +454,105 @@ float APlayerDiabloCharacter::TryAttack()
 bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg)
 {
 	char Type;
-	if(!m_QueDmgType.Dequeue(Type))
+	if (!m_QueDmgType.Dequeue(Type))
 	{
 		return false;
 	}
 
-	outDmg = m_PlUpgradeManager->m_UpgradeAtkDmg01.m_Value;
-	
+	outDmg = m_PlUpgradeManager->GetAtkUp(EAttackType::BaseAttack).m_Value;
+
 	outDmg.Multiply(100);
 	outDmg.Multiply(m_EquipManager->GetCurrentWeapon().m_Value);
 	outDmg.Divide(10000);
 
-	int Rand = FMath::RandRange(90,110);
+	int Rand = FMath::RandRange(90, 110);
 
 	outDmg.Multiply(100);
 	outDmg.Multiply(Rand);
 	outDmg.Divide(10000);
 
-	BigInt CDmg01 = m_PlUpgradeManager->m_UpgradeAtkCDmg01.m_Value; //백기준으로 해야함,1.5배는  1
 	//150
-	if (Type == 3) //cri
-		{
+	if (Type == 3) //치명타
+	{
+		BigInt CDmg01 = m_PlUpgradeManager->GetAtkUp(EAttackType::CriticalDmg).m_Value; //백기준으로 해야함,1.5배는  1
 		outDmg.Multiply(100);
 		outDmg.Multiply(CDmg01);
 		outDmg.Divide(10000);
-		}
+	}
+	else if (Type == 4) //슈퍼치명타
+	{
+		BigInt SDmg01 = m_PlUpgradeManager->GetAtkUp(EAttackType::SuperCritical).m_Value; //백기준으로 해야함,1.5배는  1
+		outDmg.Multiply(100);
+		outDmg.Multiply(SDmg01);
+		outDmg.Divide(10000);
+	}
+	else if (Type == 5) //폭발
+	{
+		BigInt SDmg02 = m_PlUpgradeManager->GetAtkUp(EAttackType::MagicBomb).m_Value; //백기준으로 해야함,1.5배는  1
+		outDmg.Multiply(100);
+		outDmg.Multiply(SDmg02);
+		outDmg.Divide(10000);
+	}
+	else if (Type == 6) //슈퍼폭발
+	{
+		BigInt SDmg03 = m_PlUpgradeManager->GetAtkUp(EAttackType::SuperMagicBomb).m_Value; //백기준으로 해야함,1.5배는  1
+		outDmg.Multiply(100);
+		outDmg.Multiply(SDmg03);
+		outDmg.Divide(10000);
+	}
+	else if (Type == 7) //휠윈드
+	{
+		BigInt SDmg04 = m_PlUpgradeManager->GetSkillUp(ESkillType::WhirlWind).m_Value; //백기준으로 해야함,1.5배는  1
+		outDmg.Multiply(100);
+		outDmg.Multiply(SDmg04);
+		outDmg.Divide(10000);
+	}
+	else if (Type == 8) //스매시
+	{
+		BigInt SDmg05 = m_PlUpgradeManager->GetSkillUp(ESkillType::MiniSlash).m_Value; //백기준으로 해야함,1.5배는  1
+		outDmg.Multiply(100);
+		outDmg.Multiply(SDmg05);
+		outDmg.Divide(10000);
+	}
+	else if (Type == 9) //데스블로우
+	{
+		BigInt SDmg06 = m_PlUpgradeManager->GetSkillUp(ESkillType::DeathBlow).m_Value; //백기준으로 해야함,1.5배는  1
+		outDmg.Multiply(100);
+		outDmg.Multiply(SDmg06);
+		outDmg.Divide(10000);
+	}
+
 	return true;
+}
+
+void APlayerDiabloCharacter::StartBuff01(float sec)
+{
+	m_fBuff01MaxTime = sec;
+
+	m_fBuff01DeltaCount = 0;
+	//
+}
+
+void APlayerDiabloCharacter::EndBuff01()
+{
+	m_fBuff01MaxTime = 0;
+
+	m_fBuff01DeltaCount = 0;
+}
+
+void APlayerDiabloCharacter::StartBuff02(float sec)
+{
+	m_fBuff02MaxTime = sec;
+
+	m_fBuff02DeltaCount = 0;
+	
+}
+
+void APlayerDiabloCharacter::EndBuff02()
+{
+	m_fBuff02MaxTime = 0;
+
+	m_fBuff02DeltaCount = 0;
 }
 
 void APlayerDiabloCharacter::ApplyDamageToTarget()
@@ -436,7 +561,7 @@ void APlayerDiabloCharacter::ApplyDamageToTarget()
 	{
 		BigInt FinalDmg;
 
-		if(!GetDmg(FinalDmg))
+		if (!GetDmg(FinalDmg))
 		{
 			return;
 		}
@@ -449,7 +574,7 @@ void APlayerDiabloCharacter::ApplyDamageToTarget()
 void APlayerDiabloCharacter::ApplyDamageToTargets(TArray<FHitResult>& aryTargets)
 {
 	BigInt FinalDmg;
-	
+
 	if (!GetDmg(FinalDmg))
 	{
 		return;
@@ -458,7 +583,7 @@ void APlayerDiabloCharacter::ApplyDamageToTargets(TArray<FHitResult>& aryTargets
 	for (auto& Mob : aryTargets)
 	{
 		AUnitPawn* Pawn = Cast<AUnitPawn>(Mob.GetActor());
-		
+
 		if (Pawn)
 		{
 			ApplyDamage(Pawn, FinalDmg);
@@ -478,7 +603,7 @@ void APlayerDiabloCharacter::ApplyMoveSpeedToOrigin()
 
 int APlayerDiabloCharacter::GetAccuLevel()
 {
-	return  m_EquipManager->GetCurrentWeapon().m_nAccuracy;
+	return m_EquipManager->GetCurrentWeapon().m_nAccuracy;
 }
 
 void APlayerDiabloCharacter::SetManualMoveLocation(FVector goalLocation)
@@ -488,17 +613,54 @@ void APlayerDiabloCharacter::SetManualMoveLocation(FVector goalLocation)
 
 void APlayerDiabloCharacter::GainRagePoint()
 {
-	m_fCurrentRage+=m_fGainRagePer;
+	m_fCurrentRage += m_fGainRagePer;
 
-	m_fCurrentRage = FMath::Clamp(m_fCurrentRage,0.f,m_fMaxRage);
+	m_fCurrentRage = FMath::Clamp(m_fCurrentRage, 0.f, m_fMaxRage);
 
-	m_OnRageChanged.Broadcast(m_fCurrentRage,m_fMaxRage);
+	m_OnRageChanged.Broadcast(m_fCurrentRage, m_fMaxRage);
+}
+
+bool APlayerDiabloCharacter::SpendRagePoint(float rage)
+{
+	if (GetRage() < rage)
+	{
+		return false;
+	}
+
+	m_fCurrentRage -= rage;
+
+	m_fCurrentRage = FMath::Clamp(m_fCurrentRage, 0.f, m_fMaxRage);
+
+	m_OnRageChanged.Broadcast(m_fCurrentRage, m_fMaxRage);
+
+
+	return true;
 }
 
 
 void APlayerDiabloCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (m_fBuff01MaxTime > 0)
+	{
+		m_fBuff01DeltaCount += DeltaTime;
+
+		if (m_fBuff01DeltaCount > m_fBuff01MaxTime)
+		{
+			EndBuff01();
+		}
+	}
+
+	if (m_fBuff02MaxTime > 0)
+	{
+		m_fBuff02DeltaCount += DeltaTime;
+
+		if (m_fBuff02DeltaCount > m_fBuff02MaxTime)
+		{
+			EndBuff02();
+		}
+	}
 
 	bool bIsMoveInputZero = m_Input.IsNearlyZero(0.1f);
 
@@ -510,6 +672,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 		if (!m_bIsManualMove && !bIsMoveInputZero)
 		{
 			m_bIsManualMove = true;
+			//m_Movement->m_bUseRVO=false;
 			GetMovementComponent()->StopMovementImmediately();
 			m_TickFSM->ForceSetStateIdle();
 			ApplyMoveSpeedToOrigin();
@@ -520,6 +683,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 	if (bIsMoveInputZero && m_bUseFSM)
 	{
 		m_bIsManualMove = false;
+		//m_Movement->m_bUseRVO=true;
 		m_TickFSM->TickFSM();
 	}
 }

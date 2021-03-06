@@ -54,6 +54,8 @@ protected:
 	float m_fDeltaCounter;
 
 	bool m_bChargeUpgrade;
+	
+	const FUpgradeSpec* m_CurrentUpgrade; 
 
 protected:
 	void SetDescPreviewText(const FUpgradeSpec& data);
@@ -67,7 +69,7 @@ public:
 	
 	void SetUpgradeVisual(const FUpgradeSpec& data);
 
-	void UpdateLevelText(const FUpgradeSpec& data);
+	void UpdateLevelText();
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 

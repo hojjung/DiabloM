@@ -37,5 +37,7 @@ void UAnimNotify_TraceSphere::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 		return;
 	}
 
-	PL->ApplyDamageToTargets(Hits);
+	PL->TriggerSkill(m_ID,&Hits);
+
+	PRINTF("GSphereTriggered");
 }

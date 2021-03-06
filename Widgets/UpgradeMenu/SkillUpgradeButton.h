@@ -75,10 +75,6 @@ protected:
 
 	FSlateBrush m_CachedNormal;
 
-	
-
-	
-
 public:
 	virtual void NativeOnInitialized() override;
 
@@ -88,7 +84,7 @@ public:
 
 	void SetNormalImage();
 
-	void UpdateLevelText(const FSkillSpec& data);
+	void UpdateSkillButton();
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 

@@ -151,6 +151,11 @@ public:
 	BigInt m_Value;
 	BigInt m_Cost;
 
+	bool IsUpgradeAble()
+	{
+		return  m_nLv < GetMaxLv();
+	}
+
 	void IncreaseLevel()
 	{
 		m_nLv++;
@@ -177,7 +182,7 @@ struct FSkillUpgradeDataRow : public FTableRowBase
 
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UParticleSystem* m_SkillEffect;
+	UAnimMontage* m_AnimSkillMotion;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	float m_fSkillCoolTime = 10.f;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -318,6 +323,11 @@ public:
 	const FSkillUpgradeDataRow* m_SkillData;
 	BigInt m_Value;
 	BigInt m_Cost;
+	float m_fCurrentCD;
+	float m_fDuration;
+
+	bool IsSkillUseable();
+	
 
 	void IncreaseLevel()
 	{
@@ -335,5 +345,46 @@ public:
 	int GetMaxLv() const
 	{
 		return m_SkillData->m_nMaxLevel;
+	}
+
+	float UseSkill();
+
+
+	void Tick(float delta_time)
+	{
+		m_fCurrentCD-=delta_time;
+		
+	}
+
+	bool IsUpgradeAble()
+	{
+		return m_nLv < GetMaxLv();
+	}
+
+	FString ParseToString()
+	{
+		FString StrW;
+		StrW.AppendInt(m_nLv);
+		StrW.Append(":");
+		StrW.AppendInt(m_nIndex);
+		StrW.Append(":");
+
+		return StrW;
+	}
+
+	void ParseFromString(const FString& str)
+	{
+		TArray<FString> OutStrAry;
+	
+		str.ParseIntoArray(OutStrAry,TEXT(":"));
+
+		m_nLv = FCString::Atoi(*OutStrAry[0]);
+		SetLevel(m_nLv);
+		m_nIndex = FCString::Atoi(*OutStrAry[1]);
+	}
+
+	bool IsCooldownReady()
+	{
+		return m_fCurrentCD<=0;
 	}
 };

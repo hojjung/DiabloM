@@ -3,8 +3,8 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "PopupTextWidget.h"
 #include "SkillHotkeyPanel.h"
-
 #include "Blueprint/UserWidget.h"
 #include "CommonElement/CooldownProgress.h"
 #include "CommonElement/ImageAndText.h"
@@ -26,7 +26,9 @@ class DIABLOM_API UMainCanvas : public UUserWidget
 public:
 	virtual void NativeOnInitialized() override;
 	
-protected:	
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UCanvasPanel* m_MainCanvas;
 	//top
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock*	     m_TextRanking;
@@ -91,13 +93,29 @@ protected:
 	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	USkillHotkeyPanel* m_SkillPanel;
+	//
+protected:
+	UPROPERTY(meta = (BindWidgetAnim))
+	UWidgetAnimation* m_ShowText;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UPopupTextWidget* m_PopupText;
 
+	int m_nIndex;
+	
+public:
+	void ReqeustText(FText txt);
+	
 protected:
 	float m_fMaxBossCooldownTime;
+	
 	float m_fBossCooldownTimeCounter;
+	
 	float m_fMaxBossDurationTime;
+	
 	float m_fBossDurationTimeCounter;
+	
 	FTextFormat m_Format;
+	
 protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	

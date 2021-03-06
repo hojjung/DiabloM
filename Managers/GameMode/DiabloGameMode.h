@@ -7,11 +7,12 @@
 #include "Components/PostProcessComponent.h"
 #include "GameFramework/GameMode.h"
 #include "Managers/MonsterSpawnManager.h"
-#include "Managers/PlayfabManager.h"
 
 
 #include "DiabloGameMode.generated.h"
 
+class UPlayerUpgradeManager;
+class UPlayfabManager;
 class APlayerVisual;
 
 
@@ -28,6 +29,9 @@ protected:
 	UActionManagerComponent* m_PlayerActionManager;
 	UPROPERTY()
 	UPlayfabManager* m_PlManager;
+	UPROPERTY()
+	UPlayerUpgradeManager* m_PlUpgrade;
+	
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 

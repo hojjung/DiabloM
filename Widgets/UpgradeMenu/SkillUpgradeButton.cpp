@@ -44,11 +44,11 @@ void USkillUpgradeButton::UpdateUpgradeable()
 
 void USkillUpgradeButton::Init(FSkillSpec& data)
 {
-	m_EquippedSkillSpec = &data;
-	m_NameText = data.m_SkillData->m_SkillShowName;
-	m_nMaxLevel = data.GetMaxLv();
-	m_ImgIcon->SetBrushFromTexture(data.m_SkillData->m_SkillIcon);
-	UpdateLevelText(data);
+	m_EquippedSkillSpec = &(data);
+	m_NameText = m_EquippedSkillSpec->m_SkillData->m_SkillShowName;
+	m_nMaxLevel = m_EquippedSkillSpec->GetMaxLv();
+	m_ImgIcon->SetBrushFromTexture(m_EquippedSkillSpec->m_SkillData->m_SkillIcon);
+	UpdateSkillButton();
 }
 
 void USkillUpgradeButton::SetCostText(const BigInt& v)
@@ -64,9 +64,9 @@ void USkillUpgradeButton::SetDescPreviewText(const FSkillSpec& data)
 	m_TextDesc->SetText(data.m_SkillData->GetFormatDescPreview(data.m_nLv));
 }
 
-void USkillUpgradeButton::UpdateLevelText(const FSkillSpec& data)
+void USkillUpgradeButton::UpdateSkillButton()
 {
-	m_nCurrentLevel = data.m_nLv;
+	m_nCurrentLevel = m_EquippedSkillSpec->m_nLv;
 	FFormatOrderedArguments Args;
 	Args.Add(m_NameText);
 	Args.Add(m_nCurrentLevel);
@@ -75,8 +75,8 @@ void USkillUpgradeButton::UpdateLevelText(const FSkillSpec& data)
 
 	m_TextName->SetText(tt);
 
-	SetDescPreviewText(data);
-	SetCostText(data.m_Cost);
+	SetDescPreviewText(*m_EquippedSkillSpec);
+	SetCostText(m_EquippedSkillSpec->m_Cost);
 	UpdateUpgradeable();
 }
 

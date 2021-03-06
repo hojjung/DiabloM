@@ -1,5 +1,8 @@
 #include "PlayerUpgradeManager.h"
 #include "DiabloGameInstance.h"
+#include "Characters/PlayerDiabloCharacter.h"
+
+#define LOCTEXT_NAMESPACE "PlayerUpgradeManager"
 
 UDataTable* UPlayerUpgradeManager::StatUpgradeTable = nullptr;
 
@@ -8,15 +11,15 @@ UDataTable* UPlayerUpgradeManager::SkillUpgradeTable = nullptr;
 UPlayerUpgradeManager::UPlayerUpgradeManager()
 {
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundSkillTable(
-              TEXT("DataTable'/Game/DataTables/Upgrade/PlayerDefaultSkillTable.PlayerDefaultSkillTable'"));
+		TEXT("DataTable'/Game/DataTables/Upgrade/PlayerDefaultSkillTable.PlayerDefaultSkillTable'"));
 	SkillUpgradeTable = FoundSkillTable.Object;
-	
-	 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundStatTable(
-	              TEXT("DataTable'/Game/DataTables/Upgrade/PlayerDefaultUpgradeTable.PlayerDefaultUpgradeTable'"));
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundStatTable(
+		TEXT("DataTable'/Game/DataTables/Upgrade/PlayerDefaultUpgradeTable.PlayerDefaultUpgradeTable'"));
 	StatUpgradeTable = FoundStatTable.Object;
 }
 
-void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& stat,const FString& skill)
+void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& stat, const FString& skill)
 {
 	m_PlayfabManager = UDiabloGameInstance::Get->m_PlayfabManager;
 	//
@@ -24,123 +27,182 @@ void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& stat,const F
 	stat.ParseIntoArray(AryStat,TEXT(":"));
 
 	TArray<FString> ArySkill;
-	skill.ParseIntoArray(ArySkill,TEXT(":"));
+	skill.ParseIntoArray(ArySkill,TEXT("/"));
+	//
+	m_AryBaseAtkUpgrade.Init(FUpgradeSpec(),(int)EAttackType::Length);
 	//	
-	m_UpgradeAtkDmg01.m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkDmg01",""); //
-	m_UpgradeAtkDmg01.SetLevel(FCString::Atoi(*AryStat[0]));
+	m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkDmg01", ""); //
+	m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::BaseAttack]));
+
+	m_AryBaseAtkUpgrade[(int)EAttackType::Critical].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkCri01", "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::Critical].SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::Critical]));
+
+	m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkCDmg01", "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::CriticalDmg]));
+
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkCri02", "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::SuperCritical]));
+
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkCDmg02", "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::SuperCriticalDmg]));
+
+	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkMagic01", "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::MagicBomb]));
 	
-	m_UpgradeAtkCri01.m_UpgradeData =  StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkCri01","");
-	m_UpgradeAtkCri01.SetLevel(FCString::Atoi(*AryStat[1]));
+	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkMDmg01", "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::MagicBombDmg]));
 	
-	m_UpgradeAtkCDmg01.m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkCDmg01","");
-	m_UpgradeAtkCDmg01.SetLevel(FCString::Atoi(*AryStat[2]));
-
-	m_AryUpgradeSkill.Init(FSkillSpec(),4);
-
-	m_AryUpgradeSkill[0].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>("Skill01","");
-	m_AryUpgradeSkill[0].SetLevel(FCString::Atoi(*ArySkill[0]));
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkMagic02", "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::MagicBomb]));
 	
-	m_AryUpgradeSkill[1].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>("Skill02","");
-	m_AryUpgradeSkill[1].SetLevel(FCString::Atoi(*ArySkill[1]));
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>("AtkMDmg02", "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::SuperMagicBombDmg]));
+	//
+	m_AryUpgradeSkill.Init(FSkillSpec(), (int)ESkillType::Length);
+
+	m_AryUpgradeSkill[(int)ESkillType::MiniSlash].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>("Skill01", "");
+	m_AryUpgradeSkill[(int)ESkillType::MiniSlash].ParseFromString(ArySkill[(int)ESkillType::MiniSlash]);
+
+	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>("Skill02", "");
+	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].ParseFromString(ArySkill[(int)ESkillType::MagicBlade]);
+
+	m_AryUpgradeSkill[(int)ESkillType::WhirlWind].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>("Skill03", "");
+	m_AryUpgradeSkill[(int)ESkillType::WhirlWind].ParseFromString(ArySkill[(int)ESkillType::WhirlWind]);
+
+	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>("Skill04", "");
+	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].ParseFromString(ArySkill[(int)ESkillType::DeathBlow]);
+
+	m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>("Skill05", "");
+	m_AryUpgradeSkill[(int)ESkillType::WindBlade].ParseFromString(ArySkill[(int)ESkillType::WindBlade]);
+	//
+	m_AryEquippedSkillSpec.Init(nullptr,4);
+
+	for(FSkillSpec& Skill : m_AryUpgradeSkill)
+	{
+		if(Skill.m_nIndex>-1)
+		{
+			m_AryEquippedSkillSpec[Skill.m_nIndex] = &Skill;
+		}
+	}
 	
-	m_AryUpgradeSkill[2].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>("Skill03","");
-	m_AryUpgradeSkill[2].SetLevel(FCString::Atoi(*ArySkill[2]));
-	//
-	m_AryEquippedSkillSpec[0] = nullptr;
-	m_AryEquippedSkillSpec[1] = nullptr;
-	m_AryEquippedSkillSpec[2] = nullptr;
-	m_AryEquippedSkillSpec[3] = nullptr;
 }
 
-void UPlayerUpgradeManager::UpgradeAtkDmg01()
+void UPlayerUpgradeManager::UpgradeAtk(EAttackType type)
 {
-	if (m_UpgradeAtkDmg01.m_nLv >= m_UpgradeAtkDmg01.GetMaxLv())
+	if (!GetAtkUp(type).IsUpgradeAble())
 	{
-		PRINTF("FAIL-UpgradeAtkDmg01-MaxLevel");
 		return;
 	}
 	//
-	m_UpgradeAtkDmg01.IncreaseLevel();
+	GetAtkUp(type).IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
+	//
+	UDiabloGameInstance::Get->RequestPopupText("UpgradeAtk");
 }
 
-void UPlayerUpgradeManager::UpgradeAtkCri01()
+void UPlayerUpgradeManager::UpgradeSkill(ESkillType type)
 {
-	if (m_UpgradeAtkCri01.m_nLv >= m_UpgradeAtkCri01.GetMaxLv())
+	if (!GetSkillUp(type).IsUpgradeAble())
 	{
-		PRINTF("FAIL-UpgradeAtkCri01-MaxLevel");
 		return;
 	}
 	//
-	m_UpgradeAtkCri01.IncreaseLevel();
-	m_OnUpgradeChanged.Broadcast();
-}
-
-void UPlayerUpgradeManager::UpgradeAtkCDmg01()
-{
-	if (m_UpgradeAtkCDmg01.m_nLv >= m_UpgradeAtkCDmg01.GetMaxLv())
-	{
-		PRINTF("FAIL-UpgradeAtkCDmg01-MaxLevel");
-		return;
-	}
-	//
-	m_UpgradeAtkCDmg01.IncreaseLevel();
-	m_OnUpgradeChanged.Broadcast();
-}
-
-void UPlayerUpgradeManager::UpgradeSkill01()
-{
-	if (m_AryUpgradeSkill[0].m_nLv >= m_AryUpgradeSkill[0].GetMaxLv())
-	{
-		PRINTF("FAIL-UpgradeSkill01-MaxLevel");
-		return;
-	}
-	//
-	m_AryUpgradeSkill[0].IncreaseLevel();
-	m_OnUpgradeChanged.Broadcast();
-}
-
-void UPlayerUpgradeManager::UpgradeSkill02()
-{
-	if (m_AryUpgradeSkill[1].m_nLv >= m_AryUpgradeSkill[1].GetMaxLv())
-	{
-		PRINTF("FAIL-UpgradeSkill01-MaxLevel");
-		return;
-	}
-	//
-	m_AryUpgradeSkill[1].IncreaseLevel();
-	m_OnUpgradeChanged.Broadcast();
-}
-
-void UPlayerUpgradeManager::UpgradeSkill03()
-{
-	if (m_AryUpgradeSkill[2].m_nLv >= m_AryUpgradeSkill[2].GetMaxLv())
-	{
-		PRINTF("FAIL-UpgradeSkill03-MaxLevel");
-		return;
-	}
-	//
-	m_AryUpgradeSkill[2].IncreaseLevel();
+	GetSkillUp(type).IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
 }
 
 void UPlayerUpgradeManager::EquipSkill(int index, FSkillSpec* skill_spec)
 {
-	if(skill_spec->m_nIndex>-1)
+	if(m_AryEquippedSkillSpec[index]&&	!m_AryEquippedSkillSpec[index]->IsCooldownReady())
 	{
-		int Index=skill_spec->m_nIndex; 
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("EquipSkillFail","Cooldown Skill Cant Change!"));
+		return;
+	}
+
+	if( skill_spec&&	!skill_spec->IsCooldownReady())
+	{
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("EquipSkillFail2","Cooldown Skill Cant Change!"));
+		return;
+	}
+
+	
+	if (skill_spec->m_nIndex > -1)
+	{
+		int Index=skill_spec->m_nIndex;
+		m_AryEquippedSkillSpec[Index] = nullptr;
 		m_OnSkillChanged.Broadcast(Index,nullptr);
 		skill_spec->m_nIndex = -1;
 	}
-	m_AryEquippedSkillSpec[index] = skill_spec;
 	
-	m_OnSkillChanged.Broadcast(index,skill_spec);
+	m_AryEquippedSkillSpec[index] = skill_spec;
+	m_AryEquippedSkillSpec[index]->m_nIndex = index;
+
+	m_OnSkillChanged.Broadcast(index, skill_spec);
 }
 
 void UPlayerUpgradeManager::UnequipSkill(int index, FSkillSpec* skill_spec)
 {
 	m_AryEquippedSkillSpec[index] = nullptr;
 	skill_spec->m_nIndex = -1;
-	m_OnSkillChanged.Broadcast(index,nullptr);
+	m_OnSkillChanged.Broadcast(index, nullptr);
 }
 
+bool UPlayerUpgradeManager::UseSkill(int index)
+{
+	if (!m_AryEquippedSkillSpec[index])
+	{
+		return false;
+	}
+
+	if (!m_AryEquippedSkillSpec[index]->IsSkillUseable())
+	{
+		return false;
+	}
+	
+	PRINTF("PLMAn-USeSkill");
+
+	m_fCastTime = m_AryEquippedSkillSpec[index]->UseSkill();
+
+	m_CurrentCastingSkill = m_AryEquippedSkillSpec[index];
+
+	UDiabloGameInstance::Get->GetPlChar()->SpendRagePoint(m_CurrentCastingSkill->m_SkillData->m_fRageCost);
+
+	m_OnSkillUse.Broadcast(index,m_AryEquippedSkillSpec[index]);
+
+	return true;
+}
+
+void UPlayerUpgradeManager::Tick(float deltaTime)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		if(!m_AryEquippedSkillSpec[i])
+		{
+			continue;
+		}
+		
+		m_AryEquippedSkillSpec[i]->Tick(deltaTime);
+
+		//m_OnSkillTick.Broadcast(i, m_AryEquippedSkillSpec[i]);
+	}
+
+	if(!m_CurrentCastingSkill)
+	{
+		return;
+	}
+
+	m_fCastTime-=deltaTime;
+
+	if(m_fCastTime<=0.f)
+	{
+		m_fCastTime = -1;
+		m_CurrentCastingSkill = nullptr;
+	}
+}
+
+bool UPlayerUpgradeManager::IsSkillCasting()
+{
+	//for prevent move and base attack
+	return m_CurrentCastingSkill;
+}
+#undef LOCTEXT_NAMESPACE

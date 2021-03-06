@@ -95,6 +95,7 @@ void UDiaSkillUseButton::OnPressBtn()
 
 void UDiaSkillUseButton::OnReleaseBtn()
 {
+	UDiabloGameInstance::Get->GetPlChar()->GetMoveComp()->SetMoveSpeedRatio(1.f);
 	if (!m_bIsSkillUsable)
 	{
 		return;
@@ -107,14 +108,11 @@ void UDiaSkillUseButton::OnReleaseBtn()
 	}
 }
 
-void UDiaSkillUseButton::UseSkill()
+void UDiaSkillUseButton::TryStartCooldown()
 {
-	//UseSkill
-
 	m_fMaxCD = m_EquippedSkillSpec->m_SkillData->m_fSkillCoolTime;
 	
 	m_fCurrentCD = m_fMaxCD; 
-	
 	
 	if (m_fCurrentCD > 0.f)
 	{
@@ -122,6 +120,18 @@ void UDiaSkillUseButton::UseSkill()
 		m_SkillCooldown->StartCooldown();
 		PRINTF("Cooldown Start : %f, %f",m_fCurrentCD,m_fMaxCD);
 	}
+}
+
+void UDiaSkillUseButton::UseSkill()
+{
+	//UseSkill
+
+	if(!UDiabloGameInstance::Get->m_PlayerUpgradeManager->UseSkill(m_nIndex))
+	{
+		return;
+	}
+
+	//TryStartCooldown();
 }
 
 bool UDiaSkillUseButton::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
@@ -147,19 +157,16 @@ void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 
 	if (m_bIsPressing && !m_bIsDragSkill)
 	{
-		if(m_fCurrentCD>0.f)
-		{
-			return;
-		}
+		UDiabloGameInstance::Get->GetPlChar()->GetMoveComp()->SetMoveSpeedRatio(0.1f);
 		UDiabloGameInstance::Get->GetPlChar()->HomingRotateToTarget();
 
 		UseSkill();
 	}
 
-	if (m_fMaxCD <= 0.f)
-	{
-		return;
-	}
+	// if (m_fMaxCD <= 0.f)
+	// {
+	// 	return;
+	// }
 
 	m_fCurrentCD -= InDeltaTime;
 

@@ -38,6 +38,6 @@ void UAnimNotify_TraceBox::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 		return;
 	}
 
-	PL->ApplyDamageToTargets(Hits);
+	PL->TriggerSkill(m_ID,&Hits);
 
 }

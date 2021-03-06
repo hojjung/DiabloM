@@ -14,8 +14,8 @@ class DIABLOM_API UAnimNotify_PlayerAttack : public UAnimNotify
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float m_fBonusDmg = 1.f;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	FName m_ID="BaseAttack";
 public:
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)override;
 };

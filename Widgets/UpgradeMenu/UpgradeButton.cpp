@@ -31,10 +31,11 @@ void UUpgradeButton::UpdateUpgradeable()
 
 void UUpgradeButton::SetUpgradeVisual(const FUpgradeSpec& data)
 {
-	m_NameText = data.m_UpgradeData->m_UpgradeShowName;
-	m_nMaxLevel = data.GetMaxLv();
-	m_ImgIcon->SetBrushFromTexture(data.m_UpgradeData->m_UpgradeIcon);
-	UpdateLevelText(data);
+	m_CurrentUpgrade = &data;
+	m_NameText = m_CurrentUpgrade->m_UpgradeData->m_UpgradeShowName;
+	m_nMaxLevel = m_CurrentUpgrade->GetMaxLv();
+	m_ImgIcon->SetBrushFromTexture(m_CurrentUpgrade->m_UpgradeData->m_UpgradeIcon);
+	UpdateLevelText();
 }
 
 void UUpgradeButton::SetCostText(const BigInt& v)
@@ -57,9 +58,9 @@ void UUpgradeButton::SetDescPreviewText(const FUpgradeSpec& data)
 	m_TextDesc->SetText(data.m_UpgradeData->GetFormatDescPreview(data.m_nLv));
 }
 
-void UUpgradeButton::UpdateLevelText(const FUpgradeSpec& data)
+void UUpgradeButton::UpdateLevelText()
 {
-	m_nCurrentLevel= data.m_nLv;
+	m_nCurrentLevel= m_CurrentUpgrade->m_nLv;
 	FFormatOrderedArguments Args;
 	Args.Add(m_NameText);
 	Args.Add(m_nCurrentLevel);
@@ -68,8 +69,8 @@ void UUpgradeButton::UpdateLevelText(const FUpgradeSpec& data)
 	
 	m_TextName->SetText(tt);
 	
-	SetDescPreviewText(data);
-	SetCostText(data.m_Cost);
+	SetDescPreviewText(*m_CurrentUpgrade);
+	SetCostText(m_CurrentUpgrade->m_Cost);
 	UpdateUpgradeable();
 }
 
