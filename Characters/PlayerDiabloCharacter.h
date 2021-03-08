@@ -28,6 +28,23 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnFloatChange2,float,float);
 DECLARE_MULTICAST_DELEGATE(FOnMove);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFocusTargetChanged,AUnitPawn*);
 DECLARE_MULTICAST_DELEGATE(FOnPlVisualChanged);
+
+
+
+
+UENUM(BlueprintType)
+enum class EDamageType :uint8
+{
+	Base01,
+	Base02,
+    Critical01,
+    Critical02,
+	Magic01,
+	Magic02,
+	Length
+};
+
+
 UCLASS( BlueprintType, Blueprintable)
 class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 {
@@ -45,6 +62,8 @@ public:
 	FOnFocusTargetChanged m_OnFocusTarget;
 
 	FOnFloatChange2 m_OnRageChanged;
+
+	
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
@@ -83,7 +102,7 @@ protected:
 
 	bool m_bIsManualMove;
 
-	TQueue<char> m_QueDmgType;
+	TQueue<EDamageType> m_QueDmgType;
 
 	UPROPERTY()
 	AEquipmentActor* m_CreatedWing;
@@ -121,11 +140,19 @@ protected:
 
 	virtual FVector GetLastSeenLocation() override;
 
-	virtual float TryAttack() override;
+	virtual float TryAttack() override;//공격하려는 의지
 
-	void ApplyDamage(AUnitPawn* target,const BigInt& finalDmg);
+	//몽타쥬 플레이
+	//몽타쥬를 플레이하기전에 마력폭발과 치명타 여부가 결정되어있음
+	//FName CalculateCritical();
+	
+	void PlayAttackMontage(float& currentCd,float maxCd,FName* sectionSkillName=nullptr);
+	//몽타쥬 트리거
+	
 
-	bool GetDmg(BigInt& outDmg);
+	void ApplyDamage(AUnitPawn* target,const BigInt& finalDmg,EDamagePopup& pp);
+
+	bool GetDmg(BigInt& outDmg,EDamagePopup& pp);
 
 	//
 	void StartBuff01(float sec);
@@ -187,17 +214,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayColorEffect(const FLinearColor& colorWant,float effectLength);
 
-	
-	void TriggerSkill(const FName& name,TArray<FHitResult>* aryHits=nullptr);
 
 public:
 	friend UDiabloGameInstance;
+	
 	friend UDiaStatPanel;
 
-	UFUNCTION(BlueprintCallable)
-	void ApplyDamageToTarget();
-	UFUNCTION(BlueprintCallable)
-    void ApplyDamageToTargets(TArray<FHitResult>& aryTargets);
+	void ApplyDamageToTarget(const BigInt* additionalDmg = nullptr);
+	
+    void ApplyDamageToTargets(TArray<FHitResult>& aryTargets,const BigInt* additionalDmg = nullptr);
 
 	void ApplyMoveSpeedToOrigin();
 
@@ -226,5 +251,7 @@ public:
 	{
 		return m_fCurrentRage;
 	}
+
+	void TriggerSkill(const FName& name,TArray<FHitResult>* aryHits=nullptr);
 };
 

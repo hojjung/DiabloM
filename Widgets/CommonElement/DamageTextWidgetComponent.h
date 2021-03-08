@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 
-#include "Characters/UnitPawn.h"
 #include "Components/WidgetComponent.h"
 #include "DamageTextWidgetComponent.generated.h"
 
@@ -15,13 +14,10 @@
 UENUM(Blueprintable)
 enum class EDamagePopup: uint8
 {
-    NormalLeft,
     NormalRight,
-    CritcalLeft,
     CritcalRight,
-    PlayerHurt,
+	CritcalRight2,
     Miss,
-	Blocked,
     Length
 };
 UCLASS()

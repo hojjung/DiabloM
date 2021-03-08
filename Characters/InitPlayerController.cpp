@@ -7,7 +7,6 @@
 AInitPlayerController::AInitPlayerController()
 {
 	//WidgetBlueprint'/Game/Blueprints/NewWidget/WB_NicknameSet.WB_NicknameSet'
-	ConstructorHelpers::FClassFinder<USetNickname> FoundW(TEXT("WidgetBlueprint'/Game/Blueprints/NewWidget/WB_NicknameSet.WB_NicknameSet_C'"));
 
 	bShowMouseCursor = true;
 }
@@ -25,7 +24,8 @@ void AInitPlayerController::Tick(float DeltaSeconds)
 }
 
 void AInitPlayerController::SetupInputComponent()
-{Super::SetupInputComponent();
+{
+	Super::SetupInputComponent();
 	InputComponent->BindAction("Exit", EInputEvent::IE_Pressed, this, &AInitPlayerController::OnDeviceBackKey);
 	InputComponent->BindAction("AndroidBack", EInputEvent::IE_Pressed, this, &AInitPlayerController::OnDeviceBackKey);
 }
@@ -33,5 +33,12 @@ void AInitPlayerController::SetupInputComponent()
 void AInitPlayerController::OnDeviceBackKey()
 {
 	PRINTF("Exit");
+	UDiabloGameInstance::Get->m_PlayfabManager->SetOfflineStatus();
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
+}
+
+void AInitPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
 }

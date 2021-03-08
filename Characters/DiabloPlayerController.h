@@ -11,6 +11,7 @@
  */
 
 
+class AUnitPawn;
 UCLASS()
 class DIABLOM_API ADiabloPlayerController : public APlayerController
 {

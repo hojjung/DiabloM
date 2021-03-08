@@ -82,6 +82,7 @@ UDamageTextWidgetComponent* ADiabloPlayerController::GetDmgWC()
 void ADiabloPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
+	UDiabloGameInstance::Get->m_PlayfabManager->SetOfflineStatus();
 }
 
 void ADiabloPlayerController::SetupInputComponent()
@@ -95,8 +96,8 @@ void ADiabloPlayerController::SetupInputComponent()
 void ADiabloPlayerController::ExitGame()
 {
 	PRINTF("Exit");
+//	UDiabloGameInstance::Get->m_PlayfabManager->SetOfflineStatus();
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
-
 }
 
 void ADiabloPlayerController::OnDeviceBackKey()

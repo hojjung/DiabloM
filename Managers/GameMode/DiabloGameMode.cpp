@@ -9,6 +9,7 @@
 #include "GameFramework/PlayerState.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DungeonManager.h"
+#include "Widgets/GameLevelHUD.h"
 #include "Widgets/MyHUD.h"
 
 ADiabloGameMode::ADiabloGameMode()
@@ -17,7 +18,7 @@ ADiabloGameMode::ADiabloGameMode()
 	DefaultPawnClass = APlayerDiabloCharacter::StaticClass();
 	GameStateClass = ADiaGameState::StaticClass();
 	PlayerStateClass = ADiaPlayerState::StaticClass();
-	HUDClass = AMyHUD::StaticClass();
+	HUDClass = AGameLevelHUD::StaticClass();
 
 	m_PlayerActionManager=CreateDefaultSubobject<UActionManagerComponent>("PlayerActionManager");
 }

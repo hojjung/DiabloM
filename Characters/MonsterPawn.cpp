@@ -291,7 +291,7 @@ void AMonsterPawn::ShowStatusBar()
     m_WorldHpBar->GetUserWidgetObject()->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
-void AMonsterPawn::TakeDmg(BigInt amount, AUnitPawn* attacker)
+void AMonsterPawn::TakeDmg(BigInt amount, AUnitPawn* attacker,EDamagePopup pp)
 {
     if(!GetFocusedTarget())
     {
@@ -321,7 +321,7 @@ void AMonsterPawn::TakeDmg(BigInt amount, AUnitPawn* attacker)
         
     m_fCurrentHP.Subtract(amount);
 
-    m_PlCon->ShowDamageNumber(amount,this,EDamagePopup::NormalRight);
+    m_PlCon->ShowDamageNumber(amount,this,pp);
 
     if(m_fCurrentHP.IsLessThanZero()||m_fCurrentHP.IsZero())
     {

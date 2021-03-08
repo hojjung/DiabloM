@@ -92,7 +92,7 @@ public: //need more monster
 	void PlayHittenSound();
 	void ShowStatusBar();
 
-	virtual void TakeDmg(BigInt amount,AUnitPawn* attacker) override;
+	virtual void TakeDmg(BigInt amount,AUnitPawn* attacker,EDamagePopup pp) override;
 
 	virtual FVector GetLastSeenLocation() override;
 

@@ -88,6 +88,11 @@ void UPlayfabManager::OnNickNameSetSuccess(const PlayFab::ClientModels::FUpdateU
                                                          false);
 }
 
+void UPlayfabManager::OnCloudScriptSuccess(const FExeCScriptRslt& rslt)
+{
+	PRINTF("Cloud Script Success");
+}
+
 void UPlayfabManager::Init()
 {
 	if (m_bLoginProcessStarted)
@@ -258,6 +263,24 @@ void UPlayfabManager::RequestGetUserData()
 	                          FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
+void UPlayfabManager::SetOnlineStatus()
+{
+	ClientModels::FExecuteCloudScriptRequest Req;
+	Req.FunctionName="SetOnlineState";
+	GetClientAPI->ExecuteCloudScript(Req,
+		FExeCScriptDele::CreateUObject(this,&UPlayfabManager::OnCloudScriptSuccess),
+		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::SetOfflineStatus()
+{
+	ClientModels::FExecuteCloudScriptRequest Req;
+	Req.FunctionName="SetOfflineState";
+	GetClientAPI->ExecuteCloudScript(Req,
+        FExeCScriptDele::CreateUObject(this,&UPlayfabManager::OnCloudScriptSuccess),
+        FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
 
 void UPlayfabManager::OnErrorPlayfabReq(const FFailRslt& ErrorResult)
 {
@@ -299,6 +322,7 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 	                                                                 m_LoadedPet, m_LoadedAccessory);
 
 
+	SetOnlineStatus();
 	m_bIsLoginCompleted = true;
 	m_bIsNicknameSet = true;
 }

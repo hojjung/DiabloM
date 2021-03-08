@@ -25,4 +25,6 @@ public:
 	virtual void SetupInputComponent() override;
 	UFUNCTION()
 void OnDeviceBackKey();
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

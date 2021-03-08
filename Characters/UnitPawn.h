@@ -10,6 +10,8 @@
 #include "Datas/CharacterDataTable.h"
 #include "Logic/FSMTick.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Widgets/CommonElement/DamageTextWidgetComponent.h"
+
 
 #include "UnitPawn.generated.h"
 
@@ -106,7 +108,7 @@ public://virtual
 
     virtual float TryAttack();
 
-    virtual void TakeDmg(BigInt amount,AUnitPawn* attacker);
+    virtual void TakeDmg(BigInt amount,AUnitPawn* attacker,EDamagePopup pp);
 
     virtual FVector GetLastSeenLocation();
 

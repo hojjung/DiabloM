@@ -25,6 +25,7 @@ typedef PlayFab::FPlayFabCppError FFailRslt;
 typedef PlayFab::UPlayFabClientAPI::FGetAccountInfoDelegate FGetAccntInfoDele;
 typedef PlayFab::ClientModels::FGetAccountInfoRequest FGetAccntInfoReq;
 typedef PlayFab::ClientModels::FGetAccountInfoResult FGetAccntInfoRslt;
+//
 
 UCLASS()
 class DIABLOM_API UPlayfabManager : public UObject
@@ -129,7 +130,12 @@ public:
 
 	void RequestGetUserData();
 
+	void SetOnlineStatus();
+	
+	void SetOfflineStatus();
+
 protected:
 	void OnNickNameSetSuccess(const  PlayFab::ClientModels::FUpdateUserTitleDisplayNameResult&);
 
+	void OnCloudScriptSuccess(const FExeCScriptRslt& rslt);
 };

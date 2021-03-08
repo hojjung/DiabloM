@@ -323,7 +323,7 @@ float AUnitPawn::TryAttack()
 }
 
 
-void AUnitPawn::TakeDmg(BigInt amount, AUnitPawn* attacker)
+void AUnitPawn::TakeDmg(BigInt amount, AUnitPawn* attacker,EDamagePopup pp)
 {
     
 }
