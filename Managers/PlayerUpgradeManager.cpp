@@ -115,13 +115,13 @@ void UPlayerUpgradeManager::EquipSkill(int index, FSkillSpec* skill_spec)
 {
 	if(m_AryEquippedSkillSpec[index]&&	!m_AryEquippedSkillSpec[index]->IsCooldownReady())
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("EquipSkillFail","Cooldown Skill Cant Change!"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("EquipSkillFail","Cooldown Skill Cant Change1!"));
 		return;
 	}
 
 	if( skill_spec&&	!skill_spec->IsCooldownReady())
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("EquipSkillFail2","Cooldown Skill Cant Change!"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("EquipSkillFail2","Cooldown Skill Cant Change2!"));
 		return;
 	}
 
@@ -159,8 +159,6 @@ bool UPlayerUpgradeManager::UseSkill(int index)
 		return false;
 	}
 	
-	PRINTF("PLMAn-USeSkill");
-
 	m_fCastTime = m_AryEquippedSkillSpec[index]->UseSkill();
 
 	m_CurrentCastingSkill = m_AryEquippedSkillSpec[index];

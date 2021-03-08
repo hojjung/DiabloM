@@ -213,7 +213,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void PlayColorEffect(const FLinearColor& colorWant,float effectLength);
-
+	
+	float PlaySkillMontageSection(FName& nameID,int nSectionIndex,float& currentCD,float maxCD);
 
 public:
 	friend UDiabloGameInstance;

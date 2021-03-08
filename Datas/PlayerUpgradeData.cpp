@@ -1,32 +1,24 @@
 #include "PlayerUpgradeData.h"
-
-
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
 
-// UPlayerUpgradeData::UPlayerUpgradeData()
-// {
-// 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundEntityTable(
-//              TEXT("DataTable'/Game/DataTables/Upgrade/PlayerDefaultUpgradeTable.PlayerDefaultUpgradeTable'"));
-// 	GetPlUpgradeTable = FoundEntityTable.Object;
-// 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundSkillTable(
-//              TEXT("DataTable'/Game/DataTables/Upgrade/PlayerDefaultSkillTable.PlayerDefaultSkillTable'"));
-// 	GetSkillUpgradeTable = FoundSkillTable.Object;
-// 	//DataTable'/Game/DataTables/Upgrade/PlayerDefaultSkillTable.PlayerDefaultSkillTable'
-// }
-
 bool FSkillSpec::IsSkillUseable()
 {
-	return m_fCurrentCD<=0.f && UDiabloGameInstance::Get->GetPlChar()->GetRage() > m_SkillData->m_fRageCost;
+	return m_fCurrentCD<=0.f && UDiabloGameInstance::Get->GetPlChar()->GetRage() >= m_SkillData->m_fRageCost;
 }
 
 float FSkillSpec::UseSkill()
 {
-	check(m_SkillData->m_AnimSkillMotion);
+	FName SkillSection = m_SkillData->m_IDSkillMontageSection;
 	
-	UDiabloGameInstance::Get->GetPlChar()->PlayAnimMontage(m_SkillData->m_AnimSkillMotion);
+	if(SkillSection == NAME_None)
+	{
+		PRINTF("SkillData MongrageSectionNull");
+		
+		return 0.f;		
+	}
+	
+	float SectionLen = UDiabloGameInstance::Get->GetPlChar()->PlaySkillMontageSection(SkillSection,m_SkillData->m_nSectionIndex,m_fCurrentCD,m_SkillData->m_fSkillCoolTime);
 
-	m_fCurrentCD = m_SkillData->m_fSkillCoolTime;
-
-	return m_SkillData->m_AnimSkillMotion->GetPlayLength();
+	return SectionLen;
 }

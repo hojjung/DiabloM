@@ -346,6 +346,17 @@ void APlayerDiabloCharacter::PlayColorEffect(const FLinearColor& colorWant, floa
 	m_SkBody->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 }
 
+float APlayerDiabloCharacter::PlaySkillMontageSection(FName& nameID,int nSectionIndex,float& currentCD,float maxCD)
+{
+	PlayAttackMontage(currentCD,maxCD,&nameID);
+
+	float AnimMongLen = m_BaseAttackAnim->GetSectionLength(nSectionIndex) / m_fAttackSpeed;
+
+	currentCD=maxCD;
+	
+	return AnimMongLen;
+}
+
 void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>* aryHits)
 {
 	bool IsAOE = aryHits;
@@ -383,22 +394,21 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 		
 		ApplyDamageToTargets(*aryHits,&SkillDmg);
 	}
-	else if (name == "Buff01") //버프 공격
+	else if (name == "Skill02") //버프 공격
 	{
-		
 		StartBuff01(10);
 	}
-	else if (name == "Skill02") //휠윈드
+	else if (name == "Skill03") //휠윈드
 	{
-		BigInt SkillDmg =m_PlUpgradeManager->GetSkillUp(ESkillType::MiniSlash).m_Value;
+		BigInt SkillDmg =m_PlUpgradeManager->GetSkillUp(ESkillType::WhirlWind).m_Value;
 		ApplyDamageToTargets(*aryHits,&SkillDmg);
 	}
-	else if (name == "Skill03") //데스블로우
+	else if (name == "Skill04") //데스블로우
 	{
-		BigInt SkillDmg =m_PlUpgradeManager->GetSkillUp(ESkillType::MiniSlash).m_Value;
+		BigInt SkillDmg =m_PlUpgradeManager->GetSkillUp(ESkillType::DeathBlow).m_Value;
 		ApplyDamageToTargets(*aryHits,&SkillDmg);
 	}
-	else if (name == "Buff02") //버프 공속
+	else if (name == "Skill05") //버프 공속
 	{
 		StartBuff02(10);
 	}
@@ -408,7 +418,7 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 
 void APlayerDiabloCharacter::PlayAttackMontage(float& currentCd,float maxCd,FName* sectionSkillName)
 {
-	m_Movement->SetMoveSpeedRatio(0.1f);
+	
 	
 	FName SectionName = "Combo01";
 	
@@ -448,8 +458,11 @@ void APlayerDiabloCharacter::PlayAttackMontage(float& currentCd,float maxCd,FNam
 	
 	BigInt Magic01 = m_PlUpgradeManager->GetAtkUp(EAttackType::MagicBomb).m_Value;
 
+	bool bUseMagic = false;
+
 	if(MagicPercent100<= Magic01)
 	{
+		bUseMagic=true;
 		SectionName = "MagicBomb01";
 		DmgType= EDamageType::Magic01;
 
@@ -466,27 +479,29 @@ void APlayerDiabloCharacter::PlayAttackMontage(float& currentCd,float maxCd,FNam
 
 	PlayAnimMontage(m_BaseAttackAnim, 1 * m_fAttackSpeed,sectionSkillName? *sectionSkillName: SectionName);
 
-	float AnimMongLen = m_BaseAttackAnim->GetSectionLength((int)DmgType);
+	float AnimMongLen = m_BaseAttackAnim->GetSectionLength((int)DmgType) / m_fAttackSpeed;
 
-	//return;
-
-	AnimMongLen /= m_fAttackSpeed;
-
-	PRINTF("ANimLen:%f",AnimMongLen);
-
-	if(AnimMongLen<maxCd)
+	if(AnimMongLen>maxCd && !bUseMagic)
 	{
-		AnimMongLen = maxCd;
+		AnimMongLen=maxCd;
 	}
 
 	currentCd = AnimMongLen-0.1f;//-0.1f;
+	//
+	bool TimerHas = GetWorldTimerManager().TimerExists(m_AttackTimer);
 
-	PRINTF("CD:%f",currentCd);
-	
-	GetWorldTimerManager().ClearTimer(m_AttackTimer);
+	if(TimerHas)
+	{
+		GetWorldTimerManager().ClearTimer(m_AttackTimer);
+		
+	}
+
+	m_Movement->SetMoveSpeedRatio(0.1f);
+
+	PRINTF("Delay:%f",AnimMongLen);
 	
 	GetWorldTimerManager().SetTimer(m_AttackTimer, this, &APlayerDiabloCharacter::ApplyMoveSpeedToOrigin,
-	                                currentCd, false);
+	                                AnimMongLen, false);
 }
 
 float APlayerDiabloCharacter::TryAttack()

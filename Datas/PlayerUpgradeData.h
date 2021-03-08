@@ -182,7 +182,9 @@ struct FSkillUpgradeDataRow : public FTableRowBase
 
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UAnimMontage* m_AnimSkillMotion;
+	FName m_IDSkillMontageSection;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	int m_nSectionIndex;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	float m_fSkillCoolTime = 10.f;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)

@@ -63,7 +63,6 @@ void UDiaSkillUseButton::ClearCooldown()
 
 void UDiaSkillUseButton::OnPressBtn()
 {
-	PRINTF("SkillUSeBtn");
 
 	if (USkillUpgradeButton::CurrentSelected)
 	{
@@ -80,14 +79,6 @@ void UDiaSkillUseButton::OnPressBtn()
 	if (m_bIsDragSkill)
 	{
 		m_OnPressed.Broadcast(this);
-
-		// UPlayerBaseAttack* SkillCDO = Cast< UPlayerBaseAttack>( m_EquippedSkillSpec->m_SkillDataPtr->m_SkillAbility->GetDefaultObject()); 
-		// float Radius =  SkillCDO->GetRadius();
-		// float Range =  SkillCDO->GetRange();
-		//
-		// m_Joystick->SetRadius(Radius,Range);
-
-		//PRINTF("Radius:%f",Radius);
 	}
 
 	m_bIsPressing = true;
@@ -95,7 +86,6 @@ void UDiaSkillUseButton::OnPressBtn()
 
 void UDiaSkillUseButton::OnReleaseBtn()
 {
-	UDiabloGameInstance::Get->GetPlChar()->GetMoveComp()->SetMoveSpeedRatio(1.f);
 	if (!m_bIsSkillUsable)
 	{
 		return;
@@ -118,7 +108,6 @@ void UDiaSkillUseButton::TryStartCooldown()
 	{
 		m_SkillCooldown->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		m_SkillCooldown->StartCooldown();
-		PRINTF("Cooldown Start : %f, %f",m_fCurrentCD,m_fMaxCD);
 	}
 }
 
@@ -139,15 +128,6 @@ bool UDiaSkillUseButton::NativeOnDrop(const FGeometry& InGeometry, const FDragDr
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 
-	//UDiaDragDropSkill* DDOSkill = Cast<UDiaDragDropSkill>(InOperation);
-
-	//if(!DDOSkill)
-	{
-		return false;
-	}
-
-	//SetSkillSpec(DDOSkill->m_DraggedSkillData);
-
 	return true;
 }
 
@@ -157,7 +137,6 @@ void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 
 	if (m_bIsPressing && !m_bIsDragSkill)
 	{
-		UDiabloGameInstance::Get->GetPlChar()->GetMoveComp()->SetMoveSpeedRatio(0.1f);
 		UDiabloGameInstance::Get->GetPlChar()->HomingRotateToTarget();
 
 		UseSkill();
