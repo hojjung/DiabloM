@@ -313,8 +313,10 @@ void UMonsterSpawnManager::SpawnBossMob()
 		m_bBossSpawned = false;;
 		m_SpawnedBoss=nullptr;
 		pawn->Destroy();
-		PRINTF("TestLambda BossDead");
+		
 		m_OnBossBattleEnd.Broadcast(true);
+		
+		
 	}
 
 	);

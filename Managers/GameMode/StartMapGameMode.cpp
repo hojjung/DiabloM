@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DungeonManager.h"
+#include "Widgets/InitLevelHUD.h"
 
 AStartMapGameMode::AStartMapGameMode()
 {
@@ -12,7 +13,7 @@ AStartMapGameMode::AStartMapGameMode()
 	//DefaultPawnClass = APlayerDiabloCharacter::StaticClass();
 	//GameStateClass = ADiaGameState::StaticClass();
 	//PlayerStateClass = ADiaPlayerState::StaticClass();
-	//HUDClass = AMyHUD::StaticClass();
+	HUDClass = AInitLevelHUD::StaticClass();
 
 }
 

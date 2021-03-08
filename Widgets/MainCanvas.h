@@ -100,10 +100,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UPopupTextWidget* m_PopupText;
 
-	int m_nIndex;
-	
 public:
-	void ReqeustText(FText txt);
+	void RequestText(FText txt);
+
+	void RequestText(FString txt);
 	
 protected:
 	float m_fMaxBossCooldownTime;
@@ -152,6 +152,8 @@ public:
 	void SummonBoss();
 
 	void OnBossBattleEnd(bool b);
+
+	void SetPlayerNicknameRanking();
 };
 
 

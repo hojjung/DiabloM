@@ -97,7 +97,7 @@ void UPlayerUpgradeManager::UpgradeAtk(EAttackType type)
 	GetAtkUp(type).IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
 	//
-	UDiabloGameInstance::Get->RequestPopupText("UpgradeAtk");
+	
 }
 
 void UPlayerUpgradeManager::UpgradeSkill(ESkillType type)

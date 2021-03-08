@@ -23,12 +23,18 @@ class DIABLOM_API USetNickname : public UUserWidget
 
 public:
 	~USetNickname();
+	
+	void ReqeustPopupText(FString str);
+
+	void ReqeustPopupText(FText str);
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UEditableText* m_Nickname;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnConfirm;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextAPI;
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UCanvasPanel* m_CanvasNotification;
@@ -36,8 +42,11 @@ protected:
 	UTextBlock* m_TextNotification;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnNotificationConfirm;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UCanvasPanel* m_CanvasNicknamePanel;
 	FDelegateHandle m_Dele;
+
+	bool m_bRequestLock = false;
 public:
 	virtual void NativeOnInitialized() override;
 
@@ -49,4 +58,12 @@ public:
 	void ConfirmNoti();
 
 	void ShowNotification(FString& str);
+
+
+	void HideNicknameSet();
+
+	void ShowNicknameSet();
+
+	UFUNCTION()
+	void OnTextChanged(const FText& text);
 };

@@ -17,10 +17,14 @@ typedef PlayFab::ClientModels::FExecuteCloudScriptResult FExeCScriptRslt;
 //
 typedef PlayFab::UPlayFabClientAPI::FGetUserDataDelegate FGetUsrDataDele;
 typedef PlayFab::ClientModels::FGetUserDataRequest FGetUsrDataReq;
-typedef PlayFab::ClientModels::FGetUserDataResult FGetUsrDataRSlt;
+typedef PlayFab::ClientModels::FGetUserDataResult FGetUsrDataRslt;
 //
 typedef PlayFab::FPlayFabErrorDelegate FFailDele;
 typedef PlayFab::FPlayFabCppError FFailRslt;
+//
+typedef PlayFab::UPlayFabClientAPI::FGetAccountInfoDelegate FGetAccntInfoDele;
+typedef PlayFab::ClientModels::FGetAccountInfoRequest FGetAccntInfoReq;
+typedef PlayFab::ClientModels::FGetAccountInfoResult FGetAccntInfoRslt;
 
 UCLASS()
 class DIABLOM_API UPlayfabManager : public UObject
@@ -56,11 +60,16 @@ protected:
 	                           const FOnlineError& error);
 
 	void TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqueId);
-	void RequestGetUserData();
+	
+
 
 	void OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result);
 
-	void OnSuccessGetUserData(const FGetUsrDataRSlt& result);
+	void OnSuccessGetUserData(const FGetUsrDataRslt& result);
+
+	void RequestGetAccountInfo();
+
+	void OnSuccessGetAccountInfo(const FGetAccntInfoRslt& rslt);
 	
 public:
 	void OnErrorPlayfabReq(const FFailRslt& ErrorResult);
@@ -68,6 +77,8 @@ public:
 public:
 	UPROPERTY()
 	bool m_bIsNicknameSet = false;
+	UPROPERTY()
+	bool m_bShowNicknameSet = false;
 	UPROPERTY()
 	bool m_bLoginProcessStarted = false;
 	UPROPERTY()
@@ -92,6 +103,8 @@ public:
 	FString m_LoadedPet;
 	UPROPERTY()
 	FString m_LoadedAccessory;
+	UPROPERTY()
+	FString m_LoadedNickname;
 	//
 
 public:
@@ -113,6 +126,8 @@ public:
 	//gold kill count separete need;
 
 	void RequestSetNickname(FString str);
+
+	void RequestGetUserData();
 
 protected:
 	void OnNickNameSetSuccess(const  PlayFab::ClientModels::FUpdateUserTitleDisplayNameResult&);

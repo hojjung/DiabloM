@@ -68,12 +68,14 @@ void UDiabloGameInstance::RequestPopupText(FString txt)
 
 void UDiabloGameInstance::RequestPopupText(FText txt)
 {
-	if(!GetPlCon())
+	auto* PlCon = UGameplayStatics::GetPlayerController(GetWorld(),0);
+	
+	if(!PlCon)
 	{
 		return;
 	}
 
-	Cast<AMyHUD>( GetPlCon()->GetHUD())->m_Canvas->ReqeustText(txt);
+	Cast<AMyHUD>( PlCon->GetHUD())->ReqeustPopupText(txt);
 }
 
 void UDiabloGameInstance::SavePlayerSetting()

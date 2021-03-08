@@ -51,7 +51,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 
 	m_bIsDead = false;
 
-	m_Movement->SetRVOAvoidanceWeight(0.5f);
+	m_Movement->SetRVOAvoidanceWeight(1);
 
 	m_Movement->m_RotateSpeed = FRotator(0.f, 650.f, 0.f);
 
@@ -678,7 +678,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 		if (!m_bIsManualMove && !bIsMoveInputZero)
 		{
 			m_bIsManualMove = true;
-			//m_Movement->m_bUseRVO=false;
+			m_Movement->m_bUseRVO=false;
 			GetMovementComponent()->StopMovementImmediately();
 			m_TickFSM->ForceSetStateIdle();
 			ApplyMoveSpeedToOrigin();
@@ -689,7 +689,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 	if (bIsMoveInputZero && m_bUseFSM)
 	{
 		m_bIsManualMove = false;
-		//m_Movement->m_bUseRVO=true;
+		m_Movement->m_bUseRVO=true;
 		m_TickFSM->TickFSM();
 	}
 }

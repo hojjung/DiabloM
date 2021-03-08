@@ -1,13 +1,11 @@
-// My First Hack n Slash
-
-
 #include "MainCanvas.h"
-
-
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Engine/Canvas.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/MonsterSpawnManager.h"
+
+
+#define LOCTEXT_NAMESPACE "MainCanvas"
 
 void UMainCanvas::NativeOnInitialized()
 {
@@ -45,20 +43,19 @@ void UMainCanvas::NativeOnInitialized()
 
 	UDiabloGameInstance::Get->GetPlChar()->m_OnRageChanged.AddUObject(this,&UMainCanvas::UpdateRageBar);
 
+	SetPlayerNicknameRanking();
 }
 
-void UMainCanvas::ReqeustText(FText txt)
+void UMainCanvas::RequestText(FText txt)
 {
 	PlayAnimation(m_ShowText);
 	
 	m_PopupText->ShowText(txt);
+}
 
-	m_nIndex++;
-
-	if(m_nIndex>=5)
-	{
-		m_nIndex=0;
-	}
+void UMainCanvas::RequestText(FString txt)
+{
+	RequestText(FText::FromString(txt));
 }
 
 void UMainCanvas::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -249,6 +246,7 @@ void UMainCanvas::SetActiveMenuPanel()
 	m_PanelEquipment->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelGacha->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelShop->SetVisibility(ESlateVisibility::Collapsed);
+	
 	if(m_PanelMenu->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
 		m_PanelMenu->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -283,12 +281,12 @@ void UMainCanvas::OnBossBattleEnd(bool b)
 	SetBossTimer();
 	if(b)
 	{
-		PRINTF("BossSuccess");
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Success Boss Kill","Success Boss Kill"));
 		m_fMaxBossCooldownTime = 25.f;
 	}
 	else
 	{
-		PRINTF("BossFail");
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Fail Boss Kill","Fail Boss Kill"));
 		m_fMaxBossCooldownTime = 45.f;
 	}
 
@@ -297,3 +295,20 @@ void UMainCanvas::OnBossBattleEnd(bool b)
 	m_fBossCooldownTimeCounter = m_fMaxBossCooldownTime;
 	//실패시 쿨타임
 }
+
+void UMainCanvas::SetPlayerNicknameRanking()
+{
+	FFormatOrderedArguments Args;
+
+	int TestRank = 1234;
+	Args.Add(TestRank);
+	Args.Add(FText::FromString(UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname));
+
+	FTextFormat Format = LOCTEXT("Rank Nickname","[{0}st] {1}");
+	
+	FText RankText = FText::Format(Format,Args);
+	
+	m_TextRanking->SetText(RankText);
+}
+
+#undef LOCTEXT_NAMESPACE

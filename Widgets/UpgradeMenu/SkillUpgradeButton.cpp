@@ -19,8 +19,10 @@ USkillUpgradeButton::USkillUpgradeButton(const FObjectInitializer& objInit): Sup
 void USkillUpgradeButton::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+	m_BtnLvUp->OnClicked.AddDynamic(this, &USkillUpgradeButton::ChargeStart);
 	m_BtnLvUp->OnHovered.AddDynamic(this, &USkillUpgradeButton::ChargeStart);
 	m_BtnLvUp->OnUnhovered.AddDynamic(this, &USkillUpgradeButton::ChargeEnd);
+	m_BtnLvUp->OnReleased.AddDynamic(this, &USkillUpgradeButton::ChargeEnd);
 	m_BtnStyle = m_BtnEquip->WidgetStyle;
 	m_BtnEquip->OnClicked.AddDynamic(this,&USkillUpgradeButton::OnClick);
 }

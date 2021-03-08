@@ -48,9 +48,10 @@ void UUpgradeButton::SetCostText(const BigInt& v)
 void UUpgradeButton::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+	m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradeButton::ChargeStart);
 	m_BtnLvUp->OnHovered.AddDynamic(this,&UUpgradeButton::ChargeStart);
 	m_BtnLvUp->OnUnhovered.AddDynamic(this,&UUpgradeButton::ChargeEnd);
-	//m_BtnLvUp->OnReleased.AddDynamic(this,&UUpgradeButton::ChargeEnd);
+	m_BtnLvUp->OnReleased.AddDynamic(this,&UUpgradeButton::ChargeEnd);
 }
 
 void UUpgradeButton::SetDescPreviewText(const FUpgradeSpec& data)
@@ -95,6 +96,7 @@ void UUpgradeButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UUpgradeButton::ChargeStart()
 {
+	PRINTF("ChargeStart");
 	m_bChargeUpgrade = true;
 	m_fDeltaCounter= 0.f;
 }

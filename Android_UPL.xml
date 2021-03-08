@@ -68,6 +68,7 @@
 	<!-- optional additions to GameActivity onCreate in GameActivity.java -->
 	<gameActivityOnCreateAdditions>
   <insert>
+    newVirtualKeyboardInput.setScaleY(0);
     // CUSTOM:
     try
     {

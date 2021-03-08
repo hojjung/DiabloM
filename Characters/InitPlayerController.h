@@ -18,12 +18,11 @@ class DIABLOM_API AInitPlayerController : public APlayerController
 	
 public:
 	AInitPlayerController();
-
-	UPROPERTY()
-	TSubclassOf<USetNickname> m_ClassWidget;
-	UPROPERTY()
-	USetNickname* m_Canvas;
-
-	virtual void BeginPlay() override;
 	
+	virtual void Tick(float DeltaSeconds) override;
+
+	bool m_bLock = false;
+	virtual void SetupInputComponent() override;
+	UFUNCTION()
+void OnDeviceBackKey();
 };

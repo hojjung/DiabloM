@@ -7,9 +7,13 @@
 #include "OnlineSubsystemUtils.h"
 #include "PlayFabClientDataModels.h"
 #include "PlayerUpgradeManager.h"
+#include "PlayFabAdminDataModels.h"
 #include "PlayFabUtilities.h"
 
 using namespace PlayFab;
+
+#define LOCTEXT_NAMESPACE "PlayfabManager"
+
 //dungeon 1111200
 const FString UPlayfabManager::Gold = "Gold";
 const FString UPlayfabManager::Dg = "Dg";
@@ -60,6 +64,7 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 
 void UPlayfabManager::RequestSetNickname(FString str)
 {
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Nickname","Request Nickname"));
 	ClientModels::FUpdateUserTitleDisplayNameRequest DisplayReq;
 
 	DisplayReq.DisplayName = str;
@@ -74,8 +79,10 @@ void UPlayfabManager::RequestSetNickname(FString str)
 void UPlayfabManager::OnNickNameSetSuccess(const PlayFab::ClientModels::FUpdateUserTitleDisplayNameResult& result)
 {
 	//result.DisplayName
-	PRINTF("NicknameSet Success");
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Nickname Success","Nickname Success"));
 	m_bIsNicknameSet=true;
+	m_LoadedNickname=result.DisplayName;
+
 	FTimerHandle hh;
 	UDiabloGameInstance::Get->GetTimerManager().SetTimer(hh, this, &UPlayfabManager::RequestGetUserData, 2.5f,
                                                          false);
@@ -92,11 +99,11 @@ void UPlayfabManager::Init()
 
 	if (UMobileUtilsBlueprintLibrary::CheckInternetConnection())
 	{
-		PRINTF("Internet Connected");
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Internet Connected","Internet Connected"));
 	}
 	else
 	{
-		PRINTF("Internet Fail-EndApp");
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-Internet Fail-EndApp","FAIL-Internet Fail-EndApp"));
 
 		FGenericPlatformMisc::RequestExit(true);
 		return;
@@ -111,6 +118,7 @@ void UPlayfabManager::Init()
 
 
 #if PLATFORM_WINDOWS
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Desktop","Try Login With Desktop"));
 	GetClientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
 
 	PlayFab::ClientModels::FLoginWithCustomIDRequest request;
@@ -129,12 +137,12 @@ void UPlayfabManager::Init()
 #endif
 
 #if PLATFORM_ANDROID
-	PRINTF("PL-Android");
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Android","Try Login With Android"));
 	IOnlineExternalUIPtr ExternalUi = Subsystem->GetExternalUIInterface();
 
 	if (!ExternalUi)
 	{
-		PRINTF("noui-GoogleLogin Fail");
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-GoogleLoginFail-1","FAIL-GoogleLoginFail-1"));
 		return;
 	}
 
@@ -149,12 +157,12 @@ void UPlayfabManager::HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqu
 {
 	if (error.bSucceeded)
 	{
-		PRINTF("GoogleLogin Success");
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-GoogleLogin","SUCCESS-GoogleLogin"));
 		TryLoginPlayfabGoogle(uniqueId);
 	}
 	else
 	{
-		PRINTF("GoogleLogin Fail");
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-GoogleLoginFail-2","FAIL-GoogleLoginFail-2"));
 		FGenericPlatformMisc::RequestExit(true);
 	}
 }
@@ -171,12 +179,14 @@ void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqu
 
 		switch (Status)
 		{
-		case ELoginStatus::NotLoggedIn: PRINTF("LoginStatus:NotLoggedin");
+		case ELoginStatus::NotLoggedIn: 
+			UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-LoginStatus:NotLoggedin","FAIL-LoginStatus:NotLoggedin"));
 			break;
-		case ELoginStatus::UsingLocalProfile: PRINTF("LoginStatus:UsingLocalProfile");
+		case ELoginStatus::UsingLocalProfile: 
+			UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-LoginStatus:UsingLocalProfile","FAIL-LoginStatus:UsingLocalProfile"));
 			break;
-		case ELoginStatus::LoggedIn: PRINTF("LoginStatus:LoggedIn");
-
+		case ELoginStatus::LoggedIn: 
+			UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("LoginStatus:LoggedIn","LoginStatus:LoggedIn"));
 			break;
 		default: ;
 		}
@@ -199,41 +209,36 @@ void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqu
 
 		if (!Result)
 		{
-			PRINTF("FAIL - Request PlayfabLogin Fail");
+			UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Fail-Request PlayfabLogin","Fail-Request PlayfabLogin"));
 		}
 	}
 	else
 	{
-		PRINTF("FAIL - GooglePlay not checked ?");
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-GooglePlay not checked ?","FAIL-GooglePlay not checked ?"));
 	}
 }
 
 
 void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result)
 {
-	PRINTF("Playfab Login Success");
-
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-Playfab Login Success","SUCCESS-Playfab Login Success"));
 	PRINTF("ID:%s", *Result.PlayFabId);
 
 	m_PlayfabID = Result.PlayFabId;
 
 	if (Result.NewlyCreated)
 	{
-		PRINTF("Playfab New Player Created");
-		PRINTF("Please Wait For Update Data");
-
-		
-
-	
-		return;
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("New Player","New Player"));
 	}
-	
-	
-	RequestGetUserData();
+	//
+	RequestGetAccountInfo();
+	//RequestGetUserData();
 }
 
 void UPlayfabManager::RequestGetUserData()
 {
+	
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Get User Data","Request Get User Data"));
 	FGetUsrDataReq req;
 
 	//Request Data
@@ -261,25 +266,19 @@ void UPlayfabManager::OnErrorPlayfabReq(const FFailRslt& ErrorResult)
 	PRINTF("PlayfabRequest Error Message:%s", *ErrorResult.ErrorMessage);
 	PRINTF("PlayfabRequest Error Code:%s", *CodeString);
 
-	// switch (ErrorResult.ErrorCode)
-	// {
-	// case 1009:
-	// case 1058:
-	// case 1065:
-	// case 1234:
-	// 	PRINTF("DisplayNameFailed");
-		UDiabloGameInstance::Get->RequestPopupText(CodeString);
-		//다시쓰게
+	UDiabloGameInstance::Get->RequestPopupText(CodeString);
 		//break;
 	m_OnPlayfabError.Broadcast(CodeString);
 }
 
-void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRSlt& result)
+void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 {
-	PRINTF("GetUserDataSuccess");
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-Get User Data","SUCCESS-Get User Data"));
+	
 	if (!result.Data.Num())
 	{
 		PRINTF("DataNull");
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-Get User Data Null","FAIL-Get User Data Null"));
 		//Something Fucked
 	}
 	//
@@ -303,3 +302,37 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRSlt& result)
 	m_bIsLoginCompleted = true;
 	m_bIsNicknameSet = true;
 }
+
+void UPlayfabManager::RequestGetAccountInfo()
+{
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("RequestGetAccountInfo","RequestGetAccountInfo"));
+	FGetAccntInfoReq Req;
+
+	GetClientAPI->GetAccountInfo(Req,FGetAccntInfoDele::CreateUObject(this,&UPlayfabManager::OnSuccessGetAccountInfo),
+		FFailDele::CreateUObject(this,&UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::OnSuccessGetAccountInfo(const FGetAccntInfoRslt& rslt)
+{
+	if(rslt.AccountInfo->TitleInfo->isBanned)
+	{
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Banned Player","Banned Player"));
+		return;
+	}
+
+	
+	if(rslt.AccountInfo->TitleInfo->DisplayName.IsEmpty())
+	{
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Please Set Nickname","Please Set Nickname"));
+		m_bShowNicknameSet = true;
+		return;
+	}
+
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Welcome","Welcome"));
+	
+	m_LoadedNickname=rslt.AccountInfo->TitleInfo->DisplayName;
+	m_bIsNicknameSet = true;
+	RequestGetUserData();
+}
+
+#undef LOCTEXT_NAMESPACE

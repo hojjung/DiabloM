@@ -19,10 +19,5 @@ class DIABLOM_API AMyHUD : public AHUD
 public:
 	AMyHUD();
 	
-	TSubclassOf<UMainCanvas> m_ClassWidget;
-
-	UPROPERTY()
-	UMainCanvas* m_Canvas;
-
-	virtual void BeginPlay() override;
+	virtual void ReqeustPopupText(FText str);
 };

@@ -64,7 +64,7 @@ protected:
 	UPROPERTY()
 	UPlayerSensing* m_PlayerSense;
 	UPROPERTY()
-	TArray< AActor*> m_AryIgnoreActor;
+	TArray<AActor*> m_AryIgnoreActor;
 	UPROPERTY()
 	ADiabloPlayerController* m_PlayerCon;
 	
