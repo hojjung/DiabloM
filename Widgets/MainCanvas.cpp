@@ -3,6 +3,7 @@
 #include "Engine/Canvas.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/MonsterSpawnManager.h"
+#include "Shopmenu/ShopPanel.h"
 
 
 #define LOCTEXT_NAMESPACE "MainCanvas"

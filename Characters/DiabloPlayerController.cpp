@@ -272,3 +272,10 @@ void ADiabloPlayerController::HideMoveIndicator()
 	m_MovePointIndicator->SetActorHiddenInGame(true);
 }
 
+void ADiabloPlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	m_OnTick.Broadcast(DeltaSeconds);
+}
+

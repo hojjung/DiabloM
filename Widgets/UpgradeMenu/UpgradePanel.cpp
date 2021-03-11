@@ -39,7 +39,6 @@ void UUpgradePanel::NativeOnInitialized()
 	m_UpgradeAtkCDmg02->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeAtkCDmg02);
 	m_UpgradeAtkCDmg02->SetUpgradeVisual(m_PlUpgrade->GetAtkUp(EAttackType::SuperCriticalDmg));
 	//
-	//
 	m_UpgradeAtkMagic01->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeAtkMagic01);
 	m_UpgradeAtkMagic01->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeAtkMagic01);
 	m_UpgradeAtkMagic01->SetUpgradeVisual(m_PlUpgrade->GetAtkUp(EAttackType::MagicBomb));
@@ -83,6 +82,7 @@ void UUpgradePanel::NativeOnInitialized()
 
 	OnUpgradeChanged();
 	CloseSkillHotkeyPanel();
+	
 }
 
 void UUpgradePanel::SetPanel1()
@@ -217,6 +217,7 @@ void UUpgradePanel::OnSkillEquipPressed(USkillUpgradeButton* btn)//EquipPress
 			m_SkillEquipBtnProxy->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 			m_SkillEquipBtnProxy->PlayBlink();
 		}
+		
 		USkillUpgradeButton::CurrentSelected=btn;
 		USkillUpgradeButton::CurrentSelected->SetHoverImage();
 	}

@@ -25,6 +25,7 @@ void USkillHotkeyPanel::NativeOnInitialized()
 
 		i++;
 	}
+	
 }
 
 

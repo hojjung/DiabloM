@@ -16,6 +16,7 @@
 
 #include "MainCanvas.generated.h"
 
+class UShopPanel;
 /**
  * 
  */
@@ -54,7 +55,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UGachaPanel*	 m_PanelGacha;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUserWidget*	 m_PanelShop;
+	UShopPanel*	 m_PanelShop;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMainMenuPanel*  m_PanelMenu;
 	//

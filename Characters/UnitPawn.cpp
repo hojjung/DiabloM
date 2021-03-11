@@ -86,7 +86,7 @@ FPathFollowingRequestResult AUnitPawn::MoveToLocation(FVector goalLocation,float
     MoveReq.SetAllowPartialPath(true);
     MoveReq.SetProjectGoalLocation(false);
     MoveReq.SetNavigationFilter(UNavigationQueryFilter::StaticClass());
-    MoveReq.SetAcceptanceRadius(GetAcceptRadiusSelfOnly()+additionalAcceptRadius);
+    MoveReq.SetAcceptanceRadius(10.f+additionalAcceptRadius);
     MoveReq.SetReachTestIncludesAgentRadius(true);
     MoveReq.SetCanStrafe(true);
 

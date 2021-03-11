@@ -27,8 +27,12 @@ public:
 	FOnPressChange m_OnPressed;
 
 	FOnPressChange m_OnReleased;
+
+	FDelegateHandle m_DeleHandle;
 	
 	void Init(int index);
+
+	~UDiaSkillUseButton();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
@@ -70,12 +74,11 @@ public:
 
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
 
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
 	virtual FReply NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
 
 	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
 
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
+	void CustomTickForBind(float delta);
 };

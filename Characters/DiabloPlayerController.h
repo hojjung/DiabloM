@@ -11,6 +11,7 @@
  * 
  */
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnTick,float);
 
 class AUnitPawn;
 UCLASS()
@@ -20,6 +21,8 @@ class DIABLOM_API ADiabloPlayerController : public APlayerController
 	
 public:
 	ADiabloPlayerController();
+
+	FOnTick m_OnTick;
 	
 protected:
 	UPROPERTY()
@@ -95,4 +98,6 @@ public:
 	void ShowMoveIndicator(FVector loc);
 
 	void HideMoveIndicator();
+
+	virtual void Tick(float DeltaSeconds) override;
 };

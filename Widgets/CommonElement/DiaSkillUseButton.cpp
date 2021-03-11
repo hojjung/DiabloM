@@ -18,6 +18,18 @@ void UDiaSkillUseButton::Init(int index)
 	ClearSkillSpec();
 
 	m_Joystick->m_OnDropEnd.AddUObject(this, &UDiaSkillUseButton::UseSkill);
+
+	m_DeleHandle = UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(
+		this, &UDiaSkillUseButton::CustomTickForBind);
+}
+
+UDiaSkillUseButton::~UDiaSkillUseButton()
+{
+	//pl con already destoryed
+	if(UDiabloGameInstance::Get&&UDiabloGameInstance::Get->GetPlCon())
+	{
+		UDiabloGameInstance::Get->GetPlCon()->m_OnTick.Remove(m_DeleHandle);
+	}
 }
 
 void UDiaSkillUseButton::SetSkillSpec(FSkillSpec* skillSpec)
@@ -131,38 +143,6 @@ bool UDiaSkillUseButton::NativeOnDrop(const FGeometry& InGeometry, const FDragDr
 	return true;
 }
 
-void UDiaSkillUseButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	if (m_bIsPressing && !m_bIsDragSkill)
-	{
-		UDiabloGameInstance::Get->GetPlChar()->HomingRotateToTarget();
-
-		UseSkill();
-	}
-
-	// if (m_fMaxCD <= 0.f)
-	// {
-	// 	return;
-	// }
-
-	m_fCurrentCD -= InDeltaTime;
-
-	if (m_fCurrentCD <= 0.f)
-	{
-		ClearCooldown();
-
-		//m_EquippedSkillSpec->m_LearnBtn->ClearCooldown();
-
-		return;
-	}
-
-	m_SkillCooldown->SetCooldownProgress(m_fCurrentCD, m_fMaxCD); //0이 끝임
-
-	//m_EquippedSkillSpec->m_LearnBtn->SetCooldownProgress(m_fCurrentCD,m_fMaxCD);//0이 끝임
-}
-
 FReply UDiaSkillUseButton::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
 {
 	FReply ASD = Super::NativeOnTouchStarted(InGeometry, InGestureEvent);
@@ -186,5 +166,26 @@ void UDiaSkillUseButton::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 	Super::NativeOnMouseLeave(InMouseEvent);
 
 	OnReleaseBtn();
+}
+
+void UDiaSkillUseButton::CustomTickForBind(float delta)
+{
+	if (m_bIsPressing && !m_bIsDragSkill)
+	{
+		UDiabloGameInstance::Get->GetPlChar()->HomingRotateToTarget();
+
+		UseSkill();
+	}
+
+	m_fCurrentCD -= delta;
+
+	if (m_fCurrentCD <= 0.f)
+	{
+		ClearCooldown();
+
+		return;
+	}
+
+	m_SkillCooldown->SetCooldownProgress(m_fCurrentCD, m_fMaxCD); //0이 끝임
 }
 
