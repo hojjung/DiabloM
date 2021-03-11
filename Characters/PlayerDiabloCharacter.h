@@ -45,6 +45,7 @@ enum class EDamageType :uint8
 };
 
 
+
 UCLASS( BlueprintType, Blueprintable)
 class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 {
@@ -124,6 +125,10 @@ protected:
 	float m_fBuff01DeltaCount;
 
 	float m_fBuff02DeltaCount;
+
+	BigInt m_bnAdditionalSkillDmg;
+
+	float m_fAdditionalAttackSpeed;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -146,7 +151,7 @@ protected:
 	//몽타쥬를 플레이하기전에 마력폭발과 치명타 여부가 결정되어있음
 	//FName CalculateCritical();
 	
-	void PlayAttackMontage(float& currentCd,float maxCd,FName* sectionSkillName=nullptr);
+	float PlayAttackMontage(float& currentCd,float maxCd,FName* sectionSkillName=nullptr);
 	//몽타쥬 트리거
 	
 
@@ -157,9 +162,13 @@ protected:
 	//
 	void StartBuff01(float sec);
 
+	bool IsBuff01Available();
+
 	void EndBuff01();
 
 	void StartBuff02(float sec);
+
+	bool IsBuff02Available();
 
 	void EndBuff02();
 
@@ -184,7 +193,7 @@ public:
 	
 	void HideOutlineOnTarget();
 
-	float GetAttackSpeedMultiple();
+	virtual float GetAttackSpeed() override;
 
 	ADiabloPlayerController* GetDiaController();
 
@@ -254,5 +263,10 @@ public:
 	}
 
 	void TriggerSkill(const FName& name,TArray<FHitResult>* aryHits=nullptr);
+
+	FORCEINLINE UFSMTick* GetTickFSM()
+	{
+		return m_TickFSM;
+	}
 };
 

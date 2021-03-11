@@ -1,6 +1,7 @@
 #include "AnimNotify_CamShake.h"
 
 #include "Characters/DiabloPlayerController.h"
+#include "Managers/DiabloGameInstance.h"
 
 void UAnimNotify_CamShake::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
@@ -21,7 +22,6 @@ void UAnimNotify_CamShake::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	// {
 	// 	return;
 	// }
-
 	
-//	ADiabloPlayerController::Get->ClientPlayCameraShake(m_ClassCamShake);	
+	UDiabloGameInstance::Get->GetPlCon()->ClientPlayCameraShake(m_ClassCamShake);	
 }

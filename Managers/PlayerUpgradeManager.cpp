@@ -203,4 +203,16 @@ bool UPlayerUpgradeManager::IsSkillCasting()
 	//for prevent move and base attack
 	return m_CurrentCastingSkill;
 }
+
+BigInt UPlayerUpgradeManager::MultiplePercent(BigInt a, BigInt b, int aPrecisionCount,
+	int bPrecisionCount)
+{
+	a.Multiply(b);
+
+	int PrecisionFactor = FMath::Pow(10,aPrecisionCount+bPrecisionCount);
+
+	a.Divide(PrecisionFactor);
+
+	return a;
+}
 #undef LOCTEXT_NAMESPACE

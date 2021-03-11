@@ -36,6 +36,7 @@ void UDiabloGameInstance::Init()
     m_PlayfabManager = NewObject<UPlayfabManager>();
     m_PlayfabManager->Init();
     //
+	m_GachaManager = NewObject<UGachaManager>();
     //
     UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(33.f);
     

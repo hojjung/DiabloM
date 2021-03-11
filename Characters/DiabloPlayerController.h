@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "MovePointIndicator.h"
 #include "GameFramework/PlayerController.h"
 #include "Widgets/CommonElement/DamageTextWidgetComponent.h"
 
@@ -21,6 +22,8 @@ public:
 	ADiabloPlayerController();
 	
 protected:
+	UPROPERTY()
+	AMovePointIndicator* m_MovePointIndicator;
 	UPROPERTY()
 	TSubclassOf<UDamageTextWidgetComponent> m_ClassDW;
 	UPROPERTY()
@@ -88,4 +91,8 @@ private://server only
 public:
 	UFUNCTION()
 	void ClickActor();
+
+	void ShowMoveIndicator(FVector loc);
+
+	void HideMoveIndicator();
 };

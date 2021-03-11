@@ -8,7 +8,7 @@
 AInitLevelHUD::AInitLevelHUD()
 {
 	//WidgetBlueprint'/Game/Blueprints/NewWidget/WB_NicknameSet.WB_NicknameSet'
-	ConstructorHelpers::FClassFinder<USetNickname> FoundW(TEXT("WidgetBlueprint'/Game/Blueprints/NewWidget/WB_NicknameSet.WB_NicknameSet_C'"));
+	ConstructorHelpers::FClassFinder<USetNickname> FoundW(TEXT("WidgetBlueprint'/Game/Blueprints/Widget/StartMenu/WB_NicknameSet.WB_NicknameSet_C'"));
 
 	m_ClassWidget = FoundW.Class;
 }

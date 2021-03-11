@@ -19,7 +19,7 @@ ADiabloPlayerController::ADiabloPlayerController()
 	m_FormatMiss=FTextFormat::FromString("Miss-{0}%");
 
 	static ConstructorHelpers::FClassFinder<UDamageTextWidgetComponent> FoundW(
-   TEXT("Blueprint'/Game/Blueprints/NewWidget/WC_DamageText.WC_DamageText_C'"));
+   TEXT("Blueprint'/Game/Blueprints/Widget/WorldWidget/WC_DamageText.WC_DamageText_C'"));
 	m_ClassDW=FoundW.Class;
 	//Blueprint'/Game/Blueprints/NewWidget/WC_DamageText.WC_DamageText'
 	////WidgetBlueprint'/Game/Blueprints/Widgets/MainMenus/WB_GameOver.WB_GameOver'
@@ -31,6 +31,10 @@ void ADiabloPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	InitWidget();
+
+	m_MovePointIndicator  = GetWorld()->SpawnActor<AMovePointIndicator>(AMovePointIndicator::StaticClass());
+	HideMoveIndicator();
+	
 }
 
 void ADiabloPlayerController::OnPossess(APawn* InPawn)
@@ -208,8 +212,6 @@ void ADiabloPlayerController::ClickActor()
 {
 	APlayerDiabloCharacter* DiaPlayer = Cast<APlayerDiabloCharacter>( GetPawn());
 
-	PRINTF("Clicked");
-	
 	FVector StartPos;
 	
 	FVector EndPos;
@@ -251,10 +253,22 @@ void ADiabloPlayerController::ClickActor()
 		}
 		DiaPlayer->FocusTarget(nullptr);
 		DiaPlayer->SetManualMoveLocation(Hits.Location);
+		ShowMoveIndicator(Hits.Location);
 		return;
 	}
-
+	HideMoveIndicator();
 	
 	DiaPlayer->FocusTarget(Mob);
+}
+
+void ADiabloPlayerController::ShowMoveIndicator(FVector loc)
+{
+	m_MovePointIndicator->SetActorHiddenInGame(false);
+	m_MovePointIndicator->SetActorLocation(loc);
+}
+
+void ADiabloPlayerController::HideMoveIndicator()
+{
+	m_MovePointIndicator->SetActorHiddenInGame(true);
 }
 

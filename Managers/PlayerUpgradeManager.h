@@ -110,4 +110,6 @@ public:
 	{
 		return m_AryEquippedSkillSpec;
 	}
+
+	static BigInt MultiplePercent(BigInt a,BigInt b,int aPrecisionCount =1,int bPrecisionCount =1);
 };

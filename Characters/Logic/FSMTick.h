@@ -7,9 +7,9 @@
 #include "FSMTick.generated.h"
 
 class AUnitPawn;
-/**
- * 
- */
+
+DECLARE_MULTICAST_DELEGATE(FOnManualMoveDone);
+
 UCLASS()
 class DIABLOM_API UFSMTick : public UObject
 {
@@ -25,6 +25,7 @@ public:
 		Length
 	};
 
+	FOnManualMoveDone m_OnMoveDone;
 protected:
 	UPROPERTY()
 	AUnitPawn* m_Owner;
@@ -76,5 +77,7 @@ public:
 	void SetManualMove(FVector goal);
 
 	void ForceSetStateIdle();
+
+	
 
 };

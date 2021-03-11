@@ -9,6 +9,7 @@
 #include "CommonElement/CooldownProgress.h"
 #include "CommonElement/ImageAndText.h"
 #include "CommonElement/MaterialProgressBar.h"
+#include "GachaMenu/GachaPanel.h"
 #include "MainMenu/MainMenuPanel.h"
 #include "UpgradeMenu/UpgradePanel.h"
 
@@ -51,7 +52,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UUserWidget*	 m_PanelEquipment;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUserWidget*	 m_PanelGacha;
+	UGachaPanel*	 m_PanelGacha;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UUserWidget*	 m_PanelShop;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -106,6 +107,8 @@ public:
 	void RequestText(FString txt);
 	
 protected:
+	FTimerHandle m_TextTimer;
+	
 	float m_fMaxBossCooldownTime;
 	
 	float m_fBossCooldownTimeCounter;
@@ -154,6 +157,11 @@ public:
 	void OnBossBattleEnd(bool b);
 
 	void SetPlayerNicknameRanking();
+
+	UFUNCTION()
+	void HideTextWidget();
+
+	virtual void OnAnimationFinishedPlaying(UUMGSequencePlayer& Player) override;
 };
 
 

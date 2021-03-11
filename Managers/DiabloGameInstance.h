@@ -2,6 +2,7 @@
 
 #include "DiabloM.h"
 #include "EquipManager.h"
+#include "GachaManager.h"
 #include "GoldManager.h"
 #include "NavigationSystem.h"
 #include "PlayerUpgradeManager.h"
@@ -39,6 +40,8 @@ public:
 	UEquipManager* m_EquipManager;
 	UPROPERTY()
 	UGoldManager* m_GoldManager;
+	UPROPERTY()
+	UGachaManager* m_GachaManager;
 	
 protected:
 	virtual void Init() override;

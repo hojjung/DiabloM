@@ -146,6 +146,7 @@ void UFSMTick::OnManualMove()
 	if (Result == EPathFollowingRequestResult::Type::AlreadyAtGoal || Result == EPathFollowingRequestResult::Type::Failed)
 	{
 		m_CurrentState = EFSM::Idle;
+		m_OnMoveDone.Broadcast();
 	}
 	else//some time already at goal not work
 	{
@@ -154,6 +155,7 @@ void UFSMTick::OnManualMove()
 		if(Dist<40000.f)
 		{
 			m_CurrentState = EFSM::Idle;
+			m_OnMoveDone.Broadcast();
 		}
 	}
 }

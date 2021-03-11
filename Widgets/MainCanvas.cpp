@@ -48,8 +48,10 @@ void UMainCanvas::NativeOnInitialized()
 
 void UMainCanvas::RequestText(FText txt)
 {
-	PlayAnimation(m_ShowText);
+	m_PopupText->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	
+	PlayAnimation(m_ShowText);
+
 	m_PopupText->ShowText(txt);
 }
 
@@ -309,6 +311,18 @@ void UMainCanvas::SetPlayerNicknameRanking()
 	FText RankText = FText::Format(Format,Args);
 	
 	m_TextRanking->SetText(RankText);
+}
+
+void UMainCanvas::HideTextWidget()
+{
+	m_PopupText->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UMainCanvas::OnAnimationFinishedPlaying(UUMGSequencePlayer& Player)
+{
+	Super::OnAnimationFinishedPlaying(Player);
+
+	HideTextWidget();
 }
 
 #undef LOCTEXT_NAMESPACE

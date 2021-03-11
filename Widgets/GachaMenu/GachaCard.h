@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ShopPanel.generated.h"
+#include "GachaCard.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UShopPanel : public UUserWidget
+class DIABLOM_API UGachaCard : public UUserWidget
 {
 	GENERATED_BODY()
 	

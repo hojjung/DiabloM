@@ -1,5 +1,5 @@
 // My First Hack n Slash
 
 
-#include "GachaPanel.h"
+#include "GachaDataTable.h"
 

@@ -509,6 +509,7 @@ float AUnitPawn::PlayAnimMontage(UAnimMontage* anim_montage, float InPlayRate, F
             if (StartSectionName != NAME_None)
             {
                 AnimInstance->Montage_JumpToSection(StartSectionName, anim_montage);
+
             }
 
             return Duration;

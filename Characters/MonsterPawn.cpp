@@ -32,7 +32,7 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     //
     //
     static ConstructorHelpers::FClassFinder<UUserWidget> FoundHpBar(
-             TEXT("WidgetBlueprint'/Game/Blueprints/NewWidget/WB_ProgressBarParents.WB_ProgressBarParents_C'"));
+             TEXT("WidgetBlueprint'/Game/Blueprints/Widget/WorldWidget/WB_MonsterHealthBar.WB_MonsterHealthBar_C'"));
     m_WorldHpBar = CreateDefaultSubobject<UFloatingStatusBarWidgetCompo>("WorldHpBar");
     m_WorldHpBar->SetWidgetClass(FoundHpBar.Class);
     m_WorldHpBar->SetDrawSize(FVector2D(150.f,22.f));

@@ -5,7 +5,7 @@
 AGameLevelHUD::AGameLevelHUD()
 {
 	static ConstructorHelpers::FClassFinder<UMainCanvas> FoundWW(
-    TEXT("WidgetBlueprint'/Game/Blueprints/NewWidget/WB_MainCanvas.WB_MainCanvas_C'"));
+    TEXT("WidgetBlueprint'/Game/Blueprints/Widget/WB_MainCanvas.WB_MainCanvas_C'"));
 	m_ClassWidget = FoundWW.Class;
 }
 

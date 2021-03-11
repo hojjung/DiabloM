@@ -1,10 +1,6 @@
-// My First Hack n Slash
-
 #pragma once
 
 #include "CoreMinimal.h"
-
-
 #include "ScrollBox.h"
 #include "StageBtn.h"
 #include "VerticalBox.h"
