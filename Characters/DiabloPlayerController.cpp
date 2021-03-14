@@ -34,6 +34,8 @@ void ADiabloPlayerController::BeginPlay()
 
 	m_MovePointIndicator  = GetWorld()->SpawnActor<AMovePointIndicator>(AMovePointIndicator::StaticClass());
 	HideMoveIndicator();
+
+
 	
 }
 

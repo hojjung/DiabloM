@@ -107,5 +107,4 @@ public:
 	virtual void NotifyBumpedPawn(APawn* BumpedPawn) override;
 	// RVO Avoidance
 #pragma endregion
-	
 };

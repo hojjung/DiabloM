@@ -1,11 +1,13 @@
 #include "GachaManager.h"
+
+#include "DiabloGameInstance.h"
 #include "Datas/GachaDataTable.h"
 
 UDataTable* UGachaManager::AryWeaponGachaDataTable[10];
 UDataTable* UGachaManager::ArySkinGachaDataTable[10];
-UDataTable* UGachaManager::PetGachaDataTable=nullptr;
-UDataTable* UGachaManager::WingGachaDataTable=nullptr;
-UDataTable* UGachaManager::AccessoryGachaDataTable=nullptr;
+UDataTable* UGachaManager::PetGachaDataTable = nullptr;
+UDataTable* UGachaManager::WingGachaDataTable = nullptr;
+UDataTable* UGachaManager::AccessoryGachaDataTable = nullptr;
 
 
 UGachaManager::UGachaManager()
@@ -13,104 +15,104 @@ UGachaManager::UGachaManager()
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGacha01(
 		TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon01.GachaWeapon01'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGacha02(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon02.GachaWeapon02'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon02.GachaWeapon02'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGacha03(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon03.GachaWeapon03'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon03.GachaWeapon03'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGacha04(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon04.GachaWeapon04'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon04.GachaWeapon04'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGacha05(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon05.GachaWeapon05'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon05.GachaWeapon05'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGacha06(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon06.GachaWeapon06'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon06.GachaWeapon06'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGacha07(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon07.GachaWeapon07'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon07.GachaWeapon07'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGacha08(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon08.GachaWeapon08'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon08.GachaWeapon08'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGacha09(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon09.GachaWeapon09'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon09.GachaWeapon09'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGacha10(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon10.GachaWeapon10'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaWeapon10.GachaWeapon10'"));
 	//
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found2Gacha01(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin01.GachaSkin01'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin01.GachaSkin01'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found2Gacha02(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin02.GachaSkin02'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin02.GachaSkin02'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found2Gacha03(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin03.GachaSkin03'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin03.GachaSkin03'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found2Gacha04(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin04.GachaSkin04'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin04.GachaSkin04'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found2Gacha05(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin05.GachaSkin05'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin05.GachaSkin05'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found2Gacha06(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin06.GachaSkin06'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin06.GachaSkin06'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found2Gacha07(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin07.GachaSkin07'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin07.GachaSkin07'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found2Gacha08(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin08.GachaSkin08'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin08.GachaSkin08'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found2Gacha09(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin09.GachaSkin09'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin09.GachaSkin09'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found2Gacha10(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin10.GachaSkin10'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaSkin10.GachaSkin10'"));
 	//
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found3Gacha01(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaPet01.GachaPet01'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaPet01.GachaPet01'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found4Gacha01(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaWing01.GachaWing01'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaWing01.GachaWing01'"));
 	static ConstructorHelpers::FObjectFinder<UDataTable> Found5Gacha01(
-        TEXT("DataTable'/Game/DataTables/Gacha/GachaAccessory01.GachaAccessory01'"));
+		TEXT("DataTable'/Game/DataTables/Gacha/GachaAccessory01.GachaAccessory01'"));
 	//
-	AryWeaponGachaDataTable[0]=(FoundGacha01.Object);
-	AryWeaponGachaDataTable[1]=(FoundGacha02.Object);
-	AryWeaponGachaDataTable[2]=(FoundGacha03.Object);
-	AryWeaponGachaDataTable[3]=(FoundGacha04.Object);
-	AryWeaponGachaDataTable[4]=(FoundGacha05.Object);
-	AryWeaponGachaDataTable[5]=(FoundGacha06.Object);
-	AryWeaponGachaDataTable[6]=(FoundGacha07.Object);
-	AryWeaponGachaDataTable[7]=(FoundGacha08.Object);
-	AryWeaponGachaDataTable[8]=(FoundGacha09.Object);
-	AryWeaponGachaDataTable[9]=(FoundGacha10.Object);
+	AryWeaponGachaDataTable[0] = (FoundGacha01.Object);
+	AryWeaponGachaDataTable[1] = (FoundGacha02.Object);
+	AryWeaponGachaDataTable[2] = (FoundGacha03.Object);
+	AryWeaponGachaDataTable[3] = (FoundGacha04.Object);
+	AryWeaponGachaDataTable[4] = (FoundGacha05.Object);
+	AryWeaponGachaDataTable[5] = (FoundGacha06.Object);
+	AryWeaponGachaDataTable[6] = (FoundGacha07.Object);
+	AryWeaponGachaDataTable[7] = (FoundGacha08.Object);
+	AryWeaponGachaDataTable[8] = (FoundGacha09.Object);
+	AryWeaponGachaDataTable[9] = (FoundGacha10.Object);
 	//
-	ArySkinGachaDataTable[0]=(Found2Gacha01.Object);
-	ArySkinGachaDataTable[1]=(Found2Gacha02.Object);
-	ArySkinGachaDataTable[2]=(Found2Gacha03.Object);
-	ArySkinGachaDataTable[3]=(Found2Gacha04.Object);
-	ArySkinGachaDataTable[4]=(Found2Gacha05.Object);
-	ArySkinGachaDataTable[5]=(Found2Gacha06.Object);
-	ArySkinGachaDataTable[6]=(Found2Gacha07.Object);
-	ArySkinGachaDataTable[7]=(Found2Gacha08.Object);
-	ArySkinGachaDataTable[8]=(Found2Gacha09.Object);
-	ArySkinGachaDataTable[9]=(Found2Gacha10.Object);
+	ArySkinGachaDataTable[0] = (Found2Gacha01.Object);
+	ArySkinGachaDataTable[1] = (Found2Gacha02.Object);
+	ArySkinGachaDataTable[2] = (Found2Gacha03.Object);
+	ArySkinGachaDataTable[3] = (Found2Gacha04.Object);
+	ArySkinGachaDataTable[4] = (Found2Gacha05.Object);
+	ArySkinGachaDataTable[5] = (Found2Gacha06.Object);
+	ArySkinGachaDataTable[6] = (Found2Gacha07.Object);
+	ArySkinGachaDataTable[7] = (Found2Gacha08.Object);
+	ArySkinGachaDataTable[8] = (Found2Gacha09.Object);
+	ArySkinGachaDataTable[9] = (Found2Gacha10.Object);
 	//
 	PetGachaDataTable = Found3Gacha01.Object;
 	WingGachaDataTable = Found4Gacha01.Object;
 	AccessoryGachaDataTable = Found5Gacha01.Object;
 	//
-	for(int i=0; i< 10;i++)
+	for (int i = 0; i < 10; i++)
 	{
-		SetTotalValue(AryWeaponGachaDataTable[i],m_AryAryGachaWeapon[i],m_AryTotalWeaponGacha[i]);
+		SetTotalValue(AryWeaponGachaDataTable[i], m_AryAryGachaWeapon[i], m_AryTotalWeaponGacha[i]);
 	}
 	//
-	for(int i=0; i< 10;i++)
+	for (int i = 0; i < 10; i++)
 	{
-		SetTotalValue(ArySkinGachaDataTable[i],m_AryAryGachaSkin[i],m_AryTotalSkinGacha[i]);
+		SetTotalValue(ArySkinGachaDataTable[i], m_AryAryGachaSkin[i], m_AryTotalSkinGacha[i]);
 	}
 	//
-	SetTotalValue(PetGachaDataTable,m_AryGachaPet,m_fTotalPetGacha);
-	SetTotalValue(WingGachaDataTable,m_AryGachaWing,m_fTotalWingGacha);
-	SetTotalValue(AccessoryGachaDataTable,m_AryGachaAccessory,m_fTotalAccessoryGacha);
+	SetTotalValue(PetGachaDataTable, m_AryGachaPet, m_fTotalPetGacha);
+	SetTotalValue(WingGachaDataTable, m_AryGachaWing, m_fTotalWingGacha);
+	SetTotalValue(AccessoryGachaDataTable, m_AryGachaAccessory, m_fTotalAccessoryGacha);
 }
 
 void UGachaManager::SetTotalValue(const UDataTable* inTable, TArray<FGachaTableRow*>& outTableRow, float& outTotal)
 {
-	if(!inTable)
+	if (!inTable)
 	{
 		return;
 	}
-	inTable->GetAllRows<FGachaTableRow>("",outTableRow);
-	
+	inTable->GetAllRows<FGachaTableRow>("", outTableRow);
+
 	for (FGachaTableRow* TableRow : outTableRow)
 	{
-		outTotal +=	TableRow->m_fPriority;
+		outTotal += TableRow->m_fPriority;
 	}
 }
 
@@ -134,3 +136,153 @@ float UGachaManager::GetCurrentLevelSkinTotalPercent()
 	return m_AryTotalSkinGacha[m_nCurrentSkin];
 }
 
+FGachaTableRow* UGachaManager::RollWeapon()
+{
+	float WeightTotal = GetCurrentLevelWeaponTotalPercent();
+	//0.4
+	float RollPercent = FMath::RandRange(0.f, 1.f);
+
+	float CurrentPercent = 0;
+	//0.1
+	int i=0;
+	
+	for (FGachaTableRow* TableRow : GetCurrentLevelWeaponTable())
+	{
+		CurrentPercent += TableRow->GetPercent(WeightTotal);
+
+		if (CurrentPercent >= RollPercent)
+		{
+			UDiabloGameInstance::Get->m_EquipManager->AddWeaponStack(i);
+			
+			return TableRow;
+		}
+
+		i++;
+	}
+
+	UDiabloGameInstance::Get->m_EquipManager->AddWeaponStack(i-1);
+	return GetCurrentLevelWeaponTable()[i-1];
+}
+
+FGachaTableRow* UGachaManager::RollSkin()
+{
+	float WeightTotal = GetCurrentLevelSkinTotalPercent();
+	//0.4
+	float RollPercent = FMath::RandRange(0.f, 1.f);
+
+	float CurrentPercent = 0;
+	//0.1
+	int i=0;
+	for (FGachaTableRow* TableRow : GetCurrentLevelSkinTable())
+	{
+		CurrentPercent += TableRow->GetPercent(WeightTotal);
+
+		if (CurrentPercent >= RollPercent)
+		{
+			UDiabloGameInstance::Get->m_EquipManager->AddSkinStack(i);
+			//select
+			return TableRow;
+		}
+		i++;
+	}
+
+	UDiabloGameInstance::Get->m_EquipManager->AddSkinStack(i-1);
+	return GetCurrentLevelSkinTable()[i-1];
+}
+
+FGachaTableRow* UGachaManager::RollPet()
+{
+	float WeightTotal = m_fTotalPetGacha;
+	//0.4
+	float RollPercent = FMath::RandRange(0.f, 1.f);
+
+	float CurrentPercent = 0;
+
+	int i=0;
+	//0.1
+	for (FGachaTableRow* TableRow : m_AryGachaPet)
+	{
+		CurrentPercent += TableRow->GetPercent(WeightTotal);
+
+		if (CurrentPercent >= RollPercent)
+		{
+			UDiabloGameInstance::Get->m_EquipManager->AddPetStack(i);
+			//select
+			return TableRow;
+		}
+
+		i++;
+	}
+	UDiabloGameInstance::Get->m_EquipManager->AddPetStack(i-1);
+	return m_AryGachaPet[i-1];
+}
+
+FGachaTableRow* UGachaManager::RollWing()
+{
+	float WeightTotal = m_fTotalWingGacha;
+	//0.4
+	float RollPercent = FMath::RandRange(0.f, 1.f);
+
+	float CurrentPercent = 0;
+
+	int i=0;
+	//0.1
+	for (FGachaTableRow* TableRow : m_AryGachaWing)
+	{
+		CurrentPercent += TableRow->GetPercent(WeightTotal);
+
+		if (CurrentPercent >= RollPercent)
+		{
+			UDiabloGameInstance::Get->m_EquipManager->AddWingStack(i);
+			//select
+			return TableRow;
+		}
+
+		i++;
+	}
+
+	UDiabloGameInstance::Get->m_EquipManager->AddWingStack(i-1);
+	return m_AryGachaWing[i-1];
+}
+
+FGachaTableRow* UGachaManager::RollAccessory()
+{
+	float WeightTotal = m_fTotalAccessoryGacha;
+	
+	float RollPercent = FMath::RandRange(0.f, 1.f);
+	
+	float CurrentPercent = 0;
+
+	int i=0;
+	
+	for (FGachaTableRow* TableRow : m_AryGachaAccessory)
+	{
+		CurrentPercent += TableRow->GetPercent(WeightTotal);
+
+		if (CurrentPercent >= RollPercent)
+		{
+			//select
+			UDiabloGameInstance::Get->m_EquipManager->AddAccessoryStack(i);
+			return TableRow;
+		}
+
+		i++;
+	}
+
+	UDiabloGameInstance::Get->m_EquipManager->AddAccessoryStack(i-1);
+	return m_AryGachaAccessory[i-1];
+}
+
+FGachaTableRow* UGachaManager::RollItem(ERollItemType type)
+{
+	switch (type)
+	{
+	case ERollItemType::RollWeapon: return RollWeapon();
+	case ERollItemType::RollSkin: return RollSkin();
+	case ERollItemType::RollPet: return RollPet();
+	case ERollItemType::RollWing: return RollWing();
+	case ERollItemType::RollAccessory: return RollAccessory();
+	}
+
+	return nullptr;
+}

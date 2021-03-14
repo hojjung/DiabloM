@@ -8,6 +8,7 @@ void UGachaPanel::NativeOnInitialized()
 	m_BtnClose->OnClicked.AddDynamic(this,&UGachaPanel::ClosePanel);
 	//
 	m_GachaInfoPanel->SetVisibility(ESlateVisibility::Collapsed);
+	m_GachaGridPanel->SetVisibility(ESlateVisibility::Collapsed);
 
 	m_GachaManager = UDiabloGameInstance::Get->m_GachaManager;
 
@@ -56,12 +57,14 @@ void UGachaPanel::ShowWeaponGachaInfo()
 
 void UGachaPanel::RollGachaWeaponOneTime()
 {
-	
+	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWeapon);
+	m_GachaGridPanel->RollGachaOneTime();
 }
 
 void UGachaPanel::RollGachaWeaponElevenTimes()
 {
-	
+	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWeapon);
+	m_GachaGridPanel->RollGachaElevenTime();
 }
 
 void UGachaPanel::ShowSkinLevelInfo()
@@ -79,10 +82,14 @@ void UGachaPanel::ShowSkinGachaInfo()
 
 void UGachaPanel::RollGachaSkinOneTime()
 {
+	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollSkin);
+	m_GachaGridPanel->RollGachaOneTime();
 }
 
 void UGachaPanel::RollGachaSkinElevenTimes()
 {
+	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollSkin);
+	m_GachaGridPanel->RollGachaElevenTime();
 }
 
 void UGachaPanel::ShowPetGachaInfo()
@@ -95,12 +102,14 @@ void UGachaPanel::ShowPetGachaInfo()
 
 void UGachaPanel::RollGachaPetOneTime()
 {
-	
+	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollPet);
+	m_GachaGridPanel->RollGachaOneTime();
 }
 
 void UGachaPanel::RollGachaPetElevenTimes()
 {
-	
+	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollPet);
+	m_GachaGridPanel->RollGachaElevenTime();
 }
 
 void UGachaPanel::ShowWingGachaInfo()
@@ -113,11 +122,14 @@ void UGachaPanel::ShowWingGachaInfo()
 
 void UGachaPanel::RollGachaWingOneTime()
 {
-	
+	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWing);
+	m_GachaGridPanel->RollGachaOneTime();
 }
 
 void UGachaPanel::RollGachaWingElevenTimes()
 {
+	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWing);
+	m_GachaGridPanel->RollGachaOneTime();
 }
 
 void UGachaPanel::ShowAccessoryGachaInfo()
@@ -130,10 +142,12 @@ void UGachaPanel::ShowAccessoryGachaInfo()
 
 void UGachaPanel::RollGachaAccessoryOneTime()
 {
-	
+	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollAccessory);
+	m_GachaGridPanel->RollGachaOneTime();
 }
 
 void UGachaPanel::RollGachaAccessoryElevenTimes()
 {
-	
+	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollAccessory);
+	m_GachaGridPanel->RollGachaElevenTime();
 }

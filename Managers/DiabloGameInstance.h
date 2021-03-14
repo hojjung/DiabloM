@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ChatManager.h"
 #include "DiabloM.h"
 #include "EquipManager.h"
 #include "GachaManager.h"
@@ -42,6 +43,8 @@ public:
 	UGoldManager* m_GoldManager;
 	UPROPERTY()
 	UGachaManager* m_GachaManager;
+	UPROPERTY()
+	UChatManager* m_ChatManager;
 	
 protected:
 	virtual void Init() override;

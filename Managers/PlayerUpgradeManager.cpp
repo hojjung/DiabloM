@@ -128,11 +128,10 @@ void UPlayerUpgradeManager::EquipSkill(int index, FSkillSpec* skill_spec)
 	
 	if (skill_spec->m_nIndex > -1)
 	{
-		int Index=skill_spec->m_nIndex;
-		m_AryEquippedSkillSpec[Index] = nullptr;
-		m_OnSkillChanged.Broadcast(Index,nullptr);
-		skill_spec->m_nIndex = -1;
+		UnequipSkill(skill_spec->m_nIndex);
 	}
+	
+	UnequipSkill(index);
 	
 	m_AryEquippedSkillSpec[index] = skill_spec;
 	m_AryEquippedSkillSpec[index]->m_nIndex = index;
@@ -140,10 +139,15 @@ void UPlayerUpgradeManager::EquipSkill(int index, FSkillSpec* skill_spec)
 	m_OnSkillChanged.Broadcast(index, skill_spec);
 }
 
-void UPlayerUpgradeManager::UnequipSkill(int index, FSkillSpec* skill_spec)
+void UPlayerUpgradeManager::UnequipSkill(int index)
 {
-	m_AryEquippedSkillSpec[index] = nullptr;
-	skill_spec->m_nIndex = -1;
+	if(!m_AryEquippedSkillSpec[index])
+	{
+		return;
+	}
+	
+	m_AryEquippedSkillSpec[index]->m_nIndex = -1;
+	m_AryEquippedSkillSpec[index]=nullptr;
 	m_OnSkillChanged.Broadcast(index, nullptr);
 }
 
@@ -180,8 +184,6 @@ void UPlayerUpgradeManager::Tick(float deltaTime)
 		}
 		
 		m_AryEquippedSkillSpec[i]->Tick(deltaTime);
-
-		//m_OnSkillTick.Broadcast(i, m_AryEquippedSkillSpec[i]);
 	}
 
 	if(!m_CurrentCastingSkill)

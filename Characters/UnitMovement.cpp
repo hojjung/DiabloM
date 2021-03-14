@@ -21,6 +21,8 @@ UUnitMovement::UUnitMovement()
     bUseAccelerationForPaths=true;
     m_AvoidanceWeight=0.3f;
     m_RotateSpeed=FRotator(0,240.f,0);
+
+    bConstrainToPlane = false;
 }
 
 float UUnitMovement::SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult& Hit,

@@ -499,6 +499,7 @@ float AUnitPawn::PlayAnimMontage(UAnimMontage* anim_montage, float InPlayRate, F
 {
     auto* AnimInstance = m_SkBody->GetAnimInstance();
 
+    //AnimInstance->RootMotionMode
     if (anim_montage && AnimInstance)
     {
         float const Duration = AnimInstance->Montage_Play(anim_montage, InPlayRate);

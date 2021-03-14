@@ -351,4 +351,15 @@ public:
 		}
 		return &m_AryPets[m_nSelectedPet];
 	}
+
+public:
+	void AddWeaponStack(int index);
+
+	void AddSkinStack(int index);
+
+	void AddPetStack(int index);
+	
+	void AddWingStack(int index);
+
+	void AddAccessoryStack(int index);
 };

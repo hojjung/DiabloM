@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Button.h"
+#include "GachaCardGridPanel.h"
 #include "GachaInfoPanel.h"
 #include "Overlay.h"
 #include "ScrollBox.h"
@@ -18,6 +19,8 @@ class DIABLOM_API UGachaPanel : public UUserWidget
 	GENERATED_BODY()
 	
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UGachaCardGridPanel* m_GachaGridPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UGachaInfoPanel* m_GachaInfoPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))

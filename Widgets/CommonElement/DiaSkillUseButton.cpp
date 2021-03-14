@@ -26,10 +26,10 @@ void UDiaSkillUseButton::Init(int index)
 UDiaSkillUseButton::~UDiaSkillUseButton()
 {
 	//pl con already destoryed
-	if(UDiabloGameInstance::Get&&UDiabloGameInstance::Get->GetPlCon())
-	{
-		UDiabloGameInstance::Get->GetPlCon()->m_OnTick.Remove(m_DeleHandle);
-	}
+	// if(UDiabloGameInstance::Get&&UDiabloGameInstance::Get->GetWorld()&&UDiabloGameInstance::Get->GetPlCon())
+	// {
+	// 	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.Remove(m_DeleHandle);
+	// }
 }
 
 void UDiaSkillUseButton::SetSkillSpec(FSkillSpec* skillSpec)

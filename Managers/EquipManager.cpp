@@ -10,7 +10,7 @@ UDataTable* UEquipManager::GetWingDataTable = nullptr;
 UDataTable* UEquipManager::GetPetDataTable = nullptr;
 UDataTable* UEquipManager::GetAcceeDataTable = nullptr;
 
-void UEquipManager::ClearSelectedIndex()//ned this for change level,player modify
+void UEquipManager::ClearSelectedIndex() //ned this for change level,player modify
 {
 	m_nSelectedSkin = -1;
 	m_nSelectedWing = -1;
@@ -174,12 +174,12 @@ void UEquipManager::EquipAll()
 	{
 		if (Spec.m_nIsEquipped == 1)
 		{
-			PRINTF("1A:%d,B:%d",Spec.m_nIsEquipped,index);
+			PRINTF("1A:%d,B:%d", Spec.m_nIsEquipped, index);
 			TryEquipAccessory1(index);
 		}
 		else if (Spec.m_nIsEquipped == 2)
 		{
-			PRINTF("2A:%d,B:%d",Spec.m_nIsEquipped,index);
+			PRINTF("2A:%d,B:%d", Spec.m_nIsEquipped, index);
 			TryEquipAccessory2(index);
 		}
 
@@ -670,4 +670,46 @@ bool UEquipManager::TryLvUpPet(int index)
 	m_OnPetChanged.Broadcast(-1, index);
 
 	return true;
+}
+
+void UEquipManager::AddWeaponStack(int index)
+{
+	m_AryWeapons[index].m_nStackCount++;
+
+	m_OnWeaponChanged.Broadcast(-1, index);
+}
+
+void UEquipManager::AddSkinStack(int index)
+{
+	m_AryPlayerSkin[index].m_nStackCount++;
+
+	m_OnPlSkinChanged.Broadcast(-1, index);
+}
+
+void UEquipManager::AddPetStack(int index)
+{
+	m_AryPets[index].m_nStackCount++;
+
+	m_OnPetChanged.Broadcast(-1, index);
+}
+
+void UEquipManager::AddWingStack(int index)
+{
+	m_AryWings[index].m_nStackCount++;
+
+	m_OnWingChanged.Broadcast(-1, index);
+}
+
+void UEquipManager::AddAccessoryStack(int index)
+{
+	m_AryAcce[index].m_nStackCount++;
+
+	if (m_AryAcce[index].m_nIsEquipped == 1)
+	{
+		m_OnAccessoryChanged1.Broadcast(-1, index);
+	}
+	else if (m_AryAcce[index].m_nIsEquipped == 2)
+	{
+		m_OnAccessoryChanged2.Broadcast(-1, index);
+	}
 }

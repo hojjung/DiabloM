@@ -422,6 +422,7 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 
 float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd,float maxCd,FName* sectionSkillName)
 {
+	
 	FName SectionName = "Combo01";
 	
 	EDamageType DmgType = EDamageType::Base01;
@@ -489,6 +490,8 @@ float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd,float maxCd,FNa
 	}
 
 	currentCd = AnimMongLen-0.1f;//-0.1f;
+	//
+	GetWorldTimerManager().ClearTimer(m_AttackTimer);
 	//
 	m_Movement->SetMoveSpeedRatio(0.1f);
 

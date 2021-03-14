@@ -5,15 +5,24 @@
 #include "UObject/NoExportTypes.h"
 #include "GachaManager.generated.h"
 
-/**
- * 
- */
+
+UENUM()
+enum ERollItemType
+{
+	RollWeapon,
+	RollSkin,
+	RollPet,
+	RollWing,
+	RollAccessory,
+	Length
+};
 UCLASS()
 class DIABLOM_API UGachaManager : public UObject
 {
 	GENERATED_BODY()
 
 public:
+	
 	UGachaManager();
 	//
 	static UDataTable* AryWeaponGachaDataTable[10];
@@ -58,4 +67,17 @@ public:
 	float GetCurrentLevelWeaponTotalPercent();
 
 	float GetCurrentLevelSkinTotalPercent();
+
+public:
+	FGachaTableRow* RollWeapon();
+
+	FGachaTableRow* RollSkin();
+
+	FGachaTableRow* RollPet();
+
+	FGachaTableRow* RollWing();
+
+	FGachaTableRow* RollAccessory();
+	
+	FGachaTableRow* RollItem(ERollItemType type);
 };

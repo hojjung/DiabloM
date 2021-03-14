@@ -24,7 +24,10 @@ public class DiabloM : ModuleRules
             "EasyActionPlugin",
             "RenderCore",
             "OnlineSubsystem", "OnlineSubsystemUtils",
-            "MoviePlayer"
+            "MoviePlayer",
+            "Http",
+            "Json",
+            "JsonUtilities"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] { 
@@ -40,15 +43,24 @@ public class DiabloM : ModuleRules
             "PlayFab",
             "PlayFabCpp",
             "PlayFabCommon",
-            "MobileUtils"
+            "MobileUtils",
+            "Http",
+            "Json",
+            "JsonUtilities"
         });
 
-        if (Target.Platform == UnrealTargetPlatform.Android)
+        if (Target.Platform == UnrealTargetPlatform.IOS)
+        {
+            PrivateDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "OnlineSubsystem" });
+            DynamicallyLoadedModuleNames.AddRange(new string[] { "OnlineSubsystemIOS", "IOSAdvertising" });
+        }
+        else if (Target.Platform == UnrealTargetPlatform.Android)
         {
             PrivateDependencyModuleNames.Add("OnlineSubsystemGooglePlay");
             string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
             AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "Android_UPL.xml"));
             PrivateDependencyModuleNames.Add("AndroidAdvertising");
+            
         }
         
     }

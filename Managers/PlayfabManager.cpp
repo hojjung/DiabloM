@@ -8,8 +8,9 @@
 #include "PlayFabClientDataModels.h"
 #include "PlayerUpgradeManager.h"
 #include "PlayFabAdminDataModels.h"
+#include "PlayFabServerDataModels.h"
 #include "PlayFabUtilities.h"
-
+#include "Objects/MyInAppPurchase.h"
 using namespace PlayFab;
 
 #define LOCTEXT_NAMESPACE "PlayfabManager"
@@ -92,6 +93,13 @@ void UPlayfabManager::OnCloudScriptSuccess(const FExeCScriptRslt& rslt)
 {
 	PRINTF("Cloud Script Success");
 }
+
+void UPlayfabManager::PurchaseIAPItem(FString itemUniqueId)
+{
+	
+}
+
+
 
 void UPlayfabManager::Init()
 {
@@ -325,6 +333,7 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 	SetOnlineStatus();
 	m_bIsLoginCompleted = true;
 	m_bIsNicknameSet = true;
+
 }
 
 void UPlayfabManager::RequestGetAccountInfo()
@@ -359,4 +368,34 @@ void UPlayfabManager::OnSuccessGetAccountInfo(const FGetAccntInfoRslt& rslt)
 	RequestGetUserData();
 }
 
+void UPlayfabManager::BuyIAP(FString id,bool bIsConsumable)
+{
+	
+
+	FInAppPurchaseProductRequest IAPRequest;
+	
+	IAPRequest.bIsConsumable=bIsConsumable;
+	
+	IAPRequest.ProductIdentifier=id;//
+
+	UMyInAppPurchase* Proxy = UMyInAppPurchase::CreateProxyObjectForInAppPurchase(UDiabloGameInstance::Get->GetPlCon(), IAPRequest);
+	
+	Proxy->OnSuccess.AddDynamic(this,&UPlayfabManager::PurchaseSuccess);
+	
+	Proxy->OnFailure.AddDynamic(this,&UPlayfabManager::PurchaseFail);
+}
+
+void UPlayfabManager::PurchaseSuccess(EInAppPurchaseState::Type completionStatus,
+    const FInAppPurchaseProductInfo& inAppPurchaseInformation)
+{
+	PRINTF("Purchase Success");
+	UDiabloGameInstance::Get->RequestPopupText("Purchase Success");
+}
+
+void UPlayfabManager::PurchaseFail(EInAppPurchaseState::Type completionStatus,
+    const FInAppPurchaseProductInfo& inAppPurchaseInformation)
+{
+	PRINTF("Purchase Fail");
+	UDiabloGameInstance::Get->RequestPopupText("Purchase Fail");
+}
 #undef LOCTEXT_NAMESPACE

@@ -1,6 +1,7 @@
 #pragma once
 #include "DiabloM.h"
 #include "OnlineError.h"
+#include "OnlineStoreInterface.h"
 #include "PlayFab.h"
 #include "Core/PlayFabError.h"
 #include "Core/PlayFabClientDataModels.h"
@@ -46,6 +47,7 @@ public:
 	static const FString Accessory;
 	//
 	FOnPlayfabError m_OnPlayfabError;
+
 public:
 	UPlayfabManager();
 
@@ -53,8 +55,9 @@ public:
 
 	void Init();
 
+protected:
+	TArray<PlayFab::ClientModels::FCatalogItem> m_AryCatalogItems;
 	
-
 
 protected:
 	void HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqueId, const int ControllerIndex,
@@ -71,6 +74,10 @@ protected:
 	void RequestGetAccountInfo();
 
 	void OnSuccessGetAccountInfo(const FGetAccntInfoRslt& rslt);
+
+public:
+	UFUNCTION()
+	void BuyIAP(FString id,bool bIsConsumable);
 	
 public:
 	void OnErrorPlayfabReq(const FFailRslt& ErrorResult);
@@ -138,4 +145,13 @@ protected:
 	void OnNickNameSetSuccess(const  PlayFab::ClientModels::FUpdateUserTitleDisplayNameResult&);
 
 	void OnCloudScriptSuccess(const FExeCScriptRslt& rslt);
+
+public:
+	void PurchaseIAPItem(FString itemUniqueId);
+
+	UFUNCTION()
+	void PurchaseSuccess(EInAppPurchaseState::Type completionStatus, const FInAppPurchaseProductInfo& inAppPurchaseInformation);
+
+	UFUNCTION()
+    void PurchaseFail(EInAppPurchaseState::Type completionStatus, const FInAppPurchaseProductInfo& inAppPurchaseInformation);
 };

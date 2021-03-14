@@ -87,7 +87,7 @@ public:
 
 	void EquipSkill(int index,  FSkillSpec* skill_spec);
 	
-	void UnequipSkill(int index,  FSkillSpec* skill_spec);
+	void UnequipSkill(int index);
 
 	bool UseSkill(int index);
 
