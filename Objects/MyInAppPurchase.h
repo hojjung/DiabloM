@@ -51,7 +51,7 @@ private:
 	/** Triggers the In-App Purchase Transaction for the specifed user; the Purchase Request object must already be set up */
 	void Trigger(class APlayerController* PlayerController, const FInAppPurchaseProductRequest& ProductRequest);
 
-private:
+public:
 
 	/** Delegate called when a InAppPurchase has been successfully read */
 	FOnInAppPurchaseCompleteDelegate InAppPurchaseCompleteDelegate;

@@ -39,7 +39,7 @@ void UDiabloGameInstance::Init()
 	m_GachaManager = NewObject<UGachaManager>();
     //
 	m_ChatManager = NewObject<UChatManager>();
-	//m_ChatManager->Init();
+	m_ChatManager->Init();
 	//
     UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(33.f);
     

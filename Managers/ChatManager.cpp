@@ -24,7 +24,7 @@ void UChatManager::HttpCall(const FString& URL, FString Type,FString* jsonData)
 
 	if(jsonData)
 	{
-		Request->SetContentAsString(*jsonData);
+		//Request->SetContentAsString(*jsonData);
 	}
 
 	if(Type=="POST")
@@ -34,9 +34,10 @@ void UChatManager::HttpCall(const FString& URL, FString Type,FString* jsonData)
 	}
 	
 	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
-	Request->SetHeader("Content-Type", TEXT("application/json"));
-	Request->SetHeader(TEXT("Accepts"), TEXT("application/json"));
+	//Request->SetHeader("Content-Type", TEXT("multipart/form-data"));
+	//Request->SetHeader(TEXT("Accepts"), TEXT("application/json"));
 	Request->ProcessRequest();
+
 }
 
 void UChatManager::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
@@ -66,20 +67,15 @@ void UChatManager::ChatPost()
 	FString NN = "ASD";
 	FString CC = "CCC";
 	
-	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
+	TSharedRef<IHttpRequest> Request = Http->CreateRequest();
+	Request->OnProcessRequestComplete().BindUObject(this, &UChatManager::OnResponseReceived);
 
-	JsonObject->SetStringField(TEXT("nickname"), NN);
-	JsonObject->SetStringField(TEXT("chat"), CC);
-
-	FString OutputString;
-
-	TSharedRef<TJsonWriter<TCHAR>> JsonWriter = TJsonWriterFactory<>::Create(&OutputString);
-
-	FJsonSerializer::Serialize(JsonObject.ToSharedRef(), JsonWriter);
-
-	TSharedRef<IHttpRequest> HttpRequest = FHttpModule::Get().CreateRequest();
-	
-	HttpCall("https://reqbin.com/","POST",&OutputString);
-
-	PRINTF("String:%s",*OutputString);
+	Request->SetURL(WebURL);
+	Request->SetVerb("POST");
+	//
+	Request->SetHeader("Content-Type", "application/x-www-form-urlencoded");
+        
+	Request->SetContentAsString("nickname=123&chat=444");// chat=777&
+	//
+	Request->ProcessRequest();
 }

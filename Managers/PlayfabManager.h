@@ -48,6 +48,10 @@ public:
 	//
 	FOnPlayfabError m_OnPlayfabError;
 
+	FString m_OrderID;
+
+	TArray<PlayFab::ClientModels::FCatalogItem> m_AryCatalog;
+	
 public:
 	UPlayfabManager();
 
@@ -77,7 +81,7 @@ protected:
 
 public:
 	UFUNCTION()
-	void BuyIAP(FString id,bool bIsConsumable);
+	void BuyIAP(FString itemId,bool bIsConsumable);
 	
 public:
 	void OnErrorPlayfabReq(const FFailRslt& ErrorResult);

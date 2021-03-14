@@ -2,6 +2,7 @@
 #include "DiabloGameInstance.h"
 #include "DungeonManager.h"
 #include "EquipManager.h"
+#include "JsonSerializer.h"
 #include "MobileUtilsBlueprintLibrary.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
@@ -11,6 +12,7 @@
 #include "PlayFabServerDataModels.h"
 #include "PlayFabUtilities.h"
 #include "Objects/MyInAppPurchase.h"
+#include "Misc/Base64.h"
 using namespace PlayFab;
 
 #define LOCTEXT_NAMESPACE "PlayfabManager"
@@ -65,7 +67,7 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 
 void UPlayfabManager::RequestSetNickname(FString str)
 {
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Nickname","Request Nickname"));
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Nickname", "Request Nickname"));
 	ClientModels::FUpdateUserTitleDisplayNameRequest DisplayReq;
 
 	DisplayReq.DisplayName = str;
@@ -80,13 +82,13 @@ void UPlayfabManager::RequestSetNickname(FString str)
 void UPlayfabManager::OnNickNameSetSuccess(const PlayFab::ClientModels::FUpdateUserTitleDisplayNameResult& result)
 {
 	//result.DisplayName
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Nickname Success","Nickname Success"));
-	m_bIsNicknameSet=true;
-	m_LoadedNickname=result.DisplayName;
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Nickname Success", "Nickname Success"));
+	m_bIsNicknameSet = true;
+	m_LoadedNickname = result.DisplayName;
 
 	FTimerHandle hh;
 	UDiabloGameInstance::Get->GetTimerManager().SetTimer(hh, this, &UPlayfabManager::RequestGetUserData, 2.5f,
-                                                         false);
+	                                                     false);
 }
 
 void UPlayfabManager::OnCloudScriptSuccess(const FExeCScriptRslt& rslt)
@@ -96,9 +98,7 @@ void UPlayfabManager::OnCloudScriptSuccess(const FExeCScriptRslt& rslt)
 
 void UPlayfabManager::PurchaseIAPItem(FString itemUniqueId)
 {
-	
 }
-
 
 
 void UPlayfabManager::Init()
@@ -112,11 +112,11 @@ void UPlayfabManager::Init()
 
 	if (UMobileUtilsBlueprintLibrary::CheckInternetConnection())
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Internet Connected","Internet Connected"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Internet Connected", "Internet Connected"));
 	}
 	else
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-Internet Fail-EndApp","FAIL-Internet Fail-EndApp"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-Internet Fail-EndApp", "FAIL-Internet Fail-EndApp"));
 
 		FGenericPlatformMisc::RequestExit(true);
 		return;
@@ -131,7 +131,7 @@ void UPlayfabManager::Init()
 
 
 #if PLATFORM_WINDOWS
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Desktop","Try Login With Desktop"));
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Desktop", "Try Login With Desktop"));
 	GetClientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
 
 	PlayFab::ClientModels::FLoginWithCustomIDRequest request;
@@ -170,12 +170,12 @@ void UPlayfabManager::HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqu
 {
 	if (error.bSucceeded)
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-GoogleLogin","SUCCESS-GoogleLogin"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-GoogleLogin", "SUCCESS-GoogleLogin"));
 		TryLoginPlayfabGoogle(uniqueId);
 	}
 	else
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-GoogleLoginFail-2","FAIL-GoogleLoginFail-2"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-GoogleLoginFail-2", "FAIL-GoogleLoginFail-2"));
 		FGenericPlatformMisc::RequestExit(true);
 	}
 }
@@ -192,14 +192,16 @@ void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqu
 
 		switch (Status)
 		{
-		case ELoginStatus::NotLoggedIn: 
-			UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-LoginStatus:NotLoggedin","FAIL-LoginStatus:NotLoggedin"));
+		case ELoginStatus::NotLoggedIn:
+			UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-LoginStatus:NotLoggedin",
+			                                                   "FAIL-LoginStatus:NotLoggedin"));
 			break;
-		case ELoginStatus::UsingLocalProfile: 
-			UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-LoginStatus:UsingLocalProfile","FAIL-LoginStatus:UsingLocalProfile"));
+		case ELoginStatus::UsingLocalProfile:
+			UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-LoginStatus:UsingLocalProfile",
+			                                                   "FAIL-LoginStatus:UsingLocalProfile"));
 			break;
-		case ELoginStatus::LoggedIn: 
-			UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("LoginStatus:LoggedIn","LoginStatus:LoggedIn"));
+		case ELoginStatus::LoggedIn:
+			UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("LoginStatus:LoggedIn", "LoginStatus:LoggedIn"));
 			break;
 		default: ;
 		}
@@ -222,26 +224,29 @@ void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqu
 
 		if (!Result)
 		{
-			UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Fail-Request PlayfabLogin","Fail-Request PlayfabLogin"));
+			UDiabloGameInstance::Get->RequestPopupText(
+				LOCTEXT("Fail-Request PlayfabLogin", "Fail-Request PlayfabLogin"));
 		}
 	}
 	else
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-GooglePlay not checked ?","FAIL-GooglePlay not checked ?"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-GooglePlay not checked ?",
+		                                                   "FAIL-GooglePlay not checked ?"));
 	}
 }
 
 
 void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result)
 {
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-Playfab Login Success","SUCCESS-Playfab Login Success"));
+	UDiabloGameInstance::Get->RequestPopupText(
+		LOCTEXT("SUCCESS-Playfab Login Success", "SUCCESS-Playfab Login Success"));
 	PRINTF("ID:%s", *Result.PlayFabId);
 
 	m_PlayfabID = Result.PlayFabId;
 
 	if (Result.NewlyCreated)
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("New Player","New Player"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("New Player", "New Player"));
 	}
 	//
 	RequestGetAccountInfo();
@@ -250,8 +255,7 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 
 void UPlayfabManager::RequestGetUserData()
 {
-	
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Get User Data","Request Get User Data"));
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Get User Data", "Request Get User Data"));
 	FGetUsrDataReq req;
 
 	//Request Data
@@ -274,19 +278,19 @@ void UPlayfabManager::RequestGetUserData()
 void UPlayfabManager::SetOnlineStatus()
 {
 	ClientModels::FExecuteCloudScriptRequest Req;
-	Req.FunctionName="SetOnlineState";
+	Req.FunctionName = "SetOnlineState";
 	GetClientAPI->ExecuteCloudScript(Req,
-		FExeCScriptDele::CreateUObject(this,&UPlayfabManager::OnCloudScriptSuccess),
-		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+	                                 FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnCloudScriptSuccess),
+	                                 FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
 void UPlayfabManager::SetOfflineStatus()
 {
 	ClientModels::FExecuteCloudScriptRequest Req;
-	Req.FunctionName="SetOfflineState";
+	Req.FunctionName = "SetOfflineState";
 	GetClientAPI->ExecuteCloudScript(Req,
-        FExeCScriptDele::CreateUObject(this,&UPlayfabManager::OnCloudScriptSuccess),
-        FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+	                                 FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnCloudScriptSuccess),
+	                                 FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
 
@@ -298,18 +302,18 @@ void UPlayfabManager::OnErrorPlayfabReq(const FFailRslt& ErrorResult)
 	PRINTF("PlayfabRequest Error Code:%s", *CodeString);
 
 	UDiabloGameInstance::Get->RequestPopupText(CodeString);
-		//break;
+	//break;
 	m_OnPlayfabError.Broadcast(CodeString);
 }
 
 void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 {
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-Get User Data","SUCCESS-Get User Data"));
-	
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-Get User Data", "SUCCESS-Get User Data"));
+
 	if (!result.Data.Num())
 	{
 		PRINTF("DataNull");
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-Get User Data Null","FAIL-Get User Data Null"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-Get User Data Null", "FAIL-Get User Data Null"));
 		//Something Fucked
 	}
 	//
@@ -334,68 +338,143 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 	m_bIsLoginCompleted = true;
 	m_bIsNicknameSet = true;
 
+	ClientModels::FGetCatalogItemsRequest Req;
+	GetClientAPI->GetCatalogItems(Req, PlayFab::UPlayFabClientAPI::FGetCatalogItemsDelegate::
+	                              CreateLambda([&](const ClientModels::FGetCatalogItemsResult cIRslt)
+	                              {
+		                              m_AryCatalog = cIRslt.Catalog;
+	                              }), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
 void UPlayfabManager::RequestGetAccountInfo()
 {
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("RequestGetAccountInfo","RequestGetAccountInfo"));
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("RequestGetAccountInfo", "RequestGetAccountInfo"));
 	FGetAccntInfoReq Req;
 
-	GetClientAPI->GetAccountInfo(Req,FGetAccntInfoDele::CreateUObject(this,&UPlayfabManager::OnSuccessGetAccountInfo),
-		FFailDele::CreateUObject(this,&UPlayfabManager::OnErrorPlayfabReq));
+	GetClientAPI->GetAccountInfo(Req, FGetAccntInfoDele::CreateUObject(this, &UPlayfabManager::OnSuccessGetAccountInfo),
+	                             FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
 void UPlayfabManager::OnSuccessGetAccountInfo(const FGetAccntInfoRslt& rslt)
 {
-	if(rslt.AccountInfo->TitleInfo->isBanned)
+	if (rslt.AccountInfo->TitleInfo->isBanned)
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Banned Player","Banned Player"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Banned Player", "Banned Player"));
 		return;
 	}
 
-	
-	if(rslt.AccountInfo->TitleInfo->DisplayName.IsEmpty())
+
+	if (rslt.AccountInfo->TitleInfo->DisplayName.IsEmpty())
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Please Set Nickname","Please Set Nickname"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Please Set Nickname", "Please Set Nickname"));
 		m_bShowNicknameSet = true;
 		return;
 	}
 
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Welcome","Welcome"));
-	
-	m_LoadedNickname=rslt.AccountInfo->TitleInfo->DisplayName;
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Welcome", "Welcome"));
+
+	m_LoadedNickname = rslt.AccountInfo->TitleInfo->DisplayName;
 	m_bIsNicknameSet = true;
 	RequestGetUserData();
 }
 
-void UPlayfabManager::BuyIAP(FString id,bool bIsConsumable)
+void UPlayfabManager::BuyIAP(FString itemId, bool bIsConsumable)
 {
-	
-
 	FInAppPurchaseProductRequest IAPRequest;
-	
-	IAPRequest.bIsConsumable=bIsConsumable;
-	
-	IAPRequest.ProductIdentifier=id;//
 
-	UMyInAppPurchase* Proxy = UMyInAppPurchase::CreateProxyObjectForInAppPurchase(UDiabloGameInstance::Get->GetPlCon(), IAPRequest);
+	IAPRequest.bIsConsumable = bIsConsumable;
+
+	IAPRequest.ProductIdentifier = itemId; //
+
+	//FInAppPurchaseReceiptInfo
 	
-	Proxy->OnSuccess.AddDynamic(this,&UPlayfabManager::PurchaseSuccess);
-	
-	Proxy->OnFailure.AddDynamic(this,&UPlayfabManager::PurchaseFail);
+	UMyInAppPurchase* Proxy = UMyInAppPurchase::CreateProxyObjectForInAppPurchase(
+		UDiabloGameInstance::Get->GetPlCon(), IAPRequest);
+
+	Proxy->OnSuccess.AddDynamic(this, &UPlayfabManager::PurchaseSuccess);
+
+	Proxy->OnFailure.AddDynamic(this, &UPlayfabManager::PurchaseFail);
+
 }
 
 void UPlayfabManager::PurchaseSuccess(EInAppPurchaseState::Type completionStatus,
-    const FInAppPurchaseProductInfo& inAppPurchaseInformation)
+                                      const FInAppPurchaseProductInfo& inAppPurchaseInformation)
 {
-	PRINTF("Purchase Success");
-	UDiabloGameInstance::Get->RequestPopupText("Purchase Success");
+	UDiabloGameInstance::Get->RequestPopupText("IAP Purchase Success 1 But Need Validate");
+	
+	FString ReceiptData = FString("");
+
+	FString Signature = FString("");
+	
+	FBase64::Decode(inAppPurchaseInformation.ReceiptData, ReceiptData);
+
+
+	PRINTF("MyReceipt::%s",*ReceiptData);
+
+	ClientModels::FValidateGooglePlayPurchaseRequest GooglePlayReq;
+	GooglePlayReq.CurrencyCode = inAppPurchaseInformation.CurrencyCode;
+	GooglePlayReq.ReceiptJson = ReceiptData;
+	//GooglePlayReq.Signature = inAppPurchaseInformation.TransactionIdentifier;
+	GooglePlayReq.PurchasePrice = inAppPurchaseInformation.RawPrice;
+	//
+	//
+	GetClientAPI->ValidateGooglePlayPurchase(GooglePlayReq,PlayFab::UPlayFabClientAPI::FValidateGooglePlayPurchaseDelegate::CreateLambda(
+[&](const ClientModels::FValidateGooglePlayPurchaseResult& gPPRslt)
+			{
+				UDiabloGameInstance::Get->RequestPopupText("Validate IAP Purchase Success 2");
+
+				PlayFab::ClientModels::FItemPurchaseRequest ItemWant;
+				ItemWant.ItemId = inAppPurchaseInformation.Identifier;
+				ItemWant.Quantity = 1;
+
+				ClientModels::FStartPurchaseRequest SPReq;
+				SPReq.Items.Add(ItemWant);
+
+				GetClientAPI->StartPurchase(SPReq, PlayFab::UPlayFabClientAPI::FStartPurchaseDelegate::CreateLambda(
+			[&](const ClientModels::FStartPurchaseResult& sPRslt)
+						{
+							UDiabloGameInstance::Get->RequestPopupText("Start Purchase");
+
+							m_OrderID = sPRslt.OrderId;
+							ClientModels::FPayForPurchaseRequest PPReq;
+							PPReq.Currency = inAppPurchaseInformation.CurrencyCode;
+							PPReq.OrderId = sPRslt.OrderId;
+							PPReq.ProviderName = inAppPurchaseInformation.
+								CurrencyCode;
+							PPReq.ProviderTransactionId = inAppPurchaseInformation.
+								TransactionIdentifier;
+
+
+							GetClientAPI->PayForPurchase(PPReq,PlayFab::UPlayFabClientAPI::FPayForPurchaseDelegate::CreateLambda(
+							[&](const ClientModels::FPayForPurchaseResult& pPRslt)
+									{
+										UDiabloGameInstance::Get->RequestPopupText("Pay For Purchase");
+
+										ClientModels::FConfirmPurchaseRequest ConfirmReq;
+
+										ConfirmReq.OrderId = m_OrderID;
+
+										GetClientAPI->ConfirmPurchase(
+											ConfirmReq,
+											PlayFab::UPlayFabClientAPI::FConfirmPurchaseDelegate::CreateLambda(
+												[&](const ClientModels::FConfirmPurchaseResult& cPRslt)
+												{
+													UDiabloGameInstance::Get->RequestPopupText("Confirm Purchase, Thank You!");
+													
+												}), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+									}), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+						}), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+			}), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+	//
+
+	//
 }
 
+
+
 void UPlayfabManager::PurchaseFail(EInAppPurchaseState::Type completionStatus,
-    const FInAppPurchaseProductInfo& inAppPurchaseInformation)
+                                   const FInAppPurchaseProductInfo& inAppPurchaseInformation)
 {
-	PRINTF("Purchase Fail");
 	UDiabloGameInstance::Get->RequestPopupText("Purchase Fail");
 }
 #undef LOCTEXT_NAMESPACE
