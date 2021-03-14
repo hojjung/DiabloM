@@ -131,7 +131,7 @@ void ADiabloPlayerController::ShowDamageNumber(const BigInt& local_damage_done,A
 	DamageText->StartAnimation(dmgPopup);
 }
 
-void ADiabloPlayerController::ShowDamageText(const FString stringWant, AUnitPawn* unit_pawn, EDamagePopup dmgPopup)
+void ADiabloPlayerController::ShowDamageText(const FString& stringWant, AUnitPawn* unit_pawn, EDamagePopup dmgPopup)
 {
 	UDamageTextWidgetComponent* DamageText = GetDmgWC();
 	
@@ -149,66 +149,11 @@ void ADiabloPlayerController::BackToSelectMenu()
 	UGameplayStatics::OpenLevel(GetWorld(),"StartMenu");
 }
 
-void ADiabloPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void ADiabloPlayerController::SendChat(FString& chat)
 {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ADiabloPlayerController,m_CurrentMsg);
+	UDiabloGameInstance::Get->m_ChatManager->ChatPost(chat);
 }
 
-void ADiabloPlayerController::AttemptToSendChatMessage(const FString& msg)
-{
-	if(GetLocalRole() < ROLE_Authority)
-	{
-		ServerSendChatMsg(msg);
-	}
-	else
-	{
-		SendChatMsg(msg);
-	}
-}
-
-void ADiabloPlayerController::SendChatMsg(const FString& msg)
-{
-	m_CurrentMsg = msg;
-	UpdateChatText();
-	FTimerHandle DummyHandle;
-	GetWorldTimerManager().SetTimer(DummyHandle,this,&ADiabloPlayerController::ClearChatmsg,5.f);
-}
-
-void ADiabloPlayerController::ClearChatmsg()
-{
-	m_CurrentMsg="";
-	UpdateChatText();
-	
-}
-
-void ADiabloPlayerController::ServerSendChatMsg_Implementation(const FString& msg)
-{
-	SendChatMsg(msg);
-}
-
-bool ADiabloPlayerController::ServerSendChatMsg_Validate(const FString& msg)
-{
-	if(msg.Len()<255)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-void ADiabloPlayerController::OnRep_CurrentMsg()
-{
-	UpdateChatText();
-}
-
-void ADiabloPlayerController::UpdateChatText()
-{
-	PRINTF("DiaChatUser(%p):%s",this,*m_CurrentMsg);
-}
 
 void ADiabloPlayerController::ClickActor()
 {
@@ -226,10 +171,7 @@ void ADiabloPlayerController::ClickActor()
 
 	FNavLocation Loc;
 
-
-
 	FHitResult Hits;
-
 	//StartPos = DiaPlayer->GetCameraLoc();
 
 	if(!UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(),

@@ -36,8 +36,6 @@ protected:
 	
 	int m_DmgIndex;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Transient,ReplicatedUsing = OnRep_CurrentMsg,Category="Chat")
-	FString m_CurrentMsg;
 	UPROPERTY()
 	TArray<AActor*> m_AryIgnoreActors;
 
@@ -65,31 +63,13 @@ public:
 	//
 	void ShowDamageNumber(const BigInt& local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target
 
-	void ShowDamageText(const FString stringWant,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target
+	void ShowDamageText(const FString& stringWant,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target
 
 	UFUNCTION()
     void BackToSelectMenu();
 
-public:
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	UFUNCTION(BlueprintCallable,Category="Chat")
-	void AttemptToSendChatMessage(const FString& msg);
-
-private://server only
-	void SendChatMsg(const FString& msg);
-
-	void ClearChatmsg();
-
-	UFUNCTION(Server,Reliable,WithValidation)
-	void ServerSendChatMsg(const FString& msg);
-	void ServerSendChatMsg_Implementation(const FString& msg);
-	bool ServerSendChatMsg_Validate(const FString& msg);
-	
 	UFUNCTION()
-    void OnRep_CurrentMsg();
-
-	void UpdateChatText();
+	void SendChat(FString& chat);
 
 public:
 	UFUNCTION()
