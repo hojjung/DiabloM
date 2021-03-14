@@ -9,6 +9,7 @@
 #include "PlayFabClientDataModels.h"
 #include "PlayerUpgradeManager.h"
 #include "PlayFabAdminDataModels.h"
+#include "PlayFabJsonObject.h"
 #include "PlayFabServerDataModels.h"
 #include "PlayFabUtilities.h"
 #include "Objects/MyInAppPurchase.h"
@@ -402,19 +403,26 @@ void UPlayfabManager::PurchaseSuccess(EInAppPurchaseState::Type completionStatus
 {
 	UDiabloGameInstance::Get->RequestPopupText("IAP Purchase Success 1 But Need Validate");
 	
-	FString ReceiptData = FString("");
-
-	FString Signature = FString("");
+	TSharedPtr<FJsonObject> JsonObject; TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(inAppPurchaseInformation.ReceiptData);
 	
-	FBase64::Decode(inAppPurchaseInformation.ReceiptData, ReceiptData);
+	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		return;	
+	}
 
+	FString ReceiptData;
+	FBase64::Decode(JsonObject->GetStringField(TEXT("receiptData")),ReceiptData);
+	
+	FString Signature = JsonObject->GetStringField(TEXT("signature"));
+	//FBase64::Decode(JsonObject->GetStringField(TEXT("signature")),Signature);
 
-	PRINTF("MyReceipt::%s",*ReceiptData);
-
+	PRINTF("ReceiptData:%s",*ReceiptData);
+	PRINTF("Signature:%s",*Signature);
+	//
 	ClientModels::FValidateGooglePlayPurchaseRequest GooglePlayReq;
 	GooglePlayReq.CurrencyCode = inAppPurchaseInformation.CurrencyCode;
 	GooglePlayReq.ReceiptJson = ReceiptData;
-	//GooglePlayReq.Signature = inAppPurchaseInformation.TransactionIdentifier;
+	GooglePlayReq.Signature = Signature;
 	GooglePlayReq.PurchasePrice = inAppPurchaseInformation.RawPrice;
 	//
 	//
