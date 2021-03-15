@@ -21,35 +21,24 @@ ADiabloGameMode::ADiabloGameMode()
 	HUDClass = AGameLevelHUD::StaticClass();
 
 	m_PlayerActionManager=CreateDefaultSubobject<UActionManagerComponent>("PlayerActionManager");
-}
 
+	PrimaryActorTick.bCanEverTick = false;
+}
+	
 
 void ADiabloGameMode::StartPlay()
 {
 	Super::StartPlay();
 
-	PRINTF("GameModeStartPlay");
-
 	UDiabloGameInstance::Get->m_DungeonManager->LoadLevelComplete(this->GetWorld());
 	m_PlManager = UDiabloGameInstance::Get->m_PlayfabManager;
 	m_PlUpgrade = UDiabloGameInstance::Get->m_PlayerUpgradeManager;
+	m_ChatManager = UDiabloGameInstance::Get->m_ChatManager;
+
+	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(m_PlManager, &UPlayfabManager::TickTryUpdateUserData);
+	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(m_PlUpgrade, &UPlayerUpgradeManager::Tick);
+	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(m_ChatManager, &UChatManager::Tick);
+
+	m_ChatManager->RequestGetChatFromServer();
 }
-
-void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-
-	//Login(ADiabloPlayerController::Get,ENetRole::ROLE_Authority,);
-	//Logout(ADiabloPlayerController::Get);
-	PRINTF("LogoutNeed");
-}
-
-void ADiabloGameMode::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	m_PlManager->TickTryUpdateUserData(DeltaSeconds);
-	m_PlUpgrade->Tick(DeltaSeconds);
-}
-
 

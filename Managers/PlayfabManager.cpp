@@ -343,7 +343,7 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 	GetClientAPI->GetCatalogItems(Req, PlayFab::UPlayFabClientAPI::FGetCatalogItemsDelegate::
 	                              CreateLambda([&](const ClientModels::FGetCatalogItemsResult cIRslt)
 	                              {
-		                              m_AryCatalog = cIRslt.Catalog;
+		                              m_AryCatalogItems = cIRslt.Catalog;
 	                              }), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
@@ -398,10 +398,9 @@ void UPlayfabManager::BuyIAP(FString itemId, bool bIsConsumable)
 
 }
 
-void UPlayfabManager::PurchaseSuccess(EInAppPurchaseState::Type completionStatus,
-                                      const FInAppPurchaseProductInfo& inAppPurchaseInformation)
+void UPlayfabManager::PurchaseSuccess(EInAppPurchaseState::Type completionStatus,const FInAppPurchaseProductInfo& inAppPurchaseInformation)
 {
-	UDiabloGameInstance::Get->RequestPopupText("IAP Purchase Success 1 But Need Validate");
+	UDiabloGameInstance::Get->RequestPopupText("IAP Purchase Need Validate");
 	
 	TSharedPtr<FJsonObject> JsonObject; TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(inAppPurchaseInformation.ReceiptData);
 	
@@ -414,10 +413,6 @@ void UPlayfabManager::PurchaseSuccess(EInAppPurchaseState::Type completionStatus
 	FBase64::Decode(JsonObject->GetStringField(TEXT("receiptData")),ReceiptData);
 	
 	FString Signature = JsonObject->GetStringField(TEXT("signature"));
-	//FBase64::Decode(JsonObject->GetStringField(TEXT("signature")),Signature);
-
-	PRINTF("ReceiptData:%s",*ReceiptData);
-	PRINTF("Signature:%s",*Signature);
 	//
 	ClientModels::FValidateGooglePlayPurchaseRequest GooglePlayReq;
 	GooglePlayReq.CurrencyCode = inAppPurchaseInformation.CurrencyCode;
@@ -425,64 +420,21 @@ void UPlayfabManager::PurchaseSuccess(EInAppPurchaseState::Type completionStatus
 	GooglePlayReq.Signature = Signature;
 	GooglePlayReq.PurchasePrice = inAppPurchaseInformation.RawPrice;
 	//
-	//
-	GetClientAPI->ValidateGooglePlayPurchase(GooglePlayReq,PlayFab::UPlayFabClientAPI::FValidateGooglePlayPurchaseDelegate::CreateLambda(
-[&](const ClientModels::FValidateGooglePlayPurchaseResult& gPPRslt)
-			{
-				UDiabloGameInstance::Get->RequestPopupText("Validate IAP Purchase Success 2");
-
-				PlayFab::ClientModels::FItemPurchaseRequest ItemWant;
-				ItemWant.ItemId = inAppPurchaseInformation.Identifier;
-				ItemWant.Quantity = 1;
-
-				ClientModels::FStartPurchaseRequest SPReq;
-				SPReq.Items.Add(ItemWant);
-
-				GetClientAPI->StartPurchase(SPReq, PlayFab::UPlayFabClientAPI::FStartPurchaseDelegate::CreateLambda(
-			[&](const ClientModels::FStartPurchaseResult& sPRslt)
-						{
-							UDiabloGameInstance::Get->RequestPopupText("Start Purchase");
-
-							m_OrderID = sPRslt.OrderId;
-							ClientModels::FPayForPurchaseRequest PPReq;
-							PPReq.Currency = inAppPurchaseInformation.CurrencyCode;
-							PPReq.OrderId = sPRslt.OrderId;
-							PPReq.ProviderName = inAppPurchaseInformation.
-								CurrencyCode;
-							PPReq.ProviderTransactionId = inAppPurchaseInformation.
-								TransactionIdentifier;
-
-
-							GetClientAPI->PayForPurchase(PPReq,PlayFab::UPlayFabClientAPI::FPayForPurchaseDelegate::CreateLambda(
-							[&](const ClientModels::FPayForPurchaseResult& pPRslt)
-									{
-										UDiabloGameInstance::Get->RequestPopupText("Pay For Purchase");
-
-										ClientModels::FConfirmPurchaseRequest ConfirmReq;
-
-										ConfirmReq.OrderId = m_OrderID;
-
-										GetClientAPI->ConfirmPurchase(
-											ConfirmReq,
-											PlayFab::UPlayFabClientAPI::FConfirmPurchaseDelegate::CreateLambda(
-												[&](const ClientModels::FConfirmPurchaseResult& cPRslt)
-												{
-													UDiabloGameInstance::Get->RequestPopupText("Confirm Purchase, Thank You!");
-													
-												}), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
-									}), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
-						}), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
-			}), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
-	//
-
-	//
+	GetClientAPI->ValidateGooglePlayPurchase(GooglePlayReq,UPlayFabClientAPI::
+		FValidateGooglePlayPurchaseDelegate::CreateUObject(this,&UPlayfabManager::OnIAPGoogleValidateSuccess),
+		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
-
-
-void UPlayfabManager::PurchaseFail(EInAppPurchaseState::Type completionStatus,
-                                   const FInAppPurchaseProductInfo& inAppPurchaseInformation)
+void UPlayfabManager::PurchaseFail(EInAppPurchaseState::Type completionStatus,const FInAppPurchaseProductInfo& inAppPurchaseInformation)
 {
-	UDiabloGameInstance::Get->RequestPopupText("Purchase Fail");
+	UDiabloGameInstance::Get->RequestPopupText("IAP Purchase Fail!");
 }
+
+void UPlayfabManager::OnIAPGoogleValidateSuccess(const PlayFab::ClientModels::FValidateGooglePlayPurchaseResult& purchaseResult)
+{
+	FString ItemID = purchaseResult.Fulfillments[0].FulfilledItems[0].ItemId;
+
+	UDiabloGameInstance::Get->RequestPopupText(FString::Printf(TEXT("IAP Purchase Success!:%s"),*ItemID));
+}
+
 #undef LOCTEXT_NAMESPACE

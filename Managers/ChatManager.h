@@ -17,10 +17,14 @@ class DIABLOM_API UChatManager : public UObject
 
 public:
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnChatReceive, const FString&);
-
-	FOnChatReceive m_OnChatReceive;
-
 	
+	FOnChatReceive m_OnChatReceive;
+	
+	UChatManager();
+
+protected:
+	TArray<FString> m_AryBadwordList;
+
 	bool m_bIsWaitingGetChatRequest;
 	
 	FString DocsURL;
@@ -28,16 +32,25 @@ public:
 	FString WebURL;
 	
 	FHttpModule* Http;
-	// Sets default values for this actor's properties
-	UChatManager();
 
-    void HttpCall(const FString& URL, FString Type,FString* jsonData=nullptr);
+	float m_fDeltaCounter;
+
+protected:
+	void SetBadWordAry();
+
+    void HttpCall(const FString& URL, FString Type,FString* formStrData=nullptr);
 
 	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 
+
+	void FilterBadWord(FString& outChatWant);
+
+public:
+	void Tick(float deltaTime);//should split
+	
 	void RequestGetChatFromServer();
 	
-	void ChatPost(FString& chatWant);
+	void ChatPost(const FText& chatWant);
 	
 };
 

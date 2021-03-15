@@ -6,6 +6,7 @@
 #include "DiabloM.h"
 #include "Components/PostProcessComponent.h"
 #include "GameFramework/GameMode.h"
+#include "Managers/ChatManager.h"
 #include "Managers/MonsterSpawnManager.h"
 
 
@@ -31,14 +32,11 @@ protected:
 	UPlayfabManager* m_PlManager;
 	UPROPERTY()
 	UPlayerUpgradeManager* m_PlUpgrade;
+	UPROPERTY()
+	UChatManager* m_ChatManager;
 	
-protected:
-	virtual void Tick(float DeltaSeconds) override;
-
 public:
 	virtual void StartPlay() override;
-
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	FORCEINLINE UActionManagerComponent* GetPlayerActionManager()
 	{

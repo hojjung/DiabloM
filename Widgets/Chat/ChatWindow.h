@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
+#include "ScrollBox.h"
 #include "Blueprint/UserWidget.h"
 #include "ChatWindow.generated.h"
 
@@ -13,5 +14,22 @@ UCLASS()
 class DIABLOM_API UChatWindow : public UUserWidget
 {
 	GENERATED_BODY()
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UEditableText* m_MesageEditableText;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UScrollBox* m_MessageScrollBox;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_SendButton;
+
+protected:
+	virtual void NativeOnInitialized() override;
 	
+public:
+	UFUNCTION()
+	void OnReceiveTotalChatList(const FString& chat);
+	
+	UFUNCTION()
+	void SendText();
 };

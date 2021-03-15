@@ -68,9 +68,6 @@ public:
 	UFUNCTION()
     void BackToSelectMenu();
 
-	UFUNCTION()
-	void SendChat(FString& chat);
-
 public:
 	UFUNCTION()
 	void ClickActor();

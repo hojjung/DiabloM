@@ -50,8 +50,6 @@ public:
 
 	FString m_OrderID;
 
-	TArray<PlayFab::ClientModels::FCatalogItem> m_AryCatalog;
-	
 public:
 	UPlayfabManager();
 
@@ -158,4 +156,8 @@ public:
 
 	UFUNCTION()
     void PurchaseFail(EInAppPurchaseState::Type completionStatus, const FInAppPurchaseProductInfo& inAppPurchaseInformation);
+
+protected:
+	void OnIAPGoogleValidateSuccess( const PlayFab::ClientModels::FValidateGooglePlayPurchaseResult&);
+
 };

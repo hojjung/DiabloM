@@ -149,11 +149,6 @@ void ADiabloPlayerController::BackToSelectMenu()
 	UGameplayStatics::OpenLevel(GetWorld(),"StartMenu");
 }
 
-void ADiabloPlayerController::SendChat(FString& chat)
-{
-	UDiabloGameInstance::Get->m_ChatManager->ChatPost(chat);
-}
-
 
 void ADiabloPlayerController::ClickActor()
 {
