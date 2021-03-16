@@ -32,6 +32,7 @@ void AStartMapGameMode::Tick(float DeltaSeconds)
 	{
 		return;	
 	}
+
 	
 	if(!m_bLock)
 	{

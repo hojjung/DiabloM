@@ -33,6 +33,7 @@ class DIABLOM_API UPlayfabManager : public UObject
 {
 	GENERATED_BODY()
 public:
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnVirtualCurrencyChanged,int);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayfabError,FString&);
 	//해금된 스테이지와 해금된 클래스,각클래스 업그레이드 레벨 다저장해야함
 	//다 숫자로 통일해주자? 테이블에서 어케 가져와
@@ -46,6 +47,8 @@ public:
 	static const FString Pet;
 	static const FString Accessory;
 	//
+	FOnVirtualCurrencyChanged m_OnGemstoneChanged;
+	
 	FOnPlayfabError m_OnPlayfabError;
 
 	FString m_OrderID;
@@ -58,7 +61,7 @@ public:
 	void Init();
 
 protected:
-	TArray<PlayFab::ClientModels::FCatalogItem> m_AryCatalogItems;
+	TMap<FString,PlayFab::ClientModels::FCatalogItem> m_MapCatalogItems;
 	
 
 protected:
@@ -76,10 +79,7 @@ protected:
 	void RequestGetAccountInfo();
 
 	void OnSuccessGetAccountInfo(const FGetAccntInfoRslt& rslt);
-
-public:
-	UFUNCTION()
-	void BuyIAP(FString itemId,bool bIsConsumable);
+	
 	
 public:
 	void OnErrorPlayfabReq(const FFailRslt& ErrorResult);
@@ -134,6 +134,7 @@ public:
 	void TickTryUpdateUserData(float deltaTime);//should split
 	//the ui drity should update
 	//gold kill count separete need;
+	void RequestGetInventory();
 
 	void RequestSetNickname(FString str);
 
@@ -149,7 +150,11 @@ protected:
 	void OnCloudScriptSuccess(const FExeCScriptRslt& rslt);
 
 public:
-	void PurchaseIAPItem(FString itemUniqueId);
+	UFUNCTION()
+    void BuyIAP(FString itemId,bool bIsConsumable);
+
+	UFUNCTION()
+	void PurchaseVirtualItem(FString itemUniqueId);
 
 	UFUNCTION()
 	void PurchaseSuccess(EInAppPurchaseState::Type completionStatus, const FInAppPurchaseProductInfo& inAppPurchaseInformation);
@@ -157,7 +162,12 @@ public:
 	UFUNCTION()
     void PurchaseFail(EInAppPurchaseState::Type completionStatus, const FInAppPurchaseProductInfo& inAppPurchaseInformation);
 
+	
 protected:
 	void OnIAPGoogleValidateSuccess( const PlayFab::ClientModels::FValidateGooglePlayPurchaseResult&);
 
+
+	void OnSuccessGetInven( const PlayFab::ClientModels::FGetUserInventoryResult&);
 };
+
+

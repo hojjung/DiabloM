@@ -18,10 +18,22 @@ UMonsterSpawnManager::UMonsterSpawnManager()
 	m_IdEnemy = "enemy";
 	m_IdBossEnemy = "boss";
 	m_IdSpecialEnemy = "special";
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundData(TEXT("DataTable'/Game/DataTables/Entities/MonsterTable.MonsterTable'"));
+	m_GoldGoblinEntity = FoundData.Object->FindRow<FMonsterEntity>("GoldGoblin","");
+	//(DataTable=DataTable'"/Game/DataTables/Entities/MonsterTable.MonsterTable"',RowName="GoldGoblin")
+
+	m_nGoldGoblinSpawnCount=0;
 }
 
 void UMonsterSpawnManager::StartSpawn(UWorld* world, const FDungeonDataTableRow* dgData)
 {
+	m_nKillCount=0;
+	
+	m_nGoldGoblinSpawnCount = FMath::RandRange(5,10);
+
+	m_nGoldGoblinSpawnCount+=m_nKillCount;
+	
 	m_CurrentWorld = world;
 
 	m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(m_CurrentWorld);
@@ -43,7 +55,7 @@ void UMonsterSpawnManager::StartSpawn(UWorld* world, const FDungeonDataTableRow*
 
 		m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
 
-		SpawnMob(FVector::ZeroVector);
+		SpawnMobToLoc(FVector::ZeroVector);
 	}
 
 	SetSensingUpdatesEnabled(true);
@@ -113,7 +125,7 @@ void UMonsterSpawnManager::OnTimer()
 	//Spawn
 	for (int i = 0; i < 5; i++)
 	{
-		if (!SpawnMob(FVector::ZeroVector))
+		if (!SpawnMobToLoc(FVector::ZeroVector))
 		{
 			break;
 		}
@@ -152,9 +164,15 @@ AMonsterPawn* UMonsterSpawnManager::GetReadyMonster()
 
 	return SelectedPawn;
 }
-
-AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
+AMonsterPawn* UMonsterSpawnManager::SpawnMobToLoc(FVector loc)
 {
+	AMonsterPawn* Mob = GetReadyMonster();
+
+	if (!Mob)
+	{
+		return nullptr;
+	}
+	
 	float MinX = loc.X - 500.f;
 	float MaxX = loc.X + 500.f;
 
@@ -170,14 +188,16 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 	const FMonsterEntityHandle& MobHandle = m_DgDataTable->m_Monster;
 
 	const FMonsterEntity* MonData = MobHandle.GetRow<FMonsterEntity>("");
-
-	AMonsterPawn* Mob = GetReadyMonster();
-
-	if (!Mob)
+	
+	if(m_nKillCount >= m_nGoldGoblinSpawnCount)
 	{
-		return nullptr;
-	}
+		m_nGoldGoblinSpawnCount = FMath::RandRange(75,150);
 
+		m_nGoldGoblinSpawnCount+=m_nKillCount;
+
+		MonData = m_GoldGoblinEntity;
+	}
+	
 	NewLoc.Z += Mob->GetCapsule()->GetScaledCapsuleHalfHeight();
 
 	Mob->SetActorLocation(NewLoc);
@@ -189,7 +209,6 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMob(FVector loc)
 
 	return Mob;
 }
-
 AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos)
 {
 	if(m_bBossSpawned && m_SpawnedBoss)
@@ -269,13 +288,7 @@ void UMonsterSpawnManager::AddKillCount()
 {
 	m_nKillCount++;
 
-	if (m_nKillCount > 10) //never spawned
-	{
-		PRINTF("SpawnBOss");
-		//SpawnBossMob();
-	}
-
-	
+		
 }
 
 void UMonsterSpawnManager::SpawnBossMob()
@@ -302,7 +315,7 @@ void UMonsterSpawnManager::SpawnBossMob()
 	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Boss,
                     m_DgDataTable->m_nAvoidLevel,
                     m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""),
-                    m_DgDataTable->m_fBossMonsterStatFactor,
+                    29,
                     m_DgDataTable->m_fBossMonsterRenderScale);
 
 	m_SpawnedBoss =  Mob;

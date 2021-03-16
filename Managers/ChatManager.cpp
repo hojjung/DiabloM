@@ -56,7 +56,7 @@ void UChatManager::HttpCall(const FString& URL, FString Type,FString* formStrDat
 	}
 	
 	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
-	Request->SetHeader("Content-Type", "application/x-www-form-urlencoded ; ");//charset=utf-8
+	Request->SetHeader("Content-Type", "application/x-www-form-urlencoded ; charset=utf-8");
 	
 	Request->ProcessRequest();
 }
@@ -112,9 +112,9 @@ void UChatManager::ChatPost(const FText& chatWant)
 	
 	FString CachedString = CachedText.ToString(); 
 	
-	FilterBadWord(CachedString);
+	//FilterBadWord(CachedString);
 
-	FString Format = FString::Printf(L"nickname=%s&chat=%s",*UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname,*CachedString);
+	FString Format = FString::Printf(TEXT("nickname=%s&chat=%s"),*UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname,*CachedString);
 
 	HttpCall(WebURL,"POST",&Format);
 }

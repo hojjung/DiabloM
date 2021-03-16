@@ -155,6 +155,9 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     m_TookHitMontage = UnitData->m_TookHitMontage;
 
     m_TextUnitName = UnitData->m_ShowingName;
+
+    
+    m_SkBody->EmptyOverrideMaterials();
     
     m_SkBody->SetSkeletalMesh(UnitData->m_Mesh);
 
@@ -177,6 +180,8 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     m_nAvoidLevel = avoidLevel;
 
     UpdateHealthBar(GetHpPercentOne());
+
+    
 
     m_SkBody->SetScalarParameterValueOnMaterials("Visibility",1.f);
 

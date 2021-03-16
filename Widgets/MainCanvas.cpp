@@ -45,6 +45,9 @@ void UMainCanvas::NativeOnInitialized()
 	UDiabloGameInstance::Get->GetPlChar()->m_OnRageChanged.AddUObject(this,&UMainCanvas::UpdateRageBar);
 
 	SetPlayerNicknameRanking();
+
+	UDiabloGameInstance::Get->m_PlayfabManager->m_OnGemstoneChanged.AddUObject(this,&UMainCanvas::UpdateGemStone);
+	UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 }
 
 void UMainCanvas::RequestText(FText txt)
@@ -304,6 +307,7 @@ void UMainCanvas::SetPlayerNicknameRanking()
 	FFormatOrderedArguments Args;
 
 	int TestRank = 1234;
+	
 	Args.Add(TestRank);
 	Args.Add(FText::FromString(UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname));
 
@@ -324,6 +328,11 @@ void UMainCanvas::OnAnimationFinishedPlaying(UUMGSequencePlayer& Player)
 	Super::OnAnimationFinishedPlaying(Player);
 
 	HideTextWidget();
+}
+
+void UMainCanvas::UpdateGemStone(int v)
+{
+	m_TextGemStone->SetText(FText::AsNumber(v));
 }
 
 #undef LOCTEXT_NAMESPACE

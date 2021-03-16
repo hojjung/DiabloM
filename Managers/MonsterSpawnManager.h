@@ -57,7 +57,10 @@ protected:
 	
 	FTimerHandle m_TimerHandle_OnTimer;
 
-	
+	FMonsterEntity* m_GoldGoblinEntity;
+
+	UPROPERTY()
+	int m_nGoldGoblinSpawnCount;
 	
 protected:
 	FVector GetRandomPointFromNav(const FVector& loc,const float& radius);
@@ -76,10 +79,8 @@ protected:
 
 	void SetSensingUpdatesEnabled(const bool bEnabled);
 
-	
-	
 public:
-	AMonsterPawn* SpawnMob(FVector loc);
+	
 	
 	void Reset();
 
@@ -107,6 +108,9 @@ public:
 	{
 		return m_bBossSpawned && GetBossMob() && GetBossMob()->IsAlive();
 	}
+
+	UFUNCTION()
+    AMonsterPawn* SpawnMobToLoc(FVector loc);
 };
 
 

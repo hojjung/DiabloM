@@ -13,7 +13,7 @@ void UChatWindow::NativeOnInitialized()
 
 void UChatWindow::OnReceiveTotalChatList(const FString& chat)
 {
-	PRINTF("Chat:%s",*chat);
+	
 }
 
 void UChatWindow::SendText()

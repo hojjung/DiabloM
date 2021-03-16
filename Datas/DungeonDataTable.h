@@ -89,10 +89,6 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FMonsterEntityHandle m_Monster;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FMonsterEntityHandle m_GoldGoblin;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fBossMonsterStatFactor = 10.f;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	float m_fBossMonsterRenderScale = 3.f;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(UIMin = "1.0"))
 	int m_nMonsterLevel;
@@ -118,43 +114,43 @@ private:
 	{
 		if(level < 25)
 		{
-			return 2.f;
+			return 1.f;
 		}
 		else if(level < 50)
 		{
-			return 4.f;
+			return 2.f;
 		}
 		else if(level < 100)
 		{
-			return 8.f;
+			return 4.f;
 		}
 		else if(level < 200)
 		{
-			return 16.f;
+			return 8.f;
 		}
 		else if(level < 300)
 		{
-			return 32.f;
+			return 16.f;
 		}
 		else if(level < 400)
 		{
-			return 64.f;
+			return 32.f;
 		}
 		else if(level < 500)
 		{
-			return 128.f;
+			return 64.f;
 		}
 		else if(level < 600)
 		{
-			return 256.f;
+			return 128.f;
 		}
 		else if(level < 1000)
 		{
-			return 512.f;
+			return 256;
 		}
 		else 
 		{
-			return 1024.f;
+			return 512;
 		}
 	}
 
@@ -191,7 +187,7 @@ public:
 
 		BigInt Value = m_fBaseValue;
 
-		return ((Value * BonusMulti * level) + m_fInitValue) *m_fBossMonsterStatFactor;
+		return ((Value * BonusMulti * level) + m_fInitValue) *29;
 	}
 
 	BigInt GetBossMobGold() const
@@ -202,7 +198,7 @@ public:
 
 		BigInt Cost = m_fBaseCost;
 
-		Cost.Multiply(Factor*m_fBossMonsterStatFactor);
+		Cost.Multiply(Factor*29);
 
 		return Cost;
 	}

@@ -43,6 +43,8 @@ UPlayfabManager::~UPlayfabManager()
 
 void UPlayfabManager::ShowBannerAd(bool able)
 {
+	//GetClientAPI->Ad()
+
 	if (able && !GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion)
 	{
 		UKismetSystemLibrary::ShowAdBanner(0, true);
@@ -97,9 +99,6 @@ void UPlayfabManager::OnCloudScriptSuccess(const FExeCScriptRslt& rslt)
 	PRINTF("Cloud Script Success");
 }
 
-void UPlayfabManager::PurchaseIAPItem(FString itemUniqueId)
-{
-}
 
 
 void UPlayfabManager::Init()
@@ -276,6 +275,7 @@ void UPlayfabManager::RequestGetUserData()
 	                          FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
+
 void UPlayfabManager::SetOnlineStatus()
 {
 	ClientModels::FExecuteCloudScriptRequest Req;
@@ -327,6 +327,7 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 	m_LoadedWing = result.Data[Wing].Value;
 	m_LoadedPet = result.Data[Pet].Value;
 	m_LoadedAccessory = result.Data[Accessory].Value;
+
 	//
 	UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(m_LoadedGold);
 	UDiabloGameInstance::Get->m_DungeonManager->SetDungeonLevel(*m_LoadedDg);
@@ -343,7 +344,10 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 	GetClientAPI->GetCatalogItems(Req, PlayFab::UPlayFabClientAPI::FGetCatalogItemsDelegate::
 	                              CreateLambda([&](const ClientModels::FGetCatalogItemsResult cIRslt)
 	                              {
-		                              m_AryCatalogItems = cIRslt.Catalog;
+		                              for(const PlayFab::ClientModels::FCatalogItem& CatalogItem : cIRslt.Catalog)
+		                              {
+		                              		m_MapCatalogItems.Add(CatalogItem.ItemId,CatalogItem);      
+		                              }
 	                              }), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
@@ -381,12 +385,18 @@ void UPlayfabManager::OnSuccessGetAccountInfo(const FGetAccntInfoRslt& rslt)
 
 void UPlayfabManager::BuyIAP(FString itemId, bool bIsConsumable)
 {
+	if(!m_MapCatalogItems.Find(itemId))
+	{
+		UDiabloGameInstance::Get->RequestPopupText("NoItem,Update Need");	
+		return;
+	}
+	
 	FInAppPurchaseProductRequest IAPRequest;
 
 	IAPRequest.bIsConsumable = bIsConsumable;
 
 	IAPRequest.ProductIdentifier = itemId; //
-
+	
 	//FInAppPurchaseReceiptInfo
 	
 	UMyInAppPurchase* Proxy = UMyInAppPurchase::CreateProxyObjectForInAppPurchase(
@@ -397,6 +407,32 @@ void UPlayfabManager::BuyIAP(FString itemId, bool bIsConsumable)
 	Proxy->OnFailure.AddDynamic(this, &UPlayfabManager::PurchaseFail);
 
 }
+
+void UPlayfabManager::PurchaseVirtualItem(FString itemUniqueId)
+{
+	if(!m_MapCatalogItems.Find(itemUniqueId))
+	{
+		UDiabloGameInstance::Get->RequestPopupText("NoItem,Update Need");	
+		return;
+	}
+
+	ClientModels::FCatalogItem& ItemWant = m_MapCatalogItems[itemUniqueId];
+	
+	ClientModels::FPurchaseItemRequest Req;
+	Req.VirtualCurrency="GG";
+	Req.Price = ItemWant.VirtualCurrencyPrices["GG"];
+	Req.CatalogVersion = ItemWant.CatalogVersion;
+	Req.CharacterId = m_PlayfabID;
+	Req.ItemId = ItemWant.ItemId;
+	
+	GetClientAPI->PurchaseItem(Req,UPlayFabClientAPI::FPurchaseItemDelegate::CreateLambda(
+		[&](const ClientModels::FPurchaseItemResult& rslt)
+	{
+			RequestGetInventory();
+			
+	}));
+}
+
 
 void UPlayfabManager::PurchaseSuccess(EInAppPurchaseState::Type completionStatus,const FInAppPurchaseProductInfo& inAppPurchaseInformation)
 {
@@ -435,6 +471,22 @@ void UPlayfabManager::OnIAPGoogleValidateSuccess(const PlayFab::ClientModels::FV
 	FString ItemID = purchaseResult.Fulfillments[0].FulfilledItems[0].ItemId;
 
 	UDiabloGameInstance::Get->RequestPopupText(FString::Printf(TEXT("IAP Purchase Success!:%s"),*ItemID));
+}
+
+void UPlayfabManager::RequestGetInventory()
+{
+	ClientModels::FGetUserInventoryRequest Req;
+	GetClientAPI->GetUserInventory(Req,
+		UPlayFabClientAPI::FGetUserInventoryDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetInven),
+		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::OnSuccessGetInven( const PlayFab::ClientModels::FGetUserInventoryResult& rslt)
+{
+	PRINTF("GetInven Success");
+	int Currency = rslt.VirtualCurrency["GG"];
+
+	m_OnGemstoneChanged.Broadcast(Currency);
 }
 
 #undef LOCTEXT_NAMESPACE

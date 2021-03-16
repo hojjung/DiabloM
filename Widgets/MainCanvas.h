@@ -163,6 +163,9 @@ public:
 	void HideTextWidget();
 
 	virtual void OnAnimationFinishedPlaying(UUMGSequencePlayer& Player) override;
+
+	void UpdateGemStone(int v);
 };
+
 
 
