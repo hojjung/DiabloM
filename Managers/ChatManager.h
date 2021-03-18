@@ -51,7 +51,10 @@ public:
 	void RequestGetChatFromServer();
 	
 	void ChatPost(const FText& chatWant);
-	
+
+	FString URLEncode(FString url);
+
+	FString URLDecode(FString url);
 };
 
 

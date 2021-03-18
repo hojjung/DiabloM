@@ -24,20 +24,20 @@ UChatManager::UChatManager()
 void UChatManager::SetBadWordAry()
 {
 	m_AryBadwordList.Reset();
-	m_AryBadwordList.Add("Fuck");
-	m_AryBadwordList.Add("Fuk");
-	m_AryBadwordList.Add("씨발");
-	m_AryBadwordList.Add("시발");
-	m_AryBadwordList.Add("씨1발");
-	m_AryBadwordList.Add("시1발");
-	m_AryBadwordList.Add("병신");
-	m_AryBadwordList.Add("병1신");
-	m_AryBadwordList.Add("새끼");
-	m_AryBadwordList.Add("새1끼");
-	m_AryBadwordList.Add("좆");
-	m_AryBadwordList.Add("좃");
-	m_AryBadwordList.Add("씹");
-	m_AryBadwordList.Add("십새");
+	m_AryBadwordList.Add(TEXT("Fuck"));
+	m_AryBadwordList.Add(TEXT("Fuk"));
+	m_AryBadwordList.Add(TEXT("씨발"));
+	m_AryBadwordList.Add(TEXT("시발"));
+	m_AryBadwordList.Add(TEXT("씨1발"));
+	m_AryBadwordList.Add(TEXT("시1발"));
+	m_AryBadwordList.Add(TEXT("병신"));
+	m_AryBadwordList.Add(TEXT("병1신"));
+	m_AryBadwordList.Add(TEXT("새끼"));
+	m_AryBadwordList.Add(TEXT("새1끼"));
+	m_AryBadwordList.Add(TEXT("좆"));
+	m_AryBadwordList.Add(TEXT("좃"));
+	m_AryBadwordList.Add(TEXT("씹"));
+	m_AryBadwordList.Add(TEXT("십새"));
 	
 }
 
@@ -52,12 +52,17 @@ void UChatManager::HttpCall(const FString& URL, FString Type,FString* formStrDat
 	if(formStrData)
 	{
 		FString NewStr =*formStrData;
+
+		NewStr = URLEncode(NewStr);
+		
 		Request->SetContentAsString(NewStr);
 	}
+
 	
 	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
-	Request->SetHeader("Content-Type", "application/x-www-form-urlencoded ; charset=utf-8");
-	
+	Request->SetHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");//application/x-www-form-urlencoded 
+	//"Content-Type" content = "text / html; charset = utf-8"
+	//text/plain
 	Request->ProcessRequest();
 }
 
@@ -69,7 +74,12 @@ void UChatManager::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr 
 		{
 			m_bIsWaitingGetChatRequest=false;
 
-			m_OnChatReceive.Broadcast(Response->GetContentAsString());
+			FString Str = Response->GetContentAsString();
+
+			PRINTF("ChatResult:%s",*Str);
+			
+
+			m_OnChatReceive.Broadcast(Str);
 		}
 	}
 	
@@ -86,7 +96,7 @@ void UChatManager::FilterBadWord(FString& outChatWant)
 {
 	for(FString& BadWord :m_AryBadwordList)
 	{
-		outChatWant.Replace(*BadWord,TEXT("*"));
+		outChatWant = outChatWant.Replace(*BadWord,TEXT("*"));
 	}
 }
 
@@ -112,9 +122,84 @@ void UChatManager::ChatPost(const FText& chatWant)
 	
 	FString CachedString = CachedText.ToString(); 
 	
-	//FilterBadWord(CachedString);
+	FilterBadWord(CachedString);
 
 	FString Format = FString::Printf(TEXT("nickname=%s&chat=%s"),*UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname,*CachedString);
 
 	HttpCall(WebURL,"POST",&Format);
+}
+
+FString UChatManager::URLEncode(FString url)
+{
+	FString dst;
+	char hex[] = "0123456789ABCDEF";
+	TArray<ANSICHAR> ANSIArray;
+ 
+	int32 SrcLen = TCString<ANSICHAR>::Strlen(TCHAR_TO_UTF8(*url)) + 1;
+	ANSIArray.AddUninitialized(SrcLen);
+ 
+	FPlatformString::Convert(ANSIArray.GetData(), SrcLen, TCHAR_TO_UTF8(*url), SrcLen);
+ 
+	int32 index = 0;
+ 
+	for (size_t i = 0; i < ANSIArray.Num(); ++i)
+	{
+		if (isascii(ANSIArray[i]) 
+            && ANSIArray[i] != '[' && ANSIArray[i] != ']'
+            && ANSIArray[i] != '{' && ANSIArray[i] != '}'
+            && ANSIArray[i] != '\"')
+		{
+			dst.AppendChar(ANSIArray[i]);
+		}
+		else
+		{
+			uint8 c(ANSIArray[i]);
+			dst.AppendChar('%');
+			dst.AppendChar(hex[c / 16]);
+			dst.AppendChar(hex[c % 16]);
+		}
+	}
+	return (dst);
+
+}
+
+FString UChatManager::URLDecode(FString url)
+{
+	TArray<ANSICHAR> returnStr1;
+	//char* s = new char[url.Len()];
+	//FMemory::Memset(s, 0, url.Len());
+	//int32 index2 = 0;
+	for (int32 index = 0 ; index < url.Len(); index++)
+	{
+		FString tempStr("");
+		if (url[index] != '%')
+		{
+			returnStr1.Add(url[index]);
+			//s[index2] = url[index];
+		}
+		else if(isxdigit(url[index + 1]) && isxdigit(url[index + 2]))
+		{
+			tempStr += url[index + 1];
+			tempStr += url[index + 2];
+			int32 hex = FCString::Strtoi(*tempStr,0,16);
+ 
+ 
+			returnStr1.Add(ANSICHAR(hex));
+			//s[index2] = char(hex);
+ 
+			index += 2;
+ 
+		}
+		else
+		{
+			returnStr1.Add('%');
+			//s[index2] = '%';
+		}
+		//index2++;
+	}
+	returnStr1.Add('\0');
+	FString str = UTF8_TO_TCHAR(returnStr1.GetData());
+	//delete[]s;
+	return str;
+
 }
