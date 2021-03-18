@@ -29,10 +29,16 @@ protected:
 	TArray<UChatText*> m_AryChatText;
 
 	int m_nTopIndex;
+
+	float m_fMaxOffset;
 protected:
 	UChatText* GetTopText();
 	
 	virtual void NativeOnInitialized() override;
+
+	void ClearChat();
+
+	
 	
 public:
 	UFUNCTION()
@@ -43,4 +49,7 @@ public:
 
 	UFUNCTION()
 	void AddTextWidget(const FString& chat);
+
+	UFUNCTION()
+	void OnChatTextChanged(const FText& text);
 };

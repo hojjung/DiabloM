@@ -17,7 +17,7 @@ void UChatWindow::NativeOnInitialized()
 	{
 		UChatText* CreatedChat = CreateWidget<UChatText>(this, m_ClassTextWidget);
 
-		auto* SlotUni = m_MessageScrollBox->AddChild(CreatedChat);//20//15
+		UPanelSlot* SlotUni = m_MessageScrollBox->AddChild(CreatedChat);//20//15
 
 		m_AryChatText.Add(CreatedChat);
 		
@@ -25,8 +25,16 @@ void UChatWindow::NativeOnInitialized()
 	}
 
 	m_nTopIndex=0;
-	
-	m_MessageScrollBox->ScrollToEnd();
+
+	m_MesageEditableText->OnTextChanged.AddDynamic(this,&UChatWindow::OnChatTextChanged);
+}
+
+void UChatWindow::ClearChat()
+{
+	for(UChatText* TextChat : m_AryChatText)
+	{
+		TextChat->Clear();
+	}
 }
 
 UChatText* UChatWindow::GetTopText()
@@ -48,16 +56,27 @@ UChatText* UChatWindow::GetTopText()
 
 void UChatWindow::OnReceiveTotalChatList(const FString& chat)
 {
+	ClearChat();
+	
 	TArray<FString> OutStrAry;
 	
 	chat.ParseIntoArray(OutStrAry,TEXT("\n"));
 
-	for(auto& Str : OutStrAry)
+	for(FString& Str : OutStrAry)
 	{
-		AddTextWidget(Str);	
+		AddTextWidget(Str);
 	}
 
+	float OffsetPercent =  m_MessageScrollBox->GetScrollOffset();
 	
+	float OffsetPercentMax =  m_MessageScrollBox->GetScrollOffsetOfEnd();
+
+	float Percent = OffsetPercent/OffsetPercentMax;
+
+	if(Percent>0.5f)
+	{
+		m_MessageScrollBox->ScrollToEnd();			
+	}
 }
 void UChatWindow::SendText()
 {
@@ -75,4 +94,18 @@ void UChatWindow::AddTextWidget(const FString& chat)
 	TopText->SetNormalChat(chat);
 
 	m_MessageScrollBox->InsertChildAt(9,TopText);
+}
+
+void UChatWindow::OnChatTextChanged(const FText& text)
+{
+	FString Str = text.ToString();
+	
+	int Diff = Str.Len() - 40;
+	
+	if(Diff>0)
+	{
+		Str = Str.LeftChop(Diff);
+	}
+
+	m_MesageEditableText->SetText(FText::FromString(Str));
 }
