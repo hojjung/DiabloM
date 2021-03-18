@@ -17,20 +17,27 @@ class DIABLOM_API UChatWindow : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UChatText> m_ClassTextWidget;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UCanvasPanel* m_ChatTotalWindow;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UEditableText* m_MesageEditableText;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UScrollBox* m_MessageScrollBox;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_SendButton;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_ChatWindowToggle;
 	UPROPERTY()
 	TArray<UChatText*> m_AryChatText;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UChatText> m_ClassTextWidget;
 
 	int m_nTopIndex;
 
 	float m_fMaxOffset;
+
+	bool m_bIsOpened;
+	
 protected:
 	UChatText* GetTopText();
 	
@@ -52,4 +59,7 @@ public:
 
 	UFUNCTION()
 	void OnChatTextChanged(const FText& text);
+
+	UFUNCTION()
+	void SetChatWindowOpenClose();
 };

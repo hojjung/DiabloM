@@ -27,6 +27,12 @@ void UChatWindow::NativeOnInitialized()
 	m_nTopIndex=0;
 
 	m_MesageEditableText->OnTextChanged.AddDynamic(this,&UChatWindow::OnChatTextChanged);
+
+	m_bIsOpened=true;
+
+	SetChatWindowOpenClose();
+
+	m_ChatWindowToggle->OnClicked.AddDynamic(this,&UChatWindow::SetChatWindowOpenClose);
 }
 
 void UChatWindow::ClearChat()
@@ -108,4 +114,19 @@ void UChatWindow::OnChatTextChanged(const FText& text)
 	}
 
 	m_MesageEditableText->SetText(FText::FromString(Str));
+}
+
+void UChatWindow::SetChatWindowOpenClose()
+{
+	if(m_bIsOpened)
+	{
+		m_ChatTotalWindow->SetVisibility(ESlateVisibility::Collapsed);	
+	}
+	else
+	{
+		m_ChatTotalWindow->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	
+	m_bIsOpened =!m_bIsOpened;
+	UDiabloGameInstance::Get->m_ChatManager->SetReceiveChat(m_bIsOpened);
 }

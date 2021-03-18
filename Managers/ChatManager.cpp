@@ -8,6 +8,7 @@
 // Sets default values
 UChatManager::UChatManager()
 {
+	m_bIsReceiveChatFromServer=false;
 	m_bIsWaitingGetChatRequest = false;
 
 	Http = &FHttpModule::Get();
@@ -100,6 +101,11 @@ void UChatManager::FilterBadWord(FString& outChatWant)
 
 void UChatManager::Tick(float deltaTime)
 {
+	if(!m_bIsReceiveChatFromServer)
+	{
+		return;
+	}
+	
 	m_fDeltaCounter += deltaTime;
 
 	if (m_fDeltaCounter > 0.7f)
@@ -200,5 +206,10 @@ FString UChatManager::URLDecode(FString url)
 	FString str = UTF8_TO_TCHAR(returnStr1.GetData());
 	//delete[]s;
 	return str;
+}
+
+void UChatManager::SetReceiveChat(bool b)
+{
+	m_bIsReceiveChatFromServer=b;
 }
 

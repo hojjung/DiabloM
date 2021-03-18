@@ -35,6 +35,8 @@ protected:
 
 	float m_fDeltaCounter;
 
+	bool m_bIsReceiveChatFromServer;
+
 protected:
 	void SetBadWordAry();
 
@@ -55,6 +57,7 @@ public:
 
 	FString URLDecode(FString url);
 
+	void SetReceiveChat(bool b);
 };
 
 
