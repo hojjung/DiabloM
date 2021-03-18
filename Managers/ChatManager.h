@@ -26,7 +26,7 @@ protected:
 	TArray<FString> m_AryBadwordList;
 
 	bool m_bIsWaitingGetChatRequest;
-	
+
 	FString DocsURL;
 	
 	FString WebURL;
@@ -42,7 +42,6 @@ protected:
 
 	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 
-
 	void FilterBadWord(FString& outChatWant);
 
 public:
@@ -55,6 +54,7 @@ public:
 	FString URLEncode(FString url);
 
 	FString URLDecode(FString url);
+
 };
 
 

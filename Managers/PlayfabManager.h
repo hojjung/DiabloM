@@ -116,6 +116,8 @@ public:
 	UPROPERTY()
 	FString m_LoadedNickname;
 	//
+	UPROPERTY()
+	int m_nRanking;
 
 public:
 	UPROPERTY()

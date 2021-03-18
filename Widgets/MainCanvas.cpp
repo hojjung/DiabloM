@@ -306,7 +306,7 @@ void UMainCanvas::SetPlayerNicknameRanking()
 {
 	FFormatOrderedArguments Args;
 
-	int TestRank = 1234;
+	int TestRank = UDiabloGameInstance::Get->m_PlayfabManager->m_nRanking;
 	
 	Args.Add(TestRank);
 	Args.Add(FText::FromString(UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname));

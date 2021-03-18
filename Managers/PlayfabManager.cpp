@@ -35,6 +35,7 @@ UPlayfabManager::UPlayfabManager()
 {
 	//m_LoadedDgID ;//= "Stage1-1";
 	//m_LoadedPlayerClassID;// = "Warrior01";
+	m_nRanking=1234;
 }
 
 UPlayfabManager::~UPlayfabManager()

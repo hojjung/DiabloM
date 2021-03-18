@@ -8,17 +8,19 @@
 // Sets default values
 UChatManager::UChatManager()
 {
-	m_bIsWaitingGetChatRequest= false;
-	
+	m_bIsWaitingGetChatRequest = false;
+
 	Http = &FHttpModule::Get();
-	
-	DocsURL= "https://docs.google.com/spreadsheets/d/18XUGwRb4DYjyJEpBZL0H3FqvlcDedE8icg7WJ_JNdD0/export?format=tsv&range=B:B";
-	
-	WebURL = "https://script.google.com/macros/s/AKfycbz9wNohotr_mFU9aQrDdguybBzwojleMe-55lzcVQHvlrfRvNJTNS-z8N9p8ae2mjk/exec";
+
+	DocsURL =
+		"https://docs.google.com/spreadsheets/d/18XUGwRb4DYjyJEpBZL0H3FqvlcDedE8icg7WJ_JNdD0/export?format=tsv&range=B:B";
+
+	WebURL =
+		"https://script.google.com/macros/s/AKfycbxwh-4ylp9wH6lHTU73NDPSD2ls0asPdzcHuuVpXmIRtigYYtAeq6Bx0CWp0UKldH9X/exec";
 
 	SetBadWordAry();
 
-	m_fDeltaCounter=0.f;
+	m_fDeltaCounter = 0.f;
 }
 
 void UChatManager::SetBadWordAry()
@@ -38,10 +40,9 @@ void UChatManager::SetBadWordAry()
 	m_AryBadwordList.Add(TEXT("좃"));
 	m_AryBadwordList.Add(TEXT("씹"));
 	m_AryBadwordList.Add(TEXT("십새"));
-	
 }
 
-void UChatManager::HttpCall(const FString& URL, FString Type,FString* formStrData)
+void UChatManager::HttpCall(const FString& URL, FString Type, FString* formStrData)
 {
 	TSharedRef<IHttpRequest> Request = Http->CreateRequest();
 	Request->OnProcessRequestComplete().BindUObject(this, &UChatManager::OnResponseReceived);
@@ -49,18 +50,19 @@ void UChatManager::HttpCall(const FString& URL, FString Type,FString* formStrDat
 	Request->SetURL(URL);
 	Request->SetVerb(Type);
 
-	if(formStrData)
+	if (formStrData)
 	{
-		FString NewStr =*formStrData;
+		FString NewStr = *formStrData;
 
 		NewStr = URLEncode(NewStr);
-		
+
 		Request->SetContentAsString(NewStr);
 	}
 
-	
+
 	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
-	Request->SetHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");//application/x-www-form-urlencoded 
+	Request->SetHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+	//application/x-www-form-urlencoded 
 	//"Content-Type" content = "text / html; charset = utf-8"
 	//text/plain
 	Request->ProcessRequest();
@@ -68,33 +70,29 @@ void UChatManager::HttpCall(const FString& URL, FString Type,FString* formStrDat
 
 void UChatManager::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	if(bWasSuccessful)
+	if (Request->GetVerb()=="GET") //for split from chat post
 	{
-		if(m_bIsWaitingGetChatRequest)//for split from chat post
-		{
-			m_bIsWaitingGetChatRequest=false;
+		m_bIsWaitingGetChatRequest = false;
 
-			FString Str = Response->GetContentAsString();
-
-			PRINTF("ChatResult:%s",*Str);
-			
-
-			m_OnChatReceive.Broadcast(Str);
-		}
+		if (bWasSuccessful)
+			m_OnChatReceive.Broadcast(Response->GetContentAsString());
 	}
-	
+	else if (Request->GetVerb()=="POST")
+	{
+		
+	}
 }
 
 void UChatManager::RequestGetChatFromServer()
 {
-	HttpCall(DocsURL,"GET");
+	HttpCall(DocsURL, "GET");
 	m_bIsWaitingGetChatRequest = true;
-	m_fDeltaCounter=0.f;
+	m_fDeltaCounter = 0.f;
 }
 
 void UChatManager::FilterBadWord(FString& outChatWant)
 {
-	for(FString& BadWord :m_AryBadwordList)
+	for (FString& BadWord : m_AryBadwordList)
 	{
 		outChatWant = outChatWant.Replace(*BadWord,TEXT("*"));
 	}
@@ -102,11 +100,11 @@ void UChatManager::FilterBadWord(FString& outChatWant)
 
 void UChatManager::Tick(float deltaTime)
 {
-	m_fDeltaCounter+=deltaTime;
+	m_fDeltaCounter += deltaTime;
 
-	if(m_fDeltaCounter>3.5f)
+	if (m_fDeltaCounter > 0.7f)
 	{
-		if(m_bIsWaitingGetChatRequest)
+		if (m_bIsWaitingGetChatRequest)
 		{
 			return;
 		}
@@ -119,14 +117,17 @@ void UChatManager::ChatPost(const FText& chatWant)
 	FText CachedText = chatWant;
 
 	CachedText = UKismetTextLibrary::TextTrimPrecedingAndTrailing(CachedText);
-	
-	FString CachedString = CachedText.ToString(); 
-	
+
+	FString CachedString = CachedText.ToString();
+
 	FilterBadWord(CachedString);
 
-	FString Format = FString::Printf(TEXT("nickname=%s&chat=%s"),*UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname,*CachedString);
+	FString FormatStr = FString::Printf(
+		TEXT("ranking=%d&nickname=%s&chat=%s"), UDiabloGameInstance::Get->m_PlayfabManager->m_nRanking,
+		*UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname, *CachedString);
 
-	HttpCall(WebURL,"POST",&Format);
+	HttpCall(WebURL, "POST", &FormatStr);
+
 }
 
 FString UChatManager::URLEncode(FString url)
@@ -134,20 +135,20 @@ FString UChatManager::URLEncode(FString url)
 	FString dst;
 	char hex[] = "0123456789ABCDEF";
 	TArray<ANSICHAR> ANSIArray;
- 
+
 	int32 SrcLen = TCString<ANSICHAR>::Strlen(TCHAR_TO_UTF8(*url)) + 1;
 	ANSIArray.AddUninitialized(SrcLen);
- 
+
 	FPlatformString::Convert(ANSIArray.GetData(), SrcLen, TCHAR_TO_UTF8(*url), SrcLen);
- 
+
 	int32 index = 0;
- 
+
 	for (size_t i = 0; i < ANSIArray.Num(); ++i)
 	{
-		if (isascii(ANSIArray[i]) 
-            && ANSIArray[i] != '[' && ANSIArray[i] != ']'
-            && ANSIArray[i] != '{' && ANSIArray[i] != '}'
-            && ANSIArray[i] != '\"')
+		if (isascii(ANSIArray[i])
+			&& ANSIArray[i] != '[' && ANSIArray[i] != ']'
+			&& ANSIArray[i] != '{' && ANSIArray[i] != '}'
+			&& ANSIArray[i] != '\"')
 		{
 			dst.AppendChar(ANSIArray[i]);
 		}
@@ -160,7 +161,6 @@ FString UChatManager::URLEncode(FString url)
 		}
 	}
 	return (dst);
-
 }
 
 FString UChatManager::URLDecode(FString url)
@@ -169,7 +169,7 @@ FString UChatManager::URLDecode(FString url)
 	//char* s = new char[url.Len()];
 	//FMemory::Memset(s, 0, url.Len());
 	//int32 index2 = 0;
-	for (int32 index = 0 ; index < url.Len(); index++)
+	for (int32 index = 0; index < url.Len(); index++)
 	{
 		FString tempStr("");
 		if (url[index] != '%')
@@ -177,18 +177,17 @@ FString UChatManager::URLDecode(FString url)
 			returnStr1.Add(url[index]);
 			//s[index2] = url[index];
 		}
-		else if(isxdigit(url[index + 1]) && isxdigit(url[index + 2]))
+		else if (isxdigit(url[index + 1]) && isxdigit(url[index + 2]))
 		{
 			tempStr += url[index + 1];
 			tempStr += url[index + 2];
-			int32 hex = FCString::Strtoi(*tempStr,0,16);
- 
- 
+			int32 hex = FCString::Strtoi(*tempStr, 0, 16);
+
+
 			returnStr1.Add(ANSICHAR(hex));
 			//s[index2] = char(hex);
- 
+
 			index += 2;
- 
 		}
 		else
 		{
@@ -201,5 +200,5 @@ FString UChatManager::URLDecode(FString url)
 	FString str = UTF8_TO_TCHAR(returnStr1.GetData());
 	//delete[]s;
 	return str;
-
 }
+
