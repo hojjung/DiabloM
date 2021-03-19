@@ -44,7 +44,7 @@ void UDungeonManager::SetDungeonLevel(const FString& dgUnlockAry)//need split
 	{
 		int IsUnlocked = FCString::Atoi(*AryDg[i]);
 
-		m_AryDgUnlocked.Add(IsUnlocked);
+		m_AryDgUnlocked.Add(1);//0319
 
 		if(IsUnlocked>1)//selected
 		{

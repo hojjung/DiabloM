@@ -2,12 +2,13 @@
 
 #pragma once
 
-#include "ChatText.h"
 #include "DiabloM.h"
-#include "ScrollBox.h"
+
 #include "Blueprint/UserWidget.h"
 #include "ChatWindow.generated.h"
 
+class UChatText;
+class UScrollBox;
 /**
  * 
  */

@@ -161,7 +161,7 @@ void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
 	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
 	                               EAttachmentRule::KeepRelative, false);
 
-	m_CreatedWeapon->AttachToComponent(m_SkBody, Rule, "Weapon");
+	m_CreatedWeapon->AttachToComponent(m_SkBody, Rule, "RightHandBottom");
 }
 
 void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)

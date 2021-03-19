@@ -15,6 +15,7 @@ public class DiabloM : ModuleRules
             "CoreUObject",
             "Engine",
             "InputCore",
+            "Slate", "SlateCore",
             "UMG",
             "AIModule",
            "DialoguePlugin",

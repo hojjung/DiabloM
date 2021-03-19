@@ -1,5 +1,6 @@
 #include "ChatWindow.h"
-
+#include "ChatText.h"
+#include "ScrollBox.h"
 
 #include "ScrollBoxSlot.h"
 #include "Managers/DiabloGameInstance.h"
@@ -79,7 +80,7 @@ void UChatWindow::OnReceiveTotalChatList(const FString& chat)
 
 	float Percent = OffsetPercent/OffsetPercentMax;
 
-	if(Percent>0.5f)
+	if(Percent>0.7f)
 	{
 		m_MessageScrollBox->ScrollToEnd();			
 	}
@@ -99,7 +100,7 @@ void UChatWindow::AddTextWidget(const FString& chat)
 	
 	TopText->SetNormalChat(chat);
 
-	m_MessageScrollBox->InsertChildAt(9,TopText);
+	m_MessageScrollBox->AddChild(TopText);
 }
 
 void UChatWindow::OnChatTextChanged(const FText& text)
@@ -128,5 +129,6 @@ void UChatWindow::SetChatWindowOpenClose()
 	}
 	
 	m_bIsOpened =!m_bIsOpened;
+	
 	UDiabloGameInstance::Get->m_ChatManager->SetReceiveChat(m_bIsOpened);
 }

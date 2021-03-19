@@ -21,7 +21,7 @@ void UChatText::SetNormalChat(const FString& chat)
 	FString ChatText = OutStrAry[2];
 
 	FString FormatStr = FString::Printf(
-        TEXT("<%s>%s</>:%s:%s"),*GetRankColor(Ranking),*Ranking,*Nickname,*ChatText);
+        TEXT("<%s>[%s]</>:%s:%s"),*GetRankColor(Ranking),*Ranking,*Nickname,*ChatText);
 	
 	m_TextChat->SetText(FText::FromString(FormatStr));
 }

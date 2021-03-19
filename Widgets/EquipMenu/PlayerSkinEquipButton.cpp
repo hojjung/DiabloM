@@ -20,7 +20,6 @@ void UPlayerSkinEquipButton::UpdateEquipSkin()
 {
 	SetDescPreviewText(*m_SkinSpec);
 	SetCombineText(m_SkinSpec->m_nStackCount);
-	PRINTF("ASD : %d",m_SkinSpec->m_nIsEquipped);
 	SetEquipped(m_SkinSpec->m_nIsEquipped);
 }
 

@@ -108,7 +108,7 @@ void UChatManager::Tick(float deltaTime)
 	
 	m_fDeltaCounter += deltaTime;
 
-	if (m_fDeltaCounter > 0.7f)
+	if (m_fDeltaCounter > 2.5f)
 	{
 		if (m_bIsWaitingGetChatRequest)
 		{
