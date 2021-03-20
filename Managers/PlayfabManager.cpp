@@ -10,6 +10,7 @@
 #include "PlayerUpgradeManager.h"
 #include "PlayFabAdminDataModels.h"
 #include "PlayFabJsonObject.h"
+#include "PlayFabJsonValue.h"
 #include "PlayFabServerDataModels.h"
 #include "PlayFabUtilities.h"
 #include "Objects/MyInAppPurchase.h"
@@ -271,6 +272,7 @@ void UPlayfabManager::RequestGetUserData()
 	req.Keys.Add(Pet);
 	req.Keys.Add(Accessory);
 
+
 	GetClientAPI->GetUserData(req,
 	                          FGetUsrDataDele::CreateUObject(this, &UPlayfabManager::OnSuccessGetUserData),
 	                          FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
@@ -465,6 +467,29 @@ void UPlayfabManager::PurchaseSuccess(EInAppPurchaseState::Type completionStatus
 void UPlayfabManager::PurchaseFail(EInAppPurchaseState::Type completionStatus,const FInAppPurchaseProductInfo& inAppPurchaseInformation)
 {
 	UDiabloGameInstance::Get->RequestPopupText("IAP Purchase Fail!");
+}
+
+void UPlayfabManager::OnStageComplete()
+{
+	PRINTF("RequestStageComplete");
+	
+	PlayFab::FJsonKeeper functionParameter = PlayFab::FJsonKeeper();
+	
+	TSharedPtr<UPlayFabJsonObject>  JsonObj = TSharedPtr<UPlayFabJsonObject>(UPlayFabJsonObject::ConstructJsonObject(UDiabloGameInstance::Get->GetWorld()));
+
+	UPlayFabJsonValue* Value = UPlayFabJsonValue::ConstructJsonValueNumber(UDiabloGameInstance::Get->GetWorld(),UDiabloGameInstance::Get->m_DungeonManager->GetMyMaxStageLevel());
+	
+	JsonObj->SetField("stageLevel",Value);
+
+	functionParameter.readFromValue(JsonObj->GetRootObject());
+	
+	ClientModels::FExecuteCloudScriptRequest Req;
+	
+	Req.FunctionParameter = functionParameter;
+	Req.FunctionName = "OnComleteLevel";
+	Req.GeneratePlayStreamEvent = true;
+	
+	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnCloudScriptSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
 void UPlayfabManager::OnIAPGoogleValidateSuccess(const PlayFab::ClientModels::FValidateGooglePlayPurchaseResult& purchaseResult)

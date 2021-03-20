@@ -26,4 +26,5 @@ protected:
 protected:
 	virtual void NativeOnInitialized() override;
 
+	void UpdateBtnUI(int index);
 };

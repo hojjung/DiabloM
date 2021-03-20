@@ -164,6 +164,7 @@ public:
 	UFUNCTION()
     void PurchaseFail(EInAppPurchaseState::Type completionStatus, const FInAppPurchaseProductInfo& inAppPurchaseInformation);
 
+	void OnStageComplete();
 	
 protected:
 	void OnIAPGoogleValidateSuccess( const PlayFab::ClientModels::FValidateGooglePlayPurchaseResult&);

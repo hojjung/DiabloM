@@ -315,7 +315,7 @@ void UMonsterSpawnManager::SpawnBossMob()
 	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Boss,
                     m_DgDataTable->m_nAvoidLevel,
                     m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""),
-                    29,
+                    22,
                     m_DgDataTable->m_fBossMonsterRenderScale);
 
 	m_SpawnedBoss =  Mob;
@@ -329,6 +329,7 @@ void UMonsterSpawnManager::SpawnBossMob()
 		
 		m_OnBossBattleEnd.Broadcast(true);
 		
+		UDiabloGameInstance::Get->m_DungeonManager->LevelUpDungeon();
 		
 	}
 

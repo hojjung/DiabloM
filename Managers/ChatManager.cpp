@@ -114,6 +114,7 @@ void UChatManager::Tick(float deltaTime)
 		{
 			return;
 		}
+		
 		RequestGetChatFromServer();
 	}
 }

@@ -63,8 +63,6 @@ public:
 	FOnFocusTargetChanged m_OnFocusTarget;
 
 	FOnFloatChange2 m_OnRageChanged;
-
-	
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")

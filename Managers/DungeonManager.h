@@ -40,18 +40,20 @@ public:
 
 	//FItemDropTableRow
 	//FMonsterEntity
-	
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDgOpen,int);
+
+	FOnDgOpen m_OnDgOpen;
 protected:
 	TArray<const FDungeonDataTableRow*> m_AryDgDataTable;
 	
 	UPROPERTY()
 	UMonsterSpawnManager* m_MonsterManager;
 	
-	UPROPERTY()
-	TArray<int> m_AryDgUnlocked;
-
 	const FDungeonDataTableRow* m_CurrentDg;
 
+	int m_nMyMaxStageLevel;
+
+	int m_nCurrentStageLevel;
 	//보스는 10킬이후부터 생성?
 	//보스는 1회만 죽여야한다
 	//보스는 1회만?
@@ -63,17 +65,24 @@ public:
 	
 	void LoadLevelComplete(UWorld* world);
 	
-	void SetDungeonLevel(const FString& dgUnlockAry);
+	void SetDungeonLevel(const FString& currentDG);
 
 	FORCEINLINE const TArray<const FDungeonDataTableRow*>& GetAryDgData() const
 	{
 		return m_AryDgDataTable;
 	}
 
-	FORCEINLINE const TArray<int>& GetAryDgUnlocked() const
+	FORCEINLINE int GetMyMaxStageLevel() const
 	{
-		return m_AryDgUnlocked;
+		return m_nMyMaxStageLevel;
+	}
+
+	FORCEINLINE int GetCurrentStageLevel() const
+	{
+		return m_nCurrentStageLevel;
 	}
 
 	void SelectDungeon(int index);
+
+	void LevelUpDungeon();//Call By Boss
 };

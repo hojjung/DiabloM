@@ -14,8 +14,7 @@
 
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
 	: Super(objInit.SetDefaultSubobjectClass<UPlayerMovement>("Movement00"))
-
-{//UPlayerMovement
+{
 	m_fMaxRage = 100;
 	m_fGainRagePer = 3;
 	m_fCurrentRage = 0;
@@ -27,9 +26,9 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 
 	m_DissolveCam = CreateDefaultSubobject<UCameraDissolve>("CamDissolve00");
 	m_DissolveCam->SetupAttachment(RootComponent);
-	m_DissolveCam->SetRelativeRotation(FRotator(-50.f, 45.f, 0.f));
+	m_DissolveCam->SetRelativeRotation(FRotator(-60.f, 45.f, 0.f));//-50
 	m_DissolveCam->SetRelativeLocation(FVector(0, 0, 0.f));
-	m_DissolveCam->TargetArmLength = 1200.f;//1400
+	m_DissolveCam->TargetArmLength = 1275.f;//1400
 	//
 	m_TopCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera00");
 	m_TopCamera->SetupAttachment(m_DissolveCam);
@@ -110,9 +109,6 @@ FVector APlayerDiabloCharacter::GetLastSeenLocation()
 {
 	return m_PlayerSense->m_LastSeenLocation;
 }
-
-
-
 
 void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
 {

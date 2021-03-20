@@ -4,7 +4,28 @@
 
 
 #define LOCTEXT_NAMESPACE "StageButton"
-void UStageBtn::Init(int dgUnlock,int index)
+
+void UStageBtn::SetUnlock(bool b)
+{
+	if(!b)
+	{
+		m_TxtStageClear->SetText(LOCTEXT("NotCleared","Not Cleared"));
+		m_StageBtn->SetIsEnabled(false);
+	}
+	else
+	{
+		m_TxtStageClear->SetText(LOCTEXT("Cleared","Cleared"));
+		m_StageBtn->SetIsEnabled(true);
+	}
+}
+
+void UStageBtn::SetCurrent()
+{
+	m_TxtStageClear->SetText(LOCTEXT("Here","Here"));
+	m_StageBtn->SetIsEnabled(false);
+}
+
+void UStageBtn::Init(bool dgUnlock,int index)
 {
 	m_nIndex = index;
 
@@ -15,29 +36,14 @@ void UStageBtn::Init(int dgUnlock,int index)
 	Args.Add(m_nIndex);
 
 	m_TxtStageName->SetText(FText::Format(m_FormatStageName,Args));
-	
-	switch (dgUnlock)
-	{
-	case 0:
-		m_TxtStageClear->SetText(LOCTEXT("NotCleared","Not Cleared"));
-		m_StageBtn->SetIsEnabled(false);
-		break;
-	case 1:
-		m_TxtStageClear->SetText(LOCTEXT("Cleared","Cleared"));
-		m_StageBtn->SetIsEnabled(true);
-		break;
-	case 2:
-		m_TxtStageClear->SetText(LOCTEXT("Current","Here"));
-		m_StageBtn->SetIsEnabled(true);
-		break;
-	default: ;
-	}
 
-	m_StageBtn->OnClicked.AddDynamic(this,&UStageBtn::MoveToDungeon);
+	SetUnlock(dgUnlock);
+	
 }
 
 void UStageBtn::MoveToDungeon()
 {
+	SetCurrent();
 	UDiabloGameInstance::Get->m_DungeonManager->SelectDungeon(m_nIndex);
 	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel();
 }

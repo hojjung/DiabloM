@@ -9,6 +9,7 @@ UCLASS()
 class DIABLOM_API UStageBtn : public UUserWidget
 {
 	GENERATED_BODY()
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TxtStageName;
@@ -21,7 +22,11 @@ protected:
 	
 	FTextFormat m_FormatStageName;
 public:
-	void Init(int dgUnlock,int index);
+	void SetUnlock(bool b);
+	
+	void SetCurrent();
+	
+	void Init(bool dgUnlock,int index);
 
 	UFUNCTION()
 	void MoveToDungeon();

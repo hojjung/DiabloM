@@ -30,39 +30,60 @@ void UDungeonManager::OpenLevel()
 	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),m_CurrentDg->m_DgId,true);
 }
 
-void UDungeonManager::SetDungeonLevel(const FString& dgUnlockAry)//need split
+void UDungeonManager::SetDungeonLevel(const FString& currentDG)//need split
 {
 	DungeonDataTable->GetAllRows("",m_AryDgDataTable);
 	
 	TArray<FString> AryDg;
 	
-	int Len = dgUnlockAry.ParseIntoArray(AryDg,TEXT(":"));
-	
-	m_AryDgUnlocked.Reserve(Len);
+	currentDG.ParseIntoArray(AryDg,TEXT(":"));
 
-	for(int i=0; i< Len; i++)
+	int StageCurrentLevel = FCString::Atoi(*AryDg[0]);
+
+	m_nMyMaxStageLevel = FCString::Atoi(*AryDg[1]);
+
+	if(m_AryDgDataTable.MyRangeCheck(StageCurrentLevel))
 	{
-		int IsUnlocked = FCString::Atoi(*AryDg[i]);
-
-		m_AryDgUnlocked.Add(1);//0319
-
-		if(IsUnlocked>1)//selected
-		{
-			m_CurrentDg = m_AryDgDataTable[i]; 
-		}
+		m_CurrentDg = m_AryDgDataTable[StageCurrentLevel];
+		m_nCurrentStageLevel=StageCurrentLevel;
 	}
-
-	if(!m_CurrentDg)
+	else
 	{
 		m_CurrentDg = m_AryDgDataTable[0];
-		PRINTF("DgManager-NoDgData");
-		return;
+		m_nCurrentStageLevel=0;
 	}
 }
 
 void UDungeonManager::SelectDungeon(int index)
 {
 	m_CurrentDg = m_AryDgDataTable[index];
+}
+
+void UDungeonManager::LevelUpDungeon()
+{
+	int NextLevel = m_nCurrentStageLevel+1;
+	
+	if(NextLevel>=m_AryDgDataTable.Num())
+	{
+		return;//MAXStage
+	}
+
+	PRINTF("DGM_NotCancel?");
+	
+	m_nCurrentStageLevel++;
+	
+	SelectDungeon(m_nCurrentStageLevel);
+
+	if(m_nCurrentStageLevel>m_nMyMaxStageLevel)
+	{
+		//new record
+		m_nMyMaxStageLevel=m_nCurrentStageLevel;
+		UDiabloGameInstance::Get->m_PlayfabManager->OnStageComplete();
+	}
+
+	m_OnDgOpen.Broadcast(m_nCurrentStageLevel);
+	
+	OpenLevel();
 }
 
 void UDungeonManager::LoadLevelComplete(UWorld* world)

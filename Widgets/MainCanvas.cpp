@@ -33,7 +33,7 @@ void UMainCanvas::NativeOnInitialized()
 
 	m_fBossDurationTimeCounter=0.f;
 
-	m_fMaxBossDurationTime = 30.f;
+	m_fMaxBossDurationTime = 22.f;
 
 	m_fBossCooldownTimeCounter = 0.f;
 
