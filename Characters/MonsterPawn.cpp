@@ -26,7 +26,7 @@ Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
     m_StShadow->SetStaticMesh(FoundSt.Object);
     m_StShadow->SetupAttachment(m_SkBody);
     m_StShadow->SetRelativeLocation(FVector(0,0,5.f));
-    m_StShadow->SetRelativeScale3D(FVector(3.f,3.f,3.f));
+    m_StShadow->SetRelativeScale3D(FVector(4.f));
     m_StShadow->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     m_StShadow->SetCanEverAffectNavigation(false);
     //
@@ -186,6 +186,8 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     m_SkBody->SetScalarParameterValueOnMaterials("Visibility",1.f);
 
     m_SkBody->SetRelativeScale3D(FVector(scaleFactor));
+
+    //m_StShadow->SetRelativeScale3D(FVector(5.f));
 
     if(m_SpawnAnim)
     {

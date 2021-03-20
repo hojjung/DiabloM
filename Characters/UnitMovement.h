@@ -69,7 +69,7 @@ public:
 	
 	void CalcVelocity(float DeltaTime);
 	
-	void MoveProceed(float DeltaTime);
+	virtual void MoveProceed(float DeltaTime);
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 

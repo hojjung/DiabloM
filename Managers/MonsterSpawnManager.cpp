@@ -14,7 +14,7 @@ UMonsterSpawnManager::UMonsterSpawnManager()
 	m_SensingInterval = 5.f;
 	m_CurrentWorld = nullptr;
 	m_NavSys = nullptr;
-	m_fSpawnRadius = 1200.f;
+	m_fSpawnRadius = 6200.f;
 	m_IdEnemy = "enemy";
 	m_IdBossEnemy = "boss";
 	m_IdSpecialEnemy = "special";

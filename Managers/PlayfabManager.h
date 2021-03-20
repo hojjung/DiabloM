@@ -41,7 +41,7 @@ public:
 	static const FString Dg;
 	static const FString Stat;
 	static const FString Skill;
-	static const FString Class;
+	static const FString SkinClass;
 	static const FString Weapon;
 	static const FString Wing;
 	static const FString Pet;

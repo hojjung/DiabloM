@@ -1,4 +1,6 @@
 #include "PlayerDiabloCharacter.h"
+
+#include "PlayerMovement.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Datas/CharacterDataTable.h"
 #include "Characters/DiabloPlayerController.h"
@@ -11,9 +13,9 @@
 #include "Managers/EquipManager.h"
 
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
-	: Super(objInit)
+	: Super(objInit.SetDefaultSubobjectClass<UPlayerMovement>("Movement00"))
 
-{
+{//UPlayerMovement
 	m_fMaxRage = 100;
 	m_fGainRagePer = 3;
 	m_fCurrentRage = 0;

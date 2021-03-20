@@ -133,11 +133,6 @@ void UUnitMovement::MoveProceed(float DeltaTime)
         {
             SlideAlongSurface(MoveDelta, 1.f - Hit.Time, Hit.Normal, Hit);
         }
-        
-        if(Hit.bStartPenetrating)
-        {
-            PRINTF("StartPenet!");    
-        }
     }
 }
 
@@ -264,6 +259,7 @@ void UUnitMovement::StopActiveMovement()
     Velocity = FVector::ZeroVector;
     m_DashDelta= FVector::ZeroVector;
     m_fDashDuration =-1.f;
+    //m_AvoidanceLockTimer = 0.0f;//0320
 }
 
 FRotator UUnitMovement::ComputeOrientToMovementRotation(const FRotator& CurrentRotation) const

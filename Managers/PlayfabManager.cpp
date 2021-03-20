@@ -24,7 +24,7 @@ const FString UPlayfabManager::Dg = "Dg";
 const FString UPlayfabManager::Stat = "Stat";
 const FString UPlayfabManager::Skill = "Skill";
 
-const FString UPlayfabManager::Class = "Class";
+const FString UPlayfabManager::SkinClass = "Class";
 const FString UPlayfabManager::Weapon = "Weapon";
 const FString UPlayfabManager::Wing = "Wing";
 const FString UPlayfabManager::Pet = "Pet";
@@ -265,7 +265,7 @@ void UPlayfabManager::RequestGetUserData()
 	req.Keys.Add(Dg);
 	req.Keys.Add(Stat);
 	req.Keys.Add(Skill);
-	req.Keys.Add(Class);
+	req.Keys.Add(SkinClass);
 	req.Keys.Add(Weapon);
 	req.Keys.Add(Wing);
 	req.Keys.Add(Pet);
@@ -323,7 +323,7 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 	m_LoadedDg = result.Data[Dg].Value;
 	m_LoadedStat = result.Data[Stat].Value;
 	m_LoadedSkill = result.Data[Skill].Value;
-	m_LoadedClass = result.Data[Class].Value;
+	m_LoadedClass = result.Data[SkinClass].Value;
 	m_LoadedWeapon = result.Data[Weapon].Value;
 	m_LoadedWing = result.Data[Wing].Value;
 	m_LoadedPet = result.Data[Pet].Value;
