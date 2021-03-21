@@ -17,11 +17,16 @@ AStartMapGameMode::AStartMapGameMode()
 
 }
 
+void AStartMapGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	//UDiabloGameInstance::Get->m_PlayfabManager->RequestVersionCheck();
+}
+
 void AStartMapGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	
 	if(!UDiabloGameInstance::Get->m_PlayfabManager->m_bIsNicknameSet)
 	{
 		return;	

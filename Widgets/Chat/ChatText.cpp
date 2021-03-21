@@ -7,7 +7,6 @@ FString UChatText::m_RichIDOrange = "RichText.Orange";
 FString UChatText::m_RichIDGreen = "RichText.Green";
 FString UChatText::m_RichIDPurple = "RichText.Purple";
 
-
 void UChatText::SetNormalChat(const FString& chat)
 {
 	TArray<FString> OutStrAry;

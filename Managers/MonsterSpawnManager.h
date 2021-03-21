@@ -61,6 +61,8 @@ protected:
 
 	UPROPERTY()
 	int m_nGoldGoblinSpawnCount;
+
+	FDelegateHandle m_BossDeleHandle;
 	
 protected:
 	FVector GetRandomPointFromNav(const FVector& loc,const float& radius);
@@ -111,6 +113,8 @@ public:
 
 	UFUNCTION()
     AMonsterPawn* SpawnMobToLoc(FVector loc);
+
+	void OnBossDead( AMonsterPawn*);
 };
 
 

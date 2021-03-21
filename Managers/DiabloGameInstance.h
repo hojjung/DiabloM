@@ -7,6 +7,8 @@
 #include "GoldManager.h"
 #include "NavigationSystem.h"
 #include "PlayerUpgradeManager.h"
+#include "QuestManager.h"
+
 
 #include "DiabloGameInstance.generated.h"
 
@@ -45,10 +47,13 @@ public:
 	UGachaManager* m_GachaManager;
 	UPROPERTY()
 	UChatManager* m_ChatManager;
+	UPROPERTY()
+	UQuestManager* m_QuestManager;
 	
 protected:
 	virtual void Init() override;
 
+	virtual void Shutdown() override;
 public:
 	ADiabloPlayerController* GetPlCon();
 	

@@ -19,15 +19,20 @@ UPlayerUpgradeManager::UPlayerUpgradeManager()
 	StatUpgradeTable = FoundStatTable.Object;
 }
 
-void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& stat, const FString& skill)
+void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& statskill)
 {
+	TArray<FString> AryStatSkill;
+
+	statskill.ParseIntoArray(AryStatSkill,TEXT("&"));
+
+	
 	m_PlayfabManager = UDiabloGameInstance::Get->m_PlayfabManager;
 	//
 	TArray<FString> AryStat;
-	stat.ParseIntoArray(AryStat,TEXT(":"));
+	AryStatSkill[0].ParseIntoArray(AryStat,TEXT(":"));
 
 	TArray<FString> ArySkill;
-	skill.ParseIntoArray(ArySkill,TEXT("/"));
+	AryStatSkill[1].ParseIntoArray(ArySkill,TEXT("/"));
 	//
 	m_AryBaseAtkUpgrade.Init(FUpgradeSpec(),(int)EAttackType::Length);
 	//	
@@ -202,12 +207,24 @@ void UPlayerUpgradeManager::Tick(float deltaTime)
 
 bool UPlayerUpgradeManager::IsSkillCasting()
 {
-	//for prevent move and base attack
 	return m_CurrentCastingSkill;
 }
 
+void UPlayerUpgradeManager::ClearCooldownAllSkill()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		if(!m_AryEquippedSkillSpec[i])
+		{
+			continue;
+		}
+		
+		m_AryEquippedSkillSpec[i]->m_fCurrentCD=-1.f;
+	}
+}
+
 BigInt UPlayerUpgradeManager::MultiplePercent(BigInt a, BigInt b, int aPrecisionCount,
-	int bPrecisionCount)
+                                              int bPrecisionCount)
 {
 	a.Multiply(b);
 

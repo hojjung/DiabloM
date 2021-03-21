@@ -31,6 +31,9 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UCanvasPanel* m_MainCanvas;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UCanvasPanel* m_CanvasBannerAds;
+	
 	//top
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock*	     m_TextRanking;
@@ -136,6 +139,7 @@ protected:
 	void UpdateTimer(float per,float cTime);
 
 	void SetBossTimer();
+	
 public:
 	UFUNCTION()
 	void SetActiveQuestPanel();
@@ -165,6 +169,14 @@ public:
 	virtual void OnAnimationFinishedPlaying(UUMGSequencePlayer& Player) override;
 
 	void UpdateGemStone(int v);
+
+	UFUNCTION()
+	void OpenGoldShop();
+	
+	UFUNCTION()
+    void OpenGemStoneShop();
+
+	void OnShowAdBanner(bool b);
 };
 
 

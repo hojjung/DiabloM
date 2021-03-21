@@ -24,7 +24,7 @@ protected:
 	static FString m_RichIDOrange;
     static FString m_RichIDGreen;
     static FString m_RichIDPurple;
-	
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	URichTextBlock* m_TextChat;

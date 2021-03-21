@@ -22,20 +22,22 @@ using namespace PlayFab;
 //dungeon 1111200
 const FString UPlayfabManager::Gold = "Gold";
 const FString UPlayfabManager::Dg = "Dg";
-const FString UPlayfabManager::Stat = "Stat";
-const FString UPlayfabManager::Skill = "Skill";
+const FString UPlayfabManager::StatSkill = "Stat&Skill";
 
 const FString UPlayfabManager::SkinClass = "Class";
 const FString UPlayfabManager::Weapon = "Weapon";
 const FString UPlayfabManager::Wing = "Wing";
 const FString UPlayfabManager::Pet = "Pet";
 const FString UPlayfabManager::Accessory = "Accessory";
+const FString UPlayfabManager::IAP = "IAP";
 
+const FString UPlayfabManager::Quest = "Quest";
 
 UPlayfabManager::UPlayfabManager()
 {
 	//m_LoadedDgID ;//= "Stage1-1";
 	//m_LoadedPlayerClassID;// = "Warrior01";
+	m_bIsShowAD=true;
 	m_nRanking=1234;
 }
 
@@ -47,13 +49,16 @@ void UPlayfabManager::ShowBannerAd(bool able)
 {
 	//GetClientAPI->Ad()
 
-	if (able && !GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion)
+	if (able && (!GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion) && m_bIsShowAD)
 	{
 		UKismetSystemLibrary::ShowAdBanner(0, true);
+		m_OnShowAdBanner.Broadcast(true);
 	}
 	else
 	{
 		UKismetSystemLibrary::HideAdBanner();
+
+		m_OnShowAdBanner.Broadcast(false);
 	}
 }
 
@@ -98,9 +103,21 @@ void UPlayfabManager::OnNickNameSetSuccess(const PlayFab::ClientModels::FUpdateU
 
 void UPlayfabManager::OnCloudScriptSuccess(const FExeCScriptRslt& rslt)
 {
-	PRINTF("Cloud Script Success");
+	PRINTF("CloudScript:%s",*rslt.toJSONString());
 }
 
+void UPlayfabManager::OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rslt)
+{
+	if(m_CurrentVersionName == rslt.Logs[0].Message)
+	{
+		PRINTF("Version Same");
+	}
+	else
+	{
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Version Changed", "Version Changed Update Need"));
+		UKismetSystemLibrary::LaunchURL("http://play.google.com/store/apps/details?id=<com.hereticbyte.dungeonslasher>");
+	}
+}
 
 
 void UPlayfabManager::Init()
@@ -264,13 +281,14 @@ void UPlayfabManager::RequestGetUserData()
 	req.PlayFabId = m_PlayfabID;
 	req.Keys.Add(Gold);
 	req.Keys.Add(Dg);
-	req.Keys.Add(Stat);
-	req.Keys.Add(Skill);
+	req.Keys.Add(StatSkill);
+	req.Keys.Add(Quest);
 	req.Keys.Add(SkinClass);
 	req.Keys.Add(Weapon);
 	req.Keys.Add(Wing);
 	req.Keys.Add(Pet);
 	req.Keys.Add(Accessory);
+	req.Keys.Add(IAP);
 
 
 	GetClientAPI->GetUserData(req,
@@ -290,6 +308,11 @@ void UPlayfabManager::SetOnlineStatus()
 
 void UPlayfabManager::SetOfflineStatus()
 {
+	if(!m_bIsLoginCompleted)
+	{
+		return;
+	}
+	
 	ClientModels::FExecuteCloudScriptRequest Req;
 	Req.FunctionName = "SetOfflineState";
 	GetClientAPI->ExecuteCloudScript(Req,
@@ -323,25 +346,36 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 	//
 	m_LoadedGold = result.Data[Gold].Value;
 	m_LoadedDg = result.Data[Dg].Value;
-	m_LoadedStat = result.Data[Stat].Value;
-	m_LoadedSkill = result.Data[Skill].Value;
+	m_LoadedStatSkill = result.Data[StatSkill].Value;
+	m_LoadedQuest = result.Data[Quest].Value;
 	m_LoadedClass = result.Data[SkinClass].Value;
 	m_LoadedWeapon = result.Data[Weapon].Value;
 	m_LoadedWing = result.Data[Wing].Value;
 	m_LoadedPet = result.Data[Pet].Value;
 	m_LoadedAccessory = result.Data[Accessory].Value;
 
+	FString IAPResult = result.Data[IAP].Value;
+
+	TArray<FString> AryIAP;
+	IAPResult.ParseIntoArray(AryIAP,TEXT(":"));
+	
+	m_bIsShowAD = AryIAP[1].ToBool();
+
 	//
 	UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(m_LoadedGold);
 	UDiabloGameInstance::Get->m_DungeonManager->SetDungeonLevel(*m_LoadedDg);
-	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(m_LoadedStat, m_LoadedSkill);
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(m_LoadedStatSkill);
 	UDiabloGameInstance::Get->m_EquipManager->SetEquipDataFromServer(m_LoadedClass, m_LoadedWeapon, m_LoadedWing,
 	                                                                 m_LoadedPet, m_LoadedAccessory);
-
+	
+	UDiabloGameInstance::Get->m_QuestManager->SetQuestDataFromServer(m_LoadedQuest);
+	
 
 	SetOnlineStatus();
 	m_bIsLoginCompleted = true;
 	m_bIsNicknameSet = true;
+
+	RequestVersionCheck();
 
 	ClientModels::FGetCatalogItemsRequest Req;
 	GetClientAPI->GetCatalogItems(Req, PlayFab::UPlayFabClientAPI::FGetCatalogItemsDelegate::
@@ -471,25 +505,57 @@ void UPlayfabManager::PurchaseFail(EInAppPurchaseState::Type completionStatus,co
 
 void UPlayfabManager::OnStageComplete()
 {
-	PRINTF("RequestStageComplete");
+	int Level = 9999;// UDiabloGameInstance::Get->m_DungeonManager->GetMyMaxStageLevel();
 	
-	PlayFab::FJsonKeeper functionParameter = PlayFab::FJsonKeeper();
+	FString LevelN = FString::FromInt(Level);
 	
-	TSharedPtr<UPlayFabJsonObject>  JsonObj = TSharedPtr<UPlayFabJsonObject>(UPlayFabJsonObject::ConstructJsonObject(UDiabloGameInstance::Get->GetWorld()));
+	FString JsonOutString;
+	
+	JsonWriter Json = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR> >::Create(&JsonOutString);
 
-	UPlayFabJsonValue* Value = UPlayFabJsonValue::ConstructJsonValueNumber(UDiabloGameInstance::Get->GetWorld(),UDiabloGameInstance::Get->m_DungeonManager->GetMyMaxStageLevel());
+	Json->WriteObjectStart();
 	
-	JsonObj->SetField("stageLevel",Value);
+	Json->WriteValue("stageLevel",9999);
 
-	functionParameter.readFromValue(JsonObj->GetRootObject());
+	Json->WriteObjectEnd();
 	
+	Json->Close();
+
 	ClientModels::FExecuteCloudScriptRequest Req;
 	
-	Req.FunctionParameter = functionParameter;
-	Req.FunctionName = "OnComleteLevel";
+	Req.FunctionParameter = FJsonKeeper(JsonOutString);
+	
+	Req.FunctionName = "OnCompleteLevel";
+	
 	Req.GeneratePlayStreamEvent = true;
 	
 	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnCloudScriptSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::RequestVersionCheck()
+{
+	FString JsonOutString;
+	
+	JsonWriter Json = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR> >::Create(&JsonOutString);
+
+	Json->WriteObjectStart();
+	
+	Json->WriteValue("versionName","TEST0320");
+
+	Json->WriteObjectEnd();
+	
+	Json->Close();
+
+	ClientModels::FExecuteCloudScriptRequest Req;
+	
+	Req.FunctionParameter = FJsonKeeper(JsonOutString);
+	
+	Req.FunctionName = "CheckVersion";
+	
+	Req.GeneratePlayStreamEvent = true;
+	
+	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnVersionCheckCloudScriptSuccess),
+		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
 void UPlayfabManager::OnIAPGoogleValidateSuccess(const PlayFab::ClientModels::FValidateGooglePlayPurchaseResult& purchaseResult)
@@ -501,6 +567,7 @@ void UPlayfabManager::OnIAPGoogleValidateSuccess(const PlayFab::ClientModels::FV
 
 void UPlayfabManager::RequestGetInventory()
 {
+	
 	ClientModels::FGetUserInventoryRequest Req;
 	GetClientAPI->GetUserInventory(Req,
 		UPlayFabClientAPI::FGetUserInventoryDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetInven),

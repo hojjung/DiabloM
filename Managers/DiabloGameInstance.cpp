@@ -40,6 +40,8 @@ void UDiabloGameInstance::Init()
     //
 	m_ChatManager = NewObject<UChatManager>();
 	//
+	m_QuestManager= NewObject<UQuestManager>();
+	//
     UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(33.f);
     
     UGameUserSettings::GetGameUserSettings()->ApplySettings(true);
@@ -47,6 +49,12 @@ void UDiabloGameInstance::Init()
     UKismetSystemLibrary::ControlScreensaver(false);
 
     //
+}
+
+void UDiabloGameInstance::Shutdown()
+{
+	Super::Shutdown();
+	UDiabloGameInstance::Get->m_PlayfabManager->SetOfflineStatus();
 }
 
 ADiabloPlayerController* UDiabloGameInstance::GetPlCon()

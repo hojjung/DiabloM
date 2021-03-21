@@ -47,8 +47,10 @@ public:
 	FText m_ShowingName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USkeletalMesh* m_Mesh;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.3"))
 	float m_fScale = 1.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.3"))
+	float m_fBossMonsterRenderScale = 3.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "200.0"))
 	float m_fMoveSpeed = 230.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "200.0"))
@@ -88,8 +90,7 @@ public:
 	FName m_DgId;//should same with level asset name
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FMonsterEntityHandle m_Monster;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fBossMonsterRenderScale = 3.f;
+	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(UIMin = "1.0"))
 	int m_nMonsterLevel;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)

@@ -77,7 +77,7 @@ protected:
 	TArray<FSkillSpec*> m_AryEquippedSkillSpec;
 	
 public:
-	void SetUpgradeDataFromServer(const FString& stat,const FString& skill);
+	void SetUpgradeDataFromServer(const FString& statskill);
 	//
 	//UpgradeAtkDmg01
 public:
@@ -94,6 +94,8 @@ public:
 	void Tick(float deltaTime);
 
 	bool IsSkillCasting();
+
+	void ClearCooldownAllSkill();
 
 public:
 	FORCEINLINE FUpgradeSpec& GetAtkUp(EAttackType type)

@@ -209,6 +209,18 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMobToLoc(FVector loc)
 
 	return Mob;
 }
+
+void UMonsterSpawnManager::OnBossDead(AMonsterPawn* pawn)
+{
+	m_SpawnedBoss->m_OnDead.Remove(m_BossDeleHandle);
+	m_bBossSpawned = false;;
+	m_SpawnedBoss=nullptr;
+	pawn->Destroy();
+	m_OnBossBattleEnd.Broadcast(true);
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->ClearCooldownAllSkill();
+	UDiabloGameInstance::Get->m_DungeonManager->LevelUpDungeon();
+}
+
 AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos)
 {
 	if(m_bBossSpawned && m_SpawnedBoss)
@@ -315,25 +327,12 @@ void UMonsterSpawnManager::SpawnBossMob()
 	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Boss,
                     m_DgDataTable->m_nAvoidLevel,
                     m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""),
-                    22,
-                    m_DgDataTable->m_fBossMonsterRenderScale);
+                    12,
+                    MonData->m_fBossMonsterRenderScale);
 
 	m_SpawnedBoss =  Mob;
 
-	m_SpawnedBoss->m_OnDead.AddLambda(
-	[&](AMonsterPawn* pawn)
-	{
-		m_bBossSpawned = false;;
-		m_SpawnedBoss=nullptr;
-		pawn->Destroy();
-		
-		m_OnBossBattleEnd.Broadcast(true);
-		
-		UDiabloGameInstance::Get->m_DungeonManager->LevelUpDungeon();
-		
-	}
-
-	);
+	m_BossDeleHandle =m_SpawnedBoss->m_OnDead.AddUObject(this,&UMonsterSpawnManager::OnBossDead);
 	
 	APlayerDiabloCharacter* Pl = Cast<APlayerDiabloCharacter> (UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(),0));
 

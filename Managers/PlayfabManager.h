@@ -33,19 +33,23 @@ class DIABLOM_API UPlayfabManager : public UObject
 {
 	GENERATED_BODY()
 public:
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnShowAdBanner,bool);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnVirtualCurrencyChanged,int);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayfabError,FString&);
+
+	FOnShowAdBanner m_OnShowAdBanner;
 	//해금된 스테이지와 해금된 클래스,각클래스 업그레이드 레벨 다저장해야함
 	//다 숫자로 통일해주자? 테이블에서 어케 가져와
 	static const FString Gold;
 	static const FString Dg;
-	static const FString Stat;
-	static const FString Skill;
+	static const FString StatSkill;
+	static const FString Quest;
 	static const FString SkinClass;
 	static const FString Weapon;
 	static const FString Wing;
 	static const FString Pet;
 	static const FString Accessory;
+	static const FString IAP;
 	//
 	FOnVirtualCurrencyChanged m_OnGemstoneChanged;
 	
@@ -86,6 +90,8 @@ public:
 
 public:
 	UPROPERTY()
+	bool m_bVersionChecked = false;
+	UPROPERTY()
 	bool m_bIsNicknameSet = false;
 	UPROPERTY()
 	bool m_bShowNicknameSet = false;
@@ -100,9 +106,9 @@ public:
 	UPROPERTY()
 	FString m_LoadedDg;
 	UPROPERTY()
-	FString m_LoadedStat;
+	FString m_LoadedStatSkill;
 	UPROPERTY()
-	FString m_LoadedSkill;
+	FString m_LoadedQuest;
 	UPROPERTY()
 	FString m_LoadedClass;
 	UPROPERTY()
@@ -115,6 +121,10 @@ public:
 	FString m_LoadedAccessory;
 	UPROPERTY()
 	FString m_LoadedNickname;
+	UPROPERTY()
+	FString m_CurrentVersionName="TEST0321";
+	UPROPERTY()
+	bool m_bIsShowAD;
 	//
 	UPROPERTY()
 	int m_nRanking;
@@ -146,10 +156,13 @@ public:
 	
 	void SetOfflineStatus();
 
+
 protected:
 	void OnNickNameSetSuccess(const  PlayFab::ClientModels::FUpdateUserTitleDisplayNameResult&);
 
 	void OnCloudScriptSuccess(const FExeCScriptRslt& rslt);
+
+	void OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rslt);
 
 public:
 	UFUNCTION()
@@ -165,6 +178,8 @@ public:
     void PurchaseFail(EInAppPurchaseState::Type completionStatus, const FInAppPurchaseProductInfo& inAppPurchaseInformation);
 
 	void OnStageComplete();
+
+	void RequestVersionCheck();
 	
 protected:
 	void OnIAPGoogleValidateSuccess( const PlayFab::ClientModels::FValidateGooglePlayPurchaseResult&);

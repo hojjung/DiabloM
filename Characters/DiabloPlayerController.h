@@ -51,8 +51,6 @@ protected:
 
 	UDamageTextWidgetComponent* GetDmgWC(); 
 
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
 	virtual void SetupInputComponent() override;
 
 	void ExitGame();

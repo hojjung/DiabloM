@@ -22,7 +22,7 @@ void UChatWindow::NativeOnInitialized()
 
 		m_AryChatText.Add(CreatedChat);
 		
-		CreatedChat->SetVisibility(ESlateVisibility::Collapsed);
+		//CreatedChat->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
 	m_nTopIndex=0;
@@ -55,7 +55,7 @@ UChatText* UChatWindow::GetTopText()
 		m_nTopIndex=0;
 	}
 
-	Text->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	//Text->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	
 	return Text;
 }
@@ -68,6 +68,8 @@ void UChatWindow::OnReceiveTotalChatList(const FString& chat)
 	TArray<FString> OutStrAry;
 	
 	chat.ParseIntoArray(OutStrAry,TEXT("\n"));
+
+	PRINTF("ChatStr:%d",OutStrAry.Num());
 
 	for(FString& Str : OutStrAry)
 	{
