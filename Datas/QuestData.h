@@ -47,18 +47,26 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FQuestLevelData> m_AryQuestData;
 
-	FText GetFormatDesc(int questLv) const
+	FText GetMaxFormatDesc(int questLv) const
 	{
-		if (!m_AryQuestData.MyRangeCheck(questLv))
-		{
-			return FText();
-		}
-
 		FTextFormat Format = FText::FromString(m_DescFormat);
 
 		FFormatOrderedArguments Args;
 
 		Args.Add(m_AryQuestData[questLv].m_nRequireData);
+
+		FText TT = FText::Format(Format, Args);
+
+		return TT;
+	}
+
+	FText GetCurrentFormatDesc(int currentValue) const
+	{
+		FTextFormat Format = FText::FromString(m_DescFormat);
+
+		FFormatOrderedArguments Args;
+
+		Args.Add(currentValue);
 
 		FText TT = FText::Format(Format, Args);
 
@@ -108,7 +116,7 @@ public:
 			return false;
 		}
 
-		if (m_nCurrentRequirePoint < m_Data->m_AryQuestData[m_nCurrentLv].m_nRequireData)
+		if (!IsCompletable())
 		{
 			return false;
 		}
@@ -118,8 +126,52 @@ public:
 		return true;
 	}
 
+	bool IsCompletable()
+	{
+		return m_nCurrentRequirePoint >= m_Data->m_AryQuestData[m_nCurrentLv].m_nRequireData;
+	}
+
 	bool IsMaxLv()
 	{
 		return m_Data->m_AryQuestData.Num() <= m_nCurrentLv + 1; // 100 ,99
 	} //10개,최대인덱스 9,현재 인덱스 8
+
+	int GetMaxRequireValue()
+	{
+		return m_Data->m_AryQuestData[m_nCurrentLv].m_nRequireData;
+	}
+
+	int GetCurrentData()
+	{
+		return m_nCurrentRequirePoint;
+	}
+
+	float GetGaugePercent()
+	{
+		float Current = GetCurrentData();
+
+		float Max = GetMaxRequireValue();
+		
+		return FMath::Clamp(Current / Max,0.f,1.f);
+	}
+
+	FText GetGaugeFormatTxt()
+	{
+		FTextFormat Format = FText::FromString("{0}/{1}");
+
+		FFormatOrderedArguments Args;
+
+		Args.Add(m_Data->GetCurrentFormatDesc(GetCurrentData()));
+	
+		Args.Add(m_Data->GetMaxFormatDesc(m_nCurrentLv));
+
+		FText TT = FText::Format(Format, Args);
+
+		return TT;
+	}
+
+	int GetCompletePrize()
+	{
+		return m_Data->m_AryQuestData[m_nCurrentLv].m_nRewardGemStone;
+	}
 };

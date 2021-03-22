@@ -9,6 +9,10 @@ void UQuestPanel::NativeOnInitialized()
 	m_AryQuestBtns.Reset();
 
 	int index = 0;
+
+	int Height = UDiabloGameInstance::Get->m_QuestManager->GetQuestData().Num() / 2;
+	
+	Height+=1;
 	
 	for(FQuestDataSpec& QuestDataSpec :  UDiabloGameInstance::Get->m_QuestManager->GetQuestData())
 	{

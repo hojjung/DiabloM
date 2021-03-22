@@ -4,6 +4,7 @@
 
 #include "DiabloM.h"
 #include "PopupTextWidget.h"
+#include "QuestPanel.h"
 #include "SkillHotkeyPanel.h"
 #include "Blueprint/UserWidget.h"
 #include "CommonElement/CooldownProgress.h"
@@ -33,7 +34,6 @@ protected:
 	UCanvasPanel* m_MainCanvas;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UCanvasPanel* m_CanvasBannerAds;
-	
 	//top
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock*	     m_TextRanking;
@@ -50,7 +50,7 @@ protected:
 	UButton* m_BtnBoss;
 	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUserWidget*     m_PanelQuest;
+	UQuestPanel*     m_PanelQuest;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UUpgradePanel*   m_PanelUpgrade;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))

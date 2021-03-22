@@ -9,11 +9,17 @@ void UQuestManager::SetQuestDataFromServer(const FString& strQuest)
 
 	strQuest.ParseIntoArray(AryQuest,TEXT("/"));
 
-	for(auto& QuestStr : AryQuest)
+	TArray<FQuestDataRow*> AryQuestRow;
+
+	UQuestData::GetQuestData->GetAllRows("",AryQuestRow);
+
+	for(int i=0;i<AryQuestRow.Num();i++)
 	{
 		FQuestDataSpec QuestDataSpec;
 
-		QuestDataSpec.ParseFromStr(QuestStr);
+		QuestDataSpec.ParseFromStr(AryQuest[i]);
+
+		QuestDataSpec.m_Data = AryQuestRow[i];
 		
 		m_AryQuestData.Add(QuestDataSpec);
 	}
