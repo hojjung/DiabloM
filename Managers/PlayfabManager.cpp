@@ -51,7 +51,7 @@ void UPlayfabManager::ShowBannerAd(bool able)
 
 	if (able && (!GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion) && m_bIsShowAD)
 	{
-		UKismetSystemLibrary::ShowAdBanner(0, true);
+		UKismetSystemLibrary::ShowAdBanner(0, false);
 		m_OnShowAdBanner.Broadcast(true);
 	}
 	else

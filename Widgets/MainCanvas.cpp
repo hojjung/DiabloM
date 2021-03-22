@@ -165,121 +165,105 @@ void UMainCanvas::SetBossTimer()
 {
 	m_fBossDurationTimeCounter = 0.f;
 }
-
+//UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 void UMainCanvas::SetActiveQuestPanel()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
-	
 	if(m_PanelQuest->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
+		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 		m_PanelQuest->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 		m_PanelQuest->SetVisibility(ESlateVisibility::Collapsed);
+		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 	}
+	
 	m_PanelUpgrade->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelEquipment->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelGacha->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelShop->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
-
-	
 }
 
 void UMainCanvas::SetActiveUpgradePanel()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
-	
 	m_PanelQuest->SetVisibility(ESlateVisibility::Collapsed);
 	if(m_PanelUpgrade->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
+		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 		m_PanelUpgrade->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 		m_PanelUpgrade->SetVisibility(ESlateVisibility::Collapsed);
+		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 	}
 	m_PanelEquipment->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelGacha->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelShop->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
-
-	
 }
 
 void UMainCanvas::SetActiveEquipmentPanel()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
-	
 	m_PanelQuest->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelUpgrade->SetVisibility(ESlateVisibility::Collapsed);
 	if(m_PanelEquipment->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
+		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 		m_PanelEquipment->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 		m_PanelEquipment->SetVisibility(ESlateVisibility::Collapsed);
+		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 	}
 	m_PanelGacha->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelShop->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
-
-	
 }
 
 void UMainCanvas::SetActiveGachaPanel()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
-	
 	m_PanelQuest->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelUpgrade->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelEquipment->SetVisibility(ESlateVisibility::Collapsed);
 	if(m_PanelGacha->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
+		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 		m_PanelGacha->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 		m_PanelGacha->SetVisibility(ESlateVisibility::Collapsed);
+		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 	}
 	m_PanelShop->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
-
-	
 }
 
 void UMainCanvas::SetActiveShopPanel()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
-	
 	m_PanelQuest->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelUpgrade->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelEquipment->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelGacha->SetVisibility(ESlateVisibility::Collapsed);
 	if(m_PanelShop->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
+		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 		m_PanelShop->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 		m_PanelShop->SetVisibility(ESlateVisibility::Collapsed);
+		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 	}
 	m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
-
-	
 }
 
 void UMainCanvas::SetActiveMenuPanel()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
-	
 	m_PanelQuest->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelUpgrade->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelEquipment->SetVisibility(ESlateVisibility::Collapsed);
@@ -288,15 +272,14 @@ void UMainCanvas::SetActiveMenuPanel()
 	
 	if(m_PanelMenu->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
+		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 		m_PanelMenu->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 		m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
+		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 	}
-	
-	
 }
 
 void UMainCanvas::UpdateGoldUI()
@@ -387,7 +370,7 @@ void UMainCanvas::OnShowAdBanner(bool b)
 {
 	if(b)
 	{
-		Cast<UCanvasPanelSlot>( m_CanvasBannerAds->Slot)->SetPosition(FVector2D(0,200.f));
+		Cast<UCanvasPanelSlot>( m_CanvasBannerAds->Slot)->SetPosition(FVector2D(0,150.f));
 	}
 	else
 	{

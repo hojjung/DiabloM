@@ -16,11 +16,14 @@ protected:
 	TSubclassOf<UQuestButton> m_ClassQuest;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UWrapBox* m_GridPanel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnClose;
 	UPROPERTY()
 	TArray<UQuestButton*> m_AryQuestBtns;
 	
 public:
 	virtual void NativeOnInitialized() override;
 
-	
+	UFUNCTION()
+	void ClosePanel();
 };

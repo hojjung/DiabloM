@@ -84,7 +84,7 @@ void UShopPanel::PurchaseGemStone06()
 void UShopPanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
-	
+	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 }
 
 void UShopPanel::ShowPackagePanel()

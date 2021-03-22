@@ -208,6 +208,8 @@ void UEquipmentPanel::SetNormalImage()
 void UEquipmentPanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
+
+	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 }
 
 void UEquipmentPanel::SetPanelSkin()

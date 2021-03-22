@@ -1,5 +1,7 @@
 #include "MainMenuPanel.h"
 
+#include "Managers/DiabloGameInstance.h"
+
 
 void UMainMenuPanel::NativeOnInitialized()
 {
@@ -18,6 +20,15 @@ void UMainMenuPanel::NativeOnInitialized()
 	m_PanelMail->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelDaily->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelOption->SetVisibility(ESlateVisibility::Collapsed);
+	//
+	m_BtnClose->OnClicked.AddDynamic(this, &UMainMenuPanel::ClosePanel);
+}
+
+void UMainMenuPanel::ClosePanel()
+{
+	SetVisibility(ESlateVisibility::Collapsed);
+
+	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 }
 
 void UMainMenuPanel::OpenPlayerInfoPanel()
@@ -141,5 +152,7 @@ void UMainMenuPanel::SetVisibility(ESlateVisibility InVisibility)
 		m_PanelMail->SetVisibility(InVisibility);
 		m_PanelDaily->SetVisibility(InVisibility);
 		m_PanelOption->SetVisibility(InVisibility);
+
+		
 	}
 }

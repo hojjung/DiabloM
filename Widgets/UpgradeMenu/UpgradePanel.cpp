@@ -101,6 +101,9 @@ void UUpgradePanel::ClosePanel()
 	SetVisibility(ESlateVisibility::Collapsed);
 	
 	CloseSkillHotkeyPanel();
+
+	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+
 }
 
 void UUpgradePanel::UpgradeAtkDmg01()

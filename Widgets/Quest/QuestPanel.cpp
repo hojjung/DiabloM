@@ -6,14 +6,12 @@ void UQuestPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	m_BtnClose->OnClicked.AddDynamic(this,&UQuestPanel::ClosePanel);
+
 	m_AryQuestBtns.Reset();
 
 	int index = 0;
 
-	int Height = UDiabloGameInstance::Get->m_QuestManager->GetQuestData().Num() / 2;
-	
-	Height+=1;
-	
 	for(FQuestDataSpec& QuestDataSpec :  UDiabloGameInstance::Get->m_QuestManager->GetQuestData())
 	{
 		UQuestButton* CreatedQuestBtn = CreateWidget<UQuestButton>(this,m_ClassQuest);
@@ -29,3 +27,10 @@ void UQuestPanel::NativeOnInitialized()
 		m_AryQuestBtns.Add(CreatedQuestBtn);
 	}
 }
+
+void UQuestPanel::ClosePanel()
+{
+	SetVisibility(ESlateVisibility::Collapsed);
+	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+}
+

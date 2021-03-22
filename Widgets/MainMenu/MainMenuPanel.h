@@ -27,6 +27,8 @@ protected:
 	UButton* m_BtnDaily;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnOption;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnClose;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -46,6 +48,8 @@ protected:
 	virtual void NativeOnInitialized() override;
 	
 public:
+	UFUNCTION()
+	void ClosePanel();
 	UFUNCTION()
     void OpenPlayerInfoPanel();
 	UFUNCTION()

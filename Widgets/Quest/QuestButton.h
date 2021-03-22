@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "CommonElement/ImageAndText.h"
-#include "CommonElement/MaterialProgressBar.h"
+#include "Widgets/CommonElement/ImageAndText.h"
+#include "Widgets/CommonElement/MaterialProgressBar.h"
 #include "Datas/QuestData.h"
 
 #include "QuestButton.generated.h"

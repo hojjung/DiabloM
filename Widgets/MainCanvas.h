@@ -4,7 +4,7 @@
 
 #include "DiabloM.h"
 #include "PopupTextWidget.h"
-#include "QuestPanel.h"
+#include "Quest/QuestPanel.h"
 #include "SkillHotkeyPanel.h"
 #include "Blueprint/UserWidget.h"
 #include "CommonElement/CooldownProgress.h"

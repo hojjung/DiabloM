@@ -94,8 +94,6 @@ protected:
 public:
 	UFUNCTION()
 	void ClosePanel();
-	UFUNCTION()
-    void ShowAds();
 	//
 	UFUNCTION()
 	void ShowWeaponLevelInfo();

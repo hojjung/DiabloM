@@ -2,8 +2,24 @@
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DungeonManager.h"
 
-
 #define LOCTEXT_NAMESPACE "StageButton"
+
+void UStageBtn::Init(bool dgUnlock,int index)
+{
+	m_nIndex = index;
+
+	m_FormatStageName = LOCTEXT("StageNameFormat","Stage:{0}");
+
+	FFormatOrderedArguments Args;
+	
+	Args.Add(m_nIndex);
+
+	m_TxtStageName->SetText(FText::Format(m_FormatStageName,Args));
+
+	SetUnlock(dgUnlock);
+
+	m_StageBtn->OnClicked.AddDynamic(this,&UStageBtn::MoveToDungeon);
+}
 
 void UStageBtn::SetUnlock(bool b)
 {
@@ -25,21 +41,7 @@ void UStageBtn::SetCurrent()
 	m_StageBtn->SetIsEnabled(false);
 }
 
-void UStageBtn::Init(bool dgUnlock,int index)
-{
-	m_nIndex = index;
 
-	m_FormatStageName = LOCTEXT("StageNameFormat","Stage:{0}");
-
-	FFormatOrderedArguments Args;
-	
-	Args.Add(m_nIndex);
-
-	m_TxtStageName->SetText(FText::Format(m_FormatStageName,Args));
-
-	SetUnlock(dgUnlock);
-	
-}
 
 void UStageBtn::MoveToDungeon()
 {
