@@ -10,6 +10,12 @@ void UPlayerMovement::BeginPlay()
 
 void UPlayerMovement::MoveProceed(float DeltaTime)
 {
+	if (UDiabloGameInstance::Get->m_PlayerUpgradeManager->IsRootmotionSkillCasting())
+	{
+		Velocity = FVector::ZeroVector;
+		//StopActiveMovement()
+		return ;
+	}
 	if (!Velocity.IsNearlyZero())
 	{
 		Velocity.Z = 0.f;

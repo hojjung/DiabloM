@@ -63,4 +63,7 @@ public:
 
 	UFUNCTION()
 	void SetChatWindowOpenClose();
+	
+	UFUNCTION()
+	void AddTextWidgetClient(const FString& chat);
 };

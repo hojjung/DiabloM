@@ -18,12 +18,15 @@ void UChatWindow::NativeOnInitialized()
 	{
 		UChatText* CreatedChat = CreateWidget<UChatText>(this, m_ClassTextWidget);
 
-		UPanelSlot* SlotUni = m_MessageScrollBox->AddChild(CreatedChat);//20//15
+		UScrollBoxSlot* SlotUni = Cast<UScrollBoxSlot>( m_MessageScrollBox->AddChild(CreatedChat));//20//15
+
+		SlotUni->SetPadding(FMargin(0,15.f,0,0));
 
 		m_AryChatText.Add(CreatedChat);
 		
 		//CreatedChat->SetVisibility(ESlateVisibility::Collapsed);
 	}
+
 
 	m_nTopIndex=0;
 
@@ -89,7 +92,11 @@ void UChatWindow::OnReceiveTotalChatList(const FString& chat)
 }
 void UChatWindow::SendText()
 {
-	UDiabloGameInstance::Get->m_ChatManager->ChatPost(m_MesageEditableText->GetText());
+	FText ChatText = m_MesageEditableText->GetText();
+
+	AddTextWidgetClient(ChatText.ToString());
+	
+	UDiabloGameInstance::Get->m_ChatManager->ChatPost(ChatText);
 
 	m_MesageEditableText->SetText(FText());
 
@@ -101,6 +108,15 @@ void UChatWindow::AddTextWidget(const FString& chat)
 	UChatText* TopText = GetTopText();
 	
 	TopText->SetNormalChat(chat);
+
+	m_MessageScrollBox->AddChild(TopText);
+}
+
+void UChatWindow::AddTextWidgetClient(const FString& chat)
+{
+	UChatText* TopText = GetTopText();
+	
+	TopText->SetChatForClient(chat);
 
 	m_MessageScrollBox->AddChild(TopText);
 }

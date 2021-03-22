@@ -45,7 +45,7 @@ void UStageBtn::SetCurrent()
 
 void UStageBtn::MoveToDungeon()
 {
-	SetCurrent();
+	//SetCurrent();
 	UDiabloGameInstance::Get->m_DungeonManager->SelectDungeon(m_nIndex);
 	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel();
 }

@@ -30,10 +30,12 @@ protected:
 	URichTextBlock* m_TextChat;
 public:
 	void SetNormalChat(const FString& chat);
-
-	void SetGachaNotify(const FString& chat);
 	
+	void SetChatForClient(const FString& chat);
+
 	void Clear();
 
 	FString GetRankColor(const FString& rankNumber);
+
+	FString GetRankColor(int rankNumber);
 };

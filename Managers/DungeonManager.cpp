@@ -56,7 +56,9 @@ void UDungeonManager::SetDungeonLevel(const FString& currentDG)//need split
 
 void UDungeonManager::SelectDungeon(int index)
 {
-	m_CurrentDg = m_AryDgDataTable[index];
+	//m_nMyMaxStageLevel=index;
+	m_nCurrentStageLevel=index;
+	m_CurrentDg = m_AryDgDataTable[m_nCurrentStageLevel];
 }
 
 void UDungeonManager::LevelUpDungeon()

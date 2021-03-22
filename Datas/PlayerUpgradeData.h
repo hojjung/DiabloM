@@ -209,6 +209,8 @@ public:
 	float m_fCostMultiFactor = 1.06f;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	float m_fRageCost = 25;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	bool m_bIsRootmotion = false;
 
 private:
 	float GetLevelBonus(int level) const

@@ -210,6 +210,11 @@ bool UPlayerUpgradeManager::IsSkillCasting()
 	return m_CurrentCastingSkill;
 }
 
+bool UPlayerUpgradeManager::IsRootmotionSkillCasting()
+{
+	return m_CurrentCastingSkill&&m_CurrentCastingSkill->m_SkillData->m_bIsRootmotion;
+}
+
 void UPlayerUpgradeManager::ClearCooldownAllSkill()
 {
 	for (int i = 0; i < 4; i++)

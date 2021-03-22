@@ -73,6 +73,10 @@ void UChatManager::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr 
 {
 	if (Request->GetVerb()=="GET") //for split from chat post
 	{
+		if(!m_bIsWaitingGetChatRequest)
+		{
+			return;
+		}
 		m_bIsWaitingGetChatRequest = false;
 
 		if (bWasSuccessful)
@@ -135,6 +139,9 @@ void UChatManager::ChatPost(const FText& chatWant)
 
 	HttpCall(WebURL, "POST", &FormatStr);
 
+	m_fDeltaCounter=0.f;
+	
+	m_bIsWaitingGetChatRequest = false;
 }
 
 FString UChatManager::URLEncode(FString url)

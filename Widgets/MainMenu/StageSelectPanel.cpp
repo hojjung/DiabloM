@@ -17,7 +17,7 @@ void UStageSelectPanel::NativeOnInitialized()
 	{
 		UStageBtn* CreatedStageBtn = CreateWidget<UStageBtn>(this,m_ClassStageBtn);
 
-		CreatedStageBtn->Init(i<MaxLevel,i);
+		CreatedStageBtn->Init(i<=MaxLevel,i);
 
 		m_StageBtnListVert->AddChild(CreatedStageBtn);
 

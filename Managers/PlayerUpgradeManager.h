@@ -95,6 +95,8 @@ public:
 
 	bool IsSkillCasting();
 
+	bool IsRootmotionSkillCasting();
+
 	void ClearCooldownAllSkill();
 
 public:
