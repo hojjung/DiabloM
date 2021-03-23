@@ -20,4 +20,7 @@ public:
 	AMyHUD();
 	
 	virtual void ReqeustPopupText(FText str);
+
+	UFUNCTION()
+	virtual void OnPressBackkey(){};
 };

@@ -54,6 +54,8 @@ void UMainCanvas::NativeOnInitialized()
 	m_BtnGold->OnClicked.AddDynamic(this,&UMainCanvas::OpenGoldShop);
 	//
 	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+
+	m_GameExitWindow->Cancel();
 }
 
 void UMainCanvas::RequestText(FText txt)
@@ -376,6 +378,11 @@ void UMainCanvas::OnShowAdBanner(bool b)
 	{
 		Cast<UCanvasPanelSlot>( m_CanvasBannerAds->Slot)->SetPosition(FVector2D(0,0));
 	}
+}
+
+void UMainCanvas::OnPressBackkey()
+{
+	m_GameExitWindow->OnBackkeyPressed();
 }
 
 #undef LOCTEXT_NAMESPACE

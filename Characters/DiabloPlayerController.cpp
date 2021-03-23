@@ -7,6 +7,7 @@
 #include "Managers/DiabloCheatManager.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Widgets/GameLevelHUD.h"
 
 ADiabloPlayerController::ADiabloPlayerController()
 {
@@ -95,9 +96,11 @@ void ADiabloPlayerController::SetupInputComponent()
 
 void ADiabloPlayerController::ExitGame()
 {
-	PRINTF("Exit");
+	PRINTF("TryExit");
+
+	Cast<AGameLevelHUD>( GetHUD())->OnPressBackkey();
 	
-	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
+	//UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
 }
 
 void ADiabloPlayerController::OnDeviceBackKey()

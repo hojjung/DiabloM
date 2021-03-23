@@ -25,3 +25,8 @@ void AGameLevelHUD::ReqeustPopupText(FText str)
 {
 	m_Canvas->RequestText(str);
 }
+
+void AGameLevelHUD::OnPressBackkey()
+{
+	m_Canvas->OnPressBackkey();
+}

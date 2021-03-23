@@ -11,9 +11,14 @@ FString UChatText::m_RichIDPurple = "RichText.Purple";
 
 void UChatText::SetNormalChat(const FString& chat)
 {
+	FString CachedChat = chat;
+
+	//CachedChat = CachedChat.TrimStart();
+	CachedChat.RemoveFromEnd(TEXT("\r"));
+	
 	TArray<FString> OutStrAry;
 	
-	chat.ParseIntoArray(OutStrAry,TEXT(":"));
+	CachedChat.ParseIntoArray(OutStrAry,TEXT(":"));
 
 	FString Ranking = OutStrAry[0];
 	

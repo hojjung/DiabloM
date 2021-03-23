@@ -3,6 +3,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "GameExitWindow.h"
 #include "PopupTextWidget.h"
 #include "Quest/QuestPanel.h"
 #include "SkillHotkeyPanel.h"
@@ -99,6 +100,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	USkillHotkeyPanel* m_SkillPanel;
 	//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UGameExitWindow* m_GameExitWindow;
 protected:
 	UPROPERTY(meta = (BindWidgetAnim))
 	UWidgetAnimation* m_ShowText;
@@ -177,6 +180,9 @@ public:
     void OpenGemStoneShop();
 
 	void OnShowAdBanner(bool b);
+
+	UFUNCTION()
+	void OnPressBackkey();
 };
 
 

@@ -24,4 +24,6 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void ReqeustPopupText(FText str) override;
+
+	virtual void OnPressBackkey() override;
 };
