@@ -12,6 +12,7 @@
 
 #include "PlayerVisual.generated.h"
 
+class APlayerDiabloCharacter;
 class USceneCaptureComponent2D;
 UCLASS()
 class DIABLOM_API APlayerVisual : public APawn
@@ -48,8 +49,6 @@ protected:
 	
 	void CreateSkMeshComponent(USkeletalMeshComponent** refSkComp,FName keyName,USceneComponent* root);
 	
-	//void OnMeshVisualChanged(const FCurrentCharData& charData);//TODO Add Slot reader,1003
-
 public:
 	void ShowMesh();
 
@@ -59,5 +58,5 @@ public:
 
 	void HideMeshWithTick();
 
-	
+	void OnMeshChanged(APlayerDiabloCharacter* charDia);
 };

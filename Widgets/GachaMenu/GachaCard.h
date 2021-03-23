@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "GachaCard.generated.h"
 
+struct FGachaAbleRow;
 struct FGachaTableRow;
 
 UCLASS()
@@ -26,7 +27,7 @@ public:
 	UWidgetAnimation* m_AnimFlash;
 
 public:
-	void SetVisual(FGachaTableRow* tableData);
+	void SetVisual(const FGachaAbleRow* tableData);
 
 	void ShowSpecialEffect();
 

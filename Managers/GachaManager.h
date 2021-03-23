@@ -69,15 +69,15 @@ public:
 	float GetCurrentLevelSkinTotalPercent();
 
 public:
-	FGachaTableRow* RollWeapon();
+	const FGachaAbleRow* RollWeapon();
 
-	FGachaTableRow* RollSkin();
+	const FGachaAbleRow* RollSkin();
 
-	FGachaTableRow* RollPet();
+	const FGachaAbleRow* RollPet();
 
-	FGachaTableRow* RollWing();
+	const FGachaAbleRow* RollWing();
 
-	FGachaTableRow* RollAccessory();
+	const FGachaAbleRow* RollAccessory();
 	
-	FGachaTableRow* RollItem(ERollItemType type);
+	const FGachaAbleRow* RollItem(ERollItemType type);
 };

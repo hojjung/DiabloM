@@ -32,7 +32,7 @@ void UWeaponEquipButton::SetLevelNameText(const FWeaponSpec& data)
 {
 	FFormatOrderedArguments Args;
 
-	Args.Add(data.m_EquipData->m_ShowingText);
+	Args.Add(data.m_EquipData->m_ShowingName);
 	Args.Add(data.m_nLv);
 
 	FText tt = FText::Format(m_FormatName,Args);

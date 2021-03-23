@@ -172,13 +172,15 @@ void UMainCanvas::SetActiveQuestPanel()
 {
 	if(m_PanelQuest->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 		m_PanelQuest->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		
+		OnMenuPanelVisibleChanged(true);
 	}
 	else
 	{
 		m_PanelQuest->SetVisibility(ESlateVisibility::Collapsed);
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+		
+		OnMenuPanelVisibleChanged(false);
 	}
 	
 	m_PanelUpgrade->SetVisibility(ESlateVisibility::Collapsed);
@@ -193,13 +195,15 @@ void UMainCanvas::SetActiveUpgradePanel()
 	m_PanelQuest->SetVisibility(ESlateVisibility::Collapsed);
 	if(m_PanelUpgrade->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 		m_PanelUpgrade->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		
+		OnMenuPanelVisibleChanged(true);
 	}
 	else
 	{
 		m_PanelUpgrade->SetVisibility(ESlateVisibility::Collapsed);
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+		
+		OnMenuPanelVisibleChanged(false);
 	}
 	m_PanelEquipment->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelGacha->SetVisibility(ESlateVisibility::Collapsed);
@@ -213,13 +217,15 @@ void UMainCanvas::SetActiveEquipmentPanel()
 	m_PanelUpgrade->SetVisibility(ESlateVisibility::Collapsed);
 	if(m_PanelEquipment->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 		m_PanelEquipment->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		
+		OnMenuPanelVisibleChanged(true);
 	}
 	else
 	{
 		m_PanelEquipment->SetVisibility(ESlateVisibility::Collapsed);
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+		
+		OnMenuPanelVisibleChanged(false);
 	}
 	m_PanelGacha->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelShop->SetVisibility(ESlateVisibility::Collapsed);
@@ -233,13 +239,15 @@ void UMainCanvas::SetActiveGachaPanel()
 	m_PanelEquipment->SetVisibility(ESlateVisibility::Collapsed);
 	if(m_PanelGacha->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 		m_PanelGacha->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+		OnMenuPanelVisibleChanged(true);
 	}
 	else
 	{
 		m_PanelGacha->SetVisibility(ESlateVisibility::Collapsed);
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+		
+		OnMenuPanelVisibleChanged(false);
 	}
 	m_PanelShop->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
@@ -253,13 +261,15 @@ void UMainCanvas::SetActiveShopPanel()
 	m_PanelGacha->SetVisibility(ESlateVisibility::Collapsed);
 	if(m_PanelShop->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 		m_PanelShop->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		
+		OnMenuPanelVisibleChanged(true);
 	}
 	else
 	{
 		m_PanelShop->SetVisibility(ESlateVisibility::Collapsed);
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+		
+		OnMenuPanelVisibleChanged(false);
 	}
 	m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
 }
@@ -274,13 +284,15 @@ void UMainCanvas::SetActiveMenuPanel()
 	
 	if(m_PanelMenu->Visibility != ESlateVisibility::SelfHitTestInvisible)
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(false);
 		m_PanelMenu->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+		OnMenuPanelVisibleChanged(true);
 	}
 	else
 	{
 		m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
-		UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+		
+		OnMenuPanelVisibleChanged(false);
 	}
 }
 
@@ -383,6 +395,13 @@ void UMainCanvas::OnShowAdBanner(bool b)
 void UMainCanvas::OnPressBackkey()
 {
 	m_GameExitWindow->OnBackkeyPressed();
+}
+
+void UMainCanvas::OnMenuPanelVisibleChanged(bool b)
+{
+	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(!b);
+
+	m_OnMenuVisibleChanged.Broadcast(b);
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -34,6 +34,8 @@ protected:
 	UPlayerUpgradeManager* m_PlUpgrade;
 	UPROPERTY()
 	UChatManager* m_ChatManager;
+	UPROPERTY()
+	APlayerVisual* m_VisualActor;
 	
 public:
 	virtual void StartPlay() override;
@@ -42,6 +44,8 @@ public:
 	{
 		return m_PlayerActionManager;
 	}
+
+	void OnMenuOpen(bool b);
 };
 
 

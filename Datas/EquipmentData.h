@@ -1,5 +1,6 @@
 #pragma once
 #include "DiabloM.h"
+#include "GachaDataTable.h"
 #include "Engine/DataTable.h"
 #include "Item/AccessoryOption.h"
 #include "Item/EquipmentActor.h"
@@ -16,15 +17,11 @@ class DIABLOM_API UEquipmentData : public UObject
 //
 
 USTRUCT(BlueprintType)
-struct FWeaponTable : public FTableRowBase
+struct FWeaponTable : public FGachaAbleRow
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UTexture2D* m_Icon;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FText m_ShowingText;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly ,meta = (MultiLine = true))
 	FText m_UpgradeDescFormat =FText::FromString( "Dmg Increase:{0}%>>P{1}%\nAccuracy Increase:{2}>>P{3}");
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -106,15 +103,11 @@ public:
 
 
 USTRUCT(BlueprintType)
-struct FPlayerSkinTable : public FTableRowBase
+struct FPlayerSkinTable : public FGachaAbleRow
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FText m_ShowingName;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UTexture2D* m_Icon;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
 	FString m_DescFormat = "Attack Speed {0}%";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -150,15 +143,11 @@ public:
 
 
 USTRUCT(BlueprintType)
-struct FWingTable : public FTableRowBase
+struct FWingTable : public FGachaAbleRow
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UTexture2D* m_WingIcon;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FText m_ShowingName;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
 	FString m_DescFormat = "Move Speed Increase:{0}%";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -186,15 +175,11 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FPetTable : public FTableRowBase
+struct FPetTable : public FGachaAbleRow
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FText m_ShowingName;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UTexture2D* m_Icon;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
 	FString m_DescFormat = "Gold Gain Increase:{0}%";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -265,15 +250,11 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FAccessoryTable : public FTableRowBase
+struct FAccessoryTable : public FGachaAbleRow
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FText m_ShowingName;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UTexture2D* m_Icon;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
 	FString m_UpgradeDescFormat = "Current:{0}>>P{1}";
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)

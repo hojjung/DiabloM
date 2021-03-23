@@ -87,6 +87,9 @@ UGachaManager::UGachaManager()
 	WingGachaDataTable = Found4Gacha01.Object;
 	AccessoryGachaDataTable = Found5Gacha01.Object;
 	//
+
+	return;
+	
 	for (int i = 0; i < 10; i++)
 	{
 		SetTotalValue(AryWeaponGachaDataTable[i], m_AryAryGachaWeapon[i], m_AryTotalWeaponGacha[i]);
@@ -112,7 +115,7 @@ void UGachaManager::SetTotalValue(const UDataTable* inTable, TArray<FGachaTableR
 
 	for (FGachaTableRow* TableRow : outTableRow)
 	{
-		outTotal += TableRow->m_fPriority;
+		outTotal += TableRow->GetGachaData().m_fPriority;
 	}
 }
 
@@ -136,7 +139,7 @@ float UGachaManager::GetCurrentLevelSkinTotalPercent()
 	return m_AryTotalSkinGacha[m_nCurrentSkin];
 }
 
-FGachaTableRow* UGachaManager::RollWeapon()
+const FGachaAbleRow* UGachaManager::RollWeapon()
 {
 	float WeightTotal = GetCurrentLevelWeaponTotalPercent();
 	//0.4
@@ -148,23 +151,23 @@ FGachaTableRow* UGachaManager::RollWeapon()
 	
 	for (FGachaTableRow* TableRow : GetCurrentLevelWeaponTable())
 	{
-		CurrentPercent += TableRow->GetPercent(WeightTotal);
+		CurrentPercent += TableRow->GetGachaData().GetPercent(WeightTotal);
 
 		if (CurrentPercent >= RollPercent)
 		{
 			UDiabloGameInstance::Get->m_EquipManager->AddWeaponStack(i);
 			
-			return TableRow;
+			return &TableRow->GetGachaData();
 		}
 
 		i++;
 	}
 
 	UDiabloGameInstance::Get->m_EquipManager->AddWeaponStack(i-1);
-	return GetCurrentLevelWeaponTable()[i-1];
+	return &GetCurrentLevelWeaponTable()[i-1]->GetGachaData();
 }
 
-FGachaTableRow* UGachaManager::RollSkin()
+const FGachaAbleRow* UGachaManager::RollSkin()
 {
 	float WeightTotal = GetCurrentLevelSkinTotalPercent();
 	//0.4
@@ -175,22 +178,23 @@ FGachaTableRow* UGachaManager::RollSkin()
 	int i=0;
 	for (FGachaTableRow* TableRow : GetCurrentLevelSkinTable())
 	{
-		CurrentPercent += TableRow->GetPercent(WeightTotal);
+		CurrentPercent += TableRow->GetGachaData().GetPercent(WeightTotal);
 
 		if (CurrentPercent >= RollPercent)
 		{
 			UDiabloGameInstance::Get->m_EquipManager->AddSkinStack(i);
 			//select
-			return TableRow;
+			return &TableRow->GetGachaData();
 		}
 		i++;
 	}
 
 	UDiabloGameInstance::Get->m_EquipManager->AddSkinStack(i-1);
-	return GetCurrentLevelSkinTable()[i-1];
+	
+	return &GetCurrentLevelSkinTable()[i-1]->GetGachaData();
 }
 
-FGachaTableRow* UGachaManager::RollPet()
+const FGachaAbleRow* UGachaManager::RollPet()
 {
 	float WeightTotal = m_fTotalPetGacha;
 	//0.4
@@ -202,22 +206,24 @@ FGachaTableRow* UGachaManager::RollPet()
 	//0.1
 	for (FGachaTableRow* TableRow : m_AryGachaPet)
 	{
-		CurrentPercent += TableRow->GetPercent(WeightTotal);
+		CurrentPercent += TableRow->GetGachaData().GetPercent(WeightTotal);
 
 		if (CurrentPercent >= RollPercent)
 		{
 			UDiabloGameInstance::Get->m_EquipManager->AddPetStack(i);
 			//select
-			return TableRow;
+			return &TableRow->GetGachaData();
 		}
 
 		i++;
 	}
+	
 	UDiabloGameInstance::Get->m_EquipManager->AddPetStack(i-1);
-	return m_AryGachaPet[i-1];
+	
+	return &m_AryGachaPet[i-1]->GetGachaData();
 }
 
-FGachaTableRow* UGachaManager::RollWing()
+const FGachaAbleRow* UGachaManager::RollWing()
 {
 	float WeightTotal = m_fTotalWingGacha;
 	//0.4
@@ -229,23 +235,24 @@ FGachaTableRow* UGachaManager::RollWing()
 	//0.1
 	for (FGachaTableRow* TableRow : m_AryGachaWing)
 	{
-		CurrentPercent += TableRow->GetPercent(WeightTotal);
+		CurrentPercent += TableRow->GetGachaData().GetPercent(WeightTotal);
 
 		if (CurrentPercent >= RollPercent)
 		{
 			UDiabloGameInstance::Get->m_EquipManager->AddWingStack(i);
 			//select
-			return TableRow;
+			return  &TableRow->GetGachaData();
 		}
 
 		i++;
 	}
 
 	UDiabloGameInstance::Get->m_EquipManager->AddWingStack(i-1);
-	return m_AryGachaWing[i-1];
+	
+	return &m_AryGachaWing[i-1]->GetGachaData();
 }
 
-FGachaTableRow* UGachaManager::RollAccessory()
+const FGachaAbleRow* UGachaManager::RollAccessory()
 {
 	float WeightTotal = m_fTotalAccessoryGacha;
 	
@@ -257,23 +264,25 @@ FGachaTableRow* UGachaManager::RollAccessory()
 	
 	for (FGachaTableRow* TableRow : m_AryGachaAccessory)
 	{
-		CurrentPercent += TableRow->GetPercent(WeightTotal);
+		CurrentPercent += TableRow->GetGachaData().GetPercent(WeightTotal);
 
 		if (CurrentPercent >= RollPercent)
 		{
 			//select
 			UDiabloGameInstance::Get->m_EquipManager->AddAccessoryStack(i);
-			return TableRow;
+			
+			return  &TableRow->GetGachaData();
 		}
 
 		i++;
 	}
 
 	UDiabloGameInstance::Get->m_EquipManager->AddAccessoryStack(i-1);
-	return m_AryGachaAccessory[i-1];
+	
+	return &m_AryGachaAccessory[i-1]->GetGachaData();
 }
 
-FGachaTableRow* UGachaManager::RollItem(ERollItemType type)
+const FGachaAbleRow* UGachaManager::RollItem(ERollItemType type)
 {
 	switch (type)
 	{

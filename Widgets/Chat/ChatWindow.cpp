@@ -94,6 +94,11 @@ void UChatWindow::SendText()
 {
 	FText ChatText = m_MesageEditableText->GetText();
 
+	if(ChatText.IsEmpty())
+	{
+		return;
+	}
+
 	AddTextWidgetClient(ChatText.ToString());
 	
 	UDiabloGameInstance::Get->m_ChatManager->ChatPost(ChatText);

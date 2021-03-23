@@ -27,7 +27,7 @@ void UChatText::SetNormalChat(const FString& chat)
 	FString ChatText = OutStrAry[2];
 
 	FString FormatStr = FString::Printf(
-        TEXT("<%s>[%s]</>:%s:%s"),*GetRankColor(Ranking),*Ranking,*Nickname,*ChatText);
+        TEXT("<%s>[%sst]</>:%s:%s"),*GetRankColor(Ranking),*Ranking,*Nickname,*ChatText);
 	
 	m_TextChat->SetText(FText::FromString(FormatStr));
 }
@@ -39,7 +39,7 @@ void UChatText::SetChatForClient(const FString& chat)
 	FString Nickname = UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname;
 	
 	FString FormatStr = FString::Printf(
-        TEXT("<%s>[%d]</> : %s : %s"),*GetRankColor(Ranking),Ranking,*Nickname,*chat);
+        TEXT("<%s>[%d st]</>: %s : %s"),*GetRankColor(Ranking),Ranking,*Nickname,*chat);
 	
 	m_TextChat->SetText(FText::FromString(FormatStr));
 }

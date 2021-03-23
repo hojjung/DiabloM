@@ -1,7 +1,7 @@
 #include "GachaCard.h"
 #include "Datas/GachaDataTable.h"
 
-void UGachaCard::SetVisual(FGachaTableRow* tableData)
+void UGachaCard::SetVisual(const FGachaAbleRow* tableData)
 {
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 

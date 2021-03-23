@@ -10,6 +10,7 @@
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DungeonManager.h"
 #include "Widgets/GameLevelHUD.h"
+#include "Widgets/MainCanvas.h"
 #include "Widgets/MyHUD.h"
 
 ADiabloGameMode::ADiabloGameMode()
@@ -39,6 +40,31 @@ void ADiabloGameMode::StartPlay()
 	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(m_PlUpgrade, &UPlayerUpgradeManager::Tick);
 	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(m_ChatManager, &UChatManager::Tick);
 
-	m_ChatManager->RequestGetChatFromServer();
+	//m_ChatManager->RequestGetChatFromServer();
+
+	//APlayerVisual
+
+	FVector Loc = FVector(7777.f);
+	FActorSpawnParameters Param;
+	Param.bNoFail=true;
+	m_VisualActor = GetWorld()->SpawnActor<APlayerVisual>(APlayerVisual::StaticClass(),Loc,FRotator(0.f),Param);
+	m_VisualActor->HideMeshWithTick();
+	//m_VisualActor->GetRootComponent()->SetMobility(EComponentMobility::Static);
+
+	AGameLevelHUD* MyHud = Cast<AGameLevelHUD>( UDiabloGameInstance::Get->GetPlCon()->GetHUD());
+
+	MyHud->m_Canvas->m_OnMenuVisibleChanged.AddUObject(this,&ADiabloGameMode::OnMenuOpen);
+}
+
+void ADiabloGameMode::OnMenuOpen(bool b)
+{
+	if(b)
+	{
+		m_VisualActor->ShowMeshWithTick();
+	}
+	else
+	{
+		m_VisualActor->HideMeshWithTick();
+	}
 }
 

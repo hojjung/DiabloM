@@ -28,8 +28,10 @@ class DIABLOM_API UMainCanvas : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void NativeOnInitialized() override;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMenuOpen,bool);
 	
+	FOnMenuOpen m_OnMenuVisibleChanged;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UCanvasPanel* m_MainCanvas;
@@ -183,6 +185,10 @@ public:
 
 	UFUNCTION()
 	void OnPressBackkey();
+
+	void OnMenuPanelVisibleChanged(bool b);
+
+	virtual void NativeOnInitialized() override;
 };
 
 

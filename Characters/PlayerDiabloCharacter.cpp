@@ -125,6 +125,8 @@ void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
 	m_BaseAttackAnim = m_PlayerEntityData->m_PlayerData->m_BaseAttackAnim;
 
 	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
+
+	m_OnMeshChanged.Broadcast(this);
 }
 
 void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
@@ -160,6 +162,8 @@ void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
 	                               EAttachmentRule::KeepRelative, false);
 
 	m_CreatedWeapon->AttachToComponent(m_SkBody, Rule, "RightHandBottom");
+
+	m_OnMeshChanged.Broadcast(this);
 }
 
 void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
@@ -198,6 +202,8 @@ void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
 	m_CreatedWing->AttachToComponent(m_SkBody, Rule, "Wing");
 
 	m_Movement->m_fMoveSpeedMultiple = spec.m_WingData->GetMoveSpdBonus();
+
+	m_OnMeshChanged.Broadcast(this);
 }
 
 void APlayerDiabloCharacter::AccessoryDataInject(const FAccessorySpec& spec)
@@ -209,6 +215,8 @@ void APlayerDiabloCharacter::AccessoryDataInject(const FAccessorySpec& spec)
 	}
 
 	PRINTF("DiaChar-DataInject Accesssory");
+
+	m_OnMeshChanged.Broadcast(this);
 }
 
 void APlayerDiabloCharacter::PetDataInject(const FPetSpec& spec)
@@ -227,6 +235,8 @@ void APlayerDiabloCharacter::PetDataInject(const FPetSpec& spec)
 	}
 
 	m_PetComp->SetChildActorClass(spec.m_PetData->m_ClassPetSkin);
+
+	m_OnMeshChanged.Broadcast(this);
 }
 
 void APlayerDiabloCharacter::ShowOutlineOnTarget(AUnitPawn* Unit)

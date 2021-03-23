@@ -25,7 +25,7 @@ void UWingEquipButton::Init(const FWingSpec& data, int index)
 	m_nIndex = index;
 	m_BtnEquip->OnClicked.AddDynamic(this,&UWingEquipButton::TryEquip);
 	m_BtnCombine->OnClicked.AddDynamic(this,&UWingEquipButton::TryCombine);
-	m_ImgIcon->SetBrushFromTexture(data.m_WingData->m_WingIcon);
+	m_ImgIcon->SetBrushFromTexture(data.m_WingData->m_Icon);
 	UpdateEquipWing();
 }
 

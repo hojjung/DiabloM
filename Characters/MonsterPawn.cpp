@@ -412,3 +412,36 @@ int AMonsterPawn::CalculateAccuracy(int attackerAccu)
     return Result;
 }
 
+float AMonsterPawn::TryAttack()
+{
+    if(m_BaseAttackAnim&&m_fAttackCD<0.f)
+    {
+        float AnimMongLen = PlayAnimMontage(m_BaseAttackAnim,1*m_fAttackSpeed,NAME_None);
+
+        if(AnimMongLen>m_fAttackCDConstant)
+        {
+            m_fAttackCD = AnimMongLen - 0.1f;
+        }
+        else
+        {
+            m_fAttackCD =m_fAttackCDConstant;
+        }
+
+        return AnimMongLen;;
+    }
+
+    return 0.f;
+    // PlayAnimMontage(m_BaseAttackAnim, 1 * GetAttackSpeed(),sectionSkillName? *sectionSkillName: SectionName);
+    //
+    // float AnimMongLen = m_BaseAttackAnim->GetSectionLength(sectionSkillName?m_BaseAttackAnim->GetSectionIndex(*sectionSkillName): (int)DmgType) / GetAttackSpeed();
+    //
+    // if(AnimMongLen>maxCd && !bUseMagic)
+    // {
+    //     AnimMongLen=maxCd;
+    // }
+    //
+    // currentCd = AnimMongLen-0.1f;//-0.1f;
+    // //
+    // GetWorldTimerManager().ClearTimer(m_AttackTimer);
+}
+

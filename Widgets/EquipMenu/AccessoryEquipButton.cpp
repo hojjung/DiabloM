@@ -86,14 +86,14 @@ void UAccessoryEquipButton::TryEquip()
 {
 	if(m_AccessorySpec)
 	{
-		if(m_ParentEquip->m_nAccessorySelector ==0)
-		{
-			UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory1(m_nIndex);	
-		}
-		else if(m_ParentEquip->m_nAccessorySelector ==1)
-		{
-			UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory2(m_nIndex);
-		}
+		// if(m_ParentEquip->m_nAccessorySelector ==0)
+		// {
+		// 	UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory1(m_nIndex);	
+		// }
+		// else if(m_ParentEquip->m_nAccessorySelector ==1)
+		// {
+		// 	UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory2(m_nIndex);
+		// }
 	}
 	else
 	{

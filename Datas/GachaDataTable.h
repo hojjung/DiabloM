@@ -16,17 +16,17 @@ class DIABLOM_API UGachaDataTable : public UObject
 };
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
-struct FGachaTableRow : public FTableRowBase
+struct FGachaAbleRow : public FTableRowBase
 {
 	GENERATED_BODY()
 	//무조건 한개가 뽑힌다
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
    	FText m_ShowingName;
-   	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-   	float m_fPriority = 1.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTexture2D* m_Icon;
+   	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+   	float m_fPriority = 1.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
    	FItemTierTableRowHandle m_Handle;
 
@@ -35,3 +35,22 @@ public:
 		return m_fPriority/weightTotal;
 	}
 };
+
+
+
+USTRUCT(BlueprintType)//���̵�,Ƽ��
+struct FGachaTableRow : public FTableRowBase
+{
+	GENERATED_BODY()
+	//무조건 한개가 뽑힌다
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FDataTableRowHandle m_GachaHandle;
+
+public:
+	const FGachaAbleRow& GetGachaData() const
+	{
+		return *m_GachaHandle.GetRow<FGachaAbleRow>("");
+	}
+};
+

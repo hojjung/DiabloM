@@ -31,8 +31,6 @@ class DIABLOM_API UEquipmentPanel : public UUserWidget
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UWidgetSwitcher* m_SwitcherPanel;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnClose;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnClassSkin;
@@ -41,9 +39,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnWing;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnAccessory1;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnAccessory2;
+	UButton* m_BtnAccessory;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnPet;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -66,6 +62,8 @@ protected:
 	UOverlay* m_OverlayAccessory;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UScrollBox* m_VertiAccessory;
+	UPROPERTY()
+	UOverlay* m_CurrentOpenedWidget;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -92,8 +90,6 @@ protected:
 	FSlateBrush m_CachedNormal;
 
 	UButton** m_PtrBtn;
-public:
-	int m_nAccessorySelector = -1;
 	
 protected:
 	virtual void NativeOnInitialized() override;
@@ -124,8 +120,6 @@ public:
 	UFUNCTION()
     void SetPanelWeapon();
 	UFUNCTION()
-    void SetPanelAccessory1();
-	UFUNCTION()
-    void SetPanelAccessory2();
+    void SetPanelAccessory();
 
 };

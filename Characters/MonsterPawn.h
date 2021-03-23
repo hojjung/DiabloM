@@ -114,4 +114,5 @@ public:
 
 	int CalculateAccuracy(int attackerAccu);
 
+	virtual float TryAttack() override;
 };

@@ -122,8 +122,7 @@ void UEquipmentPanel::NativeOnInitialized()
 	m_BtnWeapon->OnClicked.AddDynamic(this,&UEquipmentPanel::UEquipmentPanel::SetPanelWeapon);
 	m_BtnWing->OnClicked.AddDynamic(this,&UEquipmentPanel::UEquipmentPanel::SetPanelWing);
 	m_BtnPet->OnClicked.AddDynamic(this,&UEquipmentPanel::UEquipmentPanel::SetPanelPet);
-	m_BtnAccessory1->OnClicked.AddDynamic(this,&UEquipmentPanel::SetPanelAccessory1);
-	m_BtnAccessory2->OnClicked.AddDynamic(this,&UEquipmentPanel::SetPanelAccessory2);
+	m_BtnAccessory->OnClicked.AddDynamic(this,&UEquipmentPanel::SetPanelAccessory);
 	//
 	UDiabloGameInstance::Get->m_EquipManager->m_OnAccessoryChanged1.AddUObject(this,&UEquipmentPanel::OnAccessoryChanged);
 	UDiabloGameInstance::Get->m_EquipManager->m_OnAccessoryChanged2.AddUObject(this,&UEquipmentPanel::OnAccessoryChanged);
@@ -132,7 +131,7 @@ void UEquipmentPanel::NativeOnInitialized()
 	UDiabloGameInstance::Get->m_EquipManager->m_OnWeaponChanged.AddUObject(this,&UEquipmentPanel::OnWeaponChanged);
 	UDiabloGameInstance::Get->m_EquipManager->m_OnWingChanged.AddUObject(this,&UEquipmentPanel::OnWingChanged);
 
-	SetPanelSkin();
+	//SetPanelSkin();
 }
 
 void UEquipmentPanel::OnSkinChanged(int pre, int next)
@@ -214,60 +213,119 @@ void UEquipmentPanel::ClosePanel()
 
 void UEquipmentPanel::SetPanelSkin()
 {
-	m_SwitcherPanel->SetActiveWidget(m_OverlaySkin);
+	if(m_CurrentOpenedWidget)
+	{
+		m_CurrentOpenedWidget->SetVisibility(ESlateVisibility::Collapsed);
 
-	SetNormalImage();
+		SetNormalImage();
+
+		if(m_CurrentOpenedWidget==m_OverlaySkin)
+		{
+			m_CurrentOpenedWidget = nullptr;
+			
+			return;
+		}
+	}
 	
+	m_OverlaySkin->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+	m_CurrentOpenedWidget=m_OverlaySkin;
+
 	SetHoverImage(&m_BtnClassSkin);
 }
 
 void UEquipmentPanel::SetPanelWing()
 {
-	m_SwitcherPanel->SetActiveWidget(m_OverlayWing);
+	if(m_CurrentOpenedWidget)
+	{
+		m_CurrentOpenedWidget->SetVisibility(ESlateVisibility::Collapsed);
 
-	SetNormalImage();
+		SetNormalImage();
+
+		if(m_CurrentOpenedWidget==m_OverlayWing)
+		{
+			m_CurrentOpenedWidget = nullptr;
+
+			return;
+		}
+	}
+
+	m_OverlayWing->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+	m_CurrentOpenedWidget=m_OverlayWing;
 	
 	SetHoverImage(&m_BtnWing);
 }
 
 void UEquipmentPanel::SetPanelPet()
 {
-	m_SwitcherPanel->SetActiveWidget(m_OverlayPet);
+	if(m_CurrentOpenedWidget)
+	{
+		m_CurrentOpenedWidget->SetVisibility(ESlateVisibility::Collapsed);
+		
+		SetNormalImage();
+		
+		if(m_CurrentOpenedWidget==m_OverlayPet)
+		{
+			m_CurrentOpenedWidget = nullptr;
 
-	SetNormalImage();
+			return;
+		}
+
+	}
+
+	m_OverlayPet->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+	m_CurrentOpenedWidget=m_OverlayPet;
 	
 	SetHoverImage(&m_BtnPet);
 }
 
 void UEquipmentPanel::SetPanelWeapon()
 {
-	m_SwitcherPanel->SetActiveWidget(m_OverlayWeapon);
+	if(m_CurrentOpenedWidget)
+	{
+		m_CurrentOpenedWidget->SetVisibility(ESlateVisibility::Collapsed);
 
-	SetNormalImage();
+		SetNormalImage();
+		
+		if(m_CurrentOpenedWidget==m_OverlayWeapon)
+		{
+			m_CurrentOpenedWidget = nullptr;
+
+			return;
+		}
+	}
+
+	m_OverlayWeapon->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+	m_CurrentOpenedWidget=m_OverlayWeapon;
+	
+	//SetNormalImage();
 	
 	SetHoverImage(&m_BtnWeapon);
 }
 
-void UEquipmentPanel::SetPanelAccessory1()
+void UEquipmentPanel::SetPanelAccessory()
 {
-	m_SwitcherPanel->SetActiveWidget(m_OverlayAccessory);
+	if(m_CurrentOpenedWidget)
+	{
+		m_CurrentOpenedWidget->SetVisibility(ESlateVisibility::Collapsed);
 
-	m_nAccessorySelector = 0;
+		SetNormalImage();
+		
+		if(m_CurrentOpenedWidget==m_OverlayAccessory)
+		{
+			m_CurrentOpenedWidget = nullptr;
 
-	SetNormalImage();
+			return;
+		}
+	}
+
+	m_OverlayAccessory->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+	m_CurrentOpenedWidget=m_OverlayAccessory;
 	
-	SetHoverImage(&m_BtnAccessory1);
+	SetHoverImage(&m_BtnAccessory);
 }
-
-void UEquipmentPanel::SetPanelAccessory2()
-{
-	m_SwitcherPanel->SetActiveWidget(m_OverlayAccessory);
-
-	m_nAccessorySelector = 1;
-
-	SetNormalImage();
-	
-	SetHoverImage(&m_BtnAccessory2);
-}
-
 

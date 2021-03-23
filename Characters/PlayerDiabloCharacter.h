@@ -57,12 +57,15 @@ class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 public:
 	APlayerDiabloCharacter(const FObjectInitializer& objInit);
 
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMeshChanged,APlayerDiabloCharacter*);
 public:
 	FOnMove m_OnMove;
 
 	FOnFocusTargetChanged m_OnFocusTarget;
 
 	FOnFloatChange2 m_OnRageChanged;
+	
+	FOnMeshChanged m_OnMeshChanged;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
@@ -266,5 +269,10 @@ public:
 	{
 		return m_TickFSM;
 	}
+
+	FORCEINLINE const FPlayerClassSpec* GetPlayerEntityData()
+	{
+		return  m_PlayerEntityData;
+	};
 };
 

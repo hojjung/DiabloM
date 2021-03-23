@@ -78,4 +78,6 @@ public:
     void KillPlayer();
 	UFUNCTION(exec)
     void StunPlayer(float duration= 2.f);
+	UFUNCTION(exec)
+	void MoveStage(int index);
 };
