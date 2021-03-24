@@ -274,5 +274,20 @@ public:
 	{
 		return  m_PlayerEntityData;
 	};
+
+	FORCEINLINE  AEquipmentActor* GetCreatedWing()
+	{
+		return  m_CreatedWing;
+	};
+
+	FORCEINLINE  AEquipmentActor* GetCreatedWeapon()
+	{
+		return  m_CreatedWeapon;
+	};
+
+	FORCEINLINE  UChildActorComponent* GetPetComponent()
+	{
+		return  m_PetComp;
+	};
 };
 

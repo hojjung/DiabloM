@@ -18,6 +18,9 @@ class DIABLOM_API UGoldManager : public UObject
 protected:
 	BigInt m_CurrentGold;
 
+	BigInt m_OfflineGold;
+
+	int m_nMinute = 0;
 public:
 	FOnGoldChanged m_OnGoldChanged;
 	
@@ -29,7 +32,21 @@ public:
 		return m_CurrentGold;
 	}
 
-	void AddGold(const BigInt& v);
+	const BigInt& GetFinalOfflineGold() const
+	{
+		return m_OfflineGold;
+	}
+
+	int GetClampedOfflineMinutes()
+	{
+		return m_nMinute;
+	}
+
+	BigInt AddGold(const BigInt& v);
 
 	bool SubtractGold(const BigInt& v);
+	
+	void GainOfflineGold();
+
+	void SetOfflineMinutes(int minutes);
 };

@@ -22,10 +22,8 @@ APlayerVisual::APlayerVisual()
 
 	//init skMesh
 	RootComponent = CreateDefaultSubobject<USceneComponent>("Root");
-	RootComponent->SetMobility(EComponentMobility::Static);
 	CreateSkMeshComponent(&m_MeshBody, "SkMeshRoot", RootComponent);
 
-	m_MeshBody->SetMobility(EComponentMobility::Static);
 	m_MeshBody->SetRelativeLocation(FVector(0, 0, -80.f));//-80
 	m_MeshBody->SetRelativeRotation(FRotator(0, 90.f, 0));
 	//init Anim	
@@ -60,6 +58,11 @@ APlayerVisual::APlayerVisual()
 	//FReadSurfaceDataFlags ReadSurfaceDataFlags;
 	//ReadSurfaceDataFlags.SetLinearToGamma(false);
 	//RenderTargetResource->ReadPixels(Image, ReadSurfaceDataFlags);
+
+	m_PetComp = CreateDefaultSubobject<UChildActorComponent>("Child01");
+	m_PetComp->SetupAttachment(RootComponent);
+	m_PetComp->SetRelativeLocation(FVector(0, 90, 150));
+	m_PetComp->SetRelativeRotation(FRotator(0, -90, 0));
 }
 
 void APlayerVisual::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp, FName keyName, USceneComponent* root)
@@ -87,7 +90,8 @@ void APlayerVisual::BeginPlay()
 
 	UDiabloGameInstance::Get->GetPlChar()->m_OnMeshChanged.AddUObject(this,&APlayerVisual::OnMeshChanged);
 
-	OnMeshChanged(UDiabloGameInstance::Get->GetPlChar());
+	m_MeshBody->SetForcedLOD(0);
+	//OnMeshChanged(UDiabloGameInstance::Get->GetPlChar());
 }
 
 void APlayerVisual::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -141,8 +145,48 @@ void APlayerVisual::HideMeshWithTick()
 
 void APlayerVisual::OnMeshChanged(APlayerDiabloCharacter* charDia)
 {
-	const FPlayerSkinTable* EntityData = charDia->GetPlayerEntityData()->m_PlayerData; 
-	m_MeshBody->SetSkeletalMesh(EntityData->m_PlayerSkin);
-	m_MeshBody->PlayAnimation(EntityData->m_VisualIdleAnim,true);
+	if(charDia->GetPlayerEntityData())
+	{
+		const FPlayerSkinTable* EntityData = charDia->GetPlayerEntityData()->m_PlayerData; 
+		m_MeshBody->SetSkeletalMesh(EntityData->m_PlayerSkin);
+		m_MeshBody->PlayAnimation(EntityData->m_VisualIdleAnim,true);
+	}
 	
+	if(charDia->GetCreatedWeapon())
+	{
+		if(m_WeaponActor)
+		{
+			m_Capture->ShowOnlyActors.Remove(m_WeaponActor);
+			FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld, false);
+			m_WeaponActor->DetachFromActor(Rule);
+			m_WeaponActor->Destroy();
+		}
+		
+		
+		FActorSpawnParameters Param;
+
+		Param.bNoFail = true;
+		Param.Template = charDia->GetCreatedWeapon();
+
+		m_WeaponActor = GetWorld()->SpawnActor<AEquipmentActor>(Param);
+
+		FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
+                                       EAttachmentRule::KeepRelative, false);
+
+		m_WeaponActor->AttachToComponent(m_MeshBody, Rule, "RightHandBottom");
+
+		m_Capture->ShowOnlyActors.Add(m_WeaponActor);
+	}
+
+	if(charDia->GetCreatedWing())
+	{
+		//const FPlayerSkinTable* EntityData = charDia->GetPlayerEntityData()->m_PlayerData; 
+		//m_MeshBody->SetSkeletalMesh(EntityData->m_PlayerSkin);
+		//m_MeshBody->PlayAnimation(EntityData->m_VisualIdleAnim,true);
+	}
+
+	if(charDia->GetPetComponent())
+	{
+		m_PetComp->SetChildActorClass(charDia->GetPetComponent()->GetChildActorClass());
+	}
 }

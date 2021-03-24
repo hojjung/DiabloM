@@ -25,10 +25,21 @@ ADiabloGameMode::ADiabloGameMode()
 
 	PrimaryActorTick.bCanEverTick = false;
 }
-	
+
+
+void ADiabloGameMode::SpawnVisualActor()
+{
+	FVector Loc = FVector(7777.f);
+	FActorSpawnParameters Param;
+	Param.bNoFail=true;
+	m_VisualActor = GetWorld()->SpawnActor<APlayerVisual>(APlayerVisual::StaticClass(),Loc,FRotator(0.f),Param);
+	m_VisualActor->HideMeshWithTick();
+}
 
 void ADiabloGameMode::StartPlay()
 {
+	SpawnVisualActor();
+	
 	Super::StartPlay();
 
 	UDiabloGameInstance::Get->m_DungeonManager->LoadLevelComplete(this->GetWorld());
@@ -40,20 +51,17 @@ void ADiabloGameMode::StartPlay()
 	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(m_PlUpgrade, &UPlayerUpgradeManager::Tick);
 	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(m_ChatManager, &UChatManager::Tick);
 
-	//m_ChatManager->RequestGetChatFromServer();
-
-	//APlayerVisual
-
-	FVector Loc = FVector(7777.f);
-	FActorSpawnParameters Param;
-	Param.bNoFail=true;
-	m_VisualActor = GetWorld()->SpawnActor<APlayerVisual>(APlayerVisual::StaticClass(),Loc,FRotator(0.f),Param);
-	m_VisualActor->HideMeshWithTick();
-	//m_VisualActor->GetRootComponent()->SetMobility(EComponentMobility::Static);
+	
 
 	AGameLevelHUD* MyHud = Cast<AGameLevelHUD>( UDiabloGameInstance::Get->GetPlCon()->GetHUD());
-
 	MyHud->m_Canvas->m_OnMenuVisibleChanged.AddUObject(this,&ADiabloGameMode::OnMenuOpen);
+
+	UDiabloGameInstance::Get->m_GoldManager->GainOfflineGold();
+
+	AGameLevelHUD* GameLevelHUD = Cast<AGameLevelHUD>( UDiabloGameInstance::Get->GetPlCon()->GetHUD());
+
+	
+	GameLevelHUD->ShowOfflineGoldWindow(UDiabloGameInstance::Get->m_GoldManager->GetFinalOfflineGold());
 }
 
 void ADiabloGameMode::OnMenuOpen(bool b)

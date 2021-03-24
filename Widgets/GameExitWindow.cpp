@@ -5,39 +5,39 @@
 void UGameExitWindow::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	
-	m_BtnCancel->OnClicked.AddDynamic(this,&UGameExitWindow::Cancel);
-	m_BtnExitGame->OnClicked.AddDynamic(this,&UGameExitWindow::Exit);
 
-	m_bIsOpened=false;
+	m_BtnCancel->OnClicked.AddDynamic(this, &UGameExitWindow::Cancel);
+	m_BtnExitGame->OnClicked.AddDynamic(this, &UGameExitWindow::Exit);
+
+	m_bIsOpened = false;
 }
 
 void UGameExitWindow::OnBackkeyPressed()
 {
-	if(m_bIsOpened)
+	m_bIsOpened = !m_bIsOpened;
+
+	if (m_bIsOpened)
 	{
-		SetVisibility(ESlateVisibility::Collapsed);
-		UDiabloGameInstance::Get->GetPlCon()->SetPause(false);
+		SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else
 	{
-		SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		UDiabloGameInstance::Get->GetPlCon()->SetPause(true);
+		SetVisibility(ESlateVisibility::Collapsed);
+		
 	}
-
-	m_bIsOpened=!m_bIsOpened;
-	
+	UDiabloGameInstance::Get->GetPlCon()->SetPause(m_bIsOpened);
 }
 
 void UGameExitWindow::Cancel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
-	m_bIsOpened=false;
+	m_bIsOpened = false;
+	UDiabloGameInstance::Get->GetPlCon()->SetPause(m_bIsOpened);
 }
 
 void UGameExitWindow::Exit()
 {
 	PRINTF("Exit");
-	
+
 	UKismetSystemLibrary::QuitGame(GetWorld(), UDiabloGameInstance::Get->GetPlCon(), EQuitPreference::Quit, true);
 }

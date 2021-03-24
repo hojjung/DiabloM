@@ -30,3 +30,9 @@ void AGameLevelHUD::OnPressBackkey()
 {
 	m_Canvas->OnPressBackkey();
 }
+
+void AGameLevelHUD::ShowOfflineGoldWindow(BigInt gold)
+{
+	
+	m_Canvas->ShowOfflineGoldWindow(gold);
+}

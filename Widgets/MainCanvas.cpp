@@ -56,6 +56,8 @@ void UMainCanvas::NativeOnInitialized()
 	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
 
 	m_GameExitWindow->Cancel();
+	
+	m_OfflineGoldPanel->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UMainCanvas::RequestText(FText txt)
@@ -70,6 +72,16 @@ void UMainCanvas::RequestText(FText txt)
 void UMainCanvas::RequestText(FString txt)
 {
 	RequestText(FText::FromString(txt));
+}
+
+void UMainCanvas::ShowOfflineGoldWindow(BigInt gold)
+{
+	if(UDiabloGameInstance::Get->m_GoldManager->GetClampedOfflineMinutes()<2)
+	{
+		return;
+	}
+	m_OfflineGoldPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	m_OfflineGoldPanel->SetOfflineGold(gold);
 }
 
 void UMainCanvas::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

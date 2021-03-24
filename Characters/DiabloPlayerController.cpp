@@ -90,7 +90,7 @@ void ADiabloPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAction("Exit", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::ExitGame);
-	InputComponent->BindAction("AndroidBack", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::OnDeviceBackKey);
+	InputComponent->BindAction("AndroidBack", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::ExitGame);
 	InputComponent->BindAction("MouseClick", EInputEvent::IE_Pressed, this, &ADiabloPlayerController::ClickActor);
 }
 
@@ -101,11 +101,6 @@ void ADiabloPlayerController::ExitGame()
 	Cast<AGameLevelHUD>( GetHUD())->OnPressBackkey();
 	
 	//UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
-}
-
-void ADiabloPlayerController::OnDeviceBackKey()
-{
-	ExitGame();
 }
 
 void ADiabloPlayerController::ShowDamageNumber(const BigInt& local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup) //target

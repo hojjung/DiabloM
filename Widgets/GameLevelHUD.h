@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "DiabloM.h"
 #include "Widgets/MyHUD.h"
 #include "GameLevelHUD.generated.h"
 
@@ -26,4 +28,6 @@ public:
 	virtual void ReqeustPopupText(FText str) override;
 
 	virtual void OnPressBackkey() override;
+
+	void ShowOfflineGoldWindow(BigInt gold);
 };

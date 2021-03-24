@@ -85,4 +85,6 @@ public:
 	void SelectDungeon(int index);
 
 	void LevelUpDungeon();//Call By Boss
+
+	BigInt GetCurrentDungeonBounty();
 };

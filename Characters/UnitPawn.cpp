@@ -70,7 +70,7 @@ void AUnitPawn::BeginPlay()
     Super::BeginPlay();
     m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 
-    
+    m_SkBody->SetForcedLOD(1);
 }
 
 FPathFollowingRequestResult AUnitPawn::MoveToLocation(FVector goalLocation,float additionalAcceptRadius)

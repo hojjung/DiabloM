@@ -9,6 +9,7 @@
 #include "PlayFabClientDataModels.h"
 #include "PlayerUpgradeManager.h"
 #include "PlayFabAdminDataModels.h"
+#include "PlayFabClientModels.h"
 #include "PlayFabJsonObject.h"
 #include "PlayFabJsonValue.h"
 #include "PlayFabServerDataModels.h"
@@ -195,7 +196,22 @@ void UPlayfabManager::HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqu
 	else
 	{
 		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-GoogleLoginFail-2", "FAIL-GoogleLoginFail-2"));
-		FGenericPlatformMisc::RequestExit(true);
+		//FGenericPlatformMisc::RequestExit(true);
+
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Custom", "Try Login With Custom No Google"));
+		GetClientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
+
+		PlayFab::ClientModels::FLoginWithCustomIDRequest request;
+		request.CreateAccount = true;
+		request.CustomId = FGenericPlatformMisc::GetDeviceId();
+		request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
+
+		bool Result = GetClientAPI->LoginWithCustomID(request,
+                                                      PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
+                                                          this, &UPlayfabManager::OnSuccessPlayfabLogin),
+                                                      PlayFab::FPlayFabErrorDelegate::CreateUObject(
+                                                          this, &UPlayfabManager::OnErrorPlayfabReq)
+        );
 	}
 }
 
@@ -263,10 +279,14 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 
 	m_PlayfabID = Result.PlayFabId;
 
+	m_LastLoginTime = Result.LastLoginTime;
+
 	if (Result.NewlyCreated)
 	{
 		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("New Player", "New Player"));
 	}
+
+	//GetServerTime();
 	//
 	RequestGetAccountInfo();
 	//RequestGetUserData();
@@ -386,6 +406,9 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 		                              		m_MapCatalogItems.Add(CatalogItem.ItemId,CatalogItem);      
 		                              }
 	                              }), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+
+
+	RequestGetServerTime();
 }
 
 void UPlayfabManager::RequestGetAccountInfo()
@@ -580,6 +603,26 @@ void UPlayfabManager::OnSuccessGetInven( const PlayFab::ClientModels::FGetUserIn
 	int Currency = rslt.VirtualCurrency["GG"];
 
 	m_OnGemstoneChanged.Broadcast(Currency);
+}
+
+void UPlayfabManager::OnSuccessTimeGet(const PlayFab::ClientModels::FGetTimeResult& rslt)
+{
+	m_CurrentTime = rslt.Time;
+
+	FTimespan OfflineTimeSpawn = m_LastLoginTime - m_CurrentTime;
+
+	int Minuts =  OfflineTimeSpawn.GetMinutes();
+	
+	PRINTF("TimeSpan:%s,Minutes:%d",*OfflineTimeSpawn.ToString(),Minuts);
+	
+
+	UDiabloGameInstance::Get->m_GoldManager->SetOfflineMinutes(Minuts);
+}
+
+void UPlayfabManager::RequestGetServerTime()
+{
+	ClientModels::FGetTimeRequest Req;
+	GetClientAPI->GetTime(Req,PlayFab::UPlayFabClientAPI::FGetTimeDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessTimeGet));
 }
 
 #undef LOCTEXT_NAMESPACE

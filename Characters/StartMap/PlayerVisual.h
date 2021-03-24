@@ -29,7 +29,8 @@ protected:
 	USceneCaptureComponent2D* m_Capture;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	USpringArmComponent* m_Spring;
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
+	UChildActorComponent* m_PetComp;
 protected:
 	UPROPERTY()
 	UAnimSequence* m_AnimSeq;
@@ -41,6 +42,9 @@ protected:
 	FDelegateHandle Handle1;
 
 	FDelegateHandle Handle2;
+
+	UPROPERTY()
+	AEquipmentActor* m_WeaponActor;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -59,4 +63,9 @@ public:
 	void HideMeshWithTick();
 
 	void OnMeshChanged(APlayerDiabloCharacter* charDia);
+
+	USkeletalMeshComponent* GetSkMesh()
+	{
+		return m_MeshBody;
+	}
 };

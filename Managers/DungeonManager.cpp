@@ -42,16 +42,12 @@ void UDungeonManager::SetDungeonLevel(const FString& currentDG)//need split
 
 	m_nMyMaxStageLevel = FCString::Atoi(*AryDg[1]);
 
-	if(m_AryDgDataTable.MyRangeCheck(StageCurrentLevel))
+	if(!m_AryDgDataTable.MyRangeCheck(StageCurrentLevel))
 	{
-		m_CurrentDg = m_AryDgDataTable[StageCurrentLevel];
-		m_nCurrentStageLevel=StageCurrentLevel;
+		StageCurrentLevel = 0;
 	}
-	else
-	{
-		m_CurrentDg = m_AryDgDataTable[0];
-		m_nCurrentStageLevel=0;
-	}
+	
+	SelectDungeon(StageCurrentLevel);
 }
 
 void UDungeonManager::SelectDungeon(int index)
@@ -86,6 +82,11 @@ void UDungeonManager::LevelUpDungeon()
 	m_OnDgOpen.Broadcast(m_nCurrentStageLevel);
 	
 	OpenLevel();
+}
+
+BigInt UDungeonManager::GetCurrentDungeonBounty()
+{
+	return m_CurrentDg->GetMobGold();
 }
 
 void UDungeonManager::LoadLevelComplete(UWorld* world)

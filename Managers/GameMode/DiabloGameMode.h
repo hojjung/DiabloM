@@ -24,7 +24,8 @@ class DIABLOM_API ADiabloGameMode : public AGameMode
 	GENERATED_BODY()
 public:
 	ADiabloGameMode();
-	
+	void SpawnVisualActor();
+
 protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UActionManagerComponent* m_PlayerActionManager;
@@ -46,6 +47,11 @@ public:
 	}
 
 	void OnMenuOpen(bool b);
+
+	FORCEINLINE APlayerVisual* GetVisualActor()
+	{
+		return m_VisualActor;
+	}
 };
 
 

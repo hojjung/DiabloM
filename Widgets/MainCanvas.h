@@ -4,6 +4,7 @@
 
 #include "DiabloM.h"
 #include "GameExitWindow.h"
+#include "OfflineGoldBonusPanel.h"
 #include "PopupTextWidget.h"
 #include "Quest/QuestPanel.h"
 #include "SkillHotkeyPanel.h"
@@ -104,6 +105,8 @@ protected:
 	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UGameExitWindow* m_GameExitWindow;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UOfflineGoldBonusPanel* m_OfflineGoldPanel;
 protected:
 	UPROPERTY(meta = (BindWidgetAnim))
 	UWidgetAnimation* m_ShowText;
@@ -115,6 +118,8 @@ public:
 
 	void RequestText(FString txt);
 	
+	void ShowOfflineGoldWindow(BigInt gold);
+
 protected:
 	FTimerHandle m_TextTimer;
 	

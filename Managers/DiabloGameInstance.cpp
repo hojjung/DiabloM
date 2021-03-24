@@ -32,15 +32,13 @@ void UDiabloGameInstance::Init()
     m_PlayerUpgradeManager = NewObject<UPlayerUpgradeManager>();
     m_GoldManager = NewObject<UGoldManager>();
     m_EquipManager = NewObject<UEquipManager>();
+	m_GachaManager = NewObject<UGachaManager>();
+	m_QuestManager= NewObject<UQuestManager>();
     //
     m_PlayfabManager = NewObject<UPlayfabManager>();
     m_PlayfabManager->Init();
     //
-	m_GachaManager = NewObject<UGachaManager>();
-    //
-	m_ChatManager = NewObject<UChatManager>();
-	//
-	m_QuestManager= NewObject<UQuestManager>();
+	
 	//
     UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(33.f);
     
@@ -49,6 +47,7 @@ void UDiabloGameInstance::Init()
     UKismetSystemLibrary::ControlScreensaver(false);
 
     //
+	m_ChatManager = NewObject<UChatManager>();
 }
 
 void UDiabloGameInstance::Shutdown()

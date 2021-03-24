@@ -57,6 +57,10 @@ public:
 
 	FString m_OrderID;
 
+	FDateTime m_LastLoginTime;
+
+	FDateTime m_CurrentTime;
+
 public:
 	UPlayfabManager();
 
@@ -180,12 +184,16 @@ public:
 	void OnStageComplete();
 
 	void RequestVersionCheck();
+
+	void RequestGetServerTime();
 	
 protected:
 	void OnIAPGoogleValidateSuccess( const PlayFab::ClientModels::FValidateGooglePlayPurchaseResult&);
 
 
 	void OnSuccessGetInven( const PlayFab::ClientModels::FGetUserInventoryResult&);
+
+	void OnSuccessTimeGet(const PlayFab::ClientModels::FGetTimeResult& );
 };
 
 

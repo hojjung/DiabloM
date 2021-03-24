@@ -56,8 +56,6 @@ protected:
 	void ExitGame();
 
 public:
-	UFUNCTION()
-	void OnDeviceBackKey();
 	//
 	void ShowDamageNumber(const BigInt& local_damage_done,AUnitPawn* unit_pawn,EDamagePopup dmgPopup); //target
 
