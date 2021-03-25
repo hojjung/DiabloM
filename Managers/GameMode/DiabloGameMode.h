@@ -7,6 +7,7 @@
 #include "Components/PostProcessComponent.h"
 #include "GameFramework/GameMode.h"
 #include "Managers/ChatManager.h"
+#include "Managers/GoldManager.h"
 #include "Managers/MonsterSpawnManager.h"
 
 
@@ -37,7 +38,10 @@ protected:
 	UChatManager* m_ChatManager;
 	UPROPERTY()
 	APlayerVisual* m_VisualActor;
-	
+	UPROPERTY()
+	UGoldManager* m_GoldManager;
+
+	bool m_bGoldOfflineLock;
 public:
 	virtual void StartPlay() override;
 
@@ -52,6 +56,8 @@ public:
 	{
 		return m_VisualActor;
 	}
+
+	virtual void Tick(float DeltaSeconds) override;
 };
 
 

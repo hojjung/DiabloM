@@ -76,10 +76,6 @@ void UMainCanvas::RequestText(FString txt)
 
 void UMainCanvas::ShowOfflineGoldWindow(BigInt gold)
 {
-	if(UDiabloGameInstance::Get->m_GoldManager->GetClampedOfflineMinutes()<2)
-	{
-		return;
-	}
 	m_OfflineGoldPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	m_OfflineGoldPanel->SetOfflineGold(gold);
 }

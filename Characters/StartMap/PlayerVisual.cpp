@@ -61,8 +61,9 @@ APlayerVisual::APlayerVisual()
 
 	m_PetComp = CreateDefaultSubobject<UChildActorComponent>("Child01");
 	m_PetComp->SetupAttachment(RootComponent);
-	m_PetComp->SetRelativeLocation(FVector(0, 90, 150));
-	m_PetComp->SetRelativeRotation(FRotator(0, -90, 0));
+	m_PetComp->SetRelativeLocation(FVector(0, 45, 75));
+	m_PetComp->SetRelativeRotation(FRotator(0, 90, 0));
+	m_PetComp->SetRelativeScale3D(FVector(0.5f));
 }
 
 void APlayerVisual::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp, FName keyName, USceneComponent* root)
@@ -187,6 +188,13 @@ void APlayerVisual::OnMeshChanged(APlayerDiabloCharacter* charDia)
 
 	if(charDia->GetPetComponent())
 	{
+		if(m_PetComp->GetChildActor())
+		{
+			m_Capture->ShowOnlyActors.Remove(m_PetComp->GetChildActor());	
+		}
+		
 		m_PetComp->SetChildActorClass(charDia->GetPetComponent()->GetChildActorClass());
+
+		m_Capture->ShowOnlyActors.Add(m_PetComp->GetChildActor());
 	}
 }

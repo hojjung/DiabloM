@@ -14,16 +14,21 @@ UCLASS()
 class DIABLOM_API UGoldManager : public UObject
 {
 	GENERATED_BODY()
+public:
+	UGoldManager();
 
 protected:
 	BigInt m_CurrentGold;
 
 	BigInt m_OfflineGold;
 
-	int m_nMinute = 0;
+	int m_nMinute;
+	
+	bool m_bIsServerMinuteGained;
+	
 public:
 	FOnGoldChanged m_OnGoldChanged;
-	
+
 public:
 	void SetCurrentGold(const FString& v);
 	
@@ -46,7 +51,12 @@ public:
 
 	bool SubtractGold(const BigInt& v);
 	
-	void GainOfflineGold();
+	bool GainOfflineGold();
 
 	void SetOfflineMinutes(int minutes);
+
+	FORCEINLINE bool GetIsServerTimeGained()
+	{
+		return m_bIsServerMinuteGained;
+	}
 };

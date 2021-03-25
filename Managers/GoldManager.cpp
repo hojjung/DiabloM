@@ -6,6 +6,12 @@
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 
 
+UGoldManager::UGoldManager()
+{
+	m_nMinute = 0;
+	m_bIsServerMinuteGained = false;
+}
+
 void UGoldManager::SetCurrentGold(const FString& v)
 {
 	m_CurrentGold.Parse(v);
@@ -43,11 +49,11 @@ bool UGoldManager::SubtractGold(const BigInt& v)
 	return true;
 }
 
-void UGoldManager::GainOfflineGold()
+bool UGoldManager::GainOfflineGold()
 {
 	if(m_nMinute<2)
 	{
-		return;
+		return false;
 	}
 	
 	m_nMinute = FMath::Clamp(m_nMinute,1,1440);
@@ -57,9 +63,13 @@ void UGoldManager::GainOfflineGold()
 	Bounty.Multiply(5*m_nMinute);
 
 	m_OfflineGold = AddGold(Bounty);
+
+	return true;
 }
 
 void UGoldManager::SetOfflineMinutes(int minutes)
 {
 	m_nMinute = minutes;
+
+	m_bIsServerMinuteGained = true;
 }

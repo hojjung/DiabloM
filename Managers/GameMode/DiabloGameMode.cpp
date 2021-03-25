@@ -23,7 +23,9 @@ ADiabloGameMode::ADiabloGameMode()
 
 	m_PlayerActionManager=CreateDefaultSubobject<UActionManagerComponent>("PlayerActionManager");
 
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
+
+	m_bGoldOfflineLock=  false;
 }
 
 
@@ -51,17 +53,14 @@ void ADiabloGameMode::StartPlay()
 	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(m_PlUpgrade, &UPlayerUpgradeManager::Tick);
 	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(m_ChatManager, &UChatManager::Tick);
 
-	
+	m_GoldManager	= UDiabloGameInstance::Get->m_GoldManager;
 
 	AGameLevelHUD* MyHud = Cast<AGameLevelHUD>( UDiabloGameInstance::Get->GetPlCon()->GetHUD());
 	MyHud->m_Canvas->m_OnMenuVisibleChanged.AddUObject(this,&ADiabloGameMode::OnMenuOpen);
 
-	UDiabloGameInstance::Get->m_GoldManager->GainOfflineGold();
-
-	AGameLevelHUD* GameLevelHUD = Cast<AGameLevelHUD>( UDiabloGameInstance::Get->GetPlCon()->GetHUD());
+	//UDiabloGameInstance::Get->m_GoldManager->GainOfflineGold();
 
 	
-	GameLevelHUD->ShowOfflineGoldWindow(UDiabloGameInstance::Get->m_GoldManager->GetFinalOfflineGold());
 }
 
 void ADiabloGameMode::OnMenuOpen(bool b)
@@ -73,6 +72,25 @@ void ADiabloGameMode::OnMenuOpen(bool b)
 	else
 	{
 		m_VisualActor->HideMeshWithTick();
+	}
+}
+
+void ADiabloGameMode::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if(!m_bGoldOfflineLock&&m_GoldManager->GetIsServerTimeGained())
+	{
+		m_bGoldOfflineLock=true;
+		
+		if(!m_GoldManager->GainOfflineGold())
+		{
+			return;
+		}
+		
+		AGameLevelHUD* GameLevelHUD = Cast<AGameLevelHUD>( UDiabloGameInstance::Get->GetPlCon()->GetHUD());
+
+		GameLevelHUD->ShowOfflineGoldWindow(m_GoldManager->GetFinalOfflineGold());
 	}
 }
 

@@ -8,9 +8,9 @@ void UOfflineGoldBonusPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	m_FormatOfflineGold = FText::FromString("오프라인 보상으로 {0}골드를 획득했습니다.");
+	m_FormatOfflineGold = FText::FromString(TEXT("오프라인 보상으로 {0}골드를 획득했습니다."));
 
-	m_FormatOfflineTime = FText::FromString("오프라인시간:{0}분");
+	m_FormatOfflineTime = FText::FromString(TEXT("오프라인시간:{0}분"));
 
 	m_BtnConfirm->OnClicked.AddDynamic(this,&UOfflineGoldBonusPanel::OnConfirm);
 }
@@ -36,13 +36,11 @@ void UOfflineGoldBonusPanel::SetOfflineGold(BigInt gold)
 	m_TextOfflineGoldCurrent->SetText(FText::Format(m_FormatOfflineTime, Args2));
 
 	m_OfflineTimeGauge->SetProgressValue(PercentOne);
-
-	
 }
 
 void UOfflineGoldBonusPanel::OnConfirm()
 {
-	UDiabloGameInstance::Get->m_GoldManager->GainOfflineGold();
+	//UDiabloGameInstance::Get->m_GoldManager->GainOfflineGold();
 
 	SetVisibility(ESlateVisibility::Collapsed);
 }
