@@ -203,8 +203,6 @@ public:
     
     bool IsMoving();
     
-    virtual int GetAccuLevel();
-
     UUnitMovement* GetMoveComp()
     {
         return m_Movement;

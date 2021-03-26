@@ -646,7 +646,7 @@ bool UEquipManager::TryCombinePet(int index)
 
 bool UEquipManager::TryLvUpWeapon(int index)
 {
-	if (m_AryWeapons[index].m_nLv >= 200)
+	if (m_AryWeapons[index].m_nLv >= m_AryWeapons[index].GetMaxLv())
 	{
 		return false;
 	}
@@ -660,7 +660,7 @@ bool UEquipManager::TryLvUpWeapon(int index)
 
 bool UEquipManager::TryLvUpPet(int index)
 {
-	if (m_AryPets[index].m_nLv >= 200)
+	if (m_AryPets[index].m_nLv >= 100)
 	{
 		return false;
 	}

@@ -7,7 +7,7 @@ void UGachaInfoElement::SetInfoText(const FGachaTableRow* gachaTable,float total
 {
 	m_TextGachaName->SetText(gachaTable->GetGachaData().m_ShowingName);
 
-	float Percent = gachaTable->GetGachaData().GetPercent(totalPercent);
+	float Percent = gachaTable->GetPercent(totalPercent);
 
 	FFormatOrderedArguments Args;
 

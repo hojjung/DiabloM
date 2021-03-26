@@ -5,6 +5,7 @@
 #include "Item/AccessoryOption.h"
 #include "Item/EquipmentActor.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
+#include "Managers/PlayerUpgradeManager.h"
 #include "UObject/NoExportTypes.h"
 #include "EquipmentData.generated.h"
 
@@ -22,57 +23,71 @@ struct FWeaponTable : public FGachaAbleRow
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly ,meta = (MultiLine = true))
-	FText m_UpgradeDescFormat =FText::FromString( "Dmg Increase:{0}%>>P{1}%\nAccuracy Increase:{2}>>P{3}");
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AEquipmentActor> m_ClassVisualActor = nullptr;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0"))
-	float m_fBaseDmgPer = 1.f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0"))
-	int m_nInitAccuracy = 1;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0"))
-	int m_nBaseAccu = 1;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	int m_nMaxLevel = 100;
+	int m_nDmgLevel = 1;//1당 5배 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	float m_fBaseCost = 9;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fCostMultiFactor = 1.06f;
 
 	BigInt GetDmgPer(int level) const
 	{
-		BigInt Dmg = m_fBaseDmgPer;
-
-		Dmg.Multiply(level);
+		level = FMath::Clamp(level,0,100);
 		
-		return Dmg;
-	}
+		BigInt Dmg = 100;
 
-	int GetAccuracy(int level) const
-	{
-		return (m_nBaseAccu*level) + m_nBaseAccu;
+		if(m_nDmgLevel>1)
+		{
+			int IterMax = m_nDmgLevel-1;
+			
+			for(int i=0; i<IterMax;i++)
+			{
+				Dmg.MultiplyFast(5);	
+			}
+		}
+
+		if(level>0)
+		{
+			
+		BigInt Percent = Dmg;
+		
+		Percent.Divide(100);
+		
+		Percent.Multiply(level);
+
+		Dmg+=Percent;
+		}
+
+		return Dmg;
 	}
 
 	BigInt GetCost(int level) const
 	{
-		level  = FMath::Clamp(level,level,m_nMaxLevel);
+		level  = FMath::Clamp(level,0,100);
+		
+		BigInt Cost = m_fBaseCost*level;
 
-		float Factor =  FMath::Pow(m_fCostMultiFactor,level);
-
-		BigInt Cost = m_fBaseCost;
-
-		Cost.Multiply(Factor);
+		if(level>1)
+		{
+			int IterMax = level-1;
+			
+			for(int i=0; i<IterMax;i++)
+			{
+				//Cost.MultiplyFast(2);
+				Cost = UPlayerUpgradeManager::MultiplePercent(Cost,107,0,2);
+			}
+		}
 
 		return Cost;
 	}
 
 	FText GetFormatDescPreview(int level) const
 	{
-		FTextFormat Format = m_UpgradeDescFormat;
+		FTextFormat Format = FText::FromString(TEXT("데미지 증가:{0}%>\n\r>다음 레벨{1}%"));
 
 		FFormatOrderedArguments Args;
 		
-		FText Str1 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetDmgPer(level)));
+		FText Str1 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetDmgPer(level),2));
 		
 		Args.Add(Str1);
 
@@ -80,19 +95,16 @@ public:
 
 		FText Str3 = FText::FromString("MAX");
 		
-		if(level<m_nMaxLevel)
+		if(level<100)
 		{
-			FText Str2 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetDmgPer(NewLevel)));
+			FText Str2 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetDmgPer(NewLevel),2));
 			
 			Args.Add(Str2);
-			
-				
 		}
 		else
 		{			
 			Args.Add(Str3);
-			Args.Add(GetAccuracy(level));
-			Args.Add(Str3);
+			//Args.Add(Str3);
 		}
 
 		FText TT = FText::Format(Format,Args);
@@ -108,8 +120,6 @@ struct FPlayerSkinTable : public FGachaAbleRow
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
-	FString m_DescFormat = "Attack Speed {0}%";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USkeletalMesh* m_PlayerSkin = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -128,7 +138,7 @@ public:
 
 	FText GetFormatDescPreview() const
 	{
-		FTextFormat Format = FText::FromString(m_DescFormat);
+		FTextFormat Format = FText::FromString(TEXT("공격속도 {0}%"));
 
 		FFormatOrderedArguments Args;
 		
@@ -148,8 +158,6 @@ struct FWingTable : public FGachaAbleRow
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
-	FString m_DescFormat = "Move Speed Increase:{0}%";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AEquipmentActor> m_ClassVisualWingActor = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0", UIMax = "3.3"))
@@ -162,7 +170,7 @@ public:
 
 	FText GetFormatDescPreview() const
 	{
-		FTextFormat Format = FText::FromString(m_DescFormat);
+		FTextFormat Format = FText::FromString(TEXT("이동속도 {0}%"));
 
 		FFormatOrderedArguments Args;
 		
@@ -180,8 +188,6 @@ struct FPetTable : public FGachaAbleRow
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
-	FString m_DescFormat = "Gold Gain Increase:{0}%";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AEquipmentActor> m_ClassPetSkin;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -220,7 +226,7 @@ public:
 
 	FText GetFormatDescPreview(int level) const
 	{
-		FTextFormat Format = FText::FromString(m_DescFormat);
+		FTextFormat Format = FText::FromString(TEXT("골드 획득 보너스 {0}%"));
 
 		FText Str1 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetGoldBonusValue(level)));
 		

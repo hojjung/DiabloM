@@ -115,7 +115,7 @@ void UGachaManager::SetTotalValue(const UDataTable* inTable, TArray<FGachaTableR
 
 	for (FGachaTableRow* TableRow : outTableRow)
 	{
-		outTotal += TableRow->GetGachaData().m_fPriority;
+		outTotal += TableRow->m_fPriority;
 	}
 }
 
@@ -151,7 +151,7 @@ const FGachaAbleRow* UGachaManager::RollWeapon()
 	
 	for (FGachaTableRow* TableRow : GetCurrentLevelWeaponTable())
 	{
-		CurrentPercent += TableRow->GetGachaData().GetPercent(WeightTotal);
+		CurrentPercent += TableRow->GetPercent(WeightTotal);
 
 		if (CurrentPercent >= RollPercent)
 		{
@@ -178,7 +178,7 @@ const FGachaAbleRow* UGachaManager::RollSkin()
 	int i=0;
 	for (FGachaTableRow* TableRow : GetCurrentLevelSkinTable())
 	{
-		CurrentPercent += TableRow->GetGachaData().GetPercent(WeightTotal);
+		CurrentPercent += TableRow->GetPercent(WeightTotal);
 
 		if (CurrentPercent >= RollPercent)
 		{
@@ -206,7 +206,7 @@ const FGachaAbleRow* UGachaManager::RollPet()
 	//0.1
 	for (FGachaTableRow* TableRow : m_AryGachaPet)
 	{
-		CurrentPercent += TableRow->GetGachaData().GetPercent(WeightTotal);
+		CurrentPercent += TableRow->GetPercent(WeightTotal);
 
 		if (CurrentPercent >= RollPercent)
 		{
@@ -235,7 +235,7 @@ const FGachaAbleRow* UGachaManager::RollWing()
 	//0.1
 	for (FGachaTableRow* TableRow : m_AryGachaWing)
 	{
-		CurrentPercent += TableRow->GetGachaData().GetPercent(WeightTotal);
+		CurrentPercent += TableRow->GetPercent(WeightTotal);
 
 		if (CurrentPercent >= RollPercent)
 		{
@@ -264,7 +264,7 @@ const FGachaAbleRow* UGachaManager::RollAccessory()
 	
 	for (FGachaTableRow* TableRow : m_AryGachaAccessory)
 	{
-		CurrentPercent += TableRow->GetGachaData().GetPercent(WeightTotal);
+		CurrentPercent += TableRow->GetPercent(WeightTotal);
 
 		if (CurrentPercent >= RollPercent)
 		{

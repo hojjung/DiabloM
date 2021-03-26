@@ -228,6 +228,7 @@ void UPlayerUpgradeManager::ClearCooldownAllSkill()
 	}
 }
 
+//1,1
 BigInt UPlayerUpgradeManager::MultiplePercent(BigInt a, BigInt b, int aPrecisionCount,
                                               int bPrecisionCount)
 {

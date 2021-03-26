@@ -117,7 +117,7 @@ void ADiabloPlayerController::ShowDamageNumber(const BigInt& local_damage_done,A
 	}
 	else
 	{
-		DamageText->SetDamageText(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(local_damage_done)));//
+		DamageText->SetDamageText(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(local_damage_done,2)));//
 	}
 	
 	DamageText->StartAnimation(dmgPopup);

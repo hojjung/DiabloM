@@ -694,10 +694,6 @@ void APlayerDiabloCharacter::ApplyMoveSpeedToOrigin()
 	m_Movement->SetMoveSpeedRatio(1.f);
 }
 
-int APlayerDiabloCharacter::GetAccuLevel()
-{
-	return m_EquipManager->GetCurrentWeapon().m_nAccuracy;
-}
 
 void APlayerDiabloCharacter::SetManualMoveLocation(FVector goalLocation)
 {

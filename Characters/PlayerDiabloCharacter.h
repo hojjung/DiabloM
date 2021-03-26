@@ -237,8 +237,6 @@ public:
 
 	void ApplyMoveSpeedToOrigin();
 
-	virtual int GetAccuLevel() override;
-
 	FVector GetCameraLoc() const
 	{
 		return m_TopCamera->GetComponentLocation();

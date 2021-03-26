@@ -33,7 +33,6 @@ public:
 	int m_nStackCount = 0;
 	BigInt m_Value;
 	BigInt m_LvlUpCost;
-	int m_nAccuracy = 1;
 	const FWeaponTable* m_EquipData;
 
 	void SetLevel(int v)
@@ -41,12 +40,11 @@ public:
 		m_nLv = v;
 		m_Value = m_EquipData->GetDmgPer(m_nLv);
 		m_LvlUpCost = m_EquipData->GetCost(m_nLv);
-		m_nAccuracy = m_EquipData->GetAccuracy(m_nLv);
 	}
 
 	int GetMaxLv() const
 	{
-		return m_EquipData->m_nMaxLevel;
+		return 100;
 	}
 
 	

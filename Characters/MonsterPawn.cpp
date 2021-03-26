@@ -10,7 +10,6 @@
 AMonsterPawn::AMonsterPawn(const FObjectInitializer& objInit):
 Super(objInit.SetDefaultSubobjectClass<UMobUnitMovement>("Movement00"))
 {
-    m_nAvoidLevel=0;
     m_bDeathAnimEnd=true;
     m_bUseFSM = true;
     m_Movement->m_bUseRVO = true;
@@ -127,7 +126,7 @@ void AMonsterPawn::RequestGetGoldBounty()
     UDiabloGameInstance::Get->m_GoldManager->AddGold(m_fGoldBounty);
 }
 
-void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,int avoidLevel,const FItemDropTableRow* dropTable,float statFactor ,float scaleFactor)//droptable
+void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,const FItemDropTableRow* dropTable,float statFactor ,float scaleFactor)//droptable
 {
     m_DropTable = dropTable;
     
@@ -177,17 +176,11 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     
     m_fCurrentHP = m_fMaxHP;
 
-    m_nAvoidLevel = avoidLevel;
-
     UpdateHealthBar(GetHpPercentOne());
-
-    
 
     m_SkBody->SetScalarParameterValueOnMaterials("Visibility",1.f);
 
     m_SkBody->SetRelativeScale3D(FVector(scaleFactor));
-
-    //m_StShadow->SetRelativeScale3D(FVector(5.f));
 
     if(m_SpawnAnim)
     {
@@ -305,17 +298,6 @@ void AMonsterPawn::TakeDmg(BigInt amount, AUnitPawn* attacker,EDamagePopup pp)
         FocusTarget(attacker);
     }
 
-    float Accu = CalculateAccuracy(attacker->GetAccuLevel()) * 3.f;
-    //10이면 30프로로 맞춤,30이면 90프로로 맞춤
-    
-    float RandResult = FMath::RandRange(0.f,100.f);
-
-    if(RandResult > Accu)
-    {
-        m_PlCon->ShowDamageNumber(100.f-Accu,this,EDamagePopup::Miss);
-        return;
-    }
-    
     PlayTookHitMontage();
     PlayHitFlash();
     PlayHittenSound();
@@ -399,17 +381,6 @@ void AMonsterPawn::SetAcive(bool v)
     //    HideStatusBar();
         FocusTarget(nullptr);
     }
-}
-
-int AMonsterPawn::CalculateAccuracy(int attackerAccu)
-{
-    int TargetAvoid = m_nAvoidLevel;
-
-    int Result = attackerAccu - TargetAvoid;//130 - 100
-
-    Result = FMath::Clamp(Result,10,30);
-
-    return Result;
 }
 
 float AMonsterPawn::TryAttack()

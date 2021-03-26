@@ -69,8 +69,6 @@ protected:
 
 	bool m_bDeathAnimEnd;
 
-	int m_nAvoidLevel;
-
 protected:
 	void RequestDropItem();
 
@@ -104,15 +102,13 @@ public: //need more monster
 public:
     void PlayHitFlash();
 
-	void DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,int avoidLevel,const FItemDropTableRow* dropTable,float statFactor =1.f,float scaleFactor=1.f);
+	void DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,const FItemDropTableRow* dropTable,float statFactor =1.f,float scaleFactor=1.f);
 
 	virtual bool IsAlive() const override;
 
 	bool IsReadyToPool();
 
 	void SetAcive(bool v);
-
-	int CalculateAccuracy(int attackerAccu);
 
 	virtual float TryAttack() override;
 };

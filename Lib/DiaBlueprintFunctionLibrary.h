@@ -16,7 +16,7 @@ class DIABLOM_API UDiaBlueprintFunctionLibrary : public UBlueprintFunctionLibrar
 	GENERATED_BODY()
 
 public:
-	static const int UnitSymbolMax = 11;
+	static const int UnitSymbolMax = 26;
 	
 	static const FText UnitSymbol[UnitSymbolMax];
 

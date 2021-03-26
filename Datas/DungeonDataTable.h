@@ -27,6 +27,7 @@ struct FItemDropTableHandle :public FDataTableRowHandle
 public:
 	FItemDropTableHandle();
 };
+
 USTRUCT(BlueprintType)
 struct FMonsterEntity : public FTableRowBase
 {
@@ -34,7 +35,6 @@ struct FMonsterEntity : public FTableRowBase
 
 public:
 	FMonsterEntity(): m_Mesh(nullptr),
-                      m_nAvoidLevel(1),
                       m_SpawnAnim(nullptr), m_BaseAttackAnim(nullptr),
                       m_DeathMontage(nullptr),
                       m_TookHitMontage(nullptr)
@@ -57,8 +57,6 @@ public:
 	float m_fAttackRange = 330.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.5"))
 	float m_fAttackSpeed = 0.5f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0"))
-	int m_nAvoidLevel = 1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UAnimInstance> m_AnimBP;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -90,19 +88,8 @@ public:
 	FName m_DgId;//should same with level asset name
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FMonsterEntityHandle m_Monster;
-	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(UIMin = "1.0"))
 	int m_nMonsterLevel;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	int m_nAvoidLevel=1;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(UIMin = "1.0"))
-	float m_fInitValue = 20;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)//인컴은 항상 선형적이다
-	float m_fBaseValue = 1.67f;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fBaseCost = 9;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fCostMultiFactor = 1.06f;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FItemDropTableHandle m_NormalDropTableHandle;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -113,45 +100,49 @@ public:
 private:
 	static float GetLevelBonus(int level)
 	{
-		if(level < 25)
+		if(level <8)
 		{
 			return 1.f;
 		}
-		else if(level < 50)
+		else if(level < 16)
 		{
 			return 2.f;
 		}
-		else if(level < 100)
+		else if(level < 24)
 		{
 			return 4.f;
 		}
-		else if(level < 200)
+		else if(level < 32)
 		{
 			return 8.f;
 		}
-		else if(level < 300)
+		else if(level < 40)
 		{
 			return 16.f;
 		}
-		else if(level < 400)
+		else if(level < 48)
 		{
 			return 32.f;
 		}
-		else if(level < 500)
+		else if(level < 56)
 		{
 			return 64.f;
 		}
-		else if(level < 600)
+		else if(level < 64)
 		{
 			return 128.f;
 		}
-		else if(level < 1000)
+		else if(level < 72)
 		{
 			return 256;
 		}
-		else 
+		else if(level < 80)
 		{
 			return 512;
+		}
+		else
+		{
+			return 1024;
 		}
 	}
 
@@ -162,46 +153,20 @@ public:
 		
 		float BonusMulti = GetLevelBonus(level);
 
-		BigInt Value = m_fBaseValue;
+		BigInt Value = 100;
 
-		return (Value * BonusMulti * level) + m_fInitValue;
+		return (Value * BonusMulti * level) + 100;
 	}
 
 	BigInt GetMobGold() const
-	{
-		int level  = m_nMonsterLevel;
-
-		float Factor =  FMath::Pow(m_fCostMultiFactor,level);
-
-		BigInt Cost = m_fBaseCost;
-
-		Cost.Multiply(Factor);
-
-		return Cost;
-	}
-
-	BigInt GetBossMobHp() const
 	{
 		int level = m_nMonsterLevel;
 		
 		float BonusMulti = GetLevelBonus(level);
 
-		BigInt Value = m_fBaseValue;
+		BigInt Value = 30;
 
-		return ((Value * BonusMulti * level) + m_fInitValue) *29;
-	}
-
-	BigInt GetBossMobGold() const
-	{
-		int level  = m_nMonsterLevel;
-
-		float Factor =  FMath::Pow(m_fCostMultiFactor,level);
-
-		BigInt Cost = m_fBaseCost;
-
-		Cost.Multiply(Factor*29);
-
-		return Cost;
+		return (Value * BonusMulti * level) + 30;
 	}
 };
 
