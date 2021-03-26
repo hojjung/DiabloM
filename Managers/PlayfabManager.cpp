@@ -611,9 +611,9 @@ void UPlayfabManager::OnSuccessTimeGet(const PlayFab::ClientModels::FGetTimeResu
 
 	FTimespan OfflineTimeSpawn = m_CurrentTime- m_LastLoginTime;
 
-	int Minuts =  OfflineTimeSpawn.GetMinutes();
+	int Minuts =  OfflineTimeSpawn.GetTotalMinutes();
 	
-	PRINTF("TimeSpan:%s,Minutes:%d",*OfflineTimeSpawn.ToString(),Minuts);
+	PRINTF("LastLogin%s,CurrentTime:%s,TimeSpan:%s,Minutes:%d",*m_LastLoginTime.ToString(),*m_CurrentTime.ToString(),*OfflineTimeSpawn.ToString(),Minuts);
 	
 	UDiabloGameInstance::Get->m_GoldManager->SetOfflineMinutes(Minuts);
 }

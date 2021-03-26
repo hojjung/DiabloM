@@ -37,6 +37,7 @@ void UChatWindow::NativeOnInitialized()
 	SetChatWindowOpenClose();
 
 	m_ChatWindowToggle->OnClicked.AddDynamic(this,&UChatWindow::SetChatWindowOpenClose);
+
 }
 
 void UChatWindow::ClearChat()

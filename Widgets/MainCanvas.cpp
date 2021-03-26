@@ -60,6 +60,8 @@ void UMainCanvas::NativeOnInitialized()
 	m_OfflineGoldPanel->SetVisibility(ESlateVisibility::Collapsed);
 }
 
+
+
 void UMainCanvas::RequestText(FText txt)
 {
 	m_PopupText->SetVisibility(ESlateVisibility::SelfHitTestInvisible);

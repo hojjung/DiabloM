@@ -82,7 +82,7 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 	if(!m_bGoldOfflineLock&&m_GoldManager->GetIsServerTimeGained())
 	{
 		m_bGoldOfflineLock=true;
-		
+
 		if(!m_GoldManager->GainOfflineGold())
 		{
 			return;
@@ -91,6 +91,8 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 		AGameLevelHUD* GameLevelHUD = Cast<AGameLevelHUD>( UDiabloGameInstance::Get->GetPlCon()->GetHUD());
 
 		GameLevelHUD->ShowOfflineGoldWindow(m_GoldManager->GetFinalOfflineGold());
+		
+		SetActorTickEnabled(false);
 	}
 }
 

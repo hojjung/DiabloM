@@ -59,4 +59,6 @@ public:
 	{
 		return m_bIsServerMinuteGained;
 	}
+
+	
 };

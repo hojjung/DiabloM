@@ -194,6 +194,7 @@ public:
 	void OnMenuPanelVisibleChanged(bool b);
 
 	virtual void NativeOnInitialized() override;
+	
 };
 
 

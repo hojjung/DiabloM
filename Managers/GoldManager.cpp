@@ -64,6 +64,8 @@ bool UGoldManager::GainOfflineGold()
 
 	m_OfflineGold = AddGold(Bounty);
 
+	m_bIsServerMinuteGained = false;
+
 	return true;
 }
 
