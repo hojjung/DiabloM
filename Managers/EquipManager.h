@@ -206,7 +206,6 @@ struct FAccessorySpec
 	GENERATED_BODY()
 public:
 	int m_nLv =0;
-	int m_nIsEquipped = 0;
 	int m_nStackCount;
 	
 	BigInt m_Value;
@@ -226,8 +225,6 @@ public:
 		FString StrW;
 		StrW.AppendInt(m_nLv);
 		StrW.Append(":");
-		StrW.AppendInt(m_nIsEquipped);
-		StrW.Append(":");
 		StrW.AppendInt(m_nStackCount);
 		StrW.Append(":");
 		
@@ -241,8 +238,7 @@ public:
 		str.ParseIntoArray(OutStrAry,TEXT(":"));
 
 		m_nLv = FCString::Atoi(*OutStrAry[0]);
-		m_nIsEquipped = FCString::Atoi(*OutStrAry[1]);
-		m_nStackCount = FCString::Atoi(*OutStrAry[2]);
+		m_nStackCount = FCString::Atoi(*OutStrAry[1]);
 	}
 };
 
@@ -316,9 +312,6 @@ public:
 
 	void TryEquipPet(int index);
 
-	void TryEquipAccessory1(int index);
-
-	void TryEquipAccessory2(int index);
 
 public:
 	bool TryCombineSkin(int index);

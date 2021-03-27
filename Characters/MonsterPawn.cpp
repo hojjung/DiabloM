@@ -223,9 +223,9 @@ void AMonsterPawn::HideStatusBar()
 
 void AMonsterPawn::Die()
 {
-    auto* Pawn =Cast<APlayerDiabloCharacter>( UGameplayStatics::GetPlayerPawn(GetWorld(),0));
+    APlayerDiabloCharacter* Pawn = Cast<APlayerDiabloCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
     Pawn->FocusTarget(nullptr);
-    Pawn->GainRagePoint();
+    //Pawn->GainRagePoint();
     
     UDiabloGameInstance::Get->m_MonsterSpawn->AddKillCount();
     RequestDropItem();

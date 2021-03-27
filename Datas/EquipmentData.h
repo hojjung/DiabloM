@@ -30,6 +30,8 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	float m_fBaseCost = 9;
 
+public:
+
 	BigInt GetDmgPer(int level) const
 	{
 		level = FMath::Clamp(level,0,100);
@@ -42,7 +44,7 @@ public:
 			
 			for(int i=0; i<IterMax;i++)
 			{
-				Dmg.MultiplyFast(5);	
+				Dmg.MultiplyFast(50);	
 			}
 		}
 
@@ -74,7 +76,7 @@ public:
 			for(int i=0; i<IterMax;i++)
 			{
 				//Cost.MultiplyFast(2);
-				Cost = UPlayerUpgradeManager::MultiplePercent(Cost,107,0,2);
+				Cost = UDiaBlueprintFunctionLibrary::MultiplePercent(Cost,107,0,2);
 			}
 		}
 

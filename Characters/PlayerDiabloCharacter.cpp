@@ -26,9 +26,9 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 
 	m_DissolveCam = CreateDefaultSubobject<UCameraDissolve>("CamDissolve00");
 	m_DissolveCam->SetupAttachment(RootComponent);
-	m_DissolveCam->SetRelativeRotation(FRotator(-55.f, 45.f, 0.f));//-50
+	m_DissolveCam->SetRelativeRotation(FRotator(-55.f, 45.f, 0.f)); //-50
 	m_DissolveCam->SetRelativeLocation(FVector(0, 0, 0.f));
-	m_DissolveCam->TargetArmLength = 1275.f;//1400
+	m_DissolveCam->TargetArmLength = 1275.f; //1400
 	//
 	m_TopCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera00");
 	m_TopCamera->SetupAttachment(m_DissolveCam);
@@ -84,8 +84,9 @@ void APlayerDiabloCharacter::BeginPlay()
 	m_TickFSM = NewObject<UFSMTick>(this, UFSMTick::StaticClass());
 	m_TickFSM->Init(this);
 	m_bUseFSM = true;
-	GetTickFSM()->m_OnMoveDone.AddUObject(UDiabloGameInstance::Get->GetPlCon(),&ADiabloPlayerController::HideMoveIndicator);
-	m_OnMove.AddUObject(UDiabloGameInstance::Get->GetPlCon(),&ADiabloPlayerController::HideMoveIndicator);
+	GetTickFSM()->m_OnMoveDone.AddUObject(UDiabloGameInstance::Get->GetPlCon(),
+	                                      &ADiabloPlayerController::HideMoveIndicator);
+	m_OnMove.AddUObject(UDiabloGameInstance::Get->GetPlCon(), &ADiabloPlayerController::HideMoveIndicator);
 
 	m_PlUpgradeManager = UDiabloGameInstance::Get->m_PlayerUpgradeManager;
 
@@ -266,7 +267,7 @@ float APlayerDiabloCharacter::GetAttackSpeed()
 {
 	float As = m_fAttackSpeed;
 
-	if(IsBuff02Available())
+	if (IsBuff02Available())
 	{
 		As *= m_fAdditionalAttackSpeed;
 	}
@@ -358,12 +359,12 @@ void APlayerDiabloCharacter::PlayColorEffect(const FLinearColor& colorWant, floa
 	m_SkBody->SetScalarParameterValueOnMaterials(EffectLengthParamName, effectLength);
 }
 
-float APlayerDiabloCharacter::PlaySkillMontageSection(FName& nameID,int nSectionIndex,float& currentCD,float maxCD)
+float APlayerDiabloCharacter::PlaySkillMontageSection(FName& nameID, int nSectionIndex, float& currentCD, float maxCD)
 {
-	float Len = PlayAttackMontage(currentCD,maxCD,&nameID);
-	
-	currentCD=maxCD;
-	
+	float Len = PlayAttackMontage(currentCD, maxCD, &nameID);
+
+	currentCD = maxCD;
+
 	return Len;
 }
 
@@ -385,24 +386,24 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 	}
 	else if (name == "MagicBomb01") //작은 범위 공격
 	{
-		BigInt SkillDmg =m_PlUpgradeManager->GetAtkUp(EAttackType::MagicBombDmg).m_Value;
-		
-		ApplyDamageToTargets(*aryHits,&SkillDmg);
+		BigInt SkillDmg = m_PlUpgradeManager->GetAtkUp(EAttackType::MagicBombDmg).m_Value;
+
+		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
 	else if (name == "MagicBomb02") //작은 범위 공격
 	{
-		BigInt SkillDmg1 =m_PlUpgradeManager->GetAtkUp(EAttackType::MagicBombDmg).m_Value;
-		BigInt SkillDmg2 =m_PlUpgradeManager->GetAtkUp(EAttackType::SuperMagicBombDmg).m_Value;
+		BigInt SkillDmg1 = m_PlUpgradeManager->GetAtkUp(EAttackType::MagicBombDmg).m_Value;
+		BigInt SkillDmg2 = m_PlUpgradeManager->GetAtkUp(EAttackType::SuperMagicBombDmg).m_Value;
 
-		BigInt Result = UPlayerUpgradeManager::MultiplePercent(SkillDmg1,SkillDmg2); 
-		
-		ApplyDamageToTargets(*aryHits,&Result);
+		BigInt Result = UDiaBlueprintFunctionLibrary::MultiplePercent(SkillDmg1, SkillDmg2);
+
+		ApplyDamageToTargets(*aryHits, &Result);
 	}
 	else if (name == "Skill01") //작은 범위 공격
 	{
-		BigInt SkillDmg =m_PlUpgradeManager->GetSkillUp(ESkillType::MiniSlash).m_Value;
-		
-		ApplyDamageToTargets(*aryHits,&SkillDmg);
+		BigInt SkillDmg = m_PlUpgradeManager->GetSkillUp(ESkillType::MiniSlash).m_Value;
+
+		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
 	else if (name == "Skill02") //버프 공격
 	{
@@ -411,41 +412,39 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 	}
 	else if (name == "Skill03") //휠윈드
 	{
-		BigInt SkillDmg =m_PlUpgradeManager->GetSkillUp(ESkillType::WhirlWind).m_Value;
-		ApplyDamageToTargets(*aryHits,&SkillDmg);
+		BigInt SkillDmg = m_PlUpgradeManager->GetSkillUp(ESkillType::WhirlWind).m_Value;
+		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
 	else if (name == "Skill04") //데스블로우
 	{
-		BigInt SkillDmg =m_PlUpgradeManager->GetSkillUp(ESkillType::DeathBlow).m_Value;
-		ApplyDamageToTargets(*aryHits,&SkillDmg);
+		BigInt SkillDmg = m_PlUpgradeManager->GetSkillUp(ESkillType::DeathBlow).m_Value;
+		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
 	else if (name == "Skill05") //버프 공속
 	{
 		m_QueDmgType.Empty();
 		StartBuff02(10);
 	}
-	
 }
 
 
-float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd,float maxCd,FName* sectionSkillName)
+float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd, float maxCd, FName* sectionSkillName)
 {
-	
 	FName SectionName = "Combo01";
-	
+
 	EDamageType DmgType = EDamageType::Base01;
-	
-	BigInt CriPercent100 = FMath::RandRange(0.f, 100.f);
-	
+
 	BigInt Cri01 = m_PlUpgradeManager->GetAtkUp(EAttackType::Critical).m_Value;
-	
-	if (CriPercent100 <= Cri01)//치명타 뜰때
+
+	BigInt CriPercent100 = FMath::RandRange(0.f, 100.f);
+
+	if (Cri01 > 0 && CriPercent100 <= Cri01) //치명타 뜰때
 	{
 		SectionName = "Critical01";
 		DmgType = EDamageType::Critical01;
 
 		BigInt Cri2Percent100 = FMath::RandRange(0.f, 100.f);
-	
+
 		BigInt Cri02 = m_PlUpgradeManager->GetAtkUp(EAttackType::SuperCritical).m_Value;
 
 		if (Cri2Percent100 <= Cri02)
@@ -455,9 +454,9 @@ float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd,float maxCd,FNa
 		}
 		m_QueDmgType.Enqueue(DmgType);
 	}
-	else//치명타 안뜸
+	else //치명타 안뜸
 	{
-		if (FMath::RandBool())//비쥬얼만 다른 평타
+		if (FMath::RandBool()) //비쥬얼만 다른 평타
 		{
 			SectionName = "Combo02";
 			DmgType = EDamageType::Base02;
@@ -465,39 +464,40 @@ float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd,float maxCd,FNa
 		m_QueDmgType.Enqueue(DmgType);
 	}
 	//
-	BigInt MagicPercent100 = FMath::RandRange(0.f, 100.f);
-	
 	BigInt Magic01 = m_PlUpgradeManager->GetAtkUp(EAttackType::MagicBomb).m_Value;
 
 	bool bUseMagic = false;
 
-	if(MagicPercent100<= Magic01)
+	BigInt MagicPercent100 = FMath::RandRange(0.f, 100.f);
+
+	if (Magic01 > 0 && MagicPercent100 <= Magic01)
 	{
-		bUseMagic=true;
+		bUseMagic = true;
 		SectionName = "MagicBomb01";
-		DmgType= EDamageType::Magic01;
+		DmgType = EDamageType::Magic01;
 
 		BigInt Magic2Percent100 = FMath::RandRange(0.f, 100.f);
-	
+
 		BigInt Magic02 = m_PlUpgradeManager->GetAtkUp(EAttackType::SuperMagicBomb).m_Value;
 
-		if(Magic2Percent100<=Magic02)
+		if (Magic2Percent100 <= Magic02)
 		{
 			SectionName = "MagicBomb02";
-			DmgType= EDamageType::Magic02;
+			DmgType = EDamageType::Magic02;
 		}
 	}
 
-	PlayAnimMontage(m_BaseAttackAnim, 1 * GetAttackSpeed(),sectionSkillName? *sectionSkillName: SectionName);
+	PlayAnimMontage(m_BaseAttackAnim, 1 * GetAttackSpeed(), sectionSkillName ? *sectionSkillName : SectionName);
 
-	float AnimMongLen = m_BaseAttackAnim->GetSectionLength(sectionSkillName?m_BaseAttackAnim->GetSectionIndex(*sectionSkillName): (int)DmgType) / GetAttackSpeed();
+	float AnimMongLen = m_BaseAttackAnim->GetSectionLength(
+		sectionSkillName ? m_BaseAttackAnim->GetSectionIndex(*sectionSkillName) : (int)DmgType) / GetAttackSpeed();
 
-	if(AnimMongLen>maxCd && !bUseMagic)
+	if (AnimMongLen > maxCd && !bUseMagic)
 	{
-		AnimMongLen=maxCd;
+		AnimMongLen = maxCd;
 	}
 
-	currentCd = AnimMongLen-0.1f;//-0.1f;
+	currentCd = AnimMongLen - 0.1f; //-0.1f;
 	//
 	GetWorldTimerManager().ClearTimer(m_AttackTimer);
 	//
@@ -516,17 +516,17 @@ float APlayerDiabloCharacter::TryAttack()
 		return 1.f;
 	}
 
-	
 
 	if (m_BaseAttackAnim && m_fAttackCD < 0.f)
 	{
-		PlayAttackMontage(m_fAttackCD,m_fAttackCDConstant);
+		PlayAttackMontage(m_fAttackCD, m_fAttackCDConstant);
+		GainRagePoint();
 	}
 
 	return 1.f;
 }
 
-bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg,EDamagePopup& pp)
+bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 {
 	EDamageType Type;
 	if (!m_QueDmgType.Dequeue(Type))
@@ -538,35 +538,35 @@ bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg,EDamagePopup& pp)
 
 	outDmg = m_PlUpgradeManager->GetAtkUp(EAttackType::BaseAttack).m_Value;
 
-	if(IsBuff01Available())
+	if (IsBuff01Available())
 	{
-		outDmg+=m_bnAdditionalSkillDmg;
+		outDmg.Multiply(m_bnAdditionalSkillDmg);
 	}
 
-	outDmg = UPlayerUpgradeManager::MultiplePercent(outDmg,m_EquipManager->GetCurrentWeapon().m_Value);
+	outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, m_EquipManager->GetCurrentWeapon().m_Value);
 
 	int Rand = FMath::RandRange(90, 110);
 
-	outDmg = UPlayerUpgradeManager::MultiplePercent(outDmg,Rand);
+	outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, Rand);
 
 	//150
 	if (Type == EDamageType::Critical01) //치명타
 	{
 		BigInt CDmg01 = m_PlUpgradeManager->GetAtkUp(EAttackType::CriticalDmg).m_Value; //백기준으로 해야함,1.5배는  1
-		
-		outDmg = UPlayerUpgradeManager::MultiplePercent(outDmg,CDmg01);
-		
+
+		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, CDmg01);
+
 		pp = EDamagePopup::CritcalRight;
 	}
 	else if (Type == EDamageType::Critical02) //슈퍼치명타
 	{
 		BigInt CDmg01 = m_PlUpgradeManager->GetAtkUp(EAttackType::CriticalDmg).m_Value; //백기준으로 해야함,1.5배는  1
-		
-		outDmg = UPlayerUpgradeManager::MultiplePercent(outDmg,CDmg01);
-		
+
+		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, CDmg01);
+
 		BigInt SDmg02 = m_PlUpgradeManager->GetAtkUp(EAttackType::SuperCriticalDmg).m_Value; //백기준으로 해야함,1.5배는  1
-		
-		outDmg = UPlayerUpgradeManager::MultiplePercent(outDmg,SDmg02);
+
+		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, SDmg02);
 
 		pp = EDamagePopup::CritcalRight2;
 	}
@@ -581,13 +581,13 @@ void APlayerDiabloCharacter::StartBuff01(float sec)
 	m_fBuff01DeltaCount = 0;
 	//공격력 수치로 증가
 	m_bnAdditionalSkillDmg = m_PlUpgradeManager->GetSkillUp(ESkillType::MagicBlade).m_Value;
-	
+
 	PRINTF("Buff01 Start");
 }
 
 bool APlayerDiabloCharacter::IsBuff01Available()
 {
-	return m_fBuff01DeltaCount<m_fBuff01MaxTime;
+	return m_fBuff01DeltaCount < m_fBuff01MaxTime;
 }
 
 void APlayerDiabloCharacter::EndBuff01()
@@ -596,7 +596,7 @@ void APlayerDiabloCharacter::EndBuff01()
 
 	m_fBuff01DeltaCount = 0;
 
-	m_bnAdditionalSkillDmg=0;
+	m_bnAdditionalSkillDmg = 0;
 
 	PRINTF("Buff01 End");
 }
@@ -608,15 +608,15 @@ void APlayerDiabloCharacter::StartBuff02(float sec)
 	m_fBuff02DeltaCount = 0;
 	//공격속도 증가
 	int Value = m_PlUpgradeManager->GetSkillUp(ESkillType::WindBlade).m_Value.ToInt();
-	PRINTF("Value:%d",Value);
-	m_fAdditionalAttackSpeed = Value / 100.f;//150%->1.5배
+	PRINTF("Value:%d", Value);
+	m_fAdditionalAttackSpeed = Value / 100.f; //150%->1.5배
 
 	PRINTF("Buff02 Start");
 }
 
 bool APlayerDiabloCharacter::IsBuff02Available()
 {
-	return m_fBuff02DeltaCount<m_fBuff02MaxTime;
+	return m_fBuff02DeltaCount < m_fBuff02MaxTime;
 }
 
 void APlayerDiabloCharacter::EndBuff02()
@@ -625,8 +625,8 @@ void APlayerDiabloCharacter::EndBuff02()
 
 	m_fBuff02DeltaCount = 0;
 
-	m_fAdditionalAttackSpeed=0;
-	
+	m_fAdditionalAttackSpeed = 0;
+
 	PRINTF("Buff02 End");
 }
 
@@ -635,41 +635,40 @@ void APlayerDiabloCharacter::ApplyDamageToTarget(const BigInt* additionalDmg)
 	if (GetFocusedTarget())
 	{
 		BigInt FinalDmg;
-		
+
 		EDamagePopup Popup = EDamagePopup::NormalRight;
 
-		if (!GetDmg(FinalDmg,Popup))
+		if (!GetDmg(FinalDmg, Popup))
 		{
 			return;
 		}
 
-		if(additionalDmg)
+		if (additionalDmg)
 		{
-			FinalDmg = UPlayerUpgradeManager::MultiplePercent(FinalDmg,*additionalDmg);
-			
+			FinalDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(FinalDmg, *additionalDmg);
 		}
 
-		ApplyDamage(GetFocusedTarget(), FinalDmg,Popup);
+		ApplyDamage(GetFocusedTarget(), FinalDmg, Popup);
 
 		m_QueDmgType.Empty();
 	}
 }
 
 
-void APlayerDiabloCharacter::ApplyDamageToTargets(TArray<FHitResult>& aryTargets,const BigInt* additionalDmg)
+void APlayerDiabloCharacter::ApplyDamageToTargets(TArray<FHitResult>& aryTargets, const BigInt* additionalDmg)
 {
 	BigInt FinalDmg;
 
 	EDamagePopup Popup = EDamagePopup::NormalRight;
 
-	if (!GetDmg(FinalDmg,Popup))
+	if (!GetDmg(FinalDmg, Popup))
 	{
 		return;
 	}
 
-	if(additionalDmg)
+	if (additionalDmg)
 	{
-		FinalDmg = UPlayerUpgradeManager::MultiplePercent(FinalDmg,*additionalDmg);
+		FinalDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(FinalDmg, *additionalDmg);
 	}
 
 	for (auto& Mob : aryTargets)
@@ -678,15 +677,15 @@ void APlayerDiabloCharacter::ApplyDamageToTargets(TArray<FHitResult>& aryTargets
 
 		if (Pawn)
 		{
-			ApplyDamage(Pawn, FinalDmg,Popup);
+			ApplyDamage(Pawn, FinalDmg, Popup);
 		}
 	}
 	m_QueDmgType.Empty();
 }
 
-void APlayerDiabloCharacter::ApplyDamage(AUnitPawn* target, const BigInt& finalDmg,EDamagePopup& pp)
+void APlayerDiabloCharacter::ApplyDamage(AUnitPawn* target, const BigInt& finalDmg, EDamagePopup& pp)
 {
-	target->TakeDmg(finalDmg, this,pp);
+	target->TakeDmg(finalDmg, this, pp);
 }
 
 void APlayerDiabloCharacter::ApplyMoveSpeedToOrigin()
@@ -761,7 +760,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 		if (!m_bIsManualMove && !bIsMoveInputZero)
 		{
 			m_bIsManualMove = true;
-			m_Movement->m_bUseRVO=false;
+			m_Movement->m_bUseRVO = false;
 			GetMovementComponent()->StopMovementImmediately();
 			m_TickFSM->ForceSetStateIdle();
 			ApplyMoveSpeedToOrigin();
@@ -772,7 +771,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 	if (bIsMoveInputZero && m_bUseFSM)
 	{
 		m_bIsManualMove = false;
-		m_Movement->m_bUseRVO=true;
+		m_Movement->m_bUseRVO = true;
 		m_TickFSM->TickFSM();
 	}
 }

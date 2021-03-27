@@ -25,7 +25,7 @@ BigInt UGoldManager::AddGold(const BigInt& v)
 
 	if(UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet())
 	{
-		FinalV = UPlayerUpgradeManager::MultiplePercent(FinalV,UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet()->m_GoldBonusValue);
+		FinalV = UDiaBlueprintFunctionLibrary::MultiplePercent(FinalV,UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet()->m_GoldBonusValue);
 	}
 	
 	m_CurrentGold.Add(FinalV);

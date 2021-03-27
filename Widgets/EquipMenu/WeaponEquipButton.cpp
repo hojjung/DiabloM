@@ -52,6 +52,8 @@ void UWeaponEquipButton::UpdateEquipWeapon()
 	SetCombineText(m_WeaponSpec->m_nStackCount);
 	SetEquipped(m_WeaponSpec->m_nIsEquipped);
 	SetCostText();
+
+	m_ImgTierColor->SetBrushTintColor(m_WeaponSpec->m_EquipData->GetTier()->m_TierColor);
 }
 
 

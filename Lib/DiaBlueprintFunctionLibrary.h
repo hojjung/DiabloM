@@ -17,11 +17,15 @@ class DIABLOM_API UDiaBlueprintFunctionLibrary : public UBlueprintFunctionLibrar
 
 public:
 	static const int UnitSymbolMax = 26;
-	
+
 	static const FText UnitSymbol[UnitSymbolMax];
 
-	static FString GetAlphabetTextBigInt(const BigInt & vWant, int symbolCount = 0)
+	static FString GetAlphabetTextBigInt(const BigInt& vWant, int symbolCount = 0)
 	{
+		if(vWant==0)
+		{
+			return FString::FromInt(0);
+		}
 		BigInt Mile = 10000;
 
 		BigInt Cache = vWant;
@@ -45,19 +49,22 @@ public:
 
 		int MaxIter = Count - 1;
 
-		int SymbolCounter =0;
+		int SymbolCounter = 0;
 
 		for (int i = MaxIter; i >= 0; i--)
 		{
-			RetStr.Append(FString::FromInt(NumList[i].ToInt()));
+			if(NumList[i]!=0)
+			{
+				RetStr.Append(FString::FromInt(NumList[i].ToInt()));
+			}
 
 			if (i < UnitSymbolMax) //자릿수초과시 그냥 합처서
 			{
 				RetStr.Append(UnitSymbol[i].ToString());
-				
+
 				SymbolCounter++;
 
-				if(symbolCount>0&&SymbolCounter>=symbolCount)
+				if (symbolCount > 0 && SymbolCounter >= symbolCount)
 				{
 					break;
 				}
@@ -69,7 +76,7 @@ public:
 
 	static const FTextFormat FormatT;
 
-	UFUNCTION(BlueprintCallable,Category="DiaLib")
+	UFUNCTION(BlueprintCallable, Category="DiaLib")
 	static float SetFloatPrecision(float TheFloat, int32 Precision)
 	{
 		if (Precision <= 0)
@@ -96,7 +103,7 @@ public:
 		return Position;
 	}
 
-	UFUNCTION(BlueprintCallable,Category="Material")
+	UFUNCTION(BlueprintCallable, Category="Material")
 	static UMaterialInstanceDynamic* CreateSetDynamicMaterial(UMeshComponent* meshComp, int matIndex)
 	{
 		auto* Mat = meshComp->GetMaterial(matIndex);
@@ -143,5 +150,17 @@ public:
 		Args.Add(UnitSymbol[Count]);
 
 		return FText::Format(FormatT, Args);
+	}
+
+
+	static BigInt MultiplePercent(BigInt a, BigInt b, int aPrecisionCount = 1,int bPrecisionCount = 1)
+	{
+		a.Multiply(b);
+
+		int PrecisionFactor = FMath::Pow(10, aPrecisionCount + bPrecisionCount);
+
+		a.Divide(PrecisionFactor);
+
+		return a;
 	}
 };

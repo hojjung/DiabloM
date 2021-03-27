@@ -21,6 +21,7 @@ void UPlayerSkinEquipButton::UpdateEquipSkin()
 	SetDescPreviewText(*m_SkinSpec);
 	SetCombineText(m_SkinSpec->m_nStackCount);
 	SetEquipped(m_SkinSpec->m_nIsEquipped);
+	m_ImgTierColor->SetBrushTintColor(m_SkinSpec->m_PlayerData->GetTier()->m_TierColor);
 }
 
 void UPlayerSkinEquipButton::Init(const FPlayerClassSpec& data, int index)

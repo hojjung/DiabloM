@@ -104,12 +104,37 @@ void UPlayfabManager::OnNickNameSetSuccess(const PlayFab::ClientModels::FUpdateU
 
 void UPlayfabManager::OnCloudScriptSuccess(const FExeCScriptRslt& rslt)
 {
-	PRINTF("CloudScript:%s",*rslt.toJSONString());
+	FString CachedJsonString = rslt.FunctionResult.toJSONString();
+
+	TSharedPtr<FJsonObject> JsonObject; TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(CachedJsonString);
+	
+	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		return;	
+	}
+
+	FString Result = JsonObject->GetStringField(TEXT("Result"));
+	
+	//if(m_CurrentVersionName == Result)
+	{
+		PRINTF("Cloud Parameter Success!!");
+	}
 }
 
 void UPlayfabManager::OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rslt)
 {
-	if(m_CurrentVersionName == rslt.Logs[0].Message)
+	FString CachedJsonString = rslt.FunctionResult.toJSONString();
+
+	TSharedPtr<FJsonObject> JsonObject; TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(CachedJsonString);
+	
+	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		return;	
+	}
+
+	FString ServerVersionName = JsonObject->GetStringField(TEXT("ServerVersionName"));
+	
+	if(m_CurrentVersionName == ServerVersionName)
 	{
 		PRINTF("Version Same");
 	}
@@ -528,25 +553,13 @@ void UPlayfabManager::PurchaseFail(EInAppPurchaseState::Type completionStatus,co
 
 void UPlayfabManager::OnStageComplete()
 {
-	int Level = 9999;// UDiabloGameInstance::Get->m_DungeonManager->GetMyMaxStageLevel();
-	
-	FString LevelN = FString::FromInt(Level);
-	
-	FString JsonOutString;
-	
-	JsonWriter Json = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR> >::Create(&JsonOutString);
+	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 
-	Json->WriteObjectStart();
-	
-	Json->WriteValue("stageLevel",9999);
-
-	Json->WriteObjectEnd();
-	
-	Json->Close();
+	JsonObject->SetNumberField(TEXT("stageLevel"), 999992);
 
 	ClientModels::FExecuteCloudScriptRequest Req;
 	
-	Req.FunctionParameter = FJsonKeeper(JsonOutString);
+	Req.FunctionParameter = FJsonKeeper(JsonObject);
 	
 	Req.FunctionName = "OnCompleteLevel";
 	
@@ -557,21 +570,7 @@ void UPlayfabManager::OnStageComplete()
 
 void UPlayfabManager::RequestVersionCheck()
 {
-	FString JsonOutString;
-	
-	JsonWriter Json = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR> >::Create(&JsonOutString);
-
-	Json->WriteObjectStart();
-	
-	Json->WriteValue("versionName","TEST0320");
-
-	Json->WriteObjectEnd();
-	
-	Json->Close();
-
 	ClientModels::FExecuteCloudScriptRequest Req;
-	
-	Req.FunctionParameter = FJsonKeeper(JsonOutString);
 	
 	Req.FunctionName = "CheckVersion";
 	

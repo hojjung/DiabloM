@@ -28,13 +28,17 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	bool m_bUseLevelBonus = true;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fInitValue = 0;
+	bool m_bUseExponent = true;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	float m_fInitValue = 30;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)//인컴은 항상 선형적이다
-	float m_fBaseValue = 1.67f;
+	float m_fValueMultipleBase = 30;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	int m_nValueMultipleFactor00 = 106;//this value is float,like 167 = 1.67
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	float m_fBaseCost = 9;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fCostMultiFactor = 1.06f;
+	int m_nCostMultiFactor00 = 106;//this value is float,like 167 = 1.67
 
 private:
 	float GetLevelBonus(int level) const
@@ -86,26 +90,44 @@ private:
 	}
 
 public:
-	virtual BigInt GetValue(int level) const
+	virtual BigInt GetValue(int level) const//소수점 표기 어떻게
 	{
 		level  = FMath::Clamp(level,level,m_nMaxLevel);
 		
 		float BonusMulti = GetLevelBonus(level);
 
-		BigInt Value = m_fBaseValue;
+		BigInt Value = (m_fValueMultipleBase*level)+m_fInitValue;
 
-		return (Value * BonusMulti * level) + m_fInitValue;
+		if(m_bUseExponent&&level>1)
+		{
+			int IterMax = level-1;
+			
+			for(int i=0; i<IterMax;i++)
+			{
+				Value = UDiaBlueprintFunctionLibrary::MultiplePercent(Value,m_nValueMultipleFactor00,0,2);
+			}
+		}
+
+		Value.Multiply(BonusMulti);
+
+		return Value;
 	}
 
 	BigInt GetCost(int level) const
 	{
+		BigInt Cost = m_fBaseCost;
+		
 		level  = FMath::Clamp(level,level,m_nMaxLevel);
 
-		float Factor =  FMath::Pow(m_fCostMultiFactor,level);
-
-		BigInt Cost = m_fBaseCost;
-
-		Cost.Multiply(Factor);
+		if(level>1)
+		{
+			int IterMax = level-1;
+			
+			for(int i=0; i<IterMax;i++)
+			{
+				Cost = UDiaBlueprintFunctionLibrary::MultiplePercent(Cost,m_nCostMultiFactor00,0,2);
+			}
+		}
 
 		return Cost;
 	}
@@ -114,7 +136,7 @@ public:
 	{
 		FTextFormat Format = FText::FromString(m_UpgradeDescFormat);
 
-		FText Str1 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetValue(level)));
+		FText Str1 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetValue(level),2));
 		
 		FFormatOrderedArguments Args;
 		
@@ -124,7 +146,7 @@ public:
 		
 		if(level<m_nMaxLevel)
 		{
-			FText Str2 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetValue(NewLevel)));
+			FText Str2 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetValue(NewLevel),2));
 			
 			Args.Add(Str2);
 		}
@@ -191,10 +213,10 @@ public:
 	UTexture2D* m_SkillIcon;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FText m_SkillShowName;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly ,meta = (MultiLine="true"))
 	FString m_SkillDescFormat = "Current:{0}>>P{1}";
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	bool m_bIsDragSkill = false;
+	bool m_bUseExponent = true;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	int m_nMaxLevel = 400;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -202,15 +224,19 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	float m_fInitValue = 0;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)//인컴은 항상 선형적이다
-	float m_fBaseValue = 1.67f;
+	float m_fValueMultipleBase = 30;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	int m_nValueMultipleFactor00 = 106;//this value is float,like 167 = 1.67
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	float m_fBaseCost = 9;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fCostMultiFactor = 1.06f;
+	int m_nCostMultiFactor00 = 106;//this value is float,like 167 = 1.67
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	float m_fRageCost = 25;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	bool m_bIsRootmotion = false;
+	//
+	
 
 private:
 	float GetLevelBonus(int level) const
@@ -268,20 +294,38 @@ public:
 		
 		float BonusMulti = GetLevelBonus(level);
 
-		BigInt Value = m_fBaseValue;
+		BigInt Value = (m_fValueMultipleBase*level)+m_fInitValue;
 
-		return (Value * BonusMulti * level) + m_fInitValue;
+		if(m_bUseExponent&&level>1)
+		{
+			int IterMax = level-1;
+			
+			for(int i=0; i<IterMax;i++)
+			{
+				Value = UDiaBlueprintFunctionLibrary::MultiplePercent(Value,m_nValueMultipleFactor00,0,2);
+			}
+		}
+
+		Value.Multiply(BonusMulti);
+
+		return Value;
 	}
 
 	BigInt GetCost(int level) const
 	{
+		BigInt Cost = m_fBaseCost;
+		
 		level  = FMath::Clamp(level,level,m_nMaxLevel);
 
-		float Factor =  FMath::Pow(m_fCostMultiFactor,level);
-
-		BigInt Cost = m_fBaseCost;
-
-		Cost.Multiply(Factor);
+		if(level>1)
+		{
+			int IterMax = level-1;
+			
+			for(int i=0; i<IterMax;i++)
+			{
+				Cost = UDiaBlueprintFunctionLibrary::MultiplePercent(Cost,m_nCostMultiFactor00,0,2);
+			}
+		}
 
 		return Cost;
 	}

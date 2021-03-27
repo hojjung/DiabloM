@@ -47,12 +47,9 @@ void UDiaSkillUseButton::SetSkillSpec(FSkillSpec* skillSpec)
 
 	m_bIsSkillUsable = true;
 
-	m_bIsDragSkill = m_EquippedSkillSpec->m_SkillData->m_bIsDragSkill;
+	//m_bIsDragSkill = m_EquippedSkillSpec->m_SkillData->m_bIsDragSkill;
 
 	m_Joystick->SetUseDrag(m_bIsDragSkill);
-
-
-	
 }
 
 void UDiaSkillUseButton::ClearSkillSpec()

@@ -151,7 +151,6 @@ void UEquipManager::SetStringAccesoryUnlocked(FString acceUnlock)
 
 	m_AryAcce.Reset();
 
-
 	TArray<FString> AryEachDatas;
 
 	int Len = StringSplitEachItem(acceUnlock, AryEachDatas);
@@ -172,16 +171,17 @@ void UEquipManager::EquipAll()
 	int index = 0;
 	for (FAccessorySpec& Spec : m_AryAcce)
 	{
-		if (Spec.m_nIsEquipped == 1)
-		{
-			PRINTF("1A:%d,B:%d", Spec.m_nIsEquipped, index);
-			TryEquipAccessory1(index);
-		}
-		else if (Spec.m_nIsEquipped == 2)
-		{
-			PRINTF("2A:%d,B:%d", Spec.m_nIsEquipped, index);
-			TryEquipAccessory2(index);
-		}
+		PRINTF("EQManager-Acce EquipNeed");
+		// if (Spec.m_nIsEquipped == 1)
+		// {
+		// 	PRINTF("1A:%d,B:%d", Spec.m_nIsEquipped, index);
+		// 	TryEquipAccessory1(index);
+		// }
+		// else if (Spec.m_nIsEquipped == 2)
+		// {
+		// 	PRINTF("2A:%d,B:%d", Spec.m_nIsEquipped, index);
+		// 	TryEquipAccessory2(index);
+		// }
 
 		index++;
 	}
@@ -371,124 +371,6 @@ void UEquipManager::TryEquipPet(int index)
 	m_OnPetChanged.Broadcast(m_nSelectedPet, index);
 
 	m_nSelectedPet = index;
-}
-
-void UEquipManager::TryEquipAccessory1(int index)
-{
-	if (m_nSelectedAccessory1 == index)
-	{
-		PRINTF("The Accessory Is Same");
-
-		return;
-	}
-
-	if (m_AryAcce.Num() <= index)
-	{
-		return;
-	}
-
-	UDiabloGameInstance* GameInst = UDiabloGameInstance::Get;
-
-	APlayerDiabloCharacter* DiaChar = Cast<APlayerDiabloCharacter>(
-		UGameplayStatics::GetPlayerPawn(GameInst->GetWorld(), 0));
-
-	ADiabloPlayerController* DiaCon = Cast<ADiabloPlayerController>(
-		UGameplayStatics::GetPlayerController(GameInst->GetWorld(), 0));
-
-	if (m_nSelectedAccessory2 == index)
-	{
-		m_AryAcce[m_nSelectedAccessory2].m_nIsEquipped = -1;
-
-		if (m_AcceSpec2) //in first equip theres no acce
-		{
-			m_AcceSpec2->RemoveAccessory(GameInst, DiaCon, DiaChar);
-			m_AcceSpec2 = nullptr;
-		}
-
-		m_nSelectedAccessory2 = - 1;
-	}
-
-	if (m_nSelectedAccessory1 > -1)
-	{
-		m_AryAcce[m_nSelectedAccessory1].m_nIsEquipped = -1;
-
-		if (m_AcceSpec1) //for first equip
-		{
-			m_AcceSpec1->RemoveAccessory(GameInst, DiaCon, DiaChar);
-			m_AcceSpec1 = nullptr;
-		}
-	}
-
-	m_AryAcce[index].m_nIsEquipped = 1;
-	m_AcceSpec1 = NewObject<UAccessoryOption>(m_AryAcce[index].m_AccessoryData->m_ClassAccessoryOp);
-	m_AcceSpec1->ApplyAccessory(GameInst, DiaCon, DiaChar);
-
-	Cast<APlayerDiabloCharacter>(UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(), 0))->
-		AccessoryDataInject(m_AryAcce[index]);
-
-	m_OnAccessoryChanged1.Broadcast(m_nSelectedAccessory1, index);
-
-	m_nSelectedAccessory1 = index;
-}
-
-void UEquipManager::TryEquipAccessory2(int index)
-{
-	if (m_nSelectedAccessory2 == index)
-	{
-		PRINTF("The Accessory Is Same");
-
-		return;
-	}
-
-	if (m_AryAcce.Num() <= index)
-	{
-		return;
-	}
-
-	UDiabloGameInstance* GameInst = UDiabloGameInstance::Get;
-
-	APlayerDiabloCharacter* DiaChar = Cast<APlayerDiabloCharacter>(
-		UGameplayStatics::GetPlayerPawn(GameInst->GetWorld(), 0));
-
-	ADiabloPlayerController* DiaCon = Cast<ADiabloPlayerController>(
-		UGameplayStatics::GetPlayerController(GameInst->GetWorld(), 0));
-
-
-	if (m_nSelectedAccessory1 == index)
-	{
-		m_AryAcce[m_nSelectedAccessory1].m_nIsEquipped = -1;
-
-		if (m_AcceSpec1) //in first equip theres no acce
-		{
-			m_AcceSpec1->RemoveAccessory(GameInst, DiaCon, DiaChar);
-			m_AcceSpec1 = nullptr;
-		}
-
-		m_nSelectedAccessory1 = - 1;
-	}
-
-	if (m_nSelectedAccessory2 > -1)
-	{
-		m_AryAcce[m_nSelectedAccessory2].m_nIsEquipped = -1;
-
-		if (m_AcceSpec2) //in first equip theres no acce
-		{
-			m_AcceSpec2->RemoveAccessory(GameInst, DiaCon, DiaChar);
-			m_AcceSpec2 = nullptr;
-		}
-	}
-
-	m_AryAcce[index].m_nIsEquipped = 2;
-
-	m_AcceSpec2 = NewObject<UAccessoryOption>(m_AryAcce[index].m_AccessoryData->m_ClassAccessoryOp);
-	m_AcceSpec2->ApplyAccessory(GameInst, DiaCon, DiaChar);
-
-	Cast<APlayerDiabloCharacter>(UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(), 0))->
-		AccessoryDataInject(m_AryAcce[index]);
-
-	m_OnAccessoryChanged1.Broadcast(m_nSelectedAccessory2, index); //??
-
-	m_nSelectedAccessory2 = index;
 }
 
 
@@ -704,12 +586,12 @@ void UEquipManager::AddAccessoryStack(int index)
 {
 	m_AryAcce[index].m_nStackCount++;
 
-	if (m_AryAcce[index].m_nIsEquipped == 1)
-	{
-		m_OnAccessoryChanged1.Broadcast(-1, index);
-	}
-	else if (m_AryAcce[index].m_nIsEquipped == 2)
-	{
-		m_OnAccessoryChanged2.Broadcast(-1, index);
-	}
+	// if (m_AryAcce[index].m_nIsEquipped == 1)
+	// {
+	// 	m_OnAccessoryChanged1.Broadcast(-1, index);
+	// }
+	// else if (m_AryAcce[index].m_nIsEquipped == 2)
+	// {
+	// 	m_OnAccessoryChanged2.Broadcast(-1, index);
+	// }
 }

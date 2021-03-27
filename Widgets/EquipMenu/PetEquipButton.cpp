@@ -30,6 +30,7 @@ void UPetEquipButton::UpdateEquipPet()
 	SetEquipped(m_PetSpec->m_nIsEquipped);
 	SetCostText();
 	SetCombineText(m_PetSpec->m_nStackCount);
+	m_ImgTierColor->SetBrushTintColor(m_PetSpec->m_PetData->GetTier()->m_TierColor);
 }
 
 void UPetEquipButton::SetLevelNameText(const FPetSpec& data)

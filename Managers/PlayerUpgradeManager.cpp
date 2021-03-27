@@ -229,15 +229,4 @@ void UPlayerUpgradeManager::ClearCooldownAllSkill()
 }
 
 //1,1
-BigInt UPlayerUpgradeManager::MultiplePercent(BigInt a, BigInt b, int aPrecisionCount,
-                                              int bPrecisionCount)
-{
-	a.Multiply(b);
-
-	int PrecisionFactor = FMath::Pow(10,aPrecisionCount+bPrecisionCount);
-
-	a.Divide(PrecisionFactor);
-
-	return a;
-}
 #undef LOCTEXT_NAMESPACE

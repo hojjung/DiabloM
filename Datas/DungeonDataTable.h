@@ -2,6 +2,7 @@
 #include "CharacterDataTable.h"
 #include "DiabloM.h"
 #include "GameplayTagContainer.h"
+#include "Managers/PlayerUpgradeManager.h"
 #include "UObject/NoExportTypes.h"
 #include "DungeonDataTable.generated.h"
 
@@ -153,9 +154,16 @@ public:
 		
 		float BonusMulti = GetLevelBonus(level);
 
-		BigInt Value = 100;
+		BigInt Value = 200;
 
-		return (Value * BonusMulti * level) + 100;
+		for(int i=1; i< level;i++)
+		{
+			Value.MultiplyFast(9);
+		}
+
+		Value.Multiply(BonusMulti);
+
+		return Value;
 	}
 
 	BigInt GetMobGold() const
@@ -164,9 +172,9 @@ public:
 		
 		float BonusMulti = GetLevelBonus(level);
 
-		BigInt Value = 30;
+		BigInt Value =533;
 
-		return (Value * BonusMulti * level) + 30;
+		return (Value * BonusMulti * level)+30;
 	}
 };
 

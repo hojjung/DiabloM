@@ -28,6 +28,12 @@ public:
    	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
    	FItemTierTableRowHandle m_Handle;
+
+	FItemTierTableRow* GetTier() const
+	{
+		return m_Handle.GetRow<FItemTierTableRow>("");
+	}
+	
 };
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��

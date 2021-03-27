@@ -22,7 +22,9 @@ void UAccessoryEquipButton::UpdateEquipAccessory()
 	SetLevelNameText(*m_AccessorySpec);
 	SetDescPreviewText(*m_AccessorySpec);
 	SetCostText(m_AccessorySpec->m_nStackCount);
-	SetEquipped(m_AccessorySpec->m_nIsEquipped);
+	//SetEquipped(m_AccessorySpec->m_nIsEquipped);
+
+	m_ImgTierColor->SetBrushTintColor(m_AccessorySpec->m_AccessoryData->GetTier()->m_TierColor);
 }
 
 void UAccessoryEquipButton::SetLevelNameText(const FAccessorySpec& data)

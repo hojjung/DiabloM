@@ -203,7 +203,7 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMobToLoc(FVector loc)
 	Mob->SetActorLocation(NewLoc);
 
 	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Normal,
-		m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""));
+		m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""),1,MonData->m_fScale);
 
 	return Mob;
 }
