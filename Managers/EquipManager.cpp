@@ -16,8 +16,6 @@ void UEquipManager::ClearSelectedIndex() //ned this for change level,player modi
 	m_nSelectedWing = -1;
 	m_nSelectedWeapon = -1;
 	m_nSelectedPet = -1;
-	m_nSelectedAccessory1 = -1;
-	m_nSelectedAccessory2 = -1;
 }
 
 UEquipManager::UEquipManager()
@@ -169,24 +167,6 @@ void UEquipManager::SetStringAccesoryUnlocked(FString acceUnlock)
 void UEquipManager::EquipAll()
 {
 	int index = 0;
-	for (FAccessorySpec& Spec : m_AryAcce)
-	{
-		PRINTF("EQManager-Acce EquipNeed");
-		// if (Spec.m_nIsEquipped == 1)
-		// {
-		// 	PRINTF("1A:%d,B:%d", Spec.m_nIsEquipped, index);
-		// 	TryEquipAccessory1(index);
-		// }
-		// else if (Spec.m_nIsEquipped == 2)
-		// {
-		// 	PRINTF("2A:%d,B:%d", Spec.m_nIsEquipped, index);
-		// 	TryEquipAccessory2(index);
-		// }
-
-		index++;
-	}
-
-	index = 0;
 
 	for (FPetSpec& Spec : m_AryPets)
 	{
@@ -253,8 +233,6 @@ void UEquipManager::SetEquipDataFromServer(const FString& classSkin, const FStri
 	SetStringWeaponUnlocked(weapon);
 	SetStringPetUnlocked(pet);
 	SetStringAccesoryUnlocked(acce);
-	//equip need
-	//EquipAll();
 }
 
 void UEquipManager::TryEquipSkin(int index)
@@ -450,10 +428,10 @@ bool UEquipManager::TryCombineLevelUpAccessory(int index)
 	m_AryAcce[index].m_nStackCount -= m_AryAcce[index].m_LvlUpCost;
 
 	m_AryAcce[index].m_nLv++;
+	
 	m_AryAcce[index].SetLevel(m_AryAcce[index].m_nLv);
 
-	m_OnAccessoryChanged1.Broadcast(-1, index);
-	//m_OnAccessoryChanged2.Broadcast(-1,index);
+	m_OnAccessoryChanged.Broadcast(-1, index);
 
 	return true;
 }
@@ -586,12 +564,10 @@ void UEquipManager::AddAccessoryStack(int index)
 {
 	m_AryAcce[index].m_nStackCount++;
 
-	// if (m_AryAcce[index].m_nIsEquipped == 1)
-	// {
-	// 	m_OnAccessoryChanged1.Broadcast(-1, index);
-	// }
-	// else if (m_AryAcce[index].m_nIsEquipped == 2)
-	// {
-	// 	m_OnAccessoryChanged2.Broadcast(-1, index);
-	// }
+	m_OnAccessoryChanged.Broadcast(-1, index);
+}
+
+FAccessorySpec& UEquipManager::GetAccessory(EAccessory acces)
+{
+	return m_AryAcce[(int)acces];
 }

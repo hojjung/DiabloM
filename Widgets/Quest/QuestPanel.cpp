@@ -25,6 +25,8 @@ void UQuestPanel::NativeOnInitialized()
 		CreatedQuestBtn->SetPadding(FMargin(10,10,10,10));
 
 		m_AryQuestBtns.Add(CreatedQuestBtn);
+
+		UDiabloGameInstance::Get->m_QuestManager->m_OnQuestUpdate.AddUObject(this,&UQuestPanel::UpdateQuest);
 	}
 }
 
@@ -32,5 +34,10 @@ void UQuestPanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
 	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+}
+
+void UQuestPanel::UpdateQuest(int index)
+{
+	m_AryQuestBtns[index]->UpdateQuestWidget();
 }
 

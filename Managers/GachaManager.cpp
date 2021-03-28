@@ -88,20 +88,18 @@ UGachaManager::UGachaManager()
 	AccessoryGachaDataTable = Found5Gacha01.Object;
 	//
 
-	return;
-	
-	for (int i = 0; i < 10; i++)
-	{
-		SetTotalValue(AryWeaponGachaDataTable[i], m_AryAryGachaWeapon[i], m_AryTotalWeaponGacha[i]);
-	}
-	//
-	for (int i = 0; i < 10; i++)
-	{
-		SetTotalValue(ArySkinGachaDataTable[i], m_AryAryGachaSkin[i], m_AryTotalSkinGacha[i]);
-	}
+	// for (int i = 0; i < 10; i++)
+	// {
+	// 	SetTotalValue(AryWeaponGachaDataTable[i], m_AryAryGachaWeapon[i], m_AryTotalWeaponGacha[i]);
+	// }
+	// //
+	// for (int i = 0; i < 10; i++)
+	// {
+	// 	SetTotalValue(ArySkinGachaDataTable[i], m_AryAryGachaSkin[i], m_AryTotalSkinGacha[i]);
+	// }
 	//
 	SetTotalValue(PetGachaDataTable, m_AryGachaPet, m_fTotalPetGacha);
-	SetTotalValue(WingGachaDataTable, m_AryGachaWing, m_fTotalWingGacha);
+	//SetTotalValue(WingGachaDataTable, m_AryGachaWing, m_fTotalWingGacha);
 	SetTotalValue(AccessoryGachaDataTable, m_AryGachaAccessory, m_fTotalAccessoryGacha);
 }
 
@@ -284,6 +282,7 @@ const FGachaAbleRow* UGachaManager::RollAccessory()
 
 const FGachaAbleRow* UGachaManager::RollItem(ERollItemType type)
 {
+	UDiabloGameInstance::Get->m_QuestManager->AddQuestCount(EQuestType::GachaCount);
 	switch (type)
 	{
 	case ERollItemType::RollWeapon: return RollWeapon();

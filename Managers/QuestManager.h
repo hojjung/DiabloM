@@ -7,9 +7,23 @@
 #include "Datas/QuestData.h"
 #include "QuestManager.generated.h"
 
-/**
- * 
- */
+UENUM()
+enum class EQuestType :uint8
+{
+	MonsterKill,//monsterkill
+	PlayTime,//playtime
+	GachaCount,//gacha count
+	AttackLv,//attacklv
+	CriLv,//crilv
+	CriDmgLv,//cridmglv
+	SCriLv,//srcrilv
+	SCriDmgLv,//scridmglv
+	MaLv,//malv
+	MaDmgLv,//madmglv
+	SMaLv,//smalv
+	SMaDmgLv,//smadmglv
+	LENGTH
+};
 UCLASS()
 class DIABLOM_API UQuestManager : public UObject
 {
@@ -31,4 +45,9 @@ public:
 	}
 
 	bool CompleteQuest(int index);
+
+	FQuestDataSpec& GetQuest(EQuestType type);
+
+	void AddQuestCount(EQuestType type);
+
 };

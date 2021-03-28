@@ -58,6 +58,8 @@ public:
 	FString URLDecode(FString url);
 
 	void SetReceiveChat(bool b);
+
+	void SummonChatPost(const FText& gachaName);
 };
 
 

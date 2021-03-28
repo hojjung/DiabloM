@@ -33,6 +33,8 @@ public:
 	FText m_TextTierName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool m_bHasSpecialEffect = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool m_bHasServerAlert = false;
 };
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��

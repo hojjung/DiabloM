@@ -2,6 +2,7 @@
 
 #include "DiabloM.h"
 #include "GridPanel.h"
+#include "RankingPanel.h"
 #include "StageSelectPanel.h"
 #include "Blueprint/UserWidget.h"
 #include "MainMenuPanel.generated.h"
@@ -36,7 +37,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UStageSelectPanel* m_PanelStageSelect;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUserWidget* m_PanelRanking;
+	URankingPanel* m_PanelRanking;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UUserWidget* m_PanelMail;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))

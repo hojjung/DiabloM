@@ -126,7 +126,7 @@ void AMonsterPawn::RequestGetGoldBounty()
     UDiabloGameInstance::Get->m_GoldManager->AddGold(m_fGoldBounty);
 }
 
-void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,const FItemDropTableRow* dropTable,float statFactor ,float scaleFactor)//droptable
+void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,const FItemDropTableRow* dropTable,float statFactor ,float scaleFactor,float goldFactor)//droptable
 {
     m_DropTable = dropTable;
     
@@ -155,7 +155,6 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
 
     m_TextUnitName = UnitData->m_ShowingName;
 
-    
     m_SkBody->EmptyOverrideMaterials();
     
     m_SkBody->SetSkeletalMesh(UnitData->m_Mesh);
@@ -169,7 +168,7 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     m_fAttackSpeed = UnitData->m_fAttackSpeed;
 
     m_fGoldBounty = gold;
-    m_fGoldBounty.Multiply(statFactor);
+    m_fGoldBounty.Multiply(goldFactor);
 
     m_fMaxHP = hp;
     m_fMaxHP.Multiply(statFactor);
@@ -226,6 +225,8 @@ void AMonsterPawn::Die()
     APlayerDiabloCharacter* Pawn = Cast<APlayerDiabloCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
     Pawn->FocusTarget(nullptr);
     //Pawn->GainRagePoint();
+
+    UDiabloGameInstance::Get->m_QuestManager->AddQuestCount(EQuestType::MonsterKill);
     
     UDiabloGameInstance::Get->m_MonsterSpawn->AddKillCount();
     RequestDropItem();

@@ -1,5 +1,6 @@
 #include "GachaCard.h"
 #include "Datas/GachaDataTable.h"
+#include "Managers/DiabloGameInstance.h"
 
 void UGachaCard::SetVisual(const FGachaAbleRow* tableData)
 {
@@ -18,11 +19,18 @@ void UGachaCard::SetVisual(const FGachaAbleRow* tableData)
 	if(Table->m_bHasSpecialEffect)
 	{
 		ShowSpecialEffect();
-		
 		m_TextTierName->SetVisibility(ESlateVisibility::Collapsed);
 		m_TextShowingName->SetVisibility(ESlateVisibility::Collapsed);
 		m_ImgIcon->SetVisibility(ESlateVisibility::Collapsed);
 	}
+
+	if(Table->m_bHasServerAlert)
+	{
+		UDiabloGameInstance::Get->m_ChatManager->SummonChatPost(tableData->m_ShowingName);
+	}
+
+
+	//SummonChatPost
 }
 
 void UGachaCard::ShowSpecialEffect()

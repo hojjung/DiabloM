@@ -9,8 +9,9 @@ FString UChatText::m_RichIDOrange = "RichText.Orange";
 FString UChatText::m_RichIDGreen = "RichText.Green";
 FString UChatText::m_RichIDPurple = "RichText.Purple";
 
-void UChatText::SetNormalChat(const FString& chat)
+void UChatText::SetChat(const FString& chat)
 {
+	m_TextChat->SetDefaultColorAndOpacity(FLinearColor::White);
 	FString CachedChat = chat;
 
 	//CachedChat = CachedChat.TrimStart();
@@ -20,21 +21,33 @@ void UChatText::SetNormalChat(const FString& chat)
 	
 	CachedChat.ParseIntoArray(OutStrAry,TEXT(":"));
 
-	FString Ranking = OutStrAry[0];
+	if(OutStrAry.Num()>2)
+	{
+		//normalchat
+		FString Ranking = OutStrAry[0];
 	
-	FString Nickname = OutStrAry[1];
+		FString Nickname = OutStrAry[1];
 	
-	FString ChatText = OutStrAry[2];
+		FString ChatText = OutStrAry[2];
 
-	FString FormatStr = FString::Printf(
-        TEXT("<%s>[%sst]</>:%s:%s"),*GetRankColor(Ranking),*Ranking,*Nickname,*ChatText);
+		FString FormatStr = FString::Printf(
+            TEXT("<%s>[%sst]</>:%s:%s"),*GetRankColor(Ranking),*Ranking,*Nickname,*ChatText);
 	
-	m_TextChat->SetText(FText::FromString(FormatStr));
+		m_TextChat->SetText(FText::FromString(FormatStr));
+	}
+	else
+	{
+		m_TextChat->SetText(FText::FromString(CachedChat));
+		
+		m_TextChat->SetDefaultColorAndOpacity(FLinearColor::Yellow);
+	}
 }
 
 void UChatText::SetChatForClient(const FString& chat)
 {
-	int Ranking = UDiabloGameInstance::Get->m_PlayfabManager->m_nRanking;
+	m_TextChat->SetDefaultColorAndOpacity(FLinearColor::White);
+	
+	int Ranking = UDiabloGameInstance::Get->m_PlayfabManager->GetSafeRanking();
 	
 	FString Nickname = UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname;
 	

@@ -146,11 +146,26 @@ public:
 		return m_nCurrentRequirePoint;
 	}
 
+	int GetPreData()
+	{
+		if(m_nCurrentLv<1)
+		{
+			return m_Data->m_AryQuestData[0].m_nRequireData;
+		}
+		return m_Data->m_AryQuestData[m_nCurrentLv-1].m_nRequireData;
+	}
+
 	float GetGaugePercent()
 	{
 		float Current = GetCurrentData();
-
+		
 		float Max = GetMaxRequireValue();
+		
+		if(m_nCurrentLv>0)
+		{
+			Current -= m_Data->m_AryQuestData[m_nCurrentLv-1].m_nRequireData;
+			Max -= GetPreData();
+		}
 		
 		return FMath::Clamp(Current / Max,0.f,1.f);
 	}

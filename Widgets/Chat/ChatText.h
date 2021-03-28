@@ -29,7 +29,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	URichTextBlock* m_TextChat;
 public:
-	void SetNormalChat(const FString& chat);
+	void SetChat(const FString& chat);
 	
 	void SetChatForClient(const FString& chat);
 

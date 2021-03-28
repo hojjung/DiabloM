@@ -7,12 +7,11 @@
 UAccessoryEquipButton::UAccessoryEquipButton(const FObjectInitializer& objInit): Super(objInit), m_ImgIcon(nullptr),
     m_TextName(nullptr),
     m_TextDesc(nullptr),
-    m_TextEquip(nullptr),
-    m_TextCost(nullptr), m_BtnEquip(nullptr),
+    m_TextCost(nullptr), 
     m_BtnCombine(nullptr)
 {
 	m_FormatName= LOCTEXT("LevelName","{0}(Lv.{1})");
-	m_FormatCost = LOCTEXT("CombineText", "{0}/{1}"); //LOCTEXT("EquipText","Equipped!")
+	m_FormatCost = LOCTEXT("CombineText", "합성업{0}/{1}"); //LOCTEXT("EquipText","Equipped!")
 	m_nIndex = -1;
 	m_AccessorySpec = nullptr;
 }
@@ -45,7 +44,6 @@ void UAccessoryEquipButton::Init(const FAccessorySpec& data, UEquipmentPanel* eq
 	m_AccessorySpec = &data;
 	m_TextName->SetText(m_AccessorySpec->m_AccessoryData->m_ShowingName); 
 	m_nIndex = index;
-	m_BtnEquip->OnClicked.AddDynamic(this,&UAccessoryEquipButton::TryEquip);
 	m_BtnCombine->OnClicked.AddDynamic(this,&UAccessoryEquipButton::TryCombineLvUp);
 	m_ImgIcon->SetBrushFromTexture(data.m_AccessoryData->m_Icon);
 	UpdateEquipAccessory();
@@ -60,17 +58,17 @@ void UAccessoryEquipButton::SetDescPreviewText(const FAccessorySpec& data)
 
 void UAccessoryEquipButton::SetEquipped(int index)
 {
-	switch (index)
-	{
-		case 1:
-			m_TextEquip->SetText(LOCTEXT("EquipSuccessText1","Equipped-1"));
-			break;
-		case 2:
-			m_TextEquip->SetText(LOCTEXT("EquipSuccessText2","Equipped-2"));
-			break;
-		default:
-			m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
-	}
+	// switch (index)
+	// {
+	// 	case 1:
+	// 		m_TextEquip->SetText(LOCTEXT("EquipSuccessText1","Equipped-1"));
+	// 		break;
+	// 	case 2:
+	// 		m_TextEquip->SetText(LOCTEXT("EquipSuccessText2","Equipped-2"));
+	// 		break;
+	// 	default:
+	// 		m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
+	// }
 }
 
 void UAccessoryEquipButton::SetCostText(int stack)

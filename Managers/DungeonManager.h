@@ -51,9 +51,14 @@ protected:
 	
 	const FDungeonDataTableRow* m_CurrentDg;
 
+	UPROPERTY()
 	int m_nMyMaxStageLevel;
-
+	UPROPERTY()
 	int m_nCurrentStageLevel;
+	UPROPERTY()
+	int m_nSafeMaxStageLevel;
+	UPROPERTY()
+	int m_nSafeCurrentStageLevel;
 	//보스는 10킬이후부터 생성?
 	//보스는 1회만 죽여야한다
 	//보스는 1회만?
@@ -72,19 +77,17 @@ public:
 		return m_AryDgDataTable;
 	}
 
-	FORCEINLINE int GetMyMaxStageLevel() const
-	{
-		return m_nMyMaxStageLevel;
-	}
-
-	FORCEINLINE int GetCurrentStageLevel() const
-	{
-		return m_nCurrentStageLevel;
-	}
-
 	void SelectDungeon(int index);
 
 	void LevelUpDungeon();//Call By Boss
 
 	BigInt GetCurrentDungeonBounty();
+
+	int GetMaxStage() const;
+
+	int GetCurrentStage()const;
+
+	void SetMaxStageLevel(int stageLv);
+
+	void SetCurrentStageLevel(int stageLv);
 };

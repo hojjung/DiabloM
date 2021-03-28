@@ -173,6 +173,8 @@ public:
 
 	void SetPlayerNicknameRanking();
 
+	void SetPlayerNicknameRankingWrap(const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>& serverRank);
+
 	UFUNCTION()
 	void HideTextWidget();
 

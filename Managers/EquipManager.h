@@ -20,6 +20,20 @@ enum EEquipSlot
 	LEN
 };
 
+UENUM()
+enum class EAccessory :uint8
+{
+	Acce01,
+	Acce02,
+	Acce03,
+	Acce04,
+	Acce05,
+	Acce06,
+	Acce07,
+	Acce08,
+    LENGTH
+};
+
 class UPlayfabManager;
 
 
@@ -210,6 +224,7 @@ public:
 	
 	BigInt m_Value;
 	int m_LvlUpCost;//combine level up
+	float m_fFloatValue;
 	
 	const FAccessoryTable* m_AccessoryData;
 
@@ -218,6 +233,7 @@ public:
 		m_nLv = lv;
 		m_Value = m_AccessoryData->GetValue(m_nLv);
 		m_LvlUpCost = m_AccessoryData->GetCost(m_nLv);
+		m_fFloatValue=m_AccessoryData->GetFloatValue(m_nLv);
 	}
 
 	FString ParseToString()
@@ -265,8 +281,7 @@ public:
 	FOnEquipChanged m_OnWeaponChanged;
 	FOnEquipChanged m_OnWingChanged;
 	FOnEquipChanged m_OnPetChanged;
-	FOnEquipChanged m_OnAccessoryChanged1;
-	FOnEquipChanged m_OnAccessoryChanged2;
+	FOnEquipChanged m_OnAccessoryChanged;
 	
 	TArray<FPlayerClassSpec> m_AryPlayerSkin;
 	TArray<FWingSpec> m_AryWings;
@@ -274,12 +289,14 @@ public:
 	TArray<FPetSpec> m_AryPets;
 	TArray<FAccessorySpec> m_AryAcce;
 
+	UPROPERTY()
 	int m_nSelectedSkin;
+	UPROPERTY()
 	int m_nSelectedWing;
+	UPROPERTY()
 	int m_nSelectedWeapon;
+	UPROPERTY()
 	int m_nSelectedPet;
-	int m_nSelectedAccessory1;
-	int m_nSelectedAccessory2;
 
 	UPROPERTY()
 	UAccessoryOption* m_AcceSpec1;
@@ -353,4 +370,8 @@ public:
 	void AddWingStack(int index);
 
 	void AddAccessoryStack(int index);
+
+	FAccessorySpec& GetAccessory(EAccessory acces);
 };
+
+

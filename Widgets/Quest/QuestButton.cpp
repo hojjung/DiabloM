@@ -16,12 +16,21 @@ void UQuestButton::Init(int index,FQuestDataSpec* dataSpecPTr)
 
 void UQuestButton::UpdateQuestWidget()
 {
+	if(m_CurrentSpec->IsMaxLv())
+	{
+		m_TextImgComplete->SetText(FText::FromString(TEXT("MAX")));
+		
+		m_BtnComplete->SetIsEnabled(false);
+		return;
+	}
+	
 	m_TextQuestName->SetText(m_CurrentSpec->m_Data->m_TextQuestName);
 
 	m_TextQuestGauge->SetText(m_CurrentSpec->GetGaugeFormatTxt());
-	
-	m_ProgressBar->SetRenderOpacity(m_CurrentSpec->GetGaugePercent());
 
+	m_ProgressBar->SetProgressValue(m_CurrentSpec->GetGaugePercent());
+
+	
 	m_TextImgComplete->SetText(FText::AsNumber(m_CurrentSpec->GetCompletePrize()));
 
 	m_BtnComplete->SetIsEnabled(m_CurrentSpec->IsCompletable());

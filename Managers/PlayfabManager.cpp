@@ -16,7 +16,6 @@
 #include "PlayFabUtilities.h"
 #include "Objects/MyInAppPurchase.h"
 #include "Misc/Base64.h"
-using namespace PlayFab;
 
 #define LOCTEXT_NAMESPACE "PlayfabManager"
 
@@ -39,11 +38,36 @@ UPlayfabManager::UPlayfabManager()
 	//m_LoadedDgID ;//= "Stage1-1";
 	//m_LoadedPlayerClassID;// = "Warrior01";
 	m_bIsShowAD=true;
-	m_nRanking=1234;
+	SetRanking(-123);
 }
 
 UPlayfabManager::~UPlayfabManager()
 {
+}
+
+int UPlayfabManager::GetSafeRanking()
+{
+	int CachecRank = m_nSafeRanking ^ 7777;
+	
+	if(m_nRanking!=CachecRank)
+	{
+		PRINTF("Cheated!!!!!");
+		RequestCheatAlert();
+		return -1;
+	}
+
+	return CachecRank;
+}
+
+int UPlayfabManager::GetRanking()
+{
+	return m_nRanking;
+}
+
+void UPlayfabManager::SetRanking(int rank)
+{
+	m_nRanking = rank;
+	m_nSafeRanking = m_nRanking ^ 7777;
 }
 
 void UPlayfabManager::ShowBannerAd(bool able)
@@ -65,26 +89,45 @@ void UPlayfabManager::ShowBannerAd(bool able)
 
 void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 {
-	m_fDeltaCounter += deltaTime;
+	
+	
+	m_fDeltaCountTitleData += deltaTime;
+	m_fDeltaCountRanking += deltaTime;
+	m_fDeltaCountMinutePlaytime += deltaTime;
 
-	if (m_fDeltaCounter < 5.f)
+	if (m_fDeltaCountMinutePlaytime > 60.f)
 	{
-		return;
-	}
-	PRINTF("TryUpdateUserData");
+		UDiabloGameInstance::Get->m_QuestManager->AddQuestCount(EQuestType::PlayTime);
 
-	m_fDeltaCounter = 0.f;
+		m_fDeltaCountMinutePlaytime=0;
+	}
+
+	if (m_fDeltaCountTitleData > 5.f)
+	{
+		PRINTF("TryUpdateUserData");
+
+		m_fDeltaCountTitleData = 0.f;
+	}
+
+	if (m_fDeltaCountRanking > 320.f)
+	{
+		PRINTF("TryUpdateRank");
+		RequestRetrieveTotalRanking();
+		RequestRetrievePlayerAroundRanking();
+		//나의 랭킹 업데이트가 필요
+		m_fDeltaCountRanking = 0.f;
+	}
 }
 
 void UPlayfabManager::RequestSetNickname(FString str)
 {
 	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Nickname", "Request Nickname"));
-	ClientModels::FUpdateUserTitleDisplayNameRequest DisplayReq;
+	PlayFab::ClientModels::FUpdateUserTitleDisplayNameRequest DisplayReq;
 
 	DisplayReq.DisplayName = str;
 
 	GetClientAPI->UpdateUserTitleDisplayName(DisplayReq,
-	                                         UPlayFabClientAPI::FUpdateUserTitleDisplayNameDelegate::CreateUObject(
+	                                         PlayFab::UPlayFabClientAPI::FUpdateUserTitleDisplayNameDelegate::CreateUObject(
 		                                         this, &UPlayfabManager::OnNickNameSetSuccess)
 	                                         , PlayFab::FPlayFabErrorDelegate::CreateUObject(
 		                                         this, &UPlayfabManager::OnErrorPlayfabReq));
@@ -112,13 +155,7 @@ void UPlayfabManager::OnCloudScriptSuccess(const FExeCScriptRslt& rslt)
 	{
 		return;	
 	}
-
 	FString Result = JsonObject->GetStringField(TEXT("Result"));
-	
-	//if(m_CurrentVersionName == Result)
-	{
-		PRINTF("Cloud Parameter Success!!");
-	}
 }
 
 void UPlayfabManager::OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rslt)
@@ -144,6 +181,8 @@ void UPlayfabManager::OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rs
 		UKismetSystemLibrary::LaunchURL("http://play.google.com/store/apps/details?id=<com.hereticbyte.dungeonslasher>");
 	}
 }
+
+
 
 
 void UPlayfabManager::Init()
@@ -344,7 +383,7 @@ void UPlayfabManager::RequestGetUserData()
 
 void UPlayfabManager::SetOnlineStatus()
 {
-	ClientModels::FExecuteCloudScriptRequest Req;
+	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
 	Req.FunctionName = "SetOnlineState";
 	GetClientAPI->ExecuteCloudScript(Req,
 	                                 FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnCloudScriptSuccess),
@@ -358,7 +397,7 @@ void UPlayfabManager::SetOfflineStatus()
 		return;
 	}
 	
-	ClientModels::FExecuteCloudScriptRequest Req;
+	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
 	Req.FunctionName = "SetOfflineState";
 	GetClientAPI->ExecuteCloudScript(Req,
 	                                 FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnCloudScriptSuccess),
@@ -422,9 +461,9 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 
 	RequestVersionCheck();
 
-	ClientModels::FGetCatalogItemsRequest Req;
+	PlayFab::ClientModels::FGetCatalogItemsRequest Req;
 	GetClientAPI->GetCatalogItems(Req, PlayFab::UPlayFabClientAPI::FGetCatalogItemsDelegate::
-	                              CreateLambda([&](const ClientModels::FGetCatalogItemsResult cIRslt)
+	                              CreateLambda([&](const PlayFab::ClientModels::FGetCatalogItemsResult cIRslt)
 	                              {
 		                              for(const PlayFab::ClientModels::FCatalogItem& CatalogItem : cIRslt.Catalog)
 		                              {
@@ -432,7 +471,8 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 		                              }
 	                              }), FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 
-
+	RequestRetrievePlayerAroundRanking();
+	RequestRetrieveTotalRanking();
 	RequestGetServerTime();
 }
 
@@ -501,17 +541,17 @@ void UPlayfabManager::PurchaseVirtualItem(FString itemUniqueId)
 		return;
 	}
 
-	ClientModels::FCatalogItem& ItemWant = m_MapCatalogItems[itemUniqueId];
+	PlayFab::ClientModels::FCatalogItem& ItemWant = m_MapCatalogItems[itemUniqueId];
 	
-	ClientModels::FPurchaseItemRequest Req;
+	PlayFab::ClientModels::FPurchaseItemRequest Req;
 	Req.VirtualCurrency="GG";
 	Req.Price = ItemWant.VirtualCurrencyPrices["GG"];
 	Req.CatalogVersion = ItemWant.CatalogVersion;
 	Req.CharacterId = m_PlayfabID;
 	Req.ItemId = ItemWant.ItemId;
 	
-	GetClientAPI->PurchaseItem(Req,UPlayFabClientAPI::FPurchaseItemDelegate::CreateLambda(
-		[&](const ClientModels::FPurchaseItemResult& rslt)
+	GetClientAPI->PurchaseItem(Req,PlayFab::UPlayFabClientAPI::FPurchaseItemDelegate::CreateLambda(
+		[&](const PlayFab::ClientModels::FPurchaseItemResult& rslt)
 	{
 			RequestGetInventory();
 			
@@ -535,13 +575,13 @@ void UPlayfabManager::PurchaseSuccess(EInAppPurchaseState::Type completionStatus
 	
 	FString Signature = JsonObject->GetStringField(TEXT("signature"));
 	//
-	ClientModels::FValidateGooglePlayPurchaseRequest GooglePlayReq;
+	PlayFab::ClientModels::FValidateGooglePlayPurchaseRequest GooglePlayReq;
 	GooglePlayReq.CurrencyCode = inAppPurchaseInformation.CurrencyCode;
 	GooglePlayReq.ReceiptJson = ReceiptData;
 	GooglePlayReq.Signature = Signature;
 	GooglePlayReq.PurchasePrice = inAppPurchaseInformation.RawPrice;
 	//
-	GetClientAPI->ValidateGooglePlayPurchase(GooglePlayReq,UPlayFabClientAPI::
+	GetClientAPI->ValidateGooglePlayPurchase(GooglePlayReq,PlayFab::UPlayFabClientAPI::
 		FValidateGooglePlayPurchaseDelegate::CreateUObject(this,&UPlayfabManager::OnIAPGoogleValidateSuccess),
 		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
@@ -555,11 +595,11 @@ void UPlayfabManager::OnStageComplete()
 {
 	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 
-	JsonObject->SetNumberField(TEXT("stageLevel"), 999992);
+	JsonObject->SetNumberField(TEXT("stageLevel"), UDiabloGameInstance::Get->m_DungeonManager->GetMaxStage());
 
-	ClientModels::FExecuteCloudScriptRequest Req;
+	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
 	
-	Req.FunctionParameter = FJsonKeeper(JsonObject);
+	Req.FunctionParameter = PlayFab::FJsonKeeper(JsonObject);
 	
 	Req.FunctionName = "OnCompleteLevel";
 	
@@ -570,7 +610,7 @@ void UPlayfabManager::OnStageComplete()
 
 void UPlayfabManager::RequestVersionCheck()
 {
-	ClientModels::FExecuteCloudScriptRequest Req;
+	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
 	
 	Req.FunctionName = "CheckVersion";
 	
@@ -590,9 +630,9 @@ void UPlayfabManager::OnIAPGoogleValidateSuccess(const PlayFab::ClientModels::FV
 void UPlayfabManager::RequestGetInventory()
 {
 	
-	ClientModels::FGetUserInventoryRequest Req;
+	PlayFab::ClientModels::FGetUserInventoryRequest Req;
 	GetClientAPI->GetUserInventory(Req,
-		UPlayFabClientAPI::FGetUserInventoryDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetInven),
+		PlayFab::UPlayFabClientAPI::FGetUserInventoryDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetInven),
 		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
@@ -617,10 +657,59 @@ void UPlayfabManager::OnSuccessTimeGet(const PlayFab::ClientModels::FGetTimeResu
 	UDiabloGameInstance::Get->m_GoldManager->SetOfflineMinutes(Minuts);
 }
 
+void UPlayfabManager::RequestRetrieveTotalRanking()
+{
+	PlayFab::ClientModels::FGetLeaderboardRequest Req;
+	
+	Req.StatisticName=TEXT("StageLevel");
+	Req.StartPosition = 0;
+	Req.MaxResultsCount = 100;
+
+	GetClientAPI->GetLeaderboard(Req,PlayFab::UPlayFabClientAPI::FGetLeaderboardDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetTotalRanking),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::OnSuccessGetTotalRanking(const PlayFab::ClientModels::FGetLeaderboardResult& rslt)
+{
+	m_TotalRanking = rslt.Leaderboard;
+
+	m_OnTotalRankReceived.Broadcast(m_TotalRanking);
+}
+
+void UPlayfabManager::RequestRetrievePlayerAroundRanking()
+{
+	PlayFab::ClientModels::FGetLeaderboardAroundPlayerRequest Req;
+	Req.StatisticName=TEXT("StageLevel");
+	Req.MaxResultsCount=1;
+	Req.PlayFabId = m_PlayfabID;
+	
+	GetClientAPI->GetLeaderboardAroundPlayer(Req,PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetPlayerAroundRanking),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
 void UPlayfabManager::RequestGetServerTime()
 {
-	ClientModels::FGetTimeRequest Req;
+	PlayFab::ClientModels::FGetTimeRequest Req;
 	GetClientAPI->GetTime(Req,PlayFab::UPlayFabClientAPI::FGetTimeDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessTimeGet));
 }
+
+void UPlayfabManager::OnSuccessGetPlayerAroundRanking(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult& rslt)
+{
+	m_PlayerRanking = rslt.Leaderboard;
+	
+	SetRanking(m_PlayerRanking[0].Position+1);
+
+	m_OnPlayerRankReceived.Broadcast(m_PlayerRanking);
+}
+
+
+void UPlayfabManager::RequestCheatAlert()
+{
+	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
+	Req.FunctionName = "CheatAlert";
+	Req.GeneratePlayStreamEvent=true;
+	GetClientAPI->ExecuteCloudScript(Req);
+}
+
 
 #undef LOCTEXT_NAMESPACE

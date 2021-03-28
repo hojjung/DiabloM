@@ -193,44 +193,64 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AEquipmentActor> m_ClassPetSkin;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	int m_nMaxLevel = 100;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fInitValue = 0;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)//인컴은 항상 선형적이다
-	float m_fBaseValue = 1.67f;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fBaseCost = 9;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fCostMultiFactor = 1.06f;
+	int m_nFactorLevel=1;
 	
 public:
 	BigInt GetCost(int level) const
 	{
-		level  = FMath::Clamp(level,level,m_nMaxLevel);
+		level  = FMath::Clamp(level,0,100);
+		
+		BigInt Cost = 900*level;
 
-		float Factor =  FMath::Pow(m_fCostMultiFactor,level);
-
-		BigInt Cost = m_fBaseCost;
-
-		Cost.Multiply(Factor);
+		if(level>1)
+		{
+			int IterMax = level-1;
+			
+			for(int i=0; i<IterMax;i++)
+			{
+				//Cost.MultiplyFast(2);
+				Cost = UDiaBlueprintFunctionLibrary::MultiplePercent(Cost,106,0,2);
+			}
+		}
 
 		return Cost;
 	}
 
 	BigInt GetGoldBonusValue(int level) const
 	{
-		level  = FMath::Clamp(level,level,m_nMaxLevel);
+		level = FMath::Clamp(level,0,100);
 		
-		BigInt Value = m_fBaseValue;
+		BigInt GoldBonus = 120;
 
-		return (Value * level) + m_fInitValue;
+		if(m_nFactorLevel>1)
+		{
+			int IterMax = m_nFactorLevel-1;
+			
+			for(int i=0; i<IterMax;i++)
+			{
+				GoldBonus = UDiaBlueprintFunctionLibrary::MultiplePercent(GoldBonus,175,0,2);
+			}
+		}
+
+		if(level>0)//100렙찍을때 두배증가
+		{
+			BigInt Percent = GoldBonus;
+		
+			Percent.Divide(100);
+		
+			Percent.Multiply(level);
+
+			GoldBonus+=Percent;
+		}
+
+		return GoldBonus;
 	}
 
 	FText GetFormatDescPreview(int level) const
 	{
-		FTextFormat Format = FText::FromString(TEXT("골드 획득 보너스 {0}%"));
+		FTextFormat Format = FText::FromString(TEXT("골드보너스:{0}%"));
 
-		FText Str1 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetGoldBonusValue(level)));
+		FText Str1 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetGoldBonusValue(level),2));
 		
 		FFormatOrderedArguments Args;
 		
@@ -238,9 +258,9 @@ public:
 
 		int NewLevel = level+1;
 		
-		if(level<m_nMaxLevel)
+		if(level<100)
 		{
-			FText Str2 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetGoldBonusValue(NewLevel)));
+			FText Str2 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetGoldBonusValue(NewLevel),2));
 			
 			Args.Add(Str2);
 		}
@@ -266,26 +286,29 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta = (MultiLine = true))
 	FString m_UpgradeDescFormat = "Current:{0}>>P{1}";
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	int m_nMaxLevel = 100;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fInitValue = 0;
+	int m_nInitValue = 0;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)//인컴은 항상 선형적이다
-	float m_fBaseValue = 1.67f;
+	int m_nBaseValue = 100;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fBaseCost = 9;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	float m_fCostMultiFactor = 1.06f;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TSubclassOf<UAccessoryOption> m_ClassAccessoryOp;
+	int m_nID;
 	
 public:
 	virtual BigInt GetValue(int level) const
 	{
-		level  = FMath::Clamp(level,level,m_nMaxLevel);
+		level  = FMath::Clamp(level,level,500);
 		
-		BigInt Value = m_fBaseValue;
+		BigInt Value = m_nBaseValue;
 
-		return (Value * level) + m_fInitValue;
+		return (Value * level) + m_nInitValue;
+	}
+
+	float GetFloatValue(int level)const
+	{
+		level  = FMath::Clamp(level,level,500);
+		
+		float Value = m_nBaseValue;
+
+		return ((Value * level) + m_nInitValue) / 100.f;
 	}
 
 	int GetCost(int level) const
@@ -297,7 +320,7 @@ public:
 	{
 		FTextFormat Format = FText::FromString(m_UpgradeDescFormat);
 
-		FText Str1 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetValue(level)));
+		FText Str1 = FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetValue(level),2));
 		
 		FFormatOrderedArguments Args;
 		
@@ -305,9 +328,9 @@ public:
 
 		int NewLevel = level+1;
 		
-		if(level<m_nMaxLevel)
+		if(level<500)
 		{
-			FText Str2 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetValue(NewLevel)));
+			FText Str2 =FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(GetValue(NewLevel),2));
 			
 			Args.Add(Str2);
 		}

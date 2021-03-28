@@ -124,8 +124,7 @@ void UEquipmentPanel::NativeOnInitialized()
 	m_BtnPet->OnClicked.AddDynamic(this,&UEquipmentPanel::UEquipmentPanel::SetPanelPet);
 	m_BtnAccessory->OnClicked.AddDynamic(this,&UEquipmentPanel::SetPanelAccessory);
 	//
-	UDiabloGameInstance::Get->m_EquipManager->m_OnAccessoryChanged1.AddUObject(this,&UEquipmentPanel::OnAccessoryChanged);
-	UDiabloGameInstance::Get->m_EquipManager->m_OnAccessoryChanged2.AddUObject(this,&UEquipmentPanel::OnAccessoryChanged);
+	UDiabloGameInstance::Get->m_EquipManager->m_OnAccessoryChanged.AddUObject(this,&UEquipmentPanel::OnAccessoryChanged);
 	UDiabloGameInstance::Get->m_EquipManager->m_OnPlSkinChanged.AddUObject(this,&UEquipmentPanel::OnSkinChanged);
 	UDiabloGameInstance::Get->m_EquipManager->m_OnPetChanged.AddUObject(this,&UEquipmentPanel::OnPetChanged);
 	UDiabloGameInstance::Get->m_EquipManager->m_OnWeaponChanged.AddUObject(this,&UEquipmentPanel::OnWeaponChanged);

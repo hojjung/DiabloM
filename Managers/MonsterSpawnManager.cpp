@@ -188,6 +188,8 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMobToLoc(FVector loc)
 	const FMonsterEntityHandle& MobHandle = m_DgDataTable->m_Monster;
 
 	const FMonsterEntity* MonData = MobHandle.GetRow<FMonsterEntity>("");
+
+	float GoldScale = 1.f;
 	
 	if(m_nKillCount >= m_nGoldGoblinSpawnCount)
 	{
@@ -196,14 +198,18 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMobToLoc(FVector loc)
 		m_nGoldGoblinSpawnCount+=m_nKillCount;
 
 		MonData = m_GoldGoblinEntity;
+
+		GoldScale = 15;
+		
 	}
+		Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Normal,
+            m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""),1,MonData->m_fScale,GoldScale);	
 	
 	NewLoc.Z += Mob->GetCapsule()->GetScaledCapsuleHalfHeight();
 
 	Mob->SetActorLocation(NewLoc);
 
-	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Normal,
-		m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""),1,MonData->m_fScale);
+	
 
 	return Mob;
 }
@@ -322,7 +328,7 @@ void UMonsterSpawnManager::SpawnBossMob()
 
 	Mob->SetActorLocation(NewLoc);
 
-	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Boss,m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""),10,MonData->m_fBossMonsterRenderScale);
+	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Boss,m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""),10,MonData->m_fBossMonsterRenderScale,10.f);
 
 	m_SpawnedBoss =  Mob;
 

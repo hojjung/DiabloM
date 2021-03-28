@@ -27,11 +27,6 @@ void UQuestManager::SetQuestDataFromServer(const FString& strQuest)
 
 bool UQuestManager::CompleteQuest(int index)
 {
-	if(!m_AryQuestData.MyRangeCheck(index))
-	{
-		return false;
-	}
-
 	if(!m_AryQuestData[index].TryComplete())
 	{
 		return false;
@@ -40,4 +35,15 @@ bool UQuestManager::CompleteQuest(int index)
 	m_OnQuestUpdate.Broadcast(index);
 
 	return true;
+}
+
+FQuestDataSpec& UQuestManager::GetQuest(EQuestType type)
+{
+	return m_AryQuestData[(int)type];
+}
+
+void UQuestManager::AddQuestCount(EQuestType type)
+{
+	GetQuest(type).m_nCurrentRequirePoint++;
+	m_OnQuestUpdate.Broadcast((int)type);
 }

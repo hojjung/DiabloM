@@ -49,6 +49,7 @@ void UMainCanvas::NativeOnInitialized()
 	UDiabloGameInstance::Get->m_PlayfabManager->m_OnShowAdBanner.AddUObject(this,&UMainCanvas::OnShowAdBanner);
 	UDiabloGameInstance::Get->m_PlayfabManager->m_OnGemstoneChanged.AddUObject(this,&UMainCanvas::UpdateGemStone);
 	UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
+	UDiabloGameInstance::Get->m_PlayfabManager->m_OnPlayerRankReceived.AddUObject(this,&UMainCanvas::SetPlayerNicknameRankingWrap);
 
 	m_BtnGemStone->OnClicked.AddDynamic(this,&UMainCanvas::OpenGemStoneShop);
 	m_BtnGold->OnClicked.AddDynamic(this,&UMainCanvas::OpenGoldShop);
@@ -130,6 +131,10 @@ void UMainCanvas::HideBossUI()
 
 void UMainCanvas::UpdateRageBar(float cV,float mV)
 {
+	int Erase = cV;
+	
+	cV =Erase;
+	
 	m_BarRage->SetProgressValue(cV/mV);
 
 	FTextFormat FormatRage =FText::FromString("{0}/{1}");
@@ -349,9 +354,9 @@ void UMainCanvas::SetPlayerNicknameRanking()
 {
 	FFormatOrderedArguments Args;
 
-	int TestRank = UDiabloGameInstance::Get->m_PlayfabManager->m_nRanking;
+	int Rank = UDiabloGameInstance::Get->m_PlayfabManager->GetRanking();
 	
-	Args.Add(TestRank);
+	Args.Add(Rank);
 	Args.Add(FText::FromString(UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname));
 
 	FTextFormat Format = LOCTEXT("Rank Nickname","[{0}st] {1}");
@@ -359,6 +364,11 @@ void UMainCanvas::SetPlayerNicknameRanking()
 	FText RankText = FText::Format(Format,Args);
 	
 	m_TextRanking->SetText(RankText);
+}
+
+void UMainCanvas::SetPlayerNicknameRankingWrap(const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>& notUse)
+{
+	SetPlayerNicknameRanking();
 }
 
 void UMainCanvas::HideTextWidget()

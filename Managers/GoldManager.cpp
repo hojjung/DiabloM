@@ -27,6 +27,12 @@ BigInt UGoldManager::AddGold(const BigInt& v)
 	{
 		FinalV = UDiaBlueprintFunctionLibrary::MultiplePercent(FinalV,UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet()->m_GoldBonusValue);
 	}
+
+	if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce01).m_nLv>0)
+	{
+		FinalV = UDiaBlueprintFunctionLibrary::MultiplePercent(FinalV,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce01).m_Value);
+	}
+	
 	
 	m_CurrentGold.Add(FinalV);
 
@@ -61,6 +67,11 @@ bool UGoldManager::GainOfflineGold()
 	BigInt Bounty = UDiabloGameInstance::Get->m_DungeonManager->GetCurrentDungeonBounty();
 
 	Bounty.Multiply(5*m_nMinute);
+
+	if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce08).m_nLv>0)
+	{
+		Bounty = UDiaBlueprintFunctionLibrary::MultiplePercent(Bounty,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce08).m_Value);
+	}
 
 	m_OfflineGold = AddGold(Bounty);
 

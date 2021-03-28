@@ -26,4 +26,6 @@ public:
 
 	UFUNCTION()
 	void ClosePanel();
+
+	void UpdateQuest(int);
 };

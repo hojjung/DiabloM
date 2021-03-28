@@ -27,19 +27,27 @@ typedef PlayFab::UPlayFabClientAPI::FGetAccountInfoDelegate FGetAccntInfoDele;
 typedef PlayFab::ClientModels::FGetAccountInfoRequest FGetAccntInfoReq;
 typedef PlayFab::ClientModels::FGetAccountInfoResult FGetAccntInfoRslt;
 //
-
 UCLASS()
 class DIABLOM_API UPlayfabManager : public UObject
 {
 	GENERATED_BODY()
-public:
+public://delegate
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnShowAdBanner,bool);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnVirtualCurrencyChanged,int);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayfabError,FString&);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRankReceived,const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>&);
+	
+	FOnRankReceived m_OnTotalRankReceived;
+
+	FOnRankReceived m_OnPlayerRankReceived;
 
 	FOnShowAdBanner m_OnShowAdBanner;
-	//해금된 스테이지와 해금된 클래스,각클래스 업그레이드 레벨 다저장해야함
-	//다 숫자로 통일해주자? 테이블에서 어케 가져와
+
+	FOnVirtualCurrencyChanged m_OnGemstoneChanged;
+	
+	FOnPlayfabError m_OnPlayfabError;
+
+public://static
 	static const FString Gold;
 	static const FString Dg;
 	static const FString StatSkill;
@@ -51,9 +59,11 @@ public:
 	static const FString Accessory;
 	static const FString IAP;
 	//
-	FOnVirtualCurrencyChanged m_OnGemstoneChanged;
-	
-	FOnPlayfabError m_OnPlayfabError;
+public://user data
+	UPROPERTY()
+	FString m_PlayfabID;
+
+	PlayFabClientPtr GetClientAPI = nullptr;
 
 	FString m_OrderID;
 
@@ -61,38 +71,7 @@ public:
 
 	FDateTime m_CurrentTime;
 
-public:
-	UPlayfabManager();
-
-	~UPlayfabManager();
-
-	void Init();
-
-protected:
-	TMap<FString,PlayFab::ClientModels::FCatalogItem> m_MapCatalogItems;
-	
-
-protected:
-	void HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqueId, const int ControllerIndex,
-	                           const FOnlineError& error);
-
-	void TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqueId);
-	
-
-
-	void OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result);
-
-	void OnSuccessGetUserData(const FGetUsrDataRslt& result);
-
-	void RequestGetAccountInfo();
-
-	void OnSuccessGetAccountInfo(const FGetAccntInfoRslt& rslt);
-	
-	
-public:
-	void OnErrorPlayfabReq(const FFailRslt& ErrorResult);
-
-public:
+public://loaded data
 	UPROPERTY()
 	bool m_bVersionChecked = false;
 	UPROPERTY()
@@ -104,7 +83,11 @@ public:
 	UPROPERTY()
 	bool m_bIsLoginCompleted = false;
 	UPROPERTY()
-	float m_fDeltaCounter;
+	float m_fDeltaCountMinutePlaytime;
+	UPROPERTY()
+	float m_fDeltaCountTitleData;
+	UPROPERTY()
+	float m_fDeltaCountRanking;
 	UPROPERTY()
 	FString m_LoadedGold;
 	UPROPERTY()
@@ -129,15 +112,38 @@ public:
 	FString m_CurrentVersionName="TEST0321";
 	UPROPERTY()
 	bool m_bIsShowAD;
-	//
+	
+protected://rank
 	UPROPERTY()
 	int m_nRanking;
 
-public:
-	UPROPERTY()
-	FString m_PlayfabID;
+	int m_nSafeRanking;
 
-	PlayFabClientPtr GetClientAPI = nullptr;
+	TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry> m_TotalRanking;
+
+	TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry> m_PlayerRanking;
+
+public://init
+	UPlayfabManager();
+
+	~UPlayfabManager();
+
+	void Init();
+	
+protected:
+	TMap<FString,PlayFab::ClientModels::FCatalogItem> m_MapCatalogItems;
+	
+
+protected:
+	void HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqueId, const int ControllerIndex,
+	                           const FOnlineError& error);
+
+	void TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqueId);
+	
+	void RequestGetAccountInfo();
+	
+	void OnErrorPlayfabReq(const FFailRslt& ErrorResult);
+
 public:
 
 	bool GetIsLogined()
@@ -160,15 +166,6 @@ public:
 	
 	void SetOfflineStatus();
 
-
-protected:
-	void OnNickNameSetSuccess(const  PlayFab::ClientModels::FUpdateUserTitleDisplayNameResult&);
-
-	void OnCloudScriptSuccess(const FExeCScriptRslt& rslt);
-
-	void OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rslt);
-
-public:
 	UFUNCTION()
     void BuyIAP(FString itemId,bool bIsConsumable);
 
@@ -188,12 +185,49 @@ public:
 	void RequestGetServerTime();
 	
 protected:
-	void OnIAPGoogleValidateSuccess( const PlayFab::ClientModels::FValidateGooglePlayPurchaseResult&);
+	void OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result);
 
+	void OnSuccessGetUserData(const FGetUsrDataRslt& result);
+
+	void OnSuccessGetAccountInfo(const FGetAccntInfoRslt& rslt);
+	
+	void OnIAPGoogleValidateSuccess( const PlayFab::ClientModels::FValidateGooglePlayPurchaseResult&);
 
 	void OnSuccessGetInven( const PlayFab::ClientModels::FGetUserInventoryResult&);
 
 	void OnSuccessTimeGet(const PlayFab::ClientModels::FGetTimeResult& );
-};
 
+	void OnSuccessGetTotalRanking( const PlayFab::ClientModels::FGetLeaderboardResult&);
+
+	void OnNickNameSetSuccess(const  PlayFab::ClientModels::FUpdateUserTitleDisplayNameResult&);
+
+	void OnCloudScriptSuccess(const FExeCScriptRslt& rslt);
+
+	void OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rslt);
+
+	void OnSuccessGetPlayerAroundRanking(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult&);
+
+public:
+	void RequestRetrieveTotalRanking();
+
+	void RequestRetrievePlayerAroundRanking();
+	
+	int GetSafeRanking();
+
+	int GetRanking();
+
+	void SetRanking(int rank);
+
+	void RequestCheatAlert();
+
+	FORCEINLINE const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>& GetTotalRank() const
+	{
+		return m_TotalRanking;
+	}
+
+	FORCEINLINE const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>& GetPlayerRank() const
+	{
+		return m_PlayerRanking;
+	}
+};
 

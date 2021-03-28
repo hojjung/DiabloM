@@ -375,6 +375,8 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 	//
 	if (name == "BaseAttack")
 	{
+		GainRagePoint();
+		
 		if (IsAOE)
 		{
 			ApplyDamageToTargets(*aryHits);
@@ -388,14 +390,30 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 	{
 		BigInt SkillDmg = m_PlUpgradeManager->GetAtkUp(EAttackType::MagicBombDmg).m_Value;
 
+		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce05).m_nLv>0)
+		{
+			SkillDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(SkillDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce05).m_Value);
+		}
+
 		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
 	else if (name == "MagicBomb02") //작은 범위 공격
 	{
 		BigInt SkillDmg1 = m_PlUpgradeManager->GetAtkUp(EAttackType::MagicBombDmg).m_Value;
 		BigInt SkillDmg2 = m_PlUpgradeManager->GetAtkUp(EAttackType::SuperMagicBombDmg).m_Value;
-
 		BigInt Result = UDiaBlueprintFunctionLibrary::MultiplePercent(SkillDmg1, SkillDmg2);
+
+		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce05).m_nLv>0)
+		{
+			Result = UDiaBlueprintFunctionLibrary::MultiplePercent(Result,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce05).m_Value);
+		}
+
+		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce06).m_nLv>0)
+		{
+			Result = UDiaBlueprintFunctionLibrary::MultiplePercent(Result,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce06).m_Value);
+		}
+
+		
 
 		ApplyDamageToTargets(*aryHits, &Result);
 	}
@@ -520,7 +538,6 @@ float APlayerDiabloCharacter::TryAttack()
 	if (m_BaseAttackAnim && m_fAttackCD < 0.f)
 	{
 		PlayAttackMontage(m_fAttackCD, m_fAttackCDConstant);
-		GainRagePoint();
 	}
 
 	return 1.f;
@@ -543,6 +560,11 @@ bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 		outDmg.Multiply(m_bnAdditionalSkillDmg);
 	}
 
+	if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).m_nLv>0)
+	{
+		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).m_Value);
+	}
+
 	outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, m_EquipManager->GetCurrentWeapon().m_Value);
 
 	int Rand = FMath::RandRange(90, 110);
@@ -556,6 +578,11 @@ bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 
 		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, CDmg01);
 
+		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).m_nLv>0)
+		{
+			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).m_Value);
+		}
+
 		pp = EDamagePopup::CritcalRight;
 	}
 	else if (Type == EDamageType::Critical02) //슈퍼치명타
@@ -564,9 +591,19 @@ bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 
 		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, CDmg01);
 
+		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).m_nLv>0)
+		{
+			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).m_Value);
+		}
+
 		BigInt SDmg02 = m_PlUpgradeManager->GetAtkUp(EAttackType::SuperCriticalDmg).m_Value; //백기준으로 해야함,1.5배는  1
 
 		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, SDmg02);
+
+		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce04).m_nLv>0)
+		{
+			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce04).m_Value);
+		}
 
 		pp = EDamagePopup::CritcalRight2;
 	}
@@ -701,7 +738,14 @@ void APlayerDiabloCharacter::SetManualMoveLocation(FVector goalLocation)
 
 void APlayerDiabloCharacter::GainRagePoint()
 {
-	m_fCurrentRage += m_fGainRagePer;
+	float GainRage = m_fGainRagePer;
+	
+	if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce07).m_nLv>0)
+	{
+		GainRage *= UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce07).m_fFloatValue;
+	}
+
+	m_fCurrentRage += GainRage;
 
 	m_fCurrentRage = FMath::Clamp(m_fCurrentRage, 0.f, m_fMaxRage);
 

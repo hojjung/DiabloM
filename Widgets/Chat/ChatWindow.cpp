@@ -73,22 +73,9 @@ void UChatWindow::OnReceiveTotalChatList(const FString& chat)
 	
 	chat.ParseIntoArray(OutStrAry,TEXT("\n"));
 
-	PRINTF("ChatStr:%d",OutStrAry.Num());
-
 	for(FString& Str : OutStrAry)
 	{
 		AddTextWidget(Str);
-	}
-
-	float OffsetPercent =  m_MessageScrollBox->GetScrollOffset();
-	
-	float OffsetPercentMax =  m_MessageScrollBox->GetScrollOffsetOfEnd();
-
-	float Percent = OffsetPercent/OffsetPercentMax;
-
-	if(Percent>0.7f)
-	{
-		m_MessageScrollBox->ScrollToEnd();			
 	}
 }
 void UChatWindow::SendText()
@@ -113,7 +100,7 @@ void UChatWindow::AddTextWidget(const FString& chat)
 {
 	UChatText* TopText = GetTopText();
 	
-	TopText->SetNormalChat(chat);
+	TopText->SetChat(chat);
 
 	m_MessageScrollBox->AddChild(TopText);
 }

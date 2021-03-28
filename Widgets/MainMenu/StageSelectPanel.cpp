@@ -9,9 +9,9 @@ void UStageSelectPanel::NativeOnInitialized()
 
 	int Len = UDiabloGameInstance::Get->m_DungeonManager->GetAryDgData().Num();
 	
-	int MaxLevel = UDiabloGameInstance::Get->m_DungeonManager->GetMyMaxStageLevel();
+	int MaxLevel = UDiabloGameInstance::Get->m_DungeonManager->GetMaxStage();
 
-	int Current =  UDiabloGameInstance::Get->m_DungeonManager->GetCurrentStageLevel();
+	int Current =  UDiabloGameInstance::Get->m_DungeonManager->GetCurrentStage();
 
 	for(int i=0; i< Len; i++)
 	{

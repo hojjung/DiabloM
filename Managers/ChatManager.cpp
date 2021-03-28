@@ -17,7 +17,7 @@ UChatManager::UChatManager()
 		"https://docs.google.com/spreadsheets/d/18XUGwRb4DYjyJEpBZL0H3FqvlcDedE8icg7WJ_JNdD0/export?format=tsv&range=B:B";
 
 	WebURL =
-		"https://script.google.com/macros/s/AKfycbxwh-4ylp9wH6lHTU73NDPSD2ls0asPdzcHuuVpXmIRtigYYtAeq6Bx0CWp0UKldH9X/exec";
+		"https://script.google.com/macros/s/AKfycbyihgL3gbisI_koZiMPpvGhB2BVVZ3U3C0faCTgWX_GgmVdRmqmMjQfXRsDi0AJtmb5/exec";
 
 	SetBadWordAry();
 
@@ -134,7 +134,7 @@ void UChatManager::ChatPost(const FText& chatWant)
 	FilterBadWord(CachedString);
 
 	FString FormatStr = FString::Printf(
-		TEXT("ranking=%d&nickname=%s&chat=%s"), UDiabloGameInstance::Get->m_PlayfabManager->m_nRanking,
+		TEXT("ranking=%d&nickname=%s&chat=%s"), UDiabloGameInstance::Get->m_PlayfabManager->GetSafeRanking(),
 		*UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname, *CachedString);
 
 	HttpCall(WebURL, "POST", &FormatStr);
@@ -219,5 +219,24 @@ FString UChatManager::URLDecode(FString url)
 void UChatManager::SetReceiveChat(bool b)
 {
 	m_bIsReceiveChatFromServer=b;
+}
+
+void UChatManager::SummonChatPost(const FText& gachaName)
+{
+	FText CachedText = gachaName;
+
+	CachedText = UKismetTextLibrary::TextTrimPrecedingAndTrailing(CachedText);
+
+	FString CachedString = CachedText.ToString();
+
+	FilterBadWord(CachedString);
+
+	FString FormatStr = FString::Printf(TEXT("nickname=%s&gacha=%s"), *UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname, *CachedString);
+
+	HttpCall(WebURL, "POST", &FormatStr);
+
+	m_fDeltaCounter=0.f;
+	
+	m_bIsWaitingGetChatRequest = false;
 }
 
