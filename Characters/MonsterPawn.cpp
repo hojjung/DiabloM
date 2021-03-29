@@ -189,6 +189,8 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
 
   
     SetAcive(true);
+
+    m_TickFSM->ResetStartPosition(GetActorLocation());
 }
 
 void AMonsterPawn::Tick(float DeltaSeconds)

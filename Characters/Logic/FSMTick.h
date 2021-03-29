@@ -62,6 +62,8 @@ protected:
 public:
 	void Init(AUnitPawn* pawnUnit);
 	
+	void ResetStartPosition(FVector loc);
+	
 	FORCEINLINE float GetAttackRange()
 	{
 		return m_fAttackRange;

@@ -37,7 +37,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextGachaWeaponNameLevel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UMaterialProgressBar* m_BarGachaLevelExp;
+	UTextBlock* m_TextGachaLevelExpBarWeapon;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UMaterialProgressBar* m_BarGachaLevelExpWeapon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnShowWeaponLevelInfo;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -49,6 +51,8 @@ protected:
 	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextGachaSkinNameLevel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextGachaLevelExpBarSkin;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMaterialProgressBar* m_BarGachaLevelExpSkin;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -134,4 +138,8 @@ public:
 	UFUNCTION()
     void RollGachaAccessoryElevenTimes();
 	//
+
+	void UpdateGachaWeaponLevelCount(int c,int m,int lv);
+	
+	void UpdateGachaSkinLevelCount(int c,int m,int lv);
 };

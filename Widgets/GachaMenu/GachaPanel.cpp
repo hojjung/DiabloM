@@ -30,6 +30,12 @@ void UGachaPanel::NativeOnInitialized()
 	m_BtnShowAccesoryGachaRate->OnClicked.AddDynamic(this,&UGachaPanel::ShowAccessoryGachaInfo);
 	m_BtnRollGachaAccesoryOneTime->OnClicked.AddDynamic(this,&UGachaPanel::RollGachaAccessoryOneTime);
 	m_BtnRollGachaAccesoryElevenTime->OnClicked.AddDynamic(this,&UGachaPanel::RollGachaAccessoryElevenTimes);
+	//
+	m_GachaManager->m_OnGachaRollSkin.AddUObject(this,&UGachaPanel::UpdateGachaSkinLevelCount);
+	m_GachaManager->m_OnGachaRollWeapon.AddUObject(this,&UGachaPanel::UpdateGachaWeaponLevelCount);
+
+	UpdateGachaSkinLevelCount(m_GachaManager->m_nGachaSkinCount,m_GachaManager->GetGachaSkinMaxCount(),m_GachaManager->m_nCurrentSkinIndex);
+	UpdateGachaWeaponLevelCount(m_GachaManager->m_nGachaWeaponCount,m_GachaManager->GetGachaWeaponMaxCount(),m_GachaManager->m_nCurrentWeaponIndex);
 }
 
 void UGachaPanel::ClosePanel()
@@ -147,4 +153,49 @@ void UGachaPanel::RollGachaAccessoryElevenTimes()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollAccessory);
 	m_GachaGridPanel->RollGachaElevenTime();
+}
+
+void UGachaPanel::UpdateGachaWeaponLevelCount(int c, int m,int lv)
+{
+	m_TextGachaWeaponNameLevel->SetText(FText::FromString(FString::Printf(TEXT("무기 가챠:Lv.%d"),lv+1)));
+
+	if(lv==7)
+	{
+		m_TextGachaLevelExpBarWeapon->SetText(FText::FromString(TEXT("MAX")));
+		m_BarGachaLevelExpWeapon->SetProgressValue(1.f);
+		return;
+	}
+	
+	m_TextGachaLevelExpBarWeapon->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"),c,m)));
+
+	float Current = c;
+
+	float Max = m;
+	
+	float Gauge = Current / Max;
+
+	m_BarGachaLevelExpWeapon->SetProgressValue(Gauge);
+}
+
+void UGachaPanel::UpdateGachaSkinLevelCount(int c, int m,int lv)
+{
+	
+	m_TextGachaSkinNameLevel->SetText(FText::FromString(FString::Printf(TEXT("변신 가챠:Lv.%d"),lv+1)));
+
+	if(lv==7)
+	{
+		m_TextGachaLevelExpBarSkin->SetText(FText::FromString(TEXT("MAX")));
+		m_BarGachaLevelExpSkin->SetProgressValue(1.f);
+		return;
+	}
+	
+	m_TextGachaLevelExpBarSkin->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"),c,m)));
+	
+	float Current = c;
+
+	float Max = m;
+	
+	float Gauge = Current / Max;
+
+	m_BarGachaLevelExpSkin->SetProgressValue(Gauge);
 }

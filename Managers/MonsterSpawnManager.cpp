@@ -183,13 +183,19 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMobToLoc(FVector loc)
 	loc.Y = FMath::RandRange(MinY, MaxY);
 
 
-	FVector NewLoc = GetRandomPointFromNav(loc, 2000.f);
+	FVector NewLoc = GetRandomPointFromNav(loc, 4000.f);
 
 	const FMonsterEntityHandle& MobHandle = m_DgDataTable->m_Monster;
 
 	const FMonsterEntity* MonData = MobHandle.GetRow<FMonsterEntity>("");
 
+	NewLoc.Z += Mob->GetCapsule()->GetScaledCapsuleHalfHeight();
+
+	Mob->SetActorLocation(NewLoc);
+
 	float GoldScale = 1.f;
+
+	float StatScale = 1.f;
 	
 	if(m_nKillCount >= m_nGoldGoblinSpawnCount)
 	{
@@ -199,18 +205,14 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMobToLoc(FVector loc)
 
 		MonData = m_GoldGoblinEntity;
 
-		GoldScale = 15;
-		
+		GoldScale = 15.f;
+
+		StatScale = 5.f;
 	}
-		Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Normal,
-            m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""),1,MonData->m_fScale,GoldScale);	
 	
-	NewLoc.Z += Mob->GetCapsule()->GetScaledCapsuleHalfHeight();
-
-	Mob->SetActorLocation(NewLoc);
-
+	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Normal,
+           m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""),StatScale,MonData->m_fScale,GoldScale);	
 	
-
 	return Mob;
 }
 

@@ -29,6 +29,7 @@ void UGachaInfoPanel::NativeOnInitialized()
 
 void UGachaInfoPanel::OpenGachaInfo(TArray<FGachaTableRow*>& aryTableRow,float totalPercent)
 {
+	
 	for(UGachaInfoElement* GachaElement : m_AryGachaInfoElement)
 	{
 		GachaElement->SetVisibility(ESlateVisibility::Collapsed);
@@ -44,6 +45,8 @@ void UGachaInfoPanel::OpenGachaInfo(TArray<FGachaTableRow*>& aryTableRow,float t
 		
 		index++;
 	}
+
+	m_Verti->ScrollToStart();
 }
 
 void UGachaInfoPanel::CloseGachaPanel()

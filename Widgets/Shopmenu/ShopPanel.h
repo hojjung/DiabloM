@@ -43,6 +43,16 @@ protected:
 	UButton* m_BtnPurchaseGemStone05;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnPurchaseGemStone06;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextGoldSmallAmount;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextGoldMidiumAmount;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextGoldLargeAmount;
+protected:
+	BigInt m_Gold01;
+	BigInt m_Gold02;
+	BigInt m_Gold03;
 
 public:
 	virtual void NativeOnInitialized() override;
@@ -77,4 +87,6 @@ public:
     void ShowGemStonePanel();
 	UFUNCTION()
     void ShowGoldPanel();
+
+	void UpdateGoldShop();
 };

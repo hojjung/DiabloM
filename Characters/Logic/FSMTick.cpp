@@ -24,7 +24,7 @@ void UFSMTick::Init(AUnitPawn* pawnUnit)
 	m_AryStateFunction[static_cast<int>(EFSM::ManualMove)] = &UFSMTick::OnManualMove;
 
 	//
-	m_StartPoint = m_Owner->GetActorLocation();
+	ResetStartPosition(m_Owner->GetActorLocation());
 }
 
 void UFSMTick::TickFSM()
@@ -158,5 +158,10 @@ void UFSMTick::OnManualMove()
 			m_OnMoveDone.Broadcast();
 		}
 	}
+}
+
+void UFSMTick::ResetStartPosition(FVector loc)
+{
+	m_StartPoint = loc;
 }
 

@@ -78,6 +78,7 @@ void UDungeonManager::LevelUpDungeon()
 		PRINTF("DgManager-LevelUpDungeon HighScore");
 		SetMaxStageLevel(m_nCurrentStageLevel);
 		UDiabloGameInstance::Get->m_PlayfabManager->OnStageComplete();
+		m_OnDungeonMaxUpdate.Broadcast();
 	}
 
 	m_OnDgOpen.Broadcast(m_nCurrentStageLevel);

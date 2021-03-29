@@ -4,6 +4,7 @@
 #include "ShopPanel.h"
 
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/DungeonManager.h"
 
 void UShopPanel::NativeOnInitialized()
 {
@@ -24,6 +25,10 @@ void UShopPanel::NativeOnInitialized()
 	m_BtnPurchaseGemStone04->OnClicked.AddDynamic(this,&UShopPanel::PurchaseGemStone04);
 	m_BtnPurchaseGemStone05->OnClicked.AddDynamic(this,&UShopPanel::PurchaseGemStone05);
 	m_BtnPurchaseGemStone06->OnClicked.AddDynamic(this,&UShopPanel::PurchaseGemStone06);
+
+	UpdateGoldShop();
+
+	UDiabloGameInstance::Get->m_DungeonManager->m_OnDungeonMaxUpdate.AddUObject(this,&UShopPanel::UpdateGoldShop);
 }
 
 void UShopPanel::PurchasePacakge01()
@@ -100,4 +105,25 @@ void UShopPanel::ShowGemStonePanel()
 void UShopPanel::ShowGoldPanel()
 {
 	m_SwitcherPanel->SetActiveWidgetIndex(2);
+}
+
+void UShopPanel::UpdateGoldShop()
+{
+	BigInt Bounty = UDiabloGameInstance::Get->m_DungeonManager->GetCurrentDungeonBounty();
+	
+	Bounty.Multiply(7*480);
+
+	m_Gold01 = Bounty;
+
+	Bounty.Multiply(15);
+	
+	m_Gold02 = Bounty;
+
+	Bounty.Multiply(20);
+
+	m_Gold03 = Bounty;
+
+	m_TextGoldSmallAmount->SetText(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_Gold01,2)));
+	m_TextGoldMidiumAmount->SetText(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_Gold02,2)));
+	m_TextGoldLargeAmount->SetText(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_Gold03,2)));
 }

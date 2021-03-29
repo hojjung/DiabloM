@@ -30,6 +30,10 @@ class DIABLOM_API UDungeonManager : public UObject
 	GENERATED_BODY()
 
 public:
+	DECLARE_MULTICAST_DELEGATE(FOnDungeonMaxUpdate);
+	
+	FOnDungeonMaxUpdate m_OnDungeonMaxUpdate;
+	
 	UDungeonManager(const FObjectInitializer& objInit);
 
 	static UDataTable* DungeonDataTable;
