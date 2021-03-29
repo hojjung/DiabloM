@@ -25,71 +25,90 @@ void UShopPanel::NativeOnInitialized()
 	m_BtnPurchaseGemStone04->OnClicked.AddDynamic(this,&UShopPanel::PurchaseGemStone04);
 	m_BtnPurchaseGemStone05->OnClicked.AddDynamic(this,&UShopPanel::PurchaseGemStone05);
 	m_BtnPurchaseGemStone06->OnClicked.AddDynamic(this,&UShopPanel::PurchaseGemStone06);
+	m_BtnPurchaseGold01->OnClicked.AddDynamic(this,&UShopPanel::PurchaseGold01);
+	m_BtnPurchaseGold02->OnClicked.AddDynamic(this,&UShopPanel::PurchaseGold02);
+	m_BtnPurchaseGold03->OnClicked.AddDynamic(this,&UShopPanel::PurchaseGold03);
 
-	UpdateGoldShop();
-
-	UDiabloGameInstance::Get->m_DungeonManager->m_OnDungeonMaxUpdate.AddUObject(this,&UShopPanel::UpdateGoldShop);
+	m_ShopManager = UDiabloGameInstance::Get->m_ShopManager; 
+	
+	m_ShopManager->m_OnUpdateGold.AddUObject(this,&UShopPanel::OnUpdateGoldShop);;
+	m_ShopManager->UpdateGold();
 }
 
 void UShopPanel::PurchasePacakge01()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_starter",false);
+	m_ShopManager->PurchasePacakge01();
 }
 
 void UShopPanel::PurchasePacakge02()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_begginer",false);
+	m_ShopManager->PurchasePacakge02();
 }
 
 void UShopPanel::PurchasePacakge03()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_rare",false);
+	m_ShopManager->PurchasePacakge03();
 }
 
 void UShopPanel::PurchasePacakge04()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_hero",false);
+	m_ShopManager->PurchasePacakge04();
 }
 
 void UShopPanel::PurchasePacakge05()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_legend",false);
+	m_ShopManager->PurchasePacakge05();
 }
 
 void UShopPanel::PurchaseGemStone01()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("gemstone01",true);
+	m_ShopManager->PurchaseGemStone01();
 }
 
 void UShopPanel::PurchaseGemStone02()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("gemstone02",true);
+	m_ShopManager->PurchaseGemStone02();
 }
 
 void UShopPanel::PurchaseGemStone03()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("gemstone03",true);
+	m_ShopManager->PurchaseGemStone03();
 }
 
 void UShopPanel::PurchaseGemStone04()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("gemstone04",true);
+	m_ShopManager->PurchaseGemStone04();
 }
 
 void UShopPanel::PurchaseGemStone05()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("gemstone05",true);
+	m_ShopManager->PurchaseGemStone05();
 }
 
 void UShopPanel::PurchaseGemStone06()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("gemstone06",true);
+	m_ShopManager->PurchaseGemStone06();
+}
+
+void UShopPanel::PurchaseGold01()
+{
+	m_ShopManager->PurchaseGold01();
+}
+
+void UShopPanel::PurchaseGold02()
+{
+	m_ShopManager->PurchaseGold02();
+}
+
+void UShopPanel::PurchaseGold03()
+{
+	m_ShopManager->PurchaseGold03();
 }
 
 void UShopPanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
-	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+	UDiabloGameInstance::Get->m_ShopManager->ShowBannerAD(true);
 }
 
 void UShopPanel::ShowPackagePanel()
@@ -107,23 +126,9 @@ void UShopPanel::ShowGoldPanel()
 	m_SwitcherPanel->SetActiveWidgetIndex(2);
 }
 
-void UShopPanel::UpdateGoldShop()
+void UShopPanel::OnUpdateGoldShop(const BigInt& small,const BigInt& midium,const BigInt& large)
 {
-	BigInt Bounty = UDiabloGameInstance::Get->m_DungeonManager->GetCurrentDungeonBounty();
-	
-	Bounty.Multiply(7*480);
-
-	m_Gold01 = Bounty;
-
-	Bounty.Multiply(15);
-	
-	m_Gold02 = Bounty;
-
-	Bounty.Multiply(20);
-
-	m_Gold03 = Bounty;
-
-	m_TextGoldSmallAmount->SetText(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_Gold01,2)));
-	m_TextGoldMidiumAmount->SetText(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_Gold02,2)));
-	m_TextGoldLargeAmount->SetText(FText::FromString(UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_Gold03,2)));
+	m_TextGoldSmallAmount->SetText(FText::FromString(FString::Printf(TEXT("골드 %s 획득"),*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(small,2))));
+	m_TextGoldMidiumAmount->SetText(FText::FromString(FString::Printf(TEXT("골드 %s 획득"),*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(midium,2))));
+	m_TextGoldLargeAmount->SetText(FText::FromString(FString::Printf(TEXT("골드 %s 획득"),*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(large,2))));
 }

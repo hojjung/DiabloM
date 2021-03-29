@@ -32,7 +32,7 @@ class DIABLOM_API UPlayfabManager : public UObject
 {
 	GENERATED_BODY()
 public://delegate
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnShowAdBanner,bool);
+	
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnVirtualCurrencyChanged,int);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayfabError,FString&);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRankReceived,const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>&);
@@ -40,8 +40,8 @@ public://delegate
 	FOnRankReceived m_OnTotalRankReceived;
 
 	FOnRankReceived m_OnPlayerRankReceived;
-
-	FOnShowAdBanner m_OnShowAdBanner;
+	
+	
 
 	FOnVirtualCurrencyChanged m_OnGemstoneChanged;
 	
@@ -107,11 +107,11 @@ public://loaded data
 	UPROPERTY()
 	FString m_LoadedAccessory;
 	UPROPERTY()
+	FString m_LoadedIAP;
+	UPROPERTY()
 	FString m_LoadedNickname;
 	UPROPERTY()
 	FString m_CurrentVersionName="TEST0321";
-	UPROPERTY()
-	bool m_bIsShowAD;
 	
 protected://rank
 	UPROPERTY()
@@ -130,6 +130,7 @@ public://init
 
 	void Init();
 	
+
 protected:
 	TMap<FString,PlayFab::ClientModels::FCatalogItem> m_MapCatalogItems;
 	
@@ -150,8 +151,6 @@ public:
 	{
 		return m_bIsLoginCompleted;
 	}
-
-	void ShowBannerAd(bool able);
 
 	void TickTryUpdateUserData(float deltaTime);//should split
 	//the ui drity should update
@@ -229,5 +228,13 @@ public:
 	{
 		return m_PlayerRanking;
 	}
+
+	void PurchaseWithGemStone(int amount,FString itemName);
+
+	void OnPurchaseWithGemStoneSuccess(const PlayFab::ClientModels::FPurchaseItemResult&);
+
+	void AddGemStone(int amount);
+
+	void OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
 };
 

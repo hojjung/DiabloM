@@ -9,11 +9,13 @@ void UGachaCardGridPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	m_ShopManager = UDiabloGameInstance::Get->m_ShopManager;
+
 	m_BtnClose->OnClicked.AddDynamic(this, &UGachaCardGridPanel::ClosePanel);
 	m_BtnConfirm->OnClicked.AddDynamic(this, &UGachaCardGridPanel::ClosePanel);
-	m_BtnGachaOneTime->OnClicked.AddDynamic(this, &UGachaCardGridPanel::RollGachaOneTime);
-	m_BtnGachaElevenTime->OnClicked.AddDynamic(this, &UGachaCardGridPanel::RollGachaElevenTime);
-	m_BtnGachaFiftyTime->OnClicked.AddDynamic(this, &UGachaCardGridPanel::RollGachaFiftyTime);
+	m_BtnGachaOneTime->OnClicked.AddDynamic(m_ShopManager.Get(), &UShopManager::RollGachaOneTime);
+	m_BtnGachaElevenTime->OnClicked.AddDynamic(m_ShopManager.Get(), &UShopManager::RollGachaElevenTime);
+	m_BtnGachaFiftyTime->OnClicked.AddDynamic(m_ShopManager.Get(), &UShopManager::RollGachaFiftyTime);
 	//
 	m_AryGachaCard.Reset();
 
@@ -34,6 +36,7 @@ void UGachaCardGridPanel::NativeOnInitialized()
 			CreatedCard->SetVisibility(ESlateVisibility::Collapsed);
 		}		
 	}
+
 }
 
 void UGachaCardGridPanel::SetRollGachaData(ERollItemType gachaTable)
@@ -98,5 +101,4 @@ void UGachaCardGridPanel::RollGachaFiftyTime()
 		i++;
 	}
 }
-
 

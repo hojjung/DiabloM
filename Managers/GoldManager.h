@@ -47,7 +47,7 @@ public:
 		return m_nMinute;
 	}
 
-	BigInt AddGold(const BigInt& v);
+	BigInt AddGold(const BigInt& v,bool useBonus=true);
 
 	bool SubtractGold(const BigInt& v);
 	

@@ -28,7 +28,7 @@ void UMainMenuPanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
 
-	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+	UDiabloGameInstance::Get->m_ShopManager->ShowBannerAD(true);
 }
 
 void UMainMenuPanel::OpenPlayerInfoPanel()

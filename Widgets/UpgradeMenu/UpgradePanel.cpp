@@ -102,7 +102,7 @@ void UUpgradePanel::ClosePanel()
 	
 	CloseSkillHotkeyPanel();
 
-	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+	UDiabloGameInstance::Get->m_ShopManager->ShowBannerAD(true);
 
 }
 

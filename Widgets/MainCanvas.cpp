@@ -46,7 +46,7 @@ void UMainCanvas::NativeOnInitialized()
 
 	SetPlayerNicknameRanking();
 
-	UDiabloGameInstance::Get->m_PlayfabManager->m_OnShowAdBanner.AddUObject(this,&UMainCanvas::OnShowAdBanner);
+	UDiabloGameInstance::Get->m_ShopManager->m_OnShowAdBanner.AddUObject(this,&UMainCanvas::OnShowAdBanner);
 	UDiabloGameInstance::Get->m_PlayfabManager->m_OnGemstoneChanged.AddUObject(this,&UMainCanvas::UpdateGemStone);
 	UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	UDiabloGameInstance::Get->m_PlayfabManager->m_OnPlayerRankReceived.AddUObject(this,&UMainCanvas::SetPlayerNicknameRankingWrap);
@@ -54,7 +54,7 @@ void UMainCanvas::NativeOnInitialized()
 	m_BtnGemStone->OnClicked.AddDynamic(this,&UMainCanvas::OpenGemStoneShop);
 	m_BtnGold->OnClicked.AddDynamic(this,&UMainCanvas::OpenGoldShop);
 	//
-	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(true);
+	UDiabloGameInstance::Get->m_ShopManager->ShowBannerAD(true);
 
 	m_GameExitWindow->Cancel();
 	
@@ -419,7 +419,9 @@ void UMainCanvas::OnPressBackkey()
 
 void UMainCanvas::OnMenuPanelVisibleChanged(bool b)
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->ShowBannerAd(!b);
+	
+	
+	UDiabloGameInstance::Get->m_ShopManager->ShowBannerAD(!b);
 
 	m_OnMenuVisibleChanged.Broadcast(b);
 }

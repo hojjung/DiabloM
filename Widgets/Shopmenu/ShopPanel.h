@@ -5,12 +5,15 @@
 #include "Blueprint/UserWidget.h"
 #include "ShopPanel.generated.h"
 
+class UShopManager;
 UCLASS()
 class DIABLOM_API UShopPanel : public UUserWidget
 {
 	GENERATED_BODY()
 	
 protected:
+	UPROPERTY()
+	UShopManager* m_ShopManager;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnPackage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -44,15 +47,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnPurchaseGemStone06;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnPurchaseGold01;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnPurchaseGold02;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnPurchaseGold03;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextGoldSmallAmount;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextGoldMidiumAmount;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextGoldLargeAmount;
-protected:
-	BigInt m_Gold01;
-	BigInt m_Gold02;
-	BigInt m_Gold03;
+
 
 public:
 	virtual void NativeOnInitialized() override;
@@ -80,6 +86,12 @@ public:
 	UFUNCTION()
     void PurchaseGemStone06();
 	UFUNCTION()
+    void PurchaseGold01();
+	UFUNCTION()
+    void PurchaseGold02();
+	UFUNCTION()
+    void PurchaseGold03();
+	UFUNCTION()
 	void ClosePanel();
 	UFUNCTION()
 	void ShowPackagePanel();
@@ -88,5 +100,5 @@ public:
 	UFUNCTION()
     void ShowGoldPanel();
 
-	void UpdateGoldShop();
+	void OnUpdateGoldShop(const BigInt&,const BigInt&,const BigInt&);
 };

@@ -12,13 +12,14 @@
 
 #include "GachaPanel.generated.h"
 
+class UShopManager;
 class UGachaManager;
 UCLASS()
 class DIABLOM_API UGachaPanel : public UUserWidget
 {
 	GENERATED_BODY()
 	
-protected:
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UGachaCardGridPanel* m_GachaGridPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -41,8 +42,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMaterialProgressBar* m_BarGachaLevelExpWeapon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnShowWeaponLevelInfo;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnShowWeaponGachaRate;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnRollGachaWeaponOneTime;
@@ -55,8 +54,6 @@ protected:
 	UTextBlock* m_TextGachaLevelExpBarSkin;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMaterialProgressBar* m_BarGachaLevelExpSkin;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnShowSkinLevelInfo;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnShowSkinGachaRate;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -91,7 +88,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnRollGachaAccesoryElevenTime;
 	//
-	TWeakObjectPtr<UGachaManager> m_GachaManager; 
+	TWeakObjectPtr<UGachaManager> m_GachaManager;
+
+	TWeakObjectPtr<UShopManager> m_ShopManager;
 protected:
 	virtual void NativeOnInitialized() override;
 
@@ -100,22 +99,23 @@ public:
 	void ClosePanel();
 	//
 	UFUNCTION()
-	void ShowWeaponLevelInfo();
-	UFUNCTION()
     void ShowWeaponGachaInfo();
 	UFUNCTION()
 	void RollGachaWeaponOneTime();
 	UFUNCTION()
     void RollGachaWeaponElevenTimes();
+	UFUNCTION()
+    void RollGachaWeaponFiftyTimes();
 	//
 	UFUNCTION()
-    void ShowSkinLevelInfo();
-	UFUNCTION()
     void ShowSkinGachaInfo();
+	
 	UFUNCTION()
     void RollGachaSkinOneTime();
 	UFUNCTION()
     void RollGachaSkinElevenTimes();
+	UFUNCTION()
+    void RollGachaSkinFiftyTimes();
 	//
    	UFUNCTION()
     void ShowPetGachaInfo();
@@ -123,6 +123,8 @@ public:
     void RollGachaPetOneTime();
    	UFUNCTION()
     void RollGachaPetElevenTimes();
+	UFUNCTION()
+	void RollGachaPetFiftyTimes();
 	//
 	UFUNCTION()
     void ShowWingGachaInfo();
@@ -130,6 +132,8 @@ public:
 	void RollGachaWingOneTime();
 	UFUNCTION()
 	void RollGachaWingElevenTimes();
+	UFUNCTION()
+    void RollGachaWingFiftyTimes();
 	//
 	UFUNCTION()
     void ShowAccessoryGachaInfo();
@@ -137,9 +141,14 @@ public:
     void RollGachaAccessoryOneTime();
 	UFUNCTION()
     void RollGachaAccessoryElevenTimes();
+	UFUNCTION()
+    void RollGachaAccessoryFiftyTimes();
 	//
 
 	void UpdateGachaWeaponLevelCount(int c,int m,int lv);
 	
 	void UpdateGachaSkinLevelCount(int c,int m,int lv);
 };
+
+
+

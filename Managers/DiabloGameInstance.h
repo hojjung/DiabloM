@@ -8,6 +8,8 @@
 #include "NavigationSystem.h"
 #include "PlayerUpgradeManager.h"
 #include "QuestManager.h"
+#include "ShopManager.h"
+
 
 
 #include "DiabloGameInstance.generated.h"
@@ -49,6 +51,8 @@ public:
 	UChatManager* m_ChatManager;
 	UPROPERTY()
 	UQuestManager* m_QuestManager;
+	UPROPERTY()
+	UShopManager* m_ShopManager;
 	
 protected:
 	virtual void Init() override;

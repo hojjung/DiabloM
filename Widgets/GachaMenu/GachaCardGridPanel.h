@@ -6,6 +6,8 @@
 #include "UniformGridPanel.h"
 #include "Blueprint/UserWidget.h"
 #include "Managers/GachaManager.h"
+#include "Managers/ShopManager.h"
+
 
 #include "GachaCardGridPanel.generated.h"
 
@@ -15,6 +17,7 @@ class DIABLOM_API UGachaCardGridPanel : public UUserWidget
 	GENERATED_BODY()
 
 protected:
+	TWeakObjectPtr<UShopManager> m_ShopManager;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGachaCard> m_ClassGachaCard;
 	UPROPERTY()
@@ -54,4 +57,9 @@ public:
 	UFUNCTION()
     void RollGachaFiftyTime();
 
+
+	FORCEINLINE ERollItemType GetCurrentType ()
+	{
+		return 	m_CurrentType;
+	}
 };

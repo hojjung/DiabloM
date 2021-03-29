@@ -35,9 +35,6 @@ const FString UPlayfabManager::Quest = "Quest";
 
 UPlayfabManager::UPlayfabManager()
 {
-	//m_LoadedDgID ;//= "Stage1-1";
-	//m_LoadedPlayerClassID;// = "Warrior01";
-	m_bIsShowAD=true;
 	SetRanking(-123);
 }
 
@@ -70,27 +67,8 @@ void UPlayfabManager::SetRanking(int rank)
 	m_nSafeRanking = m_nRanking ^ 7777;
 }
 
-void UPlayfabManager::ShowBannerAd(bool able)
-{
-	//GetClientAPI->Ad()
-
-	if (able && (!GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion) && m_bIsShowAD)
-	{
-		UKismetSystemLibrary::ShowAdBanner(0, false);
-		m_OnShowAdBanner.Broadcast(true);
-	}
-	else
-	{
-		UKismetSystemLibrary::HideAdBanner();
-
-		m_OnShowAdBanner.Broadcast(false);
-	}
-}
-
 void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 {
-	
-	
 	m_fDeltaCountTitleData += deltaTime;
 	m_fDeltaCountRanking += deltaTime;
 	m_fDeltaCountMinutePlaytime += deltaTime;
@@ -438,13 +416,7 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 	m_LoadedPet = result.Data[Pet].Value;
 	m_LoadedAccessory = result.Data[Accessory].Value;
 
-	FString IAPResult = result.Data[IAP].Value;
-
-	TArray<FString> AryIAP;
-	IAPResult.ParseIntoArray(AryIAP,TEXT(":"));
-	
-	m_bIsShowAD = AryIAP[1].ToBool();
-
+	m_LoadedIAP = result.Data[IAP].Value;
 	//
 	UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(m_LoadedGold);
 	UDiabloGameInstance::Get->m_DungeonManager->SetDungeonLevel(*m_LoadedDg);
@@ -453,8 +425,9 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 	                                                                 m_LoadedPet, m_LoadedAccessory);
 	
 	UDiabloGameInstance::Get->m_QuestManager->SetQuestDataFromServer(m_LoadedQuest);
-	
 
+	UDiabloGameInstance::Get->m_ShopManager->SetShopDataFromServer(m_LoadedIAP);
+	
 	SetOnlineStatus();
 	m_bIsLoginCompleted = true;
 	m_bIsNicknameSet = true;
@@ -625,11 +598,12 @@ void UPlayfabManager::OnIAPGoogleValidateSuccess(const PlayFab::ClientModels::FV
 	FString ItemID = purchaseResult.Fulfillments[0].FulfilledItems[0].ItemId;
 
 	UDiabloGameInstance::Get->RequestPopupText(FString::Printf(TEXT("IAP Purchase Success!:%s"),*ItemID));
+
+	UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(ItemID);
 }
 
 void UPlayfabManager::RequestGetInventory()
 {
-	
 	PlayFab::ClientModels::FGetUserInventoryRequest Req;
 	GetClientAPI->GetUserInventory(Req,
 		PlayFab::UPlayFabClientAPI::FGetUserInventoryDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetInven),
@@ -640,7 +614,8 @@ void UPlayfabManager::OnSuccessGetInven( const PlayFab::ClientModels::FGetUserIn
 {
 	PRINTF("GetInven Success");
 	int Currency = rslt.VirtualCurrency["GG"];
-
+	
+	
 	m_OnGemstoneChanged.Broadcast(Currency);
 }
 
@@ -709,6 +684,39 @@ void UPlayfabManager::RequestCheatAlert()
 	Req.FunctionName = "CheatAlert";
 	Req.GeneratePlayStreamEvent=true;
 	GetClientAPI->ExecuteCloudScript(Req);
+}
+
+void UPlayfabManager::PurchaseWithGemStone(int amount,FString itemName)
+{
+	PlayFab::ClientModels::FPurchaseItemRequest Req;
+	Req.Price = amount;
+	Req.ItemId = itemName;
+	Req.VirtualCurrency="GG";
+	//Req.CharacterId = m_PlayfabID;
+	//FPurchaseItemDelegate, const ClientModels::FPurchaseItemResult&
+	GetClientAPI->PurchaseItem(Req,PlayFab::UPlayFabClientAPI::FPurchaseItemDelegate::CreateUObject(this,&UPlayfabManager::OnPurchaseWithGemStoneSuccess),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::OnPurchaseWithGemStoneSuccess(const PlayFab::ClientModels::FPurchaseItemResult& rslt)
+{
+	FString PurchasedItemID =  rslt.Items[0].ItemId;
+
+	UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(PurchasedItemID);
+
+}
+
+void UPlayfabManager::AddGemStone(int amount)
+{
+	PlayFab::ClientModels::FAddUserVirtualCurrencyRequest Req;
+	Req.Amount=amount;
+	Req.VirtualCurrency="GG";
+	GetClientAPI->AddUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FAddUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddGemStone),PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult& rslt)
+{
+	m_OnGemstoneChanged.Broadcast(rslt.Balance);
 }
 
 

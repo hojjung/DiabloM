@@ -85,30 +85,28 @@ UGachaManager::UGachaManager()
 	{
 		SetTotalValue(ArySkinGachaDataTable[i], m_AryAryGachaSkin[i], m_AryTotalSkinGacha[i]);
 	}
-	
+
 	SetTotalValue(PetGachaDataTable, m_AryGachaPet, m_fTotalPetGacha);
 	//SetTotalValue(WingGachaDataTable, m_AryGachaWing, m_fTotalWingGacha);
 	SetTotalValue(AccessoryGachaDataTable, m_AryGachaAccessory, m_fTotalAccessoryGacha);
 	//
-	m_nGachaWeaponMaxCount[0]=100;
-	m_nGachaWeaponMaxCount[1]=200;
-	m_nGachaWeaponMaxCount[2]=300;
-	m_nGachaWeaponMaxCount[3]=400;
-	m_nGachaWeaponMaxCount[4]=500;
-	m_nGachaWeaponMaxCount[5]=600;
-	m_nGachaWeaponMaxCount[6]=700;
-	m_nGachaWeaponMaxCount[7]=800;
-	m_nGachaWeaponMaxCount[8]=900;
+	m_nGachaWeaponMaxCount[0] = 100;
+	m_nGachaWeaponMaxCount[1] = 500;
+	m_nGachaWeaponMaxCount[2] = 1000;
+	m_nGachaWeaponMaxCount[3] = 1500;
+	m_nGachaWeaponMaxCount[4] = 2500;
+	m_nGachaWeaponMaxCount[5] = 3000;
+	m_nGachaWeaponMaxCount[6] = 3500;
+	m_nGachaWeaponMaxCount[7] = 4000;
 	//
-	m_nGachaSkinMaxCount[0]=100;
-	m_nGachaSkinMaxCount[1]=200;
-	m_nGachaSkinMaxCount[2]=300;
-	m_nGachaSkinMaxCount[3]=400;
-	m_nGachaSkinMaxCount[4]=500;
-	m_nGachaSkinMaxCount[5]=600;
-	m_nGachaSkinMaxCount[6]=700;
-	m_nGachaSkinMaxCount[7]=800;
-	m_nGachaSkinMaxCount[8]=900;
+	m_nGachaSkinMaxCount[0] = 100;
+	m_nGachaSkinMaxCount[1] = 500;
+	m_nGachaSkinMaxCount[2] = 1000;
+	m_nGachaSkinMaxCount[3] = 1500;
+	m_nGachaSkinMaxCount[4] = 2500;
+	m_nGachaSkinMaxCount[5] = 3000;
+	m_nGachaSkinMaxCount[6] = 3500;
+	m_nGachaSkinMaxCount[7] = 4000;
 }
 
 void UGachaManager::SetTotalValue(const UDataTable* inTable, TArray<FGachaTableRow*>& outTableRow, float& outTotal)
@@ -128,37 +126,38 @@ void UGachaManager::SetTotalValue(const UDataTable* inTable, TArray<FGachaTableR
 void UGachaManager::AddGachaWeaponCount()
 {
 	m_nGachaWeaponCount++;
-	
-	if(m_nGachaWeaponCount >= m_nGachaWeaponMaxCount[m_nCurrentWeaponIndex])
+
+	if (m_nGachaWeaponCount >= m_nGachaWeaponMaxCount[m_nCurrentWeaponIndex])
 	{
-		if(m_nCurrentWeaponIndex+1>=8)
+		if (m_nCurrentWeaponIndex + 1 >= 8)
 		{
 			return;
 		}
-		
+
 		m_nCurrentWeaponIndex++;
-		m_nGachaWeaponCount=0;
+		m_nGachaWeaponCount = 0;
 	}
-	
-	m_OnGachaRollWeapon.Broadcast(m_nGachaWeaponCount,m_nGachaWeaponMaxCount[m_nCurrentWeaponIndex],m_nCurrentWeaponIndex);
+
+	m_OnGachaRollWeapon.Broadcast(m_nGachaWeaponCount, m_nGachaWeaponMaxCount[m_nCurrentWeaponIndex],
+	                              m_nCurrentWeaponIndex);
 }
 
 void UGachaManager::AddGachaSkinCount()
 {
 	m_nGachaSkinCount++;
 
-	if(m_nGachaSkinCount >= m_nGachaSkinMaxCount[m_nCurrentSkinIndex])
+	if (m_nGachaSkinCount >= m_nGachaSkinMaxCount[m_nCurrentSkinIndex])
 	{
-		if(m_nCurrentSkinIndex+1>=8)
+		if (m_nCurrentSkinIndex + 1 >= 8)
 		{
 			return;
 		}
-		
+
 		m_nCurrentSkinIndex++;
-		m_nGachaSkinCount=0;
+		m_nGachaSkinCount = 0;
 	}
-	
-	m_OnGachaRollSkin.Broadcast(m_nGachaSkinCount,m_nGachaSkinMaxCount[m_nCurrentSkinIndex],m_nCurrentSkinIndex);
+
+	m_OnGachaRollSkin.Broadcast(m_nGachaSkinCount, m_nGachaSkinMaxCount[m_nCurrentSkinIndex], m_nCurrentSkinIndex);
 }
 
 TArray<FGachaTableRow*>& UGachaManager::GetCurrentLevelWeaponTable()
@@ -189,8 +188,8 @@ const FGachaAbleRow* UGachaManager::RollWeapon()
 
 	float CurrentPercent = 0;
 	//0.1
-	int i=0;
-	
+	int i = 0;
+
 	for (FGachaTableRow* TableRow : GetCurrentLevelWeaponTable())
 	{
 		CurrentPercent += TableRow->GetPercent(WeightTotal);
@@ -200,18 +199,17 @@ const FGachaAbleRow* UGachaManager::RollWeapon()
 			UDiabloGameInstance::Get->m_EquipManager->AddWeaponStack(i);
 
 			AddGachaWeaponCount();
-			
+
 			return &TableRow->GetGachaData();
 		}
 
 		i++;
 	}
 
-	UDiabloGameInstance::Get->m_EquipManager->AddWeaponStack(i-1);
+	UDiabloGameInstance::Get->m_EquipManager->AddWeaponStack(i - 1);
 
-	
-	
-	return &GetCurrentLevelWeaponTable()[i-1]->GetGachaData();
+
+	return &GetCurrentLevelWeaponTable()[i - 1]->GetGachaData();
 }
 
 const FGachaAbleRow* UGachaManager::RollSkin()
@@ -222,7 +220,7 @@ const FGachaAbleRow* UGachaManager::RollSkin()
 
 	float CurrentPercent = 0;
 	//0.1
-	int i=0;
+	int i = 0;
 	for (FGachaTableRow* TableRow : GetCurrentLevelSkinTable())
 	{
 		CurrentPercent += TableRow->GetPercent(WeightTotal);
@@ -232,17 +230,17 @@ const FGachaAbleRow* UGachaManager::RollSkin()
 			UDiabloGameInstance::Get->m_EquipManager->AddSkinStack(i);
 
 			AddGachaSkinCount();
+
 			//select
 			return &TableRow->GetGachaData();
 		}
 		i++;
 	}
 
-	
 
-	UDiabloGameInstance::Get->m_EquipManager->AddSkinStack(i-1);
-	
-	return &GetCurrentLevelSkinTable()[i-1]->GetGachaData();
+	UDiabloGameInstance::Get->m_EquipManager->AddSkinStack(i - 1);
+
+	return &GetCurrentLevelSkinTable()[i - 1]->GetGachaData();
 }
 
 const FGachaAbleRow* UGachaManager::RollPet()
@@ -253,7 +251,7 @@ const FGachaAbleRow* UGachaManager::RollPet()
 
 	float CurrentPercent = 0;
 
-	int i=0;
+	int i = 0;
 	//0.1
 	for (FGachaTableRow* TableRow : m_AryGachaPet)
 	{
@@ -262,16 +260,17 @@ const FGachaAbleRow* UGachaManager::RollPet()
 		if (CurrentPercent >= RollPercent)
 		{
 			UDiabloGameInstance::Get->m_EquipManager->AddPetStack(i);
+
 			//select
 			return &TableRow->GetGachaData();
 		}
 
 		i++;
 	}
-	
-	UDiabloGameInstance::Get->m_EquipManager->AddPetStack(i-1);
-	
-	return &m_AryGachaPet[i-1]->GetGachaData();
+
+	UDiabloGameInstance::Get->m_EquipManager->AddPetStack(i - 1);
+
+	return &m_AryGachaPet[i - 1]->GetGachaData();
 }
 
 const FGachaAbleRow* UGachaManager::RollWing()
@@ -282,7 +281,7 @@ const FGachaAbleRow* UGachaManager::RollWing()
 
 	float CurrentPercent = 0;
 
-	int i=0;
+	int i = 0;
 	//0.1
 	for (FGachaTableRow* TableRow : m_AryGachaWing)
 	{
@@ -291,28 +290,29 @@ const FGachaAbleRow* UGachaManager::RollWing()
 		if (CurrentPercent >= RollPercent)
 		{
 			UDiabloGameInstance::Get->m_EquipManager->AddWingStack(i);
+
 			//select
-			return  &TableRow->GetGachaData();
+			return &TableRow->GetGachaData();
 		}
 
 		i++;
 	}
 
-	UDiabloGameInstance::Get->m_EquipManager->AddWingStack(i-1);
-	
-	return &m_AryGachaWing[i-1]->GetGachaData();
+	UDiabloGameInstance::Get->m_EquipManager->AddWingStack(i - 1);
+
+	return &m_AryGachaWing[i - 1]->GetGachaData();
 }
 
 const FGachaAbleRow* UGachaManager::RollAccessory()
 {
 	float WeightTotal = m_fTotalAccessoryGacha;
-	
+
 	float RollPercent = FMath::RandRange(0.f, 1.f);
-	
+
 	float CurrentPercent = 0;
 
-	int i=0;
-	
+	int i = 0;
+
 	for (FGachaTableRow* TableRow : m_AryGachaAccessory)
 	{
 		CurrentPercent += TableRow->GetPercent(WeightTotal);
@@ -321,16 +321,16 @@ const FGachaAbleRow* UGachaManager::RollAccessory()
 		{
 			//select
 			UDiabloGameInstance::Get->m_EquipManager->AddAccessoryStack(i);
-			
-			return  &TableRow->GetGachaData();
+
+			return &TableRow->GetGachaData();
 		}
 
 		i++;
 	}
 
-	UDiabloGameInstance::Get->m_EquipManager->AddAccessoryStack(i-1);
-	
-	return &m_AryGachaAccessory[i-1]->GetGachaData();
+	UDiabloGameInstance::Get->m_EquipManager->AddAccessoryStack(i - 1);
+
+	return &m_AryGachaAccessory[i - 1]->GetGachaData();
 }
 
 const FGachaAbleRow* UGachaManager::RollItem(ERollItemType type)
@@ -347,3 +347,4 @@ const FGachaAbleRow* UGachaManager::RollItem(ERollItemType type)
 
 	return nullptr;
 }
+

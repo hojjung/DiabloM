@@ -5,7 +5,6 @@
 #include "UObject/NoExportTypes.h"
 #include "GachaManager.generated.h"
 
-
 UENUM()
 enum ERollItemType
 {
@@ -16,6 +15,7 @@ enum ERollItemType
 	RollAccessory,
 	Length
 };
+
 UCLASS()
 class DIABLOM_API UGachaManager : public UObject
 {
@@ -96,6 +96,7 @@ public:
 	const FGachaAbleRow* RollAccessory();
 	
 	const FGachaAbleRow* RollItem(ERollItemType type);
+	
 
 	int GetGachaSkinMaxCount()
 	{
