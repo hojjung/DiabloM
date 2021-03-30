@@ -28,7 +28,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_DissolveCam->SetupAttachment(RootComponent);
 	m_DissolveCam->SetRelativeRotation(FRotator(-55.f, 45.f, 0.f)); //-50
 	m_DissolveCam->SetRelativeLocation(FVector(0, 0, 0.f));
-	m_DissolveCam->TargetArmLength = 1275.f; //1400
+	m_DissolveCam->TargetArmLength = 1375.f; //1400
 	//
 	m_TopCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera00");
 	m_TopCamera->SetupAttachment(m_DissolveCam);
@@ -138,8 +138,6 @@ void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
 		return;
 	}
 
-	PRINTF("DiaChar-DataInject wPo");
-
 	if (m_CreatedWeapon)
 	{
 		FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld, false);
@@ -174,8 +172,6 @@ void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
 		PRINTF("DiaChar-NoWingSpec");
 		return;
 	}
-
-	PRINTF("DiaChar-DataInject Wing");
 
 	if (m_CreatedWing)
 	{
@@ -215,7 +211,6 @@ void APlayerDiabloCharacter::AccessoryDataInject(const FAccessorySpec& spec)
 		return;
 	}
 
-	PRINTF("DiaChar-DataInject Accesssory");
 
 	m_OnMeshChanged.Broadcast(this);
 }
@@ -228,7 +223,6 @@ void APlayerDiabloCharacter::PetDataInject(const FPetSpec& spec)
 		return;
 	}
 
-	PRINTF("DiaChar-DataInject Pet");
 
 	if (!spec.m_PetData->m_ClassPetSkin)
 	{
@@ -270,6 +264,11 @@ float APlayerDiabloCharacter::GetAttackSpeed()
 	if (IsBuff02Available())
 	{
 		As *= m_fAdditionalAttackSpeed;
+	}
+
+	if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
+	{
+		As *= 1.5f;
 	}
 
 	return As;
@@ -328,7 +327,6 @@ void APlayerDiabloCharacter::Revive()
 
 void APlayerDiabloCharacter::OnDeathAnimEnd()
 {
-	PRINTF("Game Over!");
 
 	//HideUI? it can be broad cast
 }
@@ -563,6 +561,33 @@ bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 	if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).m_nLv>0)
 	{
 		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).m_Value);
+	}
+	//
+	if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
+	{
+		int MultipleFactor = 5;
+
+		if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(1))
+		{
+			MultipleFactor = 10;
+			
+			if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(2))
+			{
+				MultipleFactor = 30;
+				
+				if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(3))
+				{
+					MultipleFactor = 100;
+					
+					if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(4))
+					{
+						MultipleFactor = 1000;
+					}
+				}
+			}	
+		}
+		
+		outDmg.Multiply(MultipleFactor);
 	}
 
 	outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, m_EquipManager->GetCurrentWeapon().m_Value);

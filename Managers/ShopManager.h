@@ -107,6 +107,10 @@ UFUNCTION()
 	void OnPurchasedGainItem(FString itemID);
 
 	void ShowBannerAD(bool b);
+
+	bool GetPackagePurchased(int index);
+
+	FString GetIAPDataStr();
 };
 
 

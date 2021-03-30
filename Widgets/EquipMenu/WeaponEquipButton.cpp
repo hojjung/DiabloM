@@ -19,6 +19,7 @@ void UWeaponEquipButton::Init(const FWeaponSpec& data, int index)
 {
 	m_WeaponSpec = &data;
 	m_nIndex = index;
+
 	
 	m_BtnEquip->OnClicked.AddDynamic(this,&UWeaponEquipButton::TryEquip);
 	m_BtnLvUp->OnClicked.AddDynamic(this,&UWeaponEquipButton::TryLvUp);
@@ -54,6 +55,8 @@ void UWeaponEquipButton::UpdateEquipWeapon()
 	SetCostText();
 
 	m_ImgTierColor->SetBrushTintColor(m_WeaponSpec->m_EquipData->GetTier()->m_TierColor);
+
+	m_BtnEquip->SetIsEnabled(m_WeaponSpec->m_nLv>0);
 }
 
 

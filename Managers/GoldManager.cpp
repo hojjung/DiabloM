@@ -36,6 +36,33 @@ BigInt UGoldManager::AddGold(const BigInt& v, bool useBonus)
 			FinalV = UDiaBlueprintFunctionLibrary::MultiplePercent(
 				FinalV, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce01).m_Value);
 		}
+
+		if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
+		{
+			int MultipleFactor = 5;
+
+			if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(1))
+			{
+				MultipleFactor = 10;
+
+				if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(2))
+				{
+					MultipleFactor = 30;
+
+					if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(3))
+					{
+						MultipleFactor = 100;
+
+						if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(4))
+						{
+							MultipleFactor = 1000;
+						}
+					}
+				}
+			}
+
+			FinalV.Multiply(MultipleFactor);
+		}
 	}
 
 	m_CurrentGold.Add(FinalV);
@@ -78,9 +105,11 @@ bool UGoldManager::GainOfflineGold()
 			Bounty, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce08).m_Value);
 	}
 
-	m_OfflineGold = AddGold(Bounty);
+	m_OfflineGold = AddGold(Bounty,false);
 
 	m_bIsServerMinuteGained = false;
+
+	UploadGold();
 
 	return true;
 }
@@ -90,4 +119,9 @@ void UGoldManager::SetOfflineMinutes(int minutes)
 	m_nMinute = minutes;
 
 	m_bIsServerMinuteGained = true;
+}
+
+void UGoldManager::UploadGold()
+{
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadGold(GetCurrentGold());
 }

@@ -7,7 +7,7 @@ void UShopManager::SetShopDataFromServer(FString iapData)
 {
 	TArray<FString> AryItemBought;
 
-	iapData.ParseIntoArray(AryItemBought,TEXT(":"));
+	iapData.ParseIntoArray(AryItemBought,TEXT("/"));
 	//0~6,2개제외
 	m_bIsShowAd = AryItemBought[1].ToBool();
 	Package[0] = AryItemBought[2].ToBool();
@@ -15,6 +15,8 @@ void UShopManager::SetShopDataFromServer(FString iapData)
 	Package[2] = AryItemBought[4].ToBool();
 	Package[3] = AryItemBought[5].ToBool();
 	Package[4] = AryItemBought[6].ToBool();
+
+	UDiabloGameInstance::Get->m_GachaManager->SetGachaLevel(AryItemBought[7],AryItemBought[8]);
 
 	UDiabloGameInstance::Get->m_DungeonManager->m_OnDungeonMaxUpdate.AddUObject(this, &UShopManager::UpdateGold);
 }
@@ -170,40 +172,52 @@ void UShopManager::UpdateGold()
 
 void UShopManager::RollGachaOneTime()
 {
-	ERollItemType RollType =  m_GachaPanel->m_GachaGridPanel->GetCurrentType();
+	ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
 
 	switch (RollType)
 	{
-	case RollWeapon:PurchaseGachaWeapon01(); break;
-	case RollSkin:PurchaseGachaSkin01(); break;
-	case RollPet:PurchaseGachaPet01(); break;
-	case RollAccessory:PurchaseGachaAccessory01(); break;
+	case RollWeapon: PurchaseGachaWeapon01();
+		break;
+	case RollSkin: PurchaseGachaSkin01();
+		break;
+	case RollPet: PurchaseGachaPet01();
+		break;
+	case RollAccessory: PurchaseGachaAccessory01();
+		break;
 	}
 }
 
 void UShopManager::RollGachaElevenTime()
 {
-	ERollItemType RollType =  m_GachaPanel->m_GachaGridPanel->GetCurrentType();
+	ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
 
 	switch (RollType)
 	{
-	case RollWeapon:PurchaseGachaWeapon11(); break;
-	case RollSkin:PurchaseGachaSkin11(); break;
-	case RollPet:PurchaseGachaPet11(); break;
-	case RollAccessory:PurchaseGachaAccessory11(); break;
+	case RollWeapon: PurchaseGachaWeapon11();
+		break;
+	case RollSkin: PurchaseGachaSkin11();
+		break;
+	case RollPet: PurchaseGachaPet11();
+		break;
+	case RollAccessory: PurchaseGachaAccessory11();
+		break;
 	}
 }
 
 void UShopManager::RollGachaFiftyTime()
 {
-	ERollItemType RollType =  m_GachaPanel->m_GachaGridPanel->GetCurrentType();
+	ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
 
 	switch (RollType)
 	{
-	case RollWeapon:PurchaseGachaWeapon55(); break;
-	case RollSkin:PurchaseGachaSkin55(); break;
-	case RollPet:PurchaseGachaPet55(); break;
-	case RollAccessory:PurchaseGachaAccessory55(); break;
+	case RollWeapon: PurchaseGachaWeapon55();
+		break;
+	case RollSkin: PurchaseGachaSkin55();
+		break;
+	case RollPet: PurchaseGachaPet55();
+		break;
+	case RollAccessory: PurchaseGachaAccessory55();
+		break;
 	}
 }
 
@@ -214,28 +228,28 @@ void UShopManager::OnPurchasedGainItem(FString itemID)
 	if (itemID == "package_starter")
 	{
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(60000);
-		m_bIsShowAd=false;
-		Package[0]=true;
+		m_bIsShowAd = false;
+		Package[0] = true;
 	}
 	else if (itemID == "package_begginer")
 	{
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(60000);
-		Package[1]=true;
+		Package[1] = true;
 	}
 	else if (itemID == "package_rare")
 	{
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(60000);
-		Package[2]=true;
+		Package[2] = true;
 	}
-	else if (itemID =="package_hero")
+	else if (itemID == "package_hero")
 	{
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(150000);
-		Package[3]=true;
+		Package[3] = true;
 	}
 	else if (itemID == "package_legend")
 	{
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(150000);
-		Package[4]=true;
+		Package[4] = true;
 	}
 	else if (itemID == "gemstone01")
 	{
@@ -263,15 +277,18 @@ void UShopManager::OnPurchasedGainItem(FString itemID)
 	}
 	else if (itemID == "gold01")
 	{
-		UDiabloGameInstance::Get->m_GoldManager->AddGold(m_Gold01,false);
+		UDiabloGameInstance::Get->m_GoldManager->AddGold(m_Gold01, false);
+		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == "gold02")
 	{
-		UDiabloGameInstance::Get->m_GoldManager->AddGold(m_Gold02,false);
+		UDiabloGameInstance::Get->m_GoldManager->AddGold(m_Gold02, false);
+		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == "gold03")
 	{
-		UDiabloGameInstance::Get->m_GoldManager->AddGold(m_Gold03,false);
+		UDiabloGameInstance::Get->m_GoldManager->AddGold(m_Gold03, false);
+		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == "gachaweapon01")
 	{
@@ -348,4 +365,22 @@ void UShopManager::ShowBannerAD(bool b)
 
 		m_OnShowAdBanner.Broadcast(false);
 	}
+}
+
+bool UShopManager::GetPackagePurchased(int index)
+{
+	return Package[index];
+}
+
+FString UShopManager::GetIAPDataStr()
+{
+	FString Result = FString::Printf(TEXT("%s/%s/%s/%s/%s/%s/"),
+		m_bIsShowAd ?  TEXT("True"):TEXT("False"),
+		Package[0] ?  TEXT("True"):TEXT("False"),
+		Package[1] ?  TEXT("True"):TEXT("False"),
+		Package[2] ?  TEXT("True"):TEXT("False"),
+		Package[3] ?  TEXT("True"):TEXT("False"),
+		Package[4] ?  TEXT("True"):TEXT("False"));
+
+	return Result;
 }

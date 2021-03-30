@@ -34,6 +34,7 @@ void UQuestPanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
 	UDiabloGameInstance::Get->m_ShopManager->ShowBannerAD(true);
+	UDiabloGameInstance::Get->m_QuestManager->RequestGemStoneUploadToServer();
 }
 
 void UQuestPanel::UpdateQuest(int index)

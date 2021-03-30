@@ -35,6 +35,9 @@ public:
 	
 protected:
 	TArray<FQuestDataSpec> m_AryQuestData;
+
+	UPROPERTY()
+	int m_nWaitingGemStones;
 	
 public:
 	void SetQuestDataFromServer(const FString& strQuest);
@@ -50,4 +53,9 @@ public:
 
 	void AddQuestCount(EQuestType type);
 
+	void AddGemStones(int gemStone);
+
+	void RequestGemStoneUploadToServer();
+
+	FString GetQuestDataStr();
 };

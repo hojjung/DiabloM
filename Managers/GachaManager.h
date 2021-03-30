@@ -36,6 +36,9 @@ public:
 	static UDataTable* WingGachaDataTable;
 	static UDataTable* AccessoryGachaDataTable;
 
+	void SetGachaLevel(const FString weaponGacha,const FString playerGacha);
+
+	FString GetGachaLevelStr();
 public:
 	UPROPERTY()
 	int m_nCurrentWeaponIndex;

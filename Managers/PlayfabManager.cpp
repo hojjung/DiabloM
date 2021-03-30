@@ -83,6 +83,8 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 	if (m_fDeltaCountTitleData > 5.f)
 	{
 		PRINTF("TryUpdateUserData");
+		
+		UDiabloGameInstance::Get->m_GoldManager->UploadGold();
 
 		m_fDeltaCountTitleData = 0.f;
 	}
@@ -704,6 +706,7 @@ void UPlayfabManager::OnPurchaseWithGemStoneSuccess(const PlayFab::ClientModels:
 
 	UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(PurchasedItemID);
 
+
 }
 
 void UPlayfabManager::AddGemStone(int amount)
@@ -717,6 +720,75 @@ void UPlayfabManager::AddGemStone(int amount)
 void UPlayfabManager::OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult& rslt)
 {
 	m_OnGemstoneChanged.Broadcast(rslt.Balance);
+}
+
+void UPlayfabManager::UploadQuestData(const FString& data)
+{
+	PlayFab::ClientModels::FUpdateUserDataRequest Req;
+	
+	Req.Data.Add(Quest,data);
+
+	GetClientAPI->UpdateUserData(Req,nullptr,
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+
+
+void UPlayfabManager::UploadUpgradeData(const FString& data)
+{
+	PlayFab::ClientModels::FUpdateUserDataRequest Req;
+	
+	Req.Data.Add(StatSkill,data);
+
+	GetClientAPI->UpdateUserData(Req,nullptr,
+        PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::UploadEquipData(const FString& weaponData, const FString& skinData, const FString& petData,
+	const FString& accessoryData, const FString& wingData)
+{
+	PlayFab::ClientModels::FUpdateUserDataRequest Req;
+	
+	Req.Data.Add(Weapon,weaponData);
+	Req.Data.Add(SkinClass,skinData);
+	Req.Data.Add(Pet,petData);
+	Req.Data.Add(Accessory,accessoryData);
+	Req.Data.Add(Wing,wingData);
+
+	GetClientAPI->UpdateUserData(Req,nullptr,
+        PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::UploadIAPData(const FString& data)
+{
+	PlayFab::ClientModels::FUpdateUserDataRequest Req;
+	
+	Req.Data.Add(IAP,data);
+
+	GetClientAPI->UpdateUserData(Req,nullptr,
+        PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::UploadDungeonData(int currentDungeon, int maxDungeon)
+{
+	FString DgStr = FString::Printf(TEXT("%d:%d"),currentDungeon,maxDungeon);
+	
+	PlayFab::ClientModels::FUpdateUserDataRequest Req;
+	
+	Req.Data.Add(Dg,DgStr);
+
+	GetClientAPI->UpdateUserData(Req,nullptr,
+        PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::UploadGold(BigInt gold)
+{
+	PlayFab::ClientModels::FUpdateUserDataRequest Req;
+	
+	Req.Data.Add(Gold,gold.ToString());
+
+	GetClientAPI->UpdateUserData(Req,nullptr,
+        PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
 

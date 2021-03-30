@@ -236,5 +236,18 @@ public:
 	void AddGemStone(int amount);
 
 	void OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
+
+	void UploadQuestData(const FString& data);
+
+	void UploadUpgradeData(const FString& data);
+
+	void UploadEquipData(const FString& weaponData,const FString& skinData,const FString& petData,const FString& accessoryData,const FString& wingData);
+
+	void UploadIAPData(const FString& data);
+
+
+	void UploadGold(BigInt gold);
+
+	void UploadDungeonData(int currentDungeon,int maxDungeon);
 };
 

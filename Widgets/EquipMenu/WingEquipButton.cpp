@@ -17,6 +17,8 @@ void UWingEquipButton::UpdateEquipWing()
 	SetCombineText(m_WingSpec->m_nStackCount);
 	SetEquipped(m_WingSpec->m_nIsEquipped);
 	m_ImgTierColor->SetBrushTintColor(m_WingSpec->m_WingData->GetTier()->m_TierColor);
+
+	m_BtnEquip->SetIsEnabled(m_WingSpec->m_nIsUnlocked>0);
 }
 
 void UWingEquipButton::Init(const FWingSpec& data, int index)

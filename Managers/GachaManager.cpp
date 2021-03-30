@@ -109,6 +109,30 @@ UGachaManager::UGachaManager()
 	m_nGachaSkinMaxCount[7] = 4000;
 }
 
+void UGachaManager::SetGachaLevel(const FString weaponGacha, const FString playerGacha)
+{
+	TArray<FString> WeaponGachaSpec;
+
+	weaponGacha.ParseIntoArray(WeaponGachaSpec,TEXT(":"));
+
+	TArray<FString> SkinGachaSpec;
+
+	playerGacha.ParseIntoArray(SkinGachaSpec,TEXT(":"));
+
+	m_nCurrentWeaponIndex = FCString::Atoi(*WeaponGachaSpec[0]);
+	m_nGachaWeaponCount = FCString::Atoi(*WeaponGachaSpec[1]);
+	
+	m_nCurrentSkinIndex = FCString::Atoi(*SkinGachaSpec[0]);
+	m_nGachaSkinCount = FCString::Atoi(*SkinGachaSpec[1]);
+}
+
+FString UGachaManager::GetGachaLevelStr()
+{
+	FString Result = FString::Printf(TEXT("%d:%d/%d:%d"),m_nCurrentWeaponIndex,m_nGachaWeaponCount,m_nCurrentSkinIndex,m_nGachaSkinCount);
+
+	return Result;
+}
+
 void UGachaManager::SetTotalValue(const UDataTable* inTable, TArray<FGachaTableRow*>& outTableRow, float& outTotal)
 {
 	if (!inTable)

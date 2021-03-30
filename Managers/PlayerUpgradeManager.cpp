@@ -118,7 +118,15 @@ void UPlayerUpgradeManager::UpgradeAtk(EAttackType type)
 		return;
 	}
 	//
+	BigInt Cost = GetAtkUp(type).m_Cost;
+	
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGold(Cost))
+	{
+		return;
+	}
+	
 	GetAtkUp(type).IncreaseLevel();
+	
 	m_OnUpgradeChanged.Broadcast();
 
 	switch (type)
@@ -147,6 +155,13 @@ void UPlayerUpgradeManager::UpgradeAtk(EAttackType type)
 void UPlayerUpgradeManager::UpgradeSkill(ESkillType type)
 {
 	if (!GetSkillUp(type).IsUpgradeAble())
+	{
+		return;
+	}
+	
+	BigInt Cost = GetSkillUp(type).m_Cost;
+	
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGold(Cost))
 	{
 		return;
 	}

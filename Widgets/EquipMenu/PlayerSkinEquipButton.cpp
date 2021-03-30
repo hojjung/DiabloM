@@ -22,6 +22,8 @@ void UPlayerSkinEquipButton::UpdateEquipSkin()
 	SetCombineText(m_SkinSpec->m_nStackCount);
 	SetEquipped(m_SkinSpec->m_nIsEquipped);
 	m_ImgTierColor->SetBrushTintColor(m_SkinSpec->m_PlayerData->GetTier()->m_TierColor);
+
+	m_BtnEquip->SetIsEnabled(m_SkinSpec->m_nIsUnlocked>0);
 }
 
 void UPlayerSkinEquipButton::Init(const FPlayerClassSpec& data, int index)

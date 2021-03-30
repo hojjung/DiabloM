@@ -109,7 +109,8 @@ public:
 	//
 	UFUNCTION()
     void ShowSkinGachaInfo();
-	
+	void UploadIAPData();
+
 	UFUNCTION()
     void RollGachaSkinOneTime();
 	UFUNCTION()
@@ -148,6 +149,8 @@ public:
 	void UpdateGachaWeaponLevelCount(int c,int m,int lv);
 	
 	void UpdateGachaSkinLevelCount(int c,int m,int lv);
+
+	FString GetGachaLevelDataStr();
 };
 
 

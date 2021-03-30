@@ -1,5 +1,7 @@
 #include "QuestManager.h"
 
+#include "DiabloGameInstance.h"
+
 
 void UQuestManager::SetQuestDataFromServer(const FString& strQuest)
 {
@@ -27,10 +29,14 @@ void UQuestManager::SetQuestDataFromServer(const FString& strQuest)
 
 bool UQuestManager::CompleteQuest(int index)
 {
+	int GemStone = m_AryQuestData[index].GetCompletePrize();
+	
 	if(!m_AryQuestData[index].TryComplete())
 	{
 		return false;
 	}
+
+	AddGemStones(GemStone);
 
 	m_OnQuestUpdate.Broadcast(index);
 
@@ -46,4 +52,41 @@ void UQuestManager::AddQuestCount(EQuestType type)
 {
 	GetQuest(type).m_nCurrentRequirePoint++;
 	m_OnQuestUpdate.Broadcast((int)type);
+}
+
+void UQuestManager::AddGemStones(int gemStone)
+{
+	m_nWaitingGemStones+=gemStone;
+}
+
+void UQuestManager::RequestGemStoneUploadToServer()
+{
+	if(m_nWaitingGemStones<1)
+	{
+		return;
+	}
+	
+	PRINTF("UploadTemStones:%d",m_nWaitingGemStones);
+	
+	UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(m_nWaitingGemStones);
+	
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadQuestData(GetQuestDataStr());
+	
+	m_nWaitingGemStones = 0;
+}
+
+FString UQuestManager::GetQuestDataStr()
+{
+	FString ResultStr;
+	
+	for(auto& QuestData : m_AryQuestData)
+	{
+		FString Data = QuestData.ParseToStr();
+		
+		Data.AppendChar(TEXT('/'));
+
+		ResultStr.Append(Data);
+	}
+
+	return ResultStr;
 }

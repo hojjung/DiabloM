@@ -60,18 +60,24 @@ void UGachaPanel::RollGachaWeaponOneTime()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWeapon);
 	m_GachaGridPanel->RollGachaOneTime();
+
+	UploadIAPData();
 }
 
 void UGachaPanel::RollGachaWeaponElevenTimes()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWeapon);
 	m_GachaGridPanel->RollGachaElevenTime();
+
+	UploadIAPData();
 }
 
 void UGachaPanel::RollGachaWeaponFiftyTimes()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWeapon);
 	m_GachaGridPanel->RollGachaFiftyTime();
+
+	UploadIAPData();
 }
 void UGachaPanel::RollGachaPetFiftyTimes()
 {
@@ -93,22 +99,38 @@ void UGachaPanel::ShowSkinGachaInfo()
         m_GachaManager->GetCurrentLevelSkinTotalPercent());
 }
 
+void UGachaPanel::UploadIAPData()
+{
+	FString IAPResult = UDiabloGameInstance::Get->m_ShopManager->GetIAPDataStr();
+	FString GachaResult = UDiabloGameInstance::Get->m_GachaManager->GetGachaLevelStr();
+
+	IAPResult.Append(GachaResult);
+	
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadIAPData(IAPResult);
+}
+
 void UGachaPanel::RollGachaSkinOneTime()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollSkin);
 	m_GachaGridPanel->RollGachaOneTime();
+
+	UploadIAPData();
 }
 
 void UGachaPanel::RollGachaSkinElevenTimes()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollSkin);
 	m_GachaGridPanel->RollGachaElevenTime();
+
+	UploadIAPData();
 }
 
 void UGachaPanel::RollGachaSkinFiftyTimes()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollSkin);
 	m_GachaGridPanel->RollGachaFiftyTime();
+
+	UploadIAPData();
 }
 
 void UGachaPanel::ShowPetGachaInfo()
@@ -201,7 +223,6 @@ void UGachaPanel::UpdateGachaWeaponLevelCount(int c, int m,int lv)
 
 void UGachaPanel::UpdateGachaSkinLevelCount(int c, int m,int lv)
 {
-	
 	m_TextGachaSkinNameLevel->SetText(FText::FromString(FString::Printf(TEXT("변신 가챠:Lv.%d"),lv+1)));
 
 	if(lv==7)
@@ -220,4 +241,8 @@ void UGachaPanel::UpdateGachaSkinLevelCount(int c, int m,int lv)
 	float Gauge = Current / Max;
 
 	m_BarGachaLevelExpSkin->SetProgressValue(Gauge);
+}
+FString UGachaPanel::GetGachaLevelDataStr()
+{
+		
 }

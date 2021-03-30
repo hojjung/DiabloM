@@ -86,7 +86,7 @@ void UUpgradeButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	m_fDeltaCounter+=InDeltaTime;
 
-	if(m_fDeltaCounter>0.15f)
+	if(m_fDeltaCounter>0.1f)
 	{
 		m_fDeltaCounter= 0.f;
 		m_OnCharge.ExecuteIfBound();
