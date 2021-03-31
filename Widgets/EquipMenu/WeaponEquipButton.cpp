@@ -22,8 +22,14 @@ void UWeaponEquipButton::Init(const FWeaponSpec& data, int index)
 
 	
 	m_BtnEquip->OnClicked.AddDynamic(this,&UWeaponEquipButton::TryEquip);
-	m_BtnLvUp->OnClicked.AddDynamic(this,&UWeaponEquipButton::TryLvUp);
+	//m_BtnLvUp->OnClicked.AddDynamic(this,&UWeaponEquipButton::TryLvUp);
 	m_BtnCombine->OnClicked.AddDynamic(this,&UWeaponEquipButton::TryCombine);
+	//
+	m_BtnLvUp->OnClicked.AddDynamic(this, &UWeaponEquipButton::ChargeStart);
+	m_BtnLvUp->OnHovered.AddDynamic(this, &UWeaponEquipButton::ChargeStart);
+	m_BtnLvUp->OnUnhovered.AddDynamic(this, &UWeaponEquipButton::ChargeEnd);
+	m_BtnLvUp->OnReleased.AddDynamic(this, &UWeaponEquipButton::ChargeEnd);
+	//
 	m_ImgIcon->SetBrushFromTexture(data.m_EquipData->m_Icon);
 	UpdateEquipWeapon();
 }
@@ -57,6 +63,7 @@ void UWeaponEquipButton::UpdateEquipWeapon()
 	m_ImgTierColor->SetBrushTintColor(m_WeaponSpec->m_EquipData->GetTier()->m_TierColor);
 
 	m_BtnEquip->SetIsEnabled(m_WeaponSpec->m_nLv>0);
+	m_BtnLvUp->SetIsEnabled(m_WeaponSpec->m_nLv>0);
 }
 
 
@@ -120,6 +127,37 @@ void UWeaponEquipButton::TryLvUp()
 	else
 	{
 		PRINTF("EqBtn-NoData");
+	}
+}
+
+void UWeaponEquipButton::ChargeStart()
+{
+	m_bChargeUpgrade = true;
+	m_fDeltaCounter = 0.f;
+}
+
+void UWeaponEquipButton::ChargeEnd()
+{
+	m_bChargeUpgrade = false;
+	m_fDeltaCounter = 0.f;
+}
+
+void UWeaponEquipButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (!m_bChargeUpgrade)
+	{
+		return;
+	}
+
+	m_fDeltaCounter += InDeltaTime;
+
+	if (m_fDeltaCounter > 0.1f)
+	{
+		TryLvUp();
+		m_fDeltaCounter = 0.f;
+		//upgradeTick
 	}
 }
 

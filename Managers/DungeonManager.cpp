@@ -42,7 +42,7 @@ void UDungeonManager::SetDungeonLevel(const FString& currentDG)//need split
 
 	SetMaxStageLevel(FCString::Atoi(*AryDg[1]));
 
-	if(!m_AryDgDataTable.MyRangeCheck(StageCurrentLevel))
+	if(StageCurrentLevel<0||StageCurrentLevel>=m_AryDgDataTable.Num())
 	{
 		StageCurrentLevel = 0;
 	}
@@ -82,7 +82,7 @@ void UDungeonManager::LevelUpDungeon()
 	}
 
 	m_OnDgOpen.Broadcast(m_nCurrentStageLevel);
-	
+	UploadDungeon();
 	OpenLevel();
 }
 
@@ -129,6 +129,11 @@ void UDungeonManager::SetCurrentStageLevel(int stageLv)
 {
 	m_nCurrentStageLevel = stageLv;
 	m_nSafeCurrentStageLevel = m_nCurrentStageLevel ^ 666;
+}
+
+void UDungeonManager::UploadDungeon()
+{
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadDungeonData(GetCurrentStage(),GetMaxStage());
 }
 
 void UDungeonManager::LoadLevelComplete(UWorld* world)

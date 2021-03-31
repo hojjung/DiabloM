@@ -53,8 +53,10 @@ void UDiabloGameInstance::Init()
 
 void UDiabloGameInstance::Shutdown()
 {
-	Super::Shutdown();
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData();
 	UDiabloGameInstance::Get->m_PlayfabManager->SetOfflineStatus();
+	UDiabloGameInstance::Get->m_DungeonManager->UploadDungeon();
+	Super::Shutdown();
 }
 
 ADiabloPlayerController* UDiabloGameInstance::GetPlCon()
@@ -70,6 +72,18 @@ APlayerDiabloCharacter* UDiabloGameInstance::GetPlChar()
 UNavigationSystemV1* UDiabloGameInstance::GetNavSys()
 {
 	return Cast<UNavigationSystemV1>( GetWorld()->GetNavigationSystem());
+}
+
+AGameLevelHUD* UDiabloGameInstance::GetHud()
+{
+	if(!UGameplayStatics::GetPlayerController(GetWorld(),0))
+	{
+		return nullptr;
+	}
+
+	auto* MyHud =UGameplayStatics::GetPlayerController(GetWorld(),0)->GetHUD();
+
+	return Cast<AGameLevelHUD>( MyHud);
 }
 
 void UDiabloGameInstance::RequestPopupText(FString txt)

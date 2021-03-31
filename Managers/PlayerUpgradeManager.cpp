@@ -80,9 +80,9 @@ void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& statskill)
 	//
 	m_AryUpgradeSkill.Init(FSkillSpec(), (int)ESkillType::Length);
 
-	m_AryUpgradeSkill[(int)ESkillType::MiniSlash].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow
+	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow
 	>("Skill01", "");
-	m_AryUpgradeSkill[(int)ESkillType::MiniSlash].ParseFromString(ArySkill[(int)ESkillType::MiniSlash]);
+	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].ParseFromString(ArySkill[(int)ESkillType::DeathBlow]);
 
 	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow
 	>("Skill02", "");
@@ -92,9 +92,9 @@ void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& statskill)
 	>("Skill03", "");
 	m_AryUpgradeSkill[(int)ESkillType::WhirlWind].ParseFromString(ArySkill[(int)ESkillType::WhirlWind]);
 
-	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow
+	m_AryUpgradeSkill[(int)ESkillType::EarthQuake].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow
 	>("Skill04", "");
-	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].ParseFromString(ArySkill[(int)ESkillType::DeathBlow]);
+	m_AryUpgradeSkill[(int)ESkillType::EarthQuake].ParseFromString(ArySkill[(int)ESkillType::EarthQuake]);
 
 	m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow
 	>("Skill05", "");
@@ -174,13 +174,13 @@ void UPlayerUpgradeManager::EquipSkill(int index, FSkillSpec* skill_spec)
 {
 	if (m_AryEquippedSkillSpec[index] && !m_AryEquippedSkillSpec[index]->IsCooldownReady())
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("EquipSkillFail", "Cooldown Skill Cant Change1!"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("EquipSkillFail", "스킬 쿨타임 중 변경 불가"));
 		return;
 	}
 
 	if (skill_spec && !skill_spec->IsCooldownReady())
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("EquipSkillFail2", "Cooldown Skill Cant Change2!"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("EquipSkillFail2", "스킬 쿨타임 중 변경 불가"));
 		return;
 	}
 
@@ -280,6 +280,36 @@ void UPlayerUpgradeManager::ClearCooldownAllSkill()
 
 		m_AryEquippedSkillSpec[i]->m_fCurrentCD = -1.f;
 	}
+}
+
+FString UPlayerUpgradeManager::GetUpgradeDataStr()//9
+{
+	return FString::Printf(TEXT("%d:%d:%d:%d:%d:%d:%d:%d:%d:&%d:%d:/%d:%d:/%d:%d:/%d:%d:/%d:%d:/"),
+		GetAtkUp(EAttackType::BaseAttack).m_nLv,
+		GetAtkUp(EAttackType::Critical).m_nLv,
+		GetAtkUp(EAttackType::CriticalDmg).m_nLv,
+		GetAtkUp(EAttackType::SuperCritical).m_nLv,
+		GetAtkUp(EAttackType::SuperCriticalDmg).m_nLv,
+		GetAtkUp(EAttackType::MagicBomb).m_nLv,
+		GetAtkUp(EAttackType::MagicBombDmg).m_nLv,
+		GetAtkUp(EAttackType::SuperMagicBomb).m_nLv,
+		GetAtkUp(EAttackType::SuperMagicBombDmg).m_nLv,
+		GetSkillUp(ESkillType::DeathBlow).m_nLv,
+		GetSkillUp(ESkillType::DeathBlow).m_nIndex,
+		GetSkillUp(ESkillType::MagicBlade).m_nLv,
+        GetSkillUp(ESkillType::MagicBlade).m_nIndex,
+        GetSkillUp(ESkillType::WhirlWind).m_nLv,
+        GetSkillUp(ESkillType::WhirlWind).m_nIndex,
+        GetSkillUp(ESkillType::EarthQuake).m_nLv,
+        GetSkillUp(ESkillType::EarthQuake).m_nIndex,
+        GetSkillUp(ESkillType::WindBlade).m_nLv,
+        GetSkillUp(ESkillType::WindBlade).m_nIndex
+		);
+}
+
+void UPlayerUpgradeManager::UploadUpgrade()
+{
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadUpgradeData(GetUpgradeDataStr());
 }
 
 //1,1

@@ -94,4 +94,7 @@ public:
 	void SetMaxStageLevel(int stageLv);
 
 	void SetCurrentStageLevel(int stageLv);
+
+	void UploadDungeon();
+
 };

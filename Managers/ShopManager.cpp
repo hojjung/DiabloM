@@ -123,32 +123,32 @@ void UShopManager::PurchaseGachaSkin55()
 
 void UShopManager::PurchaseGachaPet01()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(30, "gachapet01");
+	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(90, "gachapet01");
 }
 
 void UShopManager::PurchaseGachaPet11()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(300, "gachapet11");
+	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(900, "gachapet11");
 }
 
 void UShopManager::PurchaseGachaPet55()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(1500, "gachapet55");
+	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(4500, "gachapet55");
 }
 
 void UShopManager::PurchaseGachaAccessory01()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(30, "gachaaccessory01");
+	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(270, "gachaaccessory01");
 }
 
 void UShopManager::PurchaseGachaAccessory11()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(300, "gachaaccessory11");
+	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(2700, "gachaaccessory11");
 }
 
 void UShopManager::PurchaseGachaAccessory55()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(1500, "gachaaccessory55");
+	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(13500, "gachaaccessory55");
 }
 
 void UShopManager::UpdateGold()
@@ -374,7 +374,7 @@ bool UShopManager::GetPackagePurchased(int index)
 
 FString UShopManager::GetIAPDataStr()
 {
-	FString Result = FString::Printf(TEXT("%s/%s/%s/%s/%s/%s/"),
+	FString Result = FString::Printf(TEXT("True/%s/%s/%s/%s/%s/%s/"),
 		m_bIsShowAd ?  TEXT("True"):TEXT("False"),
 		Package[0] ?  TEXT("True"):TEXT("False"),
 		Package[1] ?  TEXT("True"):TEXT("False"),

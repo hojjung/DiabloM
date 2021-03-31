@@ -9,6 +9,7 @@
 #include "PlayerUpgradeManager.h"
 #include "QuestManager.h"
 #include "ShopManager.h"
+#include "Widgets/GameLevelHUD.h"
 
 
 
@@ -64,6 +65,8 @@ public:
 	APlayerDiabloCharacter* GetPlChar();
 
 	UNavigationSystemV1* GetNavSys();
+
+	AGameLevelHUD* GetHud();
 
 	void RequestPopupText(FString txt);
 	

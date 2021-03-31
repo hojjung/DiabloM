@@ -41,13 +41,12 @@ void UDiaSkillUseButton::SetSkillSpec(FSkillSpec* skillSpec)
 	}
 
 	m_EquippedSkillSpec = skillSpec;
+	
 	m_EquippedSkillSpec->m_nIndex = m_nIndex;
 
 	m_Joystick->SetIcon(m_EquippedSkillSpec->m_SkillData->m_SkillIcon);
 
 	m_bIsSkillUsable = true;
-
-	//m_bIsDragSkill = m_EquippedSkillSpec->m_SkillData->m_bIsDragSkill;
 
 	m_Joystick->SetUseDrag(m_bIsDragSkill);
 }
@@ -75,6 +74,10 @@ void UDiaSkillUseButton::OnPressBtn()
 
 	if (USkillUpgradeButton::CurrentSelected)
 	{
+		if(USkillUpgradeButton::CurrentSelected->GetSkillSpec()->m_nLv<1)
+		{
+			return;
+		}
 		UDiabloGameInstance::Get->m_PlayerUpgradeManager->EquipSkill(
 			m_nIndex, USkillUpgradeButton::CurrentSelected->GetSkillSpec());
 		return;

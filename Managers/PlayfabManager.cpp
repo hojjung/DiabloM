@@ -67,6 +67,30 @@ void UPlayfabManager::SetRanking(int rank)
 	m_nSafeRanking = m_nRanking ^ 7777;
 }
 
+void UPlayfabManager::UploadIAPData()
+{
+	FString IAPResult = UDiabloGameInstance::Get->m_ShopManager->GetIAPDataStr();
+	FString GachaResult = UDiabloGameInstance::Get->m_GachaManager->GetGachaLevelStr();
+
+	IAPResult.Append(GachaResult);
+	
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadIAPData(IAPResult);
+}
+
+void UPlayfabManager::UploadUserTitleData()
+{
+
+	
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->UploadUpgrade();
+	UDiabloGameInstance::Get->m_GoldManager->UploadGold();
+	UDiabloGameInstance::Get->m_EquipManager->UploadEquipment();
+	//
+	UploadIAPData();
+	//
+
+	m_fDeltaCountTitleData = 0.f;
+}
+
 void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 {
 	m_fDeltaCountTitleData += deltaTime;
@@ -80,14 +104,12 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 		m_fDeltaCountMinutePlaytime=0;
 	}
 
-	if (m_fDeltaCountTitleData > 5.f)
-	{
-		PRINTF("TryUpdateUserData");
-		
-		UDiabloGameInstance::Get->m_GoldManager->UploadGold();
-
-		m_fDeltaCountTitleData = 0.f;
-	}
+	// if (m_fDeltaCountTitleData > 5.f)
+	// {
+	// 	PRINTF("TryUpdateUserData");
+	// 	
+	// 	UploadUserTitleData();
+	// }
 
 	if (m_fDeltaCountRanking > 320.f)
 	{

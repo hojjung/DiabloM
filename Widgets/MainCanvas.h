@@ -107,11 +107,14 @@ protected:
 	UGameExitWindow* m_GameExitWindow;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UOfflineGoldBonusPanel* m_OfflineGoldPanel;
+	
 protected:
 	UPROPERTY(meta = (BindWidgetAnim))
 	UWidgetAnimation* m_ShowText;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UPopupTextWidget* m_PopupText;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UUserWidget* m_TouchBan;
 
 public:
 	void RequestText(FText txt);
@@ -132,6 +135,8 @@ protected:
 	float m_fBossDurationTimeCounter;
 	
 	FTextFormat m_Format;
+
+	FTimerHandle m_TouchBanTimer;
 	
 protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -196,7 +201,10 @@ public:
 	void OnMenuPanelVisibleChanged(bool b);
 
 	virtual void NativeOnInitialized() override;
-	
+
+	void ShowTouchBan(float secWant);
+
+	void OnTouchBanHide();
 };
 
 

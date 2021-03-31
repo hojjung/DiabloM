@@ -54,6 +54,8 @@ void UGachaPanel::ShowWeaponGachaInfo()
 	
 	m_GachaInfoPanel->OpenGachaInfo(m_GachaManager->GetCurrentLevelWeaponTable(),
 		m_GachaManager->GetCurrentLevelWeaponTotalPercent());
+
+	
 }
 
 void UGachaPanel::RollGachaWeaponOneTime()
@@ -61,7 +63,8 @@ void UGachaPanel::RollGachaWeaponOneTime()
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWeapon);
 	m_GachaGridPanel->RollGachaOneTime();
 
-	UploadIAPData();
+	ShowTouchBan();
+	
 }
 
 void UGachaPanel::RollGachaWeaponElevenTimes()
@@ -69,7 +72,8 @@ void UGachaPanel::RollGachaWeaponElevenTimes()
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWeapon);
 	m_GachaGridPanel->RollGachaElevenTime();
 
-	UploadIAPData();
+	
+	ShowTouchBan();
 }
 
 void UGachaPanel::RollGachaWeaponFiftyTimes()
@@ -77,18 +81,8 @@ void UGachaPanel::RollGachaWeaponFiftyTimes()
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWeapon);
 	m_GachaGridPanel->RollGachaFiftyTime();
 
-	UploadIAPData();
-}
-void UGachaPanel::RollGachaPetFiftyTimes()
-{
-	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollPet);
-	m_GachaGridPanel->RollGachaFiftyTime();
-}
-
-void UGachaPanel::RollGachaWingFiftyTimes()
-{
-	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWing);
-	m_GachaGridPanel->RollGachaFiftyTime();
+	
+	ShowTouchBan();
 }
 
 void UGachaPanel::ShowSkinGachaInfo()
@@ -99,22 +93,14 @@ void UGachaPanel::ShowSkinGachaInfo()
         m_GachaManager->GetCurrentLevelSkinTotalPercent());
 }
 
-void UGachaPanel::UploadIAPData()
-{
-	FString IAPResult = UDiabloGameInstance::Get->m_ShopManager->GetIAPDataStr();
-	FString GachaResult = UDiabloGameInstance::Get->m_GachaManager->GetGachaLevelStr();
-
-	IAPResult.Append(GachaResult);
-	
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadIAPData(IAPResult);
-}
 
 void UGachaPanel::RollGachaSkinOneTime()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollSkin);
 	m_GachaGridPanel->RollGachaOneTime();
 
-	UploadIAPData();
+	
+	ShowTouchBan();
 }
 
 void UGachaPanel::RollGachaSkinElevenTimes()
@@ -122,7 +108,8 @@ void UGachaPanel::RollGachaSkinElevenTimes()
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollSkin);
 	m_GachaGridPanel->RollGachaElevenTime();
 
-	UploadIAPData();
+	
+	ShowTouchBan();
 }
 
 void UGachaPanel::RollGachaSkinFiftyTimes()
@@ -130,7 +117,8 @@ void UGachaPanel::RollGachaSkinFiftyTimes()
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollSkin);
 	m_GachaGridPanel->RollGachaFiftyTime();
 
-	UploadIAPData();
+	
+	ShowTouchBan();
 }
 
 void UGachaPanel::ShowPetGachaInfo()
@@ -145,13 +133,25 @@ void UGachaPanel::RollGachaPetOneTime()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollPet);
 	m_GachaGridPanel->RollGachaOneTime();
+	ShowTouchBan();
 }
 
 void UGachaPanel::RollGachaPetElevenTimes()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollPet);
 	m_GachaGridPanel->RollGachaElevenTime();
+	ShowTouchBan();
 }
+
+void UGachaPanel::RollGachaPetFiftyTimes()
+{
+	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollPet);
+	m_GachaGridPanel->RollGachaFiftyTime();
+	ShowTouchBan();
+}
+
+
+
 
 void UGachaPanel::ShowWingGachaInfo()
 {
@@ -165,12 +165,23 @@ void UGachaPanel::RollGachaWingOneTime()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWing);
 	m_GachaGridPanel->RollGachaOneTime();
+
+	ShowTouchBan();
 }
 
 void UGachaPanel::RollGachaWingElevenTimes()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWing);
 	m_GachaGridPanel->RollGachaOneTime();
+
+	ShowTouchBan();
+}
+
+void UGachaPanel::RollGachaWingFiftyTimes()
+{
+	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWing);
+	m_GachaGridPanel->RollGachaFiftyTime();
+	ShowTouchBan();
 }
 
 void UGachaPanel::ShowAccessoryGachaInfo()
@@ -185,18 +196,24 @@ void UGachaPanel::RollGachaAccessoryOneTime()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollAccessory);
 	m_GachaGridPanel->RollGachaOneTime();
+
+	ShowTouchBan();
 }
 
 void UGachaPanel::RollGachaAccessoryElevenTimes()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollAccessory);
 	m_GachaGridPanel->RollGachaElevenTime();
+
+	ShowTouchBan();
 }
 
 void UGachaPanel::RollGachaAccessoryFiftyTimes()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollAccessory);
 	m_GachaGridPanel->RollGachaFiftyTime();
+
+	ShowTouchBan();
 }
 
 void UGachaPanel::UpdateGachaWeaponLevelCount(int c, int m,int lv)
@@ -242,7 +259,8 @@ void UGachaPanel::UpdateGachaSkinLevelCount(int c, int m,int lv)
 
 	m_BarGachaLevelExpSkin->SetProgressValue(Gauge);
 }
-FString UGachaPanel::GetGachaLevelDataStr()
+
+void UGachaPanel::ShowTouchBan()
 {
-		
+	UDiabloGameInstance::Get->GetHud()->ShowTouchBan(2.f);
 }

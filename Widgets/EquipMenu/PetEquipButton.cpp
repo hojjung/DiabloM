@@ -33,6 +33,7 @@ void UPetEquipButton::UpdateEquipPet()
 	m_ImgTierColor->SetBrushTintColor(m_PetSpec->m_PetData->GetTier()->m_TierColor);
 
 	m_BtnEquip->SetIsEnabled(m_PetSpec->m_nLv>0);
+	m_BtnLvUp->SetIsEnabled(m_PetSpec->m_nLv>0);
 }
 
 void UPetEquipButton::SetLevelNameText(const FPetSpec& data)
@@ -54,7 +55,12 @@ void UPetEquipButton::Init(const FPetSpec& data, int index)
 	m_nIndex = index;
 	m_BtnEquip->OnClicked.AddDynamic(this,&UPetEquipButton::TryEquip);
 	m_BtnCombine->OnClicked.AddDynamic(this,&UPetEquipButton::TryCombine);
-	m_BtnLvUp->OnClicked.AddDynamic(this,&UPetEquipButton::TryLvUp);
+	//m_BtnLvUp->OnClicked.AddDynamic(this,&UPetEquipButton::TryLvUp);
+	//
+	m_BtnLvUp->OnClicked.AddDynamic(this, &UPetEquipButton::ChargeStart);
+	m_BtnLvUp->OnHovered.AddDynamic(this, &UPetEquipButton::ChargeStart);
+	m_BtnLvUp->OnUnhovered.AddDynamic(this, &UPetEquipButton::ChargeEnd);
+	m_BtnLvUp->OnReleased.AddDynamic(this, &UPetEquipButton::ChargeEnd);
 	m_ImgIcon->SetBrushFromTexture(data.m_PetData->m_Icon);
 	UpdateEquipPet();
 }
@@ -121,6 +127,35 @@ void UPetEquipButton::TryLvUp()
 	{
 		PRINTF("EqBtn-NoData");
 	}
+}
+
+void UPetEquipButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (!m_bChargeUpgrade)
+	{
+		return;
+	}
+
+	m_fDeltaCounter += InDeltaTime;
+
+	if (m_fDeltaCounter > 0.1f)
+	{
+		TryLvUp();
+		m_fDeltaCounter = 0.f;
+		//upgradeTick
+	}
+}
+
+void UPetEquipButton::ChargeStart()
+{m_bChargeUpgrade = true;
+	m_fDeltaCounter = 0.f;
+}
+
+void UPetEquipButton::ChargeEnd()
+{m_bChargeUpgrade = false;
+	m_fDeltaCounter = 0.f;
 }
 
 #undef LOCTEXT_NAMESPACE

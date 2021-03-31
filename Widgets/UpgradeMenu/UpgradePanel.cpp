@@ -57,7 +57,7 @@ void UUpgradePanel::NativeOnInitialized()
 	//upgradeAtkCDmg01
 	m_UpgradeSkill01->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeSkill01);
 	m_UpgradeSkill01->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeSkill01);
-	m_UpgradeSkill01->Init(m_PlUpgrade->GetSkillUp(ESkillType::MiniSlash));
+	m_UpgradeSkill01->Init(m_PlUpgrade->GetSkillUp(ESkillType::DeathBlow));
 	m_UpgradeSkill01->m_OnClicked.AddUObject(this,&UUpgradePanel::OnSkillEquipPressed);
 	//upgradeAtkCDmg01
 	m_UpgradeSkill02->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeSkill02);
@@ -72,7 +72,7 @@ void UUpgradePanel::NativeOnInitialized()
 	//
 	m_UpgradeSkill04->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeSkill04);
 	m_UpgradeSkill04->m_OnCharge.BindUObject(this,&UUpgradePanel::UpgradeSkill04);
-	m_UpgradeSkill04->Init(m_PlUpgrade->GetSkillUp(ESkillType::DeathBlow));
+	m_UpgradeSkill04->Init(m_PlUpgrade->GetSkillUp(ESkillType::EarthQuake));
 	m_UpgradeSkill04->m_OnClicked.AddUObject(this,&UUpgradePanel::OnSkillEquipPressed);
 	//
 	m_UpgradeSkill05->m_BtnLvUp->OnClicked.AddDynamic(this,&UUpgradePanel::UpgradeSkill05);
@@ -153,7 +153,7 @@ void UUpgradePanel::UpgradeAtkMDmg02()
 
 void UUpgradePanel::UpgradeSkill01()
 {
-	m_PlUpgrade->UpgradeSkill(ESkillType::MiniSlash);
+	m_PlUpgrade->UpgradeSkill(ESkillType::DeathBlow);
 }
 
 void UUpgradePanel::UpgradeSkill02()
@@ -168,7 +168,7 @@ void UUpgradePanel::UpgradeSkill03()
 
 void UUpgradePanel::UpgradeSkill04()
 {
-	m_PlUpgrade->UpgradeSkill(ESkillType::DeathBlow);
+	m_PlUpgrade->UpgradeSkill(ESkillType::EarthQuake);
 }
 
 void UUpgradePanel::UpgradeSkill05()

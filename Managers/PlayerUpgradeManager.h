@@ -31,10 +31,10 @@ enum class EAttackType : uint8
 UENUM()
 enum class ESkillType : uint8
 {
-	MiniSlash,
+	DeathBlow,
 	MagicBlade,
 	WhirlWind,
-	DeathBlow,
+	EarthQuake,
 	WindBlade,
 	Length
 };
@@ -115,5 +115,7 @@ public:
 		return m_AryEquippedSkillSpec;
 	}
 
+	FString GetUpgradeDataStr();
 	
+	void UploadUpgrade();
 };

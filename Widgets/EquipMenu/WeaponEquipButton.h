@@ -7,7 +7,6 @@
 #include "Managers/EquipManager.h"
 #include "Widgets/CommonElement/ImageAndText.h"
 
-
 #include "WeaponEquipButton.generated.h"
 
 /**
@@ -52,7 +51,13 @@ protected:
 
 	const FWeaponSpec* m_WeaponSpec;
 
+	UPROPERTY()
 	int m_nIndex;
+
+	UPROPERTY()
+	float m_fDeltaCounter;
+	UPROPERTY()
+	bool m_bChargeUpgrade;
 	
 protected:
 	void SetDescPreviewText(const FWeaponSpec& data);
@@ -62,6 +67,7 @@ protected:
 	void SetCombineText(int stack);
 
 	void SetLevelNameText(const FWeaponSpec& data);
+	
 	void SetCostText();
 
 public:
@@ -75,4 +81,13 @@ public:
     void TryCombine();
 	UFUNCTION()
     void TryLvUp();
+	
+
+	UFUNCTION()
+    void ChargeStart();
+
+	UFUNCTION()
+    void ChargeEnd();
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 };

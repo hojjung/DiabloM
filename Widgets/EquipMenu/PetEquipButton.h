@@ -55,6 +55,11 @@ protected:
 
 	int m_nIndex;
 
+	UPROPERTY()
+	float m_fDeltaCounter;
+	UPROPERTY()
+	bool m_bChargeUpgrade;
+
 protected:
 	void SetDescPreviewText(const FPetSpec& data);
 
@@ -77,4 +82,12 @@ public:
     void TryCombine();
 	UFUNCTION()
     void TryLvUp();
+	//
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	UFUNCTION()
+    void ChargeStart();
+
+	UFUNCTION()
+    void ChargeEnd();
 };

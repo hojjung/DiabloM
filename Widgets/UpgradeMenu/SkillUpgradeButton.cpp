@@ -4,6 +4,8 @@
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/DiabloGameInstance.h"
 
+#define LOCTEXT_NAMESPACE "SkillUpgradeButton"
+
 USkillUpgradeButton* USkillUpgradeButton::CurrentSelected = nullptr;
 
 USkillUpgradeButton::USkillUpgradeButton(const FObjectInitializer& objInit): Super(objInit)
@@ -116,6 +118,11 @@ void USkillUpgradeButton::ChargeEnd()
 
 void USkillUpgradeButton::OnClick()
 {
+	if(m_EquippedSkillSpec->m_nLv<1)
+	{
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("OnClickFail", "배우지 않은 스킬입니다."));
+		return;
+	}
 	m_OnClicked.Broadcast(this);
 }
 
@@ -136,3 +143,5 @@ void USkillUpgradeButton::SetNormalImage()
 	
 	m_BtnEquip->SetStyle(m_BtnEquip->WidgetStyle);
 }
+
+#undef LOCTEXT_NAMESPACE

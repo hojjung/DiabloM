@@ -216,6 +216,9 @@ public:
 	int GetRanking();
 
 	void SetRanking(int rank);
+	void UploadIAPData();
+
+	void UploadUserTitleData();
 
 	void RequestCheatAlert();
 

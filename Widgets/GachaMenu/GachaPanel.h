@@ -109,7 +109,6 @@ public:
 	//
 	UFUNCTION()
     void ShowSkinGachaInfo();
-	void UploadIAPData();
 
 	UFUNCTION()
     void RollGachaSkinOneTime();
@@ -150,7 +149,7 @@ public:
 	
 	void UpdateGachaSkinLevelCount(int c,int m,int lv);
 
-	FString GetGachaLevelDataStr();
+	void ShowTouchBan();
 };
 
 

@@ -35,3 +35,8 @@ void AGameLevelHUD::ShowOfflineGoldWindow(BigInt gold)
 {
 	m_Canvas->ShowOfflineGoldWindow(gold);
 }
+
+void AGameLevelHUD::ShowTouchBan(float secWant)
+{
+	m_Canvas->ShowTouchBan(secWant);
+}

@@ -417,7 +417,7 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 	}
 	else if (name == "Skill01") //작은 범위 공격
 	{
-		BigInt SkillDmg = m_PlUpgradeManager->GetSkillUp(ESkillType::MiniSlash).m_Value;
+		BigInt SkillDmg = m_PlUpgradeManager->GetSkillUp(ESkillType::DeathBlow).m_Value;
 
 		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
@@ -433,7 +433,7 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 	}
 	else if (name == "Skill04") //데스블로우
 	{
-		BigInt SkillDmg = m_PlUpgradeManager->GetSkillUp(ESkillType::DeathBlow).m_Value;
+		BigInt SkillDmg = m_PlUpgradeManager->GetSkillUp(ESkillType::EarthQuake).m_Value;
 		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
 	else if (name == "Skill05") //버프 공속

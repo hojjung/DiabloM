@@ -30,7 +30,7 @@ void UMonsterSpawnManager::StartSpawn(UWorld* world, const FDungeonDataTableRow*
 {
 	m_nKillCount=0;
 	
-	m_nGoldGoblinSpawnCount = FMath::RandRange(5,10);
+	m_nGoldGoblinSpawnCount = FMath::RandRange(25,55);
 
 	m_nGoldGoblinSpawnCount+=m_nKillCount;
 	

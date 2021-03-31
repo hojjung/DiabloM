@@ -56,21 +56,6 @@ void UAccessoryEquipButton::SetDescPreviewText(const FAccessorySpec& data)
 	m_TextDesc->SetText(data.m_AccessoryData->GetFormatDescPreview(data.m_nLv));
 }
 
-void UAccessoryEquipButton::SetEquipped(int index)
-{
-	// switch (index)
-	// {
-	// 	case 1:
-	// 		m_TextEquip->SetText(LOCTEXT("EquipSuccessText1","Equipped-1"));
-	// 		break;
-	// 	case 2:
-	// 		m_TextEquip->SetText(LOCTEXT("EquipSuccessText2","Equipped-2"));
-	// 		break;
-	// 	default:
-	// 		m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
-	// }
-}
-
 void UAccessoryEquipButton::SetCostText(int stack)
 {
 	FFormatOrderedArguments Args;
@@ -82,24 +67,6 @@ void UAccessoryEquipButton::SetCostText(int stack)
 	m_TextCost->SetText(tt);
 }
 
-void UAccessoryEquipButton::TryEquip()
-{
-	if(m_AccessorySpec)
-	{
-		// if(m_ParentEquip->m_nAccessorySelector ==0)
-		// {
-		// 	UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory1(m_nIndex);	
-		// }
-		// else if(m_ParentEquip->m_nAccessorySelector ==1)
-		// {
-		// 	UDiabloGameInstance::Get->m_EquipManager->TryEquipAccessory2(m_nIndex);
-		// }
-	}
-	else
-	{
-		PRINTF("EqBtn-NoData");
-	}
-}
 
 void UAccessoryEquipButton::TryCombineLvUp()
 {

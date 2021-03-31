@@ -59,8 +59,23 @@ void UMainCanvas::NativeOnInitialized()
 	m_GameExitWindow->Cancel();
 	
 	m_OfflineGoldPanel->SetVisibility(ESlateVisibility::Collapsed);
+
+	OnTouchBanHide();
 }
 
+void UMainCanvas::ShowTouchBan(float secWant)
+{
+	GetWorld()->GetTimerManager().ClearTimer(m_TouchBanTimer);
+	
+	m_TouchBan->SetVisibility(ESlateVisibility::Visible);
+	//
+	GetWorld()->GetTimerManager().SetTimer(m_TouchBanTimer, this, &UMainCanvas::OnTouchBanHide,secWant, false);
+}
+
+void UMainCanvas::OnTouchBanHide()
+{
+	m_TouchBan->SetVisibility(ESlateVisibility::Collapsed);
+}
 
 
 void UMainCanvas::RequestText(FText txt)

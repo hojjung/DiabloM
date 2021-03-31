@@ -372,6 +372,8 @@ public:
 	void AddAccessoryStack(int index);
 
 	FAccessorySpec& GetAccessory(EAccessory acces);
+
+	void UploadEquipment();
 };
 
 

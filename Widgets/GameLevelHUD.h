@@ -30,4 +30,6 @@ public:
 	virtual void OnPressBackkey() override;
 
 	void ShowOfflineGoldWindow(BigInt gold);
+
+	void ShowTouchBan(float secWant);
 };
