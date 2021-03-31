@@ -23,27 +23,27 @@ void UShopManager::SetShopDataFromServer(FString iapData)
 
 void UShopManager::PurchasePacakge01()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_starter", false);
+	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_starter", true);
 }
 
 void UShopManager::PurchasePacakge02()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_begginer", false);
+	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_begginer", true);
 }
 
 void UShopManager::PurchasePacakge03()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_rare", false);
+	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_rare", true);
 }
 
 void UShopManager::PurchasePacakge04()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_hero", false);
+	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_hero", true);
 }
 
 void UShopManager::PurchasePacakge05()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_legend", false);
+	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_legend", true);
 }
 
 void UShopManager::PurchaseGemStone01()

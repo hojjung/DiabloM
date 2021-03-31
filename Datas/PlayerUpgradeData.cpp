@@ -13,8 +13,6 @@ float FSkillSpec::UseSkill()
 	
 	if(SkillSection == NAME_None)
 	{
-		PRINTF("SkillData MongrageSectionNull");
-		
 		return 0.f;		
 	}
 	

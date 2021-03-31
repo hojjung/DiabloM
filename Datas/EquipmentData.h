@@ -69,14 +69,14 @@ public:
 		
 		BigInt Cost = m_fBaseCost*level;
 
-		if(level>1)
+		if(m_nDmgLevel>1)
 		{
-			int IterMax = level-1;
+			int IterMax = m_nDmgLevel-1;
 			
 			for(int i=0; i<IterMax;i++)
 			{
 				//Cost.MultiplyFast(2);
-				Cost = UDiaBlueprintFunctionLibrary::MultiplePercent(Cost,107,0,2);
+				Cost = UDiaBlueprintFunctionLibrary::MultiplePercent(Cost,8,0,0);
 			}
 		}
 
@@ -202,14 +202,14 @@ public:
 		
 		BigInt Cost = 900*level;
 
-		if(level>1)
+		if(m_nFactorLevel>1)
 		{
-			int IterMax = level-1;
+			int IterMax = m_nFactorLevel-1;
 			
 			for(int i=0; i<IterMax;i++)
 			{
-				//Cost.MultiplyFast(2);
-				Cost = UDiaBlueprintFunctionLibrary::MultiplePercent(Cost,106,0,2);
+				Cost.MultiplyFast(8);
+				//Cost = UDiaBlueprintFunctionLibrary::MultiplePercent(Cost,8,0,0);
 			}
 		}
 
