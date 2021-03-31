@@ -31,8 +31,17 @@ void UShopPanel::NativeOnInitialized()
 
 	m_ShopManager = UDiabloGameInstance::Get->m_ShopManager; 
 	
-	m_ShopManager->m_OnUpdateGold.AddUObject(this,&UShopPanel::OnUpdateGoldShop);;
+	m_ShopManager->m_OnUpdateGold.AddUObject(this,&UShopPanel::OnUpdateGoldShop);
 	m_ShopManager->UpdateGold();
+	//
+	m_PackageItem01->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	m_PackageItem02->SetVisibility(ESlateVisibility::Collapsed);
+	m_PackageItem03->SetVisibility(ESlateVisibility::Collapsed);
+	m_PackageItem04->SetVisibility(ESlateVisibility::Collapsed);
+	m_PackageItem05->SetVisibility(ESlateVisibility::Collapsed);
+	//
+	m_ShopManager->m_OnItemPurchased.AddUObject(this,&UShopPanel::UpdateShowPackage);
+	UpdateShowPackage();
 }
 
 void UShopPanel::PurchasePacakge01()
@@ -131,4 +140,33 @@ void UShopPanel::OnUpdateGoldShop(const BigInt& small,const BigInt& midium,const
 	m_TextGoldSmallAmount->SetText(FText::FromString(FString::Printf(TEXT("골드 %s 획득"),*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(small,2))));
 	m_TextGoldMidiumAmount->SetText(FText::FromString(FString::Printf(TEXT("골드 %s 획득"),*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(midium,2))));
 	m_TextGoldLargeAmount->SetText(FText::FromString(FString::Printf(TEXT("골드 %s 획득"),*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(large,2))));
+}
+
+void UShopPanel::UpdateShowPackage()
+{
+	//다 꺼놓고 1개씩만 나오게
+	if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
+	{
+		m_PackageItem01->SetVisibility(ESlateVisibility::Collapsed);
+		m_PackageItem02->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	else if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(1))
+	{
+		m_PackageItem02->SetVisibility(ESlateVisibility::Collapsed);
+		m_PackageItem03->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	else if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(2))
+	{
+		m_PackageItem03->SetVisibility(ESlateVisibility::Collapsed);
+		m_PackageItem04->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	else if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(3))
+	{
+		m_PackageItem04->SetVisibility(ESlateVisibility::Collapsed);
+		m_PackageItem05->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	else if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(4))
+	{
+		m_PackageItem05->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }

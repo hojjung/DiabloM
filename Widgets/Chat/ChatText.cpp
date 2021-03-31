@@ -102,7 +102,7 @@ FString UChatText::GetRankColor(int RankNumber)
 	{
 		return m_RichIDPurple;
 	}
-	else if(RankNumber<=2 && RankNumber>=10)
+	else if(RankNumber<=2|| RankNumber>=10)
 	{
 		return m_RichIDRed;
 	}

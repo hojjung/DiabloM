@@ -18,6 +18,9 @@ class DIABLOM_API UShopManager : public UObject
 	GENERATED_BODY()
 public:
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnUpdateGold,const BigInt&,const BigInt&,const BigInt&);
+	DECLARE_MULTICAST_DELEGATE(FOnItemPurchased);
+
+	FOnItemPurchased m_OnItemPurchased;
 	
 	FOnUpdateGold m_OnUpdateGold;
 
@@ -34,7 +37,7 @@ public:
 protected:
 	bool m_bIsShowAd;
 	
-	bool Package[5];
+	TArray<bool> m_PackagePurchased;
 	
 	BigInt m_Gold01;
 	
@@ -111,6 +114,11 @@ UFUNCTION()
 	bool GetPackagePurchased(int index);
 
 	FString GetIAPDataStr();
+
+	FORCEINLINE const TArray<bool>& GetPackageBoughtAry() const
+	{
+		return m_PackagePurchased;
+	}
 };
 
 

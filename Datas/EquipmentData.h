@@ -44,7 +44,7 @@ public:
 			
 			for(int i=0; i<IterMax;i++)
 			{
-				Dmg.MultiplyFast(50);	
+				Dmg.MultiplyFast(12);	
 			}
 		}
 

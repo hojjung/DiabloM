@@ -22,6 +22,7 @@ enum class EQuestType :uint8
 	MaDmgLv,//madmglv
 	SMaLv,//smalv
 	SMaDmgLv,//smadmglv
+	StageLv,
 	LENGTH
 };
 UCLASS()

@@ -58,6 +58,16 @@ protected:
 	UTextBlock* m_TextGoldMidiumAmount;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextGoldLargeAmount;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	USizeBox* m_PackageItem01;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	USizeBox* m_PackageItem02;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	USizeBox* m_PackageItem03;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	USizeBox* m_PackageItem04;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	USizeBox* m_PackageItem05;
 
 
 public:
@@ -101,4 +111,6 @@ public:
     void ShowGoldPanel();
 
 	void OnUpdateGoldShop(const BigInt&,const BigInt&,const BigInt&);
+
+	void UpdateShowPackage();
 };

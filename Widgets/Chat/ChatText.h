@@ -35,7 +35,7 @@ public:
 
 	void Clear();
 
-	FString GetRankColor(const FString& rankNumber);
+	static FString GetRankColor(const FString& rankNumber);
 
-	FString GetRankColor(int rankNumber);
+	static FString GetRankColor(int rankNumber);
 };

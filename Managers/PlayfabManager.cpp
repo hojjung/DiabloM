@@ -79,22 +79,21 @@ void UPlayfabManager::UploadIAPData()
 
 void UPlayfabManager::UploadUserTitleData()
 {
-
-	
 	UDiabloGameInstance::Get->m_PlayerUpgradeManager->UploadUpgrade();
 	UDiabloGameInstance::Get->m_GoldManager->UploadGold();
 	UDiabloGameInstance::Get->m_EquipManager->UploadEquipment();
 	//
 	UploadIAPData();
 	//
-
 	m_fDeltaCountTitleData = 0.f;
 }
 
 void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 {
 	m_fDeltaCountTitleData += deltaTime;
+	
 	m_fDeltaCountRanking += deltaTime;
+	
 	m_fDeltaCountMinutePlaytime += deltaTime;
 
 	if (m_fDeltaCountMinutePlaytime > 60.f)

@@ -10,11 +10,12 @@ void UShopManager::SetShopDataFromServer(FString iapData)
 	iapData.ParseIntoArray(AryItemBought,TEXT("/"));
 	//0~6,2개제외
 	m_bIsShowAd = AryItemBought[1].ToBool();
-	Package[0] = AryItemBought[2].ToBool();
-	Package[1] = AryItemBought[3].ToBool();
-	Package[2] = AryItemBought[4].ToBool();
-	Package[3] = AryItemBought[5].ToBool();
-	Package[4] = AryItemBought[6].ToBool();
+	m_PackagePurchased.Init(false,5);
+	m_PackagePurchased[0] = AryItemBought[2].ToBool();
+	m_PackagePurchased[1] = AryItemBought[3].ToBool();
+	m_PackagePurchased[2] = AryItemBought[4].ToBool();
+	m_PackagePurchased[3] = AryItemBought[5].ToBool();
+	m_PackagePurchased[4] = AryItemBought[6].ToBool();
 
 	UDiabloGameInstance::Get->m_GachaManager->SetGachaLevel(AryItemBought[7],AryItemBought[8]);
 
@@ -229,27 +230,32 @@ void UShopManager::OnPurchasedGainItem(FString itemID)
 	{
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(60000);
 		m_bIsShowAd = false;
-		Package[0] = true;
+		m_PackagePurchased[0] = true;
+		m_OnItemPurchased.Broadcast();
 	}
 	else if (itemID == "package_begginer")
 	{
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(60000);
-		Package[1] = true;
+		m_PackagePurchased[1] = true;
+		m_OnItemPurchased.Broadcast();
 	}
 	else if (itemID == "package_rare")
 	{
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(60000);
-		Package[2] = true;
+		m_PackagePurchased[2] = true;
+		m_OnItemPurchased.Broadcast();
 	}
 	else if (itemID == "package_hero")
 	{
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(150000);
-		Package[3] = true;
+		m_PackagePurchased[3] = true;
+		m_OnItemPurchased.Broadcast();
 	}
 	else if (itemID == "package_legend")
 	{
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(150000);
-		Package[4] = true;
+		m_PackagePurchased[4] = true;
+		m_OnItemPurchased.Broadcast();
 	}
 	else if (itemID == "gemstone01")
 	{
@@ -369,18 +375,18 @@ void UShopManager::ShowBannerAD(bool b)
 
 bool UShopManager::GetPackagePurchased(int index)
 {
-	return Package[index];
+	return m_PackagePurchased[index];
 }
 
 FString UShopManager::GetIAPDataStr()
 {
 	FString Result = FString::Printf(TEXT("True/%s/%s/%s/%s/%s/%s/"),
 		m_bIsShowAd ?  TEXT("True"):TEXT("False"),
-		Package[0] ?  TEXT("True"):TEXT("False"),
-		Package[1] ?  TEXT("True"):TEXT("False"),
-		Package[2] ?  TEXT("True"):TEXT("False"),
-		Package[3] ?  TEXT("True"):TEXT("False"),
-		Package[4] ?  TEXT("True"):TEXT("False"));
+		m_PackagePurchased[0] ?  TEXT("True"):TEXT("False"),
+		m_PackagePurchased[1] ?  TEXT("True"):TEXT("False"),
+		m_PackagePurchased[2] ?  TEXT("True"):TEXT("False"),
+		m_PackagePurchased[3] ?  TEXT("True"):TEXT("False"),
+		m_PackagePurchased[4] ?  TEXT("True"):TEXT("False"));
 
 	return Result;
 }

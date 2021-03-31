@@ -76,7 +76,9 @@ void UDungeonManager::LevelUpDungeon()
 	if(m_nCurrentStageLevel>GetMaxStage())
 	{
 		PRINTF("DgManager-LevelUpDungeon HighScore");
+		
 		SetMaxStageLevel(m_nCurrentStageLevel);
+		UDiabloGameInstance::Get->m_QuestManager->AddQuestCount(EQuestType::StageLv);
 		UDiabloGameInstance::Get->m_PlayfabManager->OnStageComplete();
 		m_OnDungeonMaxUpdate.Broadcast();
 	}
