@@ -37,6 +37,10 @@ void USetNickname::TryConfirm()
 	{
 		return;
 	}
+	if(m_Nickname->GetText().IsEmpty())
+	{
+		return;
+	}
 	m_bRequestLock = true;
 	UDiabloGameInstance::Get->m_PlayfabManager->RequestSetNickname(m_Nickname->GetText().ToString());
 }
@@ -52,6 +56,7 @@ void USetNickname::ShowNotification(FString& str)
 	m_bRequestLock=false;
 	m_CanvasNotification->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	m_TextNotification->SetText(FText::FromString(str));
+	m_Nickname->SetText(FText());
 }
 
 void USetNickname::HideNicknameSet()

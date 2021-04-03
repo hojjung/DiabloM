@@ -85,6 +85,8 @@ public:
 	void SetNormalImage();
 
 	void UpdateSkillButton();
+	UFUNCTION()
+	void OnClickButton();
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 

@@ -156,3 +156,24 @@ void UMainMenuPanel::SetVisibility(ESlateVisibility InVisibility)
 		
 	}
 }
+
+FReply UMainMenuPanel::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
+{
+	FReply Re = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
+
+	return FReply::Handled();
+}
+
+FReply UMainMenuPanel::NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
+{
+	FReply Re = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
+
+	return FReply::Handled();
+}
+
+FReply UMainMenuPanel::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
+{
+	FReply Re = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
+
+	return FReply::Handled();
+}

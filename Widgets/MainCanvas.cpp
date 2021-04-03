@@ -152,7 +152,7 @@ void UMainCanvas::UpdateRageBar(float cV,float mV)
 	
 	m_BarRage->SetProgressValue(cV/mV);
 
-	FTextFormat FormatRage =FText::FromString("{0}/{1}");
+	FTextFormat FormatRage =FText::FromString(TEXT("분노 {0}/{1}"));
 
 	FFormatOrderedArguments Args;
 	Args.Add(cV);

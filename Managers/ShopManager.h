@@ -35,8 +35,6 @@ public:
 	void SetShopDataFromServer(FString iapData);
 	
 protected:
-	bool m_bIsShowAd;
-	
 	TArray<bool> m_PackagePurchased;
 	
 	BigInt m_Gold01;
@@ -119,6 +117,8 @@ UFUNCTION()
 	{
 		return m_PackagePurchased;
 	}
+
+	void ShowTouchBan();
 };
 
 

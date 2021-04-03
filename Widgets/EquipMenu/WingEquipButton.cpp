@@ -6,7 +6,7 @@
 
 UWingEquipButton::UWingEquipButton(const FObjectInitializer& objInit):Super(objInit)
 {
-	m_FormatCombine= LOCTEXT("CombineText","Combine:{0}/5");//LOCTEXT("EquipText","Equipped!")
+	m_FormatCombine= LOCTEXT("CombineText","합성:{0}/5");//LOCTEXT("EquipText","Equipped!")
 	m_nIndex=-1;
 	m_WingSpec = nullptr;
 }
@@ -41,11 +41,11 @@ void UWingEquipButton::SetEquipped(bool b)
 {
 	if(b)
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","Equipped!"));
+		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","장착 됨!"));
 	}
 	else
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
+		m_TextEquip->SetText(LOCTEXT("EquipableText","장착"));
 	}
 }
 

@@ -64,6 +64,8 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_AryTargetingObjectType.Add(EObjectTypeQuery::ObjectTypeQuery3);
 	//m_fInteractRange
 	//SoundWave'/Game/Sound/Sword_Swing_1_1.Sword_Swing_1_1'
+
+	
 }
 
 void APlayerDiabloCharacter::BeginPlay()
@@ -122,6 +124,7 @@ void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
 	m_SkBody->SetSkeletalMesh(m_PlayerEntityData->m_PlayerData->m_PlayerSkin);
 	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	m_SkBody->SetAnimInstanceClass(m_PlayerEntityData->m_PlayerData->m_AnimBP);
+	m_SkBody->SetForcedLOD(2);
 	m_fAttackSpeed = m_PlayerEntityData->m_PlayerData->m_fAttackSpeedMultiple;
 	m_BaseAttackAnim = m_PlayerEntityData->m_PlayerData->m_BaseAttackAnim;
 
@@ -411,8 +414,6 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 			Result = UDiaBlueprintFunctionLibrary::MultiplePercent(Result,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce06).m_Value);
 		}
 
-		
-
 		ApplyDamageToTargets(*aryHits, &Result);
 	}
 	else if (name == "Skill01") //작은 범위 공격
@@ -463,7 +464,7 @@ float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd, float maxCd, F
 
 		BigInt Cri02 = m_PlUpgradeManager->GetAtkUp(EAttackType::SuperCritical).m_Value;
 
-		if (Cri2Percent100 <= Cri02)
+		if (Cri02>0 && Cri2Percent100 <= Cri02)
 		{
 			SectionName = "Critical02";
 			DmgType = EDamageType::Critical02;
@@ -555,7 +556,7 @@ bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 
 	if (IsBuff01Available())
 	{
-		outDmg.Multiply(m_bnAdditionalSkillDmg);
+		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,m_bnAdditionalSkillDmg);
 	}
 
 	if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).m_nLv>0)

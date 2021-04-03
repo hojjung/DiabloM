@@ -45,6 +45,27 @@ void UGachaCardGridPanel::SetRollGachaData(ERollItemType gachaTable)
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
+FReply UGachaCardGridPanel::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
+{
+	FReply Re = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
+	
+	return FReply::Handled();
+}
+
+FReply UGachaCardGridPanel::NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
+{
+	FReply Re = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
+	
+	return FReply::Handled();
+}
+
+FReply UGachaCardGridPanel::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
+{
+	FReply Re = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
+	
+	return FReply::Handled();
+}
+
 void UGachaCardGridPanel::HideCardGrid()
 {
 	for(UGachaCard* Card : m_AryGachaCard)

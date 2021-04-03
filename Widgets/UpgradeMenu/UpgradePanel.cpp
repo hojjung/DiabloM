@@ -227,4 +227,25 @@ void UUpgradePanel::OnSkillEquipPressed(USkillUpgradeButton* btn)//EquipPress
 	
 }
 
+FReply UUpgradePanel::NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
+{
+FReply Re = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
+
+	return FReply::Handled();
+}
+
+FReply UUpgradePanel::NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
+{
+	FReply Re = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
+
+	return FReply::Handled();
+}
+
+FReply UUpgradePanel::NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent)
+{
+	FReply Re = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
+
+	return FReply::Handled();
+}
+
 

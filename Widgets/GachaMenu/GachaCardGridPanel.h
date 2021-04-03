@@ -47,6 +47,12 @@ public:
 	
 	void SetRollGachaData(ERollItemType gachaTable);
 
+	virtual FReply NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+	
+	virtual FReply NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+
+	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+
 public:
 	UFUNCTION()
 	void ClosePanel();

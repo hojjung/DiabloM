@@ -149,7 +149,11 @@ public:
 	
 	void UpdateGachaSkinLevelCount(int c,int m,int lv);
 
-	void ShowTouchBan();
+	virtual FReply NativeOnTouchStarted(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+	
+	virtual FReply NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+
+	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
 };
 
 

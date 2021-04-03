@@ -49,16 +49,9 @@ void UDiabloGameInstance::Init()
 
     //
 	m_ChatManager = NewObject<UChatManager>();
+
 }
 
-void UDiabloGameInstance::Shutdown()
-{
-	UDiabloGameInstance::Get->m_QuestManager->RequestGemStoneUploadToServer();
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData();
-	UDiabloGameInstance::Get->m_PlayfabManager->SetOfflineStatus();
-	UDiabloGameInstance::Get->m_DungeonManager->UploadDungeon();
-	Super::Shutdown();
-}
 
 ADiabloPlayerController* UDiabloGameInstance::GetPlCon()
 {

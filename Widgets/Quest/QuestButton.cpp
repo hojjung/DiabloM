@@ -10,6 +10,10 @@ void UQuestButton::Init(int index,FQuestDataSpec* dataSpecPTr)
 	m_CurrentSpec = dataSpecPTr;
 
 	m_BtnComplete->OnClicked.AddDynamic(this,&UQuestButton::OnClickButton);
+	m_BtnComplete->OnClicked.AddDynamic(this,&UQuestButton::ChargeStart);
+	m_BtnComplete->OnHovered.AddDynamic(this,&UQuestButton::ChargeStart);
+	m_BtnComplete->OnUnhovered.AddDynamic(this,&UQuestButton::ChargeEnd);
+	m_BtnComplete->OnReleased.AddDynamic(this,&UQuestButton::ChargeEnd);
 
 	UpdateQuestWidget();
 }
@@ -47,4 +51,32 @@ void UQuestButton::OnClickButton()
 bool UQuestButton::TryComplete(int index)
 {
 	return UDiabloGameInstance::Get->m_QuestManager->CompleteQuest(index);
+}
+
+void UQuestButton::ChargeStart()
+{m_bChargeUpgrade = true;
+	m_fDeltaCounter= 0.f;
+}
+
+void UQuestButton::ChargeEnd()
+{m_bChargeUpgrade = false;
+	m_fDeltaCounter= 0.f;
+}
+
+void UQuestButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	if(!m_bChargeUpgrade)
+	{
+		return;
+	}
+
+	m_fDeltaCounter+=InDeltaTime;
+
+	if(m_fDeltaCounter>0.1f)
+	{
+		m_fDeltaCounter= 0.f;
+		OnClickButton();
+		//upgradeTick
+	}
 }

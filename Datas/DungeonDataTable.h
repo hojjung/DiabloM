@@ -158,7 +158,7 @@ public:
 
 		for(int i=1; i< level;i++)
 		{
-			Value.MultiplyFast(9);
+			Value.MultiplyFast(7);
 		}
 
 		Value.Multiply(BonusMulti);

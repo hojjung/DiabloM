@@ -21,6 +21,7 @@ USkillUpgradeButton::USkillUpgradeButton(const FObjectInitializer& objInit): Sup
 void USkillUpgradeButton::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+	m_BtnLvUp->OnClicked.AddDynamic(this, &USkillUpgradeButton::OnClickButton);
 	m_BtnLvUp->OnClicked.AddDynamic(this, &USkillUpgradeButton::ChargeStart);
 	m_BtnLvUp->OnHovered.AddDynamic(this, &USkillUpgradeButton::ChargeStart);
 	m_BtnLvUp->OnUnhovered.AddDynamic(this, &USkillUpgradeButton::ChargeEnd);
@@ -84,6 +85,11 @@ void USkillUpgradeButton::UpdateSkillButton()
 	UpdateUpgradeable();
 }
 
+void USkillUpgradeButton::OnClickButton()
+{
+	m_OnCharge.ExecuteIfBound();
+}
+
 void USkillUpgradeButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
@@ -98,7 +104,7 @@ void USkillUpgradeButton::NativeTick(const FGeometry& MyGeometry, float InDeltaT
 	if (m_fDeltaCounter > 0.1f)
 	{
 		m_fDeltaCounter = 0.f;
-		m_OnCharge.ExecuteIfBound();
+		OnClickButton();
 		//upgradeTick
 	}
 }

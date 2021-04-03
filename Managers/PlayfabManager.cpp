@@ -79,6 +79,9 @@ void UPlayfabManager::UploadIAPData()
 
 void UPlayfabManager::UploadUserTitleData()
 {
+	//UDiabloGameInstance::Get->m_QuestManager->RequestGemStoneUploadToServer();
+	UDiabloGameInstance::Get->m_DungeonManager->UploadDungeon();
+	//
 	UDiabloGameInstance::Get->m_PlayerUpgradeManager->UploadUpgrade();
 	UDiabloGameInstance::Get->m_GoldManager->UploadGold();
 	UDiabloGameInstance::Get->m_EquipManager->UploadEquipment();
@@ -103,14 +106,14 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 		m_fDeltaCountMinutePlaytime=0;
 	}
 
-	// if (m_fDeltaCountTitleData > 5.f)
-	// {
-	// 	PRINTF("TryUpdateUserData");
+	 if (m_fDeltaCountTitleData > 50.f)
+	 {
+	 	PRINTF("TryUpdateUserData");
 	// 	
-	// 	UploadUserTitleData();
-	// }
+	 	UploadUserTitleData();
+	 }
 
-	if (m_fDeltaCountRanking > 320.f)
+	if (m_fDeltaCountRanking > 220.f)
 	{
 		PRINTF("TryUpdateRank");
 		RequestRetrieveTotalRanking();
@@ -122,7 +125,7 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 
 void UPlayfabManager::RequestSetNickname(FString str)
 {
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Nickname", "Request Nickname"));
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Nickname", "닉네임 요청 전송"));
 	PlayFab::ClientModels::FUpdateUserTitleDisplayNameRequest DisplayReq;
 
 	DisplayReq.DisplayName = str;
@@ -137,12 +140,12 @@ void UPlayfabManager::RequestSetNickname(FString str)
 void UPlayfabManager::OnNickNameSetSuccess(const PlayFab::ClientModels::FUpdateUserTitleDisplayNameResult& result)
 {
 	//result.DisplayName
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Nickname Success", "Nickname Success"));
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Nickname Success", "닉네임 성공,기다려주세요"));
 	m_bIsNicknameSet = true;
 	m_LoadedNickname = result.DisplayName;
 
 	FTimerHandle hh;
-	UDiabloGameInstance::Get->GetTimerManager().SetTimer(hh, this, &UPlayfabManager::RequestGetUserData, 2.5f,
+	UDiabloGameInstance::Get->GetTimerManager().SetTimer(hh, this, &UPlayfabManager::RequestGetUserData, 5.5f,
 	                                                     false);
 }
 
@@ -197,11 +200,11 @@ void UPlayfabManager::Init()
 
 	if (UMobileUtilsBlueprintLibrary::CheckInternetConnection())
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Internet Connected", "Internet Connected"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Internet Connected", "인터넷 접속 성공"));
 	}
 	else
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-Internet Fail-EndApp", "FAIL-Internet Fail-EndApp"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-Internet Fail-EndApp", "인터넷 접속 실패"));
 
 		FGenericPlatformMisc::RequestExit(true);
 		return;
@@ -255,12 +258,12 @@ void UPlayfabManager::HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqu
 {
 	if (error.bSucceeded)
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-GoogleLogin", "SUCCESS-GoogleLogin"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-GoogleLogin", "구글 로그인 성공"));
 		TryLoginPlayfabGoogle(uniqueId);
 	}
 	else
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-GoogleLoginFail-2", "FAIL-GoogleLoginFail-2"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-GoogleLoginFail-2", "구글 로그인 실패"));
 		//FGenericPlatformMisc::RequestExit(true);
 
 		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Custom", "Try Login With Custom No Google"));
@@ -346,15 +349,10 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 
 	m_LastLoginTime = Result.LastLoginTime;
 
-	if (Result.NewlyCreated)
-	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("New Player", "New Player"));
-	}
-
-	//GetServerTime();
+	m_bIsNewCreatePlayer = Result.NewlyCreated;
+	
 	//
 	RequestGetAccountInfo();
-	//RequestGetUserData();
 }
 
 void UPlayfabManager::RequestGetUserData()
@@ -409,10 +407,7 @@ void UPlayfabManager::SetOfflineStatus()
 void UPlayfabManager::OnErrorPlayfabReq(const FFailRslt& ErrorResult)
 {
 	FString CodeString = UPlayFabUtilities::getErrorText(ErrorResult.ErrorCode);
-	PRINTF("PlayfabRequest Error Name:%s", *ErrorResult.ErrorName);
-	PRINTF("PlayfabRequest Error Message:%s", *ErrorResult.ErrorMessage);
-	PRINTF("PlayfabRequest Error Code:%s", *CodeString);
-
+	
 	UDiabloGameInstance::Get->RequestPopupText(CodeString);
 	//break;
 	m_OnPlayfabError.Broadcast(CodeString);

@@ -69,6 +69,8 @@ public://user data
 
 	FDateTime m_LastLoginTime;
 
+	bool m_bIsNewCreatePlayer;
+
 	FDateTime m_CurrentTime;
 
 public://loaded data

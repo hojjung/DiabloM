@@ -33,6 +33,10 @@ protected:
 	int m_nIndex;
 
 	FQuestDataSpec* m_CurrentSpec;
+
+	float m_fDeltaCounter;
+
+	bool m_bChargeUpgrade;
 	
 public:
 	void Init(int index,FQuestDataSpec* dataSpecPTr);
@@ -43,4 +47,15 @@ public:
 	void OnClickButton();
 
 	bool TryComplete(int index);
+
+
+	UFUNCTION()
+    void ChargeStart();
+
+	UFUNCTION()
+    void ChargeEnd();
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	
 };

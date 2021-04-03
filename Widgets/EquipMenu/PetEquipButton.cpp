@@ -13,7 +13,7 @@ UPetEquipButton::UPetEquipButton(const FObjectInitializer& objInit): Super(objIn
     m_BtnCombine(nullptr)
 {
 	m_FormatName= LOCTEXT("LevelName","{0}(Lv.{1})");//LOCTEXT("EquipText","Equipped!")m_FormatCombine= LOCTEXT("CombineText","Combine:0/5");//LOCTEXT("EquipText","Equipped!")
-	m_FormatCombine= LOCTEXT("CombineText","Combine:{0}/5");//LOCTEXT("EquipText","Equipped!")
+	m_FormatCombine= LOCTEXT("CombineText","합성:{0}/5");//LOCTEXT("EquipText","Equipped!")
 	m_nIndex = -1;
 	m_PetSpec = nullptr;
 }
@@ -55,8 +55,8 @@ void UPetEquipButton::Init(const FPetSpec& data, int index)
 	m_nIndex = index;
 	m_BtnEquip->OnClicked.AddDynamic(this,&UPetEquipButton::TryEquip);
 	m_BtnCombine->OnClicked.AddDynamic(this,&UPetEquipButton::TryCombine);
-	//m_BtnLvUp->OnClicked.AddDynamic(this,&UPetEquipButton::TryLvUp);
 	//
+	m_BtnLvUp->OnClicked.AddDynamic(this,&UPetEquipButton::TryLvUp);
 	m_BtnLvUp->OnClicked.AddDynamic(this, &UPetEquipButton::ChargeStart);
 	m_BtnLvUp->OnHovered.AddDynamic(this, &UPetEquipButton::ChargeStart);
 	m_BtnLvUp->OnUnhovered.AddDynamic(this, &UPetEquipButton::ChargeEnd);
@@ -74,11 +74,11 @@ void UPetEquipButton::SetEquipped(bool b)
 {
 	if(b)
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","Equipped!"));
+		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","장착 됨!"));
 	}
 	else
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
+		m_TextEquip->SetText(LOCTEXT("EquipableText","장착"));
 	}
 }
 

@@ -9,6 +9,7 @@
 #include "PlayerUpgradeManager.h"
 #include "QuestManager.h"
 #include "ShopManager.h"
+#include "Kismet/BlueprintPlatformLibrary.h"
 #include "Widgets/GameLevelHUD.h"
 
 
@@ -25,7 +26,7 @@ class UDungeonManager;
 struct FItemTier;
 
 UCLASS()
-class DIABLOM_API UDiabloGameInstance : public UGameInstance
+class DIABLOM_API UDiabloGameInstance : public UPlatformGameInstance
 {
 	GENERATED_BODY()
 	
@@ -57,8 +58,7 @@ public:
 	
 protected:
 	virtual void Init() override;
-
-	virtual void Shutdown() override;
+	
 public:
 	ADiabloPlayerController* GetPlCon();
 	

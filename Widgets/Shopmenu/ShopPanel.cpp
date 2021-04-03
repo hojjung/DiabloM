@@ -150,22 +150,22 @@ void UShopPanel::UpdateShowPackage()
 		m_PackageItem01->SetVisibility(ESlateVisibility::Collapsed);
 		m_PackageItem02->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
-	else if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(1))
+	if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(1))
 	{
 		m_PackageItem02->SetVisibility(ESlateVisibility::Collapsed);
 		m_PackageItem03->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
-	else if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(2))
+	if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(2))
 	{
 		m_PackageItem03->SetVisibility(ESlateVisibility::Collapsed);
 		m_PackageItem04->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
-	else if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(3))
+	if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(3))
 	{
 		m_PackageItem04->SetVisibility(ESlateVisibility::Collapsed);
 		m_PackageItem05->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
-	else if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(4))
+	if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(4))
 	{
 		m_PackageItem05->SetVisibility(ESlateVisibility::Collapsed);
 	}

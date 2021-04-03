@@ -11,7 +11,7 @@ void UWeaponEquipButton::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	m_FormatName= LOCTEXT("LevelName","{0}(Lv.{1})");//LOCTEXT("EquipText","Equipped!")
-	m_FormatCombine= LOCTEXT("CombineText","Combine:{0}/5");//LOCTEXT("EquipText","Equipped!")
+	m_FormatCombine= LOCTEXT("CombineText","합성:{0}/5");//LOCTEXT("EquipText","Equipped!")
 	m_nIndex=-1;
 	m_WeaponSpec = nullptr;
 }
@@ -22,9 +22,9 @@ void UWeaponEquipButton::Init(const FWeaponSpec& data, int index)
 
 	
 	m_BtnEquip->OnClicked.AddDynamic(this,&UWeaponEquipButton::TryEquip);
-	//m_BtnLvUp->OnClicked.AddDynamic(this,&UWeaponEquipButton::TryLvUp);
 	m_BtnCombine->OnClicked.AddDynamic(this,&UWeaponEquipButton::TryCombine);
 	//
+	m_BtnLvUp->OnClicked.AddDynamic(this,&UWeaponEquipButton::TryLvUp);
 	m_BtnLvUp->OnClicked.AddDynamic(this, &UWeaponEquipButton::ChargeStart);
 	m_BtnLvUp->OnHovered.AddDynamic(this, &UWeaponEquipButton::ChargeStart);
 	m_BtnLvUp->OnUnhovered.AddDynamic(this, &UWeaponEquipButton::ChargeEnd);
@@ -76,11 +76,11 @@ void UWeaponEquipButton::SetEquipped(bool b)
 {
 	if(b)
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","Equipped!"));
+		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","장착 됨!"));
 	}
 	else
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
+		m_TextEquip->SetText(LOCTEXT("EquipableText","장착"));
 	}
 }
 

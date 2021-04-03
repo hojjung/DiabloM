@@ -70,8 +70,12 @@ public:
 	void SetUpgradeVisual(const FUpgradeSpec& data);
 
 	void UpdateLevelText();
+	
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	
+	UFUNCTION()
+    void OnClickButton();
 
 	UFUNCTION()
 	void ChargeStart();

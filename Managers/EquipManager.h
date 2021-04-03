@@ -276,12 +276,18 @@ public:
 	
 	void ClearSelectedIndex();
 
+protected:
+	TMap<const FGachaAbleRow*,int> m_MapPlayerSkin;
+
+	TMap<const FGachaAbleRow*,int> m_MapPlayerWeapon;
+	
 public:
 	FOnEquipChanged m_OnPlSkinChanged;
 	FOnEquipChanged m_OnWeaponChanged;
 	FOnEquipChanged m_OnWingChanged;
 	FOnEquipChanged m_OnPetChanged;
 	FOnEquipChanged m_OnAccessoryChanged;
+
 	
 	TArray<FPlayerClassSpec> m_AryPlayerSkin;
 	TArray<FWingSpec> m_AryWings;
@@ -297,11 +303,6 @@ public:
 	int m_nSelectedWeapon;
 	UPROPERTY()
 	int m_nSelectedPet;
-
-	UPROPERTY()
-	UAccessoryOption* m_AcceSpec1;
-	UPROPERTY()
-	UAccessoryOption* m_AcceSpec2;
 
 protected:
 	int StringSplitEachItem(const FString& equipDatas, TArray<FString>& outStrAry) const;
@@ -361,6 +362,10 @@ public:
 	}
 
 public:
+	void AddWeaponStack(const FGachaAbleRow* weaponData);
+
+	void AddSkinStack(const FGachaAbleRow* skinData);
+	//
 	void AddWeaponStack(int index);
 
 	void AddSkinStack(int index);

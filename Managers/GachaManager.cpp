@@ -218,15 +218,18 @@ const FGachaAbleRow* UGachaManager::RollWeapon()
 
 		if (CurrentPercent >= RollPercent)
 		{
-			UDiabloGameInstance::Get->m_EquipManager->AddWeaponStack(i);
+			const FGachaAbleRow* GachaData = &TableRow->GetGachaData();
+
+			UDiabloGameInstance::Get->m_EquipManager->AddWeaponStack(GachaData);
 
 			AddGachaWeaponCount();
 
-			return &TableRow->GetGachaData();
+			return GachaData;
 		}
 
 		i++;
 	}
+	
 
 	UDiabloGameInstance::Get->m_EquipManager->AddWeaponStack(i - 1);
 
@@ -249,12 +252,13 @@ const FGachaAbleRow* UGachaManager::RollSkin()
 
 		if (CurrentPercent >= RollPercent)
 		{
-			UDiabloGameInstance::Get->m_EquipManager->AddSkinStack(i);
+			const FGachaAbleRow* GachaData = &TableRow->GetGachaData();
+
+			UDiabloGameInstance::Get->m_EquipManager->AddSkinStack(GachaData);
 
 			AddGachaSkinCount();
-
 			//select
-			return &TableRow->GetGachaData();
+			return GachaData;
 		}
 		i++;
 	}

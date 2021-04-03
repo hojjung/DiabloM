@@ -44,7 +44,7 @@ public:
 			
 			for(int i=0; i<IterMax;i++)
 			{
-				Dmg.MultiplyFast(12);	
+				Dmg.MultiplyFast(31);	
 			}
 		}
 
@@ -76,7 +76,7 @@ public:
 			for(int i=0; i<IterMax;i++)
 			{
 				//Cost.MultiplyFast(2);
-				Cost = UDiaBlueprintFunctionLibrary::MultiplePercent(Cost,8,0,0);
+				Cost = UDiaBlueprintFunctionLibrary::MultiplePercent(Cost,6,0,0);
 			}
 		}
 

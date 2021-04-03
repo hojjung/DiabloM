@@ -11,7 +11,7 @@ UPlayerSkinEquipButton::UPlayerSkinEquipButton(const FObjectInitializer& objInit
 	m_TextCombine(nullptr), m_BtnEquip(nullptr),
 	m_BtnCombine(nullptr)
 {
-	m_FormatCombine = LOCTEXT("CombineText", "Combine:{0}/5"); //LOCTEXT("EquipText","Equipped!")
+	m_FormatCombine = LOCTEXT("CombineText", "합성:{0}/5"); //LOCTEXT("EquipText","Equipped!")
 	m_nIndex = -1;
 	m_SkinSpec = nullptr;
 }
@@ -46,11 +46,11 @@ void UPlayerSkinEquipButton::SetEquipped(bool b)
 {
 	if(b)
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","Equipped!"));
+		m_TextEquip->SetText(LOCTEXT("EquipSuccessText","장착 됨!"));
 	}
 	else
 	{
-		m_TextEquip->SetText(LOCTEXT("EquipableText","Equip"));
+		m_TextEquip->SetText(LOCTEXT("EquipableText","장착"));
 	}
 }
 

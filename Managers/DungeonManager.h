@@ -97,4 +97,5 @@ public:
 
 	void UploadDungeon();
 
+	int GetLevelBonus();
 };

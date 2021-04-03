@@ -71,6 +71,8 @@ void UQuestManager::RequestGemStoneUploadToServer()
 	UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(m_nWaitingGemStones);
 	
 	UDiabloGameInstance::Get->m_PlayfabManager->UploadQuestData(GetQuestDataStr());
+
+	UDiabloGameInstance::Get->RequestPopupText(FString::Printf(TEXT("젬스톤%d개 업로드중"),m_nWaitingGemStones));
 	
 	m_nWaitingGemStones = 0;
 }

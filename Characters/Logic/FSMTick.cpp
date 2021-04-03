@@ -152,7 +152,7 @@ void UFSMTick::OnManualMove()
 	{
 		float Dist = FVector::DistSquared2D(m_Owner->GetActorLocation(),m_ManualMoveLocation);
 
-		if(Dist<100.f)//40000.f
+		if(Dist<20000.f)//40000.f
 		{
 			m_CurrentState = EFSM::Idle;
 			m_OnMoveDone.Broadcast();

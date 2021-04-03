@@ -9,146 +9,171 @@ void UShopManager::SetShopDataFromServer(FString iapData)
 
 	iapData.ParseIntoArray(AryItemBought,TEXT("/"));
 	//0~6,2개제외
-	m_bIsShowAd = AryItemBought[1].ToBool();
 	m_PackagePurchased.Init(false,5);
-	m_PackagePurchased[0] = AryItemBought[2].ToBool();
-	m_PackagePurchased[1] = AryItemBought[3].ToBool();
-	m_PackagePurchased[2] = AryItemBought[4].ToBool();
-	m_PackagePurchased[3] = AryItemBought[5].ToBool();
-	m_PackagePurchased[4] = AryItemBought[6].ToBool();
+	m_PackagePurchased[0] = AryItemBought[1].ToBool();
+	m_PackagePurchased[1] = AryItemBought[2].ToBool();
+	m_PackagePurchased[2] = AryItemBought[3].ToBool();
+	m_PackagePurchased[3] = AryItemBought[4].ToBool();
+	m_PackagePurchased[4] = AryItemBought[5].ToBool();
 
-	UDiabloGameInstance::Get->m_GachaManager->SetGachaLevel(AryItemBought[7],AryItemBought[8]);
+	UDiabloGameInstance::Get->m_GachaManager->SetGachaLevel(AryItemBought[6],AryItemBought[7]);
 
 	UDiabloGameInstance::Get->m_DungeonManager->m_OnDungeonMaxUpdate.AddUObject(this, &UShopManager::UpdateGold);
 }
 
 void UShopManager::PurchasePacakge01()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_starter", true);
 }
 
 void UShopManager::PurchasePacakge02()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_begginer", true);
 }
 
 void UShopManager::PurchasePacakge03()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_rare", true);
 }
 
 void UShopManager::PurchasePacakge04()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_hero", true);
 }
 
 void UShopManager::PurchasePacakge05()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("package_legend", true);
 }
 
 void UShopManager::PurchaseGemStone01()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("gemstone01", true);
 }
 
 void UShopManager::PurchaseGemStone02()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("gemstone02", true);
 }
 
 void UShopManager::PurchaseGemStone03()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("gemstone03", true);
 }
 
 void UShopManager::PurchaseGemStone04()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("gemstone04", true);
 }
 
 void UShopManager::PurchaseGemStone05()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("gemstone05", true);
 }
 
 void UShopManager::PurchaseGemStone06()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->BuyIAP("gemstone06", true);
 }
 
 void UShopManager::PurchaseGold01()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(30, "gold01");
 }
 
 void UShopManager::PurchaseGold02()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(300, "gold02");
 }
 
 void UShopManager::PurchaseGold03()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(3000, "gold03");
 }
 
 void UShopManager::PurchaseGachaWeapon01()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(30, "gachaweapon01");
 }
 
 void UShopManager::PurchaseGachaWeapon11()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(300, "gachaweapon11");
 }
 
 void UShopManager::PurchaseGachaWeapon55()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(1500, "gachaweapon55");
 }
 
 void UShopManager::PurchaseGachaSkin01()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(30, "gachaskin01");
 }
 
 void UShopManager::PurchaseGachaSkin11()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(300, "gachaskin11");
 }
 
 void UShopManager::PurchaseGachaSkin55()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(1500, "gachaskin55");
 }
 
 void UShopManager::PurchaseGachaPet01()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(90, "gachapet01");
 }
 
 void UShopManager::PurchaseGachaPet11()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(900, "gachapet11");
 }
 
 void UShopManager::PurchaseGachaPet55()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(4500, "gachapet55");
 }
 
 void UShopManager::PurchaseGachaAccessory01()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(270, "gachaaccessory01");
 }
 
 void UShopManager::PurchaseGachaAccessory11()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(2700, "gachaaccessory11");
 }
 
 void UShopManager::PurchaseGachaAccessory55()
 {
+	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(13500, "gachaaccessory55");
 }
 
@@ -156,7 +181,9 @@ void UShopManager::UpdateGold()
 {
 	BigInt Bounty = UDiabloGameInstance::Get->m_DungeonManager->GetCurrentDungeonBounty();
 
-	Bounty.Multiply(7 * 480);
+	Bounty.Multiply(3500);
+
+	Bounty.Multiply(UDiabloGameInstance::Get->m_DungeonManager->GetLevelBonus());
 
 	m_Gold01 = Bounty;
 
@@ -229,7 +256,6 @@ void UShopManager::OnPurchasedGainItem(FString itemID)
 	if (itemID == "package_starter")
 	{
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(60000);
-		m_bIsShowAd = false;
 		m_PackagePurchased[0] = true;
 		m_OnItemPurchased.Broadcast();
 	}
@@ -356,11 +382,13 @@ void UShopManager::OnPurchasedGainItem(FString itemID)
 		m_GachaPanel->RollGachaAccessoryFiftyTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
+
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData();
 }
 
 void UShopManager::ShowBannerAD(bool b)
 {
-	if (b && (!GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion) && m_bIsShowAd)
+	if (b && (!GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion)&&!m_PackagePurchased[0])
 	{
 		UKismetSystemLibrary::ShowAdBanner(0, false);
 		m_OnShowAdBanner.Broadcast(true);
@@ -380,8 +408,7 @@ bool UShopManager::GetPackagePurchased(int index)
 
 FString UShopManager::GetIAPDataStr()
 {
-	FString Result = FString::Printf(TEXT("True/%s/%s/%s/%s/%s/%s/"),
-		m_bIsShowAd ?  TEXT("True"):TEXT("False"),
+	FString Result = FString::Printf(TEXT("True/%s/%s/%s/%s/%s/"),
 		m_PackagePurchased[0] ?  TEXT("True"):TEXT("False"),
 		m_PackagePurchased[1] ?  TEXT("True"):TEXT("False"),
 		m_PackagePurchased[2] ?  TEXT("True"):TEXT("False"),
@@ -389,4 +416,10 @@ FString UShopManager::GetIAPDataStr()
 		m_PackagePurchased[4] ?  TEXT("True"):TEXT("False"));
 
 	return Result;
+}
+
+
+void UShopManager::ShowTouchBan()
+{
+	UDiabloGameInstance::Get->GetHud()->ShowTouchBan(2.f);
 }

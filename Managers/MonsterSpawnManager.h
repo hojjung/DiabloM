@@ -25,7 +25,7 @@ public:
 	FOnBossBattleEnd m_OnBossBattleEnd;
 	
 protected:
-	static const int m_nMonsterPoolCount = 11;
+	static const int m_nMonsterPoolCount = 22;
 	UPROPERTY()
 	UNavigationSystemV1* m_NavSys;
 	UPROPERTY()

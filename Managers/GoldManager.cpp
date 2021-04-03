@@ -93,9 +93,16 @@ bool UGoldManager::GainOfflineGold()
 		return false;
 	}
 
+	if(UDiabloGameInstance::Get->m_PlayfabManager->m_bIsNewCreatePlayer)
+	{
+		return false;
+	}
+
 	m_nMinute = FMath::Clamp(m_nMinute, 1, 1440);
 
 	BigInt Bounty = UDiabloGameInstance::Get->m_DungeonManager->GetCurrentDungeonBounty();
+
+	
 
 	Bounty.Multiply(5 * m_nMinute);
 

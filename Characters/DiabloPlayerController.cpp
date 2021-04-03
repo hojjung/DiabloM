@@ -168,12 +168,8 @@ void ADiabloPlayerController::ClickActor()
 	{
 		return;
 	}
-	PRINTF("ClickSuccess");
-
-
 
 	AMonsterPawn* Mob = Cast<AMonsterPawn>( Hits.Actor);
-
 	
 	if(!Mob)
 	{
@@ -183,10 +179,12 @@ void ADiabloPlayerController::ClickActor()
 			return;
 		}
 		DiaPlayer->FocusTarget(nullptr);
-		DiaPlayer->SetManualMoveLocation(Hits.Location);
-		ShowMoveIndicator(Hits.Location);
+		DiaPlayer->SetManualMoveLocation(Loc.Location);
+		ShowMoveIndicator(Loc.Location);
+		
 		return;
 	}
+	
 	HideMoveIndicator();
 	
 	DiaPlayer->FocusTarget(Mob);

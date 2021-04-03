@@ -11,7 +11,7 @@ UAccessoryEquipButton::UAccessoryEquipButton(const FObjectInitializer& objInit):
     m_BtnCombine(nullptr)
 {
 	m_FormatName= LOCTEXT("LevelName","{0}(Lv.{1})");
-	m_FormatCost = LOCTEXT("CombineText", "합성업{0}/{1}"); //LOCTEXT("EquipText","Equipped!")
+	m_FormatCost = LOCTEXT("CombineText", "합성 업{0}/{1}"); //LOCTEXT("EquipText","Equipped!")
 	m_nIndex = -1;
 	m_AccessorySpec = nullptr;
 }

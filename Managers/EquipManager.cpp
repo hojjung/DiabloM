@@ -55,6 +55,7 @@ void UEquipManager::SetStringSkinUnlocked(FString skinUnlock) //이 str에 모�
 	UEquipManager::GetPlayerSkinDataTable->GetAllRows("", ArySkins);
 
 	m_AryPlayerSkin.Reset();
+	m_MapPlayerSkin.Reset();
 
 	TArray<FString> AryEachDatas;
 
@@ -66,7 +67,8 @@ void UEquipManager::SetStringSkinUnlocked(FString skinUnlock) //이 str에 모�
 		PlSpec.m_PlayerData = ArySkins[i];
 		PlSpec.ParseFromString(AryEachDatas[i]);
 		PlSpec.SetValue();
-		m_AryPlayerSkin.Add(PlSpec);
+		int Index  = m_AryPlayerSkin.Add(PlSpec);
+		m_MapPlayerSkin.Add(m_AryPlayerSkin[Index].m_PlayerData,Index);
 	}
 }
 
@@ -100,6 +102,7 @@ void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
 	UEquipManager::GetWeaponDataTable->GetAllRows("", AryWeapon);
 
 	m_AryWeapons.Reset();
+	m_MapPlayerWeapon.Reset();
 
 	TArray<FString> AryEachDatas;
 
@@ -111,7 +114,10 @@ void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
 		EqSpec.m_EquipData = AryWeapon[i];
 		EqSpec.ParseFromString(AryEachDatas[i]);
 		EqSpec.SetLevel(EqSpec.m_nLv);
-		m_AryWeapons.Add(EqSpec);
+		
+		int Index = m_AryWeapons.Add(EqSpec);
+
+		m_MapPlayerWeapon.Add(m_AryWeapons[Index].m_EquipData,Index);
 	}
 }
 
@@ -540,6 +546,16 @@ bool UEquipManager::TryLvUpPet(int index)
 	m_OnPetChanged.Broadcast(-1, index);
 
 	return true;
+}
+
+void UEquipManager::AddWeaponStack(const FGachaAbleRow* weaponData)
+{
+	AddWeaponStack(m_MapPlayerWeapon[weaponData]);
+}
+
+void UEquipManager::AddSkinStack(const FGachaAbleRow* skinData)
+{
+	AddSkinStack(m_MapPlayerSkin[skinData]);
 }
 
 void UEquipManager::AddWeaponStack(int index)
