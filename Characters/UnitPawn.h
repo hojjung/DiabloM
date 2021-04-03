@@ -7,7 +7,6 @@
 #include "GameFramework/Pawn.h"
 #include "Characters/UnitMovement.h"
 #include "Navigation/PathFollowingComponent.h"
-#include "Datas/CharacterDataTable.h"
 #include "Logic/FSMTick.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Widgets/CommonElement/DamageTextWidgetComponent.h"

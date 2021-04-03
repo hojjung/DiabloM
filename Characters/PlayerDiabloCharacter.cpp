@@ -2,12 +2,12 @@
 
 #include "PlayerMovement.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Datas/CharacterDataTable.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Camera/CameraDissolve.h"
 #include "Logic/PlayerSensing.h"
 #include "Characters/MonsterPawn.h"
 #include "Animations/MobAnimInstance.h"
+#include "Engine/AssetManager.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/PlayfabManager.h"
 #include "Managers/EquipManager.h"
@@ -120,8 +120,19 @@ void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
 		PRINTF("DiaChar-NoSkinSpec");
 		return;
 	}
+	
 	m_PlayerEntityData = &spec;
-	m_SkBody->SetSkeletalMesh(m_PlayerEntityData->m_PlayerData->m_PlayerSkin);
+	
+	FStreamableManager& StreamableManager =  UAssetManager::Get().GetStreamableManager();
+
+	if(m_SkinMeshHandle.Get())
+	{
+		m_SkinMeshHandle.Get()->ReleaseHandle();
+	}
+	
+	StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_PlayerSkinSoft,true,&m_SkinMeshHandle);
+	//
+	m_SkBody->SetSkeletalMesh(m_PlayerEntityData->m_PlayerData->m_PlayerSkinSoft.Get());
 	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	m_SkBody->SetAnimInstanceClass(m_PlayerEntityData->m_PlayerData->m_AnimBP);
 	m_SkBody->SetForcedLOD(2);
@@ -442,6 +453,17 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 		m_QueDmgType.Empty();
 		StartBuff02(22);
 	}
+}
+
+void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	if(m_SkinMeshHandle.Get())
+	{
+		m_SkinMeshHandle.Get()->ReleaseHandle();
+	}
+	
 }
 
 

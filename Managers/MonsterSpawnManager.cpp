@@ -4,6 +4,7 @@
 #include "EngineUtils.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Engine/AssetManager.h"
 
 UMonsterSpawnManager::UMonsterSpawnManager()
 {
@@ -28,6 +29,20 @@ UMonsterSpawnManager::UMonsterSpawnManager()
 
 void UMonsterSpawnManager::StartSpawn(UWorld* world, const FDungeonDataTableRow* dgData)
 {
+	if(m_LoadedMonster.Get())
+	{
+		m_LoadedMonster.Get()->ReleaseHandle();
+	}
+	
+	FStreamableManager& StreamableManager =  UAssetManager::Get().GetStreamableManager();
+	
+	StreamableManager.LoadSynchronous(dgData->m_Monster.GetRow<FMonsterEntity>("")->m_MonsterMeshSoft,true,&m_LoadedMonster);
+
+	if(!m_LoadedGoblin.Get())
+	{
+		StreamableManager.LoadSynchronous(m_GoldGoblinEntity->m_MonsterMeshSoft.Get(),true,&m_LoadedGoblin);			
+	}
+	
 	m_nKillCount=0;
 	
 	m_nGoldGoblinSpawnCount = FMath::RandRange(25,55);
@@ -49,7 +64,7 @@ void UMonsterSpawnManager::StartSpawn(UWorld* world, const FDungeonDataTableRow*
 
 	int i = 0;
 
-	while (i++ < m_nMonsterPoolCount)
+	while (i++ < MonsterPoolCount)
 	{
 		AMonsterPawn* SpawnedMob = CreateMob(FVector::ZeroVector);
 
@@ -225,6 +240,21 @@ void UMonsterSpawnManager::OnBossDead(AMonsterPawn* pawn)
 	m_OnBossBattleEnd.Broadcast(true);
 	UDiabloGameInstance::Get->m_PlayerUpgradeManager->ClearCooldownAllSkill();
 	UDiabloGameInstance::Get->m_DungeonManager->LevelUpDungeon();
+}
+
+void UMonsterSpawnManager::BeginDestroy()
+{
+	Super::BeginDestroy();
+	
+	if(m_LoadedMonster.Get())
+	{
+		m_LoadedMonster.Get()->ReleaseHandle();
+	}
+
+	if(m_LoadedGoblin.Get())
+	{
+		m_LoadedGoblin.Get()->ReleaseHandle();
+	}
 }
 
 AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos)

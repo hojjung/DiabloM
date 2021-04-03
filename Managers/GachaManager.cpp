@@ -345,10 +345,11 @@ const FGachaAbleRow* UGachaManager::RollAccessory()
 
 		if (CurrentPercent >= RollPercent)
 		{
-			//select
-			UDiabloGameInstance::Get->m_EquipManager->AddAccessoryStack(i);
+			const FGachaAbleRow* Data = &TableRow->GetGachaData();
+			
+			UDiabloGameInstance::Get->m_EquipManager->AddAccessoryStack(Data);
 
-			return &TableRow->GetGachaData();
+			return Data;
 		}
 
 		i++;

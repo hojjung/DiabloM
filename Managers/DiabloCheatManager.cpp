@@ -1,5 +1,7 @@
 #include "DiabloCheatManager.h"
 #include "DungeonManager.h"
+#include "OnlineIdentityInterface.h"
+#include "OnlineSubsystem.h"
 #include "Characters/DiabloPlayerController.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
@@ -124,5 +126,23 @@ void UDiabloCheatManager::MoveStage(int index)
 {
 	m_GameManager->m_DungeonManager->SelectDungeon(index);
 	m_GameManager->m_DungeonManager->OpenLevel();
+}
+
+void UDiabloCheatManager::Logout()
+{
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	IOnlineIdentityPtr OnlineIdentity = Subsystem->GetIdentityInterface();
+	OnlineIdentity->Logout(0);
+	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(), "NewGameInitLevel", true);
+}
+
+void UDiabloCheatManager::Purchase01()
+{
+	m_GameManager->m_ShopManager->PurchasePacakge01();
+}
+
+void UDiabloCheatManager::Purchase02()
+{
+	m_GameManager->m_ShopManager->PurchasePacakge02();
 }
 

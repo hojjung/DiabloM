@@ -80,4 +80,10 @@ public:
     void StunPlayer(float duration= 2.f);
 	UFUNCTION(exec)
 	void MoveStage(int index);
+	UFUNCTION(exec)
+	void Logout();
+	UFUNCTION(exec)
+    void Purchase01();
+	UFUNCTION(exec)
+    void Purchase02();
 };

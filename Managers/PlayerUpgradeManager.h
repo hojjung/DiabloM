@@ -117,5 +117,4 @@ public:
 
 	FString GetUpgradeDataStr();
 	
-	void UploadUpgrade();
 };

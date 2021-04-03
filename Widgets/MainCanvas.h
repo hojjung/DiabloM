@@ -205,6 +205,8 @@ public:
 	void ShowTouchBan(float secWant);
 
 	void OnTouchBanHide();
+
+	bool CheckIsAvailableTouchBan();
 };
 
 

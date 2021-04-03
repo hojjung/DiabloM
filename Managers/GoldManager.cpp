@@ -116,7 +116,7 @@ bool UGoldManager::GainOfflineGold()
 
 	m_bIsServerMinuteGained = false;
 
-	UploadGold();
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData();
 
 	return true;
 }
@@ -128,7 +128,8 @@ void UGoldManager::SetOfflineMinutes(int minutes)
 	m_bIsServerMinuteGained = true;
 }
 
-void UGoldManager::UploadGold()
+FString UGoldManager::GetGoldDataStr()
 {
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadGold(GetCurrentGold());
+	return GetCurrentGold().ToString();	
 }
+

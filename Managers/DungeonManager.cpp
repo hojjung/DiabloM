@@ -2,7 +2,6 @@
 
 #include "DiabloGameInstance.h"
 #include "GameplayTagContainer.h"
-#include "Engine/LevelStreaming.h"
 #include "UObject/UObjectGlobals.h"
 
 
@@ -24,6 +23,7 @@ UDungeonManager::UDungeonManager(const FObjectInitializer& objInit): Super(objIn
 void UDungeonManager::Init(UMonsterSpawnManager* mMang)
 {
 	m_MonsterManager = mMang;
+	
 }
 
 void UDungeonManager::OpenLevel()
@@ -85,7 +85,9 @@ void UDungeonManager::LevelUpDungeon()
 	}
 
 	m_OnDgOpen.Broadcast(m_nCurrentStageLevel);
-	UploadDungeon();
+	
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData();
+	
 	OpenLevel();
 }
 
@@ -134,11 +136,6 @@ void UDungeonManager::SetCurrentStageLevel(int stageLv)
 	m_nSafeCurrentStageLevel = m_nCurrentStageLevel ^ 666;
 }
 
-void UDungeonManager::UploadDungeon()
-{
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadDungeonData(GetCurrentStage(), GetMaxStage());
-}
-
 int UDungeonManager::GetLevelBonus()
 {
 	if (m_nCurrentStageLevel < 8)
@@ -185,6 +182,11 @@ int UDungeonManager::GetLevelBonus()
 	{
 		return 1024;
 	}
+}
+
+FString UDungeonManager::GetDgDataStr()
+{
+	return FString::Printf(TEXT("%d:%d"),GetCurrentStage(),GetMaxStage());
 }
 
 void UDungeonManager::LoadLevelComplete(UWorld* world)

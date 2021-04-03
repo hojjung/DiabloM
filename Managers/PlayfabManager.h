@@ -218,7 +218,8 @@ public:
 	int GetRanking();
 
 	void SetRanking(int rank);
-	void UploadIAPData();
+	
+	FString GetIAPDataStr();
 
 	void UploadUserTitleData();
 
@@ -254,5 +255,6 @@ public:
 	void UploadGold(BigInt gold);
 
 	void UploadDungeonData(int currentDungeon,int maxDungeon);
+
 };
 

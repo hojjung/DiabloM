@@ -67,26 +67,36 @@ void UPlayfabManager::SetRanking(int rank)
 	m_nSafeRanking = m_nRanking ^ 7777;
 }
 
-void UPlayfabManager::UploadIAPData()
+FString UPlayfabManager::GetIAPDataStr()
 {
 	FString IAPResult = UDiabloGameInstance::Get->m_ShopManager->GetIAPDataStr();
+	
 	FString GachaResult = UDiabloGameInstance::Get->m_GachaManager->GetGachaLevelStr();
 
 	IAPResult.Append(GachaResult);
 	
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadIAPData(IAPResult);
+	return IAPResult;
 }
 
 void UPlayfabManager::UploadUserTitleData()
 {
-	//UDiabloGameInstance::Get->m_QuestManager->RequestGemStoneUploadToServer();
-	UDiabloGameInstance::Get->m_DungeonManager->UploadDungeon();
+	PlayFab::ClientModels::FUpdateUserDataRequest Req;
 	//
-	UDiabloGameInstance::Get->m_PlayerUpgradeManager->UploadUpgrade();
-	UDiabloGameInstance::Get->m_GoldManager->UploadGold();
-	UDiabloGameInstance::Get->m_EquipManager->UploadEquipment();
-	//
-	UploadIAPData();
+	Req.Data.Add(Dg,UDiabloGameInstance::Get->m_DungeonManager->GetDgDataStr());
+	Req.Data.Add(StatSkill,UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetUpgradeDataStr());
+	Req.Data.Add(Gold,UDiabloGameInstance::Get->m_GoldManager->GetGoldDataStr());
+
+	Req.Data.Add(Weapon,UDiabloGameInstance::Get->m_EquipManager->GetWeaponDataStr());
+	Req.Data.Add(SkinClass,UDiabloGameInstance::Get->m_EquipManager->GetSkinDataStr());
+	Req.Data.Add(Pet,UDiabloGameInstance::Get->m_EquipManager->GetPetDataStr());
+	Req.Data.Add(Accessory,UDiabloGameInstance::Get->m_EquipManager->GetAccessoryDataStr());
+	Req.Data.Add(Wing,UDiabloGameInstance::Get->m_EquipManager->GetWingDataStr());
+	
+	Req.Data.Add(IAP,GetIAPDataStr());
+	
+
+	GetClientAPI->UpdateUserData(Req,nullptr,
+        PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 	//
 	m_fDeltaCountTitleData = 0.f;
 }
@@ -256,30 +266,17 @@ void UPlayfabManager::Init()
 void UPlayfabManager::HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqueId, const int ControllerIndex,
                                             const FOnlineError& error)
 {
+
 	if (error.bSucceeded)
 	{
 		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-GoogleLogin", "구글 로그인 성공"));
 		TryLoginPlayfabGoogle(uniqueId);
+		
 	}
 	else
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-GoogleLoginFail-2", "구글 로그인 실패"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-GoogleLoginFail-2", "실패-앱을 종료후 구글 계정 로그인 먼저해주세요"));
 		//FGenericPlatformMisc::RequestExit(true);
-
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Custom", "Try Login With Custom No Google"));
-		GetClientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
-
-		PlayFab::ClientModels::FLoginWithCustomIDRequest request;
-		request.CreateAccount = true;
-		request.CustomId = FGenericPlatformMisc::GetDeviceId();
-		request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
-
-		bool Result = GetClientAPI->LoginWithCustomID(request,
-                                                      PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
-                                                          this, &UPlayfabManager::OnSuccessPlayfabLogin),
-                                                      PlayFab::FPlayFabErrorDelegate::CreateUObject(
-                                                          this, &UPlayfabManager::OnErrorPlayfabReq)
-        );
 	}
 }
 
@@ -535,8 +532,8 @@ void UPlayfabManager::PurchaseVirtualItem(FString itemUniqueId)
 	PlayFab::ClientModels::FCatalogItem& ItemWant = m_MapCatalogItems[itemUniqueId];
 	
 	PlayFab::ClientModels::FPurchaseItemRequest Req;
-	Req.VirtualCurrency="GG";
-	Req.Price = ItemWant.VirtualCurrencyPrices["GG"];
+	Req.VirtualCurrency=TEXT("GG");
+	Req.Price = ItemWant.VirtualCurrencyPrices[TEXT("GG")];
 	Req.CatalogVersion = ItemWant.CatalogVersion;
 	Req.CharacterId = m_PlayfabID;
 	Req.ItemId = ItemWant.ItemId;
@@ -597,6 +594,8 @@ void UPlayfabManager::OnStageComplete()
 	Req.GeneratePlayStreamEvent = true;
 	
 	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnCloudScriptSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+
+	UploadUserTitleData();
 }
 
 void UPlayfabManager::RequestVersionCheck()
@@ -631,7 +630,7 @@ void UPlayfabManager::RequestGetInventory()
 void UPlayfabManager::OnSuccessGetInven( const PlayFab::ClientModels::FGetUserInventoryResult& rslt)
 {
 	PRINTF("GetInven Success");
-	int Currency = rslt.VirtualCurrency["GG"];
+	int Currency = rslt.VirtualCurrency[TEXT("GG")];
 	
 	
 	m_OnGemstoneChanged.Broadcast(Currency);

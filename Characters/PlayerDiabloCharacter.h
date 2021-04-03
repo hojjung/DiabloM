@@ -11,6 +11,7 @@
 
 #include "PlayerDiabloCharacter.generated.h"
 
+class AEquipmentActor;
 struct FPetSpec;
 struct FAccessorySpec;
 struct FWingSpec;
@@ -66,6 +67,8 @@ public:
 	FOnFloatChange2 m_OnRageChanged;
 	
 	FOnMeshChanged m_OnMeshChanged;
+
+	
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
@@ -130,6 +133,8 @@ protected:
 	BigInt m_bnAdditionalSkillDmg;
 
 	float m_fAdditionalAttackSpeed;
+
+	TSharedPtr<FStreamableHandle>  m_SkinMeshHandle;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -287,5 +292,7 @@ public:
 	{
 		return  m_PetComp;
 	};
+	
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };
 

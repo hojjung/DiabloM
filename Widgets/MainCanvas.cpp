@@ -77,6 +77,10 @@ void UMainCanvas::OnTouchBanHide()
 	m_TouchBan->SetVisibility(ESlateVisibility::Collapsed);
 }
 
+bool UMainCanvas::CheckIsAvailableTouchBan()
+{
+	return GetWorld()->GetTimerManager().TimerExists(m_TouchBanTimer);
+}
 
 void UMainCanvas::RequestText(FText txt)
 {
@@ -429,6 +433,10 @@ void UMainCanvas::OnShowAdBanner(bool b)
 
 void UMainCanvas::OnPressBackkey()
 {
+	if(CheckIsAvailableTouchBan())
+	{
+		return;
+	}
 	m_GameExitWindow->OnBackkeyPressed();
 }
 

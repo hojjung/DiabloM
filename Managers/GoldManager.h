@@ -60,6 +60,5 @@ public:
 		return m_bIsServerMinuteGained;
 	}
 
-	void UploadGold();
-	
+	FString GetGoldDataStr();	
 };

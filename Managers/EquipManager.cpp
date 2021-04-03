@@ -67,8 +67,8 @@ void UEquipManager::SetStringSkinUnlocked(FString skinUnlock) //이 str에 모�
 		PlSpec.m_PlayerData = ArySkins[i];
 		PlSpec.ParseFromString(AryEachDatas[i]);
 		PlSpec.SetValue();
-		int Index  = m_AryPlayerSkin.Add(PlSpec);
-		m_MapPlayerSkin.Add(m_AryPlayerSkin[Index].m_PlayerData,Index);
+		int Index = m_AryPlayerSkin.Add(PlSpec);
+		m_MapPlayerSkin.Add(m_AryPlayerSkin[Index].m_PlayerData, Index);
 	}
 }
 
@@ -114,10 +114,10 @@ void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
 		EqSpec.m_EquipData = AryWeapon[i];
 		EqSpec.ParseFromString(AryEachDatas[i]);
 		EqSpec.SetLevel(EqSpec.m_nLv);
-		
+
 		int Index = m_AryWeapons.Add(EqSpec);
 
-		m_MapPlayerWeapon.Add(m_AryWeapons[Index].m_EquipData,Index);
+		m_MapPlayerWeapon.Add(m_AryWeapons[Index].m_EquipData, Index);
 	}
 }
 
@@ -152,6 +152,7 @@ void UEquipManager::SetStringAccesoryUnlocked(FString acceUnlock)
 	UEquipManager::GetAcceeDataTable->GetAllRows("", AryAcces);
 
 	m_AryAcce.Reset();
+	m_MapAccessory.Reset();
 
 	TArray<FString> AryEachDatas;
 
@@ -164,7 +165,9 @@ void UEquipManager::SetStringAccesoryUnlocked(FString acceUnlock)
 		EqSpec.ParseFromString(AryEachDatas[i]);
 		EqSpec.SetLevel(EqSpec.m_nLv);
 
-		m_AryAcce.Add(EqSpec);
+		int index = m_AryAcce.Add(EqSpec);
+
+		m_MapAccessory.Add(m_AryAcce[index].m_AccessoryData, index);
 	}
 }
 
@@ -260,8 +263,9 @@ void UEquipManager::TryEquipSkin(int index)
 
 	m_AryPlayerSkin[index].m_nIsEquipped = true;
 
-	Cast<APlayerDiabloCharacter>(UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(), 0))->
-		PlayerClassDataInject(m_AryPlayerSkin[index]);
+	UDiabloGameInstance::Get->GetPlChar()->PlayerClassDataInject(m_AryPlayerSkin[index]);
+
+	UDiabloGameInstance::Get->GetPlCon()->ClientForceGarbageCollection();
 
 	m_OnPlSkinChanged.Broadcast(m_nSelectedSkin, index);
 
@@ -289,9 +293,8 @@ void UEquipManager::TryEquipWeapon(int index)
 
 	m_AryWeapons[index].m_nIsEquipped = true;
 
-	Cast<APlayerDiabloCharacter>(UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(), 0))->
-		WeaponDataInject(m_AryWeapons[index]);
-
+	UDiabloGameInstance::Get->GetPlChar()->WeaponDataInject(m_AryWeapons[index]);
+	
 	m_OnWeaponChanged.Broadcast(m_nSelectedWeapon, index);
 
 	m_nSelectedWeapon = index;
@@ -318,8 +321,7 @@ void UEquipManager::TryEquipWing(int index)
 
 	m_AryWings[index].m_nIsEquipped = true;
 
-	Cast<APlayerDiabloCharacter>(UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(), 0))->
-		WingDataInject(m_AryWings[index]);
+	UDiabloGameInstance::Get->GetPlChar()->WingDataInject(m_AryWings[index]);
 
 	m_OnWingChanged.Broadcast(m_nSelectedWing, index);
 
@@ -347,8 +349,8 @@ void UEquipManager::TryEquipPet(int index)
 
 	m_AryPets[index].m_nIsEquipped = true;
 
-	Cast<APlayerDiabloCharacter>(UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(), 0))->
-		PetDataInject(m_AryPets[index]);
+
+	UDiabloGameInstance::Get->GetPlChar()->PetDataInject(m_AryPets[index]);
 
 	m_OnPetChanged.Broadcast(m_nSelectedPet, index);
 
@@ -432,7 +434,7 @@ bool UEquipManager::TryCombineLevelUpAccessory(int index)
 	m_AryAcce[index].m_nStackCount -= m_AryAcce[index].m_LvlUpCost;
 
 	m_AryAcce[index].m_nLv++;
-	
+
 	m_AryAcce[index].SetLevel(m_AryAcce[index].m_nLv);
 
 	m_OnAccessoryChanged.Broadcast(-1, index);
@@ -515,11 +517,11 @@ bool UEquipManager::TryLvUpWeapon(int index)
 		return false;
 	}
 
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGold(m_AryWeapons[index].m_LvlUpCost))
+	if (!UDiabloGameInstance::Get->m_GoldManager->SubtractGold(m_AryWeapons[index].m_LvlUpCost))
 	{
 		return false;
 	}
-	
+
 	m_AryWeapons[index].m_nLv++;
 	m_AryWeapons[index].SetLevel(m_AryWeapons[index].m_nLv);
 
@@ -535,11 +537,11 @@ bool UEquipManager::TryLvUpPet(int index)
 		return false;
 	}
 
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGold(m_AryPets[index].m_LvlUpCost))
+	if (!UDiabloGameInstance::Get->m_GoldManager->SubtractGold(m_AryPets[index].m_LvlUpCost))
 	{
 		return false;
 	}
-	
+
 	m_AryPets[index].m_nLv++;
 	m_AryPets[index].SetLevel(m_AryPets[index].m_nLv);
 
@@ -558,15 +560,20 @@ void UEquipManager::AddSkinStack(const FGachaAbleRow* skinData)
 	AddSkinStack(m_MapPlayerSkin[skinData]);
 }
 
+void UEquipManager::AddAccessoryStack(const FGachaAbleRow* acceData)
+{
+	AddAccessoryStack(m_MapAccessory[acceData]);
+}
+
 void UEquipManager::AddWeaponStack(int index)
 {
-	if(m_AryWeapons[index].m_nLv<1)
+	if (m_AryWeapons[index].m_nLv < 1)
 	{
 		TryLvUpWeapon(index);
 	}
 	else
 	{
-		m_AryWeapons[index].m_nStackCount++;	
+		m_AryWeapons[index].m_nStackCount++;
 	}
 
 	m_OnWeaponChanged.Broadcast(-1, index);
@@ -574,9 +581,9 @@ void UEquipManager::AddWeaponStack(int index)
 
 void UEquipManager::AddSkinStack(int index)
 {
-	if(m_AryPlayerSkin[index].m_nIsUnlocked<1)
+	if (m_AryPlayerSkin[index].m_nIsUnlocked < 1)
 	{
-		m_AryPlayerSkin[index].m_nIsUnlocked=1;
+		m_AryPlayerSkin[index].m_nIsUnlocked = 1;
 	}
 	else
 	{
@@ -588,7 +595,7 @@ void UEquipManager::AddSkinStack(int index)
 
 void UEquipManager::AddPetStack(int index)
 {
-	if(m_AryPets[index].m_nLv<1)
+	if (m_AryPets[index].m_nLv < 1)
 	{
 		TryLvUpPet(index);
 	}
@@ -602,9 +609,9 @@ void UEquipManager::AddPetStack(int index)
 
 void UEquipManager::AddWingStack(int index)
 {
-	if(m_AryWings[index].m_nIsUnlocked<1)
+	if (m_AryWings[index].m_nIsUnlocked < 1)
 	{
-		m_AryWings[index].m_nIsUnlocked=1;
+		m_AryWings[index].m_nIsUnlocked = 1;
 	}
 	else
 	{
@@ -616,13 +623,13 @@ void UEquipManager::AddWingStack(int index)
 
 void UEquipManager::AddAccessoryStack(int index)
 {
-	if(m_AryAcce[index].m_nLv<1)
+	if (m_AryAcce[index].m_nLv < 1)
 	{
 		m_AryAcce[index].SetLevel(1);
 	}
 	else
 	{
-		m_AryAcce[index].m_nStackCount++;	
+		m_AryAcce[index].m_nStackCount++;
 	}
 
 	m_OnAccessoryChanged.Broadcast(-1, index);
@@ -633,47 +640,68 @@ FAccessorySpec& UEquipManager::GetAccessory(EAccessory acces)
 	return m_AryAcce[(int)acces];
 }
 
-void UEquipManager::UploadEquipment()
+
+FString UEquipManager::GetWeaponDataStr()
 {
 	FString WeaponStr;
-	
-	for(auto& WeaponSpec : m_AryWeapons)
+
+	for (auto& WeaponSpec : m_AryWeapons)
 	{
 		WeaponStr.Append(WeaponSpec.ParseToString());
 		WeaponStr.AppendChar(TEXT('/'));
 	}
-	
+
+	return WeaponStr;
+}
+
+FString UEquipManager::GetSkinDataStr()
+{
 	FString SkinStr;
-	
-	for(auto& SkinSpec : m_AryPlayerSkin)
-    	{
-    		SkinStr.Append(SkinSpec.ParseToString());
-    		SkinStr.AppendChar(TEXT('/'));
-    	}
-	
+
+	for (auto& SkinSpec : m_AryPlayerSkin)
+	{
+		SkinStr.Append(SkinSpec.ParseToString());
+		SkinStr.AppendChar(TEXT('/'));
+	}
+
+	return SkinStr;
+}
+
+FString UEquipManager::GetPetDataStr()
+{
 	FString PetStr;
 
-	for(auto& PetSpec : m_AryPets)
+	for (auto& PetSpec : m_AryPets)
 	{
 		PetStr.Append(PetSpec.ParseToString());
 		PetStr.AppendChar(TEXT('/'));
 	}
-	
+
+	return PetStr;
+}
+
+FString UEquipManager::GetAccessoryDataStr()
+{
 	FString AccessoryStr;
 
-	for(auto& AcceSpec : m_AryAcce)
+	for (auto& AcceSpec : m_AryAcce)
 	{
 		AccessoryStr.Append(AcceSpec.ParseToString());
 		AccessoryStr.AppendChar(TEXT('/'));
 	}
-	
+
+	return AccessoryStr;
+}
+
+FString UEquipManager::GetWingDataStr()
+{
 	FString WingStr;
 
-	for(auto& WingSpecs : m_AryWings)
+	for (auto& WingSpecs : m_AryWings)
 	{
 		WingStr.Append(WingSpecs.ParseToString());
 		WingStr.AppendChar(TEXT('/'));
 	}
-	
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadEquipData(WeaponStr,SkinStr,PetStr,AccessoryStr,WingStr);
+
+	return WingStr;
 }

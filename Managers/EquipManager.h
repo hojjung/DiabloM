@@ -280,6 +280,8 @@ protected:
 	TMap<const FGachaAbleRow*,int> m_MapPlayerSkin;
 
 	TMap<const FGachaAbleRow*,int> m_MapPlayerWeapon;
+
+	TMap<const FGachaAbleRow*,int> m_MapAccessory;
 	
 public:
 	FOnEquipChanged m_OnPlSkinChanged;
@@ -365,6 +367,8 @@ public:
 	void AddWeaponStack(const FGachaAbleRow* weaponData);
 
 	void AddSkinStack(const FGachaAbleRow* skinData);
+
+	void AddAccessoryStack(const FGachaAbleRow* acceData);
 	//
 	void AddWeaponStack(int index);
 
@@ -378,7 +382,16 @@ public:
 
 	FAccessorySpec& GetAccessory(EAccessory acces);
 
-	void UploadEquipment();
+	FString GetWeaponDataStr();
+
+	FString GetSkinDataStr();
+
+	FString GetPetDataStr();
+
+	FString GetAccessoryDataStr();
+
+	FString GetWingDataStr();
+
 };
 
 

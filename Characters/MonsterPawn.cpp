@@ -157,7 +157,7 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
 
     m_SkBody->EmptyOverrideMaterials();
     
-    m_SkBody->SetSkeletalMesh(UnitData->m_Mesh);
+    m_SkBody->SetSkeletalMesh(UnitData->m_MonsterMeshSoft.Get());
 
     m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
     

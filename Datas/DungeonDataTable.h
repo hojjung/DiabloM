@@ -1,5 +1,4 @@
 #pragma once
-#include "CharacterDataTable.h"
 #include "DiabloM.h"
 #include "GameplayTagContainer.h"
 #include "Managers/PlayerUpgradeManager.h"
@@ -35,7 +34,7 @@ struct FMonsterEntity : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FMonsterEntity(): m_Mesh(nullptr),
+	FMonsterEntity(): 
                       m_SpawnAnim(nullptr), m_BaseAttackAnim(nullptr),
                       m_DeathMontage(nullptr),
                       m_TookHitMontage(nullptr)
@@ -47,7 +46,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText m_ShowingName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USkeletalMesh* m_Mesh;
+	TSoftObjectPtr<USkeletalMesh> m_MonsterMeshSoft;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.3"))
 	float m_fScale = 1.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "0.3"))

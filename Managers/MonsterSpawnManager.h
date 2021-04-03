@@ -25,7 +25,7 @@ public:
 	FOnBossBattleEnd m_OnBossBattleEnd;
 	
 protected:
-	static const int m_nMonsterPoolCount = 22;
+	static const int MonsterPoolCount = 12;
 	UPROPERTY()
 	UNavigationSystemV1* m_NavSys;
 	UPROPERTY()
@@ -63,6 +63,10 @@ protected:
 	int m_nGoldGoblinSpawnCount;
 
 	FDelegateHandle m_BossDeleHandle;
+
+	TSharedPtr<FStreamableHandle> m_LoadedMonster;
+
+	TSharedPtr<FStreamableHandle> m_LoadedGoblin;
 	
 protected:
 	FVector GetRandomPointFromNav(const FVector& loc,const float& radius);
@@ -115,6 +119,8 @@ public:
     AMonsterPawn* SpawnMobToLoc(FVector loc);
 
 	void OnBossDead( AMonsterPawn*);
+
+	virtual void BeginDestroy() override;
 };
 
 

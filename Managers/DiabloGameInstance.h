@@ -9,6 +9,7 @@
 #include "PlayerUpgradeManager.h"
 #include "QuestManager.h"
 #include "ShopManager.h"
+#include "Characters/PlayerDiabloCharacter.h"
 #include "Kismet/BlueprintPlatformLibrary.h"
 #include "Widgets/GameLevelHUD.h"
 

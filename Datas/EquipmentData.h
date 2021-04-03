@@ -2,7 +2,6 @@
 #include "DiabloM.h"
 #include "GachaDataTable.h"
 #include "Engine/DataTable.h"
-#include "Item/AccessoryOption.h"
 #include "Item/EquipmentActor.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/PlayerUpgradeManager.h"
@@ -123,13 +122,13 @@ struct FPlayerSkinTable : public FGachaAbleRow
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USkeletalMesh* m_PlayerSkin = nullptr;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UAnimInstance> m_AnimBP;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimSequence* m_VisualIdleAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimMontage* m_BaseAttackAnim;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<USkeletalMesh> m_PlayerSkinSoft;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0", UIMax = "3.3"))
 	float m_fAttackSpeedMultiple = 1.f;
 

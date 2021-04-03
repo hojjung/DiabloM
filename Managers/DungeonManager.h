@@ -67,6 +67,7 @@ protected:
 	//보스는 1회만 죽여야한다
 	//보스는 1회만?
 	//그럼 결국 던전이 킬카운트 가지고 있어야한다
+
 public:
 	void Init(UMonsterSpawnManager*  mMang);
 
@@ -95,7 +96,7 @@ public:
 
 	void SetCurrentStageLevel(int stageLv);
 
-	void UploadDungeon();
-
 	int GetLevelBonus();
+
+	FString GetDgDataStr();
 };

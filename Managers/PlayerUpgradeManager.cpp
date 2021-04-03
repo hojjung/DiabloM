@@ -307,10 +307,6 @@ FString UPlayerUpgradeManager::GetUpgradeDataStr()//9
 		);
 }
 
-void UPlayerUpgradeManager::UploadUpgrade()
-{
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadUpgradeData(GetUpgradeDataStr());
-}
 
 //1,1
 #undef LOCTEXT_NAMESPACE
