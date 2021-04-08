@@ -68,32 +68,7 @@ FString UChatText::GetRankColor(const FString& rankNumber)
 {
 	int RankNumber = FCString::Atoi(*rankNumber);
 
-	if(RankNumber==1)
-	{
-		return m_RichIDPurple;
-	}
-	else if(RankNumber<=2 || RankNumber>=10)
-	{
-		return m_RichIDRed;
-	}
-	else if(RankNumber>=100)
-	{
-		return m_RichIDOrange;
-	}
-	else if(RankNumber>=1000)
-	{
-		return m_RichIDYellow;
-	}
-	else if(RankNumber>=5000)
-	{
-		return m_RichIDBlue;
-	}
-	else if(RankNumber>=10000)
-	{
-		return m_RichIDGreen;
-	}
-
-	return "Default";
+	return GetRankColor(RankNumber);
 }
 
 FString UChatText::GetRankColor(int RankNumber)
@@ -102,23 +77,23 @@ FString UChatText::GetRankColor(int RankNumber)
 	{
 		return m_RichIDPurple;
 	}
-	else if(RankNumber<=2|| RankNumber>=10)
+	else if(RankNumber>=2 && RankNumber<10)
 	{
 		return m_RichIDRed;
 	}
-	else if(RankNumber>=100)
+	else if(RankNumber>=10&&RankNumber<100)
 	{
 		return m_RichIDOrange;
 	}
-	else if(RankNumber>=1000)
+	else if(RankNumber>=100&&RankNumber<1000)
 	{
 		return m_RichIDYellow;
 	}
-	else if(RankNumber>=5000)
+	else if(RankNumber>=1000&&RankNumber<5000)
 	{
 		return m_RichIDBlue;
 	}
-	else if(RankNumber>=10000)
+	else if(RankNumber>=5000&&RankNumber<10000)
 	{
 		return m_RichIDGreen;
 	}

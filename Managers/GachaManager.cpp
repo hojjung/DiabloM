@@ -128,7 +128,7 @@ void UGachaManager::SetGachaLevel(const FString weaponGacha, const FString playe
 
 FString UGachaManager::GetGachaLevelStr()
 {
-	return FString::Printf(TEXT("%d:%d/%d:%d"),m_nCurrentWeaponIndex,m_nGachaWeaponCount,m_nCurrentSkinIndex,m_nGachaSkinCount);
+	return FString::Printf(TEXT("%d:%d/%d:%d/"),m_nCurrentWeaponIndex,m_nGachaWeaponCount,m_nCurrentSkinIndex,m_nGachaSkinCount);
 }
 
 void UGachaManager::SetTotalValue(const UDataTable* inTable, TArray<FGachaTableRow*>& outTableRow, float& outTotal)

@@ -3,11 +3,10 @@
 #include "DiabloGameInstance.h"
 #include "Widgets/GachaMenu/GachaPanel.h"
 
-void UShopManager::SetShopDataFromServer(FString iapData)
+void UShopManager::SetShopDataFromServer()
 {
-	TArray<FString> AryItemBought;
+	const TArray<FString>& AryItemBought = UDiabloGameInstance::Get->m_PlayfabManager->m_AryIAPData;
 
-	iapData.ParseIntoArray(AryItemBought,TEXT("/"));
 	//0~6,2개제외
 	m_PackagePurchased.Init(false,5);
 	m_PackagePurchased[0] = AryItemBought[1].ToBool();
@@ -19,6 +18,13 @@ void UShopManager::SetShopDataFromServer(FString iapData)
 	UDiabloGameInstance::Get->m_GachaManager->SetGachaLevel(AryItemBought[6],AryItemBought[7]);
 
 	UDiabloGameInstance::Get->m_DungeonManager->m_OnDungeonMaxUpdate.AddUObject(this, &UShopManager::UpdateGold);
+
+	m_nDDay = 0;
+	
+	if(AryItemBought.Num()>=10)
+	{
+		m_nDDay = FCString::Atoi(*AryItemBought[9]);
+	}
 }
 
 void UShopManager::PurchasePacakge01()

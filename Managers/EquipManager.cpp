@@ -61,7 +61,9 @@ void UEquipManager::SetStringSkinUnlocked(FString skinUnlock) //이 str에 모�
 
 	StringSplitEachItem(skinUnlock, AryEachDatas);
 
-	for (int i = 0; i < ArySkins.Num(); i++)
+	int IterMax = FMath::Min(ArySkins.Num(),AryEachDatas.Num());
+
+	for (int i = 0; i < IterMax; i++)
 	{
 		FPlayerClassSpec PlSpec;
 		PlSpec.m_PlayerData = ArySkins[i];
@@ -84,9 +86,11 @@ void UEquipManager::SetStringWingUnlocked(FString wingUnlock)
 
 	TArray<FString> AryEachDatas;
 
-	int Len = StringSplitEachItem(wingUnlock, AryEachDatas);
+	StringSplitEachItem(wingUnlock, AryEachDatas);
 
-	for (int i = 0; i < AryWings.Num(); i++)
+	int IterMax = FMath::Min(AryWings.Num(),AryEachDatas.Num());
+
+	for (int i = 0; i < IterMax; i++)
 	{
 		FWingSpec EqSpec;
 		EqSpec.m_WingData = AryWings[i];
@@ -106,9 +110,11 @@ void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
 
 	TArray<FString> AryEachDatas;
 
-	int Len = StringSplitEachItem(weaponUnlock, AryEachDatas);
+	StringSplitEachItem(weaponUnlock, AryEachDatas);
+	
+	int IterMax = FMath::Min(AryWeapon.Num(),AryEachDatas.Num());
 
-	for (int i = 0; i < AryWeapon.Num(); i++)
+	for (int i = 0; i < IterMax; i++)
 	{
 		FWeaponSpec EqSpec;
 		EqSpec.m_EquipData = AryWeapon[i];
@@ -129,12 +135,13 @@ void UEquipManager::SetStringPetUnlocked(FString petUnlock)
 
 	m_AryPets.Reset();
 
-
 	TArray<FString> AryEachDatas;
 
 	StringSplitEachItem(petUnlock, AryEachDatas);
 
-	for (int i = 0; i < AryPet.Num(); i++)
+	int IterMax = FMath::Min(AryPet.Num(),AryEachDatas.Num());
+
+	for (int i = 0; i < IterMax; i++)
 	{
 		FPetSpec EqSpec;
 		EqSpec.m_PetData = AryPet[i];
@@ -156,9 +163,11 @@ void UEquipManager::SetStringAccesoryUnlocked(FString acceUnlock)
 
 	TArray<FString> AryEachDatas;
 
-	int Len = StringSplitEachItem(acceUnlock, AryEachDatas);
+	StringSplitEachItem(acceUnlock, AryEachDatas);
 
-	for (int i = 0; i < AryAcces.Num(); i++)
+	int IterMax = FMath::Min(AryAcces.Num(),AryEachDatas.Num());
+
+	for (int i = 0; i < IterMax; i++)
 	{
 		FAccessorySpec EqSpec;
 		EqSpec.m_AccessoryData = AryAcces[i];

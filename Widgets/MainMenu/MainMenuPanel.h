@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DailyRewardPanel.h"
 #include "DiabloM.h"
 #include "GridPanel.h"
 #include "RankingPanel.h"
@@ -41,7 +42,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UUserWidget* m_PanelMail;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUserWidget* m_PanelDaily;
+	UDailyRewardPanel* m_PanelDaily;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UUserWidget* m_PanelOption;
 

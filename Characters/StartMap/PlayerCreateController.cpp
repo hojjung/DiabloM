@@ -34,8 +34,6 @@ APlayerVisual* APlayerCreateController::GetPlayerVisual()
 void APlayerCreateController::SetupInputComponent()
 {
     Super::SetupInputComponent();
-    InputComponent->BindAction("Exit", EInputEvent::IE_Pressed, this, &APlayerCreateController::ExitGame);
-    InputComponent->BindAction("AndroidBack", EInputEvent::IE_Pressed, this, &APlayerCreateController::OnDeviceBackKey);
 }
 
 void APlayerCreateController::OnDeviceBackKey()

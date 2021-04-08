@@ -30,9 +30,12 @@ public:
 
 	UPROPERTY()
 	UGachaPanel* m_GachaPanel;
+
+	UPROPERTY()
+	int m_nDDay;
 	
 public:
-	void SetShopDataFromServer(FString iapData);
+	void SetShopDataFromServer();
 	
 protected:
 	TArray<bool> m_PackagePurchased;

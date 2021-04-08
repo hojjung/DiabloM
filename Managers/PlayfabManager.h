@@ -69,9 +69,13 @@ public://user data
 
 	FDateTime m_LastLoginTime;
 
-	bool m_bIsNewCreatePlayer;
+	FDateTime m_LastLogoutTime;
 
 	FDateTime m_CurrentTime;
+
+	
+	bool m_bIsNewCreatePlayer;
+
 
 public://loaded data
 	UPROPERTY()
@@ -113,7 +117,12 @@ public://loaded data
 	UPROPERTY()
 	FString m_LoadedNickname;
 	UPROPERTY()
-	FString m_CurrentVersionName="TEST0321";
+	FString m_CurrentVersionName=TEXT("TEST0321");//RELEASE0408
+
+	TArray<FString> m_AryIAPData;
+
+	UPROPERTY()
+	int m_nOfflineHours;
 	
 protected://rank
 	UPROPERTY()
@@ -163,9 +172,6 @@ public:
 
 	void RequestGetUserData();
 
-	void SetOnlineStatus();
-	
-	void SetOfflineStatus();
 
 	UFUNCTION()
     void BuyIAP(FString itemId,bool bIsConsumable);
@@ -249,7 +255,7 @@ public:
 
 	void UploadEquipData(const FString& weaponData,const FString& skinData,const FString& petData,const FString& accessoryData,const FString& wingData);
 
-	void UploadIAPData(const FString& data);
+	void UploadIAPData();
 
 
 	void UploadGold(BigInt gold);

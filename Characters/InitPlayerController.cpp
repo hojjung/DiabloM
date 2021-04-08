@@ -33,7 +33,6 @@ void AInitPlayerController::SetupInputComponent()
 void AInitPlayerController::OnDeviceBackKey()
 {
 	PRINTF("Exit");
-	UDiabloGameInstance::Get->m_PlayfabManager->SetOfflineStatus();
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
 }
 

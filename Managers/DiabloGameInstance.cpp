@@ -44,6 +44,13 @@ void UDiabloGameInstance::Init()
     UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(33.f);
     
     UGameUserSettings::GetGameUserSettings()->ApplySettings(true);
+
+#if PLATFORM_WINDOWS
+	UGameUserSettings::GetGameUserSettings()->SetScreenResolution(FIntPoint(360,640));
+
+	UGameUserSettings::GetGameUserSettings()->ApplyResolutionSettings(true);
+
+#endif
     
     UKismetSystemLibrary::ControlScreensaver(false);
 

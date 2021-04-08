@@ -37,67 +37,67 @@ void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& statskill)
 	m_AryBaseAtkUpgrade.Init(FUpgradeSpec(), (int)EAttackType::Length);
 	//	
 	m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow
-	>("AtkDmg01", ""); //
+	>(TEXT("AtkDmg01"), ""); //
 	m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::BaseAttack]));
 
 	m_AryBaseAtkUpgrade[(int)EAttackType::Critical].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
-		"AtkCri01", "");
+		TEXT("AtkCri01"), "");
 	m_AryBaseAtkUpgrade[(int)EAttackType::Critical].SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::Critical]));
 
 	m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
-		"AtkCDmg01", "");
+		TEXT("AtkCDmg01"), "");
 	m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].
 		SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::CriticalDmg]));
 
 	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow
-	>("AtkCri02", "");
+	>(TEXT("AtkCri02"), "");
 	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].SetLevel(
 		FCString::Atoi(*AryStat[(int)EAttackType::SuperCritical]));
 
 	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
-		"AtkCDmg02", "");
+		TEXT("AtkCDmg02"), "");
 	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].SetLevel(
 		FCString::Atoi(*AryStat[(int)EAttackType::SuperCriticalDmg]));
 
 	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
-		"AtkMagic01", "");
+		TEXT("AtkMagic01"), "");
 	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].SetLevel(FCString::Atoi(*AryStat[(int)EAttackType::MagicBomb]));
 
 	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
-		"AtkMDmg01", "");
+		TEXT("AtkMDmg01"), "");
 	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].SetLevel(
 		FCString::Atoi(*AryStat[(int)EAttackType::MagicBombDmg]));
 
 	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
-		"AtkMagic02", "");
+		TEXT("AtkMagic02"), "");
 	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].SetLevel(
 		FCString::Atoi(*AryStat[(int)EAttackType::MagicBomb]));
 
 	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow
-	>("AtkMDmg02", "");
+	>(TEXT("AtkMDmg02"), "");
 	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].SetLevel(
 		FCString::Atoi(*AryStat[(int)EAttackType::SuperMagicBombDmg]));
 	//
 	m_AryUpgradeSkill.Init(FSkillSpec(), (int)ESkillType::Length);
 
 	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow
-	>("Skill01", "");
+	>(TEXT("Skill01"), "");
 	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].ParseFromString(ArySkill[(int)ESkillType::DeathBlow]);
 
 	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow
-	>("Skill02", "");
+	>(TEXT("Skill02"), "");
 	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].ParseFromString(ArySkill[(int)ESkillType::MagicBlade]);
 
 	m_AryUpgradeSkill[(int)ESkillType::WhirlWind].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow
-	>("Skill03", "");
+	>(TEXT("Skill03"), "");
 	m_AryUpgradeSkill[(int)ESkillType::WhirlWind].ParseFromString(ArySkill[(int)ESkillType::WhirlWind]);
 
 	m_AryUpgradeSkill[(int)ESkillType::EarthQuake].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow
-	>("Skill04", "");
+	>(TEXT("Skill04"), "");
 	m_AryUpgradeSkill[(int)ESkillType::EarthQuake].ParseFromString(ArySkill[(int)ESkillType::EarthQuake]);
 
 	m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow
-	>("Skill05", "");
+	>(TEXT("Skill05"), "");
 	m_AryUpgradeSkill[(int)ESkillType::WindBlade].ParseFromString(ArySkill[(int)ESkillType::WindBlade]);
 	//
 	m_AryEquippedSkillSpec.Init(nullptr, 4);

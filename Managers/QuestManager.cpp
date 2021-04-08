@@ -15,7 +15,9 @@ void UQuestManager::SetQuestDataFromServer(const FString& strQuest)
 
 	UQuestData::GetQuestData->GetAllRows("",AryQuestRow);
 
-	for(int i=0;i<AryQuestRow.Num();i++)
+	int IterMax = FMath::Min(AryQuestRow.Num(),AryQuest.Num());
+
+	for(int i=0;i<IterMax; i++)
 	{
 		FQuestDataSpec QuestDataSpec;
 
@@ -23,7 +25,7 @@ void UQuestManager::SetQuestDataFromServer(const FString& strQuest)
 
 		QuestDataSpec.m_Data = AryQuestRow[i];
 		
-		m_AryQuestData.Add(QuestDataSpec);
+		m_AryQuestData.Emplace(QuestDataSpec);
 	}
 }
 

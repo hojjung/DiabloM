@@ -74,6 +74,23 @@ FString UPlayfabManager::GetIAPDataStr()
 	FString GachaResult = UDiabloGameInstance::Get->m_GachaManager->GetGachaLevelStr();
 
 	IAPResult.Append(GachaResult);
+
+	FDateTime CurrentTime = FDateTime::Now().UtcNow();
+
+	FString TimeStr = CurrentTime.ToString();
+	
+	TimeStr.AppendChar(TEXT('/'));
+	
+	IAPResult.Append(TimeStr);
+
+	int NextDDay = UDiabloGameInstance::Get->m_ShopManager->m_nDDay;
+
+	FString DDayStr = FString::FromInt(NextDDay);
+	
+	DDayStr.AppendChar(TEXT('/'));
+
+	IAPResult.Append(DDayStr);
+
 	
 	return IAPResult;
 }
@@ -191,8 +208,8 @@ void UPlayfabManager::OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rs
 	}
 	else
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Version Changed", "Version Changed Update Need"));
-		UKismetSystemLibrary::LaunchURL("http://play.google.com/store/apps/details?id=<com.hereticbyte.dungeonslasher>");
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Version Changed", "업데이트 해주세요!"));
+		UKismetSystemLibrary::LaunchURL(TEXT("https://play.google.com/store/apps/details?id=com.hereticbyte.dungeonslasher"));
 	}
 }
 
@@ -234,7 +251,7 @@ void UPlayfabManager::Init()
 
 	PlayFab::ClientModels::FLoginWithCustomIDRequest request;
 	request.CreateAccount = true;
-	request.CustomId = "JungPC TestID3";
+	request.CustomId = TEXT("JungPC TestID3");
 	request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
 
 	bool Result = GetClientAPI->LoginWithCustomID(request,
@@ -377,28 +394,6 @@ void UPlayfabManager::RequestGetUserData()
 }
 
 
-void UPlayfabManager::SetOnlineStatus()
-{
-	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
-	Req.FunctionName = "SetOnlineState";
-	GetClientAPI->ExecuteCloudScript(Req,
-	                                 FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnCloudScriptSuccess),
-	                                 FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
-}
-
-void UPlayfabManager::SetOfflineStatus()
-{
-	if(!m_bIsLoginCompleted)
-	{
-		return;
-	}
-	
-	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
-	Req.FunctionName = "SetOfflineState";
-	GetClientAPI->ExecuteCloudScript(Req,
-	                                 FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnCloudScriptSuccess),
-	                                 FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
-}
 
 
 void UPlayfabManager::OnErrorPlayfabReq(const FFailRslt& ErrorResult)
@@ -433,6 +428,8 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 
 	m_LoadedIAP = result.Data[IAP].Value;
 	//
+	m_LoadedIAP.ParseIntoArray(m_AryIAPData,TEXT("/"));
+	//
 	UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(m_LoadedGold);
 	UDiabloGameInstance::Get->m_DungeonManager->SetDungeonLevel(*m_LoadedDg);
 	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(m_LoadedStatSkill);
@@ -441,9 +438,8 @@ void UPlayfabManager::OnSuccessGetUserData(const FGetUsrDataRslt& result)
 	
 	UDiabloGameInstance::Get->m_QuestManager->SetQuestDataFromServer(m_LoadedQuest);
 
-	UDiabloGameInstance::Get->m_ShopManager->SetShopDataFromServer(m_LoadedIAP);
+	UDiabloGameInstance::Get->m_ShopManager->SetShopDataFromServer();
 	
-	SetOnlineStatus();
 	m_bIsLoginCompleted = true;
 	m_bIsNicknameSet = true;
 
@@ -589,7 +585,7 @@ void UPlayfabManager::OnStageComplete()
 	
 	Req.FunctionParameter = PlayFab::FJsonKeeper(JsonObject);
 	
-	Req.FunctionName = "OnCompleteLevel";
+	Req.FunctionName = TEXT("OnCompleteLevel");
 	
 	Req.GeneratePlayStreamEvent = true;
 	
@@ -602,7 +598,7 @@ void UPlayfabManager::RequestVersionCheck()
 {
 	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
 	
-	Req.FunctionName = "CheckVersion";
+	Req.FunctionName =TEXT( "CheckVersion");
 	
 	Req.GeneratePlayStreamEvent = true;
 	
@@ -630,8 +626,8 @@ void UPlayfabManager::RequestGetInventory()
 void UPlayfabManager::OnSuccessGetInven( const PlayFab::ClientModels::FGetUserInventoryResult& rslt)
 {
 	PRINTF("GetInven Success");
-	int Currency = rslt.VirtualCurrency[TEXT("GG")];
 	
+	int Currency = rslt.VirtualCurrency[TEXT("GG")];
 	
 	m_OnGemstoneChanged.Broadcast(Currency);
 }
@@ -640,9 +636,33 @@ void UPlayfabManager::OnSuccessTimeGet(const PlayFab::ClientModels::FGetTimeResu
 {
 	m_CurrentTime = rslt.Time;
 
-	FTimespan OfflineTimeSpawn = m_CurrentTime- m_LastLoginTime;
+	FTimespan OfflineTimeSpawn;
+	
+	TArray<FString> AryItemBought;
 
+	m_LoadedIAP.ParseIntoArray(AryItemBought,TEXT("/"));
+
+	bool LogoutParseSuccess = FDateTime::Parse(AryItemBought[8],m_LastLogoutTime);
+
+	bool LogoutTimeIsValid = (m_LastLogoutTime - m_LastLoginTime).GetTotalMinutes() > 0;//check time fixed device
+
+	FString LastLogout = m_LastLogoutTime.ToString();
+	FString LastLogint = m_LastLoginTime.ToString();
+	FString CurrentTime = m_CurrentTime.ToString();
+	
+	if(LogoutParseSuccess&&LogoutTimeIsValid)
+	{
+		OfflineTimeSpawn = m_CurrentTime - m_LastLogoutTime ;		
+	}
+	else
+	{
+		OfflineTimeSpawn = m_CurrentTime - m_LastLoginTime;
+		//Fail, WE Use Login Time
+	}
+		
 	int Minuts =  OfflineTimeSpawn.GetTotalMinutes();
+
+	m_nOfflineHours=  OfflineTimeSpawn.GetTotalHours();
 	
 	PRINTF("LastLogin%s,CurrentTime:%s,TimeSpan:%s,Minutes:%d",*m_LastLoginTime.ToString(),*m_CurrentTime.ToString(),*OfflineTimeSpawn.ToString(),Minuts);
 	
@@ -694,11 +714,10 @@ void UPlayfabManager::OnSuccessGetPlayerAroundRanking(const PlayFab::ClientModel
 	m_OnPlayerRankReceived.Broadcast(m_PlayerRanking);
 }
 
-
 void UPlayfabManager::RequestCheatAlert()
 {
 	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
-	Req.FunctionName = "CheatAlert";
+	Req.FunctionName = TEXT("CheatAlert");
 	Req.GeneratePlayStreamEvent=true;
 	GetClientAPI->ExecuteCloudScript(Req);
 }
@@ -708,7 +727,7 @@ void UPlayfabManager::PurchaseWithGemStone(int amount,FString itemName)
 	PlayFab::ClientModels::FPurchaseItemRequest Req;
 	Req.Price = amount;
 	Req.ItemId = itemName;
-	Req.VirtualCurrency="GG";
+	Req.VirtualCurrency=TEXT("GG");
 	//Req.CharacterId = m_PlayfabID;
 	//FPurchaseItemDelegate, const ClientModels::FPurchaseItemResult&
 	GetClientAPI->PurchaseItem(Req,PlayFab::UPlayFabClientAPI::FPurchaseItemDelegate::CreateUObject(this,&UPlayfabManager::OnPurchaseWithGemStoneSuccess),
@@ -721,14 +740,13 @@ void UPlayfabManager::OnPurchaseWithGemStoneSuccess(const PlayFab::ClientModels:
 
 	UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(PurchasedItemID);
 
-
 }
 
 void UPlayfabManager::AddGemStone(int amount)
 {
 	PlayFab::ClientModels::FAddUserVirtualCurrencyRequest Req;
 	Req.Amount=amount;
-	Req.VirtualCurrency="GG";
+	Req.VirtualCurrency=TEXT("GG");
 	GetClientAPI->AddUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FAddUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddGemStone),PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
@@ -774,11 +792,11 @@ void UPlayfabManager::UploadEquipData(const FString& weaponData, const FString& 
         PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
-void UPlayfabManager::UploadIAPData(const FString& data)
+void UPlayfabManager::UploadIAPData()
 {
 	PlayFab::ClientModels::FUpdateUserDataRequest Req;
 	
-	Req.Data.Add(IAP,data);
+	Req.Data.Add(IAP,GetIAPDataStr());
 
 	GetClientAPI->UpdateUserData(Req,nullptr,
         PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
