@@ -8,7 +8,7 @@
 // Sets default values
 UChatManager::UChatManager()
 {
-	m_bIsReceiveChatFromServer=false;
+	//m_bIsReceiveChatFromServer=false;
 	m_bIsWaitingGetChatRequest = false;
 
 	Http = &FHttpModule::Get();
@@ -105,14 +105,14 @@ void UChatManager::FilterBadWord(FString& outChatWant)
 
 void UChatManager::Tick(float deltaTime)
 {
-	if(!m_bIsReceiveChatFromServer)
-	{
-		return;
-	}
+	// if(!m_bIsReceiveChatFromServer)
+	// {
+	// 	return;
+	// }
 	
 	m_fDeltaCounter += deltaTime;
 
-	if (m_fDeltaCounter > 2.5f)
+	if (m_fDeltaCounter > 2.0f)
 	{
 		if (m_bIsWaitingGetChatRequest)
 		{
@@ -216,10 +216,6 @@ FString UChatManager::URLDecode(FString url)
 	return str;
 }
 
-void UChatManager::SetReceiveChat(bool b)
-{
-	m_bIsReceiveChatFromServer=b;
-}
 
 void UChatManager::SummonChatPost(const FText& gachaName)
 {

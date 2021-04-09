@@ -141,5 +141,5 @@ void UChatWindow::SetChatWindowOpenClose()
 	
 	m_bIsOpened =!m_bIsOpened;
 	
-	UDiabloGameInstance::Get->m_ChatManager->SetReceiveChat(m_bIsOpened);
+	//UDiabloGameInstance::Get->m_ChatManager->SetReceiveChat(m_bIsOpened);
 }

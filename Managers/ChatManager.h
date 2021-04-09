@@ -35,7 +35,7 @@ protected:
 
 	float m_fDeltaCounter;
 
-	bool m_bIsReceiveChatFromServer;
+	//bool m_bIsReceiveChatFromServer;
 
 protected:
 	void SetBadWordAry();
@@ -57,7 +57,7 @@ public:
 
 	FString URLDecode(FString url);
 
-	void SetReceiveChat(bool b);
+	//void SetReceiveChat(bool b);
 
 	void SummonChatPost(const FText& gachaName);
 };
