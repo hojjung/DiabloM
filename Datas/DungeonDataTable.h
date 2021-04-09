@@ -153,11 +153,11 @@ public:
 		
 		float BonusMulti = GetLevelBonus(level);
 
-		BigInt Value = 200;
+		BigInt Value = 150;
 
 		for(int i=1; i< level;i++)
 		{
-			Value.MultiplyFast(7);
+			Value.MultiplyFast(6);
 		}
 
 		Value.Multiply(BonusMulti);
@@ -171,7 +171,7 @@ public:
 		
 		float BonusMulti = GetLevelBonus(level);
 
-		BigInt Value =533;
+		BigInt Value =2800;
 
 		return (Value * BonusMulti * level)+30;
 	}

@@ -13,6 +13,7 @@
 #include "MonsterSpawnManager.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnBossBattleEnd,bool);
+DECLARE_MULTICAST_DELEGATE(FOnBossBattleStart);
 UCLASS()
 class DIABLOM_API UMonsterSpawnManager : public UObject
 {
@@ -23,6 +24,8 @@ public:
 	UMonsterSpawnManager();
 
 	FOnBossBattleEnd m_OnBossBattleEnd;
+
+	FOnBossBattleStart m_OnBossBattleStart;
 	
 protected:
 	static const int MonsterPoolCount = 12;
@@ -83,7 +86,7 @@ protected:
 	
 	void SetSensingInterval(const float newSensingInterval);
 
-	void SetSensingUpdatesEnabled(const bool bEnabled);
+	void SetSpawnMonsterOnTick(const bool bEnabled);
 
 public:
 	

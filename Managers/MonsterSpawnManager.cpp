@@ -73,10 +73,10 @@ void UMonsterSpawnManager::StartSpawn(UWorld* world, const FDungeonDataTableRow*
 		SpawnMobToLoc(FVector::ZeroVector);
 	}
 
-	SetSensingUpdatesEnabled(true);
+	SetSpawnMonsterOnTick(true);
 }
 
-void UMonsterSpawnManager::SetSensingUpdatesEnabled(const bool bEnabled)
+void UMonsterSpawnManager::SetSpawnMonsterOnTick(const bool bEnabled)
 {
 	if (bEnabled && m_SensingInterval > 0.f)
 	{
@@ -371,6 +371,8 @@ void UMonsterSpawnManager::SpawnBossMob()
 	Pl->FocusTarget(m_SpawnedBoss);
 
 	m_bBossSpawned = true;
+
+	m_OnBossBattleStart.Broadcast();
 }
 
 void UMonsterSpawnManager::FailBossKill()

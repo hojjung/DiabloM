@@ -138,6 +138,7 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 	 	PRINTF("TryUpdateUserData");
 	// 	
 	 	UploadUserTitleData();
+	 	UDiabloGameInstance::Get->m_QuestManager->UploadQuestData();
 	 }
 
 	if (m_fDeltaCountRanking > 220.f)
@@ -577,9 +578,13 @@ void UPlayfabManager::PurchaseFail(EInAppPurchaseState::Type completionStatus,co
 
 void UPlayfabManager::OnStageComplete()
 {
+	int MaxStage = UDiabloGameInstance::Get->m_DungeonManager->GetMaxStage();
+
+	PRINTF("UploadMaxStage:%d",MaxStage);
+	
 	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 
-	JsonObject->SetNumberField(TEXT("stageLevel"), UDiabloGameInstance::Get->m_DungeonManager->GetMaxStage());
+	JsonObject->SetNumberField(TEXT("stageLevel"), MaxStage);
 
 	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
 	
@@ -592,6 +597,7 @@ void UPlayfabManager::OnStageComplete()
 	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnCloudScriptSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 
 	UploadUserTitleData();
+	UDiabloGameInstance::Get->m_QuestManager->UploadQuestData();
 }
 
 void UPlayfabManager::RequestVersionCheck()
@@ -667,6 +673,7 @@ void UPlayfabManager::OnSuccessTimeGet(const PlayFab::ClientModels::FGetTimeResu
 	PRINTF("LastLogin%s,CurrentTime:%s,TimeSpan:%s,Minutes:%d",*m_LastLoginTime.ToString(),*m_CurrentTime.ToString(),*OfflineTimeSpawn.ToString(),Minuts);
 	
 	UDiabloGameInstance::Get->m_GoldManager->SetOfflineMinutes(Minuts);
+	UDiabloGameInstance::Get->m_ShopManager->SetOfflineHours(m_nOfflineHours);
 }
 
 void UPlayfabManager::RequestRetrieveTotalRanking()
@@ -812,6 +819,12 @@ void UPlayfabManager::UploadDungeonData(int currentDungeon, int maxDungeon)
 
 	GetClientAPI->UpdateUserData(Req,nullptr,
         PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::OnBossBattleStart()
+{
+	m_fDeltaCountRanking-=20.f;
+	m_fDeltaCountTitleData=0.f;
 }
 
 void UPlayfabManager::UploadGold(BigInt gold)

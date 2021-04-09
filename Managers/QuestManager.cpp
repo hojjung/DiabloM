@@ -1,6 +1,7 @@
 #include "QuestManager.h"
 
 #include "DiabloGameInstance.h"
+#include "DungeonManager.h"
 
 
 void UQuestManager::SetQuestDataFromServer(const FString& strQuest)
@@ -26,6 +27,13 @@ void UQuestManager::SetQuestDataFromServer(const FString& strQuest)
 		QuestDataSpec.m_Data = AryQuestRow[i];
 		
 		m_AryQuestData.Emplace(QuestDataSpec);
+	}
+
+	int MaxStage = UDiabloGameInstance::Get->m_DungeonManager->GetMaxStage();
+	
+	if(MaxStage>m_AryQuestData[12].m_nCurrentRequirePoint)//던전 데이터 업로드 실패 예외처리
+	{
+		m_AryQuestData[12].m_nCurrentRequirePoint =MaxStage;	
 	}
 }
 
@@ -61,6 +69,11 @@ void UQuestManager::AddGemStones(int gemStone)
 	m_nWaitingGemStones+=gemStone;
 }
 
+void UQuestManager::UploadQuestData()
+{
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadQuestData(GetQuestDataStr());
+}
+
 void UQuestManager::RequestGemStoneUploadToServer()
 {
 	if(m_nWaitingGemStones<1)
@@ -72,7 +85,7 @@ void UQuestManager::RequestGemStoneUploadToServer()
 	
 	UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(m_nWaitingGemStones);
 	
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadQuestData(GetQuestDataStr());
+	UploadQuestData();
 
 	UDiabloGameInstance::Get->RequestPopupText(FString::Printf(TEXT("젬스톤%d개 업로드중"),m_nWaitingGemStones));
 	

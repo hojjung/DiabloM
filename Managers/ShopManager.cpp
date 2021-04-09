@@ -27,6 +27,13 @@ void UShopManager::SetShopDataFromServer()
 	}
 }
 
+void UShopManager::SetOfflineHours(int offHours)
+{
+	m_nOfflineHours=offHours;
+
+	m_OnOfflineHoursSet.Broadcast();
+}
+
 void UShopManager::PurchasePacakge01()
 {
 	ShowTouchBan();

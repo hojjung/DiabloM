@@ -8,6 +8,7 @@
 UDataTable* UDungeonManager::DungeonDataTable = nullptr;
 UDataTable* UDungeonManager::DropDataTable = nullptr;
 UDataTable* UDungeonManager::MonsterEntityTable = nullptr;
+UDataTable* UDungeonManager::GoldDungeonDataTable = nullptr;
 
 UDungeonManager::UDungeonManager(const FObjectInitializer& objInit): Super(objInit)
 {
@@ -18,6 +19,13 @@ UDungeonManager::UDungeonManager(const FObjectInitializer& objInit): Super(objIn
 		TEXT("DataTable'/Game/DataTables/Dungeon/DungeonData.DungeonData'"));
 
 	DungeonDataTable = FoundDungeon.Object;
+
+	//DataTable'/Game/DataTables/Dungeon/GoldDungeonData.GoldDungeonData'
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGoldDungeon(
+        TEXT("DataTable'/Game/DataTables/Dungeon/GoldDungeonData.GoldDungeonData'"));
+
+	GoldDungeonDataTable = FoundGoldDungeon.Object;
 }
 
 void UDungeonManager::Init(UMonsterSpawnManager* mMang)
@@ -48,13 +56,24 @@ void UDungeonManager::SetDungeonLevel(const FString& currentDG) //need split
 		StageCurrentLevel = 0;
 	}
 
-	SelectDungeon(StageCurrentLevel);
+	SelectNormalDungeon(StageCurrentLevel);
+
+	//
+	GoldDungeonDataTable->GetAllRows("", m_AryGoldDgDataTable);
+	
 }
 
-void UDungeonManager::SelectDungeon(int index)
+void UDungeonManager::SelectNormalDungeon(int index)
 {
 	SetCurrentStageLevel(index);
 	m_CurrentDg = m_AryDgDataTable[GetCurrentStage()];
+}
+
+void UDungeonManager::SelectGoldDungeon(int index)
+{
+	m_CurrentGoldDg =  m_AryGoldDgDataTable[index];
+	//GoldDg Ticket Count
+	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(), m_CurrentGoldDg->m_DgId, true);
 }
 
 void UDungeonManager::LevelUpDungeon()
@@ -72,7 +91,7 @@ void UDungeonManager::LevelUpDungeon()
 
 	SetCurrentStageLevel(m_nCurrentStageLevel);
 
-	SelectDungeon(m_nCurrentStageLevel);
+	SelectNormalDungeon(m_nCurrentStageLevel);
 
 	if (m_nCurrentStageLevel > GetMaxStage())
 	{

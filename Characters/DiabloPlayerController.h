@@ -11,8 +11,6 @@
  * 
  */
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnTick,float);
-
 class AUnitPawn;
 UCLASS()
 class DIABLOM_API ADiabloPlayerController : public APlayerController

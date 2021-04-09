@@ -124,7 +124,7 @@ void UDiabloCheatManager::StunPlayer(float duration)
 
 void UDiabloCheatManager::MoveStage(int index)
 {
-	m_GameManager->m_DungeonManager->SelectDungeon(index);
+	m_GameManager->m_DungeonManager->SelectNormalDungeon(index);
 	m_GameManager->m_DungeonManager->OpenLevel();
 }
 

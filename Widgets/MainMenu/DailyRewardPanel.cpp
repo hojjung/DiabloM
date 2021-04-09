@@ -7,15 +7,19 @@
 #include "UniformGridSlot.h"
 #include "Managers/DiabloGameInstance.h"
 
-void UDailyRewardPanel::NativeOnInitialized()
+UDailyRewardPanel::~UDailyRewardPanel()
 {
-	Super::NativeOnInitialized();
+	if(UDiabloGameInstance::Get)
+	{
+		if(UDiabloGameInstance::Get->m_ShopManager&&Handle.IsValid())
+		{
+			UDiabloGameInstance::Get->m_ShopManager->m_OnOfflineHoursSet.Remove(Handle);
+		}
+	}
+}
 
-	int OfflineHours = UDiabloGameInstance::Get->m_PlayfabManager->m_nOfflineHours;
-
-	
-
-	
+void UDailyRewardPanel::Init()
+{
 	m_AryClaimGemstone.Reserve(25);
 	m_AryClaimGemstone.Add(300);
 	m_AryClaimGemstone.Add(1500);
@@ -43,16 +47,46 @@ void UDailyRewardPanel::NativeOnInitialized()
 	m_AryClaimGemstone.Add(600);
 	m_AryClaimGemstone.Add(6000);
 
+	int OfflineHours = UDiabloGameInstance::Get->m_PlayfabManager->m_nOfflineHours;//순서안맞음
+	
 	int MaxDay = m_AryClaimGemstone.Num();
 
 	m_nDDay = UDiabloGameInstance::Get->m_ShopManager->m_nDDay;
 
 	CreateDailyButton(MaxDay);
 
-	if(OfflineHours<20)
+	PRINTF("OfflineHours:%d",OfflineHours);
+
+	bool IsNewCreatePlayer = UDiabloGameInstance::Get->m_PlayfabManager->m_bIsNewCreatePlayer;
+
+	if(!IsNewCreatePlayer&&OfflineHours<20)
 	{
 		SetIsEnabled(false);
-		m_AryElements[m_nDDay]->Claimed();
+
+		if(m_nDDay-1 >=0)
+		{
+			m_AryElements[m_nDDay-1]->Claimed();
+		}
+		else
+		{
+			m_AryElements[m_nDDay]->Claimed();	
+		}
+		
+	}
+}
+
+void UDailyRewardPanel::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	
+	if(UDiabloGameInstance::Get->m_ShopManager->m_nOfflineHours==-1)
+	{
+		//Not SetYet
+		Handle = UDiabloGameInstance::Get->m_ShopManager->m_OnOfflineHoursSet.AddUObject(this,&UDailyRewardPanel::Init);
+	}
+	else
+	{
+		Init();
 	}
 }
 

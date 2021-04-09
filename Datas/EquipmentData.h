@@ -35,7 +35,7 @@ public:
 	{
 		level = FMath::Clamp(level,0,100);
 		
-		BigInt Dmg = 100;
+		BigInt Dmg = 220;
 
 		if(m_nDmgLevel>1)
 		{
@@ -43,7 +43,7 @@ public:
 			
 			for(int i=0; i<IterMax;i++)
 			{
-				Dmg.MultiplyFast(31);	
+				Dmg.MultiplyFast(34);	
 			}
 		}
 

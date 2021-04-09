@@ -27,6 +27,7 @@ public:
 	ADiabloGameMode();
 	void SpawnVisualActor();
 
+	FOnTick m_OnTick;
 protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	UActionManagerComponent* m_PlayerActionManager;

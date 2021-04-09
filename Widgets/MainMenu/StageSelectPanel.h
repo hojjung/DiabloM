@@ -17,6 +17,12 @@ class DIABLOM_API UStageSelectPanel : public UUserWidget
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnShowNormalDg;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnShowGoldDg;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UScrollBox* m_DgGoldStageBtnListVert;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UScrollBox* m_StageBtnListVert;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UStageBtn> m_ClassStageBtn;
@@ -27,4 +33,12 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 	void UpdateBtnUI(int index);
+
+public:
+	UFUNCTION()
+	void OpenNormalDg();
+	UFUNCTION()
+    void OpenGoldDg();
 };
+
+

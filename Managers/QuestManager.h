@@ -55,6 +55,8 @@ public:
 	void AddQuestCount(EQuestType type);
 
 	void AddGemStones(int gemStone);
+	
+	void UploadQuestData();
 
 	void RequestGemStoneUploadToServer();
 

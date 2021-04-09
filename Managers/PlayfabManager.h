@@ -262,5 +262,7 @@ public:
 
 	void UploadDungeonData(int currentDungeon,int maxDungeon);
 
+	void OnBossBattleStart();
+
 };
 

@@ -49,10 +49,6 @@ void ADiabloGameMode::StartPlay()
 	m_PlUpgrade = UDiabloGameInstance::Get->m_PlayerUpgradeManager;
 	m_ChatManager = UDiabloGameInstance::Get->m_ChatManager;
 
-	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(m_PlManager, &UPlayfabManager::TickTryUpdateUserData);
-	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(m_PlUpgrade, &UPlayerUpgradeManager::Tick);
-	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.AddUObject(m_ChatManager, &UChatManager::Tick);
-
 	m_GoldManager	= UDiabloGameInstance::Get->m_GoldManager;
 
 	AGameLevelHUD* MyHud = Cast<AGameLevelHUD>( UDiabloGameInstance::Get->GetPlCon()->GetHUD());
@@ -92,7 +88,13 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 
 		GameLevelHUD->ShowOfflineGoldWindow(m_GoldManager->GetFinalOfflineGold());
 		
-		SetActorTickEnabled(false);
+		//SetActorTickEnabled(false);
 	}
+
+	m_PlManager->TickTryUpdateUserData(DeltaSeconds);
+	m_PlUpgrade->Tick(DeltaSeconds);
+	m_ChatManager->Tick(DeltaSeconds);
+
+	m_OnTick.Broadcast(DeltaSeconds);
 }
 

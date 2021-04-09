@@ -32,8 +32,6 @@ public:
 	
 	void Init(int index);
 
-	~UDiaSkillUseButton();
-
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
 	UJoystick* m_Joystick;

@@ -12,6 +12,7 @@
 #include "CommonElement/CooldownProgress.h"
 #include "CommonElement/ImageAndText.h"
 #include "CommonElement/MaterialProgressBar.h"
+#include "EquipMenu/EquipmentPanel.h"
 #include "GachaMenu/GachaPanel.h"
 #include "MainMenu/MainMenuPanel.h"
 #include "UpgradeMenu/UpgradePanel.h"
@@ -58,7 +59,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UUpgradePanel*   m_PanelUpgrade;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUserWidget*	 m_PanelEquipment;
+	UEquipmentPanel*	 m_PanelEquipment;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UGachaPanel*	 m_PanelGacha;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -207,6 +208,10 @@ public:
 	void OnTouchBanHide();
 
 	bool CheckIsAvailableTouchBan();
+
+	void OnBossBattleStart();
+
+	
 };
 
 

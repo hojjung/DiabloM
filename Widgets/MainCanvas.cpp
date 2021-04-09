@@ -28,7 +28,7 @@ void UMainCanvas::NativeOnInitialized()
 	m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
 
 	UDiabloGameInstance::Get->m_GoldManager->m_OnGoldChanged.AddUObject(this,&UMainCanvas::UpdateGoldUI);
-	UDiabloGameInstance::Get->m_MonsterSpawn->m_OnBossBattleEnd.AddUObject(this,&UMainCanvas::OnBossBattleEnd);
+	
 	UpdateGoldUI();
 
 	m_fBossDurationTimeCounter=0.f;
@@ -61,6 +61,10 @@ void UMainCanvas::NativeOnInitialized()
 	m_OfflineGoldPanel->SetVisibility(ESlateVisibility::Collapsed);
 
 	OnTouchBanHide();
+	//
+	UDiabloGameInstance::Get->m_MonsterSpawn->m_OnBossBattleStart.AddUObject(this,&UMainCanvas::OnBossBattleStart);
+	UDiabloGameInstance::Get->m_MonsterSpawn->m_OnBossBattleStart.AddUObject(UDiabloGameInstance::Get->m_PlayfabManager,&UPlayfabManager::OnBossBattleStart);
+	UDiabloGameInstance::Get->m_MonsterSpawn->m_OnBossBattleEnd.AddUObject(this,&UMainCanvas::OnBossBattleEnd);
 }
 
 void UMainCanvas::ShowTouchBan(float secWant)
@@ -80,6 +84,24 @@ void UMainCanvas::OnTouchBanHide()
 bool UMainCanvas::CheckIsAvailableTouchBan()
 {
 	return GetWorld()->GetTimerManager().TimerExists(m_TouchBanTimer);
+}
+
+void UMainCanvas::OnBossBattleStart()
+{
+	m_PanelMenu->ClosePanel();
+	m_PanelShop->ClosePanel();
+	m_PanelGacha->ClosePanel();
+	m_PanelEquipment->ClosePanel();
+	m_PanelUpgrade->ClosePanel();
+	m_PanelQuest->ClosePanel();
+	m_BtnGold->SetIsEnabled(false);
+	m_BtnGemStone->SetIsEnabled(false);
+	m_BtnQuest->SetIsEnabled(false);
+	m_BtnUpgrade->SetIsEnabled(false);
+	m_BtnEquipment->SetIsEnabled(false);
+	m_BtnGacha->SetIsEnabled(false);
+	m_BtnShop->SetIsEnabled(false);
+	m_BtnMenu->SetIsEnabled(false);
 }
 
 void UMainCanvas::RequestText(FText txt)
@@ -349,6 +371,16 @@ void UMainCanvas::SummonBoss()
 
 void UMainCanvas::OnBossBattleEnd(bool b)
 {
+	
+	m_BtnGold->SetIsEnabled(true);
+	m_BtnGemStone->SetIsEnabled(true);
+	m_BtnQuest->SetIsEnabled(true);
+	m_BtnUpgrade->SetIsEnabled(true);
+	m_BtnEquipment->SetIsEnabled(true);
+	m_BtnGacha->SetIsEnabled(true);
+	m_BtnShop->SetIsEnabled(true);
+	m_BtnMenu->SetIsEnabled(true);
+	//
 	UpdateBossText(0);
 	HideBossUI();
 	SetBossTimer();

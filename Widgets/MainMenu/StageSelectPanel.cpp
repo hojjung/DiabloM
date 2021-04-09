@@ -29,9 +29,25 @@ void UStageSelectPanel::NativeOnInitialized()
 	m_AryStageBtn[Current]->SetCurrent();
 
 	UDiabloGameInstance::Get->m_DungeonManager->m_OnDgOpen.AddUObject(this,&UStageSelectPanel::UpdateBtnUI);
+	//
+	// m_StageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
+	// m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
+	// //
+	// m_BtnShowNormalDg->OnClicked.AddDynamic(this,&UStageSelectPanel::OpenNormalDg);
+	// m_BtnShowGoldDg->OnClicked.AddDynamic(this,&UStageSelectPanel::OpenGoldDg);
 }
 
 void UStageSelectPanel::UpdateBtnUI(int index)
 {
 	m_AryStageBtn[index]->SetCurrent();
+}
+
+void UStageSelectPanel::OpenNormalDg()
+{
+	m_StageBtnListVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+}
+
+void UStageSelectPanel::OpenGoldDg()
+{
+	m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }

@@ -42,6 +42,8 @@ public:
 
 	static UDataTable* MonsterEntityTable;
 
+	static UDataTable* GoldDungeonDataTable;
+
 	//FItemDropTableRow
 	//FMonsterEntity
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDgOpen,int);
@@ -54,6 +56,8 @@ protected:
 	UMonsterSpawnManager* m_MonsterManager;
 	
 	const FDungeonDataTableRow* m_CurrentDg;
+
+	
 
 	UPROPERTY()
 	int m_nMyMaxStageLevel;
@@ -68,6 +72,10 @@ protected:
 	//보스는 1회만?
 	//그럼 결국 던전이 킬카운트 가지고 있어야한다
 
+protected://GoldDg
+	TArray<const FDungeonDataTableRow*> m_AryGoldDgDataTable;
+
+	const FDungeonDataTableRow* m_CurrentGoldDg;
 public:
 	void Init(UMonsterSpawnManager*  mMang);
 
@@ -82,7 +90,9 @@ public:
 		return m_AryDgDataTable;
 	}
 
-	void SelectDungeon(int index);
+	void SelectNormalDungeon(int index);
+
+	void SelectGoldDungeon(int index);
 
 	void LevelUpDungeon();//Call By Boss
 

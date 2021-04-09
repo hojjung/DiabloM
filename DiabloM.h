@@ -121,3 +121,5 @@ static FString EnumToString(const FString& enumName, const T value)
 typedef  TBigInt<480,true> BigInt;
 //#define LOCTEXT_NAMESPACE "FMyEditorExtensionModule"
 //#undef LOCTEXT_NAMESPACE
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnTick,float);

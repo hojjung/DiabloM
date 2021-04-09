@@ -23,15 +23,6 @@ void UDiaSkillUseButton::Init(int index)
 		this, &UDiaSkillUseButton::CustomTickForBind);
 }
 
-UDiaSkillUseButton::~UDiaSkillUseButton()
-{
-	//pl con already destoryed
-	// if(UDiabloGameInstance::Get&&UDiabloGameInstance::Get->GetWorld()&&UDiabloGameInstance::Get->GetPlCon())
-	// {
-	// 	UDiabloGameInstance::Get->GetPlCon()->m_OnTick.Remove(m_DeleHandle);
-	// }
-}
-
 void UDiaSkillUseButton::SetSkillSpec(FSkillSpec* skillSpec)
 {
 	if (!skillSpec)
