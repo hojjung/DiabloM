@@ -436,7 +436,7 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 	else if (name == "Skill02") //버프 공격
 	{
 		m_QueDmgType.Empty();
-		StartBuff01(22);
+		StartBuff01(20);
 	}
 	else if (name == "Skill03") //휠윈드
 	{
@@ -451,7 +451,7 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 	else if (name == "Skill05") //버프 공속
 	{
 		m_QueDmgType.Empty();
-		StartBuff02(22);
+		StartBuff02(17);
 	}
 }
 

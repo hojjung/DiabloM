@@ -34,7 +34,7 @@ public:
 	
 	FOnMenuOpen m_OnMenuVisibleChanged;
 
-protected:
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UCanvasPanel* m_MainCanvas;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))

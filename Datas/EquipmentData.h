@@ -43,7 +43,7 @@ public:
 			
 			for(int i=0; i<IterMax;i++)
 			{
-				Dmg.MultiplyFast(34);	
+				Dmg.MultiplyFast(6);	
 			}
 		}
 

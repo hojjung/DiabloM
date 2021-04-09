@@ -6,6 +6,7 @@
 
 #include "UniformGridSlot.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Widgets/MainCanvas.h"
 
 UDailyRewardPanel::~UDailyRewardPanel()
 {
@@ -59,7 +60,13 @@ void UDailyRewardPanel::Init()
 
 	bool IsNewCreatePlayer = UDiabloGameInstance::Get->m_PlayfabManager->m_bIsNewCreatePlayer;
 
-	if(!IsNewCreatePlayer&&OfflineHours<20)
+	if(IsNewCreatePlayer || OfflineHours>=20)
+	{
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->SetActiveMenuPanel();
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelMenu->OpenDailyPanel();
+		ClaimReward();
+	}
+	else
 	{
 		SetIsEnabled(false);
 
@@ -71,7 +78,6 @@ void UDailyRewardPanel::Init()
 		{
 			m_AryElements[m_nDDay]->Claimed();	
 		}
-		
 	}
 }
 
@@ -114,7 +120,7 @@ void UDailyRewardPanel::CreateDailyButton(int maxCount)
 
 			CreatedCard->SetDailyRewardElement(Index+1,m_AryClaimGemstone[Index]);
 
-			CreatedCard->m_BtnClaimReward->OnClicked.AddDynamic(this,&UDailyRewardPanel::ClaimReward);
+			//CreatedCard->m_BtnClaimReward->OnClicked.AddDynamic(this,&UDailyRewardPanel::ClaimReward);
 
 			Index++;
 		}		
