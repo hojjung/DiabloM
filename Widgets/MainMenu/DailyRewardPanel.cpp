@@ -48,7 +48,7 @@ void UDailyRewardPanel::Init()
 	m_AryClaimGemstone.Add(600);
 	m_AryClaimGemstone.Add(6000);
 
-	int OfflineHours = UDiabloGameInstance::Get->m_PlayfabManager->m_nOfflineHours;//순서안맞음
+	int OfflineHours = UDiabloGameInstance::Get->m_ShopManager->m_nOfflineHours;//순서안맞음
 	
 	int MaxDay = m_AryClaimGemstone.Num();
 
@@ -58,7 +58,7 @@ void UDailyRewardPanel::Init()
 
 	PRINTF("OfflineHours:%d",OfflineHours);
 
-	bool IsNewCreatePlayer = UDiabloGameInstance::Get->m_PlayfabManager->m_bIsNewCreatePlayer;
+	bool IsNewCreatePlayer = UDiabloGameInstance::Get->m_ShopManager->m_bIsFirstTime;
 
 	if(IsNewCreatePlayer || OfflineHours>=20)
 	{
@@ -143,11 +143,15 @@ void UDailyRewardPanel::ClaimReward()
 	{
 		m_nDDay=0;
 	}
-
-	UDiabloGameInstance::Get->m_ShopManager->m_nDDay = m_nDDay; 
+	
+	UDiabloGameInstance::Get->m_ShopManager->m_nDDay = m_nDDay;
+	
+	UDiabloGameInstance::Get->m_ShopManager->m_DailyRewardClaimTime = FDateTime::Now().UtcNow();
 	
 	UDiabloGameInstance::Get->m_QuestManager->AddGemStones(GemStoneAmount);
+	
 	UDiabloGameInstance::Get->m_QuestManager->RequestGemStoneUploadToServer();
+	
 	UDiabloGameInstance::Get->m_PlayfabManager->UploadIAPData();
 }
 

@@ -80,7 +80,14 @@ void UChatManager::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr 
 		m_bIsWaitingGetChatRequest = false;
 
 		if (bWasSuccessful)
-			m_OnChatReceive.Broadcast(Response->GetContentAsString());
+		{
+			FString ChatContent = Response->GetContentAsString();
+
+			//ChatContent = URLDecode(ChatContent);
+
+			m_OnChatReceive.Broadcast(ChatContent);
+		}
+			
 	}
 	else if (Request->GetVerb()=="POST")
 	{
@@ -101,6 +108,9 @@ void UChatManager::FilterBadWord(FString& outChatWant)
 	{
 		outChatWant = outChatWant.Replace(*BadWord,TEXT("*"));
 	}
+
+	FString PercentPrevent = TEXT("%");
+	outChatWant = outChatWant.Replace(*PercentPrevent,TEXT("퍼센트"));
 }
 
 void UChatManager::Tick(float deltaTime)
@@ -123,26 +133,7 @@ void UChatManager::Tick(float deltaTime)
 	}
 }
 
-void UChatManager::ChatPost(const FText& chatWant)
-{
-	FText CachedText = chatWant;
 
-	CachedText = UKismetTextLibrary::TextTrimPrecedingAndTrailing(CachedText);
-
-	FString CachedString = CachedText.ToString();
-
-	FilterBadWord(CachedString);
-
-	FString FormatStr = FString::Printf(
-		TEXT("ranking=%d&nickname=%s&chat=%s"), UDiabloGameInstance::Get->m_PlayfabManager->GetSafeRanking(),
-		*UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname, *CachedString);
-
-	HttpCall(WebURL, "POST", &FormatStr);
-
-	m_fDeltaCounter=0.f;
-	
-	m_bIsWaitingGetChatRequest = false;
-}
 
 FString UChatManager::URLEncode(FString url)
 {
@@ -216,12 +207,28 @@ FString UChatManager::URLDecode(FString url)
 	return str;
 }
 
+void UChatManager::ChatPost(const FText& chatWant)
+{
+	FText CachedText = chatWant;
+
+	FString CachedString = CachedText.ToString();
+
+	FilterBadWord(CachedString);
+
+	FString FormatStr = FString::Printf(
+        TEXT("ranking=%d&nickname=%s&chat=%s"), UDiabloGameInstance::Get->m_PlayfabManager->GetSafeRanking(),
+        *UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname, *CachedString);
+
+	HttpCall(WebURL, "POST", &FormatStr);
+
+	m_fDeltaCounter=0.f;
+	
+	m_bIsWaitingGetChatRequest = false;
+}
 
 void UChatManager::SummonChatPost(const FText& gachaName)
 {
 	FText CachedText = gachaName;
-
-	CachedText = UKismetTextLibrary::TextTrimPrecedingAndTrailing(CachedText);
 
 	FString CachedString = CachedText.ToString();
 

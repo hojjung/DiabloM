@@ -90,6 +90,14 @@ FString UPlayfabManager::GetIAPDataStr()
 	DDayStr.AppendChar(TEXT('/'));
 
 	IAPResult.Append(DDayStr);
+	//
+	FDateTime RewardClaimTime = UDiabloGameInstance::Get->m_ShopManager->m_DailyRewardClaimTime;
+
+	FString ClaimTimeStr = RewardClaimTime.ToString();
+	
+	ClaimTimeStr.AppendChar(TEXT('/'));
+	
+	IAPResult.Append(ClaimTimeStr);
 
 	
 	return IAPResult;
@@ -668,12 +676,10 @@ void UPlayfabManager::OnSuccessTimeGet(const PlayFab::ClientModels::FGetTimeResu
 		
 	int Minuts =  OfflineTimeSpawn.GetTotalMinutes();
 
-	m_nOfflineHours=  OfflineTimeSpawn.GetTotalHours();
-	
 	PRINTF("LastLogin%s,CurrentTime:%s,TimeSpan:%s,Minutes:%d",*m_LastLoginTime.ToString(),*m_CurrentTime.ToString(),*OfflineTimeSpawn.ToString(),Minuts);
 	
 	UDiabloGameInstance::Get->m_GoldManager->SetOfflineMinutes(Minuts);
-	UDiabloGameInstance::Get->m_ShopManager->SetOfflineHours(m_nOfflineHours);
+	UDiabloGameInstance::Get->m_ShopManager->SetOfflineHours(m_CurrentTime);
 }
 
 void UPlayfabManager::RequestRetrieveTotalRanking()

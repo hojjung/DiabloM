@@ -121,8 +121,6 @@ public://loaded data
 
 	TArray<FString> m_AryIAPData;
 
-	UPROPERTY()
-	int m_nOfflineHours;
 	
 protected://rank
 	UPROPERTY()

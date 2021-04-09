@@ -3,33 +3,58 @@
 #include "DiabloGameInstance.h"
 #include "Widgets/GachaMenu/GachaPanel.h"
 
+UShopManager::UShopManager()
+{
+	m_nOfflineHours=-1;
+	m_nDDay = 0;
+	m_bIsFirstTime = false;
+}
+
 void UShopManager::SetShopDataFromServer()
 {
 	const TArray<FString>& AryItemBought = UDiabloGameInstance::Get->m_PlayfabManager->m_AryIAPData;
 
 	//0~6,2개제외
-	m_PackagePurchased.Init(false,5);
+	m_PackagePurchased.Init(false, 5);
 	m_PackagePurchased[0] = AryItemBought[1].ToBool();
 	m_PackagePurchased[1] = AryItemBought[2].ToBool();
 	m_PackagePurchased[2] = AryItemBought[3].ToBool();
 	m_PackagePurchased[3] = AryItemBought[4].ToBool();
 	m_PackagePurchased[4] = AryItemBought[5].ToBool();
 
-	UDiabloGameInstance::Get->m_GachaManager->SetGachaLevel(AryItemBought[6],AryItemBought[7]);
+	UDiabloGameInstance::Get->m_GachaManager->SetGachaLevel(AryItemBought[6], AryItemBought[7]);
 
 	UDiabloGameInstance::Get->m_DungeonManager->m_OnDungeonMaxUpdate.AddUObject(this, &UShopManager::UpdateGold);
+}
 
-	m_nDDay = 0;
+void UShopManager::SetOfflineHours(FDateTime& currentTime)
+{
+	m_bIsFirstTime = UDiabloGameInstance::Get->m_PlayfabManager->m_bIsNewCreatePlayer;
 	
-	if(AryItemBought.Num()>=10)
+	const TArray<FString>& AryItemBought = UDiabloGameInstance::Get->m_PlayfabManager->m_AryIAPData;
+
+	if (AryItemBought.Num() >= 10) //정상적인 업데이트 된사람
 	{
 		m_nDDay = FCString::Atoi(*AryItemBought[9]);
 	}
-}
+	
+	if (AryItemBought.Num() >= 11) //정상적인 업데이트 된사람
+	{
+		m_bIsFirstTime = false;
+		
+		FDateTime LastDailyClaimTime;
+		
+		if(FDateTime::Parse(AryItemBought[10],LastDailyClaimTime))
+		{
+			FTimespan DailyRewardTimeSpen = currentTime - LastDailyClaimTime;
 
-void UShopManager::SetOfflineHours(int offHours)
-{
-	m_nOfflineHours=offHours;
+			m_nOfflineHours = DailyRewardTimeSpen.GetTotalHours();
+		}
+	}
+	else//데이터 없음 처음으로 인식
+	{
+		m_bIsFirstTime = true;
+	}
 
 	m_OnOfflineHoursSet.Broadcast();
 }
@@ -401,7 +426,7 @@ void UShopManager::OnPurchasedGainItem(FString itemID)
 
 void UShopManager::ShowBannerAD(bool b)
 {
-	if (b && (!GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion)&&!m_PackagePurchased[0])
+	if (b && (!GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion) && !m_PackagePurchased[0])
 	{
 		UKismetSystemLibrary::ShowAdBanner(0, false);
 		m_OnShowAdBanner.Broadcast(true);
@@ -422,11 +447,11 @@ bool UShopManager::GetPackagePurchased(int index)
 FString UShopManager::GetIAPDataStr()
 {
 	FString Result = FString::Printf(TEXT("True/%s/%s/%s/%s/%s/"),
-		m_PackagePurchased[0] ?  TEXT("True"):TEXT("False"),
-		m_PackagePurchased[1] ?  TEXT("True"):TEXT("False"),
-		m_PackagePurchased[2] ?  TEXT("True"):TEXT("False"),
-		m_PackagePurchased[3] ?  TEXT("True"):TEXT("False"),
-		m_PackagePurchased[4] ?  TEXT("True"):TEXT("False"));
+	                                 m_PackagePurchased[0] ? TEXT("True") : TEXT("False"),
+	                                 m_PackagePurchased[1] ? TEXT("True") : TEXT("False"),
+	                                 m_PackagePurchased[2] ? TEXT("True") : TEXT("False"),
+	                                 m_PackagePurchased[3] ? TEXT("True") : TEXT("False"),
+	                                 m_PackagePurchased[4] ? TEXT("True") : TEXT("False"));
 
 	return Result;
 }

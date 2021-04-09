@@ -16,6 +16,7 @@ void UChatText::SetChat(const FString& chat)
 
 	//CachedChat = CachedChat.TrimStart();
 	CachedChat.RemoveFromEnd(TEXT("\r"));
+
 	
 	TArray<FString> OutStrAry;
 	
@@ -27,7 +28,7 @@ void UChatText::SetChat(const FString& chat)
 		FString Ranking = OutStrAry[0];
 	
 		FString Nickname = OutStrAry[1];
-	
+
 		FString ChatText = OutStrAry[2];
 
 		FString FormatStr = FString::Printf(
