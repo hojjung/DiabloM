@@ -51,7 +51,7 @@ void USetNickname::ConfirmNoti()
 	
 }
 
-void USetNickname::ShowNotification(FString& str)
+void USetNickname::ShowNotification(const FString& str)
 {
 	m_bRequestLock=false;
 	m_CanvasNotification->SetVisibility(ESlateVisibility::SelfHitTestInvisible);

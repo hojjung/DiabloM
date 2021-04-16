@@ -75,22 +75,6 @@ void ADiabloGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if(!m_bGoldOfflineLock&&m_GoldManager->GetIsServerTimeGained())
-	{
-		m_bGoldOfflineLock=true;
-
-		if(!m_GoldManager->GainOfflineGold())
-		{
-			return;
-		}
-		
-		AGameLevelHUD* GameLevelHUD = Cast<AGameLevelHUD>( UDiabloGameInstance::Get->GetPlCon()->GetHUD());
-
-		GameLevelHUD->ShowOfflineGoldWindow(m_GoldManager->GetFinalOfflineGold());
-		
-		//SetActorTickEnabled(false);
-	}
-
 	m_PlManager->TickTryUpdateUserData(DeltaSeconds);
 	m_PlUpgrade->Tick(DeltaSeconds);
 	m_ChatManager->Tick(DeltaSeconds);

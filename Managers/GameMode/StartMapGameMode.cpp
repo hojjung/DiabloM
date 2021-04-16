@@ -1,6 +1,5 @@
 #include "StartMapGameMode.h"
 #include "PlayFabServerDataModels.h"
-#include "Characters/InitPlayerController.h"
 #include "Core/PlayFabClientAPI.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/DiabloGameInstance.h"
@@ -9,10 +8,6 @@
 
 AStartMapGameMode::AStartMapGameMode()
 {
-	PlayerControllerClass = AInitPlayerController::StaticClass();
-	//DefaultPawnClass = APlayerDiabloCharacter::StaticClass();
-	//GameStateClass = ADiaGameState::StaticClass();
-	//PlayerStateClass = ADiaPlayerState::StaticClass();
 	HUDClass = AInitLevelHUD::StaticClass();
 
 }
@@ -20,29 +15,7 @@ AStartMapGameMode::AStartMapGameMode()
 void AStartMapGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	//UDiabloGameInstance::Get->m_PlayfabManager->RequestVersionCheck();
-}
 
-void AStartMapGameMode::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->m_bIsNicknameSet)
-	{
-		return;	
-	}
-	//m_bIsNicknameSet
-
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->m_bIsLoginCompleted)
-	{
-		return;	
-	}
-
+	UGameplayStatics::GetPlayerController(this,0)->bShowMouseCursor=true;
 	
-	if(!m_bLock)
-	{
-		UDiabloGameInstance::Get->m_DungeonManager->OpenLevel();
-
-		m_bLock=true;
-	}
 }

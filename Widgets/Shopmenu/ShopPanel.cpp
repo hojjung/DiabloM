@@ -31,7 +31,7 @@ void UShopPanel::NativeOnInitialized()
 
 	m_ShopManager = UDiabloGameInstance::Get->m_ShopManager; 
 	
-	m_ShopManager->m_OnUpdateGold.AddUObject(this,&UShopPanel::OnUpdateGoldShop);
+	m_ShopManager->m_OnUpdateShopGold.AddUObject(this,&UShopPanel::OnUpdateGoldShop);
 	m_ShopManager->UpdateGold();
 	//
 	m_PackageItem01->SetVisibility(ESlateVisibility::SelfHitTestInvisible);

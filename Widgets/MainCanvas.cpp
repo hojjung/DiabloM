@@ -58,8 +58,6 @@ void UMainCanvas::NativeOnInitialized()
 
 	m_GameExitWindow->Cancel();
 	
-	m_OfflineGoldPanel->SetVisibility(ESlateVisibility::Collapsed);
-
 	OnTouchBanHide();
 	//
 	UDiabloGameInstance::Get->m_MonsterSpawn->m_OnBossBattleStart.AddUObject(this,&UMainCanvas::OnBossBattleStart);
@@ -118,11 +116,6 @@ void UMainCanvas::RequestText(FString txt)
 	RequestText(FText::FromString(txt));
 }
 
-void UMainCanvas::ShowOfflineGoldWindow(BigInt gold)
-{
-	m_OfflineGoldPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	m_OfflineGoldPanel->SetOfflineGold(gold);
-}
 
 void UMainCanvas::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {

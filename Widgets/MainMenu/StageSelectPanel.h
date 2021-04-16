@@ -21,9 +21,21 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnShowGoldDg;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnShowStatDg;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnShowAcceDg;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnBack;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UScrollBox* m_StageTypeSelectVert;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UScrollBox* m_DgGoldStageBtnListVert;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UScrollBox* m_StageBtnListVert;
+	UScrollBox* m_DgStageBtnListVert;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UScrollBox* m_DgAcceStageBtnListVert;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UScrollBox* m_DgStatBtnListVert;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UStageBtn> m_ClassStageBtn;
 	UPROPERTY()
@@ -39,6 +51,12 @@ public:
 	void OpenNormalDg();
 	UFUNCTION()
     void OpenGoldDg();
+	UFUNCTION()
+	void OpenStatDg();
+	UFUNCTION()
+    void OpenAcceDg();
+	UFUNCTION()
+	void Back();
 };
 
 

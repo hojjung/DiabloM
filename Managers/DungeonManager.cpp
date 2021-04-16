@@ -115,6 +115,11 @@ BigInt UDungeonManager::GetCurrentDungeonBounty()
 	return m_CurrentDg->GetMobGold();
 }
 
+BigInt UDungeonManager::GetMaxDungeonBounty()
+{
+	return m_AryDgDataTable[GetMaxStage()]->GetMobGold();
+}
+
 int UDungeonManager::GetMaxStage() const
 {
 	int CachedStage = m_nSafeMaxStageLevel ^ 1423;
@@ -205,7 +210,13 @@ int UDungeonManager::GetLevelBonus()
 
 FString UDungeonManager::GetDgDataStr()
 {
-	return FString::Printf(TEXT("%d:%d"),GetCurrentStage(),GetMaxStage());
+	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+
+	JsonObject->SetNumberField(TEXT("CurrentStageLevel"), GetCurrentStage());
+
+	JsonObject->SetNumberField(TEXT("MaxStageLevel"), GetMaxStage());
+
+	return PlayFab::FJsonKeeper(JsonObject).toJSONString();
 }
 
 void UDungeonManager::LoadLevelComplete(UWorld* world)

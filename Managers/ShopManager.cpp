@@ -3,13 +3,6 @@
 #include "DiabloGameInstance.h"
 #include "Widgets/GachaMenu/GachaPanel.h"
 
-UShopManager::UShopManager()
-{
-	m_nOfflineHours=-1;
-	m_nDDay = 0;
-	m_bIsFirstTime = false;
-}
-
 void UShopManager::SetShopDataFromServer()
 {
 	const TArray<FString>& AryItemBought = UDiabloGameInstance::Get->m_PlayfabManager->m_AryIAPData;
@@ -27,37 +20,7 @@ void UShopManager::SetShopDataFromServer()
 	UDiabloGameInstance::Get->m_DungeonManager->m_OnDungeonMaxUpdate.AddUObject(this, &UShopManager::UpdateGold);
 }
 
-void UShopManager::SetOfflineHours(FDateTime& currentTime)
-{
-	m_bIsFirstTime = UDiabloGameInstance::Get->m_PlayfabManager->m_bIsNewCreatePlayer;
-	
-	const TArray<FString>& AryItemBought = UDiabloGameInstance::Get->m_PlayfabManager->m_AryIAPData;
-
-	if (AryItemBought.Num() >= 10) //정상적인 업데이트 된사람
-	{
-		m_nDDay = FCString::Atoi(*AryItemBought[9]);
-	}
-	
-	if (AryItemBought.Num() >= 11) //정상적인 업데이트 된사람
-	{
-		m_bIsFirstTime = false;
-		
-		FDateTime LastDailyClaimTime;
-		
-		if(FDateTime::Parse(AryItemBought[10],LastDailyClaimTime))
-		{
-			FTimespan DailyRewardTimeSpen = currentTime - LastDailyClaimTime;
-
-			m_nOfflineHours = DailyRewardTimeSpen.GetTotalHours();
-		}
-	}
-	else//데이터 없음 처음으로 인식
-	{
-		m_bIsFirstTime = true;
-	}
-
-	m_OnOfflineHoursSet.Broadcast();
-}
+#pragma region IAP
 
 void UShopManager::PurchasePacakge01()
 {
@@ -233,58 +196,58 @@ void UShopManager::UpdateGold()
 
 	m_Gold03 = Bounty;
 
-	m_OnUpdateGold.Broadcast(m_Gold01, m_Gold02, m_Gold03);
+	m_OnUpdateShopGold.Broadcast(m_Gold01, m_Gold02, m_Gold03);
 }
 
 void UShopManager::RollGachaOneTime()
 {
-	ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
-
-	switch (RollType)
-	{
-	case RollWeapon: PurchaseGachaWeapon01();
-		break;
-	case RollSkin: PurchaseGachaSkin01();
-		break;
-	case RollPet: PurchaseGachaPet01();
-		break;
-	case RollAccessory: PurchaseGachaAccessory01();
-		break;
-	}
+	// ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
+	//
+	// switch (RollType)
+	// {
+	// case RollWeapon: PurchaseGachaWeapon01();
+	// 	break;
+	// case RollSkin: PurchaseGachaSkin01();
+	// 	break;
+	// case RollPet: PurchaseGachaPet01();
+	// 	break;
+	// case RollAccessory: PurchaseGachaAccessory01();
+	// 	break;
+	// }
 }
 
 void UShopManager::RollGachaElevenTime()
 {
-	ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
-
-	switch (RollType)
-	{
-	case RollWeapon: PurchaseGachaWeapon11();
-		break;
-	case RollSkin: PurchaseGachaSkin11();
-		break;
-	case RollPet: PurchaseGachaPet11();
-		break;
-	case RollAccessory: PurchaseGachaAccessory11();
-		break;
-	}
+	// ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
+	//
+	// switch (RollType)
+	// {
+	// case RollWeapon: PurchaseGachaWeapon11();
+	// 	break;
+	// case RollSkin: PurchaseGachaSkin11();
+	// 	break;
+	// case RollPet: PurchaseGachaPet11();
+	// 	break;
+	// case RollAccessory: PurchaseGachaAccessory11();
+	// 	break;
+	// }
 }
 
 void UShopManager::RollGachaFiftyTime()
 {
-	ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
-
-	switch (RollType)
-	{
-	case RollWeapon: PurchaseGachaWeapon55();
-		break;
-	case RollSkin: PurchaseGachaSkin55();
-		break;
-	case RollPet: PurchaseGachaPet55();
-		break;
-	case RollAccessory: PurchaseGachaAccessory55();
-		break;
-	}
+	// ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
+	//
+	// switch (RollType)
+	// {
+	// case RollWeapon: PurchaseGachaWeapon55();
+	// 	break;
+	// case RollSkin: PurchaseGachaSkin55();
+	// 	break;
+	// case RollPet: PurchaseGachaPet55();
+	// 	break;
+	// case RollAccessory: PurchaseGachaAccessory55();
+	// 	break;
+	// }
 }
 
 void UShopManager::OnPurchasedGainItem(FString itemID)
@@ -362,67 +325,58 @@ void UShopManager::OnPurchasedGainItem(FString itemID)
 	}
 	else if (itemID == TEXT("gachaweapon01"))
 	{
-		m_GachaPanel->RollGachaWeaponOneTime();
+		//UDiabloGameInstance::Get->m_GachaManager->RollGachaWeaponOneTime();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaweapon11"))
 	{
-		m_GachaPanel->RollGachaWeaponElevenTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaweapon55"))
 	{
-		m_GachaPanel->RollGachaWeaponFiftyTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaskin01"))
 	{
-		m_GachaPanel->RollGachaSkinOneTime();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaskin11"))
 	{
-		m_GachaPanel->RollGachaSkinElevenTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaskin55"))
 	{
-		m_GachaPanel->RollGachaSkinFiftyTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachapet01"))
 	{
-		m_GachaPanel->RollGachaPetOneTime();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachapet11"))
 	{
-		m_GachaPanel->RollGachaPetElevenTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachapet55"))
 	{
-		m_GachaPanel->RollGachaPetFiftyTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaaccessory01"))
 	{
-		m_GachaPanel->RollGachaAccessoryOneTime();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaaccessory11"))
 	{
-		m_GachaPanel->RollGachaAccessoryElevenTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaaccessory55"))
 	{
-		m_GachaPanel->RollGachaAccessoryFiftyTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 
 	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData();
 }
+
+#pragma endregion IAP
 
 void UShopManager::ShowBannerAD(bool b)
 {

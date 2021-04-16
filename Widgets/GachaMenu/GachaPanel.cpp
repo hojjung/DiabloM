@@ -14,7 +14,6 @@ void UGachaPanel::NativeOnInitialized()
 	m_GachaManager = UDiabloGameInstance::Get->m_GachaManager;
 
 	m_ShopManager = UDiabloGameInstance::Get->m_ShopManager;
-	m_ShopManager->m_GachaPanel = this;
 
 	//m_BtnViewAds->SetVisibility(ESlateVisibility::Collapsed);
 	m_BtnShowWeaponGachaRate->OnClicked.AddDynamic(this, &UGachaPanel::ShowWeaponGachaInfo);

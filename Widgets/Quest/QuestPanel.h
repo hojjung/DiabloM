@@ -24,6 +24,8 @@ protected:
 public:
 	virtual void NativeOnInitialized() override;
 
+	virtual void SetVisibility(ESlateVisibility InVisibility) override;
+
 	UFUNCTION()
 	void ClosePanel();
 

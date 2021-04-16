@@ -1,14 +1,11 @@
-// My First Hack n Slash
-
-
 #include "InitLevelHUD.h"
 
 #include "ConstructorHelpers.h"
+#include "GameStartCanvas.h"
 
 AInitLevelHUD::AInitLevelHUD()
 {
-	//WidgetBlueprint'/Game/Blueprints/NewWidget/WB_NicknameSet.WB_NicknameSet'
-	ConstructorHelpers::FClassFinder<USetNickname> FoundW(TEXT("WidgetBlueprint'/Game/Blueprints/Widget/StartMenu/WB_NicknameSet.WB_NicknameSet_C'"));
+	ConstructorHelpers::FClassFinder<UGameStartCanvas> FoundW(TEXT("WidgetBlueprint'/Game/Blueprints/Widget/StartMenu/WB_GameStartCanvas.WB_GameStartCanvas_C'"));
 
 	m_ClassWidget = FoundW.Class;
 }
@@ -16,15 +13,13 @@ AInitLevelHUD::AInitLevelHUD()
 void AInitLevelHUD::BeginPlay()
 {
 	Super::BeginPlay();
-	//SetInputMode(FInputModeUIOnly());
-	m_Canvas = CreateWidget<USetNickname>(GetWorld(), m_ClassWidget);
+	
+	m_Canvas = CreateWidget<UGameStartCanvas>(GetWorld(), m_ClassWidget);
 
 	if(m_Canvas)
 	{
 		m_Canvas->AddToViewport();
 	}
-
-	m_Canvas->HideNicknameSet();
 }
 
 void AInitLevelHUD::ReqeustPopupText(FText str)

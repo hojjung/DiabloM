@@ -1,13 +1,10 @@
-// My First Hack n Slash
-
 #pragma once
 
 #include "CoreMinimal.h"
-
-#include "SetNickname.h"
 #include "Widgets/MyHUD.h"
 #include "InitLevelHUD.generated.h"
 
+class UGameStartCanvas;
 /**
  * 
  */
@@ -18,11 +15,10 @@ class DIABLOM_API AInitLevelHUD : public AMyHUD
 public:
 	AInitLevelHUD();
 
-	
 	UPROPERTY()
-	TSubclassOf<USetNickname> m_ClassWidget;
+	TSubclassOf<UGameStartCanvas> m_ClassWidget;
 	UPROPERTY()
-	USetNickname* m_Canvas;
+	UGameStartCanvas* m_Canvas;
 
 	virtual void BeginPlay() override;
 

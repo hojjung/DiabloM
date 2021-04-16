@@ -57,8 +57,7 @@ public:
 	UFUNCTION()
 	void ConfirmNoti();
 
-	void ShowNotification(FString& str);
-
+	void ShowNotification(const FString& str);
 
 	void HideNicknameSet();
 

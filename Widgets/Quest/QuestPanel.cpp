@@ -30,11 +30,26 @@ void UQuestPanel::NativeOnInitialized()
 	}
 }
 
+void UQuestPanel::SetVisibility(ESlateVisibility InVisibility)
+{
+	Super::SetVisibility(InVisibility);
+
+	if(InVisibility==ESlateVisibility::Hidden || InVisibility==ESlateVisibility::Collapsed)
+	{
+		if(UDiabloGameInstance::Get->m_ShopManager)
+		{
+			UDiabloGameInstance::Get->m_ShopManager->ShowBannerAD(true);	
+		}
+		if(UDiabloGameInstance::Get->m_QuestManager)
+		{
+			UDiabloGameInstance::Get->m_QuestManager->RequestGemStoneUploadToServer();	
+		}
+	}
+}
+
 void UQuestPanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
-	UDiabloGameInstance::Get->m_ShopManager->ShowBannerAD(true);
-	UDiabloGameInstance::Get->m_QuestManager->RequestGemStoneUploadToServer();
 }
 
 void UQuestPanel::UpdateQuest(int index)

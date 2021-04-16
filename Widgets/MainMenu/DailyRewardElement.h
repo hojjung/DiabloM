@@ -25,6 +25,9 @@ public:
 	int m_nGemStones;
 public:
 	void SetDailyRewardElement(int dday,int gemstoneAmount);
-	
+
+	UFUNCTION()
 	void Claimed();
+	
+	void SetClaimAble();
 };

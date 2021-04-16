@@ -20,7 +20,17 @@ class ANavigationData;
 class AMonsterPawn;
 struct FDungeonDataRow;
 
+USTRUCT()
+struct FDungeonDataSpec
+{
+	GENERATED_BODY()
 
+public:
+	UPROPERTY(EditAnywhere)
+	int m_nCurrentStage;
+	UPROPERTY(EditAnywhere)
+	int m_nMaxStage;
+};
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDungeonCreate,bool);
 
@@ -97,6 +107,8 @@ public:
 	void LevelUpDungeon();//Call By Boss
 
 	BigInt GetCurrentDungeonBounty();
+
+	BigInt GetMaxDungeonBounty();
 
 	int GetMaxStage() const;
 

@@ -245,8 +245,8 @@ void UEquipManager::SetEquipDataFromServer(const FString& classSkin, const FStri
                                            const FString& pet, const FString& acce)
 {
 	SetStringSkinUnlocked(classSkin);
-	SetStringWingUnlocked(wing);
 	SetStringWeaponUnlocked(weapon);
+	SetStringWingUnlocked(wing);
 	SetStringPetUnlocked(pet);
 	SetStringAccesoryUnlocked(acce);
 }

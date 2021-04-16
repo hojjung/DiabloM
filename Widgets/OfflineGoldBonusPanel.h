@@ -36,7 +36,7 @@ protected:
 public:
 	virtual void NativeOnInitialized() override;
 	
-	void SetOfflineGold(BigInt gold);
+	void SetOfflineGold(BigInt gold,int minute);
 
 	UFUNCTION()
 	void OnConfirm();

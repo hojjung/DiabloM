@@ -34,7 +34,7 @@ class DIABLOM_API UPlayfabManager : public UObject
 public://delegate
 	
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnVirtualCurrencyChanged,int);
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayfabError,FString&);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayfabError,const FString&);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRankReceived,const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>&);
 	
 	FOnRankReceived m_OnTotalRankReceived;
@@ -58,6 +58,9 @@ public://static
 	static const FString Pet;
 	static const FString Accessory;
 	static const FString IAP;
+	static const FString Daily;
+	static const FString Inbox;
+	static const FString Gacha;
 	//
 public://user data
 	UPROPERTY()
@@ -73,13 +76,14 @@ public://user data
 
 	FDateTime m_CurrentTime;
 
-	
 	bool m_bIsNewCreatePlayer;
+
+	FString m_ServerCloseOpenTime;
+
+	FString m_ServerVersion;
 
 
 public://loaded data
-	UPROPERTY()
-	bool m_bVersionChecked = false;
 	UPROPERTY()
 	bool m_bIsNicknameSet = false;
 	UPROPERTY()
@@ -88,6 +92,10 @@ public://loaded data
 	bool m_bLoginProcessStarted = false;
 	UPROPERTY()
 	bool m_bIsLoginCompleted = false;
+	UPROPERTY()
+	bool m_bIsServerClosed = false;
+	UPROPERTY()
+	bool m_bIsVersionWrong = false;
 	UPROPERTY()
 	float m_fDeltaCountMinutePlaytime;
 	UPROPERTY()
@@ -117,11 +125,13 @@ public://loaded data
 	UPROPERTY()
 	FString m_LoadedNickname;
 	UPROPERTY()
-	FString m_CurrentVersionName=TEXT("TEST0321");//RELEASE0408
+	FString m_CurrentVersionName;//RELEASE0408
 
 	TArray<FString> m_AryIAPData;
 
-	
+	int m_nLocalGemStone;
+
+	TArray<PlayFab::ClientModels::FTitleNewsItem> m_TitleNews;
 protected://rank
 	UPROPERTY()
 	int m_nRanking;
@@ -139,6 +149,9 @@ public://init
 
 	void Init();
 	
+	void RequestUploadNewPlayerData();
+	
+	
 
 protected:
 	TMap<FString,PlayFab::ClientModels::FCatalogItem> m_MapCatalogItems;
@@ -154,6 +167,8 @@ protected:
 	
 	void OnErrorPlayfabReq(const FFailRslt& ErrorResult);
 
+	FDateTime DecodePlayfabTimeToUe4Time(FString playfabTime);
+
 public:
 
 	bool GetIsLogined()
@@ -168,9 +183,12 @@ public:
 
 	void RequestSetNickname(FString str);
 
-	void RequestGetUserData();
+	void RequestGetUserData01();
 
+	void RequestGetUserData02();
 
+	void RequestInboxList();
+	
 	UFUNCTION()
     void BuyIAP(FString itemId,bool bIsConsumable);
 
@@ -187,12 +205,20 @@ public:
 
 	void RequestVersionCheck();
 
+	void RequestServerOpenCheck();
+
 	void RequestGetServerTime();
+
+	void RequestTitleNews();
 	
 protected:
+	void OnSuccessGetInbox(const FGetUsrDataRslt& result);
+	
 	void OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result);
 
-	void OnSuccessGetUserData(const FGetUsrDataRslt& result);
+	void OnSuccessGetUserData01(const FGetUsrDataRslt& result);
+
+	void OnSuccessGetUserData02(const FGetUsrDataRslt& result);
 
 	void OnSuccessGetAccountInfo(const FGetAccntInfoRslt& rslt);
 	
@@ -206,11 +232,15 @@ protected:
 
 	void OnNickNameSetSuccess(const  PlayFab::ClientModels::FUpdateUserTitleDisplayNameResult&);
 
-	void OnCloudScriptSuccess(const FExeCScriptRslt& rslt);
+	void OnStageCompleteScriptSuccess(const FExeCScriptRslt& rslt);
 
 	void OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rslt);
 
+	void OnServerCloseCheckScriptSuccess(const FExeCScriptRslt& rslt);
+
 	void OnSuccessGetPlayerAroundRanking(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult&);
+
+	void OnSuccessGetTitleNews(const PlayFab::ClientModels::FGetTitleNewsResult&);
 
 public:
 	void RequestRetrieveTotalRanking();
@@ -255,12 +285,17 @@ public:
 
 	void UploadIAPData();
 
-
 	void UploadGold(BigInt gold);
+
+	void UploadOfflineGold(BigInt gold);
 
 	void UploadDungeonData(int currentDungeon,int maxDungeon);
 
 	void OnBossBattleStart();
+	//
+	void RequestItemTest();
 
+	void UploadDailyData(int dday,const FDateTime claimTime);
 };
+
 

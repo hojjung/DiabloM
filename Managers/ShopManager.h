@@ -17,38 +17,19 @@ class DIABLOM_API UShopManager : public UObject
 {
 	GENERATED_BODY()
 public:
-	UShopManager();
-	
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnUpdateGold,const BigInt&,const BigInt&,const BigInt&);
 	DECLARE_MULTICAST_DELEGATE(FOnItemPurchased);
-	DECLARE_MULTICAST_DELEGATE(FOnOfflineHoursSet);
-
-	FOnOfflineHoursSet m_OnOfflineHoursSet;
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnShowAdBanner,bool);
 
 	FOnItemPurchased m_OnItemPurchased;
 	
-	FOnUpdateGold m_OnUpdateGold;
-
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnShowAdBanner,bool);
+	FOnUpdateGold m_OnUpdateShopGold;
 
 	FOnShowAdBanner m_OnShowAdBanner;
 
-	UPROPERTY()
-	UGachaPanel* m_GachaPanel;
-
-	UPROPERTY()
-	int m_nDDay;
-	UPROPERTY()
-	int m_nOfflineHours;
-	UPROPERTY()
-	bool m_bIsFirstTime;
-
-	FDateTime m_DailyRewardClaimTime;
 public:
 	void SetShopDataFromServer();
 	
-	void SetOfflineHours(FDateTime& currentTime);
-
 protected:
 	TArray<bool> m_PackagePurchased;
 	

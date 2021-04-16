@@ -39,6 +39,7 @@ public:
 	void SetGachaLevel(const FString weaponGacha,const FString playerGacha);
 
 	FString GetGachaLevelStr();
+	
 public:
 	UPROPERTY()
 	int m_nCurrentWeaponIndex;
@@ -110,4 +111,5 @@ public:
 	{
 		return m_nGachaWeaponMaxCount[m_nCurrentWeaponIndex];
 	}
+
 };

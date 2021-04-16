@@ -122,8 +122,6 @@ public:
 
 	void RequestText(FString txt);
 	
-	void ShowOfflineGoldWindow(BigInt gold);
-
 protected:
 	FTimerHandle m_TextTimer;
 	

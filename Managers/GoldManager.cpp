@@ -8,14 +8,17 @@
 
 UGoldManager::UGoldManager()
 {
-	m_nMinute = 0;
-	m_bIsServerMinuteGained = false;
+	m_nOfflineMinutes = -1;
+	m_bIsReceivedOfflineGoldThisTime = false;
 }
 
-void UGoldManager::SetCurrentGold(const FString& v)
+void UGoldManager::SetCurrentGold(const FString& v, bool bIsNewCreatedPlayer, const FDateTime& currentTime,
+                                  const FDateTime& lastLoginTime, const FDateTime& lastLogoutTime)
 {
 	m_CurrentGold.Parse(v);
 	PRINTF("SetGold:%s", *UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_CurrentGold));
+
+	SetOfflineMinutes(bIsNewCreatedPlayer, currentTime, lastLoginTime, lastLogoutTime);
 	m_OnGoldChanged.Broadcast();
 }
 
@@ -86,25 +89,44 @@ bool UGoldManager::SubtractGold(const BigInt& v)
 	return true;
 }
 
-bool UGoldManager::GainOfflineGold()
+void UGoldManager::SetOfflineMinutes(bool bIsNewCreatedPlayer, const FDateTime& currentTime,
+                                     const FDateTime& lastLoginTime, const FDateTime& lastLogoutTime)
 {
-	if (m_nMinute < 2)
+	if (bIsNewCreatedPlayer)
 	{
-		return false;
+		return;
 	}
 
-	if(UDiabloGameInstance::Get->m_PlayfabManager->m_bIsNewCreatePlayer)
+	if (m_bIsReceivedOfflineGoldThisTime)
 	{
-		return false;
+		return;
 	}
 
-	m_nMinute = FMath::Clamp(m_nMinute, 1, 1440);
+	FTimespan OfflineTimeSpawn;
 
-	BigInt Bounty = UDiabloGameInstance::Get->m_DungeonManager->GetCurrentDungeonBounty();
+	bool LogoutTimeIsValid = (lastLogoutTime - lastLoginTime).GetTotalMinutes() > 0; //check time fixed device
 
-	
+	if (LogoutTimeIsValid)
+	{
+		OfflineTimeSpawn = currentTime - lastLogoutTime;
+	}
+	else
+	{
+		OfflineTimeSpawn = currentTime - lastLoginTime;
+	}
 
-	Bounty.Multiply(5 * m_nMinute);
+	m_nOfflineMinutes = OfflineTimeSpawn.GetTotalMinutes();
+
+	if (m_nOfflineMinutes < 2)
+	{
+		return;
+	}
+
+	m_nOfflineMinutes = FMath::Clamp(m_nOfflineMinutes, 2, 1440);
+
+	BigInt Bounty = UDiabloGameInstance::Get->m_DungeonManager->GetMaxDungeonBounty();
+
+	Bounty.Multiply(3 * m_nOfflineMinutes);
 
 	if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce08).m_nLv > 0)
 	{
@@ -112,24 +134,24 @@ bool UGoldManager::GainOfflineGold()
 			Bounty, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce08).m_Value);
 	}
 
-	m_OfflineGold = AddGold(Bounty,false);
-
-	m_bIsServerMinuteGained = false;
-
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData();
-
-	return true;
-}
-
-void UGoldManager::SetOfflineMinutes(int minutes)
-{
-	m_nMinute = minutes;
-
-	m_bIsServerMinuteGained = true;
+	m_OfflineGold = AddGold(Bounty, false);
 }
 
 FString UGoldManager::GetGoldDataStr()
 {
-	return GetCurrentGold().ToString();	
+	return GetCurrentGold().ToString();
 }
 
+bool UGoldManager::IsOfflineGoldAvailable()
+{
+	return !m_bIsReceivedOfflineGoldThisTime && m_nOfflineMinutes >= 2;
+}
+
+void UGoldManager::Confirm()
+{
+	m_bIsReceivedOfflineGoldThisTime = true;
+
+	m_nOfflineMinutes = -1;
+
+	m_OfflineGold.Zero();
+}
