@@ -6,6 +6,7 @@
 #include "EquipManager.h"
 #include "GachaManager.h"
 #include "GoldManager.h"
+#include "InboxManager.h"
 #include "NavigationSystem.h"
 #include "PlayerUpgradeManager.h"
 #include "QuestManager.h"
@@ -59,6 +60,8 @@ public:
 	UShopManager* m_ShopManager;
 	UPROPERTY()
 	UDailyPrizeManager* m_DailyManager;
+	UPROPERTY()
+	UInboxManager* m_InboxManager;
 	
 protected:
 	virtual void Init() override;

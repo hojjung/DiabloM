@@ -36,6 +36,7 @@ void UDiabloGameInstance::Init()
 	m_QuestManager= NewObject<UQuestManager>();
 	m_ShopManager= NewObject<UShopManager>();
 	m_DailyManager= NewObject<UDailyPrizeManager>();
+	m_InboxManager= NewObject<UInboxManager>();
     //
     m_PlayfabManager = NewObject<UPlayfabManager>();
     m_PlayfabManager->Init();

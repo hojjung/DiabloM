@@ -43,6 +43,8 @@ UPlayfabManager::UPlayfabManager()
 	SetRanking(-123);
 	
 	m_CurrentVersionName=TEXT("0410NEEDFIX");
+
+	m_bIsCustomID=false;
 	//
 }
 
@@ -263,6 +265,13 @@ void UPlayfabManager::OnServerCloseCheckScriptSuccess(const FExeCScriptRslt& rsl
 	//ServerCloseOpenTime
 }
 
+void UPlayfabManager::OnInboxRefreshSuccess(const FExeCScriptRslt& rslt)
+{
+	FString CachedJsonString = rslt.FunctionResult.toJSONString();
+
+	UpdateInboxListToClient(CachedJsonString);
+}
+
 
 void UPlayfabManager::Init()
 {
@@ -301,7 +310,7 @@ void UPlayfabManager::Init()
 	request.CreateAccount = true;
 	request.CustomId = TEXT("JungPC TestID3");
 	request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
-
+	m_bIsCustomID = true;
 	bool Result = GetClientAPI->LoginWithCustomID(request,
 	                                              PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
 		                                              this, &UPlayfabManager::OnSuccessPlayfabLogin),
@@ -440,6 +449,10 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 
 	if(m_bIsNewCreatePlayer)
 	{
+		if(m_bIsCustomID)
+		{
+			
+		}
 		RequestUploadNewPlayerData();
 
 		return;
@@ -487,19 +500,34 @@ void UPlayfabManager::RequestGetUserData02()
 	GetClientAPI->GetUserData(req,FGetUsrDataDele::CreateUObject(this, &UPlayfabManager::OnSuccessGetUserData02),
         FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
+void UPlayfabManager::RequestClaimInbox(int index)//
+{
+	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 
+	JsonObject->SetNumberField(TEXT("Index"), index);
+
+	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
+	
+	Req.FunctionParameter = PlayFab::FJsonKeeper(JsonObject);
+	
+	Req.FunctionName = TEXT("ClaimInbox");
+	
+	Req.GeneratePlayStreamEvent = true;
+	
+	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnInboxRefreshSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
 void UPlayfabManager::RequestInboxList()
 {
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Get User Data02", "유저 데이터 가져오는 중 02"));
-	FGetUsrDataReq req;
-
-	//Request Data
-	req.PlayFabId = m_PlayfabID;
-	req.Keys.Add(Inbox);
-
-	GetClientAPI->GetUserData(req,FGetUsrDataDele::CreateUObject(this, &UPlayfabManager::OnSuccessGetInbox),
-        FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
+	
+	Req.FunctionName = TEXT("RefreshInbox");
+	
+	Req.GeneratePlayStreamEvent = true;
+	
+	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnInboxRefreshSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+	//
 }
+
 
 void UPlayfabManager::OnErrorPlayfabReq(const FFailRslt& ErrorResult)
 {
@@ -640,6 +668,8 @@ void UPlayfabManager::OnSuccessGetAccountInfo(const FGetAccntInfoRslt& rslt)
 
 	RequestServerOpenCheck();
 }
+
+
 
 void UPlayfabManager::BuyIAP(FString itemId, bool bIsConsumable)
 {
@@ -846,28 +876,39 @@ void UPlayfabManager::RequestTitleNews()
 	GetClientAPI->GetTitleNews(Req,PlayFab::UPlayFabClientAPI::FGetTitleNewsDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetTitleNews),PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
-void UPlayfabManager::OnSuccessGetInbox(const FGetUsrDataRslt& result)
+void UPlayfabManager::UpdateInboxListToClient(FString InboxListStr)
 {
-	if(!result.Data.Contains(Inbox))
+	TArray<FInboxSpec> AryInbox;
+	
+	AryInbox.Reserve(20);
+	
+	if(!FJsonObjectConverter::JsonArrayStringToUStruct(InboxListStr, &AryInbox, 0, 0))
 	{
 		return;
 	}
+
+	for(auto& InboxRef : AryInbox)
+	{
+		InboxRef.m_ExpireTimeUTC = DecodePlayfabTimeToUe4Time(InboxRef.ExpireTime);
+
+		FString EpxireItmeUTCStr =InboxRef.m_ExpireTimeUTC.ToString(); 
 	
-	FString InboxListStr =result.Data[Inbox].Value; 
-	TArray<FInboxSpec> data;
-	FJsonObjectConverter::JsonArrayStringToUStruct(InboxListStr, &data, 0, 0);
+		FTimespan OfflineTimeSpawn = InboxRef.m_ExpireTimeUTC - m_CurrentTime;
+		
+		int Minutes = OfflineTimeSpawn.GetTotalMinutes();
+		
+		if(Minutes<1)
+		{
+			PRINTF("Minutes Expired");
+			InboxRef.m_bIsExpired = true;
+		}
+	}
 	
+	//AryInbox.Shrink();
 	
-	// FJsonObjectConverter::JsonObjectToUStruct(JsonObject,AryInbox,);
-	//
-	// FString MailName = JsonObject->GetStringField(TEXT("MailName"));
-	// FString MailDesc = JsonObject->GetStringField(TEXT("MailDesc"));
-	// FString ItemID = JsonObject->GetStringField(TEXT("ItemID"));
-	// int ItemAmount = JsonObject->GetIntegerField(TEXT("ItemAmount"));
-	//
-	// FString DateTimeISO = JsonObject->GetStringField(TEXT("ExpireTime"));
-	// FDateTime ExpireTime = DecodePlayfabTimeToUe4Time(DateTimeISO);
+	UDiabloGameInstance::Get->m_InboxManager->SetInboxManager(AryInbox);
 }
+
 
 void UPlayfabManager::OnSuccessGetPlayerAroundRanking(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult& rslt)
 {
@@ -924,34 +965,10 @@ void UPlayfabManager::OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirt
 	m_OnGemstoneChanged.Broadcast(rslt.Balance);
 }
 
-void UPlayfabManager::UploadQuestData(const FString& data)
-{
-	PlayFab::ClientModels::FUpdateUserDataRequest Req;
-	Req.Permission=PlayFab::ClientModels::UserDataPermission::UserDataPermissionPublic;
-	
-	Req.Data.Add(Quest,data);
-
-	GetClientAPI->UpdateUserData(Req,nullptr,
-		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
-}
-
-
-
-void UPlayfabManager::UploadUpgradeData(const FString& data)
-{
-	PlayFab::ClientModels::FUpdateUserDataRequest Req;
-	Req.Permission=PlayFab::ClientModels::UserDataPermission::UserDataPermissionPublic;
-	
-	Req.Data.Add(StatSkill,data);
-
-	GetClientAPI->UpdateUserData(Req,nullptr,
-        PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
-}
-
 void UPlayfabManager::UploadEquipData(const FString& weaponData, const FString& skinData, const FString& petData,
 	const FString& accessoryData, const FString& wingData)
 {
-	PlayFab::ClientModels::FUpdateUserDataRequest Req;
+	FUpdateReq Req;
 	Req.Permission=PlayFab::ClientModels::UserDataPermission::UserDataPermissionPublic;
 	
 	Req.Data.Add(Weapon,weaponData);
@@ -966,7 +983,7 @@ void UPlayfabManager::UploadEquipData(const FString& weaponData, const FString& 
 
 void UPlayfabManager::UploadIAPData()
 {
-	PlayFab::ClientModels::FUpdateUserDataRequest Req;
+	FUpdateReq Req;
 	Req.Permission=PlayFab::ClientModels::UserDataPermission::UserDataPermissionPublic;
 	
 	Req.Data.Add(IAP,GetIAPDataStr());
@@ -979,7 +996,7 @@ void UPlayfabManager::UploadDungeonData(int currentDungeon, int maxDungeon)
 {
 	FString DgStr = FString::Printf(TEXT("%d:%d"),currentDungeon,maxDungeon);
 	
-	PlayFab::ClientModels::FUpdateUserDataRequest Req;
+	FUpdateReq Req;
 	Req.Permission=PlayFab::ClientModels::UserDataPermission::UserDataPermissionPublic;
 	
 	Req.Data.Add(Dg,DgStr);
@@ -1007,7 +1024,7 @@ void UPlayfabManager::UploadDailyData(int dday, const FDateTime claimTime)
 	JsonObject->SetNumberField(TEXT("DDay"), dday);
 	JsonObject->SetStringField(TEXT("ClaimTime"), claimTime.ToString());
 	//
-	PlayFab::ClientModels::FUpdateUserDataRequest Req;
+	FUpdateReq Req;
 	Req.Permission=PlayFab::ClientModels::UserDataPermission::UserDataPermissionPublic;
 	
 	Req.Data.Add(Daily,PlayFab::FJsonKeeper(JsonObject).toJSONString());
@@ -1016,20 +1033,20 @@ void UPlayfabManager::UploadDailyData(int dday, const FDateTime claimTime)
         PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
-void UPlayfabManager::UploadGold(BigInt gold)
+void UPlayfabManager::UploadQuestData(const FString& data)
 {
 	PlayFab::ClientModels::FUpdateUserDataRequest Req;
 	Req.Permission=PlayFab::ClientModels::UserDataPermission::UserDataPermissionPublic;
 	
-	Req.Data.Add(Gold,gold.ToString());
+	Req.Data.Add(Quest,data);
 
 	GetClientAPI->UpdateUserData(Req,nullptr,
         PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
-void UPlayfabManager::UploadOfflineGold(BigInt gold)
+void UPlayfabManager::UploadGold(BigInt gold)
 {
-	PlayFab::ClientModels::FUpdateUserDataRequest Req;
+	FUpdateReq Req;
 	Req.Permission=PlayFab::ClientModels::UserDataPermission::UserDataPermissionPublic;
 	
 	Req.Data.Add(Gold,gold.ToString());

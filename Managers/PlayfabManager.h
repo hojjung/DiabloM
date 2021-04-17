@@ -1,5 +1,6 @@
 #pragma once
 #include "DiabloM.h"
+#include "InboxManager.h"
 #include "OnlineError.h"
 #include "OnlineStoreInterface.h"
 #include "PlayFab.h"
@@ -82,7 +83,8 @@ public://user data
 
 	FString m_ServerVersion;
 
-
+	bool m_bIsCustomID;
+	
 public://loaded data
 	UPROPERTY()
 	bool m_bIsNicknameSet = false;
@@ -150,8 +152,6 @@ public://init
 	void Init();
 	
 	void RequestUploadNewPlayerData();
-	
-	
 
 protected:
 	TMap<FString,PlayFab::ClientModels::FCatalogItem> m_MapCatalogItems;
@@ -188,6 +188,8 @@ public:
 	void RequestGetUserData02();
 
 	void RequestInboxList();
+
+	void RequestClaimInbox(int index);
 	
 	UFUNCTION()
     void BuyIAP(FString itemId,bool bIsConsumable);
@@ -211,8 +213,9 @@ public:
 
 	void RequestTitleNews();
 	
+	void UpdateInboxListToClient(FString InboxListStr);
+
 protected:
-	void OnSuccessGetInbox(const FGetUsrDataRslt& result);
 	
 	void OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result);
 
@@ -237,6 +240,8 @@ protected:
 	void OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rslt);
 
 	void OnServerCloseCheckScriptSuccess(const FExeCScriptRslt& rslt);
+
+	void OnInboxRefreshSuccess(const FExeCScriptRslt& rslt);
 
 	void OnSuccessGetPlayerAroundRanking(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult&);
 
@@ -277,17 +282,11 @@ public:
 
 	void OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
 
-	void UploadQuestData(const FString& data);
-
-	void UploadUpgradeData(const FString& data);
-
 	void UploadEquipData(const FString& weaponData,const FString& skinData,const FString& petData,const FString& accessoryData,const FString& wingData);
 
 	void UploadIAPData();
 
 	void UploadGold(BigInt gold);
-
-	void UploadOfflineGold(BigInt gold);
 
 	void UploadDungeonData(int currentDungeon,int maxDungeon);
 
@@ -296,6 +295,8 @@ public:
 	void RequestItemTest();
 
 	void UploadDailyData(int dday,const FDateTime claimTime);
+
+	void UploadQuestData(const FString& data);
 };
 
 

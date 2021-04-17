@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "UObject/NoExportTypes.h"
 #include "InboxManager.generated.h"
 
@@ -14,7 +14,7 @@ USTRUCT(BlueprintType)
 struct FInboxSpec 
 {
 	GENERATED_USTRUCT_BODY()
-	
+public:
 	UPROPERTY(EditAnywhere)
 	FString MailName;
 	UPROPERTY(EditAnywhere)
@@ -22,7 +22,13 @@ struct FInboxSpec
     UPROPERTY(EditAnywhere)
     FString ItemID;
 	UPROPERTY(EditAnywhere)
+	FString ItemAmount;
+	UPROPERTY(EditAnywhere)
 	FString ExpireTime;
+	
+	FDateTime m_ExpireTimeUTC;
+
+	bool m_bIsExpired = false;
 };
 
 UCLASS()
@@ -32,12 +38,26 @@ class DIABLOM_API UInboxManager : public UObject
 
 public:
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnInboxUpdated,const TArray<FInboxSpec>&);
+	
 	FOnInboxUpdated m_OnInboxUpdated;
+	
 protected:
 	TArray<FInboxSpec> m_AryInbox;
+
+protected:
+	void ClaimItem(FString itemID,int amount);
 	
 public:
 	void SetInboxManager(TArray<FInboxSpec>& inboxSpec);
 
 	void RefreshInbox();
+
+	void ClaimInbox(int index);
+
+	void ClaimAll();
+
+	FORCEINLINE const TArray<FInboxSpec>& GetAryInbox()
+	{
+		return m_AryInbox;
+	}
 };

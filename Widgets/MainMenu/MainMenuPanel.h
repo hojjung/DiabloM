@@ -8,6 +8,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuPanel.generated.h"
 
+class UInboxPanel;
 /**
  * 
  */
@@ -40,7 +41,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	URankingPanel* m_PanelRanking;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUserWidget* m_PanelMail;
+	UInboxPanel* m_PanelMail;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDailyRewardPanel* m_PanelDaily;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))

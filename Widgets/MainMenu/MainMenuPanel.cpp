@@ -1,5 +1,7 @@
 #include "MainMenuPanel.h"
 
+
+#include "InboxPanel.h"
 #include "Managers/DiabloGameInstance.h"
 
 
