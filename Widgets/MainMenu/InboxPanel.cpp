@@ -53,8 +53,13 @@ void UInboxPanel::SetInboxElement(const TArray<FInboxSpec>& aryInboxSpecs)
 
 	if(aryInboxSpecs.Num()<1)
 	{
+		m_TextMailCount->SetText(FText::AsNumber(0));
+		m_TextLoading->SetText(FText::FromString(TEXT("우편 업음")));
+		m_TextLoading->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		return;
 	}
+
+	m_TextLoading->SetVisibility(ESlateVisibility::Collapsed);
 	
 	int i=0;
 
@@ -70,6 +75,18 @@ void UInboxPanel::SetInboxElement(const TArray<FInboxSpec>& aryInboxSpecs)
 	}
 
 	m_TextMailCount->SetText(FText::AsNumber(i));
+}
+
+void UInboxPanel::SetVisibility(ESlateVisibility InVisibility)
+{
+	Super::SetVisibility(InVisibility);
+
+	if(InVisibility==ESlateVisibility::SelfHitTestInvisible || InVisibility==ESlateVisibility::Visible)
+	{
+		m_TextLoading->SetText(FText::FromString(TEXT("우편 로딩중")));
+		m_TextLoading->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		UDiabloGameInstance::Get->m_PlayfabManager->RequestInboxList();	
+	}
 }
 
 void UInboxPanel::ClaimAll()

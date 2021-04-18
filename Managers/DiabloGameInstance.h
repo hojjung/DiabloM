@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AdvertiseManager.h"
 #include "ChatManager.h"
 #include "DailyPrizeManager.h"
 #include "DiabloM.h"
@@ -62,6 +63,8 @@ public:
 	UDailyPrizeManager* m_DailyManager;
 	UPROPERTY()
 	UInboxManager* m_InboxManager;
+	UPROPERTY()
+	UAdvertiseManager* m_AdverManager;
 	
 protected:
 	virtual void Init() override;

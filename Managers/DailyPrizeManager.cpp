@@ -4,6 +4,7 @@
 #include "DailyPrizeManager.h"
 
 #include "DiabloGameInstance.h"
+#include "JsonSerializer.h"
 
 UDailyPrizeManager::UDailyPrizeManager()
 {
@@ -38,18 +39,33 @@ UDailyPrizeManager::UDailyPrizeManager()
 	m_bIsAbleGetDailyPrize=false;
 }
 
-void UDailyPrizeManager::SetPrizeManager(bool isFirst,const FDateTime& currentTime,const FDateTime& lastClaimTime,int lastDay)//json?
+void UDailyPrizeManager::SetPrizeManager(const FString& prizeJsonStr,const FDateTime& currentTime,bool bIsFirst)//json?
 {
-	m_nDDay=lastDay;
+	TSharedPtr<FJsonObject> JsonObject;
 
-	if(isFirst)
+	TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(prizeJsonStr);
+	
+	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		return;	
+	}
+	
+	FString ClaimTimeStr = JsonObject->GetStringField(TEXT("ClaimTime"));
+	//
+	FDateTime ClaimTime;
+	
+	FDateTime::Parse(ClaimTimeStr,ClaimTime);
+	
+	m_nDDay=JsonObject->GetIntegerField(TEXT("Dday"));
+
+	if(bIsFirst)
 	{
 		m_bIsAbleGetDailyPrize = true;
 
 		return;
 	}
 	
-	FTimespan DailyRewardTimeSpen = currentTime - lastClaimTime;
+	FTimespan DailyRewardTimeSpen = currentTime - ClaimTime;
 
 	int Hours = DailyRewardTimeSpen.GetTotalHours();
 

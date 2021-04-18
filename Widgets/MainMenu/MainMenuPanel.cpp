@@ -30,7 +30,7 @@ void UMainMenuPanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
 
-	UDiabloGameInstance::Get->m_ShopManager->ShowBannerAD(true);
+	UDiabloGameInstance::Get->m_AdverManager->ShowBannerAD(true);
 }
 
 void UMainMenuPanel::OpenPlayerInfoPanel()

@@ -54,9 +54,9 @@ void ADiabloGameMode::StartPlay()
 	AGameLevelHUD* MyHud = Cast<AGameLevelHUD>( UDiabloGameInstance::Get->GetPlCon()->GetHUD());
 	MyHud->m_Canvas->m_OnMenuVisibleChanged.AddUObject(this,&ADiabloGameMode::OnMenuOpen);
 
-	//UDiabloGameInstance::Get->m_GoldManager->GainOfflineGold();
-
-	
+	//Test
+	//UDiabloGameInstance::Get->m_AdverManager->ShowInterstitialAds();
+	//UDiabloGameInstance::Get->m_AdverManager->ShowRewardAds();
 }
 
 void ADiabloGameMode::OnMenuOpen(bool b)

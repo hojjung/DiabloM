@@ -19,16 +19,15 @@ class DIABLOM_API UShopManager : public UObject
 public:
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnUpdateGold,const BigInt&,const BigInt&,const BigInt&);
 	DECLARE_MULTICAST_DELEGATE(FOnItemPurchased);
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnShowAdBanner,bool);
+	
 
 	FOnItemPurchased m_OnItemPurchased;
 	
 	FOnUpdateGold m_OnUpdateShopGold;
-
-	FOnShowAdBanner m_OnShowAdBanner;
+	
 
 public:
-	void SetShopDataFromServer();
+	void SetShopDataFromServer(const FString iapJsonStr);
 	
 protected:
 	TArray<bool> m_PackagePurchased;
@@ -103,7 +102,7 @@ UFUNCTION()
 
 	void OnPurchasedGainItem(FString itemID);
 
-	void ShowBannerAD(bool b);
+	
 
 	bool GetPackagePurchased(int index);
 

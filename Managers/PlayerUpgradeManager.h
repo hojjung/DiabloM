@@ -77,7 +77,7 @@ protected:
 	TArray<FSkillSpec*> m_AryEquippedSkillSpec;
 	
 public:
-	void SetUpgradeDataFromServer(const FString& statskill);
+	void SetUpgradeDataFromServer(const FString& statJsonStr,const FString& skillJsonStr);
 	//
 	//UpgradeAtkDmg01
 public:

@@ -12,12 +12,9 @@ UGoldManager::UGoldManager()
 	m_bIsReceivedOfflineGoldThisTime = false;
 }
 
-void UGoldManager::SetCurrentGold(const FString& v, bool bIsNewCreatedPlayer, const FDateTime& currentTime,
-                                  const FDateTime& lastLoginTime, const FDateTime& lastLogoutTime)
+void UGoldManager::SetCurrentGold(const FString& v, bool bIsNewCreatedPlayer, const FDateTime& currentTime,const FDateTime& lastLoginTime, const FDateTime& lastLogoutTime)
 {
 	m_CurrentGold.Parse(v);
-	PRINTF("SetGold:%s", *UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(m_CurrentGold));
-
 	SetOfflineMinutes(bIsNewCreatedPlayer, currentTime, lastLoginTime, lastLogoutTime);
 	m_OnGoldChanged.Broadcast();
 }

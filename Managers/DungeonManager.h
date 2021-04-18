@@ -89,12 +89,12 @@ protected://GoldDg
 public:
 	void Init(UMonsterSpawnManager*  mMang);
 
+	void SetDungeonData(const FString& dgJsonStr);
+
 	void OpenLevel();
 	
 	void LoadLevelComplete(UWorld* world);
 	
-	void SetDungeonLevel(const FString& currentDG);
-
 	FORCEINLINE const TArray<const FDungeonDataTableRow*>& GetAryDgData() const
 	{
 		return m_AryDgDataTable;

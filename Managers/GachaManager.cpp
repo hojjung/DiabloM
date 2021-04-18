@@ -1,6 +1,7 @@
 #include "GachaManager.h"
 
 #include "DiabloGameInstance.h"
+#include "JsonSerializer.h"
 #include "Datas/GachaDataTable.h"
 
 UDataTable* UGachaManager::AryWeaponGachaDataTable[8];
@@ -109,21 +110,22 @@ UGachaManager::UGachaManager()
 	m_nGachaSkinMaxCount[7] = 4000;
 }
 
-void UGachaManager::SetGachaLevel(const FString weaponGacha, const FString playerGacha)
+void UGachaManager::SetGachaLevel(const FString gachaJsonStr)
 {
-	TArray<FString> WeaponGachaSpec;
+	TSharedPtr<FJsonObject> JsonObject;
 
-	weaponGacha.ParseIntoArray(WeaponGachaSpec,TEXT(":"));
-
-	TArray<FString> SkinGachaSpec;
-
-	playerGacha.ParseIntoArray(SkinGachaSpec,TEXT(":"));
-
-	m_nCurrentWeaponIndex = FCString::Atoi(*WeaponGachaSpec[0]);
-	m_nGachaWeaponCount = FCString::Atoi(*WeaponGachaSpec[1]);
+	TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(gachaJsonStr);
 	
-	m_nCurrentSkinIndex = FCString::Atoi(*SkinGachaSpec[0]);
-	m_nGachaSkinCount = FCString::Atoi(*SkinGachaSpec[1]);
+	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		return;	
+	}
+	
+	m_nCurrentWeaponIndex = JsonObject->GetIntegerField(TEXT("GachaWeaponLv"));
+	m_nGachaWeaponCount =JsonObject->GetIntegerField(TEXT("GachaWeaponCurrent"));
+	
+	m_nCurrentSkinIndex =JsonObject->GetIntegerField(TEXT("GachaSkinLv"));
+	m_nGachaSkinCount =JsonObject->GetIntegerField(TEXT("GachaSkinCurrent"));
 }
 
 FString UGachaManager::GetGachaLevelStr()

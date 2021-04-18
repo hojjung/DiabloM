@@ -36,15 +36,18 @@ enum class EAccessory :uint8
 
 class UPlayfabManager;
 
-
+//레벨업그레이드 있는 장비는 레벨0이 잠김,레벨1이 해금,그이상이 레벨임
 USTRUCT()
 struct FWeaponSpec
 {
 	GENERATED_BODY()
 public:
-	int m_nLv =0;
-	int m_nIsEquipped = 0;
-	int m_nStackCount = 0;
+	UPROPERTY(EditAnywhere)
+	int Level = 0;
+	UPROPERTY(EditAnywhere)
+	bool IsEquipped = false;
+	UPROPERTY(EditAnywhere)
+	int StackCount = 0;
 	BigInt m_Value;
 	BigInt m_LvlUpCost;
 	const FWeaponTable* m_EquipData;
@@ -76,18 +79,6 @@ public:
 
 		return StrW;
 	}
-
-	void ParseFromString(const FString& str)
-	{
-		TArray<FString> OutStrAry;
-	
-		str.ParseIntoArray(OutStrAry,TEXT(":"));
-
-		m_nLv = FCString::Atoi(*OutStrAry[0]);
-		m_nIsEquipped = FCString::Atoi(*OutStrAry[1]);
-		m_nStackCount = FCString::Atoi(*OutStrAry[2]);
-	}
-	
 };
 
 
@@ -96,9 +87,13 @@ struct FPlayerClassSpec
 {
 	GENERATED_BODY()
 public:
-	int m_nIsUnlocked = 0;
-	int m_nIsEquipped = 0;
-	int m_nStackCount = 0;
+	UPROPERTY(EditAnywhere)
+	bool IsUnlocked = false;
+	UPROPERTY(EditAnywhere)
+	bool IsEquipped = false;
+	UPROPERTY(EditAnywhere)
+	int StackCount = 0;
+	
 	float m_fAttackSpeed=1.f;
 	const FPlayerSkinTable* m_PlayerData;
 
@@ -120,16 +115,6 @@ public:
 		return StrW;
 	}
 
-	void ParseFromString(const FString& str)
-	{
-		TArray<FString> OutStrAry;
-	
-		str.ParseIntoArray(OutStrAry,TEXT(":"));
-
-		m_nIsUnlocked = FCString::Atoi(*OutStrAry[0]);
-		m_nIsEquipped = FCString::Atoi(*OutStrAry[1]);
-		m_nStackCount = FCString::Atoi(*OutStrAry[2]);
-	}
 };
 
 USTRUCT()
@@ -137,9 +122,12 @@ struct FWingSpec
 {
 	GENERATED_BODY()
 public:
-	int m_nIsUnlocked = 0;
-	int m_nIsEquipped = 0;
-	int m_nStackCount = 0;
+	UPROPERTY(EditAnywhere)
+	bool IsUnlocked = false;
+	UPROPERTY(EditAnywhere)
+	bool IsEquipped = false;
+	UPROPERTY(EditAnywhere)
+	int StackCount = 0;
 	const FWingTable* m_WingData;
 
 	FString ParseToString()
@@ -173,9 +161,12 @@ struct FPetSpec
 {
 	GENERATED_BODY()
 public:
-	int m_nLv =0;
-	int m_nIsEquipped = 0;
-	int m_nStackCount = 0;
+	UPROPERTY(EditAnywhere)
+	int Level = 0;
+	UPROPERTY(EditAnywhere)
+	bool IsEquipped = false;
+	UPROPERTY(EditAnywhere)
+	int StackCount = 0;
 	
 	BigInt m_GoldBonusValue;
 	BigInt m_LvlUpCost;
@@ -219,8 +210,12 @@ struct FAccessorySpec
 {
 	GENERATED_BODY()
 public:
-	int m_nLv =0;
-	int m_nStackCount;
+	UPROPERTY(EditAnywhere)
+	bool IsUnlocked = false;
+	UPROPERTY(EditAnywhere)
+	bool IsEquipped = false;
+	UPROPERTY(EditAnywhere)
+	int StackCount = 0;
 	
 	BigInt m_Value;
 	int m_LvlUpCost;//combine level up
@@ -311,8 +306,6 @@ protected:
 	
 	void SetStringSkinUnlocked(FString skinUnlock);
 	
-	void SetStringWingUnlocked(FString wingUnlock);
-	
 	void SetStringWeaponUnlocked(FString weaponUnlock);
 	
 	void SetStringPetUnlocked(FString petUnlock);
@@ -320,7 +313,7 @@ protected:
 	void SetStringAccesoryUnlocked(FString acceUnlock);
 
 public:
-	void SetEquipDataFromServer(const FString& classSkin,const FString& weapon,const FString& wing,const FString& pet,const FString& acce);
+	void SetEquipDataFromServer(const FString& classSkin, const FString& weapon,const FString& pet);
 
 	void EquipAll();
 	

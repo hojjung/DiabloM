@@ -420,15 +420,10 @@ public:
 		return StrW;
 	}
 
-	void ParseFromString(const FString& str)
+	void InitSkillSpec(int lv, int index)
 	{
-		TArray<FString> OutStrAry;
-	
-		str.ParseIntoArray(OutStrAry,TEXT(":"));
-
-		m_nLv = FCString::Atoi(*OutStrAry[0]);
-		SetLevel(m_nLv);
-		m_nIndex = FCString::Atoi(*OutStrAry[1]);
+		SetLevel(lv);
+		m_nIndex = index;
 	}
 
 	bool IsCooldownReady()

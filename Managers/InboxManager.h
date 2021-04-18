@@ -50,8 +50,6 @@ protected:
 public:
 	void SetInboxManager(TArray<FInboxSpec>& inboxSpec);
 
-	void RefreshInbox();
-
 	void ClaimInbox(int index);
 
 	void ClaimAll();

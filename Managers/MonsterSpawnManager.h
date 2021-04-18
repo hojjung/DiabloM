@@ -70,6 +70,8 @@ protected:
 	TSharedPtr<FStreamableHandle> m_LoadedMonster;
 
 	TSharedPtr<FStreamableHandle> m_LoadedGoblin;
+	UPROPERTY()
+	UDataTable* m_MobEntityTable;
 	
 protected:
 	FVector GetRandomPointFromNav(const FVector& loc,const float& radius);
@@ -89,7 +91,7 @@ protected:
 	void SetSpawnMonsterOnTick(const bool bEnabled);
 
 public:
-	
+	void Init();
 	
 	void Reset();
 

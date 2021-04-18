@@ -36,7 +36,7 @@ public:
 	static UDataTable* WingGachaDataTable;
 	static UDataTable* AccessoryGachaDataTable;
 
-	void SetGachaLevel(const FString weaponGacha,const FString playerGacha);
+	void SetGachaLevel(const FString gachaJsonStr);
 
 	FString GetGachaLevelStr();
 	

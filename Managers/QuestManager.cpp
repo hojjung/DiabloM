@@ -2,38 +2,34 @@
 
 #include "DiabloGameInstance.h"
 #include "DungeonManager.h"
+#include "JsonObjectConverter.h"
 
 
 void UQuestManager::SetQuestDataFromServer(const FString& strQuest)
 {
-	m_AryQuestData.Reset();
+	m_AryQuestData.Reserve(30);
 	
-	TArray<FString> AryQuest;
-
-	strQuest.ParseIntoArray(AryQuest,TEXT("/"));
-
+	if(!FJsonObjectConverter::JsonArrayStringToUStruct(strQuest, &m_AryQuestData, 0, 0))
+	{
+		return;
+	}
+	
 	TArray<FQuestDataRow*> AryQuestRow;
 
 	UQuestData::GetQuestData->GetAllRows("",AryQuestRow);
 
-	int IterMax = FMath::Min(AryQuestRow.Num(),AryQuest.Num());
-
+	int IterMax = FMath::Min(AryQuestRow.Num(),m_AryQuestData.Num());
+	
 	for(int i=0;i<IterMax; i++)
 	{
-		FQuestDataSpec QuestDataSpec;
-
-		QuestDataSpec.ParseFromStr(AryQuest[i]);
-
-		QuestDataSpec.m_Data = AryQuestRow[i];
-		
-		m_AryQuestData.Emplace(QuestDataSpec);
+		m_AryQuestData[i].m_Data = AryQuestRow[i];
 	}
 
 	int MaxStage = UDiabloGameInstance::Get->m_DungeonManager->GetMaxStage();
 	
-	if(MaxStage>m_AryQuestData[12].m_nCurrentRequirePoint)//던전 데이터 업로드 실패 예외처리
+	if(MaxStage>m_AryQuestData[12].QuestAmount)//던전 데이터 업로드 실패 예외처리
 	{
-		m_AryQuestData[12].m_nCurrentRequirePoint =MaxStage;	
+		m_AryQuestData[12].QuestAmount =MaxStage;	
 	}
 }
 
@@ -60,7 +56,7 @@ FQuestDataSpec& UQuestManager::GetQuest(EQuestType type)
 
 void UQuestManager::AddQuestCount(EQuestType type)
 {
-	GetQuest(type).m_nCurrentRequirePoint++;
+	GetQuest(type).QuestAmount++;
 	m_OnQuestUpdate.Broadcast((int)type);
 }
 

@@ -38,7 +38,7 @@ void UQuestPanel::SetVisibility(ESlateVisibility InVisibility)
 	{
 		if(UDiabloGameInstance::Get->m_ShopManager)
 		{
-			UDiabloGameInstance::Get->m_ShopManager->ShowBannerAD(true);	
+			UDiabloGameInstance::Get->m_AdverManager->ShowBannerAD(true);	
 		}
 		if(UDiabloGameInstance::Get->m_QuestManager)
 		{

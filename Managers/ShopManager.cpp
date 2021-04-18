@@ -1,22 +1,28 @@
 #include "ShopManager.h"
 #include "Managers/DungeonManager.h"
 #include "DiabloGameInstance.h"
+#include "JsonSerializer.h"
 #include "Widgets/GachaMenu/GachaPanel.h"
 
-void UShopManager::SetShopDataFromServer()
+void UShopManager::SetShopDataFromServer(const FString iapJsonStr)
 {
-	const TArray<FString>& AryItemBought = UDiabloGameInstance::Get->m_PlayfabManager->m_AryIAPData;
+	TSharedPtr<FJsonObject> JsonObject;
 
-	//0~6,2개제외
+	TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(iapJsonStr);
+	
+	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		return;	
+	}
+	
 	m_PackagePurchased.Init(false, 5);
-	m_PackagePurchased[0] = AryItemBought[1].ToBool();
-	m_PackagePurchased[1] = AryItemBought[2].ToBool();
-	m_PackagePurchased[2] = AryItemBought[3].ToBool();
-	m_PackagePurchased[3] = AryItemBought[4].ToBool();
-	m_PackagePurchased[4] = AryItemBought[5].ToBool();
-
-	UDiabloGameInstance::Get->m_GachaManager->SetGachaLevel(AryItemBought[6], AryItemBought[7]);
-
+	
+	m_PackagePurchased[0] = JsonObject->GetBoolField(TEXT("Package01"));
+	m_PackagePurchased[1] = JsonObject->GetBoolField(TEXT("Package02"));
+	m_PackagePurchased[2] = JsonObject->GetBoolField(TEXT("Package03"));
+	m_PackagePurchased[3] = JsonObject->GetBoolField(TEXT("Package04"));
+	m_PackagePurchased[4] = JsonObject->GetBoolField(TEXT("Package05"));
+	//젬스톤 구매 골드가 플레이어 던전 최고레벨에 비례해서올라감
 	UDiabloGameInstance::Get->m_DungeonManager->m_OnDungeonMaxUpdate.AddUObject(this, &UShopManager::UpdateGold);
 }
 
@@ -377,21 +383,6 @@ void UShopManager::OnPurchasedGainItem(FString itemID)
 }
 
 #pragma endregion IAP
-
-void UShopManager::ShowBannerAD(bool b)
-{
-	if (b && (!GetDefault<UPlayFabRuntimeSettings>()->bIsVIPGameVersion) && !m_PackagePurchased[0])
-	{
-		UKismetSystemLibrary::ShowAdBanner(0, false);
-		m_OnShowAdBanner.Broadcast(true);
-	}
-	else
-	{
-		UKismetSystemLibrary::HideAdBanner();
-
-		m_OnShowAdBanner.Broadcast(false);
-	}
-}
 
 bool UShopManager::GetPackagePurchased(int index)
 {

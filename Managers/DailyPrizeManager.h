@@ -26,7 +26,7 @@ public:
 	
 	//
 public:
-	void SetPrizeManager(bool isFirst,const FDateTime& currentTime,const FDateTime& lastClaimTime,int lastDay);
+	void SetPrizeManager(const FString& prizeJsonStr,const FDateTime& currentTime,bool bIsFirst);
 	UFUNCTION()
 	void Claim();
 };

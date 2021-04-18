@@ -24,6 +24,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextMailCount;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextLoading;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnClaimAll;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UScrollBox* m_VerticalInboxList;
@@ -36,6 +38,8 @@ public:
 	void CreateInboxElement(int count);
 
 	void SetInboxElement(const TArray<FInboxSpec>& aryInboxSpecs);
+
+	virtual void SetVisibility(ESlateVisibility InVisibility) override;
 
 	UFUNCTION()
 	void ClaimAll();

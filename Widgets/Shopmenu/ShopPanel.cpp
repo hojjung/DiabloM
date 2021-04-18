@@ -117,7 +117,7 @@ void UShopPanel::PurchaseGold03()
 void UShopPanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
-	UDiabloGameInstance::Get->m_ShopManager->ShowBannerAD(true);
+	UDiabloGameInstance::Get->m_AdverManager->ShowBannerAD(true);
 }
 
 void UShopPanel::ShowPackagePanel()

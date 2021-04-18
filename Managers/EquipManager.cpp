@@ -1,6 +1,7 @@
 #include "EquipManager.h"
 
 #include "DiabloGameInstance.h"
+#include "JsonObjectConverter.h"
 #include "PlayfabManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
 
@@ -43,6 +44,16 @@ UEquipManager::UEquipManager()
 	ClearSelectedIndex();
 }
 
+void UEquipManager::SetEquipDataFromServer(const FString& classSkin, const FString& weapon,const FString& pet)
+{
+	SetStringSkinUnlocked(classSkin);
+	SetStringWeaponUnlocked(weapon);
+	//SetStringWingUnlocked(wing);
+	SetStringPetUnlocked(pet);
+	//SetStringAccesoryUnlocked(acce);
+}
+
+
 int UEquipManager::StringSplitEachItem(const FString& equipDatas, TArray<FString>& outStrAry) const
 {
 	return equipDatas.ParseIntoArray(outStrAry,TEXT("/"));
@@ -50,80 +61,56 @@ int UEquipManager::StringSplitEachItem(const FString& equipDatas, TArray<FString
 
 void UEquipManager::SetStringSkinUnlocked(FString skinUnlock) //이 str에 모든 스킨정보가 등록되어있음,근데 순서를 어떻게 보장시킴?
 {
+	m_MapPlayerSkin.Reset();
+	m_AryPlayerSkin.Reset();
+	m_AryPlayerSkin.Reserve(30);
+	
+	if(!FJsonObjectConverter::JsonArrayStringToUStruct(skinUnlock, &m_AryPlayerSkin, 0, 0))
+	{
+		return;
+	}
+
 	TArray<const FPlayerSkinTable*> ArySkins;
 
 	UEquipManager::GetPlayerSkinDataTable->GetAllRows("", ArySkins);
-
-	m_AryPlayerSkin.Reset();
-	m_MapPlayerSkin.Reset();
-
-	TArray<FString> AryEachDatas;
-
-	StringSplitEachItem(skinUnlock, AryEachDatas);
-
-	int IterMax = FMath::Min(ArySkins.Num(),AryEachDatas.Num());
-
-	for (int i = 0; i < IterMax; i++)
+	
+	int IterMax = FMath::Min(ArySkins.Num(),m_AryPlayerSkin.Num());
+	
+	for(int i=0;i<IterMax; i++)
 	{
-		FPlayerClassSpec PlSpec;
-		PlSpec.m_PlayerData = ArySkins[i];
-		PlSpec.ParseFromString(AryEachDatas[i]);
-		PlSpec.SetValue();
-		int Index = m_AryPlayerSkin.Add(PlSpec);
-		m_MapPlayerSkin.Add(m_AryPlayerSkin[Index].m_PlayerData, Index);
+		m_AryPlayerSkin[i].m_PlayerData = ArySkins[i];
+		m_AryPlayerSkin[i].SetValue();
+		m_MapPlayerSkin.Add(m_AryPlayerSkin[i].m_PlayerData, i);
 	}
 }
 
-
-void UEquipManager::SetStringWingUnlocked(FString wingUnlock)
-{
-	TArray<const FWingTable*> AryWings;
-
-	UEquipManager::GetWingDataTable->GetAllRows("", AryWings);
-
-	m_AryWings.Reset();
-
-
-	TArray<FString> AryEachDatas;
-
-	StringSplitEachItem(wingUnlock, AryEachDatas);
-
-	int IterMax = FMath::Min(AryWings.Num(),AryEachDatas.Num());
-
-	for (int i = 0; i < IterMax; i++)
-	{
-		FWingSpec EqSpec;
-		EqSpec.m_WingData = AryWings[i];
-		EqSpec.ParseFromString(AryEachDatas[i]);
-		m_AryWings.Add(EqSpec);
-	}
-}
 
 void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
 {
-	TArray<const FWeaponTable*> AryWeapon;
+	TArray<const FWeaponTable*> AryWeaponTable;
 
-	UEquipManager::GetWeaponDataTable->GetAllRows("", AryWeapon);
+	UEquipManager::GetWeaponDataTable->GetAllRows("", AryWeaponTable);
 
-	m_AryWeapons.Reset();
 	m_MapPlayerWeapon.Reset();
+	m_AryWeapons.Reset();
+	m_AryWeapons.Reserve(30);
 
 	TArray<FString> AryEachDatas;
 
 	StringSplitEachItem(weaponUnlock, AryEachDatas);
-	
-	int IterMax = FMath::Min(AryWeapon.Num(),AryEachDatas.Num());
+	//
+	if(!FJsonObjectConverter::JsonArrayStringToUStruct(weaponUnlock, &m_AryWeapons, 0, 0))
+	{
+		return;
+	}
+
+	int IterMax = FMath::Min(AryWeaponTable.Num(),m_AryWeapons.Num());
 
 	for (int i = 0; i < IterMax; i++)
 	{
-		FWeaponSpec EqSpec;
-		EqSpec.m_EquipData = AryWeapon[i];
-		EqSpec.ParseFromString(AryEachDatas[i]);
-		EqSpec.SetLevel(EqSpec.m_nLv);
-
-		int Index = m_AryWeapons.Add(EqSpec);
-
-		m_MapPlayerWeapon.Add(m_AryWeapons[Index].m_EquipData, Index);
+		m_AryWeapons[i].m_EquipData=AryWeaponTable[i];
+		m_AryWeapons[i].SetLevel(m_AryWeapons[i].m_nLv);
+		m_MapPlayerWeapon.Add(m_AryWeapons[i].m_EquipData, i);
 	}
 }
 
@@ -214,7 +201,7 @@ void UEquipManager::EquipAll()
 
 	for (FPlayerClassSpec& Spec : m_AryPlayerSkin)
 	{
-		if (Spec.m_nIsEquipped)
+		if (Spec.IsEquipped)
 		{
 			TryEquipSkin(index);
 
@@ -241,15 +228,6 @@ void UEquipManager::EquipAll()
 	index = 0;
 }
 
-void UEquipManager::SetEquipDataFromServer(const FString& classSkin, const FString& weapon, const FString& wing,
-                                           const FString& pet, const FString& acce)
-{
-	SetStringSkinUnlocked(classSkin);
-	SetStringWeaponUnlocked(weapon);
-	SetStringWingUnlocked(wing);
-	SetStringPetUnlocked(pet);
-	SetStringAccesoryUnlocked(acce);
-}
 
 void UEquipManager::TryEquipSkin(int index)
 {
@@ -267,7 +245,7 @@ void UEquipManager::TryEquipSkin(int index)
 
 	if (m_nSelectedSkin > -1)
 	{
-		m_AryPlayerSkin[m_nSelectedSkin].m_nIsEquipped = false;
+		m_AryPlayerSkin[m_nSelectedSkin].IsEquipped = false;
 	}
 
 	m_AryPlayerSkin[index].m_nIsEquipped = true;

@@ -49,19 +49,17 @@ public://delegate
 	FOnPlayfabError m_OnPlayfabError;
 
 public://static
-	static const FString Gold;
-	static const FString Dg;
-	static const FString StatSkill;
-	static const FString Quest;
-	static const FString SkinClass;
-	static const FString Weapon;
-	static const FString Wing;
-	static const FString Pet;
-	static const FString Accessory;
 	static const FString IAP;
+	static const FString GachaLevel;
+	static const FString MainDungeon;
+	static const FString Upgrade;
+	static const FString Skill;
+	static const FString Quest;
+	static const FString Gold;
+	static const FString Weapon;
+	static const FString Skin;
+	static const FString Pet;
 	static const FString Daily;
-	static const FString Inbox;
-	static const FString Gacha;
 	//
 public://user data
 	UPROPERTY()
@@ -105,26 +103,6 @@ public://loaded data
 	UPROPERTY()
 	float m_fDeltaCountRanking;
 	UPROPERTY()
-	FString m_LoadedGold;
-	UPROPERTY()
-	FString m_LoadedDg;
-	UPROPERTY()
-	FString m_LoadedStatSkill;
-	UPROPERTY()
-	FString m_LoadedQuest;
-	UPROPERTY()
-	FString m_LoadedClass;
-	UPROPERTY()
-	FString m_LoadedWeapon;
-	UPROPERTY()
-	FString m_LoadedWing;
-	UPROPERTY()
-	FString m_LoadedPet;
-	UPROPERTY()
-	FString m_LoadedAccessory;
-	UPROPERTY()
-	FString m_LoadedIAP;
-	UPROPERTY()
 	FString m_LoadedNickname;
 	UPROPERTY()
 	FString m_CurrentVersionName;//RELEASE0408
@@ -153,7 +131,6 @@ public://init
 	
 	void RequestUploadNewPlayerData();
 
-protected:
 	TMap<FString,PlayFab::ClientModels::FCatalogItem> m_MapCatalogItems;
 	
 
@@ -220,6 +197,7 @@ protected:
 	void OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result);
 
 	void OnSuccessGetUserData01(const FGetUsrDataRslt& result);
+	void RequestCatalogItems();
 
 	void OnSuccessGetUserData02(const FGetUsrDataRslt& result);
 
@@ -240,6 +218,8 @@ protected:
 	void OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rslt);
 
 	void OnServerCloseCheckScriptSuccess(const FExeCScriptRslt& rslt);
+
+	void OnNewPlayerDataInitSuccess(const FExeCScriptRslt& rslt);
 
 	void OnInboxRefreshSuccess(const FExeCScriptRslt& rslt);
 
@@ -281,8 +261,6 @@ public:
 	void AddGemStone(int amount);
 
 	void OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
-
-	void UploadEquipData(const FString& weaponData,const FString& skinData,const FString& petData,const FString& accessoryData,const FString& wingData);
 
 	void UploadIAPData();
 

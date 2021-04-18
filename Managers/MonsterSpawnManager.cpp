@@ -21,10 +21,16 @@ UMonsterSpawnManager::UMonsterSpawnManager()
 	m_IdSpecialEnemy = "special";
 
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundData(TEXT("DataTable'/Game/DataTables/Entities/MonsterTable.MonsterTable'"));
-	m_GoldGoblinEntity = FoundData.Object->FindRow<FMonsterEntity>("GoldGoblin","");
+	m_MobEntityTable=FoundData.Object;
 	//(DataTable=DataTable'"/Game/DataTables/Entities/MonsterTable.MonsterTable"',RowName="GoldGoblin")
 
 	m_nGoldGoblinSpawnCount=0;
+}
+
+
+void UMonsterSpawnManager::Init()
+{
+	m_GoldGoblinEntity = m_MobEntityTable->FindRow<FMonsterEntity>("GoldGoblin","");
 }
 
 void UMonsterSpawnManager::StartSpawn(UWorld* world, const FDungeonDataTableRow* dgData)
@@ -89,6 +95,7 @@ void UMonsterSpawnManager::SetSpawnMonsterOnTick(const bool bEnabled)
 		SetTimer(0.f);
 	}
 }
+
 
 void UMonsterSpawnManager::SetTimer(const float TimeInterval)
 {

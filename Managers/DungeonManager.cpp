@@ -2,6 +2,7 @@
 
 #include "DiabloGameInstance.h"
 #include "GameplayTagContainer.h"
+#include "JsonSerializer.h"
 #include "UObject/UObjectGlobals.h"
 
 
@@ -34,22 +35,22 @@ void UDungeonManager::Init(UMonsterSpawnManager* mMang)
 	
 }
 
-void UDungeonManager::OpenLevel()
-{
-	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(), m_CurrentDg->m_DgId, true);
-}
-
-void UDungeonManager::SetDungeonLevel(const FString& currentDG) //need split
+void UDungeonManager::SetDungeonData(const FString& dgJsonStr)
 {
 	DungeonDataTable->GetAllRows("", m_AryDgDataTable);
 
-	TArray<FString> AryDg;
+	TSharedPtr<FJsonObject> JsonObject;
 
-	currentDG.ParseIntoArray(AryDg,TEXT(":"));
+	TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(dgJsonStr);
+	
+	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		return;	
+	}
+	
+	int StageCurrentLevel = JsonObject->GetIntegerField(TEXT("CurrentStageLevel"));
 
-	int StageCurrentLevel = FCString::Atoi(*AryDg[0]);
-
-	SetMaxStageLevel(FCString::Atoi(*AryDg[1]));
+	SetMaxStageLevel(JsonObject->GetIntegerField(TEXT("MaxStageLevel")));
 
 	if (StageCurrentLevel < 0 || StageCurrentLevel >= m_AryDgDataTable.Num())
 	{
@@ -57,10 +58,13 @@ void UDungeonManager::SetDungeonLevel(const FString& currentDG) //need split
 	}
 
 	SelectNormalDungeon(StageCurrentLevel);
-
 	//
 	GoldDungeonDataTable->GetAllRows("", m_AryGoldDgDataTable);
-	
+}
+
+void UDungeonManager::OpenLevel()
+{
+	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(), m_CurrentDg->m_DgId, true);
 }
 
 void UDungeonManager::SelectNormalDungeon(int index)

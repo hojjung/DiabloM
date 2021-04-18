@@ -82,31 +82,20 @@ struct FQuestDataSpec
 public:
 	FQuestDataRow* m_Data;
 
-	UPROPERTY()
-	int m_nCurrentLv;
-	UPROPERTY()
-	int m_nCurrentRequirePoint;
+	UPROPERTY(EditAnywhere)
+	int QuestLevel;
+	UPROPERTY(EditAnywhere)
+	int QuestAmount;
 
 	FString ParseToStr()
 	{
 		FString StrW;
-		StrW.AppendInt(m_nCurrentLv);
+		StrW.AppendInt(QuestLevel);
 		StrW.Append(":");
-		StrW.AppendInt(m_nCurrentRequirePoint);
+		StrW.AppendInt(QuestAmount);
 		StrW.Append(":");
 
 		return StrW;
-	}
-
-	void ParseFromStr(FString strServer)
-	{
-		TArray<FString> OutStrAry;
-
-		strServer.ParseIntoArray(OutStrAry,TEXT(":"));
-
-		m_nCurrentLv = FCString::Atoi(*OutStrAry[0]);
-
-		m_nCurrentRequirePoint = FCString::Atoi(*OutStrAry[1]);
 	}
 
 	bool TryComplete()
@@ -121,38 +110,38 @@ public:
 			return false;
 		}
 
-		m_nCurrentLv++;
+		QuestLevel++;
 		
 		return true;
 	}
 
 	bool IsCompletable()
 	{
-		return m_nCurrentRequirePoint >= m_Data->m_AryQuestData[m_nCurrentLv].m_nRequireData;
+		return QuestAmount >= m_Data->m_AryQuestData[QuestLevel].m_nRequireData;
 	}
 
 	bool IsMaxLv()
 	{
-		return m_Data->m_AryQuestData.Num() <= m_nCurrentLv + 1; // 100 ,99
+		return m_Data->m_AryQuestData.Num() <= QuestLevel + 1; // 100 ,99
 	} //10개,최대인덱스 9,현재 인덱스 8
 
 	int GetMaxRequireValue()
 	{
-		return m_Data->m_AryQuestData[m_nCurrentLv].m_nRequireData;
+		return m_Data->m_AryQuestData[QuestLevel].m_nRequireData;
 	}
 
 	int GetCurrentData()
 	{
-		return m_nCurrentRequirePoint;
+		return QuestAmount;
 	}
 
 	int GetPreData()
 	{
-		if(m_nCurrentLv<1)
+		if(QuestLevel<1)
 		{
 			return m_Data->m_AryQuestData[0].m_nRequireData;
 		}
-		return m_Data->m_AryQuestData[m_nCurrentLv-1].m_nRequireData;
+		return m_Data->m_AryQuestData[QuestLevel-1].m_nRequireData;
 	}
 
 	float GetGaugePercent()
@@ -161,9 +150,9 @@ public:
 		
 		float Max = GetMaxRequireValue();
 		
-		if(m_nCurrentLv>0)
+		if(QuestLevel>0)
 		{
-			Current -= m_Data->m_AryQuestData[m_nCurrentLv-1].m_nRequireData;
+			Current -= m_Data->m_AryQuestData[QuestLevel-1].m_nRequireData;
 			Max -= GetPreData();
 		}
 		
@@ -178,7 +167,7 @@ public:
 
 		Args.Add(m_Data->GetCurrentFormatDesc(GetCurrentData()));
 	
-		Args.Add(m_Data->GetMaxFormatDesc(m_nCurrentLv));
+		Args.Add(m_Data->GetMaxFormatDesc(QuestLevel));
 
 		FText TT = FText::Format(Format, Args);
 
@@ -187,6 +176,6 @@ public:
 
 	int GetCompletePrize()
 	{
-		return m_Data->m_AryQuestData[m_nCurrentLv].m_nRewardGemStone;
+		return m_Data->m_AryQuestData[QuestLevel].m_nRewardGemStone;
 	}
 };

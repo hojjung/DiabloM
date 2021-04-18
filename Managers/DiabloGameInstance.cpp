@@ -27,6 +27,7 @@ void UDiabloGameInstance::Init()
 {
     Super::Init();
     m_MonsterSpawn = NewObject<UMonsterSpawnManager>();
+	m_MonsterSpawn->Init();
     m_DungeonManager = NewObject<UDungeonManager>();
     m_DungeonManager->Init(m_MonsterSpawn);
     m_PlayerUpgradeManager = NewObject<UPlayerUpgradeManager>();
@@ -37,6 +38,8 @@ void UDiabloGameInstance::Init()
 	m_ShopManager= NewObject<UShopManager>();
 	m_DailyManager= NewObject<UDailyPrizeManager>();
 	m_InboxManager= NewObject<UInboxManager>();
+	m_AdverManager= NewObject<UAdvertiseManager>();
+	m_AdverManager->Init();
     //
     m_PlayfabManager = NewObject<UPlayfabManager>();
     m_PlayfabManager->Init();
