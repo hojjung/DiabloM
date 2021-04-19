@@ -20,7 +20,7 @@ void UAccessoryEquipButton::UpdateEquipAccessory()
 {
 	SetLevelNameText(*m_AccessorySpec);
 	SetDescPreviewText(*m_AccessorySpec);
-	SetCostText(m_AccessorySpec->m_nStackCount);
+	SetCostText(m_AccessorySpec->StackCount);
 	//SetEquipped(m_AccessorySpec->m_nIsEquipped);
 
 	m_ImgTierColor->SetBrushTintColor(m_AccessorySpec->m_AccessoryData->GetTier()->m_TierColor);
@@ -31,7 +31,7 @@ void UAccessoryEquipButton::SetLevelNameText(const FAccessorySpec& data)
 	FFormatOrderedArguments Args;
 
 	Args.Add(data.m_AccessoryData->m_ShowingName);
-	Args.Add(data.m_nLv);
+	Args.Add(data.Level);
 
 	FText tt = FText::Format(m_FormatName,Args);
 
@@ -53,7 +53,7 @@ void UAccessoryEquipButton::Init(const FAccessorySpec& data, UEquipmentPanel* eq
 
 void UAccessoryEquipButton::SetDescPreviewText(const FAccessorySpec& data)
 {
-	m_TextDesc->SetText(data.m_AccessoryData->GetFormatDescPreview(data.m_nLv));
+	m_TextDesc->SetText(data.m_AccessoryData->GetFormatDescPreview(data.Level));
 }
 
 void UAccessoryEquipButton::SetCostText(int stack)

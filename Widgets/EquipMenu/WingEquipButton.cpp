@@ -14,11 +14,11 @@ UWingEquipButton::UWingEquipButton(const FObjectInitializer& objInit):Super(objI
 void UWingEquipButton::UpdateEquipWing()
 {
 	SetDescPreviewText(*m_WingSpec);
-	SetCombineText(m_WingSpec->m_nStackCount);
-	SetEquipped(m_WingSpec->m_nIsEquipped);
+	SetCombineText(m_WingSpec->StackCount);
+	SetEquipped(m_WingSpec->IsEquipped);
 	m_ImgTierColor->SetBrushTintColor(m_WingSpec->m_WingData->GetTier()->m_TierColor);
 
-	m_BtnEquip->SetIsEnabled(m_WingSpec->m_nIsUnlocked>0);
+	m_BtnEquip->SetIsEnabled(m_WingSpec->IsUnlocked);
 }
 
 void UWingEquipButton::Init(const FWingSpec& data, int index)

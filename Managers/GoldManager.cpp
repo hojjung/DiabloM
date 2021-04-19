@@ -31,11 +31,11 @@ BigInt UGoldManager::AddGold(const BigInt& v, bool useBonus)
 				FinalV, UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet()->m_GoldBonusValue);
 		}
 
-		if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce01).m_nLv > 0)
-		{
-			FinalV = UDiaBlueprintFunctionLibrary::MultiplePercent(
-				FinalV, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce01).m_Value);
-		}
+		// if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce01).Level > 0)
+		// {
+		// 	FinalV = UDiaBlueprintFunctionLibrary::MultiplePercent(
+		// 		FinalV, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce01).m_Value);
+		// }
 
 		if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
 		{
@@ -125,11 +125,11 @@ void UGoldManager::SetOfflineMinutes(bool bIsNewCreatedPlayer, const FDateTime& 
 
 	Bounty.Multiply(3 * m_nOfflineMinutes);
 
-	if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce08).m_nLv > 0)
-	{
-		Bounty = UDiaBlueprintFunctionLibrary::MultiplePercent(
-			Bounty, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce08).m_Value);
-	}
+	// if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce08).Level > 0)
+	// {
+	// 	Bounty = UDiaBlueprintFunctionLibrary::MultiplePercent(
+	// 		Bounty, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce08).m_Value);
+	// }
 
 	m_OfflineGold = AddGold(Bounty, false);
 }

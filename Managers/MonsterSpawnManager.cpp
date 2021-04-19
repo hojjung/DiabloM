@@ -51,7 +51,7 @@ void UMonsterSpawnManager::StartSpawn(UWorld* world, const FDungeonDataTableRow*
 	
 	m_nKillCount=0;
 	
-	m_nGoldGoblinSpawnCount = FMath::RandRange(25,55);
+	m_nGoldGoblinSpawnCount = FMath::RandRange(10,25);
 
 	m_nGoldGoblinSpawnCount+=m_nKillCount;
 	
@@ -221,7 +221,7 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMobToLoc(FVector loc)
 	
 	if(m_nKillCount >= m_nGoldGoblinSpawnCount)
 	{
-		m_nGoldGoblinSpawnCount = FMath::RandRange(75,150);
+		m_nGoldGoblinSpawnCount = FMath::RandRange(25,35);
 
 		m_nGoldGoblinSpawnCount+=m_nKillCount;
 

@@ -40,7 +40,7 @@ void UWeaponEquipButton::SetLevelNameText(const FWeaponSpec& data)
 	FFormatOrderedArguments Args;
 
 	Args.Add(data.m_EquipData->m_ShowingName);
-	Args.Add(data.m_nLv);
+	Args.Add(data.Level);
 
 	FText tt = FText::Format(m_FormatName,Args);
 
@@ -56,20 +56,20 @@ void UWeaponEquipButton::UpdateEquipWeapon()
 {
 	SetLevelNameText(*m_WeaponSpec);
 	SetDescPreviewText(*m_WeaponSpec);
-	SetCombineText(m_WeaponSpec->m_nStackCount);
-	SetEquipped(m_WeaponSpec->m_nIsEquipped);
+	SetCombineText(m_WeaponSpec->StackCount);
+	SetEquipped(m_WeaponSpec->IsEquipped);
 	SetCostText();
 
 	m_ImgTierColor->SetBrushTintColor(m_WeaponSpec->m_EquipData->GetTier()->m_TierColor);
 
-	m_BtnEquip->SetIsEnabled(m_WeaponSpec->m_nLv>0);
-	m_BtnLvUp->SetIsEnabled(m_WeaponSpec->m_nLv>0);
+	m_BtnEquip->SetIsEnabled(m_WeaponSpec->Level>0);
+	m_BtnLvUp->SetIsEnabled(m_WeaponSpec->Level>0);
 }
 
 
 void UWeaponEquipButton::SetDescPreviewText(const FWeaponSpec& data)
 {
-	m_TextDesc->SetText(data.m_EquipData->GetFormatDescPreview(data.m_nLv));
+	m_TextDesc->SetText(data.m_EquipData->GetFormatDescPreview(data.Level));
 }
 
 void UWeaponEquipButton::SetEquipped(bool b)

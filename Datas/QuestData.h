@@ -87,17 +87,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	int QuestAmount;
 
-	FString ParseToStr()
-	{
-		FString StrW;
-		StrW.AppendInt(QuestLevel);
-		StrW.Append(":");
-		StrW.AppendInt(QuestAmount);
-		StrW.Append(":");
-
-		return StrW;
-	}
-
 	bool TryComplete()
 	{
 		if (IsMaxLv())

@@ -30,7 +30,7 @@ void UEquipmentPanel::NativeOnInitialized()
 
 		EqBtn1->SetPadding(MargW);
 
-		if(PlSpec.m_nIsUnlocked<1)
+		if(PlSpec.IsUnlocked)
 		{
 			//EqBtn1->m_BtnEquip->SetIsEnabled(false);
 		}
@@ -50,7 +50,7 @@ void UEquipmentPanel::NativeOnInitialized()
 
 		EqBtn2->SetPadding(MargW);
 
-		if(EqSpec2.m_nIsUnlocked<1)
+		if(EqSpec2.IsUnlocked)
 		{
 			//EqBtn->m_BtnEquip->SetIsEnabled(false);
 		}
@@ -70,7 +70,7 @@ void UEquipmentPanel::NativeOnInitialized()
 
 		EqBtn3->SetPadding(MargW);
 
-		if(EqSpec3.m_nLv<1)
+		if(EqSpec3.Level<1)
 		{
 			//EqBtn->m_BtnEquip->SetIsEnabled(false);
 		}
@@ -90,7 +90,7 @@ void UEquipmentPanel::NativeOnInitialized()
 
 		EqBtn4->SetPadding(MargW);
 
-		if(EqSpec4.m_nLv<1)
+		if(EqSpec4.Level<1)
 		{
 			//EqBtn->m_BtnEquip->SetIsEnabled(false);
 		}
@@ -110,7 +110,7 @@ void UEquipmentPanel::NativeOnInitialized()
 
 		EqBtn5->SetPadding(MargW);
 
-		if(EqSpec5.m_nLv<1)
+		if(EqSpec5.Level<1)
 		{
 			//EqBtn->m_BtnEquip->SetIsEnabled(false);
 		}

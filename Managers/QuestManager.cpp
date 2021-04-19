@@ -31,6 +31,7 @@ void UQuestManager::SetQuestDataFromServer(const FString& strQuest)
 	{
 		m_AryQuestData[12].QuestAmount =MaxStage;	
 	}
+
 }
 
 bool UQuestManager::CompleteQuest(int index)
@@ -94,11 +95,6 @@ FString UQuestManager::GetQuestDataStr()
 	
 	for(auto& QuestData : m_AryQuestData)
 	{
-		FString Data = QuestData.ParseToStr();
-		
-		Data.AppendChar(TEXT('/'));
-
-		ResultStr.Append(Data);
 	}
 
 	return ResultStr;

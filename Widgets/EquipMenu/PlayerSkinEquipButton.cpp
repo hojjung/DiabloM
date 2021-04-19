@@ -19,11 +19,11 @@ UPlayerSkinEquipButton::UPlayerSkinEquipButton(const FObjectInitializer& objInit
 void UPlayerSkinEquipButton::UpdateEquipSkin()
 {
 	SetDescPreviewText(*m_SkinSpec);
-	SetCombineText(m_SkinSpec->m_nStackCount);
-	SetEquipped(m_SkinSpec->m_nIsEquipped);
+	SetCombineText(m_SkinSpec->StackCount);
+	SetEquipped(m_SkinSpec->IsEquipped);
 	m_ImgTierColor->SetBrushTintColor(m_SkinSpec->m_PlayerData->GetTier()->m_TierColor);
 
-	m_BtnEquip->SetIsEnabled(m_SkinSpec->m_nIsUnlocked>0);
+	m_BtnEquip->SetIsEnabled(m_SkinSpec->IsUnlocked);
 }
 
 void UPlayerSkinEquipButton::Init(const FPlayerClassSpec& data, int index)

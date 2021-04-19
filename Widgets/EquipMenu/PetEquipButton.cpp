@@ -27,13 +27,13 @@ void UPetEquipButton::UpdateEquipPet()
 {
 	SetLevelNameText(*m_PetSpec);
 	SetDescPreviewText(*m_PetSpec);
-	SetEquipped(m_PetSpec->m_nIsEquipped);
+	SetEquipped(m_PetSpec->IsEquipped);
 	SetCostText();
-	SetCombineText(m_PetSpec->m_nStackCount);
+	SetCombineText(m_PetSpec->StackCount);
 	m_ImgTierColor->SetBrushTintColor(m_PetSpec->m_PetData->GetTier()->m_TierColor);
 
-	m_BtnEquip->SetIsEnabled(m_PetSpec->m_nLv>0);
-	m_BtnLvUp->SetIsEnabled(m_PetSpec->m_nLv>0);
+	m_BtnEquip->SetIsEnabled(m_PetSpec->Level>0);
+	m_BtnLvUp->SetIsEnabled(m_PetSpec->Level>0);
 }
 
 void UPetEquipButton::SetLevelNameText(const FPetSpec& data)
@@ -41,7 +41,7 @@ void UPetEquipButton::SetLevelNameText(const FPetSpec& data)
 	FFormatOrderedArguments Args;
 
 	Args.Add(data.m_PetData->m_ShowingName);
-	Args.Add(data.m_nLv);
+	Args.Add(data.Level);
 
 	FText tt = FText::Format(m_FormatName,Args);
 
@@ -67,7 +67,7 @@ void UPetEquipButton::Init(const FPetSpec& data, int index)
 
 void UPetEquipButton::SetDescPreviewText(const FPetSpec& data)
 {
-	m_TextDesc->SetText(data.m_PetData->GetFormatDescPreview(data.m_nLv));
+	m_TextDesc->SetText(data.m_PetData->GetFormatDescPreview(data.Level));
 }
 
 void UPetEquipButton::SetEquipped(bool b)

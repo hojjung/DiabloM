@@ -54,30 +54,14 @@ public:
 
 	void SetLevel(int v)
 	{
-		m_nLv = v;
-		m_Value = m_EquipData->GetDmgPer(m_nLv);
-		m_LvlUpCost = m_EquipData->GetCost(m_nLv);
+		Level = v;
+		m_Value = m_EquipData->GetDmgPer(Level);
+		m_LvlUpCost = m_EquipData->GetCost(Level);
 	}
 
 	int GetMaxLv() const
 	{
 		return 100;
-	}
-
-	
-
-	FString ParseToString()
-	{
-		FString StrW;
-		
-		StrW.AppendInt(m_nLv);
-		StrW.Append(":");
-		StrW.AppendInt(m_nIsEquipped);
-		StrW.Append(":");
-		StrW.AppendInt(m_nStackCount);
-		StrW.Append(":");
-
-		return StrW;
 	}
 };
 
@@ -101,20 +85,6 @@ public:
 	{
 		m_fAttackSpeed = m_PlayerData->GetAtkSpdBonus();
 	}
-
-	FString ParseToString()
-	{
-		FString StrW;
-		StrW.AppendInt(m_nIsUnlocked);
-		StrW.Append(":");
-		StrW.AppendInt(m_nIsEquipped);
-		StrW.Append(":");
-		StrW.AppendInt(m_nStackCount);
-		StrW.Append(":");
-
-		return StrW;
-	}
-
 };
 
 USTRUCT()
@@ -128,31 +98,8 @@ public:
 	bool IsEquipped = false;
 	UPROPERTY(EditAnywhere)
 	int StackCount = 0;
-	const FWingTable* m_WingData;
-
-	FString ParseToString()
-	{
-		FString StrW;
-		StrW.AppendInt(m_nIsUnlocked);
-		StrW.Append(":");
-		StrW.AppendInt(m_nIsEquipped);
-		StrW.Append(":");
-		StrW.AppendInt(m_nStackCount);
-		StrW.Append(":");
-
-		return StrW;
-	}
-
-	void ParseFromString(const FString& str)
-	{
-		TArray<FString> OutStrAry;
 	
-		str.ParseIntoArray(OutStrAry,TEXT(":"));
-
-		m_nIsUnlocked = FCString::Atoi(*OutStrAry[0]);
-		m_nIsEquipped = FCString::Atoi(*OutStrAry[1]);
-		m_nStackCount = FCString::Atoi(*OutStrAry[2]);
-	}
+	const FWingTable* m_WingData;
 };
 
 
@@ -175,33 +122,9 @@ public:
 
 	void SetLevel(int lv)
 	{
-		m_nLv = lv;
-		m_GoldBonusValue = m_PetData->GetGoldBonusValue(m_nLv);
-		m_LvlUpCost = m_PetData->GetCost(m_nLv);
-	}
-
-	FString ParseToString()
-	{
-		FString StrW;
-		StrW.AppendInt(m_nLv);
-		StrW.Append(":");
-		StrW.AppendInt(m_nIsEquipped);
-		StrW.Append(":");
-		StrW.AppendInt(m_nStackCount);
-		StrW.Append(":");
-
-		return StrW;
-	}
-
-	void ParseFromString(const FString& str)
-	{
-		TArray<FString> OutStrAry;
-	
-		str.ParseIntoArray(OutStrAry,TEXT(":"));
-
-		m_nLv = FCString::Atoi(*OutStrAry[0]);
-		m_nIsEquipped = FCString::Atoi(*OutStrAry[1]);
-		m_nStackCount = FCString::Atoi(*OutStrAry[2]);
+		Level = lv;
+		m_GoldBonusValue = m_PetData->GetGoldBonusValue(Level);
+		m_LvlUpCost = m_PetData->GetCost(Level);
 	}
 };
 
@@ -210,6 +133,8 @@ struct FAccessorySpec
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(EditAnywhere)
+	int Level;
 	UPROPERTY(EditAnywhere)
 	bool IsUnlocked = false;
 	UPROPERTY(EditAnywhere)
@@ -225,31 +150,10 @@ public:
 
 	void SetLevel(int lv)
 	{
-		m_nLv = lv;
-		m_Value = m_AccessoryData->GetValue(m_nLv);
-		m_LvlUpCost = m_AccessoryData->GetCost(m_nLv);
-		m_fFloatValue=m_AccessoryData->GetFloatValue(m_nLv);
-	}
-
-	FString ParseToString()
-	{
-		FString StrW;
-		StrW.AppendInt(m_nLv);
-		StrW.Append(":");
-		StrW.AppendInt(m_nStackCount);
-		StrW.Append(":");
-		
-		return StrW;
-	}
-
-	void ParseFromString(const FString& str)
-	{
-		TArray<FString> OutStrAry;
-	
-		str.ParseIntoArray(OutStrAry,TEXT(":"));
-
-		m_nLv = FCString::Atoi(*OutStrAry[0]);
-		m_nStackCount = FCString::Atoi(*OutStrAry[1]);
+		Level = lv;
+		m_Value = m_AccessoryData->GetValue(Level);
+		m_LvlUpCost = m_AccessoryData->GetCost(Level);
+		m_fFloatValue=m_AccessoryData->GetFloatValue(Level);
 	}
 };
 
@@ -273,6 +177,8 @@ public:
 
 protected:
 	TMap<const FGachaAbleRow*,int> m_MapPlayerSkin;
+	
+	TMap<const FGachaAbleRow*,int> m_MapPlayerPet;
 
 	TMap<const FGachaAbleRow*,int> m_MapPlayerWeapon;
 

@@ -578,8 +578,9 @@ void UPlayfabManager::OnSuccessGetUserData02(const FGetUsrDataRslt& result)
 	}
 
 	UDiabloGameInstance::Get->m_QuestManager->SetQuestDataFromServer(result.Data[Quest].Value);
-	UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(result.Data[Gold].Value,m_bIsNewCreatePlayer,m_CurrentTime,m_LastLoginTime,m_LastLogoutTime);
+	//Equip Should Init Faster than GoldManager
 	UDiabloGameInstance::Get->m_EquipManager->SetEquipDataFromServer(result.Data[Weapon].Value,result.Data[Skin].Value,result.Data[Pet].Value);
+	UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(result.Data[Gold].Value,m_bIsNewCreatePlayer,m_CurrentTime,m_LastLoginTime,m_LastLogoutTime);
 	UDiabloGameInstance::Get->m_DailyManager->SetPrizeManager(result.Data[Daily].Value,m_CurrentTime,m_bIsNewCreatePlayer);
 	//
 	m_bIsLoginCompleted = true;

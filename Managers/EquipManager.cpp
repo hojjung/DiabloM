@@ -61,24 +61,22 @@ int UEquipManager::StringSplitEachItem(const FString& equipDatas, TArray<FString
 
 void UEquipManager::SetStringSkinUnlocked(FString skinUnlock) //이 str에 모든 스킨정보가 등록되어있음,근데 순서를 어떻게 보장시킴?
 {
-	m_MapPlayerSkin.Reset();
-	m_AryPlayerSkin.Reset();
-	m_AryPlayerSkin.Reserve(30);
+	m_MapPlayerSkin.Empty(30);
+	m_AryPlayerSkin.Empty(30);
+	TArray<const FPlayerSkinTable*> ArySkinsTable;
+	UEquipManager::GetPlayerSkinDataTable->GetAllRows("", ArySkinsTable);
 	
 	if(!FJsonObjectConverter::JsonArrayStringToUStruct(skinUnlock, &m_AryPlayerSkin, 0, 0))
 	{
 		return;
 	}
 
-	TArray<const FPlayerSkinTable*> ArySkins;
-
-	UEquipManager::GetPlayerSkinDataTable->GetAllRows("", ArySkins);
 	
-	int IterMax = FMath::Min(ArySkins.Num(),m_AryPlayerSkin.Num());
+	int IterMax = FMath::Min(ArySkinsTable.Num(),m_AryPlayerSkin.Num());
 	
 	for(int i=0;i<IterMax; i++)
 	{
-		m_AryPlayerSkin[i].m_PlayerData = ArySkins[i];
+		m_AryPlayerSkin[i].m_PlayerData = ArySkinsTable[i];
 		m_AryPlayerSkin[i].SetValue();
 		m_MapPlayerSkin.Add(m_AryPlayerSkin[i].m_PlayerData, i);
 	}
@@ -87,18 +85,11 @@ void UEquipManager::SetStringSkinUnlocked(FString skinUnlock) //이 str에 모�
 
 void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
 {
+	m_MapPlayerWeapon.Empty(30);
+	m_AryWeapons.Empty(30);
 	TArray<const FWeaponTable*> AryWeaponTable;
-
 	UEquipManager::GetWeaponDataTable->GetAllRows("", AryWeaponTable);
 
-	m_MapPlayerWeapon.Reset();
-	m_AryWeapons.Reset();
-	m_AryWeapons.Reserve(30);
-
-	TArray<FString> AryEachDatas;
-
-	StringSplitEachItem(weaponUnlock, AryEachDatas);
-	//
 	if(!FJsonObjectConverter::JsonArrayStringToUStruct(weaponUnlock, &m_AryWeapons, 0, 0))
 	{
 		return;
@@ -109,61 +100,52 @@ void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
 	for (int i = 0; i < IterMax; i++)
 	{
 		m_AryWeapons[i].m_EquipData=AryWeaponTable[i];
-		m_AryWeapons[i].SetLevel(m_AryWeapons[i].m_nLv);
+		m_AryWeapons[i].SetLevel(m_AryWeapons[i].Level);
 		m_MapPlayerWeapon.Add(m_AryWeapons[i].m_EquipData, i);
 	}
 }
 
 void UEquipManager::SetStringPetUnlocked(FString petUnlock)
 {
-	TArray<const FPetTable*> AryPet;
+	m_MapPlayerPet.Empty(30);
+	m_AryPets.Empty(30);
+	TArray<const FPetTable*> AryPetTable;
+	UEquipManager::GetPetDataTable->GetAllRows("", AryPetTable);
+	//
+	if(!FJsonObjectConverter::JsonArrayStringToUStruct(petUnlock, &m_AryPets, 0, 0))
+	{
+		return;
+	}
 
-	UEquipManager::GetPetDataTable->GetAllRows("", AryPet);
-
-	m_AryPets.Reset();
-
-	TArray<FString> AryEachDatas;
-
-	StringSplitEachItem(petUnlock, AryEachDatas);
-
-	int IterMax = FMath::Min(AryPet.Num(),AryEachDatas.Num());
+	int IterMax = FMath::Min(m_AryPets.Num(),AryPetTable.Num());
 
 	for (int i = 0; i < IterMax; i++)
 	{
-		FPetSpec EqSpec;
-		EqSpec.m_PetData = AryPet[i];
-		EqSpec.ParseFromString(AryEachDatas[i]);
-		EqSpec.SetLevel(EqSpec.m_nLv);
-
-		m_AryPets.Add(EqSpec);
+		m_AryPets[i].m_PetData=AryPetTable[i];
+		m_AryPets[i].SetLevel(m_AryPets[i].Level);
+		m_MapPlayerPet.Add(m_AryPets[i].m_PetData, i);
 	}
 }
 
 void UEquipManager::SetStringAccesoryUnlocked(FString acceUnlock)
 {
-	TArray<const FAccessoryTable*> AryAcces;
+	m_MapAccessory.Empty(30);
+	m_AryAcce.Empty(30);
+	TArray<const FAccessoryTable*> AryAccesTable;
+	UEquipManager::GetAcceeDataTable->GetAllRows("", AryAccesTable);
+	//
+	if(!FJsonObjectConverter::JsonArrayStringToUStruct(acceUnlock, &m_AryAcce, 0, 0))
+	{
+		return;
+	}
 
-	UEquipManager::GetAcceeDataTable->GetAllRows("", AryAcces);
-
-	m_AryAcce.Reset();
-	m_MapAccessory.Reset();
-
-	TArray<FString> AryEachDatas;
-
-	StringSplitEachItem(acceUnlock, AryEachDatas);
-
-	int IterMax = FMath::Min(AryAcces.Num(),AryEachDatas.Num());
+	int IterMax = FMath::Min(m_AryAcce.Num(),AryAccesTable.Num());
 
 	for (int i = 0; i < IterMax; i++)
 	{
-		FAccessorySpec EqSpec;
-		EqSpec.m_AccessoryData = AryAcces[i];
-		EqSpec.ParseFromString(AryEachDatas[i]);
-		EqSpec.SetLevel(EqSpec.m_nLv);
-
-		int index = m_AryAcce.Add(EqSpec);
-
-		m_MapAccessory.Add(m_AryAcce[index].m_AccessoryData, index);
+		m_AryAcce[i].m_AccessoryData=AryAccesTable[i];
+		m_AryAcce[i].SetLevel(m_AryPets[i].Level);
+		m_MapAccessory.Add(m_AryAcce[i].m_AccessoryData, i);
 	}
 }
 
@@ -173,7 +155,7 @@ void UEquipManager::EquipAll()
 
 	for (FPetSpec& Spec : m_AryPets)
 	{
-		if (Spec.m_nIsEquipped)
+		if (Spec.IsEquipped)
 		{
 			TryEquipPet(index);
 
@@ -187,7 +169,7 @@ void UEquipManager::EquipAll()
 
 	for (FWeaponSpec& Spec : m_AryWeapons)
 	{
-		if (Spec.m_nIsEquipped)
+		if (Spec.IsEquipped)
 		{
 			TryEquipWeapon(index);
 
@@ -215,7 +197,7 @@ void UEquipManager::EquipAll()
 
 	for (FWingSpec& Spec : m_AryWings)
 	{
-		if (Spec.m_nIsEquipped)
+		if (Spec.IsEquipped)
 		{
 			TryEquipWing(index);
 
@@ -248,7 +230,7 @@ void UEquipManager::TryEquipSkin(int index)
 		m_AryPlayerSkin[m_nSelectedSkin].IsEquipped = false;
 	}
 
-	m_AryPlayerSkin[index].m_nIsEquipped = true;
+	m_AryPlayerSkin[index].IsEquipped = true;
 
 	UDiabloGameInstance::Get->GetPlChar()->PlayerClassDataInject(m_AryPlayerSkin[index]);
 
@@ -275,10 +257,10 @@ void UEquipManager::TryEquipWeapon(int index)
 
 	if (m_nSelectedWeapon > -1)
 	{
-		m_AryWeapons[m_nSelectedWeapon].m_nIsEquipped = false;
+		m_AryWeapons[m_nSelectedWeapon].IsEquipped = false;
 	}
 
-	m_AryWeapons[index].m_nIsEquipped = true;
+	m_AryWeapons[index].IsEquipped = true;
 
 	UDiabloGameInstance::Get->GetPlChar()->WeaponDataInject(m_AryWeapons[index]);
 	
@@ -303,10 +285,10 @@ void UEquipManager::TryEquipWing(int index)
 
 	if (m_nSelectedWing > -1)
 	{
-		m_AryWings[m_nSelectedWing].m_nIsEquipped = false;
+		m_AryWings[m_nSelectedWing].IsEquipped = false;
 	}
 
-	m_AryWings[index].m_nIsEquipped = true;
+	m_AryWings[index].IsEquipped = true;
 
 	UDiabloGameInstance::Get->GetPlChar()->WingDataInject(m_AryWings[index]);
 
@@ -331,10 +313,10 @@ void UEquipManager::TryEquipPet(int index)
 
 	if (m_nSelectedPet > -1)
 	{
-		m_AryPets[m_nSelectedPet].m_nIsEquipped = false;
+		m_AryPets[m_nSelectedPet].IsEquipped = false;
 	}
 
-	m_AryPets[index].m_nIsEquipped = true;
+	m_AryPets[index].IsEquipped = true;
 
 
 	UDiabloGameInstance::Get->GetPlChar()->PetDataInject(m_AryPets[index]);
@@ -354,23 +336,23 @@ bool UEquipManager::TryCombineSkin(int index)
 		return false; //full
 	}
 
-	if (m_AryPlayerSkin[index].m_nStackCount < 5)
+	if (m_AryPlayerSkin[index].StackCount < 5)
 	{
 		return false;
 	}
 
-	while (m_AryPlayerSkin[index].m_nStackCount > 4)
+	while (m_AryPlayerSkin[index].StackCount > 4)
 	{
-		m_AryPlayerSkin[index].m_nStackCount -= 5;
+		m_AryPlayerSkin[index].StackCount -= 5;
 
-		if (m_AryPlayerSkin[NextIndex].m_nIsUnlocked < 1)
+		if (!m_AryPlayerSkin[NextIndex].IsUnlocked)//해금
 		{
-			m_AryPlayerSkin[NextIndex].m_nIsUnlocked++;
+			m_AryPlayerSkin[NextIndex].IsUnlocked=true;
 
 			continue;
 		}
 
-		m_AryPlayerSkin[NextIndex].m_nStackCount++;
+		m_AryPlayerSkin[NextIndex].StackCount++;//해금완료됐으면 스택늘려줌
 	}
 
 	m_OnPlSkinChanged.Broadcast(index, NextIndex);
@@ -387,23 +369,23 @@ bool UEquipManager::TryCombineWing(int index)
 		return false; //full
 	}
 
-	if (m_AryWings[index].m_nStackCount < 5)
+	if (m_AryWings[index].StackCount < 5)
 	{
 		return false;
 	}
 
-	while (m_AryWings[index].m_nStackCount > 4)
+	while (m_AryWings[index].StackCount > 4)
 	{
-		m_AryWings[index].m_nStackCount -= 5;
+		m_AryWings[index].StackCount -= 5;
 
-		if (m_AryWings[NextIndex].m_nIsUnlocked < 1)
+		if (!m_AryWings[NextIndex].IsUnlocked)
 		{
-			m_AryWings[NextIndex].m_nIsUnlocked++;
+			m_AryWings[NextIndex].IsUnlocked=true;
 
 			continue;
 		}
 
-		m_AryWings[NextIndex].m_nStackCount++;
+		m_AryWings[NextIndex].StackCount++;
 	}
 
 	m_OnWingChanged.Broadcast(index, NextIndex);
@@ -413,16 +395,16 @@ bool UEquipManager::TryCombineWing(int index)
 
 bool UEquipManager::TryCombineLevelUpAccessory(int index)
 {
-	if (m_AryAcce[index].m_nStackCount < m_AryAcce[index].m_LvlUpCost)
+	if (m_AryAcce[index].StackCount < m_AryAcce[index].m_LvlUpCost)
 	{
 		return false;
 	}
 
-	m_AryAcce[index].m_nStackCount -= m_AryAcce[index].m_LvlUpCost;
+	m_AryAcce[index].StackCount -= m_AryAcce[index].m_LvlUpCost;
 
-	m_AryAcce[index].m_nLv++;
+	m_AryAcce[index].Level++;
 
-	m_AryAcce[index].SetLevel(m_AryAcce[index].m_nLv);
+	m_AryAcce[index].SetLevel(m_AryAcce[index].Level);
 
 	m_OnAccessoryChanged.Broadcast(-1, index);
 
@@ -438,24 +420,24 @@ bool UEquipManager::TryCombineWeapon(int index)
 		return false; //full
 	}
 
-	if (m_AryWeapons[index].m_nStackCount < 5)
+	if (m_AryWeapons[index].StackCount < 5)
 	{
 		return false;
 	}
 
-	while (m_AryWeapons[index].m_nStackCount > 4)
+	while (m_AryWeapons[index].StackCount > 4)
 	{
-		m_AryWeapons[index].m_nStackCount -= 5;
+		m_AryWeapons[index].StackCount -= 5;
 
-		if (m_AryWeapons[NextIndex].m_nLv < 1)
+		if (m_AryWeapons[NextIndex].Level < 1)
 		{
-			m_AryWeapons[NextIndex].m_nLv++;
-			m_AryWeapons[NextIndex].SetLevel(m_AryWeapons[NextIndex].m_nLv);
+			m_AryWeapons[NextIndex].Level++;
+			m_AryWeapons[NextIndex].SetLevel(m_AryWeapons[NextIndex].Level);
 
 			continue;
 		}
 
-		m_AryWeapons[NextIndex].m_nStackCount++;
+		m_AryWeapons[NextIndex].StackCount++;
 	}
 
 	m_OnWeaponChanged.Broadcast(NextIndex, index);
@@ -472,24 +454,24 @@ bool UEquipManager::TryCombinePet(int index)
 		return false; //full
 	}
 
-	if (m_AryPets[index].m_nStackCount < 5)
+	if (m_AryPets[index].StackCount < 5)
 	{
 		return false;
 	}
 
-	while (m_AryPets[index].m_nStackCount > 4)
+	while (m_AryPets[index].StackCount > 4)
 	{
-		m_AryPets[index].m_nStackCount -= 5;
+		m_AryPets[index].StackCount -= 5;
 
-		if (m_AryPets[NextIndex].m_nLv < 1)
+		if (m_AryPets[NextIndex].Level < 1)
 		{
-			m_AryPets[NextIndex].m_nLv++;
-			m_AryPets[NextIndex].SetLevel(m_AryPets[NextIndex].m_nLv);
+			m_AryPets[NextIndex].Level++;
+			m_AryPets[NextIndex].SetLevel(m_AryPets[NextIndex].Level);
 
 			continue;
 		}
 
-		m_AryPets[NextIndex].m_nStackCount++;
+		m_AryPets[NextIndex].StackCount++;
 	}
 
 	m_OnPetChanged.Broadcast(NextIndex, index);
@@ -499,7 +481,7 @@ bool UEquipManager::TryCombinePet(int index)
 
 bool UEquipManager::TryLvUpWeapon(int index)
 {
-	if (m_AryWeapons[index].m_nLv >= m_AryWeapons[index].GetMaxLv())
+	if (m_AryWeapons[index].Level >= m_AryWeapons[index].GetMaxLv())
 	{
 		return false;
 	}
@@ -509,8 +491,8 @@ bool UEquipManager::TryLvUpWeapon(int index)
 		return false;
 	}
 
-	m_AryWeapons[index].m_nLv++;
-	m_AryWeapons[index].SetLevel(m_AryWeapons[index].m_nLv);
+	m_AryWeapons[index].Level++;
+	m_AryWeapons[index].SetLevel(m_AryWeapons[index].Level);
 
 	m_OnWeaponChanged.Broadcast(-1, index);
 
@@ -519,7 +501,7 @@ bool UEquipManager::TryLvUpWeapon(int index)
 
 bool UEquipManager::TryLvUpPet(int index)
 {
-	if (m_AryPets[index].m_nLv >= 100)
+	if (m_AryPets[index].Level >= 100)
 	{
 		return false;
 	}
@@ -529,8 +511,8 @@ bool UEquipManager::TryLvUpPet(int index)
 		return false;
 	}
 
-	m_AryPets[index].m_nLv++;
-	m_AryPets[index].SetLevel(m_AryPets[index].m_nLv);
+	m_AryPets[index].Level++;
+	m_AryPets[index].SetLevel(m_AryPets[index].Level);
 
 	m_OnPetChanged.Broadcast(-1, index);
 
@@ -554,13 +536,13 @@ void UEquipManager::AddAccessoryStack(const FGachaAbleRow* acceData)
 
 void UEquipManager::AddWeaponStack(int index)
 {
-	if (m_AryWeapons[index].m_nLv < 1)
+	if (m_AryWeapons[index].Level < 1)
 	{
 		TryLvUpWeapon(index);
 	}
 	else
 	{
-		m_AryWeapons[index].m_nStackCount++;
+		m_AryWeapons[index].StackCount++;
 	}
 
 	m_OnWeaponChanged.Broadcast(-1, index);
@@ -568,13 +550,13 @@ void UEquipManager::AddWeaponStack(int index)
 
 void UEquipManager::AddSkinStack(int index)
 {
-	if (m_AryPlayerSkin[index].m_nIsUnlocked < 1)
+	if (!m_AryPlayerSkin[index].IsUnlocked)
 	{
-		m_AryPlayerSkin[index].m_nIsUnlocked = 1;
+		m_AryPlayerSkin[index].IsUnlocked = true;
 	}
 	else
 	{
-		m_AryPlayerSkin[index].m_nStackCount++;
+		m_AryPlayerSkin[index].StackCount++;
 	}
 
 	m_OnPlSkinChanged.Broadcast(-1, index);
@@ -582,13 +564,13 @@ void UEquipManager::AddSkinStack(int index)
 
 void UEquipManager::AddPetStack(int index)
 {
-	if (m_AryPets[index].m_nLv < 1)
+	if (m_AryPets[index].Level < 1)
 	{
 		TryLvUpPet(index);
 	}
 	else
 	{
-		m_AryPets[index].m_nStackCount++;
+		m_AryPets[index].StackCount++;
 	}
 
 	m_OnPetChanged.Broadcast(-1, index);
@@ -596,13 +578,13 @@ void UEquipManager::AddPetStack(int index)
 
 void UEquipManager::AddWingStack(int index)
 {
-	if (m_AryWings[index].m_nIsUnlocked < 1)
+	if (!m_AryWings[index].IsUnlocked)
 	{
-		m_AryWings[index].m_nIsUnlocked = 1;
+		m_AryWings[index].IsUnlocked = true;
 	}
 	else
 	{
-		m_AryWings[index].m_nStackCount++;
+		m_AryWings[index].StackCount++;
 	}
 
 	m_OnWingChanged.Broadcast(-1, index);
@@ -610,13 +592,13 @@ void UEquipManager::AddWingStack(int index)
 
 void UEquipManager::AddAccessoryStack(int index)
 {
-	if (m_AryAcce[index].m_nLv < 1)
+	if (m_AryAcce[index].Level < 1)
 	{
 		m_AryAcce[index].SetLevel(1);
 	}
 	else
 	{
-		m_AryAcce[index].m_nStackCount++;
+		m_AryAcce[index].StackCount++;
 	}
 
 	m_OnAccessoryChanged.Broadcast(-1, index);
@@ -634,8 +616,6 @@ FString UEquipManager::GetWeaponDataStr()
 
 	for (auto& WeaponSpec : m_AryWeapons)
 	{
-		WeaponStr.Append(WeaponSpec.ParseToString());
-		WeaponStr.AppendChar(TEXT('/'));
 	}
 
 	return WeaponStr;
@@ -647,8 +627,6 @@ FString UEquipManager::GetSkinDataStr()
 
 	for (auto& SkinSpec : m_AryPlayerSkin)
 	{
-		SkinStr.Append(SkinSpec.ParseToString());
-		SkinStr.AppendChar(TEXT('/'));
 	}
 
 	return SkinStr;
@@ -660,8 +638,6 @@ FString UEquipManager::GetPetDataStr()
 
 	for (auto& PetSpec : m_AryPets)
 	{
-		PetStr.Append(PetSpec.ParseToString());
-		PetStr.AppendChar(TEXT('/'));
 	}
 
 	return PetStr;
@@ -673,8 +649,6 @@ FString UEquipManager::GetAccessoryDataStr()
 
 	for (auto& AcceSpec : m_AryAcce)
 	{
-		AccessoryStr.Append(AcceSpec.ParseToString());
-		AccessoryStr.AppendChar(TEXT('/'));
 	}
 
 	return AccessoryStr;
@@ -686,8 +660,6 @@ FString UEquipManager::GetWingDataStr()
 
 	for (auto& WingSpecs : m_AryWings)
 	{
-		WingStr.Append(WingSpecs.ParseToString());
-		WingStr.AppendChar(TEXT('/'));
 	}
 
 	return WingStr;
