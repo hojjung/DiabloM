@@ -116,5 +116,7 @@ public:
 	}
 
 	FString GetUpgradeDataStr();
+
+	FString GetSkillDataStr();
 	
 };

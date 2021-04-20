@@ -8,15 +8,15 @@ void UShopManager::SetShopDataFromServer(const FString iapJsonStr)
 {
 	TSharedPtr<FJsonObject> JsonObject;
 
-	TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(iapJsonStr);
-	
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(iapJsonStr);
+
 	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
 	{
-		return;	
+		return;
 	}
-	
+
 	m_PackagePurchased.Init(false, 5);
-	
+
 	m_PackagePurchased[0] = JsonObject->GetBoolField(TEXT("Package01"));
 	m_PackagePurchased[1] = JsonObject->GetBoolField(TEXT("Package02"));
 	m_PackagePurchased[2] = JsonObject->GetBoolField(TEXT("Package03"));
@@ -379,7 +379,7 @@ void UShopManager::OnPurchasedGainItem(FString itemID)
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData();
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData01();
 }
 
 #pragma endregion IAP
@@ -391,16 +391,16 @@ bool UShopManager::GetPackagePurchased(int index)
 
 FString UShopManager::GetIAPDataStr()
 {
-	FString Result = FString::Printf(TEXT("True/%s/%s/%s/%s/%s/"),
-	                                 m_PackagePurchased[0] ? TEXT("True") : TEXT("False"),
-	                                 m_PackagePurchased[1] ? TEXT("True") : TEXT("False"),
-	                                 m_PackagePurchased[2] ? TEXT("True") : TEXT("False"),
-	                                 m_PackagePurchased[3] ? TEXT("True") : TEXT("False"),
-	                                 m_PackagePurchased[4] ? TEXT("True") : TEXT("False"));
+	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 
-	return Result;
+	JsonObject->SetBoolField(TEXT("Package01"), m_PackagePurchased[0]);
+	JsonObject->SetBoolField(TEXT("Package02"), m_PackagePurchased[1]);
+	JsonObject->SetBoolField(TEXT("Package03"), m_PackagePurchased[2]);
+	JsonObject->SetBoolField(TEXT("Package04"), m_PackagePurchased[3]);
+	JsonObject->SetBoolField(TEXT("Package05"), m_PackagePurchased[4]);
+
+	return PlayFab::FJsonKeeper(JsonObject).toJSONString();
 }
-
 
 void UShopManager::ShowTouchBan()
 {

@@ -58,7 +58,7 @@ public:
 	
 	void UploadQuestData();
 
-	void RequestGemStoneUploadToServer();
+	void RequestGemStoneUploadToServer(bool bForce);
 
 	FString GetQuestDataStr();
 };

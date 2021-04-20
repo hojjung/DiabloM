@@ -60,6 +60,7 @@ public://static
 	static const FString Skin;
 	static const FString Pet;
 	static const FString Daily;
+	static const FString LogoutTime;
 	//
 public://user data
 	UPROPERTY()
@@ -227,6 +228,8 @@ protected:
 
 	void OnSuccessGetTitleNews(const PlayFab::ClientModels::FGetTitleNewsResult&);
 
+	void UploadTitleData02( const FUpdateRslt&);
+	
 public:
 	void RequestRetrieveTotalRanking();
 
@@ -238,9 +241,9 @@ public:
 
 	void SetRanking(int rank);
 	
-	FString GetIAPDataStr();
+	void UploadUserTitleData01();
 
-	void UploadUserTitleData();
+	
 
 	void RequestCheatAlert();
 
@@ -262,19 +265,17 @@ public:
 
 	void OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
 
-	void UploadIAPData();
-
 	void UploadGold(BigInt gold);
-
-	void UploadDungeonData(int currentDungeon,int maxDungeon);
 
 	void OnBossBattleStart();
 	//
 	void RequestItemTest();
 
-	void UploadDailyData(int dday,const FDateTime claimTime);
+	void UploadDailyData(const FString dailyJsonStr);
 
 	void UploadQuestData(const FString& data);
+
+	
 };
 
 

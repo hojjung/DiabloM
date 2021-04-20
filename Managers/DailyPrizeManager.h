@@ -29,4 +29,6 @@ public:
 	void SetPrizeManager(const FString& prizeJsonStr,const FDateTime& currentTime,bool bIsFirst);
 	UFUNCTION()
 	void Claim();
+
+	FString GetDailyPrizeJsonStr();
 };

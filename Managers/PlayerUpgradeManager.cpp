@@ -86,6 +86,43 @@ void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& statJsonStr,
 	}
 }
 
+FString UPlayerUpgradeManager::GetUpgradeDataStr()//9
+{
+	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+
+	JsonObject->SetNumberField(TEXT("BaseAttack"), m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].m_nLv);
+	JsonObject->SetNumberField(TEXT("Critical"), m_AryBaseAtkUpgrade[(int)EAttackType::Critical].m_nLv);
+	JsonObject->SetNumberField(TEXT("CriticalDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].m_nLv);
+	JsonObject->SetNumberField(TEXT("SuperCritical"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].m_nLv);
+	JsonObject->SetNumberField(TEXT("SuperCriticalDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].m_nLv);
+	JsonObject->SetNumberField(TEXT("MagicBomb"), m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].m_nLv);
+	JsonObject->SetNumberField(TEXT("MagicBombDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].m_nLv);
+	JsonObject->SetNumberField(TEXT("SuperMagicBomb"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].m_nLv);
+	JsonObject->SetNumberField(TEXT("SuperMagicBombDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].m_nLv);
+
+	return PlayFab::FJsonKeeper(JsonObject).toJSONString();
+}
+
+FString UPlayerUpgradeManager::GetSkillDataStr()
+{
+	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+
+	JsonObject->SetNumberField(TEXT("DeathBlow"),m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_nLv);
+	JsonObject->SetNumberField(TEXT("DeathBlowEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_nIndex);
+	JsonObject->SetNumberField(TEXT("MagicBlade"), m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_nLv);
+	JsonObject->SetNumberField(TEXT("MagicBladeEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_nIndex);
+	JsonObject->SetNumberField(TEXT("WhirlWind"), m_AryUpgradeSkill[(int)ESkillType::WhirlWind].m_nLv);
+	JsonObject->SetNumberField(TEXT("WhirlWindEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::WhirlWind].m_nIndex);
+	JsonObject->SetNumberField(TEXT("EarthQuake"), m_AryUpgradeSkill[(int)ESkillType::EarthQuake].m_nLv);
+	JsonObject->SetNumberField(TEXT("EarthQuakeEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::EarthQuake].m_nIndex);
+	JsonObject->SetNumberField(TEXT("WindBlade"), m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_nLv);
+	JsonObject->SetNumberField(TEXT("WindBladeEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_nIndex);
+
+	return PlayFab::FJsonKeeper(JsonObject).toJSONString();
+}
+
+
+
 void UPlayerUpgradeManager::UpgradeAtk(EAttackType type)
 {
 	if (!GetAtkUp(type).IsUpgradeAble())
@@ -257,30 +294,6 @@ void UPlayerUpgradeManager::ClearCooldownAllSkill()
 	}
 }
 
-FString UPlayerUpgradeManager::GetUpgradeDataStr()//9
-{
-	return FString::Printf(TEXT("%d:%d:%d:%d:%d:%d:%d:%d:%d:&%d:%d:/%d:%d:/%d:%d:/%d:%d:/%d:%d:/"),
-		GetAtkUp(EAttackType::BaseAttack).m_nLv,
-		GetAtkUp(EAttackType::Critical).m_nLv,
-		GetAtkUp(EAttackType::CriticalDmg).m_nLv,
-		GetAtkUp(EAttackType::SuperCritical).m_nLv,
-		GetAtkUp(EAttackType::SuperCriticalDmg).m_nLv,
-		GetAtkUp(EAttackType::MagicBomb).m_nLv,
-		GetAtkUp(EAttackType::MagicBombDmg).m_nLv,
-		GetAtkUp(EAttackType::SuperMagicBomb).m_nLv,
-		GetAtkUp(EAttackType::SuperMagicBombDmg).m_nLv,
-		GetSkillUp(ESkillType::DeathBlow).m_nLv,
-		GetSkillUp(ESkillType::DeathBlow).m_nIndex,
-		GetSkillUp(ESkillType::MagicBlade).m_nLv,
-        GetSkillUp(ESkillType::MagicBlade).m_nIndex,
-        GetSkillUp(ESkillType::WhirlWind).m_nLv,
-        GetSkillUp(ESkillType::WhirlWind).m_nIndex,
-        GetSkillUp(ESkillType::EarthQuake).m_nLv,
-        GetSkillUp(ESkillType::EarthQuake).m_nIndex,
-        GetSkillUp(ESkillType::WindBlade).m_nLv,
-        GetSkillUp(ESkillType::WindBlade).m_nIndex
-		);
-}
 
 
 //1,1

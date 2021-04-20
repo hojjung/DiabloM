@@ -109,7 +109,7 @@ void UDungeonManager::LevelUpDungeon()
 
 	m_OnDgOpen.Broadcast(m_nCurrentStageLevel);
 	
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData();
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData01();
 	
 	OpenLevel();
 }

@@ -31,7 +31,6 @@ void UQuestManager::SetQuestDataFromServer(const FString& strQuest)
 	{
 		m_AryQuestData[12].QuestAmount =MaxStage;	
 	}
-
 }
 
 bool UQuestManager::CompleteQuest(int index)
@@ -71,9 +70,9 @@ void UQuestManager::UploadQuestData()
 	UDiabloGameInstance::Get->m_PlayfabManager->UploadQuestData(GetQuestDataStr());
 }
 
-void UQuestManager::RequestGemStoneUploadToServer()
+void UQuestManager::RequestGemStoneUploadToServer(bool bForce)
 {
-	if(m_nWaitingGemStones<1)
+	if(!bForce&&m_nWaitingGemStones<1)
 	{
 		return;
 	}
@@ -91,11 +90,30 @@ void UQuestManager::RequestGemStoneUploadToServer()
 
 FString UQuestManager::GetQuestDataStr()
 {
-	FString ResultStr;
-	
-	for(auto& QuestData : m_AryQuestData)
-	{
-	}
+	TSharedPtr<FJsonObject> AryQuestJsonObj = MakeShareable(new FJsonObject);
 
-	return ResultStr;
+	TArray<TSharedPtr<FJsonValue>> AryQuestSpec;
+	AryQuestSpec.Empty(30);
+	//<TCHAR, TCondensedJsonPrintPolicy<TCHAR> >
+	for(const FQuestDataSpec& QuestSpec : m_AryQuestData)
+	{
+		TSharedRef<FJsonObject> CurrentQuestJson= MakeShareable(new FJsonObject);
+		
+		if(!FJsonObjectConverter::UStructToJsonObject(FQuestDataSpec::StaticStruct(),&QuestSpec,CurrentQuestJson,0,0))
+		{
+			break; 
+		}
+
+		TSharedRef< FJsonValueObject > QuestJsonValue = MakeShareable( new FJsonValueObject( CurrentQuestJson) );
+		
+		AryQuestSpec.Add(QuestJsonValue);
+	}
+	
+	FString QuestJsonValueStr;
+	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter=
+	TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&QuestJsonValueStr);
+	FJsonSerializer::Serialize(AryQuestSpec, JsonWriter);
+	JsonWriter->Close();
+
+	return QuestJsonValueStr;
 }

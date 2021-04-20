@@ -44,7 +44,7 @@ UEquipManager::UEquipManager()
 	ClearSelectedIndex();
 }
 
-void UEquipManager::SetEquipDataFromServer(const FString& classSkin, const FString& weapon,const FString& pet)
+void UEquipManager::SetEquipDataFromServer(const FString& classSkin, const FString& weapon, const FString& pet)
 {
 	SetStringSkinUnlocked(classSkin);
 	SetStringWeaponUnlocked(weapon);
@@ -65,16 +65,16 @@ void UEquipManager::SetStringSkinUnlocked(FString skinUnlock) //이 str에 모�
 	m_AryPlayerSkin.Empty(30);
 	TArray<const FPlayerSkinTable*> ArySkinsTable;
 	UEquipManager::GetPlayerSkinDataTable->GetAllRows("", ArySkinsTable);
-	
-	if(!FJsonObjectConverter::JsonArrayStringToUStruct(skinUnlock, &m_AryPlayerSkin, 0, 0))
+
+	if (!FJsonObjectConverter::JsonArrayStringToUStruct(skinUnlock, &m_AryPlayerSkin, 0, 0))
 	{
 		return;
 	}
 
-	
-	int IterMax = FMath::Min(ArySkinsTable.Num(),m_AryPlayerSkin.Num());
-	
-	for(int i=0;i<IterMax; i++)
+
+	int IterMax = FMath::Min(ArySkinsTable.Num(), m_AryPlayerSkin.Num());
+
+	for (int i = 0; i < IterMax; i++)
 	{
 		m_AryPlayerSkin[i].m_PlayerData = ArySkinsTable[i];
 		m_AryPlayerSkin[i].SetValue();
@@ -90,16 +90,16 @@ void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
 	TArray<const FWeaponTable*> AryWeaponTable;
 	UEquipManager::GetWeaponDataTable->GetAllRows("", AryWeaponTable);
 
-	if(!FJsonObjectConverter::JsonArrayStringToUStruct(weaponUnlock, &m_AryWeapons, 0, 0))
+	if (!FJsonObjectConverter::JsonArrayStringToUStruct(weaponUnlock, &m_AryWeapons, 0, 0))
 	{
 		return;
 	}
 
-	int IterMax = FMath::Min(AryWeaponTable.Num(),m_AryWeapons.Num());
+	int IterMax = FMath::Min(AryWeaponTable.Num(), m_AryWeapons.Num());
 
 	for (int i = 0; i < IterMax; i++)
 	{
-		m_AryWeapons[i].m_EquipData=AryWeaponTable[i];
+		m_AryWeapons[i].m_EquipData = AryWeaponTable[i];
 		m_AryWeapons[i].SetLevel(m_AryWeapons[i].Level);
 		m_MapPlayerWeapon.Add(m_AryWeapons[i].m_EquipData, i);
 	}
@@ -112,16 +112,16 @@ void UEquipManager::SetStringPetUnlocked(FString petUnlock)
 	TArray<const FPetTable*> AryPetTable;
 	UEquipManager::GetPetDataTable->GetAllRows("", AryPetTable);
 	//
-	if(!FJsonObjectConverter::JsonArrayStringToUStruct(petUnlock, &m_AryPets, 0, 0))
+	if (!FJsonObjectConverter::JsonArrayStringToUStruct(petUnlock, &m_AryPets, 0, 0))
 	{
 		return;
 	}
 
-	int IterMax = FMath::Min(m_AryPets.Num(),AryPetTable.Num());
+	int IterMax = FMath::Min(m_AryPets.Num(), AryPetTable.Num());
 
 	for (int i = 0; i < IterMax; i++)
 	{
-		m_AryPets[i].m_PetData=AryPetTable[i];
+		m_AryPets[i].m_PetData = AryPetTable[i];
 		m_AryPets[i].SetLevel(m_AryPets[i].Level);
 		m_MapPlayerPet.Add(m_AryPets[i].m_PetData, i);
 	}
@@ -134,16 +134,16 @@ void UEquipManager::SetStringAccesoryUnlocked(FString acceUnlock)
 	TArray<const FAccessoryTable*> AryAccesTable;
 	UEquipManager::GetAcceeDataTable->GetAllRows("", AryAccesTable);
 	//
-	if(!FJsonObjectConverter::JsonArrayStringToUStruct(acceUnlock, &m_AryAcce, 0, 0))
+	if (!FJsonObjectConverter::JsonArrayStringToUStruct(acceUnlock, &m_AryAcce, 0, 0))
 	{
 		return;
 	}
 
-	int IterMax = FMath::Min(m_AryAcce.Num(),AryAccesTable.Num());
+	int IterMax = FMath::Min(m_AryAcce.Num(), AryAccesTable.Num());
 
 	for (int i = 0; i < IterMax; i++)
 	{
-		m_AryAcce[i].m_AccessoryData=AryAccesTable[i];
+		m_AryAcce[i].m_AccessoryData = AryAccesTable[i];
 		m_AryAcce[i].SetLevel(m_AryPets[i].Level);
 		m_MapAccessory.Add(m_AryAcce[i].m_AccessoryData, i);
 	}
@@ -263,7 +263,7 @@ void UEquipManager::TryEquipWeapon(int index)
 	m_AryWeapons[index].IsEquipped = true;
 
 	UDiabloGameInstance::Get->GetPlChar()->WeaponDataInject(m_AryWeapons[index]);
-	
+
 	m_OnWeaponChanged.Broadcast(m_nSelectedWeapon, index);
 
 	m_nSelectedWeapon = index;
@@ -345,14 +345,14 @@ bool UEquipManager::TryCombineSkin(int index)
 	{
 		m_AryPlayerSkin[index].StackCount -= 5;
 
-		if (!m_AryPlayerSkin[NextIndex].IsUnlocked)//해금
+		if (!m_AryPlayerSkin[NextIndex].IsUnlocked) //해금
 		{
-			m_AryPlayerSkin[NextIndex].IsUnlocked=true;
+			m_AryPlayerSkin[NextIndex].IsUnlocked = true;
 
 			continue;
 		}
 
-		m_AryPlayerSkin[NextIndex].StackCount++;//해금완료됐으면 스택늘려줌
+		m_AryPlayerSkin[NextIndex].StackCount++; //해금완료됐으면 스택늘려줌
 	}
 
 	m_OnPlSkinChanged.Broadcast(index, NextIndex);
@@ -380,7 +380,7 @@ bool UEquipManager::TryCombineWing(int index)
 
 		if (!m_AryWings[NextIndex].IsUnlocked)
 		{
-			m_AryWings[NextIndex].IsUnlocked=true;
+			m_AryWings[NextIndex].IsUnlocked = true;
 
 			continue;
 		}
@@ -612,55 +612,153 @@ FAccessorySpec& UEquipManager::GetAccessory(EAccessory acces)
 
 FString UEquipManager::GetWeaponDataStr()
 {
-	FString WeaponStr;
+	TSharedPtr<FJsonObject> AryWeaponJsonObj = MakeShareable(new FJsonObject);
 
-	for (auto& WeaponSpec : m_AryWeapons)
+	TArray<TSharedPtr<FJsonValue>> AryWeaponSpec;
+	AryWeaponSpec.Empty(30);
+	//<TCHAR, TCondensedJsonPrintPolicy<TCHAR> >
+	for (const FWeaponSpec& WeaponSpec : m_AryWeapons)
 	{
+		TSharedRef<FJsonObject> CurrentWeaponJson = MakeShareable(new FJsonObject);
+
+		if (!FJsonObjectConverter::UStructToJsonObject(FWeaponSpec::StaticStruct(), &WeaponSpec, CurrentWeaponJson, 0,
+		                                               0))
+		{
+			break;
+		}
+
+		TSharedRef<FJsonValueObject> WeaponJsonValue = MakeShareable(new FJsonValueObject(CurrentWeaponJson));
+
+		AryWeaponSpec.Add(WeaponJsonValue);
 	}
 
-	return WeaponStr;
+	FString WeaponJsonValueStr;
+	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter =
+		TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&WeaponJsonValueStr);
+	FJsonSerializer::Serialize(AryWeaponSpec, JsonWriter);
+	JsonWriter->Close();
+
+	return WeaponJsonValueStr;
 }
 
 FString UEquipManager::GetSkinDataStr()
 {
-	FString SkinStr;
+	TSharedPtr<FJsonObject> ArySkinJsonObj = MakeShareable(new FJsonObject);
 
-	for (auto& SkinSpec : m_AryPlayerSkin)
+	TArray<TSharedPtr<FJsonValue>> ArySkinSpec;
+	ArySkinSpec.Empty(30);
+	//<TCHAR, TCondensedJsonPrintPolicy<TCHAR> >
+	for (const FPlayerClassSpec& SkinSpec : m_AryPlayerSkin)
 	{
+		TSharedRef<FJsonObject> CurrentSkinJson = MakeShareable(new FJsonObject);
+
+		if (!FJsonObjectConverter::UStructToJsonObject(FPlayerClassSpec::StaticStruct(), &SkinSpec, CurrentSkinJson, 0,
+		                                               0))
+		{
+			break;
+		}
+
+		TSharedRef<FJsonValueObject> SkinJsonValue = MakeShareable(new FJsonValueObject(CurrentSkinJson));
+
+		ArySkinSpec.Add(SkinJsonValue);
 	}
 
-	return SkinStr;
+	FString SkinJsonValueStr;
+	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter =
+		TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&SkinJsonValueStr);
+	FJsonSerializer::Serialize(ArySkinSpec, JsonWriter);
+	JsonWriter->Close();
+
+	return SkinJsonValueStr;
 }
 
 FString UEquipManager::GetPetDataStr()
 {
-	FString PetStr;
+	TSharedPtr<FJsonObject> AryPetJsonObj = MakeShareable(new FJsonObject);
 
-	for (auto& PetSpec : m_AryPets)
+	TArray<TSharedPtr<FJsonValue>> AryPetSpec;
+	AryPetSpec.Empty(30);
+	//<TCHAR, TCondensedJsonPrintPolicy<TCHAR> >
+	for (const FPetSpec& PetSpec : m_AryPets)
 	{
+		TSharedRef<FJsonObject> CurrentPetJson = MakeShareable(new FJsonObject);
+
+		if (!FJsonObjectConverter::UStructToJsonObject(FPetSpec::StaticStruct(), &PetSpec, CurrentPetJson, 0, 0))
+		{
+			break;
+		}
+
+		TSharedRef<FJsonValueObject> PetJsonValue = MakeShareable(new FJsonValueObject(CurrentPetJson));
+
+		AryPetSpec.Add(PetJsonValue);
 	}
 
-	return PetStr;
+	FString PetJsonValueStr;
+	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter =
+		TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&PetJsonValueStr);
+	FJsonSerializer::Serialize(AryPetSpec, JsonWriter);
+	JsonWriter->Close();
+
+	return PetJsonValueStr;
 }
 
 FString UEquipManager::GetAccessoryDataStr()
 {
-	FString AccessoryStr;
+	TSharedPtr<FJsonObject> AryAcceJsonObj = MakeShareable(new FJsonObject);
 
-	for (auto& AcceSpec : m_AryAcce)
+	TArray<TSharedPtr<FJsonValue>> AryAcceSpec;
+	AryAcceSpec.Empty(30);
+	//<TCHAR, TCondensedJsonPrintPolicy<TCHAR> >
+	for (const FAccessorySpec& AcceSpec : m_AryAcce)
 	{
+		TSharedRef<FJsonObject> CurrentAcceJson = MakeShareable(new FJsonObject);
+
+		if (!FJsonObjectConverter::UStructToJsonObject(FAccessorySpec::StaticStruct(), &AcceSpec, CurrentAcceJson, 0, 0)
+		)
+		{
+			break;
+		}
+
+		TSharedRef<FJsonValueObject> AcceJsonValue = MakeShareable(new FJsonValueObject(CurrentAcceJson));
+
+		AryAcceSpec.Add(AcceJsonValue);
 	}
 
-	return AccessoryStr;
+	FString AcceJsonValueStr;
+	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter =
+		TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&AcceJsonValueStr);
+	FJsonSerializer::Serialize(AryAcceSpec, JsonWriter);
+	JsonWriter->Close();
+
+	return AcceJsonValueStr;
 }
 
 FString UEquipManager::GetWingDataStr()
 {
-	FString WingStr;
+	TSharedPtr<FJsonObject> AryWingJsonObj = MakeShareable(new FJsonObject);
 
-	for (auto& WingSpecs : m_AryWings)
+	TArray<TSharedPtr<FJsonValue>> AryWingSpecs;
+	AryWingSpecs.Empty(30);
+	//<TCHAR, TCondensedJsonPrintPolicy<TCHAR> >
+	for (const FWingSpec& WingSpec : m_AryWings)
 	{
+		TSharedRef<FJsonObject> CurrentAcceJson = MakeShareable(new FJsonObject);
+
+		if (!FJsonObjectConverter::UStructToJsonObject(FWingSpec::StaticStruct(), &WingSpec, CurrentAcceJson, 0, 0))
+		{
+			break;
+		}
+
+		TSharedRef<FJsonValueObject> AcceJsonValue = MakeShareable(new FJsonValueObject(CurrentAcceJson));
+
+		AryWingSpecs.Add(AcceJsonValue);
 	}
 
-	return WingStr;
+	FString AcceJsonValueStr;
+	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter =
+		TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&AcceJsonValueStr);
+	FJsonSerializer::Serialize(AryWingSpecs, JsonWriter);
+	JsonWriter->Close();
+
+	return AcceJsonValueStr;
 }

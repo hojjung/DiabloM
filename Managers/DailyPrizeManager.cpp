@@ -98,9 +98,16 @@ void UDailyPrizeManager::Claim()
 	
 	m_bIsAbleGetDailyPrize = false;
 
-	FDateTime CurrentTime = FDateTime::Now();
-	
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadDailyData(m_nDDay,CurrentTime);
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadDailyData(GetDailyPrizeJsonStr());
 	UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(m_AryClaimGemstone[m_nDDay]);
-	//Upload GG,claim time and dday
+}
+
+FString UDailyPrizeManager::GetDailyPrizeJsonStr()//시작할때 한번만 받아야함
+{
+	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+
+	JsonObject->SetNumberField(TEXT("Dday"),m_nDDay); 
+	JsonObject->SetStringField(TEXT("ClaimTime"),FDateTime::UtcNow().ToString());
+
+	return PlayFab::FJsonKeeper(JsonObject).toJSONString();
 }

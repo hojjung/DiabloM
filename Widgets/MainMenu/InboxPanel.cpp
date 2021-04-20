@@ -54,7 +54,7 @@ void UInboxPanel::SetInboxElement(const TArray<FInboxSpec>& aryInboxSpecs)
 	if(aryInboxSpecs.Num()<1)
 	{
 		m_TextMailCount->SetText(FText::AsNumber(0));
-		m_TextLoading->SetText(FText::FromString(TEXT("우편 업음")));
+		m_TextLoading->SetText(FText::FromString(TEXT("우편 없음")));
 		m_TextLoading->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		return;
 	}

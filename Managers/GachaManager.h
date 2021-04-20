@@ -38,7 +38,7 @@ public:
 
 	void SetGachaLevel(const FString gachaJsonStr);
 
-	FString GetGachaLevelStr();
+	FString GetGachaDataStr();
 	
 public:
 	UPROPERTY()

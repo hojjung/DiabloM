@@ -42,7 +42,7 @@ void UQuestPanel::SetVisibility(ESlateVisibility InVisibility)
 		}
 		if(UDiabloGameInstance::Get->m_QuestManager)
 		{
-			UDiabloGameInstance::Get->m_QuestManager->RequestGemStoneUploadToServer();	
+			UDiabloGameInstance::Get->m_QuestManager->RequestGemStoneUploadToServer(false);	
 		}
 	}
 }
