@@ -14,11 +14,8 @@ void UInboxElement::SetInboxSpec(const FInboxSpec& element)
 {
 	m_TextMailName->SetText(FText::FromString(element.MailName));
 	m_TextMailDesc->SetText(FText::FromString(element.MailDesc));
-	m_TextExpireTime->SetText(FText::FromString(element.m_ExpireTimeUTC.ToString()));
-
+	m_TextExpireTime->SetText(FText::FromString(FString::Printf(TEXT("%s까지"),*element.m_ExpireTimeUTC.ToString())));
 	m_TextItemAmount->SetText(FText::FromString(element.ItemAmount));
-
-	
 }
 
 void UInboxElement::OnClick()

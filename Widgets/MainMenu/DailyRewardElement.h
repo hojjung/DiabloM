@@ -20,7 +20,14 @@ public:
 	UTextBlock* m_TextDay;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextGemStones;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImage* m_ImgFocused;
+	
+	//Overlay=FOcus
+	//Disable=Complete
+	//Defaultban = touchban
+	UPROPERTY()
+	bool m_bIsAvailable;
 	UPROPERTY()
 	int m_nGemStones;
 public:
@@ -30,4 +37,6 @@ public:
 	void Claimed();
 	
 	void SetClaimAble();
+
+	
 };

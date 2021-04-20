@@ -25,6 +25,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnShowAcceDg;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnPVP;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnBack;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UScrollBox* m_StageTypeSelectVert;
@@ -36,12 +38,15 @@ protected:
 	UScrollBox* m_DgAcceStageBtnListVert;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UScrollBox* m_DgStatBtnListVert;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UScrollBox* m_DgPVPVert;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UStageBtn> m_ClassStageBtn;
 	UPROPERTY()
 	TArray<UStageBtn*> m_AryStageBtn;
 
 protected:
+	void InitNormalDungeon();
 	virtual void NativeOnInitialized() override;
 
 	void UpdateBtnUI(int index);
@@ -55,6 +60,8 @@ public:
 	void OpenStatDg();
 	UFUNCTION()
     void OpenAcceDg();
+	UFUNCTION()
+    void OpenPVPDg();
 	UFUNCTION()
 	void Back();
 };

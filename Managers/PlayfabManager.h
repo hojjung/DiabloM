@@ -98,6 +98,8 @@ public://loaded data
 	UPROPERTY()
 	bool m_bIsVersionWrong = false;
 	UPROPERTY()
+	float m_fDeltaInboxUpdateCooldown;
+	UPROPERTY()
 	float m_fDeltaCountMinutePlaytime;
 	UPROPERTY()
 	float m_fDeltaCountTitleData;
@@ -165,7 +167,7 @@ public:
 
 	void RequestGetUserData02();
 
-	void RequestInboxList();
+	bool RequestInboxList();
 
 	void RequestClaimInbox(int index);
 	

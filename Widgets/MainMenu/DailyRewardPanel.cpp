@@ -24,6 +24,8 @@ void UDailyRewardPanel::CreateDailyButton(int maxCount)
 	m_AryElements.Reserve(maxCount);
 
 	int Index = 0;
+
+	int DDay = UDiabloGameInstance::Get->m_DailyManager->m_nDDay;
 	
 	for(int y=0; y< 5; y++)
 	{
@@ -38,24 +40,19 @@ void UDailyRewardPanel::CreateDailyButton(int maxCount)
 
 			m_AryElements.Add(CreatedCard);
 
-			CreatedCard->SetIsEnabled(false);
-
 			CreatedCard->SetDailyRewardElement(Index+1,UDiabloGameInstance::Get->m_DailyManager->m_AryClaimGemstone[Index]);
+
+			if(Index<DDay)
+			{
+				CreatedCard->SetIsEnabled(false);
+			}
 
 			Index++;
 		}		
 	}
 
+	auto* CurrentElement = m_AryElements[DDay];
 	
-	auto* CurrentElement = m_AryElements[UDiabloGameInstance::Get->m_DailyManager->m_nDDay];
-	
-	if(!UDiabloGameInstance::Get->m_DailyManager->m_bIsAbleGetDailyPrize)
-	{
-		CurrentElement->Claimed();
-		return;
-	}
-	
-	CurrentElement->SetIsEnabled(true);
 	CurrentElement->SetClaimAble();
 	CurrentElement->m_BtnClaimReward->OnClicked.AddDynamic(this,&UDailyRewardPanel::ClaimReward);
 }

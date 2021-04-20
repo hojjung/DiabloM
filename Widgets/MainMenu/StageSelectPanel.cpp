@@ -2,11 +2,32 @@
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DungeonManager.h"
 
-
 void UStageSelectPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	InitNormalDungeon();
+
+	UDiabloGameInstance::Get->m_DungeonManager->m_OnDgOpen.AddUObject(this, &UStageSelectPanel::UpdateBtnUI);
+	//
+	m_DgStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
+	m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed); //골드던전 가림
+	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
+	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
+	m_DgPVPVert->SetVisibility(ESlateVisibility::Collapsed);
+	// //
+	m_BtnShowNormalDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenNormalDg);
+	m_BtnShowGoldDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenGoldDg);
+	m_BtnShowStatDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenStatDg);
+	m_BtnShowAcceDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenAcceDg);
+	m_BtnPVP->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenPVPDg);
+	m_BtnBack->OnClicked.AddDynamic(this, &UStageSelectPanel::Back);
+	//
+	m_BtnBack->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UStageSelectPanel::InitNormalDungeon()
+{
 	int Len = UDiabloGameInstance::Get->m_DungeonManager->GetAryDgData().Num();
 
 	int MaxLevel = UDiabloGameInstance::Get->m_DungeonManager->GetMaxStage();
@@ -27,19 +48,6 @@ void UStageSelectPanel::NativeOnInitialized()
 	}
 
 	m_AryStageBtn[Current]->SetCurrent();
-
-	UDiabloGameInstance::Get->m_DungeonManager->m_OnDgOpen.AddUObject(this, &UStageSelectPanel::UpdateBtnUI);
-	//
-	m_DgStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
-	m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed); //골드던전 가림
-	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
-	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
-	// //
-	m_BtnShowNormalDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenNormalDg);
-	m_BtnShowGoldDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenGoldDg);
-	m_BtnShowStatDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenStatDg);
-	m_BtnShowAcceDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenAcceDg);
-	m_BtnBack->OnClicked.AddDynamic(this, &UStageSelectPanel::Back);
 }
 
 void UStageSelectPanel::UpdateBtnUI(int index)
@@ -52,6 +60,8 @@ void UStageSelectPanel::OpenNormalDg()
 	m_DgStageBtnListVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
+	
+	m_BtnBack->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UStageSelectPanel::OpenGoldDg()
@@ -59,6 +69,8 @@ void UStageSelectPanel::OpenGoldDg()
 	m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
+
+	m_BtnBack->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UStageSelectPanel::OpenStatDg()
@@ -66,6 +78,8 @@ void UStageSelectPanel::OpenStatDg()
 	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
+
+	m_BtnBack->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UStageSelectPanel::OpenAcceDg()
@@ -73,7 +87,19 @@ void UStageSelectPanel::OpenAcceDg()
 	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
+
+	m_BtnBack->SetVisibility(ESlateVisibility::Visible);
 }
+
+void UStageSelectPanel::OpenPVPDg()
+{
+	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
+
+	m_BtnBack->SetVisibility(ESlateVisibility::Visible);
+}
+
 
 void UStageSelectPanel::Back()
 {
@@ -83,4 +109,6 @@ void UStageSelectPanel::Back()
 	m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed); //골드던전 가림
 	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
 	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
+	//
+	m_BtnBack->SetVisibility(ESlateVisibility::Collapsed);
 }

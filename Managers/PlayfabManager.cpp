@@ -44,6 +44,7 @@ UPlayfabManager::UPlayfabManager()
 
 	m_bIsCustomID=false;
 	//
+	m_fDeltaInboxUpdateCooldown =160.f;
 }
 
 UPlayfabManager::~UPlayfabManager()
@@ -116,6 +117,8 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 	m_fDeltaCountRanking += deltaTime;
 	
 	m_fDeltaCountMinutePlaytime += deltaTime;
+
+	m_fDeltaInboxUpdateCooldown += deltaTime;
 
 	if (m_fDeltaCountMinutePlaytime > 60.f)
 	{
@@ -482,8 +485,16 @@ void UPlayfabManager::RequestClaimInbox(int index)//
 	
 	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnInboxRefreshSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
-void UPlayfabManager::RequestInboxList()
+bool UPlayfabManager::RequestInboxList()
 {
+	if(m_fDeltaInboxUpdateCooldown<150)
+	{
+		return false;
+	}
+	PRINTF("PlayfabManager-InboxRequest");
+	
+	m_fDeltaInboxUpdateCooldown =0.f;
+	
 	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
 	
 	Req.FunctionName = TEXT("RefreshInbox");
@@ -492,6 +503,7 @@ void UPlayfabManager::RequestInboxList()
 	
 	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnInboxRefreshSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 	//
+	return true;
 }
 
 
@@ -829,6 +841,7 @@ void UPlayfabManager::UpdateInboxListToClient(FString InboxListStr)
 	
 	if(!FJsonObjectConverter::JsonArrayStringToUStruct(InboxListStr, &AryInbox, 0, 0))
 	{
+		UDiabloGameInstance::Get->m_InboxManager->SetInboxManager(AryInbox);
 		return;
 	}
 
