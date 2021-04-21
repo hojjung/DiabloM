@@ -133,6 +133,8 @@ public://init
 	void Init();
 	
 	void RequestUploadNewPlayerData();
+	
+	
 
 	TMap<FString,PlayFab::ClientModels::FCatalogItem> m_MapCatalogItems;
 	
@@ -170,6 +172,8 @@ public:
 	bool RequestInboxList();
 
 	void RequestClaimInbox(int index);
+
+	void RequestClaimAllInbox();
 	
 	UFUNCTION()
     void BuyIAP(FString itemId,bool bIsConsumable);

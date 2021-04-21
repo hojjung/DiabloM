@@ -53,8 +53,16 @@ void UDailyRewardPanel::CreateDailyButton(int maxCount)
 
 	auto* CurrentElement = m_AryElements[DDay];
 	
-	CurrentElement->SetClaimAble();
-	CurrentElement->m_BtnClaimReward->OnClicked.AddDynamic(this,&UDailyRewardPanel::ClaimReward);
+	if(UDiabloGameInstance::Get->m_DailyManager->m_bIsAbleGetDailyPrize)
+	{
+		CurrentElement->SetClaimAble();
+		CurrentElement->m_BtnClaimReward->OnClicked.AddDynamic(this,&UDailyRewardPanel::ClaimReward);	
+	}
+	else
+	{
+		CurrentElement->m_bIsAvailable=true;
+		CurrentElement->Claimed();
+	}
 }
 
 void UDailyRewardPanel::ClaimReward()

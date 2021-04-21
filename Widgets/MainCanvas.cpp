@@ -63,6 +63,10 @@ void UMainCanvas::NativeOnInitialized()
 	UDiabloGameInstance::Get->m_MonsterSpawn->m_OnBossBattleStart.AddUObject(this,&UMainCanvas::OnBossBattleStart);
 	UDiabloGameInstance::Get->m_MonsterSpawn->m_OnBossBattleStart.AddUObject(UDiabloGameInstance::Get->m_PlayfabManager,&UPlayfabManager::OnBossBattleStart);
 	UDiabloGameInstance::Get->m_MonsterSpawn->m_OnBossBattleEnd.AddUObject(this,&UMainCanvas::OnBossBattleEnd);
+	//
+	m_fMaxBossCooldownTime=10;
+	m_fBossCooldownTimeCounter = m_fMaxBossCooldownTime;
+	m_CDBoss->StartCooldown();
 }
 
 void UMainCanvas::ShowTouchBan(float secWant)

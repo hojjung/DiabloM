@@ -95,7 +95,7 @@ void UInboxPanel::SetVisibility(ESlateVisibility InVisibility)
 void UInboxPanel::ClaimAll()
 {
 	PRINTF("ClaimALL - InboxPanel");
-	UDiabloGameInstance::Get->m_InboxManager->ClaimAll();
+	UDiabloGameInstance::Get->m_InboxManager->ClaimAllInbox();
 }
 
 void UInboxPanel::ClaimInbox(int index)

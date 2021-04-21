@@ -481,10 +481,22 @@ void UPlayfabManager::RequestClaimInbox(int index)//
 	
 	Req.FunctionName = TEXT("ClaimInbox");
 	
-	Req.GeneratePlayStreamEvent = true;
+	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnInboxRefreshSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::RequestClaimAllInbox()
+{
+	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+
+	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
+	
+	Req.FunctionParameter = PlayFab::FJsonKeeper(JsonObject);
+	
+	Req.FunctionName = TEXT("ClaimAllInbox");
 	
 	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnInboxRefreshSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
+
 bool UPlayfabManager::RequestInboxList()
 {
 	if(m_fDeltaInboxUpdateCooldown<150)
@@ -498,8 +510,6 @@ bool UPlayfabManager::RequestInboxList()
 	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
 	
 	Req.FunctionName = TEXT("RefreshInbox");
-	
-	Req.GeneratePlayStreamEvent = true;
 	
 	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnInboxRefreshSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 	//
@@ -763,7 +773,7 @@ void UPlayfabManager::OnIAPGoogleValidateSuccess(const PlayFab::ClientModels::FV
 
 	UDiabloGameInstance::Get->RequestPopupText(FString::Printf(TEXT("결제성공.아이템적용 진행중")));
 
-	UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(ItemID);
+	UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(ItemID,true);
 }
 
 void UPlayfabManager::RequestGetInventory()
@@ -908,7 +918,7 @@ void UPlayfabManager::OnPurchaseWithGemStoneSuccess(const PlayFab::ClientModels:
 {
 	FString PurchasedItemID =  rslt.Items[0].ItemId;
 
-	UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(PurchasedItemID);
+	UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(PurchasedItemID,true);
 
 }
 

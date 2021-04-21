@@ -100,7 +100,7 @@ UFUNCTION()
 	UFUNCTION()
     void RollGachaFiftyTime();
 
-	void OnPurchasedGainItem(FString itemID);
+	void OnPurchasedGainItem(FString itemID,bool updateData);
 
 	
 

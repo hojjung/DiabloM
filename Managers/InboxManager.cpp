@@ -13,7 +13,7 @@ void UInboxManager::ClaimItem(FString itemID, int amount)
 	}
 	else
 	{
-		UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(itemID);
+		UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(itemID,true);
 	}
 }
 
@@ -53,13 +53,40 @@ void UInboxManager::ClaimInbox(int index)
 	UDiabloGameInstance::Get->m_PlayfabManager->RequestClaimInbox(index);
 }
 
-void UInboxManager::ClaimAll()
+void UInboxManager::ClaimAllItems()
+{
+	int GemStones=0;
+	
+	for(FInboxSpec& InboxSpec  : m_AryInbox)
+	{
+		if( InboxSpec.ItemID==TEXT("GG"))
+		{
+			GemStones+=FCString::Atoi(*InboxSpec.ItemAmount);
+		}
+		else
+		{
+			UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(InboxSpec.ItemID,false);
+		}
+	}
+	
+	if(GemStones>0)
+	{
+		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(GemStones);
+	}
+
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData01();
+}
+
+void UInboxManager::ClaimAllInbox()
 {
 	if (m_AryInbox.Num() < 1)
 	{
 		return;
 	}
 
+	ClaimAllItems();
+	
 	UDiabloGameInstance::Get->RequestPopupText(TEXT("우편 적용중"));
+	UDiabloGameInstance::Get->m_PlayfabManager->RequestClaimAllInbox();
 	UDiabloGameInstance::Get->GetHud()->ShowTouchBan(3);
 }

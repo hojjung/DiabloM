@@ -23,15 +23,18 @@ void UDailyRewardElement::Claimed()
 		return;
 	}
 	m_bIsAvailable=false;
-	m_BtnClaimReward->SetIsEnabled(false);
+	
 	FString Str= FString::Printf(TEXT("획득!:%d"),m_nGemStones);
 	m_TextGemStones->SetText(FText::FromString(Str));
+	m_ImgFocused->SetVisibility(ESlateVisibility::Collapsed);
+	
+	SetIsEnabled(false);
 }
 
 void UDailyRewardElement::SetClaimAble()
 {
 	m_bIsAvailable=true;
 	m_ImgFocused->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	FString Str= FString::Printf(TEXT("획득가능:%d"),m_nGemStones);
+	FString Str= FString::Printf(TEXT("받기:%d"),m_nGemStones);
 	m_TextGemStones->SetText(FText::FromString(Str));
 }

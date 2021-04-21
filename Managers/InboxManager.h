@@ -46,13 +46,16 @@ protected:
 
 protected:
 	void ClaimItem(FString itemID,int amount);
+
+	void ClaimAllItems();
 	
 public:
 	void SetInboxManager(TArray<FInboxSpec>& inboxSpec);
 
 	void ClaimInbox(int index);
+	
 
-	void ClaimAll();
+	void ClaimAllInbox();
 
 	FORCEINLINE const TArray<FInboxSpec>& GetAryInbox()
 	{

@@ -256,7 +256,7 @@ void UShopManager::RollGachaFiftyTime()
 	// }
 }
 
-void UShopManager::OnPurchasedGainItem(FString itemID)
+void UShopManager::OnPurchasedGainItem(FString itemID,bool updateData)
 {
 	PRINTF("PurchasedItem:%s", *itemID);
 
@@ -379,7 +379,10 @@ void UShopManager::OnPurchasedGainItem(FString itemID)
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData01();
+	if(updateData)
+	{
+		UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData01();
+	}
 }
 
 #pragma endregion IAP

@@ -24,15 +24,26 @@ void UChatText::SetChat(const FString& chat)
 
 	if(OutStrAry.Num()>2)
 	{
-		//normalchat
 		FString Ranking = OutStrAry[0];
-	
+		
+		int Rank = FCString::Atoi(*Ranking);
+
 		FString Nickname = OutStrAry[1];
 
 		FString ChatText = OutStrAry[2];
 
-		FString FormatStr = FString::Printf(
-            TEXT("<%s>[%sst]</>:%s:%s"),*GetRankColor(Ranking),*Ranking,*Nickname,*ChatText);
+		FString FormatStr;
+
+		if(Rank>9999)
+		{
+			FormatStr = FString::Printf(TEXT("[초짜]:%s:%s"),*Nickname,*ChatText);
+		}
+		else
+		{
+			FormatStr = FString::Printf(TEXT("<%s>[%sst]</>:%s:%s"),*GetRankColor(Ranking),*Ranking,*Nickname,*ChatText);	
+		}
+		
+		
 	
 		m_TextChat->SetText(FText::FromString(FormatStr));
 	}

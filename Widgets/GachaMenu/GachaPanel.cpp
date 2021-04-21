@@ -15,7 +15,8 @@ void UGachaPanel::NativeOnInitialized()
 
 	m_ShopManager = UDiabloGameInstance::Get->m_ShopManager;
 
-	//m_BtnViewAds->SetVisibility(ESlateVisibility::Collapsed);
+	m_BtnViewAds->OnClicked.AddDynamic(this, &UGachaPanel::ShowAds);
+	
 	m_BtnShowWeaponGachaRate->OnClicked.AddDynamic(this, &UGachaPanel::ShowWeaponGachaInfo);
 	m_BtnShowSkinGachaRate->OnClicked.AddDynamic(this, &UGachaPanel::ShowSkinGachaInfo);
 	m_BtnShowPetGachaRate->OnClicked.AddDynamic(this, &UGachaPanel::ShowPetGachaInfo);
@@ -180,6 +181,11 @@ void UGachaPanel::RollGachaAccessoryFiftyTimes()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollAccessory);
 	m_GachaGridPanel->RollGachaFiftyTime();
+}
+
+void UGachaPanel::ShowAds()
+{
+	UDiabloGameInstance::Get->m_AdverManager->ShowRewardAds();
 }
 
 void UGachaPanel::UpdateGachaWeaponLevelCount(int c, int m, int lv)

@@ -144,7 +144,9 @@ public:
 	UFUNCTION()
     void RollGachaAccessoryFiftyTimes();
 	//
-
+	UFUNCTION()
+	void ShowAds();
+	//
 	void UpdateGachaWeaponLevelCount(int c,int m,int lv);
 	
 	void UpdateGachaSkinLevelCount(int c,int m,int lv);
