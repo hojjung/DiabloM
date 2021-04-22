@@ -10,6 +10,7 @@
 #include "InboxManager.h"
 #include "NavigationSystem.h"
 #include "PlayerUpgradeManager.h"
+#include "PVPManager.h"
 #include "QuestManager.h"
 #include "ShopManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
@@ -65,6 +66,8 @@ public:
 	UInboxManager* m_InboxManager;
 	UPROPERTY()
 	UAdvertiseManager* m_AdverManager;
+	UPROPERTY()
+	UPVPManager* m_PVPManager;
 	
 protected:
 	virtual void Init() override;

@@ -61,6 +61,7 @@ public://static
 	static const FString Pet;
 	static const FString Daily;
 	static const FString LogoutTime;
+	static const FString AdmobTime;
 	//
 public://user data
 	UPROPERTY()
@@ -75,6 +76,8 @@ public://user data
 	FDateTime m_LastLogoutTime;
 
 	FDateTime m_CurrentTime;
+
+	FDateTime m_LastAdmobTime;
 
 	bool m_bIsNewCreatePlayer;
 
@@ -134,7 +137,10 @@ public://init
 	
 	void RequestUploadNewPlayerData();
 	
+	void RequestPVPMatching(int aroundCount,PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate completeDele);
 	
+	void UploadAdmobTime(const FDateTime& date_time);
+
 
 	TMap<FString,PlayFab::ClientModels::FCatalogItem> m_MapCatalogItems;
 	

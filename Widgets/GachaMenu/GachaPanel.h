@@ -18,7 +18,8 @@ UCLASS()
 class DIABLOM_API UGachaPanel : public UUserWidget
 {
 	GENERATED_BODY()
-	
+public:
+	~UGachaPanel();
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UGachaCardGridPanel* m_GachaGridPanel;
@@ -30,8 +31,6 @@ public:
 	UScrollBox* m_VertiGacha;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnViewAds;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TextViewCounts;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextViewCooldown;
 	//
@@ -91,6 +90,8 @@ public:
 	TWeakObjectPtr<UGachaManager> m_GachaManager;
 
 	TWeakObjectPtr<UShopManager> m_ShopManager;
+
+	FDelegateHandle m_TimeUpdateHandle;
 protected:
 	virtual void NativeOnInitialized() override;
 
@@ -156,6 +157,8 @@ public:
 	virtual FReply NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
 
 	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+
+	void SetAdsViewTest(const FString&);
 };
 
 

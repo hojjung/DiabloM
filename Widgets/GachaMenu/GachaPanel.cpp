@@ -3,6 +3,11 @@
 #include "Managers/EquipManager.h"
 #include "Managers/ShopManager.h"
 
+UGachaPanel::~UGachaPanel()
+{
+	 UDiabloGameInstance::Get->m_AdverManager->m_OnAdTick.Remove(m_TimeUpdateHandle);
+}
+
 void UGachaPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -42,6 +47,8 @@ void UGachaPanel::NativeOnInitialized()
 	                          m_GachaManager->m_nCurrentSkinIndex);
 	UpdateGachaWeaponLevelCount(m_GachaManager->m_nGachaWeaponCount, m_GachaManager->GetGachaWeaponMaxCount(),
 	                            m_GachaManager->m_nCurrentWeaponIndex);
+	                            
+	m_TimeUpdateHandle = UDiabloGameInstance::Get->m_AdverManager->m_OnAdTick.AddUObject(this,&UGachaPanel::SetAdsViewTest);
 }
 
 void UGachaPanel::ClosePanel()
@@ -251,4 +258,9 @@ FReply UGachaPanel::NativeOnTouchEnded(const FGeometry& InGeometry, const FPoint
 	FReply Re = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
 
 	return FReply::Handled();
+}
+
+void UGachaPanel::SetAdsViewTest(const FString& timeData)
+{
+	m_TextViewCooldown->SetText(FText::FromString(timeData));
 }

@@ -40,6 +40,7 @@ void UDiabloGameInstance::Init()
 	m_InboxManager= NewObject<UInboxManager>();
 	m_AdverManager= NewObject<UAdvertiseManager>();
 	m_AdverManager->Init();
+	m_PVPManager=NewObject<UPVPManager>();	
     //
     m_PlayfabManager = NewObject<UPlayfabManager>();
     m_PlayfabManager->Init();

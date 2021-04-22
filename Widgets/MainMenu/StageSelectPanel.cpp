@@ -57,7 +57,7 @@ void UStageSelectPanel::UpdateBtnUI(int index)
 
 void UStageSelectPanel::OpenNormalDg()
 {
-	m_DgStageBtnListVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	m_DgStageBtnListVert->SetVisibility(ESlateVisibility::Visible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
 	
@@ -66,7 +66,7 @@ void UStageSelectPanel::OpenNormalDg()
 
 void UStageSelectPanel::OpenGoldDg()
 {
-	m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::Visible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
 
@@ -75,7 +75,7 @@ void UStageSelectPanel::OpenGoldDg()
 
 void UStageSelectPanel::OpenStatDg()
 {
-	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::Visible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
 
@@ -84,7 +84,7 @@ void UStageSelectPanel::OpenStatDg()
 
 void UStageSelectPanel::OpenAcceDg()
 {
-	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::Visible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
 
@@ -93,7 +93,7 @@ void UStageSelectPanel::OpenAcceDg()
 
 void UStageSelectPanel::OpenPVPDg()
 {
-	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	m_DgPVPVert->SetVisibility(ESlateVisibility::Visible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
 

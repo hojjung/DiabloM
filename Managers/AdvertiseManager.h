@@ -11,36 +11,40 @@ class ULoadCustomRewardedVideoAd;
 /**
  * 
  */
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAdTick,const FString&);
 UCLASS()
 class DIABLOM_API UAdvertiseManager : public UObject
 {
 	GENERATED_BODY()
+public:
+	FOnAdTick m_OnAdTick;
+	
 protected:
 	UPROPERTY()
-	ULoadCustomInterstitialAd* m_LoadedInitAds;
-	UPROPERTY()
 	ULoadCustomRewardedVideoAd* m_LoadedRewardAds;
-
-	bool m_bLoadInitAdsProcessing;
 
 	bool m_bLoadRewardAdsProcessing;
 
 	FString m_RewardAdID;
 
-	FString m_InitAdID;
-	
+	float m_fRemainAdmobTime;
+
+	bool m_bAdsUpdateLock;
+
 public:
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnShowAdBanner,bool);
 	FOnShowAdBanner m_OnShowAdBanner;
 	
-
+protected:
+	FString GetTimeToStr();
 public:
 	void Init();
+
+	void SetTimeCooldownFromServer(FDateTime lastAdmobTime,FDateTime currentLoginTime);
+
+	void Tick(float deltaTime);
 	
-	UFUNCTION()
-	void InitAdsLoadFail(const FString& reason);
-	UFUNCTION()
-	void InitAdsLoadSuccess();
 	UFUNCTION()
     void RewardAdsLoadFail(const FString& reason);
 	UFUNCTION()
@@ -52,19 +56,13 @@ public:
 
 	void ShowRewardAds();
 
-	void ShowInterstitialAds();
-
 public:
-	UFUNCTION()
-	void OnInterClick();
-	UFUNCTION()
-    void OnInterShow();
-	UFUNCTION()
-    void OnInterClose();
 	UFUNCTION()
 	void OnRewardAdsSuccess(FString item, int32 amount);
 	UFUNCTION()
 	void OnRewardAdsClose();
+
+	
 };
 
 

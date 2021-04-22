@@ -34,6 +34,7 @@ const FString UPlayfabManager::Skin= TEXT("Skin");
 const FString UPlayfabManager::Pet= TEXT("Pet");
 const FString UPlayfabManager::Daily= TEXT("Daily");
 const FString UPlayfabManager::LogoutTime= TEXT("LogoutTime");
+const FString UPlayfabManager::AdmobTime= TEXT("AdmobTime");
 //
 
 UPlayfabManager::UPlayfabManager()
@@ -143,6 +144,8 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 		//나의 랭킹 업데이트가 필요
 		m_fDeltaCountRanking = 0.f;
 	}
+
+	UDiabloGameInstance::Get->m_AdverManager->Tick(deltaTime);
 }
 
 void UPlayfabManager::RequestSetNickname(FString str)
@@ -329,6 +332,27 @@ void UPlayfabManager::RequestUploadNewPlayerData()
 		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
+void UPlayfabManager::RequestPVPMatching(int aroundCount,PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate completeDele)
+{
+	PlayFab::ClientModels::FGetLeaderboardAroundPlayerRequest Req;
+	Req.StatisticName=TEXT("StageLevel");
+	Req.MaxResultsCount=aroundCount;
+	Req.PlayFabId = m_PlayfabID;
+	//PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetPlayerAroundRanking
+	GetClientAPI->GetLeaderboardAroundPlayer(Req,completeDele,
+        PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::UploadAdmobTime(const FDateTime& date_time)
+{
+	FUpdateReq Req;
+	
+	Req.Data.Add(AdmobTime,date_time.ToString());
+
+	GetClientAPI->UpdateUserData(Req,nullptr,
+        PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
 
 void UPlayfabManager::HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqueId, const int ControllerIndex,
                                             const FOnlineError& error)
@@ -444,7 +468,7 @@ void UPlayfabManager::RequestGetUserData01()
 	req.Keys.Add(MainDungeon);
 	req.Keys.Add(Upgrade);
 	req.Keys.Add(Skill);
-	req.Keys.Add(LogoutTime);
+	req.Keys.Add(AdmobTime);
 	
 
 	GetClientAPI->GetUserData(req,FGetUsrDataDele::CreateUObject(this, &UPlayfabManager::OnSuccessGetUserData01),
@@ -544,6 +568,13 @@ void UPlayfabManager::OnSuccessGetUserData01(const FGetUsrDataRslt& result)
 	{
 		PRINTF("DataNull");
 		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-Get User Data Null01", "실패-유저 데이터 획득 없음01"));
+	}
+	
+	if(FDateTime::Parse(result.Data[AdmobTime].Value,m_LastAdmobTime))
+	{
+		FTimespan KoreanTime(9,0,0);
+		m_LastAdmobTime+=KoreanTime;
+		UDiabloGameInstance::Get->m_AdverManager->SetTimeCooldownFromServer(m_LastAdmobTime,m_CurrentTime);
 	}
 	//
 	UDiabloGameInstance::Get->m_ShopManager->SetShopDataFromServer(result.Data[IAP].Value);
@@ -950,7 +981,6 @@ void UPlayfabManager::RequestItemTest()
 void UPlayfabManager::UploadDailyData(const FString dailyJsonStr)
 {
 	FUpdateReq Req;
-	Req.Permission=PlayFab::ClientModels::UserDataPermission::UserDataPermissionPublic;
 	
 	Req.Data.Add(Daily,dailyJsonStr);
 

@@ -57,6 +57,8 @@ void ADiabloGameMode::StartPlay()
 	//Test
 	//UDiabloGameInstance::Get->m_AdverManager->ShowInterstitialAds();
 	//UDiabloGameInstance::Get->m_AdverManager->ShowRewardAds();
+
+	//UDiabloGameInstance::Get->m_PVPManager->RequestPVPMatching();
 }
 
 void ADiabloGameMode::OnMenuOpen(bool b)
