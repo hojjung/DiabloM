@@ -5,6 +5,7 @@
 #include "UObject/NoExportTypes.h"
 #include "GachaManager.generated.h"
 
+class UPlayFabJsonObject;
 UENUM()
 enum ERollItemType
 {
@@ -36,7 +37,7 @@ public:
 	static UDataTable* WingGachaDataTable;
 	static UDataTable* AccessoryGachaDataTable;
 
-	void SetGachaLevel(const FString gachaJsonStr);
+	void SetGachaLevel(const UPlayFabJsonObject* gachaJsonStr);
 
 	FString GetGachaDataStr();
 	

@@ -55,6 +55,11 @@ void UInboxManager::ClaimInbox(int index)
 
 void UInboxManager::ClaimAllItems()
 {
+	if(m_AryInbox.Num()<1)
+	{
+		return;
+	}
+	
 	int GemStones=0;
 	
 	for(FInboxSpec& InboxSpec  : m_AryInbox)
@@ -74,7 +79,7 @@ void UInboxManager::ClaimAllItems()
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(GemStones);
 	}
 
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData01();
+	UDiabloGameInstance::Get->m_PlayfabManager->UploadMainData();
 }
 
 void UInboxManager::ClaimAllInbox()

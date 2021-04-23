@@ -12,6 +12,7 @@
 #include "PlayerUpgradeManager.h"
 #include "PlayFabAdminDataModels.h"
 #include "PlayFabClientModels.h"
+#include "PlayFabJsonHelpers.h"
 #include "PlayFabJsonObject.h"
 #include "PlayFabJsonValue.h"
 #include "PlayFabServerDataModels.h"
@@ -20,23 +21,14 @@
 #include "Misc/Base64.h"
 
 #define LOCTEXT_NAMESPACE "PlayfabManager"
-
 //dungeon 1111200
-const FString UPlayfabManager::IAP = TEXT("IAP");
-const FString UPlayfabManager::GachaLevel= TEXT("GachaLevel");
-const FString UPlayfabManager::MainDungeon= TEXT("MainDungeon");
-const FString UPlayfabManager::Upgrade= TEXT("Upgrade");
-const FString UPlayfabManager::Skill= TEXT("Skill");
-const FString UPlayfabManager::Quest= TEXT("Quest");
-const FString UPlayfabManager::Gold= TEXT("Gold");
-const FString UPlayfabManager::Weapon= TEXT("Weapon");
-const FString UPlayfabManager::Skin= TEXT("Skin");
-const FString UPlayfabManager::Pet= TEXT("Pet");
-const FString UPlayfabManager::Daily= TEXT("Daily");
-const FString UPlayfabManager::LogoutTime= TEXT("LogoutTime");
-const FString UPlayfabManager::AdmobTime= TEXT("AdmobTime");
+const FString UPlayfabManager::MainData = TEXT("MainData");      
+const FString UPlayfabManager::MainDungeon = TEXT("MainDungeon");   
+const FString UPlayfabManager::Quest = TEXT("Quest");         
+const FString UPlayfabManager::Daily = TEXT("Daily");        
+const FString UPlayfabManager::Gold = TEXT("Gold");
+const FString UPlayfabManager::AdmobTime = TEXT("AdmobTime");
 //
-
 UPlayfabManager::UPlayfabManager()
 {
 	SetRanking(-123);
@@ -48,9 +40,6 @@ UPlayfabManager::UPlayfabManager()
 	m_fDeltaInboxUpdateCooldown =160.f;
 }
 
-UPlayfabManager::~UPlayfabManager()
-{
-}
 
 int UPlayfabManager::GetSafeRanking()
 {
@@ -77,38 +66,18 @@ void UPlayfabManager::SetRanking(int rank)
 	m_nSafeRanking = m_nRanking ^ 7777;
 }
 
-void UPlayfabManager::UploadUserTitleData01()
+void UPlayfabManager::UploadMainData()
 {
 	PlayFab::ClientModels::FUpdateUserDataRequest Req;
 	Req.Permission=PlayFab::ClientModels::UserDataPermission::UserDataPermissionPublic;
 	// //
-	Req.Data.Add(IAP,UDiabloGameInstance::Get->m_ShopManager->GetIAPDataStr());
-	Req.Data.Add(GachaLevel,UDiabloGameInstance::Get->m_GachaManager->GetGachaDataStr());
-	Req.Data.Add(MainDungeon,UDiabloGameInstance::Get->m_DungeonManager->GetDgDataStr());
-	Req.Data.Add(Upgrade,UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetUpgradeDataStr());
-	Req.Data.Add(Skill,UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetSkillDataStr());
-	Req.Data.Add(LogoutTime,FDateTime::UtcNow().ToString());
+	Req.Data.Add(MainData,GetMainDataJsonStr());
+	Req.Data.Add(Gold,UDiabloGameInstance::Get->m_GoldManager->GetGoldDataStr());
 	
-
-	GetClientAPI->UpdateUserData(Req,FUpdateDele::CreateUObject(this,&UPlayfabManager::UploadTitleData02),
+	GetClientAPI->UpdateUserData(Req,nullptr,
         PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 	
 	m_fDeltaCountTitleData = 0.f;
-}
-
-void UPlayfabManager::UploadTitleData02(const FUpdateRslt&)
-{
-	PlayFab::ClientModels::FUpdateUserDataRequest Req;
-	Req.Permission=PlayFab::ClientModels::UserDataPermission::UserDataPermissionPublic;
-	//
-	Req.Data.Add(Quest,UDiabloGameInstance::Get->m_QuestManager->GetQuestDataStr());
-	Req.Data.Add(Gold,UDiabloGameInstance::Get->m_GoldManager->GetGoldDataStr());
-	Req.Data.Add(Weapon,UDiabloGameInstance::Get->m_EquipManager->GetWeaponDataStr());
-	Req.Data.Add(Skin,UDiabloGameInstance::Get->m_EquipManager->GetSkinDataStr());
-	Req.Data.Add(Pet,UDiabloGameInstance::Get->m_EquipManager->GetPetDataStr());
-	//
-	GetClientAPI->UpdateUserData(Req,nullptr,
-        PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
 void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
@@ -132,7 +101,7 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 	 {
 	 	PRINTF("TryUpdateUserData");
 	// 	
-	 	UploadUserTitleData01();
+	 	UploadMainData();
 	 	UDiabloGameInstance::Get->m_QuestManager->UploadQuestData();
 	 }
 
@@ -202,7 +171,7 @@ void UPlayfabManager::OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rs
 	{
 		PRINTF("Version Same");
 		RequestTitleNews();
-		RequestGetUserData01();
+		RequestGetMainData();
 	}
 	else
 	{
@@ -456,43 +425,35 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 	//RequestGetAccountInfo();
 }
 
-void UPlayfabManager::RequestGetUserData01()
+void UPlayfabManager::RequestGetMainData()
 {
 	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Get User Data01", "유저 데이터 가져오는 중 01"));
 	FGetUsrDataReq req;
-
 	//Request Data
 	req.PlayFabId = m_PlayfabID;
-	req.Keys.Add(IAP);
-	req.Keys.Add(GachaLevel);
+	req.Keys.Add(MainData);
 	req.Keys.Add(MainDungeon);
-	req.Keys.Add(Upgrade);
-	req.Keys.Add(Skill);
+	req.Keys.Add(Quest);
+	req.Keys.Add(Daily);
+	req.Keys.Add(Gold);
 	req.Keys.Add(AdmobTime);
-	
-
-	GetClientAPI->GetUserData(req,FGetUsrDataDele::CreateUObject(this, &UPlayfabManager::OnSuccessGetUserData01),
+	//다른데이터?
+	GetClientAPI->GetUserData(req,FGetUsrDataDele::CreateUObject(this, &UPlayfabManager::OnSuccessGetMainData),
 		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
-void UPlayfabManager::RequestGetUserData02()
+void UPlayfabManager::RequestGetOtherPlayerMainData(const FString& playfabID,FGetUsrDataDele onSuccess)
 {
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Get User Data02", "유저 데이터 가져오는 중 02"));
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Request Get OtherPlayer Data", "타 유저 데이터 가져오는 중"));
 	FGetUsrDataReq req;
-
 	//Request Data
-	req.PlayFabId = m_PlayfabID;
-	req.Keys.Add(Quest);
-	req.Keys.Add(Gold);
-	req.Keys.Add(Weapon);
-	req.Keys.Add(Skin);
-	req.Keys.Add(Pet);
-	req.Keys.Add(Daily);
-	req.Keys.Add(LogoutTime);
-
-	GetClientAPI->GetUserData(req,FGetUsrDataDele::CreateUObject(this, &UPlayfabManager::OnSuccessGetUserData02),
-        FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+	req.PlayFabId = playfabID;
+	req.Keys.Add(MainData);
+	
+	GetClientAPI->GetUserData(req,onSuccess,
+		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
+
 void UPlayfabManager::RequestClaimInbox(int index)//
 {
 	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
@@ -554,6 +515,7 @@ FDateTime UPlayfabManager::DecodePlayfabTimeToUe4Time(FString playfabTime)
 {
 	FDateTime DateTimeOut;
 	FString DateString = playfabTime;
+	
 	if (!FDateTime::ParseIso8601(*DateString, DateTimeOut))
 	{
 		PRINTF("TimeChangeFail");
@@ -562,13 +524,54 @@ FDateTime UPlayfabManager::DecodePlayfabTimeToUe4Time(FString playfabTime)
 	return DateTimeOut;
 }
 
-void UPlayfabManager::OnSuccessGetUserData01(const FGetUsrDataRslt& result)
+FString UPlayfabManager::GetMainDataJsonStr()
+{
+	//Logout
+	FString LogoutStr = FDateTime::UtcNow().ToString();
+	//IAP
+	FString IAPStr = UDiabloGameInstance::Get->m_ShopManager->GetIAPDataStr();
+	//Gacha
+	FString GachaStr = UDiabloGameInstance::Get->m_GachaManager->GetGachaDataStr();
+	//Upgrade
+	FString UpgradeStr = UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetUpgradeDataStr();
+	//Skill
+	FString SkillStr = UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetSkillDataStr();
+	//Weapon
+	FString WeaponStr = UDiabloGameInstance::Get->m_EquipManager->GetWeaponDataStr();
+	//Skin
+	FString SkinStr = UDiabloGameInstance::Get->m_EquipManager->GetSkinDataStr();
+	//Pet
+	FString PetStr = UDiabloGameInstance::Get->m_EquipManager->GetPetDataStr();
+	//
+	TSharedRef<FJsonObject> MainDataJson= MakeShareable(new FJsonObject);
+
+	MainDataJson->SetStringField(TEXT("LogoutTime"),LogoutStr);
+	MainDataJson->SetStringField(TEXT("IAP"),IAPStr);
+	MainDataJson->SetStringField(TEXT("Gacha"),GachaStr);
+	MainDataJson->SetStringField(TEXT("Upgrade"),UpgradeStr);
+	MainDataJson->SetStringField(TEXT("Skill"),SkillStr);
+	MainDataJson->SetStringField(TEXT("Weapon"),WeaponStr);
+	MainDataJson->SetStringField(TEXT("Skin"),SkinStr);
+	MainDataJson->SetStringField(TEXT("Pet"),PetStr);
+
+	//
+	FString MainDataJsonStr;
+	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter=
+	TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&MainDataJsonStr);
+	FJsonSerializer::Serialize(MainDataJson, JsonWriter);
+	JsonWriter->Close();
+
+	return MainDataJsonStr;
+}
+
+void UPlayfabManager::OnSuccessGetMainData(const FGetUsrDataRslt& result)
 {
 	if (!result.Data.Num())
 	{
 		PRINTF("DataNull");
 		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-Get User Data Null01", "실패-유저 데이터 획득 없음01"));
 	}
+	SetMainDataToManagers(result.Data[MainData].Value);
 	
 	if(FDateTime::Parse(result.Data[AdmobTime].Value,m_LastAdmobTime))
 	{
@@ -577,12 +580,16 @@ void UPlayfabManager::OnSuccessGetUserData01(const FGetUsrDataRslt& result)
 		UDiabloGameInstance::Get->m_AdverManager->SetTimeCooldownFromServer(m_LastAdmobTime,m_CurrentTime);
 	}
 	//
-	UDiabloGameInstance::Get->m_ShopManager->SetShopDataFromServer(result.Data[IAP].Value);
-	UDiabloGameInstance::Get->m_GachaManager->SetGachaLevel(result.Data[GachaLevel].Value);
 	UDiabloGameInstance::Get->m_DungeonManager->SetDungeonData(result.Data[MainDungeon].Value);
-	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(result.Data[Upgrade].Value,result.Data[Skill].Value);
+	UDiabloGameInstance::Get->m_QuestManager->SetQuestDataFromServer(result.Data[Quest].Value);
+	UDiabloGameInstance::Get->m_DailyManager->SetPrizeManager(result.Data[Daily].Value,m_CurrentTime,m_bIsNewCreatePlayer);
+	UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(result.Data[Gold].Value,m_bIsNewCreatePlayer,m_CurrentTime,m_LastLoginTime,m_LastLogoutTime);
 	
-	RequestGetUserData02();
+	m_bIsLoginCompleted = true;
+	m_bIsNicknameSet = true;
+	RequestCatalogItems();
+	RequestRetrievePlayerAroundRanking();
+	RequestRetrieveTotalRanking();
 }
 
 void UPlayfabManager::RequestCatalogItems()
@@ -600,36 +607,7 @@ void UPlayfabManager::RequestCatalogItems()
 
 void UPlayfabManager::OnSuccessGetUserData02(const FGetUsrDataRslt& result)
 {
-	if (!result.Data.Num())
-	{
-		PRINTF("DataNull");
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-Get User Data Null02", "실패-유저 데이터 획득 없음02"));
-	}
-	else
-	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-Get User Data02", "유저 데이터 획득 성공"));	
-	}
 
-	if(FDateTime::Parse(result.Data[LogoutTime].Value,m_LastLogoutTime))
-	{
-		FTimespan KoreanTime(9,0,0);
-		m_LastLogoutTime+=KoreanTime;
-	}
-	
-	//m_LastLogoutTime?
-	UDiabloGameInstance::Get->m_DailyManager->SetPrizeManager(result.Data[Daily].Value,m_CurrentTime,m_bIsNewCreatePlayer);
-	UDiabloGameInstance::Get->m_QuestManager->SetQuestDataFromServer(result.Data[Quest].Value);
-	//Equip Should Init Faster than GoldManager
-	UDiabloGameInstance::Get->m_EquipManager->SetEquipDataFromServer(result.Data[Weapon].Value,result.Data[Skin].Value,result.Data[Pet].Value);
-	UDiabloGameInstance::Get->m_GoldManager->SetCurrentGold(result.Data[Gold].Value,m_bIsNewCreatePlayer,m_CurrentTime,m_LastLoginTime,m_LastLogoutTime);
-	//
-	m_bIsLoginCompleted = true;
-	
-	m_bIsNicknameSet = true;
-
-	RequestCatalogItems();
-	RequestRetrievePlayerAroundRanking();
-	RequestRetrieveTotalRanking();
 }
 
 void UPlayfabManager::RequestGetAccountInfo()
@@ -750,7 +728,7 @@ void UPlayfabManager::PurchaseFail(EInAppPurchaseState::Type completionStatus,co
 	UDiabloGameInstance::Get->RequestPopupText(TEXT("결제 실패!"));
 }
 
-void UPlayfabManager::OnStageComplete()
+void UPlayfabManager::UploadNormalDungeon()
 {
 	int MaxStage = UDiabloGameInstance::Get->m_DungeonManager->GetMaxStage();
 
@@ -770,7 +748,6 @@ void UPlayfabManager::OnStageComplete()
 	
 	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnStageCompleteScriptSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 
-	UploadUserTitleData01();
 	UDiabloGameInstance::Get->m_QuestManager->UploadQuestData();
 }
 
@@ -972,10 +949,31 @@ void UPlayfabManager::OnBossBattleStart()
 	m_fDeltaCountTitleData=0.f;
 }
 
-void UPlayfabManager::RequestItemTest()
+void UPlayfabManager::SetMainDataToManagers(const FString& maindataFromServer)
 {
-	PlayFab::ClientModels::FItemInstance ItemTest;
+	UPlayFabJsonObject* JsonObj =UPlayFabJsonObject::ConstructJsonObject(this);
+
+	if(!JsonObj->DecodeJson(maindataFromServer))
+	{
+		return;
+	}
+
+	FString LogoutLoaded = JsonObj->GetStringField(TEXT("LogoutTime"));
+
+	if(FDateTime::Parse(LogoutLoaded,m_LastLogoutTime))
+	{
+		FTimespan KoreanTime(9,0,0);
+		m_LastLogoutTime+=KoreanTime;
+	}
 	
+	UDiabloGameInstance::Get->m_ShopManager->SetShopDataFromServer(JsonObj->GetObjectField(TEXT("IAP")));
+	UDiabloGameInstance::Get->m_GachaManager->SetGachaLevel(JsonObj->GetObjectField(TEXT("Gacha")));
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(JsonObj->GetObjectField(TEXT("Stat")),JsonObj->GetObjectField(TEXT("Skill")));
+	UDiabloGameInstance::Get->m_EquipManager->
+	SetEquipDataFromServer(
+		JsonObj->GetArrayField(TEXT("Skin")),
+		JsonObj->GetArrayField(TEXT("Weapon")),
+		JsonObj->GetArrayField(TEXT("Pet")));
 }
 
 void UPlayfabManager::UploadDailyData(const FString dailyJsonStr)

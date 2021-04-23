@@ -11,6 +11,7 @@
  */
 
 
+class UPlayFabJsonObject;
 class UGachaPanel;
 UCLASS()
 class DIABLOM_API UShopManager : public UObject
@@ -27,7 +28,7 @@ public:
 	
 
 public:
-	void SetShopDataFromServer(const FString iapJsonStr);
+	void SetShopDataFromServer(const UPlayFabJsonObject* iapJsonStr);
 	
 protected:
 	TArray<bool> m_PackagePurchased;

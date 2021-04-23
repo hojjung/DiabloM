@@ -6,6 +6,7 @@
 #include "Datas/EquipmentData.h"
 #include "EquipManager.generated.h"
 
+class UPlayFabJsonValue;
 UENUM()
 enum EEquipSlot
 {
@@ -210,16 +211,16 @@ public:
 protected:
 	int StringSplitEachItem(const FString& equipDatas, TArray<FString>& outStrAry) const;
 	
-	void SetStringSkinUnlocked(FString skinUnlock);
+	void SetStringSkinUnlocked(const TArray<UPlayFabJsonValue*>&  skinUnlock);
 	
-	void SetStringWeaponUnlocked(FString weaponUnlock);
+	void SetStringWeaponUnlocked(const TArray<UPlayFabJsonValue*>&  weaponUnlock);
 	
-	void SetStringPetUnlocked(FString petUnlock);
+	void SetStringPetUnlocked(const TArray<UPlayFabJsonValue*>&  petUnlock);
 	
-	void SetStringAccesoryUnlocked(FString acceUnlock);
+	void SetStringAccesoryUnlocked(const TArray<UPlayFabJsonValue*>&  acceUnlock);
 
 public:
-	void SetEquipDataFromServer(const FString& classSkin, const FString& weapon,const FString& pet);
+	void SetEquipDataFromServer(const TArray<UPlayFabJsonValue*>& classSkin, const TArray<UPlayFabJsonValue*>& weapon,const TArray<UPlayFabJsonValue*>& pet);
 
 	void EquipAll();
 	

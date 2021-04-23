@@ -2,6 +2,7 @@
 
 #include "DiabloGameInstance.h"
 #include "JsonSerializer.h"
+#include "PlayFabJsonObject.h"
 #include "Datas/GachaDataTable.h"
 
 UDataTable* UGachaManager::AryWeaponGachaDataTable[8];
@@ -110,22 +111,13 @@ UGachaManager::UGachaManager()
 	m_nGachaSkinMaxCount[7] = 4000;
 }
 
-void UGachaManager::SetGachaLevel(const FString gachaJsonStr)
+void UGachaManager::SetGachaLevel(const UPlayFabJsonObject* gachaJsonStr)
 {
-	TSharedPtr<FJsonObject> JsonObject;
-
-	TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(gachaJsonStr);
+	m_nCurrentWeaponIndex = gachaJsonStr->GetNumberField(TEXT("GachaWeaponLv"));
+	m_nGachaWeaponCount = gachaJsonStr->GetNumberField(TEXT("GachaWeaponCurrent"));
 	
-	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
-	{
-		return;	
-	}
-	
-	m_nCurrentWeaponIndex = JsonObject->GetIntegerField(TEXT("GachaWeaponLv"));
-	m_nGachaWeaponCount =JsonObject->GetIntegerField(TEXT("GachaWeaponCurrent"));
-	
-	m_nCurrentSkinIndex =JsonObject->GetIntegerField(TEXT("GachaSkinLv"));
-	m_nGachaSkinCount =JsonObject->GetIntegerField(TEXT("GachaSkinCurrent"));
+	m_nCurrentSkinIndex = gachaJsonStr->GetNumberField(TEXT("GachaSkinLv"));
+	m_nGachaSkinCount = gachaJsonStr->GetNumberField(TEXT("GachaSkinCurrent"));
 }
 
 FString UGachaManager::GetGachaDataStr()

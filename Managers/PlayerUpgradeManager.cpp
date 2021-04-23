@@ -1,6 +1,7 @@
 #include "PlayerUpgradeManager.h"
 #include "DiabloGameInstance.h"
 #include "JsonSerializer.h"
+#include "PlayFabJsonObject.h"
 #include "Characters/PlayerDiabloCharacter.h"
 
 #define LOCTEXT_NAMESPACE "PlayerUpgradeManager"
@@ -20,7 +21,7 @@ UPlayerUpgradeManager::UPlayerUpgradeManager()
 	StatUpgradeTable = FoundStatTable.Object;
 }
 
-void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& statJsonStr,const FString& skillJsonStr)
+void UPlayerUpgradeManager::SetUpgradeDataFromServer(const UPlayFabJsonObject* statJsonStr,const UPlayFabJsonObject* skillJsonStr)
 {
 	m_PlayfabManager = UDiabloGameInstance::Get->m_PlayfabManager;
 	//
@@ -36,44 +37,26 @@ void UPlayerUpgradeManager::SetUpgradeDataFromServer(const FString& statJsonStr,
 	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow	>(TEXT("AtkMDmg02"), "");
 	m_AryUpgradeSkill.Init(FSkillSpec(), (int)ESkillType::Length);
 	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(TEXT("Skill01"), "");
-	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow	>(TEXT("Skill02"), "");
+	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(TEXT("Skill02"), "");
 	m_AryUpgradeSkill[(int)ESkillType::WhirlWind].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow	>(TEXT("Skill03"), "");
 	m_AryUpgradeSkill[(int)ESkillType::EarthQuake].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(TEXT("Skill04"), "");
 	m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(TEXT("Skill05"), "");
-
-	TSharedPtr<FJsonObject> JsonObjectStat;
-
-	TSharedRef< TJsonReader<> > StatReader = TJsonReaderFactory<>::Create(statJsonStr);
-	
-	if (!FJsonSerializer::Deserialize(StatReader, JsonObjectStat))
-	{
-		return;	
-	}
 	//
-	m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].SetLevel(JsonObjectStat->GetIntegerField(TEXT("BaseAttack")));
-	m_AryBaseAtkUpgrade[(int)EAttackType::Critical].SetLevel(JsonObjectStat->GetIntegerField(TEXT("Critical")));
-	m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].SetLevel(JsonObjectStat->GetIntegerField(TEXT("CriticalDmg")));
-	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].SetLevel(JsonObjectStat->GetIntegerField(TEXT("SuperCritical")));
-	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].SetLevel(JsonObjectStat->GetIntegerField(TEXT("SuperCriticalDmg")));
-	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].SetLevel(JsonObjectStat->GetIntegerField(TEXT("MagicBomb")));
-	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].SetLevel(JsonObjectStat->GetIntegerField(TEXT("MagicBombDmg")));
-	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].SetLevel(JsonObjectStat->GetIntegerField(TEXT("SuperMagicBomb")));
-	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].SetLevel(JsonObjectStat->GetIntegerField(TEXT("SuperMagicBombDmg")));
+	m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].SetLevel(statJsonStr->GetNumberField(TEXT("BaseAttack")));
+	m_AryBaseAtkUpgrade[(int)EAttackType::Critical].SetLevel(statJsonStr->GetNumberField(TEXT("Critical")));
+	m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].SetLevel(statJsonStr->GetNumberField(TEXT("CriticalDmg")));
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].SetLevel(statJsonStr->GetNumberField(TEXT("SuperCritical")));
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].SetLevel(statJsonStr->GetNumberField(TEXT("SuperCriticalDmg")));
+	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].SetLevel(statJsonStr->GetNumberField(TEXT("MagicBomb")));
+	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].SetLevel(statJsonStr->GetNumberField(TEXT("MagicBombDmg")));
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].SetLevel(statJsonStr->GetNumberField(TEXT("SuperMagicBomb")));
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].SetLevel(statJsonStr->GetNumberField(TEXT("SuperMagicBombDmg")));
 	//
-	TSharedPtr<FJsonObject> JsonObjectSkill;
-
-	TSharedRef< TJsonReader<> > SkillReader = TJsonReaderFactory<>::Create(skillJsonStr);
-	
-	if (!FJsonSerializer::Deserialize(SkillReader, JsonObjectSkill))
-	{
-		return;	
-	}
-	//
-	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].InitSkillSpec(JsonObjectSkill->GetIntegerField(TEXT("DeathBlow")),JsonObjectSkill->GetIntegerField(TEXT("DeathBlowEquipSlot")));
-	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].InitSkillSpec(JsonObjectSkill->GetIntegerField(TEXT("MagicBlade")),JsonObjectSkill->GetIntegerField(TEXT("MagicBladeEquipSlot")));
-	m_AryUpgradeSkill[(int)ESkillType::WhirlWind].InitSkillSpec (JsonObjectSkill->GetIntegerField(TEXT("WhirlWind")),JsonObjectSkill->GetIntegerField(TEXT("WhirlWindEquipSlot")));
-	m_AryUpgradeSkill[(int)ESkillType::EarthQuake].InitSkillSpec(JsonObjectSkill->GetIntegerField(TEXT("EarthQuake")),JsonObjectSkill->GetIntegerField(TEXT("EarthQuakeEquipSlot")));
-	m_AryUpgradeSkill[(int)ESkillType::WindBlade].InitSkillSpec (JsonObjectSkill->GetIntegerField(TEXT("WindBlade")),JsonObjectSkill->GetIntegerField(TEXT("WindBladeEquipSlot")));
+	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].InitSkillSpec(skillJsonStr->GetNumberField(TEXT("DeathBlow")),skillJsonStr->GetNumberField(TEXT("DeathBlowEquipSlot")));
+	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].InitSkillSpec(skillJsonStr->GetNumberField(TEXT("MagicBlade")),skillJsonStr->GetNumberField(TEXT("MagicBladeEquipSlot")));
+	m_AryUpgradeSkill[(int)ESkillType::WhirlWind].InitSkillSpec (skillJsonStr->GetNumberField(TEXT("WhirlWind")),skillJsonStr->GetNumberField(TEXT("WhirlWindEquipSlot")));
+	m_AryUpgradeSkill[(int)ESkillType::EarthQuake].InitSkillSpec(skillJsonStr->GetNumberField(TEXT("EarthQuake")),skillJsonStr->GetNumberField(TEXT("EarthQuakeEquipSlot")));
+	m_AryUpgradeSkill[(int)ESkillType::WindBlade].InitSkillSpec (skillJsonStr->GetNumberField(TEXT("WindBlade")),skillJsonStr->GetNumberField(TEXT("WindBladeEquipSlot")));
 	//
 	m_AryEquippedSkillSpec.Init(nullptr, 4);
 

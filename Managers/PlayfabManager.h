@@ -41,27 +41,21 @@ public://delegate
 	FOnRankReceived m_OnTotalRankReceived;
 
 	FOnRankReceived m_OnPlayerRankReceived;
-	
-	
 
 	FOnVirtualCurrencyChanged m_OnGemstoneChanged;
 	
 	FOnPlayfabError m_OnPlayfabError;
 
 public://static
-	static const FString IAP;
-	static const FString GachaLevel;
+	static const FString MainData;
 	static const FString MainDungeon;
-	static const FString Upgrade;
-	static const FString Skill;
 	static const FString Quest;
-	static const FString Gold;
-	static const FString Weapon;
-	static const FString Skin;
-	static const FString Pet;
 	static const FString Daily;
-	static const FString LogoutTime;
+	static const FString Gold;
 	static const FString AdmobTime;
+
+public:
+	UPlayfabManager();
 	//
 public://user data
 	UPROPERTY()
@@ -87,7 +81,6 @@ public://user data
 
 	bool m_bIsCustomID;
 	
-public://loaded data
 	UPROPERTY()
 	bool m_bIsNicknameSet = false;
 	UPROPERTY()
@@ -118,6 +111,7 @@ public://loaded data
 	int m_nLocalGemStone;
 
 	TArray<PlayFab::ClientModels::FTitleNewsItem> m_TitleNews;
+	
 protected://rank
 	UPROPERTY()
 	int m_nRanking;
@@ -128,24 +122,11 @@ protected://rank
 
 	TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry> m_PlayerRanking;
 
-public://init
-	UPlayfabManager();
-
-	~UPlayfabManager();
-
-	void Init();
-	
-	void RequestUploadNewPlayerData();
-	
-	void RequestPVPMatching(int aroundCount,PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate completeDele);
-	
-	void UploadAdmobTime(const FDateTime& date_time);
-
-
 	TMap<FString,PlayFab::ClientModels::FCatalogItem> m_MapCatalogItems;
-	
 
 protected:
+	void RequestUploadNewPlayerData();
+
 	void HandleExternalUIClose(TSharedPtr<const FUniqueNetId> uniqueId, const int ControllerIndex,
 	                           const FOnlineError& error);
 
@@ -157,59 +138,12 @@ protected:
 
 	FDateTime DecodePlayfabTimeToUe4Time(FString playfabTime);
 
-public:
+	FString GetMainDataJsonStr();
 
-	bool GetIsLogined()
-	{
-		return m_bIsLoginCompleted;
-	}
-
-	void TickTryUpdateUserData(float deltaTime);//should split
-	//the ui drity should update
-	//gold kill count separete need;
-	void RequestGetInventory();
-
-	void RequestSetNickname(FString str);
-
-	void RequestGetUserData01();
-
-	void RequestGetUserData02();
-
-	bool RequestInboxList();
-
-	void RequestClaimInbox(int index);
-
-	void RequestClaimAllInbox();
-	
-	UFUNCTION()
-    void BuyIAP(FString itemId,bool bIsConsumable);
-
-	UFUNCTION()
-	void PurchaseVirtualItem(FString itemUniqueId);
-
-	UFUNCTION()
-	void PurchaseSuccess(EInAppPurchaseState::Type completionStatus, const FInAppPurchaseProductInfo& inAppPurchaseInformation);
-
-	UFUNCTION()
-    void PurchaseFail(EInAppPurchaseState::Type completionStatus, const FInAppPurchaseProductInfo& inAppPurchaseInformation);
-
-	void OnStageComplete();
-
-	void RequestVersionCheck();
-
-	void RequestServerOpenCheck();
-
-	void RequestGetServerTime();
-
-	void RequestTitleNews();
-	
-	void UpdateInboxListToClient(FString InboxListStr);
-
-protected:
-	
 	void OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result);
 
-	void OnSuccessGetUserData01(const FGetUsrDataRslt& result);
+	void OnSuccessGetMainData(const FGetUsrDataRslt& result);
+	
 	void RequestCatalogItems();
 
 	void OnSuccessGetUserData02(const FGetUsrDataRslt& result);
@@ -240,9 +174,61 @@ protected:
 
 	void OnSuccessGetTitleNews(const PlayFab::ClientModels::FGetTitleNewsResult&);
 
-	void UploadTitleData02( const FUpdateRslt&);
+	void OnPurchaseWithGemStoneSuccess(const PlayFab::ClientModels::FPurchaseItemResult&);
+
+	void OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
+
+	void SetMainDataToManagers(const FString& maindataFromServer);
 	
 public:
+	void Init();
+	
+	void OnBossBattleStart();
+	
+	bool GetIsLogined()
+	{
+		return m_bIsLoginCompleted;
+	}
+
+	void TickTryUpdateUserData(float deltaTime);//should split
+	//the ui drity should update
+	//gold kill count separete need;
+	void RequestSetNickname(FString str);
+	
+	void RequestGetInventory();
+
+	void RequestGetMainData();
+
+	void RequestGetOtherPlayerMainData(const FString& playfabID,FGetUsrDataDele onSuccess);
+
+	bool RequestInboxList();
+
+	void RequestClaimInbox(int index);
+
+	void RequestClaimAllInbox();
+	
+	UFUNCTION()
+    void BuyIAP(FString itemId,bool bIsConsumable);
+
+	UFUNCTION()
+	void PurchaseVirtualItem(FString itemUniqueId);
+
+	UFUNCTION()
+	void PurchaseSuccess(EInAppPurchaseState::Type completionStatus, const FInAppPurchaseProductInfo& inAppPurchaseInformation);
+
+	UFUNCTION()
+    void PurchaseFail(EInAppPurchaseState::Type completionStatus, const FInAppPurchaseProductInfo& inAppPurchaseInformation);
+
+	void RequestVersionCheck();
+
+	void RequestServerOpenCheck();
+
+	void RequestGetServerTime();
+
+	void RequestTitleNews();
+	
+	void UpdateInboxListToClient(FString InboxListStr);
+
 	void RequestRetrieveTotalRanking();
 
 	void RequestRetrievePlayerAroundRanking();
@@ -253,10 +239,6 @@ public:
 
 	void SetRanking(int rank);
 	
-	void UploadUserTitleData01();
-
-	
-
 	void RequestCheatAlert();
 
 	FORCEINLINE const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>& GetTotalRank() const
@@ -271,23 +253,21 @@ public:
 
 	void PurchaseWithGemStone(int amount,FString itemName);
 
-	void OnPurchaseWithGemStoneSuccess(const PlayFab::ClientModels::FPurchaseItemResult&);
-
 	void AddGemStone(int amount);
-
-	void OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
-
-	void UploadGold(BigInt gold);
-
-	void OnBossBattleStart();
 	//
-	void RequestItemTest();
+	void UploadNormalDungeon();
+	
+	void UploadMainData();
 
 	void UploadDailyData(const FString dailyJsonStr);
 
 	void UploadQuestData(const FString& data);
 
-	
+	void UploadGold(BigInt gold);
+
+	void UploadAdmobTime(const FDateTime& date_time);
+
+	void RequestPVPMatching(int aroundCount,PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate completeDele);
 };
 
 

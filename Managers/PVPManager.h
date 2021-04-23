@@ -3,14 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "PlayFabClientDataModels.h"
 #include "UObject/NoExportTypes.h"
 #include "PVPManager.generated.h"
-
-namespace PlayFab {
-	namespace ClientModels {
-		struct FGetLeaderboardAroundPlayerResult;
-	}
-}
 
 /**
  * 
@@ -23,4 +19,6 @@ public:
 	void RequestPVPMatching();
 
 	void OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult& rslt);
+
+	void OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserDataResult&);
 };

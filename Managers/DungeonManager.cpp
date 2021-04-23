@@ -103,13 +103,13 @@ void UDungeonManager::LevelUpDungeon()
 
 		SetMaxStageLevel(m_nCurrentStageLevel);
 		UDiabloGameInstance::Get->m_QuestManager->AddQuestCount(EQuestType::StageLv);
-		UDiabloGameInstance::Get->m_PlayfabManager->OnStageComplete();
+		UDiabloGameInstance::Get->m_PlayfabManager->UploadNormalDungeon();
 		m_OnDungeonMaxUpdate.Broadcast();
 	}
 
 	m_OnDgOpen.Broadcast(m_nCurrentStageLevel);
 	
-	UDiabloGameInstance::Get->m_PlayfabManager->UploadUserTitleData01();
+	//UDiabloGameInstance::Get->m_PlayfabManager->UploadMainData();
 	
 	OpenLevel();
 }

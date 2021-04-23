@@ -11,6 +11,7 @@
 #include "PlayerUpgradeManager.generated.h"
 
 
+class UPlayFabJsonObject;
 DECLARE_MULTICAST_DELEGATE(FOnUpgradeLevelChanged);
 
 UENUM()
@@ -77,7 +78,7 @@ protected:
 	TArray<FSkillSpec*> m_AryEquippedSkillSpec;
 	
 public:
-	void SetUpgradeDataFromServer(const FString& statJsonStr,const FString& skillJsonStr);
+	void SetUpgradeDataFromServer(const UPlayFabJsonObject* statJsonStr,const UPlayFabJsonObject* skillJsonStr);
 	//
 	//UpgradeAtkDmg01
 public:

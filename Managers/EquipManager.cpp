@@ -2,9 +2,11 @@
 
 #include "DiabloGameInstance.h"
 #include "JsonObjectConverter.h"
+#include "PlayFabJsonValue.h"
 #include "PlayfabManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
 
+class UPlayFabJsonValue;
 UDataTable* UEquipManager::GetPlayerSkinDataTable = nullptr;
 UDataTable* UEquipManager::GetWeaponDataTable = nullptr;
 UDataTable* UEquipManager::GetWingDataTable = nullptr;
@@ -44,7 +46,7 @@ UEquipManager::UEquipManager()
 	ClearSelectedIndex();
 }
 
-void UEquipManager::SetEquipDataFromServer(const FString& classSkin, const FString& weapon, const FString& pet)
+void UEquipManager::SetEquipDataFromServer(const TArray<UPlayFabJsonValue*>& classSkin, const TArray<UPlayFabJsonValue*>& weapon, const TArray<UPlayFabJsonValue*>& pet)
 {
 	SetStringSkinUnlocked(classSkin);
 	SetStringWeaponUnlocked(weapon);
@@ -59,14 +61,21 @@ int UEquipManager::StringSplitEachItem(const FString& equipDatas, TArray<FString
 	return equipDatas.ParseIntoArray(outStrAry,TEXT("/"));
 }
 
-void UEquipManager::SetStringSkinUnlocked(FString skinUnlock) //이 str에 모든 스킨정보가 등록되어있음,근데 순서를 어떻게 보장시킴?
+void UEquipManager::SetStringSkinUnlocked(const TArray<UPlayFabJsonValue*>&  skinUnlock) //이 str에 모든 스킨정보가 등록되어있음,근데 순서를 어떻게 보장시킴?
 {
 	m_MapPlayerSkin.Empty(30);
 	m_AryPlayerSkin.Empty(30);
 	TArray<const FPlayerSkinTable*> ArySkinsTable;
 	UEquipManager::GetPlayerSkinDataTable->GetAllRows("", ArySkinsTable);
 
-	if (!FJsonObjectConverter::JsonArrayStringToUStruct(skinUnlock, &m_AryPlayerSkin, 0, 0))
+	TArray<TSharedPtr<FJsonValue>> AryJsonValue;
+
+	for(auto* playfabJsonV : skinUnlock)
+	{
+		AryJsonValue.Add(playfabJsonV->GetRootValue());
+	}
+
+	if (!FJsonObjectConverter::JsonArrayToUStruct(AryJsonValue, &m_AryPlayerSkin, 0, 0))
 	{
 		return;
 	}
@@ -83,14 +92,21 @@ void UEquipManager::SetStringSkinUnlocked(FString skinUnlock) //이 str에 모�
 }
 
 
-void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
+void UEquipManager::SetStringWeaponUnlocked(const TArray<UPlayFabJsonValue*>&  weaponUnlock)
 {
 	m_MapPlayerWeapon.Empty(30);
 	m_AryWeapons.Empty(30);
 	TArray<const FWeaponTable*> AryWeaponTable;
 	UEquipManager::GetWeaponDataTable->GetAllRows("", AryWeaponTable);
 
-	if (!FJsonObjectConverter::JsonArrayStringToUStruct(weaponUnlock, &m_AryWeapons, 0, 0))
+	TArray<TSharedPtr<FJsonValue>> AryJsonValue;
+
+	for(auto* playfabJsonV : weaponUnlock)
+	{
+		AryJsonValue.Add(playfabJsonV->GetRootValue());
+	}
+
+	if (!FJsonObjectConverter::JsonArrayToUStruct(AryJsonValue, &m_AryWeapons, 0, 0))
 	{
 		return;
 	}
@@ -105,14 +121,21 @@ void UEquipManager::SetStringWeaponUnlocked(FString weaponUnlock)
 	}
 }
 
-void UEquipManager::SetStringPetUnlocked(FString petUnlock)
+void UEquipManager::SetStringPetUnlocked(const TArray<UPlayFabJsonValue*>&  petUnlock)
 {
 	m_MapPlayerPet.Empty(30);
 	m_AryPets.Empty(30);
 	TArray<const FPetTable*> AryPetTable;
 	UEquipManager::GetPetDataTable->GetAllRows("", AryPetTable);
 	//
-	if (!FJsonObjectConverter::JsonArrayStringToUStruct(petUnlock, &m_AryPets, 0, 0))
+	TArray<TSharedPtr<FJsonValue>> AryJsonValue;
+
+	for(auto* playfabJsonV : petUnlock)
+	{
+		AryJsonValue.Add(playfabJsonV->GetRootValue());
+	}
+
+	if (!FJsonObjectConverter::JsonArrayToUStruct(AryJsonValue, &m_AryPets, 0, 0))
 	{
 		return;
 	}
@@ -127,14 +150,21 @@ void UEquipManager::SetStringPetUnlocked(FString petUnlock)
 	}
 }
 
-void UEquipManager::SetStringAccesoryUnlocked(FString acceUnlock)
+void UEquipManager::SetStringAccesoryUnlocked(const TArray<UPlayFabJsonValue*>&  acceUnlock)
 {
 	m_MapAccessory.Empty(30);
 	m_AryAcce.Empty(30);
 	TArray<const FAccessoryTable*> AryAccesTable;
 	UEquipManager::GetAcceeDataTable->GetAllRows("", AryAccesTable);
 	//
-	if (!FJsonObjectConverter::JsonArrayStringToUStruct(acceUnlock, &m_AryAcce, 0, 0))
+	TArray<TSharedPtr<FJsonValue>> AryJsonValue;
+
+	for(auto* playfabJsonV : acceUnlock)
+	{
+		AryJsonValue.Add(playfabJsonV->GetRootValue());
+	}
+
+	if (!FJsonObjectConverter::JsonArrayToUStruct(AryJsonValue, &m_AryAcce, 0, 0))
 	{
 		return;
 	}
