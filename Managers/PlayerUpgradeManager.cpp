@@ -104,8 +104,6 @@ FString UPlayerUpgradeManager::GetSkillDataStr()
 	return PlayFab::FJsonKeeper(JsonObject).toJSONString();
 }
 
-
-
 void UPlayerUpgradeManager::UpgradeAtk(EAttackType type)
 {
 	if (!GetAtkUp(type).IsUpgradeAble())
