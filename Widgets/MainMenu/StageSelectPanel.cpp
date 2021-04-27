@@ -1,4 +1,6 @@
 #include "StageSelectPanel.h"
+
+#include "PVPPanel.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DungeonManager.h"
 
@@ -14,7 +16,8 @@ void UStageSelectPanel::NativeOnInitialized()
 	m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed); //골드던전 가림
 	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
 	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
-	m_DgPVPVert->SetVisibility(ESlateVisibility::Collapsed);
+	//
+	m_DgPVPPanel->SetVisibility(ESlateVisibility::Collapsed);
 	// //
 	m_BtnShowNormalDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenNormalDg);
 	m_BtnShowGoldDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenGoldDg);
@@ -93,7 +96,7 @@ void UStageSelectPanel::OpenAcceDg()
 
 void UStageSelectPanel::OpenPVPDg()
 {
-	m_DgPVPVert->SetVisibility(ESlateVisibility::Visible);
+	m_DgPVPPanel->SetVisibility(ESlateVisibility::Visible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
 

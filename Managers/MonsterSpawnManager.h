@@ -126,6 +126,7 @@ public:
 	void OnBossDead( AMonsterPawn*);
 
 	virtual void BeginDestroy() override;
+	
 };
 
 

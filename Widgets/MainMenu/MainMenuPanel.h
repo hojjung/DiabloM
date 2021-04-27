@@ -51,6 +51,7 @@ protected:
 	virtual void NativeOnInitialized() override;
 	
 public:
+	void DisableInteract();
 	UFUNCTION()
 	void ClosePanel();
 	UFUNCTION()

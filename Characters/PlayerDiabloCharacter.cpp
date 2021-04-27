@@ -45,7 +45,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_SkBody->CastShadow = true;
 	m_SkBody->bReceiveMobileCSMShadows = false;
 	m_SkBody->SetRelativeLocation(FVector(0, 0, -80.f));
-	m_SkBody->SetRelativeRotation(FRotator(0, -90.f, -0.f));
+	m_SkBody->SetRelativeRotation(FRotator(0, -90.f, 0.f));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> FoundSkMesh(
 		TEXT("SkeletalMesh'/Game/Models/ParagonMeshs/Greystone_SK.Greystone_SK'"));

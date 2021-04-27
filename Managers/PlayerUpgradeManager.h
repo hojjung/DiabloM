@@ -116,8 +116,8 @@ public:
 		return m_AryEquippedSkillSpec;
 	}
 
-	FString GetUpgradeDataStr();
+	void SetUpgradeDataToJson(UPlayFabJsonObject*);
 
-	FString GetSkillDataStr();
+	void SetSkillDataToJson(UPlayFabJsonObject*);
 	
 };

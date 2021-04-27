@@ -5,6 +5,7 @@
 
 void UPVPManager::RequestPVPMatching()
 {
+	m_OnMatchStart.Broadcast();
 	UDiabloGameInstance::Get->m_PlayfabManager->RequestPVPMatching(
 		6, PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate::CreateUObject(
 			this, &UPVPManager::OnRequestComplete));
@@ -17,7 +18,7 @@ void UPVPManager::OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboard
 
 	if (PlayerLeaderBoard.Num() < 1)
 	{
-		PRINTF("NoUser,Need AiBOT");
+		m_OnMatchFail.Broadcast();
 		return;
 	}
 
@@ -29,15 +30,23 @@ void UPVPManager::OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboard
 
 	PlayFab::ClientModels::FPlayerLeaderboardEntry MatchedUser = PlayerLeaderBoard.GetRandom();
 
+
+	//m_OtherPlayerDisplayName = MatchedUser.DisplayName;
+	FString TestID = TEXT("8CAA7224F3D58944");
+	
+	m_OtherPlayerDisplayName = TEXT("윤빠띠");
+	
+	m_OnOtherPlayerFound.Broadcast(m_OtherPlayerDisplayName);
+
 	UDiabloGameInstance::Get->m_PlayfabManager->RequestGetOtherPlayerMainData(
-		MatchedUser.PlayFabId, FGetUsrDataDele::CreateUObject(this, &UPVPManager::OnGetOtherPlayerSuccess));
+		TestID, FGetUsrDataDele::CreateUObject(this, &UPVPManager::OnGetOtherPlayerSuccess));
 }
 
 void UPVPManager::OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserDataResult& rslt)
 {
 	if (!rslt.Data.Find(UPlayfabManager::MainData))
 	{
-		PRINTF("PVP-NoData");
+		m_OnMatchFail.Broadcast();
 		return;
 	}
 
@@ -49,51 +58,24 @@ void UPVPManager::OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserD
 		return;
 	}
 
-	UPlayFabJsonObject* StatObj = PlayfabJson->GetObjectField(TEXT("Stat"));
+	m_StatObj = PlayfabJson->GetObjectField(TEXT("Upgrade"));
 
-	int BaseAttack = StatObj->GetNumberField(TEXT("BaseAttack"));
+	m_EquipObj = PlayfabJson->GetObjectField(TEXT("CurrentEquipped"));
 
-	int Critical = StatObj->GetNumberField(TEXT("Critical"));
-
-	int CriticalDmg = StatObj->GetNumberField(TEXT("CriticalDmg"));
-
-	int SuperCritical = StatObj->GetNumberField(TEXT("SuperCritical"));
-
-	int SuperCriticalDmg = StatObj->GetNumberField(TEXT("SuperCriticalDmg"));
-
-	int MagicBomb = StatObj->GetNumberField(TEXT("MagicBomb"));
-
-	int MagicBombDmg = StatObj->GetNumberField(TEXT("MagicBombDmg"));
-
-	int SuperMagicBomb = StatObj->GetNumberField(TEXT("SuperMagicBomb"));
-
-	int SuperMagicBombDmg = StatObj->GetNumberField(TEXT("SuperMagicBombDmg"));
-
-	UPlayFabJsonObject* EquippedObj = PlayfabJson->GetObjectField(TEXT("CurrentEquipped"));
-
-	int SkinIndex = EquippedObj->GetNumberField(TEXT("EquippedSkin"));
-
-	int WeaponIndex = EquippedObj->GetNumberField(TEXT("EquippedWeapon"));
-
-	int WeaponLevel = EquippedObj->GetNumberField(TEXT("EquippedWeaponLevel"));
-
-	int PetIndex = EquippedObj->GetNumberField(TEXT("EquippedPet"));
-
-	int EquippedPetLevel = EquippedObj->GetNumberField(TEXT("EquippedPetLevel"));
-
-	int EquippedSkill01 = EquippedObj->GetNumberField(TEXT("EquippedSkill01"));
-	
-	int EquippedSkill01Level = EquippedObj->GetNumberField(TEXT("EquippedSkill01Level"));
-	
-	int EquippedSkill02 = EquippedObj->GetNumberField(TEXT("EquippedSkill02"));
-	
-	int EquippedSkill02Level = EquippedObj->GetNumberField(TEXT("EquippedSkill02Level"));
-	
-	int EquippedSkill03 = EquippedObj->GetNumberField(TEXT("EquippedSkill03"));
-	
-	int EquippedSkill03Level = EquippedObj->GetNumberField(TEXT("EquippedSkill03Level"));
-	
-	int EquippedSkill04 = EquippedObj->GetNumberField(TEXT("EquippedSkill04"));
-	
-	int EquippedSkill04Level = EquippedObj->GetNumberField(TEXT("EquippedSkill04Level"));
+	m_OnMatchSuccessed.Broadcast(m_StatObj,m_EquipObj);
+	//
+	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this, &UPVPManager::MoveStageLevelToPVP,1.7f,false);
 }
+
+void UPVPManager::MatchFail()
+{
+	PRINTF("MatchFail");
+}
+
+void UPVPManager::MoveStageLevelToPVP()
+{
+	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),TEXT("PVPStage"), true);
+
+	
+}
+

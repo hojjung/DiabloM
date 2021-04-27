@@ -26,6 +26,18 @@ void UMainMenuPanel::NativeOnInitialized()
 	m_BtnClose->OnClicked.AddDynamic(this, &UMainMenuPanel::ClosePanel);
 }
 
+void UMainMenuPanel::DisableInteract()
+{
+	m_PanelStageSelect->m_BtnBack->SetIsEnabled(false);
+	m_BtnClose->SetIsEnabled(false);
+	m_BtnDaily->SetIsEnabled(false);
+	m_BtnPlayerInfo->SetIsEnabled(false);
+	m_BtnMapSelect->SetIsEnabled(false);
+	m_BtnRanking->SetIsEnabled(false);
+	m_BtnMail->SetIsEnabled(false);
+	m_BtnOption->SetIsEnabled(false);
+}
+
 void UMainMenuPanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
@@ -154,8 +166,6 @@ void UMainMenuPanel::SetVisibility(ESlateVisibility InVisibility)
 		m_PanelMail->SetVisibility(InVisibility);
 		m_PanelDaily->SetVisibility(InVisibility);
 		m_PanelOption->SetVisibility(InVisibility);
-
-		
 	}
 }
 

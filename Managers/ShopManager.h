@@ -107,7 +107,7 @@ UFUNCTION()
 
 	bool GetPackagePurchased(int index);
 
-	FString GetIAPDataStr();
+	void SetIAPDataToJson(UPlayFabJsonObject*);
 
 	FORCEINLINE const TArray<bool>& GetPackageBoughtAry() const
 	{

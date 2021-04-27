@@ -25,7 +25,7 @@ APlayerVisual::APlayerVisual()
 	CreateSkMeshComponent(&m_MeshBody, "SkMeshRoot", RootComponent);
 
 	m_MeshBody->SetRelativeLocation(FVector(0, 0, -80.f));//-80
-	m_MeshBody->SetRelativeRotation(FRotator(0, 90.f, 0));
+	m_MeshBody->SetRelativeRotation(FRotator(0, -90.f, 0));
 	//init Anim	
 	m_MeshBody->SetAnimationMode(EAnimationMode::AnimationSingleNode);
 
@@ -37,7 +37,7 @@ APlayerVisual::APlayerVisual()
 	//
 	m_Spring = CreateDefaultSubobject<USpringArmComponent>("Spring");
 	m_Spring->SetupAttachment(RootComponent);
-	m_Spring->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
+	m_Spring->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));
 	m_Spring->SetRelativeLocation(FVector(0.f, 0.f, 30.f));//30
 	m_Spring->TargetArmLength = 300.f;
 
@@ -93,13 +93,6 @@ void APlayerVisual::BeginPlay()
 
 	m_MeshBody->SetForcedLOD(0);
 	//OnMeshChanged(UDiabloGameInstance::Get->GetPlChar());
-}
-
-void APlayerVisual::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-//	m_PlCreateManager->m_OnVisualChange.Remove(Handle1);
-	//m_PlCreateManager->m_OnStartCreation.Unbind();
 }
 
 void APlayerVisual::ShowMesh()
@@ -162,7 +155,6 @@ void APlayerVisual::OnMeshChanged(APlayerDiabloCharacter* charDia)
 			m_WeaponActor->DetachFromActor(Rule);
 			m_WeaponActor->Destroy();
 		}
-		
 		
 		FActorSpawnParameters Param;
 

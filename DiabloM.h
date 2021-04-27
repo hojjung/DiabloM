@@ -67,7 +67,6 @@
 // #include "Abilities/GameplayAbilityTypes.h"
 // #include "AbilitySystem/AbilityTypes.h"
 
-
 //
 
 DIABLOM_API DECLARE_LOG_CATEGORY_EXTERN(DiaM, Log, All);

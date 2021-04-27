@@ -418,9 +418,7 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 		//Create Player's TitleData,플레이펩 오토메이션은 없어져야함
 		//그리고 그 모든것이 끝났을때
 	}
-
 	RequestGetServerTime();
-	
 	//
 	//RequestGetAccountInfo();
 }
@@ -526,42 +524,43 @@ FDateTime UPlayfabManager::DecodePlayfabTimeToUe4Time(FString playfabTime)
 
 FString UPlayfabManager::GetMainDataJsonStr()
 {
+	UPlayFabJsonObject* TotalMaindataJsonObj = UPlayFabJsonObject::ConstructJsonObject(this);
 	//Logout
-	FString LogoutStr = FDateTime::UtcNow().ToString();
+	TotalMaindataJsonObj->SetStringField(TEXT("LogoutTime"),FDateTime::UtcNow().ToString());
 	//IAP
-	FString IAPStr = UDiabloGameInstance::Get->m_ShopManager->GetIAPDataStr();
+	UDiabloGameInstance::Get->m_ShopManager->SetIAPDataToJson(TotalMaindataJsonObj);
 	//Gacha
-	FString GachaStr = UDiabloGameInstance::Get->m_GachaManager->GetGachaDataStr();
+	UDiabloGameInstance::Get->m_GachaManager->SetGachaDataToJson(TotalMaindataJsonObj);
 	//Upgrade
-	FString UpgradeStr = UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetUpgradeDataStr();
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataToJson(TotalMaindataJsonObj);
 	//Skill
-	FString SkillStr = UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetSkillDataStr();
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetSkillDataToJson(TotalMaindataJsonObj);
 	//Weapon
-	FString WeaponStr = UDiabloGameInstance::Get->m_EquipManager->GetWeaponDataStr();
+	UDiabloGameInstance::Get->m_EquipManager->SetWeaponDataToJson(TotalMaindataJsonObj);
 	//Skin
-	FString SkinStr = UDiabloGameInstance::Get->m_EquipManager->GetSkinDataStr();
+	UDiabloGameInstance::Get->m_EquipManager->SetSkinDataToJson(TotalMaindataJsonObj);
 	//Pet
-	FString PetStr = UDiabloGameInstance::Get->m_EquipManager->GetPetDataStr();
+	UDiabloGameInstance::Get->m_EquipManager->SetPetDataToJson(TotalMaindataJsonObj);
 	//
-	TSharedRef<FJsonObject> MainDataJson= MakeShareable(new FJsonObject);
+	UPlayFabJsonObject* CurrentEquippedObj = UPlayFabJsonObject::ConstructJsonObject(this);
 
-	MainDataJson->SetStringField(TEXT("LogoutTime"),LogoutStr);
-	MainDataJson->SetStringField(TEXT("IAP"),IAPStr);
-	MainDataJson->SetStringField(TEXT("Gacha"),GachaStr);
-	MainDataJson->SetStringField(TEXT("Upgrade"),UpgradeStr);
-	MainDataJson->SetStringField(TEXT("Skill"),SkillStr);
-	MainDataJson->SetStringField(TEXT("Weapon"),WeaponStr);
-	MainDataJson->SetStringField(TEXT("Skin"),SkinStr);
-	MainDataJson->SetStringField(TEXT("Pet"),PetStr);
-
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkin"),UDiabloGameInstance::Get->m_EquipManager->m_nSelectedSkin);
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedWeapon"),UDiabloGameInstance::Get->m_EquipManager->m_nSelectedWeapon);
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedWeaponLevel"),UDiabloGameInstance::Get->m_EquipManager->GetCurrentWeapon().Level);
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedPet"),UDiabloGameInstance::Get->m_EquipManager->m_nSelectedPet);
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedPetLevel"),UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet()?UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet()->Level:-1);
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill01"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[0]->m_nIndex >= 0 ?UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[0]->m_nIndex : -1);
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill01Level"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[0]->m_nLv);
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill02"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[1]->m_nIndex >= 0 ?UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[1]->m_nIndex : -1);
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill02Level"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[1]->m_nLv);
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill03"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[2]->m_nIndex >= 0 ?UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[2]->m_nIndex : -1);
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill03Level"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[2]->m_nLv);
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill04"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[3]->m_nIndex >= 0 ?UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[3]->m_nIndex : -1);
+	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill04Level"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[3]->m_nLv);
+	
+	TotalMaindataJsonObj->SetObjectField(TEXT("CurrentEquipped"),CurrentEquippedObj);
 	//
-	FString MainDataJsonStr;
-	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter=
-	TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&MainDataJsonStr);
-	FJsonSerializer::Serialize(MainDataJson, JsonWriter);
-	JsonWriter->Close();
-
-	return MainDataJsonStr;
+	return TotalMaindataJsonObj->EncodeJson();
 }
 
 void UPlayfabManager::OnSuccessGetMainData(const FGetUsrDataRslt& result)
@@ -968,7 +967,7 @@ void UPlayfabManager::SetMainDataToManagers(const FString& maindataFromServer)
 	
 	UDiabloGameInstance::Get->m_ShopManager->SetShopDataFromServer(JsonObj->GetObjectField(TEXT("IAP")));
 	UDiabloGameInstance::Get->m_GachaManager->SetGachaLevel(JsonObj->GetObjectField(TEXT("Gacha")));
-	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(JsonObj->GetObjectField(TEXT("Stat")),JsonObj->GetObjectField(TEXT("Skill")));
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->SetUpgradeDataFromServer(JsonObj->GetObjectField(TEXT("Upgrade")),JsonObj->GetObjectField(TEXT("Skill")));
 	UDiabloGameInstance::Get->m_EquipManager->
 	SetEquipDataFromServer(
 		JsonObj->GetArrayField(TEXT("Skin")),

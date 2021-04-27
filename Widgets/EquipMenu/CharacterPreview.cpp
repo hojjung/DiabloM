@@ -65,10 +65,12 @@ void UCharacterPreview::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	}
 
 	FRotator NewRot = m_PlayerVisual->GetSkMesh()->GetComponentRotation();
-
+	
 	NewRot.Yaw = UKismetMathLibrary::RInterpTo(NewRot, m_InitVisualRot,InDeltaTime, 5.5f).Yaw;
+	
+	m_PlayerVisual->GetSkMesh()->SetWorldRotation(NewRot);
 
-	m_PlayerVisual->GetSkMesh()->SetRelativeRotation(NewRot);
+	FRotator NewRot2 = m_PlayerVisual->GetSkMesh()->GetComponentRotation();
 }
 
 

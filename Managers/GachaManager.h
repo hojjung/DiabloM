@@ -39,7 +39,7 @@ public:
 
 	void SetGachaLevel(const UPlayFabJsonObject* gachaJsonStr);
 
-	FString GetGachaDataStr();
+	void SetGachaDataToJson(UPlayFabJsonObject* obj);
 	
 public:
 	UPROPERTY()

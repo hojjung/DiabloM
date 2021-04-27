@@ -185,8 +185,8 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     {
         PlayAnimMontage(m_SpawnAnim);
     }
+    
     m_TickFSM->Init(this);
-
   
     SetAcive(true);
 

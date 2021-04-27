@@ -31,16 +31,32 @@ ADiabloGameMode::ADiabloGameMode()
 
 void ADiabloGameMode::SpawnVisualActor()
 {
+	FRotator Rot = FRotator(0);
+	Rot.Yaw = 310.f;
 	FVector Loc = FVector(7777.f);
 	FActorSpawnParameters Param;
 	Param.bNoFail=true;
-	m_VisualActor = GetWorld()->SpawnActor<APlayerVisual>(APlayerVisual::StaticClass(),Loc,FRotator(0.f),Param);
+	m_VisualActor = GetWorld()->SpawnActor<APlayerVisual>(APlayerVisual::StaticClass(),Loc,Rot,Param);
 	m_VisualActor->HideMeshWithTick();
+}
+
+void ADiabloGameMode::SpawnOtherPVPActor()
+{
+	FRotator Rot = FRotator(0);
+	Rot.Yaw = 310.f;
+	FVector Loc = FVector(77777.f);
+	FActorSpawnParameters Param;
+	Param.bNoFail=true;
+	m_OtherPlayer = GetWorld()->SpawnActor<AOtherPlayerPawn>(AOtherPlayerPawn::StaticClass(),Loc,Rot,Param);
+	m_OtherPlayer->HideMeshWithTick();
+	//
+	m_OtherPlayerHandle = UDiabloGameInstance::Get->m_PVPManager->m_OnMatchSuccessed.AddUObject(m_OtherPlayer,&AOtherPlayerPawn::SetPVPPlayerPawn);
 }
 
 void ADiabloGameMode::StartPlay()
 {
 	SpawnVisualActor();
+	SpawnOtherPVPActor();
 	
 	Super::StartPlay();
 
@@ -58,7 +74,14 @@ void ADiabloGameMode::StartPlay()
 	//UDiabloGameInstance::Get->m_AdverManager->ShowInterstitialAds();
 	//UDiabloGameInstance::Get->m_AdverManager->ShowRewardAds();
 
-	UDiabloGameInstance::Get->m_PVPManager->RequestPVPMatching();
+	
+}
+
+void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchSuccessed.Remove(m_OtherPlayerHandle);
 }
 
 void ADiabloGameMode::OnMenuOpen(bool b)
@@ -66,10 +89,12 @@ void ADiabloGameMode::OnMenuOpen(bool b)
 	if(b)
 	{
 		m_VisualActor->ShowMeshWithTick();
+		//m_OtherPlayer->ShowMeshWithTick();
 	}
 	else
 	{
 		m_VisualActor->HideMeshWithTick();
+		m_OtherPlayer->HideMeshWithTick();
 	}
 }
 

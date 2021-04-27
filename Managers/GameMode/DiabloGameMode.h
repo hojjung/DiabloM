@@ -4,6 +4,7 @@
 
 #include "ActionManagerComponent.h"
 #include "DiabloM.h"
+#include "Characters/OtherPlayerPawn.h"
 #include "Components/PostProcessComponent.h"
 #include "GameFramework/GameMode.h"
 #include "Managers/ChatManager.h"
@@ -25,7 +26,10 @@ class DIABLOM_API ADiabloGameMode : public AGameMode
 	GENERATED_BODY()
 public:
 	ADiabloGameMode();
+	
 	void SpawnVisualActor();
+
+	void SpawnOtherPVPActor();
 
 	FOnTick m_OnTick;
 protected:
@@ -39,12 +43,18 @@ protected:
 	UChatManager* m_ChatManager;
 	UPROPERTY()
 	APlayerVisual* m_VisualActor;
+	UPROPERTY()//for pvp visual
+	AOtherPlayerPawn* m_OtherPlayer;
 	UPROPERTY()
 	UGoldManager* m_GoldManager;
 
 	bool m_bGoldOfflineLock;
+
+	FDelegateHandle m_OtherPlayerHandle;
 public:
 	virtual void StartPlay() override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	FORCEINLINE UActionManagerComponent* GetPlayerActionManager()
 	{

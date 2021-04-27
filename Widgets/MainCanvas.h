@@ -209,7 +209,7 @@ public:
 
 	void OnBossBattleStart();
 
-	
+	void OnPVPBattleStart();
 };
 
 

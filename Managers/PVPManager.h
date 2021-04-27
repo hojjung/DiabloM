@@ -5,9 +5,11 @@
 #include "CoreMinimal.h"
 
 #include "PlayFabClientDataModels.h"
+#include "Datas/ItemTierData.h"
 #include "UObject/NoExportTypes.h"
 #include "PVPManager.generated.h"
 
+class UPlayFabJsonObject;
 /**
  * 
  */
@@ -16,9 +18,36 @@ class DIABLOM_API UPVPManager : public UObject
 {
 	GENERATED_BODY()
 public:
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPVPMatched,UPlayFabJsonObject*,UPlayFabJsonObject*);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnOtherPlayerFound,const FString);
+	DECLARE_MULTICAST_DELEGATE(FOnMatchFail);
+	DECLARE_MULTICAST_DELEGATE(FOnMatchStart);
+
+	FOnPVPMatched m_OnMatchSuccessed;
+
+	FOnOtherPlayerFound m_OnOtherPlayerFound;
+
+	FOnMatchFail m_OnMatchFail;
+
+	FOnMatchStart m_OnMatchStart;
+
+	FTimerHandle m_TimerHandle_OnTimer;
+	
+public:
+	FString m_OtherPlayerDisplayName;
+	UPROPERTY()
+	UPlayFabJsonObject* m_StatObj;
+	UPROPERTY()
+	UPlayFabJsonObject* m_EquipObj;
+public:
 	void RequestPVPMatching();
 
 	void OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult& rslt);
 
 	void OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserDataResult&);
+	
+	void MatchFail();
+	UFUNCTION()
+	void MoveStageLevelToPVP();
 };
+

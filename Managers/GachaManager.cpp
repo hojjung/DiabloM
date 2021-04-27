@@ -120,16 +120,16 @@ void UGachaManager::SetGachaLevel(const UPlayFabJsonObject* gachaJsonStr)
 	m_nGachaSkinCount = gachaJsonStr->GetNumberField(TEXT("GachaSkinCurrent"));
 }
 
-FString UGachaManager::GetGachaDataStr()
+void UGachaManager::SetGachaDataToJson(UPlayFabJsonObject* obj)
 {
-	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+	UPlayFabJsonObject* JsonObj = UPlayFabJsonObject::ConstructJsonObject(this);
 
-	JsonObject->SetNumberField(TEXT("GachaWeaponLv"),m_nCurrentWeaponIndex);    
-	JsonObject->SetNumberField(TEXT("GachaWeaponCurrent"),m_nGachaWeaponCount); 
-	JsonObject->SetNumberField(TEXT("GachaSkinLv"),m_nCurrentSkinIndex);        
-	JsonObject->SetNumberField(TEXT("GachaSkinCurrent"),m_nGachaSkinCount);     
+	JsonObj->SetNumberField(TEXT("GachaWeaponLv"),m_nCurrentWeaponIndex);    
+	JsonObj->SetNumberField(TEXT("GachaWeaponCurrent"),m_nGachaWeaponCount); 
+	JsonObj->SetNumberField(TEXT("GachaSkinLv"),m_nCurrentSkinIndex);        
+	JsonObj->SetNumberField(TEXT("GachaSkinCurrent"),m_nGachaSkinCount);
 
-	return PlayFab::FJsonKeeper(JsonObject).toJSONString();
+	obj->SetObjectField(TEXT("Gacha"),JsonObj);
 }
 
 void UGachaManager::SetTotalValue(const UDataTable* inTable, TArray<FGachaTableRow*>& outTableRow, float& outTotal)

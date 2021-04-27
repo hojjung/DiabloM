@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "StageSelectPanel.generated.h"
 
+class UPVPPanel;
 /**
  * 
  */
@@ -15,7 +16,7 @@ class DIABLOM_API UStageSelectPanel : public UUserWidget
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnShowNormalDg;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -39,7 +40,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UScrollBox* m_DgStatBtnListVert;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UScrollBox* m_DgPVPVert;
+	UPVPPanel* m_DgPVPPanel;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UStageBtn> m_ClassStageBtn;
 	UPROPERTY()

@@ -383,17 +383,17 @@ bool UShopManager::GetPackagePurchased(int index)
 	return m_PackagePurchased[index];
 }
 
-FString UShopManager::GetIAPDataStr()
+void UShopManager::SetIAPDataToJson(UPlayFabJsonObject* obj)
 {
-	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+	UPlayFabJsonObject* JsonObj = UPlayFabJsonObject::ConstructJsonObject(this);
 
-	JsonObject->SetBoolField(TEXT("Package01"), m_PackagePurchased[0]);
-	JsonObject->SetBoolField(TEXT("Package02"), m_PackagePurchased[1]);
-	JsonObject->SetBoolField(TEXT("Package03"), m_PackagePurchased[2]);
-	JsonObject->SetBoolField(TEXT("Package04"), m_PackagePurchased[3]);
-	JsonObject->SetBoolField(TEXT("Package05"), m_PackagePurchased[4]);
-
-	return PlayFab::FJsonKeeper(JsonObject).toJSONString();
+	JsonObj->SetBoolField(TEXT("Package01"), m_PackagePurchased[0]);
+	JsonObj->SetBoolField(TEXT("Package02"), m_PackagePurchased[1]);
+	JsonObj->SetBoolField(TEXT("Package03"), m_PackagePurchased[2]);
+	JsonObj->SetBoolField(TEXT("Package04"), m_PackagePurchased[3]);
+	JsonObj->SetBoolField(TEXT("Package05"), m_PackagePurchased[4]);
+	//
+	obj->SetObjectField(TEXT("IAP"),JsonObj);
 }
 
 void UShopManager::ShowTouchBan()

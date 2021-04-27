@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 #include "Datas/EquipmentData.h"
 #include "EquipManager.generated.h"
 
@@ -198,6 +198,13 @@ public:
 	TArray<FWeaponSpec> m_AryWeapons;
 	TArray<FPetSpec> m_AryPets;
 	TArray<FAccessorySpec> m_AryAcce;
+	//
+	TArray<const FPlayerSkinTable*> m_ArySkinsTable;
+	TArray<const FWeaponTable*> m_AryWeaponTable;
+	TArray<const FPetTable*> m_AryPetTable;
+	TArray<const FAccessoryTable*> m_AryAccesTable;
+	
+	//
 
 	UPROPERTY()
 	int m_nSelectedSkin;
@@ -282,15 +289,15 @@ public:
 
 	FAccessorySpec& GetAccessory(EAccessory acces);
 
-	FString GetWeaponDataStr();
+	void SetWeaponDataToJson(UPlayFabJsonObject*);
 
-	FString GetSkinDataStr();
+	void SetSkinDataToJson(UPlayFabJsonObject*);
 
-	FString GetPetDataStr();
+	void SetPetDataToJson(UPlayFabJsonObject*);
 
-	FString GetAccessoryDataStr();
+	void SetAccessoryDataToJson(UPlayFabJsonObject*);
 
-	FString GetWingDataStr();
+	void SetWingDataToJson(UPlayFabJsonObject*);
 
 };
 

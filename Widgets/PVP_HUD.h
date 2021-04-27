@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Characters/UnitPawn.h"
-#include "AllyPawn.generated.h"
+#include "Widgets/MyHUD.h"
+#include "PVP_HUD.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API AAllyPawn : public AUnitPawn
+class DIABLOM_API APVP_HUD : public AMyHUD
 {
 	GENERATED_BODY()
 	

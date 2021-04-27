@@ -67,6 +67,8 @@ void UMainCanvas::NativeOnInitialized()
 	m_fMaxBossCooldownTime=10;
 	m_fBossCooldownTimeCounter = m_fMaxBossCooldownTime;
 	m_CDBoss->StartCooldown();
+	//
+	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchStart.AddUObject(this,&UMainCanvas::OnPVPBattleStart);
 }
 
 void UMainCanvas::ShowTouchBan(float secWant)
@@ -106,6 +108,20 @@ void UMainCanvas::OnBossBattleStart()
 	m_BtnMenu->SetIsEnabled(false);
 }
 
+void UMainCanvas::OnPVPBattleStart()
+{
+	m_BtnGold->SetIsEnabled(false);
+	m_BtnGemStone->SetIsEnabled(false);
+	m_BtnQuest->SetIsEnabled(false);
+	m_BtnUpgrade->SetIsEnabled(false);
+	m_BtnEquipment->SetIsEnabled(false);
+	m_BtnGacha->SetIsEnabled(false);
+	m_BtnShop->SetIsEnabled(false);
+	m_BtnMenu->SetIsEnabled(false);
+	m_BtnBoss->SetIsEnabled(false);
+	//
+	m_PanelMenu->DisableInteract();
+}
 void UMainCanvas::RequestText(FText txt)
 {
 	m_PopupText->SetVisibility(ESlateVisibility::SelfHitTestInvisible);

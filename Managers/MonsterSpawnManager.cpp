@@ -3,6 +3,7 @@
 #include "DungeonManager.h"
 #include "EngineUtils.h"
 #include "Characters/DiabloPlayerController.h"
+#include "Characters/OtherPlayerPawn.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Engine/AssetManager.h"
 
@@ -277,11 +278,7 @@ AMonsterPawn* UMonsterSpawnManager::GetNearestMonster(const FVector& wantPos)
 
 	for (AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
 	{
-		bool b2 = !Mob;
-		bool b3 = Mob->IsReadyToPool(); //공중에있다는뜻
-		bool b4 = !Mob->IsAlive();
-
-		if (b2 || b3 || b4)
+		if (!Mob || Mob->IsReadyToPool() || !Mob->IsAlive())
 		{
 			continue;
 		}
