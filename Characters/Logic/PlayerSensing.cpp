@@ -121,6 +121,13 @@ void UPlayerSensing::UpdateAISensing()
 	{
 		return;
 	}
+
+	if(UDiabloGameInstance::Get->m_PVPManager->m_bIsMatchStarted)
+	{
+		m_OwnedPlayer->FocusTarget(UDiabloGameInstance::Get->m_PVPManager->m_PVPOtherPlayer.Get());
+
+		return;
+	}
 	
 	auto* Pawn = UDiabloGameInstance::Get->m_MonsterSpawn->GetNearestMonster(m_OwnedPlayer->GetActorLocation());
 

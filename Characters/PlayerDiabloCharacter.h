@@ -88,25 +88,19 @@ protected:
 	UPROPERTY()
 	UPlayerSensing* m_PlayerSense;
 	UPROPERTY()
-	TArray<AActor*> m_AryIgnoreActor;
-	UPROPERTY()
 	ADiabloPlayerController* m_PlayerCon;
 	
 	const FPlayerClassSpec* m_PlayerEntityData;
 
 	FVector m_Input;
 
-	UPROPERTY()
-	TSet<AActor*> m_AlreadyHittenForIgnore;
-
-	bool m_bIsDead;
-
 	TWeakObjectPtr<AUnitPawn> m_FocusOutlinePawn;;
 
-	FTimerHandle m_AttackTimer;
 
 	bool m_bIsManualMove;
 
+	FTimerHandle m_AttackTimer;
+	
 	TQueue<EDamageType> m_QueDmgType;
 
 	UPROPERTY()
@@ -159,7 +153,7 @@ protected:
 	
 	float PlayAttackMontage(float& currentCd,float maxCd,FName* sectionSkillName=nullptr);
 	//몽타쥬 트리거
-	
+	virtual void TakeDmg(BigInt amount,AUnitPawn* attacker,EDamagePopup pp) override;
 
 	void ApplyDamage(AUnitPawn* target,const BigInt& finalDmg,EDamagePopup& pp);
 
@@ -192,8 +186,6 @@ public:
 public:
 	virtual void FocusTarget(AUnitPawn* target) override;
 	
-	UFUNCTION(BlueprintCallable)
-    void Revive();
 	
 	void ShowOutlineOnTarget(AUnitPawn* Unit);
 	
@@ -212,17 +204,7 @@ public:
 		return m_AryTargetingObjectType;
 	}
 
-	FORCEINLINE const TArray<AActor*>& GetAryIgnoreActor()
-	{
-		return m_AryIgnoreActor;
-	}
-
 	void ClearFocusedTarget(AUnitPawn* target);
-
-	TSet<AActor*>& GetAlreadyAttacked()
-	{
-		return m_AlreadyHittenForIgnore;
-	}
 
 	virtual bool IsAlive() const override;
 	

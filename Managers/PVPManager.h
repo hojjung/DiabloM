@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "PlayFabClientDataModels.h"
+#include "Characters/OtherPlayerPawn.h"
 #include "Datas/ItemTierData.h"
 #include "UObject/NoExportTypes.h"
 #include "PVPManager.generated.h"
@@ -18,10 +19,12 @@ class DIABLOM_API UPVPManager : public UObject
 {
 	GENERATED_BODY()
 public:
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPVPMatched,UPlayFabJsonObject*,UPlayFabJsonObject*);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnPVPMatched,UPlayFabJsonObject*,UPlayFabJsonObject*,UPlayFabJsonObject*);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnOtherPlayerFound,const FString);
 	DECLARE_MULTICAST_DELEGATE(FOnMatchFail);
 	DECLARE_MULTICAST_DELEGATE(FOnMatchStart);
+
+	UPVPManager();
 
 	FOnPVPMatched m_OnMatchSuccessed;
 
@@ -32,11 +35,17 @@ public:
 	FOnMatchStart m_OnMatchStart;
 
 	FTimerHandle m_TimerHandle_OnTimer;
+
+	TWeakObjectPtr<AOtherPlayerPawn> m_PVPOtherPlayer;
+
+	bool m_bIsMatchStarted;
 	
 public:
 	FString m_OtherPlayerDisplayName;
 	UPROPERTY()
 	UPlayFabJsonObject* m_StatObj;
+	UPROPERTY()
+	UPlayFabJsonObject* m_SkillObj;
 	UPROPERTY()
 	UPlayFabJsonObject* m_EquipObj;
 public:
@@ -49,5 +58,9 @@ public:
 	void MatchFail();
 	UFUNCTION()
 	void MoveStageLevelToPVP();
+
+	void PVPStart();
+
+	void PVPEnd();
 };
 

@@ -56,7 +56,6 @@ protected:
 
     float m_fAttackSpeed;
 
-    int m_nAccuracyLevel;
 public:
     UPROPERTY()
     UAnimMontage* m_BaseAttackAnim;

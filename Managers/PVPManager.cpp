@@ -3,6 +3,11 @@
 #include "JsonSerializer.h"
 #include "PlayFabJsonObject.h"
 
+UPVPManager::UPVPManager()
+{
+	m_bIsMatchStarted = false;
+}
+
 void UPVPManager::RequestPVPMatching()
 {
 	m_OnMatchStart.Broadcast();
@@ -59,10 +64,12 @@ void UPVPManager::OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserD
 	}
 
 	m_StatObj = PlayfabJson->GetObjectField(TEXT("Upgrade"));
+	
+	m_SkillObj = PlayfabJson->GetObjectField(TEXT("Skill"));
 
 	m_EquipObj = PlayfabJson->GetObjectField(TEXT("CurrentEquipped"));
 
-	m_OnMatchSuccessed.Broadcast(m_StatObj,m_EquipObj);
+	m_OnMatchSuccessed.Broadcast(m_StatObj,m_SkillObj,m_EquipObj);
 	//
 	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this, &UPVPManager::MoveStageLevelToPVP,1.7f,false);
 }
@@ -75,7 +82,22 @@ void UPVPManager::MatchFail()
 void UPVPManager::MoveStageLevelToPVP()
 {
 	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),TEXT("PVPStage"), true);
-
 	
+}
+
+void UPVPManager::PVPStart()
+{
+	APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
+	
+	PlChar->FocusTarget(m_PVPOtherPlayer.Get());
+	
+	m_PVPOtherPlayer.Get()->FocusTarget(PlChar);
+
+	m_bIsMatchStarted=true;
+}
+
+void UPVPManager::PVPEnd()
+{
+	m_bIsMatchStarted=false;
 }
 

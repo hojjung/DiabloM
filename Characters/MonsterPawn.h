@@ -21,13 +21,15 @@ enum EMonsterType
 	Boss
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnMonsterDead,AMonsterPawn*);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnMonsterHit,float);
+
 UCLASS()
 class DIABLOM_API AMonsterPawn : public AUnitPawn
 {
 	GENERATED_BODY()
 public:
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMonsterDead,AMonsterPawn*);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMonsterHit,float);
+	
 	AMonsterPawn(const FObjectInitializer& objInit);
 
 	EMonsterType m_MonsterType;

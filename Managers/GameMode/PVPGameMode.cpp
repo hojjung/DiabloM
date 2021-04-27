@@ -41,7 +41,7 @@ void APVPGameMode::SpawnOtherPlayerPawn()
 	
 	m_OtherPlayer = GetWorld()->SpawnActor<AOtherPlayerPawn>(AOtherPlayerPawn::StaticClass(),Loc,Rot,Param);
 	//
-	m_OtherPlayer->SetPVPPlayerPawn(UDiabloGameInstance::Get->m_PVPManager->m_StatObj,UDiabloGameInstance::Get->m_PVPManager->m_EquipObj);
+	m_OtherPlayer->SetPVPPlayerPawn(UDiabloGameInstance::Get->m_PVPManager->m_StatObj,UDiabloGameInstance::Get->m_PVPManager->m_SkillObj,UDiabloGameInstance::Get->m_PVPManager->m_EquipObj);
 }
 
 void APVPGameMode::StartPlay()
@@ -49,6 +49,8 @@ void APVPGameMode::StartPlay()
 	Super::StartPlay();
 
 	SpawnOtherPlayerPawn();
+
+	UDiabloGameInstance::Get->m_PVPManager->PVPStart();
 }
 
 void APVPGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)

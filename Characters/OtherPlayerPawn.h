@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 
 #include "PlayFabJsonObject.h"
 #include "Characters/UnitPawn.h"
 #include "Datas/PlayerUpgradeData.h"
 #include "Managers/EquipManager.h"
-
+#include "Characters/PlayerDiabloCharacter.h"
 #include "OtherPlayerPawn.generated.h"
 
 class AEquipmentActor;
@@ -22,7 +22,8 @@ class DIABLOM_API AOtherPlayerPawn : public AUnitPawn
 	GENERATED_BODY()
 public:
 	AOtherPlayerPawn(const FObjectInitializer& objInit);
-	
+
+	FOnFloatChange2 m_OnRageChanged;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USceneCaptureComponent2D* m_Capture;
@@ -34,15 +35,14 @@ protected:
 protected:
 	TSharedPtr<FStreamableHandle>  m_SkinMeshHandle;
 	
-	TArray<FUpgradeSpec> m_AryBaseAtkUpgrade;
+	TArray<FUpgradeSpec> m_AryUpgradeSpec;
 	
-	TArray<const FSkillUpgradeDataRow*> m_AryUpgradeSkill;
-
+	TArray<FSkillSpec> m_ArySkillSpec;
+	
 	FWeaponSpec m_WeaponSpec;
 
 	FPetSpec m_PetSpec;
 	
-	TArray<FSkillSpec> m_AryEquippedSkillSpec;
 	
 	UPROPERTY()
 	UAnimSequence* m_AnimSeq;
@@ -51,11 +51,60 @@ protected:
 	UPROPERTY()
 	AEquipmentActor* m_WeaponActor;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Player")
+	TArray<TEnumAsByte< EObjectTypeQuery>> m_AryTargetingObjectType;
+
+	FTimerHandle m_AttackTimer;
+	
+	TQueue<EDamageType> m_QueDmgType;
+
+	UPROPERTY()
+	float m_fMaxRage;
+	UPROPERTY()
+	float m_fGainRagePer;
+	UPROPERTY()
+	float m_fCurrentRage;
+	UPROPERTY()
+	float m_fBuff01MaxTime;
+	UPROPERTY()
+	float m_fBuff02MaxTime;
+	UPROPERTY()
+	float m_fBuff01DeltaCount;
+	UPROPERTY()
+	float m_fBuff02DeltaCount;
+	UPROPERTY()
+	float m_fAdditionalAttackSpeed;
+	
+	BigInt m_bnAdditionalSkillDmg;
+
+
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	virtual void Tick(float DeltaSeconds) override;
+
+	
+
+	void StartBuff01(float sec);
+
+	bool IsBuff01Available();
+
+	void EndBuff01();
+
+	void StartBuff02(float sec);
+
+	bool IsBuff02Available();
+
+	void EndBuff02();
+
+	bool GetDmg(BigInt& outDmg, EDamagePopup& pp);
+
 public:
-	void SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJsonObject* equipObj);
+	virtual void FocusTarget(AUnitPawn* target) override;
+	
+	void SetPVPPlayerPawn(UPlayFabJsonObject* statObj,UPlayFabJsonObject* skillObj, UPlayFabJsonObject* equipObj);
 
 	void ShowMesh();
 
@@ -64,4 +113,33 @@ public:
 	void ShowMeshWithTick();
 
 	void HideMeshWithTick();
+	//
+	float PlayAttackMontage(float& currentCd,float maxCd,FName* sectionSkillName=nullptr);
+	
+public:
+	virtual void TakeDmg(BigInt amount,AUnitPawn* attacker,EDamagePopup pp) override;
+	
+	float PlaySkillMontageSection(FName& nameID,int nSectionIndex,float& currentCD,float maxCD);
+
+	void ApplyDamageToTarget(const BigInt* additionalDmg = nullptr);
+	
+	void ApplyDamageToTargets(TArray<FHitResult>& aryTargets,const BigInt* additionalDmg = nullptr);
+
+	void ApplyMoveSpeedToOrigin();
+
+	void GainRagePoint();
+
+	bool SpendRagePoint(float rage);
+
+	void TriggerSkill(const FName& name,TArray<FHitResult>* aryHits=nullptr);
+
+	void ApplyDamage(AUnitPawn* target,const BigInt& finalDmg,EDamagePopup& pp);
+
+	
+	
+	FORCEINLINE float GetRage()
+	{
+		return m_fCurrentRage;
+	}
 };
+

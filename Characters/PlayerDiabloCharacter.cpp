@@ -19,7 +19,6 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_fGainRagePer = 3;
 	m_fCurrentRage = 0;
 
-	m_nAccuracyLevel = 10;
 	m_bIsManualMove = false;
 
 	m_Capsule->SetCapsuleSize(55, 88);
@@ -51,8 +50,6 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 		TEXT("SkeletalMesh'/Game/Models/ParagonMeshs/Greystone_SK.Greystone_SK'"));
 	m_SkBody->SetSkeletalMesh(FoundSkMesh.Object);
 
-	m_bIsDead = false;
-
 	m_Movement->SetRVOAvoidanceWeight(1);
 
 	m_Movement->m_RotateSpeed = FRotator(0.f, 650.f, 0.f);
@@ -74,8 +71,6 @@ void APlayerDiabloCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
-	m_AryIgnoreActor.Add(this);
-	m_AryIgnoreActor.Add(m_PlayerCon);
 	//
 	m_PlayerSense = NewObject<UPlayerSensing>(this, UPlayerSensing::StaticClass());
 	m_PlayerSense->InitSense(this);
@@ -302,19 +297,18 @@ void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 		return;
 	}
 
-	AMonsterPawn* Unit = Cast<AMonsterPawn>(target);
+	AUnitPawn* Unit = Cast<AUnitPawn>(target);
 
 	if (!Unit || target == m_FocusedEnemy) //캐스팅 실패하거나 이미 타겟팅 대상이면 스킵
 	{
 		return;
 	}
 
-	ShowOutlineOnTarget(Unit);
+	m_FocusedEnemy = Unit;
+	
+	ShowOutlineOnTarget(m_FocusedEnemy.Get());
 
-	m_OnFocusTarget.Broadcast(Unit);
-
-	m_FocusedEnemy = Cast<AUnitPawn>(target);
-
+	m_OnFocusTarget.Broadcast(m_FocusedEnemy.Get());
 	//m_FocusedTargetDie = m_FocusedEnemy->GetOnDied().AddUObject(this, &APlayerDiabloCharacter::ClearFocusedTarget);
 }
 
@@ -327,18 +321,6 @@ ADiabloPlayerController* APlayerDiabloCharacter::GetDiaController()
 void APlayerDiabloCharacter::Die()
 {
 }
-
-void APlayerDiabloCharacter::Revive()
-{
-	m_bIsDead = false;
-	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	// GrantBaseAttackAbility();
-	GetCapsule()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	GetMovementComponent()->SetActive(true);
-	SetActorTickEnabled(true);
-	m_PlayerSense->SetSensingUpdatesEnabled(true);
-}
-
 
 void APlayerDiabloCharacter::OnDeathAnimEnd()
 {
@@ -355,7 +337,7 @@ void APlayerDiabloCharacter::ClearFocusedTarget(AUnitPawn* target) //wrapper
 
 bool APlayerDiabloCharacter::IsAlive() const
 {
-	return !m_bIsDead || Super::IsAlive();
+	return true;
 }
 
 void APlayerDiabloCharacter::PlayColorEffect(const FLinearColor& colorWant, float effectLength) //애초에 사용된적이 없음
@@ -547,6 +529,11 @@ float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd, float maxCd, F
 	                                AnimMongLen, false);
 
 	return AnimMongLen;
+}
+
+void APlayerDiabloCharacter::TakeDmg(BigInt amount, AUnitPawn* attacker, EDamagePopup pp)
+{
+	
 }
 
 float APlayerDiabloCharacter::TryAttack()
@@ -845,24 +832,22 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 
 	bool bIsMoveInputZero = m_Input.IsNearlyZero(0.1f);
 
-	if (m_FocusedEnemy.Get())
+	if (!m_bIsManualMove && !bIsMoveInputZero)
 	{
-		DrawDebugLine(GetWorld(), GetActorLocation(), m_FocusedEnemy->GetActorLocation(), FColor::Red, false, -1, 1,
-		              5.f);
-
-		if (!m_bIsManualMove && !bIsMoveInputZero)
-		{
-			m_bIsManualMove = true;
-			m_Movement->m_bUseRVO = false;
-			GetMovementComponent()->StopMovementImmediately();
-			m_TickFSM->ForceSetStateIdle();
-			ApplyMoveSpeedToOrigin();
-			FocusTarget(nullptr);
-		}
+		m_bIsManualMove = true;
+		m_Movement->m_bUseRVO = false;
+		GetMovementComponent()->StopMovementImmediately();
+		m_TickFSM->ForceSetStateIdle();
+		
+		ApplyMoveSpeedToOrigin();
+		FocusTarget(nullptr);
 	}
-
-	if (bIsMoveInputZero && m_bUseFSM)
+	else if (bIsMoveInputZero && m_bUseFSM) 
 	{
+		if(m_bIsManualMove)
+		{
+			m_TickFSM->ResetStartPosition(GetActorLocation());	
+		}
 		m_bIsManualMove = false;
 		m_Movement->m_bUseRVO = true;
 		m_TickFSM->TickFSM();
