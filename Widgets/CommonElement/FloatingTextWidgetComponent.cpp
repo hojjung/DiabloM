@@ -4,6 +4,7 @@
 #include "FloatingTextWidgetComponent.h"
 
 #include "ConstructorHelpers.h"
+#include "FloatingTextWidget.h"
 
 UFloatingTextWidgetComponent::UFloatingTextWidgetComponent()
 {
@@ -19,5 +20,5 @@ UFloatingTextWidgetComponent::UFloatingTextWidgetComponent()
 
 void UFloatingTextWidgetComponent::SetFloatingText(const FText& ttWant)
 {
-	//GetUserWidgetObject()
+	Cast<UFloatingTextWidget>( GetUserWidgetObject())->m_TextName->SetText(ttWant);
 }

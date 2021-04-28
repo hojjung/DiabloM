@@ -549,14 +549,6 @@ FString UPlayfabManager::GetMainDataJsonStr()
 	CurrentEquippedObj->SetNumberField(TEXT("EquippedWeaponLevel"),UDiabloGameInstance::Get->m_EquipManager->GetCurrentWeapon().Level);
 	CurrentEquippedObj->SetNumberField(TEXT("EquippedPet"),UDiabloGameInstance::Get->m_EquipManager->m_nSelectedPet);
 	CurrentEquippedObj->SetNumberField(TEXT("EquippedPetLevel"),UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet()?UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet()->Level:-1);
-	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill01"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[0]->m_nIndex >= 0 ?UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[0]->m_nIndex : -1);
-	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill01Level"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[0]->m_nLv);
-	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill02"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[1]->m_nIndex >= 0 ?UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[1]->m_nIndex : -1);
-	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill02Level"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[1]->m_nLv);
-	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill03"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[2]->m_nIndex >= 0 ?UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[2]->m_nIndex : -1);
-	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill03Level"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[2]->m_nLv);
-	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill04"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[3]->m_nIndex >= 0 ?UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[3]->m_nIndex : -1);
-	CurrentEquippedObj->SetNumberField(TEXT("EquippedSkill04Level"),UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill()[3]->m_nLv);
 	
 	TotalMaindataJsonObj->SetObjectField(TEXT("CurrentEquipped"),CurrentEquippedObj);
 	//

@@ -66,6 +66,11 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	// static ConstructorHelpers::FClassFinder<UUserWidget> FoundW(
 	// TEXT("WidgetBlueprint'/Game/Blueprints/Widget/CommonElement/WB_TextPlayerName.WB_TextPlayerName_C'"));
 	// m_NameCard = Create("asd",FoundW.Class);
+	//m_NameCard->SetWidgetClass(FoundW.Class);
+	m_NameCard = CreateDefaultSubobject<UFloatingTextWidgetComponent>("NameCard");
+	m_NameCard->SetupAttachment(RootComponent);
+	static ConstructorHelpers::FClassFinder<UUserWidget> FoundW(
+	TEXT("WidgetBlueprint'/Game/Blueprints/Widget/CommonElement/WB_TextPlayerName.WB_TextPlayerName_C'"));
 	m_NameCard->SetWidgetClass(FoundW.Class);
 	m_NameCard->SetRelativeLocation(FVector(0, 0, 100));
 	m_NameCard->SetVisibility(false);

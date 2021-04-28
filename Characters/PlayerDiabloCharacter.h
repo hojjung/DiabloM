@@ -251,7 +251,7 @@ public:
 		return m_fCurrentRage;
 	}
 
-	void TriggerSkill(const FName& name,TArray<FHitResult>* aryHits=nullptr);
+	virtual void TriggerSkill(const FName& name,TArray<FHitResult>* aryHits=nullptr) override;
 
 	FORCEINLINE UFSMTick* GetTickFSM()
 	{

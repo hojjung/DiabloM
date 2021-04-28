@@ -1,16 +1,19 @@
 #include "PVPManager.h"
 #include "DiabloGameInstance.h"
+#include "DungeonManager.h"
 #include "JsonSerializer.h"
 #include "PlayFabJsonObject.h"
 
 UPVPManager::UPVPManager()
 {
 	m_bIsMatchStarted = false;
+
+	m_fTimer = 0.f;
 }
 
 void UPVPManager::RequestPVPMatching()
 {
-	m_OnMatchStart.Broadcast();
+	m_OnMatchStart.ExecuteIfBound();
 	UDiabloGameInstance::Get->m_PlayfabManager->RequestPVPMatching(
 		6, PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate::CreateUObject(
 			this, &UPVPManager::OnRequestComplete));
@@ -23,7 +26,7 @@ void UPVPManager::OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboard
 
 	if (PlayerLeaderBoard.Num() < 1)
 	{
-		m_OnMatchFail.Broadcast();
+		m_OnMatchFail.ExecuteIfBound();
 		return;
 	}
 
@@ -38,10 +41,10 @@ void UPVPManager::OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboard
 
 	//m_OtherPlayerDisplayName = MatchedUser.DisplayName;
 	FString TestID = TEXT("8CAA7224F3D58944");
-	
+
 	m_OtherPlayerDisplayName = TEXT("윤빠띠");
-	
-	m_OnOtherPlayerFound.Broadcast(m_OtherPlayerDisplayName);
+
+	m_OnOtherPlayerFound.ExecuteIfBound(m_OtherPlayerDisplayName);
 
 	UDiabloGameInstance::Get->m_PlayfabManager->RequestGetOtherPlayerMainData(
 		TestID, FGetUsrDataDele::CreateUObject(this, &UPVPManager::OnGetOtherPlayerSuccess));
@@ -51,7 +54,7 @@ void UPVPManager::OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserD
 {
 	if (!rslt.Data.Find(UPlayfabManager::MainData))
 	{
-		m_OnMatchFail.Broadcast();
+		m_OnMatchFail.ExecuteIfBound();
 		return;
 	}
 
@@ -64,14 +67,15 @@ void UPVPManager::OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserD
 	}
 
 	m_StatObj = PlayfabJson->GetObjectField(TEXT("Upgrade"));
-	
+
 	m_SkillObj = PlayfabJson->GetObjectField(TEXT("Skill"));
 
 	m_EquipObj = PlayfabJson->GetObjectField(TEXT("CurrentEquipped"));
 
-	m_OnMatchSuccessed.Broadcast(m_StatObj,m_SkillObj,m_EquipObj);
+	m_OnMatchSuccessed.ExecuteIfBound(m_StatObj, m_SkillObj, m_EquipObj);
 	//
-	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this, &UPVPManager::MoveStageLevelToPVP,1.7f,false);
+	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,
+	                                                                 &UPVPManager::MoveStageLevelToPVP, 1.7f, false);
 }
 
 void UPVPManager::MatchFail()
@@ -81,7 +85,7 @@ void UPVPManager::MatchFail()
 
 void UPVPManager::UpdateGauge()
 {
-	m_TotalDmg = m_PlayerTotalDmg+m_OtherPlayerTotalDmg;
+	m_TotalDmg = m_PlayerTotalDmg + m_OtherPlayerTotalDmg;
 
 	BigInt PlayerDmgCache = m_PlayerTotalDmg;
 
@@ -89,42 +93,61 @@ void UPVPManager::UpdateGauge()
 
 	PlayerDmgCache.Divide(m_TotalDmg);
 
-	float PercentOne = (float)PlayerDmgCache.ToInt()/10.f;
+	float PercentOne = (float)PlayerDmgCache.ToInt() / 10.f;
 
-	m_OnDmgChanged.Broadcast(PercentOne,m_PlayerTotalDmg,m_OtherPlayerTotalDmg);
+	PercentOne = FMath::Clamp(PercentOne, 0.1f, 0.9f);
+
+	m_OnDmgChanged.ExecuteIfBound(PercentOne, m_PlayerTotalDmg, m_OtherPlayerTotalDmg);
 }
 
 void UPVPManager::MoveStageLevelToPVP()
 {
 	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),TEXT("PVPStage"), true);
-	
 }
+
 
 void UPVPManager::PVPStart()
 {
 	APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
 
 	PlChar->ShowNameCard(UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname);
-	
+
 	PlChar->FocusTarget(m_PVPOtherPlayer.Get());
 
 	m_PVPOtherPlayer.Get()->ShowNameCard(m_OtherPlayerDisplayName);
-	
+
 	m_PVPOtherPlayer.Get()->FocusTarget(PlChar);
 
-	m_PlayerTotalDmg=0;
+	m_PlayerTotalDmg = 0;
 
-	m_OtherPlayerTotalDmg=0;
+	m_OtherPlayerTotalDmg = 0;
 
-	m_TotalDmg=0;
+	m_TotalDmg = 0;
 
-	m_bIsMatchStarted=true;
+	m_bIsMatchStarted = true;
 }
 
 void UPVPManager::PVPEnd()
 {
-	m_bIsMatchStarted=false;
+	m_bIsMatchStarted = false;
+
+	APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
+
+	PlChar->m_bUseFSM = false;
+
+	m_PVPOtherPlayer.Get()->m_bUseFSM = false;
+
+	m_OnBattleEnd.ExecuteIfBound(m_PlayerTotalDmg.IsGreaterOrEqual(m_OtherPlayerTotalDmg));
+
+	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,
+																	&UPVPManager::MoveStageLevelToNormalDungeon, 2.2f, false);
 }
+
+void UPVPManager::MoveStageLevelToNormalDungeon()
+{
+	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel();
+}
+
 
 void UPVPManager::AddPlayerTotalDamage(const BigInt& v)
 {
@@ -136,7 +159,25 @@ void UPVPManager::AddPlayerTotalDamage(const BigInt& v)
 void UPVPManager::AddOtherPlayerTotalDamage(const BigInt& v)
 {
 	m_OtherPlayerTotalDmg.Add(v);
-	
+
 	UpdateGauge();
 }
 
+void UPVPManager::Tick(float deltaTime)
+{
+	if (!m_bIsMatchStarted)
+	{
+		return;
+	}
+
+	m_fTimer += deltaTime;
+
+	float TimeRemain = 20 - m_fTimer;
+
+	m_OnTick.ExecuteIfBound(TimeRemain);
+
+	if (m_fTimer > 20)
+	{
+		PVPEnd();
+	}
+}

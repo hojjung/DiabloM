@@ -49,8 +49,9 @@ void ADiabloGameMode::SpawnOtherPVPActor()
 	Param.bNoFail=true;
 	m_OtherPlayer = GetWorld()->SpawnActor<AOtherPlayerPawn>(AOtherPlayerPawn::StaticClass(),Loc,Rot,Param);
 	m_OtherPlayer->HideMeshWithTick();
+	m_OtherPlayer->SetPetPositionForVisual();
 	//
-	m_OtherPlayerHandle = UDiabloGameInstance::Get->m_PVPManager->m_OnMatchSuccessed.AddUObject(m_OtherPlayer,&AOtherPlayerPawn::SetPVPPlayerPawn);
+	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchSuccessed.BindUObject(m_OtherPlayer,&AOtherPlayerPawn::SetPVPPlayerPawn);
 }
 
 void ADiabloGameMode::StartPlay()
@@ -81,7 +82,7 @@ void ADiabloGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchSuccessed.Remove(m_OtherPlayerHandle);
+	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchSuccessed.Unbind();
 }
 
 void ADiabloGameMode::OnMenuOpen(bool b)

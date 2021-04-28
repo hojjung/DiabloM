@@ -5,9 +5,9 @@ void UPVPPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	
-	UDiabloGameInstance::Get->m_PVPManager->m_OnOtherPlayerFound.AddUObject(this,&UPVPPanel::OnNicknameFound);
+	UDiabloGameInstance::Get->m_PVPManager->m_OnOtherPlayerFound.BindUObject(this,&UPVPPanel::OnNicknameFound);
 
-	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchFail.AddUObject(this,&UPVPPanel::OnMatchFail);
+	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchFail.BindUObject(this,&UPVPPanel::OnMatchFail);
 	
 	m_BtnMatching->OnClicked.AddDynamic(this,&UPVPPanel::RequestMatch);
 

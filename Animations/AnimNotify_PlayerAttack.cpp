@@ -11,12 +11,12 @@ void UAnimNotify_PlayerAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 		return;
 	}
 
-	APlayerDiabloCharacter* PL = Cast<APlayerDiabloCharacter>(MeshComp->GetOwner());
+	AUnitPawn* Unit = Cast<AUnitPawn>(MeshComp->GetOwner());
 
-	if(!PL)
+	if(!Unit)
 	{
 		return;
 	}
 
-	PL->TriggerSkill(m_ID);
+	Unit->TriggerSkill(m_ID);
 }

@@ -19,13 +19,19 @@ class DIABLOM_API UPVPManager : public UObject
 {
 	GENERATED_BODY()
 public:
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnPVPMatched,UPlayFabJsonObject*,UPlayFabJsonObject*,UPlayFabJsonObject*);
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnOtherPlayerFound,const FString);
-	DECLARE_MULTICAST_DELEGATE(FOnMatchFail);
-	DECLARE_MULTICAST_DELEGATE(FOnMatchStart);
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnDmgChanged,float,BigInt,BigInt);
+	DECLARE_DELEGATE_ThreeParams(FOnPVPMatched,UPlayFabJsonObject*,UPlayFabJsonObject*,UPlayFabJsonObject*);
+	DECLARE_DELEGATE_OneParam(FOnOtherPlayerFound,const FString);
+	DECLARE_DELEGATE(FOnMatchFail);
+	DECLARE_DELEGATE(FOnMatchStart);
+	DECLARE_DELEGATE_ThreeParams(FOnDmgChanged,float,BigInt,BigInt);
+	DECLARE_DELEGATE_OneParam(FOnTick,float);
+	DECLARE_DELEGATE_OneParam(FOnBattleEnd,bool);
 
 	UPVPManager();
+
+	FOnBattleEnd m_OnBattleEnd;
+	
+	FOnTick m_OnTick;
 
 	FOnDmgChanged m_OnDmgChanged;
 
@@ -48,6 +54,8 @@ public:
 	BigInt m_OtherPlayerTotalDmg;
 
 	BigInt m_TotalDmg;
+
+	float m_fTimer;
 	
 public:
 	FString m_OtherPlayerDisplayName;
@@ -64,6 +72,9 @@ protected:
 public:
 	UFUNCTION()
 	void MoveStageLevelToPVP();
+
+	UFUNCTION()
+	void MoveStageLevelToNormalDungeon();
 	
 	void RequestPVPMatching();
 
@@ -80,5 +91,7 @@ public:
 	void AddPlayerTotalDamage(const BigInt& v);
 
 	void AddOtherPlayerTotalDamage(const BigInt& v);
+
+	void Tick(float deltaTime);
 };
 

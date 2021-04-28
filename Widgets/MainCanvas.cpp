@@ -68,7 +68,7 @@ void UMainCanvas::NativeOnInitialized()
 	m_fBossCooldownTimeCounter = m_fMaxBossCooldownTime;
 	m_CDBoss->StartCooldown();
 	//
-	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchStart.AddUObject(this,&UMainCanvas::OnPVPBattleStart);
+	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchStart.BindUObject(this,&UMainCanvas::OnPVPBattleStart);
 }
 
 void UMainCanvas::ShowTouchBan(float secWant)

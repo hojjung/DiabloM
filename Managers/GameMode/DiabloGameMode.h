@@ -50,7 +50,6 @@ protected:
 
 	bool m_bGoldOfflineLock;
 
-	FDelegateHandle m_OtherPlayerHandle;
 public:
 	virtual void StartPlay() override;
 

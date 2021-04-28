@@ -23,6 +23,15 @@ protected:
 	UTextBlock* m_TxtOtherPlayerDmgValue;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TxtRequestedInfo;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TxtPlayerName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TxtOtherPlayerName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TxtTimer;
+	UPROPERTY(meta = (BindWidgetAnim))
+	UWidgetAnimation* ShowResult;
+
 	
 public:
 	virtual void NativeOnInitialized() override;
@@ -30,4 +39,9 @@ public:
 	void UpdateDmgGauge(float percentOne,BigInt playerDmg,BigInt otherPlayerDmg);
 	
 	void ReqeustPopupText(const FText& str);
+
+	void UpdateTimer(float timer);
+
+	void OnBattleEnd(bool isPlayerWon);
 };
+

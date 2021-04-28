@@ -26,6 +26,9 @@ public:
 	AOtherPlayerPawn(const FObjectInitializer& objInit);
 
 	FOnFloatChange2 m_OnRageChanged;
+
+	bool m_bUseFSM;
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USceneCaptureComponent2D* m_Capture;
@@ -89,7 +92,7 @@ protected:
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	
+	virtual void TriggerSkill(const FName& name,TArray<FHitResult>* aryHits=nullptr) override;	
 
 	void StartBuff01(float sec);
 
@@ -121,7 +124,13 @@ public:
 	float PlayAttackMontage(float& currentCd,float maxCd,FName* sectionSkillName=nullptr);
 	
 public:
+	void SetPetPositionForVisual();
+
+	void SetPetPositionForBattle();
+
 	virtual void TakeDmg(BigInt amount,AUnitPawn* attacker,EDamagePopup pp) override;
+
+	virtual float TryAttack() override;
 	
 	float PlaySkillMontageSection(FName& nameID,int nSectionIndex,float& currentCD,float maxCD);
 
@@ -135,7 +144,6 @@ public:
 
 	bool SpendRagePoint(float rage);
 
-	void TriggerSkill(const FName& name,TArray<FHitResult>* aryHits=nullptr);
 
 	void ApplyDamage(AUnitPawn* target,const BigInt& finalDmg,EDamagePopup& pp);
 

@@ -13,6 +13,8 @@ AOtherPlayerPawn::AOtherPlayerPawn(const FObjectInitializer& objInit): Super(obj
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	m_bUseFSM=true;
+
 	static ConstructorHelpers::FObjectFinder<UAnimSequence> FoundAnim(TEXT(
 		"AnimSequence'/Game/AnimationBlueprint/Aurora/29_Frank_ActionRPG_Sword_Attack03.29_Frank_ActionRPG_Sword_Attack03'"));
 
@@ -71,6 +73,8 @@ AOtherPlayerPawn::AOtherPlayerPawn(const FObjectInitializer& objInit): Super(obj
 
 	m_Movement->m_bUseRVO = false;
 	//
+	m_NameCard = CreateDefaultSubobject<UFloatingTextWidgetComponent>("NameCard");
+	m_NameCard->SetupAttachment(RootComponent);
 	static ConstructorHelpers::FClassFinder<UUserWidget> FoundW(
  	TEXT("WidgetBlueprint'/Game/Blueprints/Widget/CommonElement/WB_TextOtherPlayerName.WB_TextOtherPlayerName_C'"));
 	m_NameCard->SetWidgetClass(FoundW.Class);
@@ -141,6 +145,11 @@ void AOtherPlayerPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AOtherPlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(!m_bUseFSM)
+	{
+		return;
+	}
 
 	if (m_fBuff01MaxTime > 0)
 	{
@@ -469,6 +478,22 @@ void AOtherPlayerPawn::HideMeshWithTick()
 	PRINTF("HideMeshWithTick");
 }
 
+float AOtherPlayerPawn::TryAttack()
+{
+	// if (UDiabloGameInstance::Get->m_PlayerUpgradeManager->IsSkillCasting())
+	// {
+	// 	return 1.f;
+	// }
+
+
+	if (m_BaseAttackAnim && m_fAttackCD < 0.f)
+	{
+		PlayAttackMontage(m_fAttackCD, m_fAttackCDConstant);
+	}
+
+	return 1.f;
+}
+
 float AOtherPlayerPawn::PlayAttackMontage(float& currentCd, float maxCd, FName* sectionSkillName)
 {
 	FName SectionName = TEXT("Combo01");
@@ -548,6 +573,19 @@ float AOtherPlayerPawn::PlayAttackMontage(float& currentCd, float maxCd, FName* 
 	                                AnimMongLen, false);
 
 	return AnimMongLen;
+}
+
+void AOtherPlayerPawn::SetPetPositionForVisual()
+{
+	m_PetComp->SetRelativeLocation(FVector(0, 45, 75));
+	m_PetComp->SetRelativeRotation(FRotator(0, 270, 0));
+	m_PetComp->SetRelativeScale3D(FVector(0.5f));
+}
+
+void AOtherPlayerPawn::SetPetPositionForBattle()
+{
+	m_PetComp->SetRelativeLocation(FVector(0, 90, 150));
+	m_PetComp->SetRelativeRotation(FRotator(0, -90, 0));
 }
 
 void AOtherPlayerPawn::TakeDmg(BigInt amount, AUnitPawn* attacker, EDamagePopup pp)

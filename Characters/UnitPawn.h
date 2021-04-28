@@ -37,8 +37,7 @@ public:
 protected:
     UPROPERTY(EditAnywhere)
     ETeamID m_TeamID;
-    UPROPERTY(EditAnywhere)
-    bool m_bUseFSM;
+    
     UPROPERTY(EditAnywhere, Category = Abilities)
     float m_fMoveAcceptRadius;
     UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Character")
@@ -57,6 +56,8 @@ protected:
     float m_fAttackSpeed;
 
 public:
+    UPROPERTY(EditAnywhere)
+    bool m_bUseFSM;
     UPROPERTY()
     UAnimMontage* m_BaseAttackAnim;
     
@@ -113,6 +114,8 @@ public://virtual
     virtual float GetAttackSpeed();
 
     virtual float GetAttackRange();
+
+    virtual void TriggerSkill(const FName& name,TArray<FHitResult>* aryHits=nullptr) {};
 
 public:
 

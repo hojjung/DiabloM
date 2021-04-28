@@ -31,7 +31,7 @@ APVPGameMode::APVPGameMode()
 
 void APVPGameMode::SpawnOtherPlayerPawn()
 {
-	FVector Loc = FVector(947,1131,102);
+	FVector Loc = FVector(290,290,102);
 	
 	FRotator Rot = FRotator(0,130,0);
 	
@@ -51,6 +51,13 @@ void APVPGameMode::StartPlay()
 	SpawnOtherPlayerPawn();
 
 	UDiabloGameInstance::Get->m_PVPManager->PVPStart();
+}
+
+void APVPGameMode::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	
+	UDiabloGameInstance::Get->m_PVPManager->Tick(DeltaSeconds);
 }
 
 void APVPGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
