@@ -7,6 +7,7 @@
 #include "Characters/UnitPawn.h"
 #include "Managers/DiabloCheatManager.h"
 #include "Managers/MonsterSpawnManager.h"
+#include "Widgets/CommonElement/FloatingTextWidgetComponent.h"
 
 
 #include "PlayerDiabloCharacter.generated.h"
@@ -79,6 +80,8 @@ protected:
 	UCameraComponent* m_TopCamera;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category = "Player")
 	UChildActorComponent* m_PetComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UFloatingTextWidgetComponent* m_NameCard;
 	//
 protected:
 	UPROPERTY()
@@ -276,5 +279,7 @@ public:
 	};
 	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	void ShowNameCard(const FString& name);
 };
 

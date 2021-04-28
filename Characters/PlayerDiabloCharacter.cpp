@@ -63,7 +63,12 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	//m_fInteractRange
 	//SoundWave'/Game/Sound/Sword_Swing_1_1.Sword_Swing_1_1'
 
-	
+	// static ConstructorHelpers::FClassFinder<UUserWidget> FoundW(
+	// TEXT("WidgetBlueprint'/Game/Blueprints/Widget/CommonElement/WB_TextPlayerName.WB_TextPlayerName_C'"));
+	// m_NameCard = Create("asd",FoundW.Class);
+	m_NameCard->SetWidgetClass(FoundW.Class);
+	m_NameCard->SetRelativeLocation(FVector(0, 0, 100));
+	m_NameCard->SetVisibility(false);
 }
 
 void APlayerDiabloCharacter::BeginPlay()
@@ -533,7 +538,10 @@ float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd, float maxCd, F
 
 void APlayerDiabloCharacter::TakeDmg(BigInt amount, AUnitPawn* attacker, EDamagePopup pp)
 {
-	
+	if(Cast<AOtherPlayerPawn>(attacker))
+    {
+		UDiabloGameInstance::Get->m_PVPManager->AddOtherPlayerTotalDamage(amount);
+    }
 }
 
 float APlayerDiabloCharacter::TryAttack()
@@ -894,4 +902,9 @@ void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	m_PlayerCon = Cast<ADiabloPlayerController>(GetController());
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerDiabloCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerDiabloCharacter::MoveRight);
+}
+void APlayerDiabloCharacter::ShowNameCard(const FString& name)
+{
+	m_NameCard->SetVisibility(true);
+	m_NameCard->SetFloatingText(FText::FromString(name));
 }

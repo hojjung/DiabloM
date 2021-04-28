@@ -79,6 +79,21 @@ void UPVPManager::MatchFail()
 	PRINTF("MatchFail");
 }
 
+void UPVPManager::UpdateGauge()
+{
+	m_TotalDmg = m_PlayerTotalDmg+m_OtherPlayerTotalDmg;
+
+	BigInt PlayerDmgCache = m_PlayerTotalDmg;
+
+	PlayerDmgCache.MultiplyFast(10);
+
+	PlayerDmgCache.Divide(m_TotalDmg);
+
+	float PercentOne = (float)PlayerDmgCache.ToInt()/10.f;
+
+	m_OnDmgChanged.Broadcast(PercentOne,m_PlayerTotalDmg,m_OtherPlayerTotalDmg);
+}
+
 void UPVPManager::MoveStageLevelToPVP()
 {
 	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),TEXT("PVPStage"), true);
@@ -88,10 +103,20 @@ void UPVPManager::MoveStageLevelToPVP()
 void UPVPManager::PVPStart()
 {
 	APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
+
+	PlChar->ShowNameCard(UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname);
 	
 	PlChar->FocusTarget(m_PVPOtherPlayer.Get());
+
+	m_PVPOtherPlayer.Get()->ShowNameCard(m_OtherPlayerDisplayName);
 	
 	m_PVPOtherPlayer.Get()->FocusTarget(PlChar);
+
+	m_PlayerTotalDmg=0;
+
+	m_OtherPlayerTotalDmg=0;
+
+	m_TotalDmg=0;
 
 	m_bIsMatchStarted=true;
 }
@@ -99,5 +124,19 @@ void UPVPManager::PVPStart()
 void UPVPManager::PVPEnd()
 {
 	m_bIsMatchStarted=false;
+}
+
+void UPVPManager::AddPlayerTotalDamage(const BigInt& v)
+{
+	m_PlayerTotalDmg.Add(v);
+
+	UpdateGauge();
+}
+
+void UPVPManager::AddOtherPlayerTotalDamage(const BigInt& v)
+{
+	m_OtherPlayerTotalDmg.Add(v);
+	
+	UpdateGauge();
 }
 

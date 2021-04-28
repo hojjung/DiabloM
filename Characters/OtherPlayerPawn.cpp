@@ -70,6 +70,12 @@ AOtherPlayerPawn::AOtherPlayerPawn(const FObjectInitializer& objInit): Super(obj
 	m_fCurrentRage = 0;
 
 	m_Movement->m_bUseRVO = false;
+	//
+	static ConstructorHelpers::FClassFinder<UUserWidget> FoundW(
+ 	TEXT("WidgetBlueprint'/Game/Blueprints/Widget/CommonElement/WB_TextOtherPlayerName.WB_TextOtherPlayerName_C'"));
+	m_NameCard->SetWidgetClass(FoundW.Class);
+	m_NameCard->SetRelativeLocation(FVector(0, 0, 100));
+	m_NameCard->SetVisibility(false);
 }
 
 void AOtherPlayerPawn::BeginPlay()
@@ -546,12 +552,10 @@ float AOtherPlayerPawn::PlayAttackMontage(float& currentCd, float maxCd, FName* 
 
 void AOtherPlayerPawn::TakeDmg(BigInt amount, AUnitPawn* attacker, EDamagePopup pp)
 {
-	if (!GetFocusedTarget())
+	if(Cast<APlayerDiabloCharacter>(attacker))
 	{
-		FocusTarget(attacker);
+		UDiabloGameInstance::Get->m_PVPManager->AddPlayerTotalDamage(amount);
 	}
-
-	
 }
 
 float AOtherPlayerPawn::PlaySkillMontageSection(FName& nameID, int nSectionIndex, float& currentCD, float maxCD)
@@ -617,6 +621,12 @@ void AOtherPlayerPawn::ApplyDamageToTargets(TArray<FHitResult>& aryTargets, cons
 void AOtherPlayerPawn::ApplyDamage(AUnitPawn* target, const BigInt& finalDmg, EDamagePopup& pp)
 {
 	target->TakeDmg(finalDmg, this, pp);
+}
+
+void AOtherPlayerPawn::ShowNameCard(const FString& name)
+{
+	m_NameCard->SetVisibility(true);
+	m_NameCard->SetFloatingText(FText::FromString(name));
 }
 
 void AOtherPlayerPawn::ApplyMoveSpeedToOrigin()

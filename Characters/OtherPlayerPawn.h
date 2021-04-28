@@ -9,6 +9,8 @@
 #include "Datas/PlayerUpgradeData.h"
 #include "Managers/EquipManager.h"
 #include "Characters/PlayerDiabloCharacter.h"
+#include "Widgets/CommonElement/FloatingTextWidgetComponent.h"
+
 #include "OtherPlayerPawn.generated.h"
 
 class AEquipmentActor;
@@ -31,6 +33,8 @@ protected:
 	USpringArmComponent* m_Spring;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player")
 	UChildActorComponent* m_PetComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UFloatingTextWidgetComponent* m_NameCard;
 	
 protected:
 	TSharedPtr<FStreamableHandle>  m_SkinMeshHandle;
@@ -141,5 +145,7 @@ public:
 	{
 		return m_fCurrentRage;
 	}
+
+	void ShowNameCard(const FString& name);
 };
 

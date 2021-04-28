@@ -23,8 +23,11 @@ public:
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnOtherPlayerFound,const FString);
 	DECLARE_MULTICAST_DELEGATE(FOnMatchFail);
 	DECLARE_MULTICAST_DELEGATE(FOnMatchStart);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnDmgChanged,float,BigInt,BigInt);
 
 	UPVPManager();
+
+	FOnDmgChanged m_OnDmgChanged;
 
 	FOnPVPMatched m_OnMatchSuccessed;
 
@@ -39,6 +42,12 @@ public:
 	TWeakObjectPtr<AOtherPlayerPawn> m_PVPOtherPlayer;
 
 	bool m_bIsMatchStarted;
+
+	BigInt m_PlayerTotalDmg;
+	
+	BigInt m_OtherPlayerTotalDmg;
+
+	BigInt m_TotalDmg;
 	
 public:
 	FString m_OtherPlayerDisplayName;
@@ -48,7 +57,14 @@ public:
 	UPlayFabJsonObject* m_SkillObj;
 	UPROPERTY()
 	UPlayFabJsonObject* m_EquipObj;
+
+protected:
+	void UpdateGauge();
+	
 public:
+	UFUNCTION()
+	void MoveStageLevelToPVP();
+	
 	void RequestPVPMatching();
 
 	void OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult& rslt);
@@ -56,11 +72,13 @@ public:
 	void OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserDataResult&);
 	
 	void MatchFail();
-	UFUNCTION()
-	void MoveStageLevelToPVP();
 
 	void PVPStart();
 
 	void PVPEnd();
+
+	void AddPlayerTotalDamage(const BigInt& v);
+
+	void AddOtherPlayerTotalDamage(const BigInt& v);
 };
 

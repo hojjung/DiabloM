@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "PVPCanvas.h"
 #include "Widgets/MyHUD.h"
 #include "PVP_HUD.generated.h"
 
@@ -14,4 +16,15 @@ class DIABLOM_API APVP_HUD : public AMyHUD
 {
 	GENERATED_BODY()
 	
+public:
+	APVP_HUD();
+
+	UPROPERTY()
+	TSubclassOf<UPVPCanvas> m_ClassWidget;
+	UPROPERTY()
+	UPVPCanvas* m_Canvas;
+
+	virtual void BeginPlay() override;
+
+	virtual void ReqeustPopupText(FText str) override;
 };
