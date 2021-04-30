@@ -70,7 +70,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_NameCard = CreateDefaultSubobject<UFloatingTextWidgetComponent>("NameCard");
 	m_NameCard->SetupAttachment(RootComponent);
 	static ConstructorHelpers::FClassFinder<UUserWidget> FoundW(
-	TEXT("WidgetBlueprint'/Game/Blueprints/Widget/CommonElement/WB_TextPlayerName.WB_TextPlayerName_C'"));
+		TEXT("WidgetBlueprint'/Game/Blueprints/Widget/CommonElement/WB_TextPlayerName.WB_TextPlayerName_C'"));
 	m_NameCard->SetWidgetClass(FoundW.Class);
 	m_NameCard->SetRelativeLocation(FVector(0, 0, 100));
 	m_NameCard->SetVisibility(false);
@@ -126,17 +126,17 @@ void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
 		PRINTF("DiaChar-NoSkinSpec");
 		return;
 	}
-	
-	m_PlayerEntityData = &spec;
-	
-	FStreamableManager& StreamableManager =  UAssetManager::Get().GetStreamableManager();
 
-	if(m_SkinMeshHandle.Get())
+	m_PlayerEntityData = &spec;
+
+	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
+
+	if (m_SkinMeshHandle.Get())
 	{
 		m_SkinMeshHandle.Get()->ReleaseHandle();
 	}
-	
-	StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_PlayerSkinSoft,true,&m_SkinMeshHandle);
+
+	StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_PlayerSkinSoft, true, &m_SkinMeshHandle);
 	//
 	m_SkBody->SetSkeletalMesh(m_PlayerEntityData->m_PlayerData->m_PlayerSkinSoft.Get());
 	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -286,7 +286,7 @@ float APlayerDiabloCharacter::GetAttackSpeed()
 		As *= m_fAdditionalAttackSpeed;
 	}
 
-	if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
+	if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
 	{
 		As *= 1.5f;
 	}
@@ -315,7 +315,7 @@ void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 	}
 
 	m_FocusedEnemy = Unit;
-	
+
 	ShowOutlineOnTarget(m_FocusedEnemy.Get());
 
 	m_OnFocusTarget.Broadcast(m_FocusedEnemy.Get());
@@ -334,7 +334,6 @@ void APlayerDiabloCharacter::Die()
 
 void APlayerDiabloCharacter::OnDeathAnimEnd()
 {
-
 	//HideUI? it can be broad cast
 }
 
@@ -378,10 +377,10 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 	bool IsAOE = aryHits;
 	//m_QueDmgType.Empty();
 	//
-	if (name == "BaseAttack")
+	if (name == TEXT("BaseAttack"))
 	{
 		GainRagePoint();
-		
+
 		if (IsAOE)
 		{
 			ApplyDamageToTargets(*aryHits);
@@ -391,57 +390,60 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 			ApplyDamageToTarget();
 		}
 	}
-	else if (name == "MagicBomb01") //작은 범위 공격
+	else if (name == TEXT("MagicBomb01")) //작은 범위 공격
 	{
 		BigInt SkillDmg = m_PlUpgradeManager->GetAtkUp(EAttackType::MagicBombDmg).m_Value;
 
-		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce05).Level>0)
+		if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce05).Level > 0)
 		{
-			SkillDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(SkillDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce05).m_Value);
+			SkillDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(
+				SkillDmg, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce05).m_Value);
 		}
 
 		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
-	else if (name == "MagicBomb02") //작은 범위 공격
+	else if (name == TEXT("MagicBomb02")) //작은 범위 공격
 	{
 		BigInt SkillDmg1 = m_PlUpgradeManager->GetAtkUp(EAttackType::MagicBombDmg).m_Value;
 		BigInt SkillDmg2 = m_PlUpgradeManager->GetAtkUp(EAttackType::SuperMagicBombDmg).m_Value;
 		BigInt Result = UDiaBlueprintFunctionLibrary::MultiplePercent(SkillDmg1, SkillDmg2);
 
-		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce05).Level>0)
+		if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce05).Level > 0)
 		{
-			Result = UDiaBlueprintFunctionLibrary::MultiplePercent(Result,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce05).m_Value);
+			Result = UDiaBlueprintFunctionLibrary::MultiplePercent(
+				Result, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce05).m_Value);
 		}
 
-		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce06).Level>0)
+		if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce06).Level > 0)
 		{
-			Result = UDiaBlueprintFunctionLibrary::MultiplePercent(Result,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce06).m_Value);
+			Result = UDiaBlueprintFunctionLibrary::MultiplePercent(
+				Result, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce06).m_Value);
 		}
 
 		ApplyDamageToTargets(*aryHits, &Result);
 	}
-	else if (name == "Skill01") //작은 범위 공격
+	else if (name == TEXT("Skill01")) //작은 범위 공격
 	{
 		BigInt SkillDmg = m_PlUpgradeManager->GetSkillUp(ESkillType::DeathBlow).m_Value;
 
 		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
-	else if (name == "Skill02") //버프 공격
+	else if (name == TEXT("Skill02")) //버프 공격
 	{
 		m_QueDmgType.Empty();
 		StartBuff01(20);
 	}
-	else if (name == "Skill03") //휠윈드
+	else if (name == TEXT("Skill03")) //휠윈드
 	{
 		BigInt SkillDmg = m_PlUpgradeManager->GetSkillUp(ESkillType::WhirlWind).m_Value;
 		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
-	else if (name == "Skill04") //데스블로우
+	else if (name == TEXT("Skill04")) //데스블로우
 	{
 		BigInt SkillDmg = m_PlUpgradeManager->GetSkillUp(ESkillType::EarthQuake).m_Value;
 		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
-	else if (name == "Skill05") //버프 공속
+	else if (name == TEXT("Skill05")) //버프 공속
 	{
 		m_QueDmgType.Empty();
 		StartBuff02(17);
@@ -451,18 +453,17 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-	
-	if(m_SkinMeshHandle.Get())
+
+	if (m_SkinMeshHandle.Get())
 	{
 		m_SkinMeshHandle.Get()->ReleaseHandle();
 	}
-	
 }
 
 
 float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd, float maxCd, FName* sectionSkillName)
 {
-	FName SectionName = "Combo01";
+	FName SectionName = TEXT("Combo01");
 
 	EDamageType DmgType = EDamageType::Base01;
 
@@ -472,16 +473,16 @@ float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd, float maxCd, F
 
 	if (Cri01 > 0 && CriPercent100 <= Cri01) //치명타 뜰때
 	{
-		SectionName = "Critical01";
+		SectionName = TEXT("Critical01");
 		DmgType = EDamageType::Critical01;
 
 		BigInt Cri2Percent100 = FMath::RandRange(0.f, 100.f);
 
 		BigInt Cri02 = m_PlUpgradeManager->GetAtkUp(EAttackType::SuperCritical).m_Value;
 
-		if (Cri02>0 && Cri2Percent100 <= Cri02)
+		if (Cri02 > 0 && Cri2Percent100 <= Cri02)
 		{
-			SectionName = "Critical02";
+			SectionName = TEXT("Critical02");
 			DmgType = EDamageType::Critical02;
 		}
 		m_QueDmgType.Enqueue(DmgType);
@@ -490,7 +491,7 @@ float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd, float maxCd, F
 	{
 		if (FMath::RandBool()) //비쥬얼만 다른 평타
 		{
-			SectionName = "Combo02";
+			SectionName = TEXT("Combo02");
 			DmgType = EDamageType::Base02;
 		}
 		m_QueDmgType.Enqueue(DmgType);
@@ -505,7 +506,7 @@ float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd, float maxCd, F
 	if (Magic01 > 0 && MagicPercent100 <= Magic01)
 	{
 		bUseMagic = true;
-		SectionName = "MagicBomb01";
+		SectionName = TEXT("MagicBomb01");
 		DmgType = EDamageType::Magic01;
 
 		BigInt Magic2Percent100 = FMath::RandRange(0.f, 100.f);
@@ -514,12 +515,26 @@ float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd, float maxCd, F
 
 		if (Magic2Percent100 <= Magic02)
 		{
-			SectionName = "MagicBomb02";
+			SectionName = TEXT("MagicBomb02");
 			DmgType = EDamageType::Magic02;
 		}
 	}
 
-	PlayAnimMontage(m_BaseAttackAnim, 1 * GetAttackSpeed(), sectionSkillName ? *sectionSkillName : SectionName);
+	if (sectionSkillName)
+	{
+		float AttackSpeed = 1.f;
+
+		if (*sectionSkillName != TEXT("Skill03"))
+		{
+			AttackSpeed = 1 * GetAttackSpeed();
+		}
+		PlayAnimMontage(m_BaseAttackAnim, AttackSpeed, *sectionSkillName);
+	}
+	else
+	{
+		PlayAnimMontage(m_BaseAttackAnim, 1 * GetAttackSpeed(), SectionName);
+	}
+
 
 	float AnimMongLen = m_BaseAttackAnim->GetSectionLength(
 		sectionSkillName ? m_BaseAttackAnim->GetSectionIndex(*sectionSkillName) : (int)DmgType) / GetAttackSpeed();
@@ -543,10 +558,10 @@ float APlayerDiabloCharacter::PlayAttackMontage(float& currentCd, float maxCd, F
 
 void APlayerDiabloCharacter::TakeDmg(BigInt amount, AUnitPawn* attacker, EDamagePopup pp)
 {
-	if(Cast<AOtherPlayerPawn>(attacker))
-    {
+	if (Cast<AOtherPlayerPawn>(attacker))
+	{
 		UDiabloGameInstance::Get->m_PVPManager->AddOtherPlayerTotalDamage(amount);
-    }
+	}
 }
 
 float APlayerDiabloCharacter::TryAttack()
@@ -579,7 +594,7 @@ bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 
 	if (IsBuff01Available())
 	{
-		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,m_bnAdditionalSkillDmg);
+		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, m_bnAdditionalSkillDmg);
 	}
 
 	// if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).Level>0)
@@ -587,30 +602,30 @@ bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 	// 	outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).m_Value);
 	// }
 	//
-	if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
+	if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
 	{
 		int MultipleFactor = 5;
 
-		if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(1))
+		if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(1))
 		{
 			MultipleFactor = 10;
-			
-			if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(2))
+
+			if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(2))
 			{
 				MultipleFactor = 30;
-				
-				if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(3))
+
+				if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(3))
 				{
 					MultipleFactor = 100;
-					
-					if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(4))
+
+					if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(4))
 					{
 						MultipleFactor = 1000;
 					}
 				}
-			}	
+			}
 		}
-		
+
 		outDmg.Multiply(MultipleFactor);
 	}
 
@@ -627,9 +642,10 @@ bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 
 		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, CDmg01);
 
-		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).Level>0)
+		if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).Level > 0)
 		{
-			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).m_Value);
+			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(
+				outDmg, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).m_Value);
 		}
 
 		pp = EDamagePopup::CritcalRight;
@@ -640,18 +656,20 @@ bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 
 		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, CDmg01);
 
-		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).Level>0)
+		if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).Level > 0)
 		{
-			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).m_Value);
+			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(
+				outDmg, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).m_Value);
 		}
 
 		BigInt SDmg02 = m_PlUpgradeManager->GetAtkUp(EAttackType::SuperCriticalDmg).m_Value; //백기준으로 해야함,1.5배는  1
 
 		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, SDmg02);
 
-		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce04).Level>0)
+		if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce04).Level > 0)
 		{
-			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce04).m_Value);
+			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(
+				outDmg, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce04).m_Value);
 		}
 
 		pp = EDamagePopup::CritcalRight2;
@@ -788,7 +806,7 @@ void APlayerDiabloCharacter::SetManualMoveLocation(FVector goalLocation)
 void APlayerDiabloCharacter::GainRagePoint()
 {
 	float GainRage = m_fGainRagePer;
-	
+
 	// if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce07).Level>0)
 	// {
 	// 	GainRage *= UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce07).m_fFloatValue;
@@ -851,15 +869,15 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 		m_Movement->m_bUseRVO = false;
 		GetMovementComponent()->StopMovementImmediately();
 		m_TickFSM->ForceSetStateIdle();
-		
+
 		ApplyMoveSpeedToOrigin();
 		FocusTarget(nullptr);
 	}
-	else if (bIsMoveInputZero && m_bUseFSM) 
+	else if (bIsMoveInputZero && m_bUseFSM)
 	{
-		if(m_bIsManualMove)
+		if (m_bIsManualMove)
 		{
-			m_TickFSM->ResetStartPosition(GetActorLocation());	
+			m_TickFSM->ResetStartPosition(GetActorLocation());
 		}
 		m_bIsManualMove = false;
 		m_Movement->m_bUseRVO = true;
@@ -908,6 +926,7 @@ void APlayerDiabloCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerDiabloCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerDiabloCharacter::MoveRight);
 }
+
 void APlayerDiabloCharacter::ShowNameCard(const FString& name)
 {
 	m_NameCard->SetVisibility(true);

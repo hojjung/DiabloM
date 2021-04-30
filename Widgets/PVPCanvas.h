@@ -3,7 +3,10 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "SkillHotkeyPanel.h"
 #include "Blueprint/UserWidget.h"
+#include "Datas/PlayerUpgradeData.h"
+
 #include "PVPCanvas.generated.h"
 
 class UMaterialProgressBar;
@@ -15,22 +18,33 @@ class DIABLOM_API UPVPCanvas : public UUserWidget
 {
 	GENERATED_BODY()
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UMaterialProgressBar* m_BarPlayerDmg;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TxtPlayerDmgValue;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TxtOtherPlayerDmgValue;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TxtRequestedInfo;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TxtPlayerName;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TxtOtherPlayerName;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TxtTimer;
-	UPROPERTY(meta = (BindWidgetAnim))
+	UPROPERTY(Transient,meta = (BindWidgetAnim),meta=(AllowPrivateAccess = "true"))
 	UWidgetAnimation* ShowResult;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UMaterialProgressBar* m_BarPlayerDmg;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UTextBlock* m_TxtPlayerDmgValue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UTextBlock* m_TxtOtherPlayerDmgValue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UTextBlock* m_TxtRequestedInfo;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UTextBlock* m_TxtPlayerName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UTextBlock* m_TxtOtherPlayerName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UTextBlock* m_TxtTimer;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	USkillHotkeyPanel* m_PlayerEquippedSkill;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UDiaSkillUseButton* m_OtherPlayerSkill01;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UDiaSkillUseButton* m_OtherPlayerSkill02;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UDiaSkillUseButton* m_OtherPlayerSkill03;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UDiaSkillUseButton* m_OtherPlayerSkill04;
+	
 
 	
 public:
@@ -43,5 +57,7 @@ public:
 	void UpdateTimer(float timer);
 
 	void OnBattleEnd(bool isPlayerWon);
+
+	void OnEquipSkillSet(TArray<FSkillSpec>& equippedSkill);
 };
 

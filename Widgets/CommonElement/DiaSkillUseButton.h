@@ -37,7 +37,8 @@ protected:
 	UJoystick* m_Joystick;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget), Category = "Skill")
 	UCooldownProgress* m_SkillCooldown;
-protected:
+	
+public:
 	int m_nIndex;
 
 	float m_fMaxCD;

@@ -17,15 +17,15 @@ class DIABLOM_API USkillHotkeyPanel : public UUserWidget
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UDiaSkillUseButton* m_BtnSkillUse1;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UDiaSkillUseButton* m_BtnSkillUse2;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UDiaSkillUseButton* m_BtnSkillUse3;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UDiaSkillUseButton* m_BtnSkillUse4;
-	UPROPERTY(meta = (BindWidgetAnim))
+	UPROPERTY(Transient,meta = (BindWidgetAnim,AllowPrivateAccess = "true"))
 	UWidgetAnimation* m_FlashAnim;
 	UPROPERTY()
 	TArray<UDiaSkillUseButton*> m_ArySkillUse;

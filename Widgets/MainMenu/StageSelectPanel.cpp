@@ -112,6 +112,7 @@ void UStageSelectPanel::Back()
 	m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed); //골드던전 가림
 	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
 	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
+	m_DgPVPPanel->SetVisibility(ESlateVisibility::Collapsed);
 	//
 	m_BtnBack->SetVisibility(ESlateVisibility::Collapsed);
 }

@@ -129,6 +129,8 @@ void UPVPManager::PVPStart()
 
 void UPVPManager::PVPEnd()
 {
+	m_fTimer = 0.f;
+	
 	m_bIsMatchStarted = false;
 
 	APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();

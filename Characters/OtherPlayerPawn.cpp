@@ -13,7 +13,7 @@ AOtherPlayerPawn::AOtherPlayerPawn(const FObjectInitializer& objInit): Super(obj
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	m_bUseFSM=true;
+	m_bUseFSM=false;
 
 	static ConstructorHelpers::FObjectFinder<UAnimSequence> FoundAnim(TEXT(
 		"AnimSequence'/Game/AnimationBlueprint/Aurora/29_Frank_ActionRPG_Sword_Attack03.29_Frank_ActionRPG_Sword_Attack03'"));
@@ -82,10 +82,10 @@ AOtherPlayerPawn::AOtherPlayerPawn(const FObjectInitializer& objInit): Super(obj
 	m_NameCard->SetVisibility(false);
 }
 
-void AOtherPlayerPawn::BeginPlay()
+void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj,UPlayFabJsonObject* skillObj,  UPlayFabJsonObject* equipObj)
 {
-	Super::BeginPlay();
-
+	m_bUseFSM=true;
+	
 	m_Capture->ShowOnlyActors.Add(this);
 
 	m_SkBody->SetForcedLOD(0);
@@ -123,12 +123,117 @@ void AOtherPlayerPawn::BeginPlay()
 	m_ArySkillSpec[(int)ESkillType::WindBlade].m_SkillData = UPlayerUpgradeManager::SkillUpgradeTable->FindRow<
 		FSkillUpgradeDataRow>(TEXT("Skill05"), "");
 	//
+
 	//
 	UDiabloGameInstance::Get->m_PVPManager->m_PVPOtherPlayer = this;
 	m_TickFSM = NewObject<UFSMTick>(this, UFSMTick::StaticClass());
 	m_TickFSM->Init(this);
 
 	m_OnRageChanged.Broadcast(m_fCurrentRage, m_fMaxRage);
+	//
+	ShowMeshWithTick();
+
+	auto* SkinData = UDiabloGameInstance::Get->m_EquipManager->m_ArySkinsTable[equipObj->GetNumberField(
+		TEXT("EquippedSkin"))];
+
+	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
+
+	if (m_SkinMeshHandle.Get())
+	{
+		m_SkinMeshHandle.Get()->ReleaseHandle();
+	}
+
+	auto* LoadedMesh = StreamableManager.LoadSynchronous(SkinData->m_PlayerSkinSoft, true, &m_SkinMeshHandle);
+
+	USkeletalMesh* MeshLoadd = Cast<USkeletalMesh>(LoadedMesh);
+	//
+	m_SkBody->SetSkeletalMesh(MeshLoadd);
+	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	m_SkBody->SetAnimInstanceClass(SkinData->m_AnimBP);
+	//
+	m_WeaponSpec = FWeaponSpec();
+	m_WeaponSpec.m_EquipData = UDiabloGameInstance::Get->m_EquipManager->m_AryWeaponTable[equipObj->GetNumberField(
+		TEXT("EquippedWeapon"))];
+	m_WeaponSpec.SetLevel(equipObj->GetNumberField(TEXT("EquippedWeaponLevel")));
+
+	if (m_WeaponSpec.m_EquipData)
+	{
+		if (m_WeaponActor)
+		{
+			m_Capture->ShowOnlyActors.Remove(m_WeaponActor);
+			FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld, false);
+			m_WeaponActor->DetachFromActor(Rule);
+			m_WeaponActor->Destroy();
+		}
+
+		FActorSpawnParameters Param;
+
+		Param.bNoFail = true;
+
+		m_WeaponActor = GetWorld()->SpawnActor<AEquipmentActor>(m_WeaponSpec.m_EquipData->m_ClassVisualActor, Param);
+
+		FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
+		                               EAttachmentRule::KeepRelative, false);
+
+		m_WeaponActor->AttachToComponent(m_SkBody, Rule, "RightHandBottom");
+
+		m_Capture->ShowOnlyActors.Add(m_WeaponActor);
+	}
+	//
+	m_PetSpec = FPetSpec();
+
+	int EquipPetIndex = equipObj->GetNumberField(TEXT("EquippedPet"));
+
+	if (EquipPetIndex >= 0)
+	{
+		m_PetSpec.m_PetData = UDiabloGameInstance::Get->m_EquipManager->m_AryPetTable[EquipPetIndex];
+		m_PetSpec.SetLevel(equipObj->GetNumberField(TEXT("EquippedPetLevel")));
+
+		if (m_PetSpec.m_PetData)
+		{
+			if (m_PetComp->GetChildActor())
+			{
+				m_Capture->ShowOnlyActors.Remove(m_PetComp->GetChildActor());
+			}
+
+			m_PetComp->SetChildActorClass(m_PetSpec.m_PetData->m_ClassPetSkin);
+
+			m_Capture->ShowOnlyActors.Add(m_PetComp->GetChildActor());
+		}
+	}
+
+	m_AryUpgradeSpec[(int)EAttackType::BaseAttack].SetLevel(statObj->GetNumberField(TEXT("BaseAttack")));
+	m_AryUpgradeSpec[(int)EAttackType::Critical].SetLevel(statObj->GetNumberField(TEXT("Critical")));
+	m_AryUpgradeSpec[(int)EAttackType::CriticalDmg].SetLevel(statObj->GetNumberField(TEXT("CriticalDmg")));
+	m_AryUpgradeSpec[(int)EAttackType::SuperCritical].SetLevel(statObj->GetNumberField(TEXT("SuperCritical")));
+	m_AryUpgradeSpec[(int)EAttackType::SuperCriticalDmg].SetLevel(statObj->GetNumberField(TEXT("SuperCriticalDmg")));
+	m_AryUpgradeSpec[(int)EAttackType::MagicBomb].SetLevel(statObj->GetNumberField(TEXT("MagicBomb")));
+	m_AryUpgradeSpec[(int)EAttackType::MagicBombDmg].SetLevel(statObj->GetNumberField(TEXT("MagicBombDmg")));
+	m_AryUpgradeSpec[(int)EAttackType::SuperMagicBomb].SetLevel(statObj->GetNumberField(TEXT("SuperMagicBomb")));
+	m_AryUpgradeSpec[(int)EAttackType::SuperMagicBombDmg].SetLevel(
+		statObj->GetNumberField(TEXT("SuperMagicBombDmg")));
+	//0428 0713 스킬도 여기에 받아와야함
+
+	m_ArySkillSpec[(int)ESkillType::DeathBlow].InitSkillSpec(skillObj->GetNumberField(TEXT("DeathBlow")),skillObj->GetNumberField(TEXT("DeathBlowEquipSlot")));
+	m_ArySkillSpec[(int)ESkillType::MagicBlade].InitSkillSpec(skillObj->GetNumberField(TEXT("MagicBlade")),skillObj->GetNumberField(TEXT("MagicBladeEquipSlot")));
+	m_ArySkillSpec[(int)ESkillType::WhirlWind].InitSkillSpec(skillObj->GetNumberField(TEXT("WhirlWind")),skillObj->GetNumberField(TEXT("WhirlWindEquipSlot")));
+	m_ArySkillSpec[(int)ESkillType::EarthQuake].InitSkillSpec(skillObj->GetNumberField(TEXT("EarthQuake")),skillObj->GetNumberField(TEXT("EarthQuakeEquipSlot")));
+	m_ArySkillSpec[(int)ESkillType::WindBlade].InitSkillSpec(skillObj->GetNumberField(TEXT("WindBlade")),skillObj->GetNumberField(TEXT("WindBladeEquipSlot")));
+	//
+	m_fAttackSpeed = SkinData->m_fAttackSpeedMultiple;
+	m_BaseAttackAnim = SkinData->m_BaseAttackAnim;
+
+	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
+	//
+
+	m_ArySkillEquipped.Init(FSkillSpec(),4);
+	for(auto& SkillSpec :  m_ArySkillSpec)
+	{
+		if(SkillSpec.m_nIndex>=0)
+		{
+			m_ArySkillEquipped[SkillSpec.m_nIndex] = SkillSpec;	
+		}
+	}
 }
 
 void AOtherPlayerPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -339,102 +444,6 @@ bool AOtherPlayerPawn::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 	return true;
 }
 
-void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj,UPlayFabJsonObject* skillObj,  UPlayFabJsonObject* equipObj)
-{
-	ShowMeshWithTick();
-
-	auto* SkinData = UDiabloGameInstance::Get->m_EquipManager->m_ArySkinsTable[equipObj->GetNumberField(
-		TEXT("EquippedSkin"))];
-
-	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
-
-	if (m_SkinMeshHandle.Get())
-	{
-		m_SkinMeshHandle.Get()->ReleaseHandle();
-	}
-
-	auto* LoadedMesh = StreamableManager.LoadSynchronous(SkinData->m_PlayerSkinSoft, true, &m_SkinMeshHandle);
-
-	USkeletalMesh* MeshLoadd = Cast<USkeletalMesh>(LoadedMesh);
-	//
-	m_SkBody->SetSkeletalMesh(MeshLoadd);
-	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	m_SkBody->SetAnimInstanceClass(SkinData->m_AnimBP);
-	//
-	m_WeaponSpec = FWeaponSpec();
-	m_WeaponSpec.m_EquipData = UDiabloGameInstance::Get->m_EquipManager->m_AryWeaponTable[equipObj->GetNumberField(
-		TEXT("EquippedWeapon"))];
-	m_WeaponSpec.SetLevel(equipObj->GetNumberField(TEXT("EquippedWeaponLevel")));
-
-	if (m_WeaponSpec.m_EquipData)
-	{
-		if (m_WeaponActor)
-		{
-			m_Capture->ShowOnlyActors.Remove(m_WeaponActor);
-			FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld, false);
-			m_WeaponActor->DetachFromActor(Rule);
-			m_WeaponActor->Destroy();
-		}
-
-		FActorSpawnParameters Param;
-
-		Param.bNoFail = true;
-
-		m_WeaponActor = GetWorld()->SpawnActor<AEquipmentActor>(m_WeaponSpec.m_EquipData->m_ClassVisualActor, Param);
-
-		FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
-		                               EAttachmentRule::KeepRelative, false);
-
-		m_WeaponActor->AttachToComponent(m_SkBody, Rule, "RightHandBottom");
-
-		m_Capture->ShowOnlyActors.Add(m_WeaponActor);
-	}
-	//
-	m_PetSpec = FPetSpec();
-
-	int EquipPetIndex = equipObj->GetNumberField(TEXT("EquippedPet"));
-
-	if (EquipPetIndex >= 0)
-	{
-		m_PetSpec.m_PetData = UDiabloGameInstance::Get->m_EquipManager->m_AryPetTable[EquipPetIndex];
-		m_PetSpec.SetLevel(equipObj->GetNumberField(TEXT("EquippedPetLevel")));
-
-		if (m_PetSpec.m_PetData)
-		{
-			if (m_PetComp->GetChildActor())
-			{
-				m_Capture->ShowOnlyActors.Remove(m_PetComp->GetChildActor());
-			}
-
-			m_PetComp->SetChildActorClass(m_PetSpec.m_PetData->m_ClassPetSkin);
-
-			m_Capture->ShowOnlyActors.Add(m_PetComp->GetChildActor());
-		}
-	}
-
-	m_AryUpgradeSpec[(int)EAttackType::BaseAttack].SetLevel(statObj->GetNumberField(TEXT("BaseAttack")));
-	m_AryUpgradeSpec[(int)EAttackType::Critical].SetLevel(statObj->GetNumberField(TEXT("Critical")));
-	m_AryUpgradeSpec[(int)EAttackType::CriticalDmg].SetLevel(statObj->GetNumberField(TEXT("CriticalDmg")));
-	m_AryUpgradeSpec[(int)EAttackType::SuperCritical].SetLevel(statObj->GetNumberField(TEXT("SuperCritical")));
-	m_AryUpgradeSpec[(int)EAttackType::SuperCriticalDmg].SetLevel(statObj->GetNumberField(TEXT("SuperCriticalDmg")));
-	m_AryUpgradeSpec[(int)EAttackType::MagicBomb].SetLevel(statObj->GetNumberField(TEXT("MagicBomb")));
-	m_AryUpgradeSpec[(int)EAttackType::MagicBombDmg].SetLevel(statObj->GetNumberField(TEXT("MagicBombDmg")));
-	m_AryUpgradeSpec[(int)EAttackType::SuperMagicBomb].SetLevel(statObj->GetNumberField(TEXT("SuperMagicBomb")));
-	m_AryUpgradeSpec[(int)EAttackType::SuperMagicBombDmg].SetLevel(
-		statObj->GetNumberField(TEXT("SuperMagicBombDmg")));
-	//0428 0713 스킬도 여기에 받아와야함
-
-	m_ArySkillSpec[(int)ESkillType::DeathBlow].InitSkillSpec(skillObj->GetNumberField(TEXT("DeathBlow")),skillObj->GetNumberField(TEXT("DeathBlowEquipSlot")));
-	m_ArySkillSpec[(int)ESkillType::MagicBlade].InitSkillSpec(skillObj->GetNumberField(TEXT("MagicBlade")),skillObj->GetNumberField(TEXT("MagicBladeEquipSlot")));
-	m_ArySkillSpec[(int)ESkillType::WhirlWind].InitSkillSpec(skillObj->GetNumberField(TEXT("WhirlWind")),skillObj->GetNumberField(TEXT("WhirlWindEquipSlot")));
-	m_ArySkillSpec[(int)ESkillType::EarthQuake].InitSkillSpec(skillObj->GetNumberField(TEXT("EarthQuake")),skillObj->GetNumberField(TEXT("EarthQuakeEquipSlot")));
-	m_ArySkillSpec[(int)ESkillType::WindBlade].InitSkillSpec(skillObj->GetNumberField(TEXT("WindBlade")),skillObj->GetNumberField(TEXT("WindBladeEquipSlot")));
-	//
-	m_fAttackSpeed = SkinData->m_fAttackSpeedMultiple;
-	m_BaseAttackAnim = SkinData->m_BaseAttackAnim;
-
-	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
-}
 
 void AOtherPlayerPawn::ShowMesh()
 {

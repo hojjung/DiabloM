@@ -97,70 +97,17 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FItemDropTableHandle m_BossDropTableHandle;
 
-private:
-	static float GetLevelBonus(int level)
-	{
-		if(level <8)
-		{
-			return 1.f;
-		}
-		else if(level < 16)
-		{
-			return 2.f;
-		}
-		else if(level < 24)
-		{
-			return 4.f;
-		}
-		else if(level < 32)
-		{
-			return 8.f;
-		}
-		else if(level < 40)
-		{
-			return 16.f;
-		}
-		else if(level < 48)
-		{
-			return 32.f;
-		}
-		else if(level < 56)
-		{
-			return 64.f;
-		}
-		else if(level < 64)
-		{
-			return 128.f;
-		}
-		else if(level < 72)
-		{
-			return 256;
-		}
-		else if(level < 80)
-		{
-			return 512;
-		}
-		else
-		{
-			return 1024;
-		}
-	}
-
 public:
 	BigInt GetMobHp() const
 	{
 		int level = m_nMonsterLevel;
 		
-		float BonusMulti = GetLevelBonus(level);
-
 		BigInt Value = 150;
 
 		for(int i=1; i< level;i++)
 		{
 			Value.MultiplyFast(3);
 		}
-
-		Value.Multiply(BonusMulti);
 
 		return Value;
 	}
@@ -169,11 +116,9 @@ public:
 	{
 		int level = m_nMonsterLevel;
 		
-		float BonusMulti = GetLevelBonus(level);
-
 		BigInt Value =2800;
 
-		return (Value * BonusMulti * level)+30;
+		return (Value * level)+30;
 	}
 };
 

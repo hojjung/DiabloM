@@ -26,7 +26,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	FString ExpireTime;
 	
-	FDateTime m_ExpireTimeUTC;
+	FString m_StrRemainTime;
 
 	bool m_bIsExpired = false;
 };

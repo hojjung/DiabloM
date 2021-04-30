@@ -846,32 +846,43 @@ void UPlayfabManager::UpdateInboxListToClient(FString InboxListStr)
 {
 	TArray<FInboxSpec> AryInbox;
 	
-	AryInbox.Reserve(20);
-	
 	if(!FJsonObjectConverter::JsonArrayStringToUStruct(InboxListStr, &AryInbox, 0, 0))
 	{
-		UDiabloGameInstance::Get->m_InboxManager->SetInboxManager(AryInbox);
+		UDiabloGameInstance::Get->m_InboxManager->SetInboxManager(AryInbox);//실패시 그냥 빈배열줌
 		return;
 	}
+	
+	AryInbox.Reserve(20);
 
 	FTimespan KoreanTime(9,0,0);
 
 	for(auto& InboxRef : AryInbox)
 	{
-		InboxRef.m_ExpireTimeUTC = DecodePlayfabTimeToUe4Time(InboxRef.ExpireTime);
-
-		InboxRef.m_ExpireTimeUTC+=KoreanTime;
-
-		FString EpxireItmeUTCStr =InboxRef.m_ExpireTimeUTC.ToString(); 
-	
-		FTimespan OfflineTimeSpawn = InboxRef.m_ExpireTimeUTC - m_CurrentTime;
+		FDateTime ExpireTime = DecodePlayfabTimeToUe4Time(InboxRef.ExpireTime);
 		
-		int Minutes = OfflineTimeSpawn.GetTotalMinutes();
+		ExpireTime+=KoreanTime;
 		
-		if(Minutes<1)
+		FTimespan OfflineTimeSpawn = ExpireTime - m_CurrentTime;
+
+		int Hours =  OfflineTimeSpawn.GetTotalHours();
+
+		if(Hours>0)
 		{
-			PRINTF("Minutes Expired");
-			InboxRef.m_bIsExpired = true;
+			InboxRef.m_StrRemainTime =  FString::Printf(TEXT("%d시간"),Hours);
+		}
+		else
+		{
+			int Minutes = OfflineTimeSpawn.GetTotalMinutes();
+			
+			if(Minutes<1)
+			{
+				PRINTF("Minutes Expired");
+				InboxRef.m_bIsExpired = true;
+			}
+			else
+			{
+				InboxRef.m_StrRemainTime =  FString::Printf(TEXT("%d분"),Hours);	
+			}
 		}
 	}
 	

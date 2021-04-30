@@ -40,62 +40,12 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	int m_nCostMultiFactor00 = 106;//this value is float,like 167 = 1.67
 
-private:
-	float GetLevelBonus(int level) const
-	{
-		if(!m_bUseLevelBonus)
-		{
-			return 1.f;
-		}
-		if(level < 25)
-		{
-			return 2.f;
-		}
-		else if(level < 50)
-		{
-			return 4.f;
-		}
-		else if(level < 100)
-		{
-			return 8.f;
-		}
-		else if(level < 200)
-		{
-			return 16.f;
-		}
-		else if(level < 300)
-		{
-			return 32.f;
-		}
-		else if(level < 400)
-		{
-			return 64.f;
-		}
-		else if(level < 500)
-		{
-			return 128.f;
-		}
-		else if(level < 600)
-		{
-			return 256.f;
-		}
-		else if(level < 1000)
-		{
-			return 512.f;
-		}
-		else 
-		{
-			return 1024.f;
-		}
-	}
 
 public:
 	virtual BigInt GetValue(int level) const//소수점 표기 어떻게
 	{
 		level  = FMath::Clamp(level,level,m_nMaxLevel);
 		
-		float BonusMulti = GetLevelBonus(level);
-
 		BigInt Value = (m_fValueMultipleBase*level)+m_fInitValue;
 
 		if(m_bUseExponent&&level>1)
@@ -107,8 +57,6 @@ public:
 				Value = UDiaBlueprintFunctionLibrary::MultiplePercent(Value,m_nValueMultipleFactor00,0,2);
 			}
 		}
-
-		Value.Multiply(BonusMulti);
 
 		return Value;
 	}
@@ -235,65 +183,12 @@ public:
 	float m_fRageCost = 25;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	bool m_bIsRootmotion = false;
-	//
-	
-
-private:
-	float GetLevelBonus(int level) const
-	{
-		if(!m_bUseLevelBonus)
-		{
-			return 1.f;
-		}
-		if(level < 25)
-		{
-			return 2.f;
-		}
-		else if(level < 50)
-		{
-			return 4.f;
-		}
-		else if(level < 100)
-		{
-			return 8.f;
-		}
-		else if(level < 200)
-		{
-			return 16.f;
-		}
-		else if(level < 300)
-		{
-			return 32.f;
-		}
-		else if(level < 400)
-		{
-			return 64.f;
-		}
-		else if(level < 500)
-		{
-			return 128.f;
-		}
-		else if(level < 600)
-		{
-			return 256.f;
-		}
-		else if(level < 1000)
-		{
-			return 512.f;
-		}
-		else 
-		{
-			return 1024.f;
-		}
-	}
 
 public:
 	virtual BigInt GetValue(int level) const
 	{
 		level  = FMath::Clamp(level,level,m_nMaxLevel);
 		
-		float BonusMulti = GetLevelBonus(level);
-
 		BigInt Value = (m_fValueMultipleBase*level)+m_fInitValue;
 
 		if(m_bUseExponent&&level>1)
@@ -305,8 +200,6 @@ public:
 				Value = UDiaBlueprintFunctionLibrary::MultiplePercent(Value,m_nValueMultipleFactor00,0,2);
 			}
 		}
-
-		Value.Multiply(BonusMulti);
 
 		return Value;
 	}

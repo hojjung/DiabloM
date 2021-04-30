@@ -45,6 +45,8 @@ protected:
 	TArray<FUpgradeSpec> m_AryUpgradeSpec;
 	
 	TArray<FSkillSpec> m_ArySkillSpec;
+
+	TArray<FSkillSpec> m_ArySkillEquipped;
 	
 	FWeaponSpec m_WeaponSpec;
 
@@ -86,8 +88,6 @@ protected:
 
 
 protected:
-	virtual void BeginPlay() override;
-
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void Tick(float DeltaSeconds) override;
@@ -155,5 +155,10 @@ public:
 	}
 
 	void ShowNameCard(const FString& name);
+
+	FORCEINLINE TArray<FSkillSpec>& GetEquippedSkill()
+	{
+		return m_ArySkillEquipped;
+	}
 };
 

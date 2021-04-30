@@ -16,7 +16,9 @@ void UPVPCanvas::NativeOnInitialized()
 	UDiabloGameInstance::Get->m_PVPManager->m_OnTick.BindUObject(this,&UPVPCanvas::UpdateTimer);
 
 	UDiabloGameInstance::Get->m_PVPManager->m_OnBattleEnd.BindUObject(this,&UPVPCanvas::OnBattleEnd);
-	
+
+	OnEquipSkillSet(UDiabloGameInstance::Get->m_PVPManager->m_PVPOtherPlayer.Get()->GetEquippedSkill());
+
 }
 
 void UPVPCanvas::UpdateDmgGauge(float percentOne, BigInt playerDmg, BigInt otherPlayerDmg)
@@ -50,4 +52,38 @@ void UPVPCanvas::OnBattleEnd(bool isPlayerWon)
 		m_TxtRequestedInfo->SetText(FText::FromString(TEXT("패배")));
 	}
 	
+}
+
+void UPVPCanvas::OnEquipSkillSet(TArray<FSkillSpec>& equippedSkill)
+{
+	m_OtherPlayerSkill01->Init(0);
+	
+	m_OtherPlayerSkill02->Init(1);
+	m_OtherPlayerSkill03->Init(2);
+	m_OtherPlayerSkill04->Init(3);
+
+	if(equippedSkill[0].m_SkillData)
+	{
+		m_OtherPlayerSkill01->SetSkillSpec(&equippedSkill[0]);	
+	}
+
+	if(equippedSkill[1].m_SkillData)
+	{
+		m_OtherPlayerSkill02->SetSkillSpec(&equippedSkill[1]);	
+	}
+
+	if(equippedSkill[2].m_SkillData)
+	{
+		m_OtherPlayerSkill03->SetSkillSpec(&equippedSkill[2]);	
+	}
+
+	if(equippedSkill[3].m_SkillData)
+	{
+		m_OtherPlayerSkill04->SetSkillSpec(&equippedSkill[3]);	
+	}
+
+	m_OtherPlayerSkill01->m_bIsSkillUsable=false;
+	m_OtherPlayerSkill02->m_bIsSkillUsable=false;
+	m_OtherPlayerSkill03->m_bIsSkillUsable=false;
+	m_OtherPlayerSkill04->m_bIsSkillUsable=false;
 }

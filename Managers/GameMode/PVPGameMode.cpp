@@ -46,9 +46,10 @@ void APVPGameMode::SpawnOtherPlayerPawn()
 
 void APVPGameMode::StartPlay()
 {
-	Super::StartPlay();
 
 	SpawnOtherPlayerPawn();
+	
+	Super::StartPlay();
 
 	UDiabloGameInstance::Get->m_PVPManager->PVPStart();
 }
@@ -58,6 +59,8 @@ void APVPGameMode::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	
 	UDiabloGameInstance::Get->m_PVPManager->Tick(DeltaSeconds);
+	
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->Tick(DeltaSeconds);
 }
 
 void APVPGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
