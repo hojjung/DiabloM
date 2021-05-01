@@ -19,6 +19,13 @@ void UPVPCanvas::NativeOnInitialized()
 
 	OnEquipSkillSet(UDiabloGameInstance::Get->m_PVPManager->m_PVPOtherPlayer.Get()->GetEquippedSkill());
 
+	UDiabloGameInstance::Get->GetPlChar()->m_OnRageChanged.AddUObject(this,&UPVPCanvas::PlayerUpdateRageBar);
+
+	UDiabloGameInstance::Get->m_PVPManager->m_PVPOtherPlayer.Get()->m_OnRageChanged.AddUObject(this,&UPVPCanvas::OtherPlayerUpdateRageBar);
+
+	UDiabloGameInstance::Get->m_PVPManager->m_PVPOtherPlayer.Get()->UpdateRage();
+
+	UDiabloGameInstance::Get->GetPlChar()->UpdateRage();
 }
 
 void UPVPCanvas::UpdateDmgGauge(float percentOne, BigInt playerDmg, BigInt otherPlayerDmg)
@@ -54,7 +61,7 @@ void UPVPCanvas::OnBattleEnd(bool isPlayerWon)
 	
 }
 
-void UPVPCanvas::OnEquipSkillSet(TArray<FSkillSpec>& equippedSkill)
+void UPVPCanvas::OnEquipSkillSet(TArray<FSkillSpec*>& equippedSkill)
 {
 	m_OtherPlayerSkill01->Init(0);
 	
@@ -62,28 +69,62 @@ void UPVPCanvas::OnEquipSkillSet(TArray<FSkillSpec>& equippedSkill)
 	m_OtherPlayerSkill03->Init(2);
 	m_OtherPlayerSkill04->Init(3);
 
-	if(equippedSkill[0].m_SkillData)
+	if(equippedSkill[0]->m_SkillData)
 	{
-		m_OtherPlayerSkill01->SetSkillSpec(&equippedSkill[0]);	
+		m_OtherPlayerSkill01->SetSkillSpec(equippedSkill[0]);	
 	}
 
-	if(equippedSkill[1].m_SkillData)
+	if(equippedSkill[1]->m_SkillData)
 	{
-		m_OtherPlayerSkill02->SetSkillSpec(&equippedSkill[1]);	
+		m_OtherPlayerSkill02->SetSkillSpec(equippedSkill[1]);	
 	}
 
-	if(equippedSkill[2].m_SkillData)
+	if(equippedSkill[2]->m_SkillData)
 	{
-		m_OtherPlayerSkill03->SetSkillSpec(&equippedSkill[2]);	
+		m_OtherPlayerSkill03->SetSkillSpec(equippedSkill[2]);	
 	}
 
-	if(equippedSkill[3].m_SkillData)
+	if(equippedSkill[3]->m_SkillData)
 	{
-		m_OtherPlayerSkill04->SetSkillSpec(&equippedSkill[3]);	
+		m_OtherPlayerSkill04->SetSkillSpec(equippedSkill[3]);	
 	}
 
 	m_OtherPlayerSkill01->m_bIsSkillUsable=false;
 	m_OtherPlayerSkill02->m_bIsSkillUsable=false;
 	m_OtherPlayerSkill03->m_bIsSkillUsable=false;
 	m_OtherPlayerSkill04->m_bIsSkillUsable=false;
+}
+
+void UPVPCanvas::PlayerUpdateRageBar(float cV, float mV)
+{
+	int Erase = cV;
+	
+	cV =Erase;
+	
+	m_PlayerBarRage->SetProgressValue(cV/mV);
+
+	FTextFormat FormatRage =FText::FromString(TEXT("분노 {0}/{1}"));
+
+	FFormatOrderedArguments Args;
+	Args.Add(cV);
+	Args.Add(mV);
+	
+	m_TxtPlayerRageValue->SetText(FText::Format(FormatRage,Args));	
+}
+
+void UPVPCanvas::OtherPlayerUpdateRageBar(float cV, float mV)
+{
+	int Erase = cV;
+	
+	cV =Erase;
+	
+	m_OtherPlayerBarRage->SetProgressValue(cV/mV);
+
+	FTextFormat FormatRage =FText::FromString(TEXT("분노 {0}/{1}"));
+
+	FFormatOrderedArguments Args;
+	Args.Add(cV);
+	Args.Add(mV);
+	
+	m_TxtOtherPlayerRageValue->SetText(FText::Format(FormatRage,Args));	
 }

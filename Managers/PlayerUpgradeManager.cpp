@@ -212,12 +212,12 @@ bool UPlayerUpgradeManager::UseSkill(int index)
 		return false;
 	}
 
-	if (!m_AryEquippedSkillSpec[index]->IsSkillUseable())
+	if (!m_AryEquippedSkillSpec[index]->IsSkillUseable(UDiabloGameInstance::Get->GetPlChar()))
 	{
 		return false;
 	}
 
-	m_fCastTime = m_AryEquippedSkillSpec[index]->UseSkill();
+	m_fCastTime = m_AryEquippedSkillSpec[index]->UseSkill(UDiabloGameInstance::Get->GetPlChar());
 
 	m_CurrentCastingSkill = m_AryEquippedSkillSpec[index];
 

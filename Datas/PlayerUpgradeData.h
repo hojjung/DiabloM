@@ -5,6 +5,7 @@
 #include "UObject/NoExportTypes.h"
 #include "PlayerUpgradeData.generated.h"
 
+class ISkillUseCharacter;
 UCLASS()
 class DIABLOM_API UPlayerUpgradeData : public UObject
 {
@@ -267,7 +268,7 @@ public:
 	float m_fCurrentCD;
 	float m_fDuration;
 
-	bool IsSkillUseable();
+	bool IsSkillUseable(ISkillUseCharacter* skillOwner);
 	
 
 	void IncreaseLevel()
@@ -288,7 +289,7 @@ public:
 		return m_SkillData->m_nMaxLevel;
 	}
 
-	float UseSkill();
+	float UseSkill(ISkillUseCharacter* skillOwner);
 
 
 	void Tick(float delta_time)

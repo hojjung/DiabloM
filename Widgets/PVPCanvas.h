@@ -44,7 +44,14 @@ protected:
 	UDiaSkillUseButton* m_OtherPlayerSkill03;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UDiaSkillUseButton* m_OtherPlayerSkill04;
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UMaterialProgressBar* m_PlayerBarRage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TxtPlayerRageValue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UMaterialProgressBar* m_OtherPlayerBarRage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TxtOtherPlayerRageValue;
 
 	
 public:
@@ -58,6 +65,10 @@ public:
 
 	void OnBattleEnd(bool isPlayerWon);
 
-	void OnEquipSkillSet(TArray<FSkillSpec>& equippedSkill);
+	void OnEquipSkillSet(TArray<FSkillSpec*>& equippedSkill);
+
+	void PlayerUpdateRageBar(float cV,float mV);
+
+	void OtherPlayerUpdateRageBar(float cV,float mV);
 };
 

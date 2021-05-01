@@ -30,7 +30,7 @@ void UAnimNotify_TraceSphere::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 	}
 
 
-	APlayerDiabloCharacter* PL = Cast<APlayerDiabloCharacter>(Instigator);
+	AUnitPawn* PL = Cast<AUnitPawn>(Instigator);
 
 	if(!PL)
 	{

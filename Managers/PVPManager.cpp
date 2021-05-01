@@ -4,6 +4,8 @@
 #include "JsonSerializer.h"
 #include "PlayFabJsonObject.h"
 
+#define PVPTIME 40
+
 UPVPManager::UPVPManager()
 {
 	m_bIsMatchStarted = false;
@@ -174,11 +176,11 @@ void UPVPManager::Tick(float deltaTime)
 
 	m_fTimer += deltaTime;
 
-	float TimeRemain = 20 - m_fTimer;
+	float TimeRemain = PVPTIME - m_fTimer;
 
 	m_OnTick.ExecuteIfBound(TimeRemain);
 
-	if (m_fTimer > 20)
+	if (m_fTimer > PVPTIME)
 	{
 		PVPEnd();
 	}

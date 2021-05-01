@@ -31,7 +31,7 @@ void UAnimNotify_TraceBox::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 
 	PRINTF("HitCount:%d",Hits.Num());
 
-	APlayerDiabloCharacter* PL = Cast<APlayerDiabloCharacter>(Instigator);
+	AUnitPawn* PL = Cast<AUnitPawn>(Instigator);
 
 	if(!PL)
 	{

@@ -7,13 +7,16 @@
 #include "Components/SceneCaptureComponent2D.h"
 #include "Engine/AssetManager.h"
 #include "Engine/TextureRenderTarget2D.h"
+#include "Logic/AutoSkillUse.h"
 #include "Managers/DiabloGameInstance.h"
 
 AOtherPlayerPawn::AOtherPlayerPawn(const FObjectInitializer& objInit): Super(objInit)
 {
+	m_CurrentCastingSkill = nullptr;
+
 	PrimaryActorTick.bCanEverTick = true;
 
-	m_bUseFSM=false;
+	m_bUseFSM = false;
 
 	static ConstructorHelpers::FObjectFinder<UAnimSequence> FoundAnim(TEXT(
 		"AnimSequence'/Game/AnimationBlueprint/Aurora/29_Frank_ActionRPG_Sword_Attack03.29_Frank_ActionRPG_Sword_Attack03'"));
@@ -76,16 +79,24 @@ AOtherPlayerPawn::AOtherPlayerPawn(const FObjectInitializer& objInit): Super(obj
 	m_NameCard = CreateDefaultSubobject<UFloatingTextWidgetComponent>("NameCard");
 	m_NameCard->SetupAttachment(RootComponent);
 	static ConstructorHelpers::FClassFinder<UUserWidget> FoundW(
- 	TEXT("WidgetBlueprint'/Game/Blueprints/Widget/CommonElement/WB_TextOtherPlayerName.WB_TextOtherPlayerName_C'"));
+		TEXT("WidgetBlueprint'/Game/Blueprints/Widget/CommonElement/WB_TextOtherPlayerName.WB_TextOtherPlayerName_C'"));
 	m_NameCard->SetWidgetClass(FoundW.Class);
 	m_NameCard->SetRelativeLocation(FVector(0, 0, 100));
 	m_NameCard->SetVisibility(false);
 }
 
-void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj,UPlayFabJsonObject* skillObj,  UPlayFabJsonObject* equipObj)
+void AOtherPlayerPawn::UpdateRage()
 {
-	m_bUseFSM=true;
-	
+	m_OnRageChanged.Broadcast(m_fCurrentRage, m_fMaxRage);
+}
+
+void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJsonObject* skillObj,
+                                        UPlayFabJsonObject* equipObj)
+{
+	m_bUseFSM = true;
+
+	m_AutoSkillUse = NewObject<UAutoSkillUse>(this, UAutoSkillUse::StaticClass());
+
 	m_Capture->ShowOnlyActors.Add(this);
 
 	m_SkBody->SetForcedLOD(0);
@@ -129,7 +140,7 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj,UPlayFabJson
 	m_TickFSM = NewObject<UFSMTick>(this, UFSMTick::StaticClass());
 	m_TickFSM->Init(this);
 
-	m_OnRageChanged.Broadcast(m_fCurrentRage, m_fMaxRage);
+	
 	//
 	ShowMeshWithTick();
 
@@ -214,11 +225,16 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj,UPlayFabJson
 		statObj->GetNumberField(TEXT("SuperMagicBombDmg")));
 	//0428 0713 스킬도 여기에 받아와야함
 
-	m_ArySkillSpec[(int)ESkillType::DeathBlow].InitSkillSpec(skillObj->GetNumberField(TEXT("DeathBlow")),skillObj->GetNumberField(TEXT("DeathBlowEquipSlot")));
-	m_ArySkillSpec[(int)ESkillType::MagicBlade].InitSkillSpec(skillObj->GetNumberField(TEXT("MagicBlade")),skillObj->GetNumberField(TEXT("MagicBladeEquipSlot")));
-	m_ArySkillSpec[(int)ESkillType::WhirlWind].InitSkillSpec(skillObj->GetNumberField(TEXT("WhirlWind")),skillObj->GetNumberField(TEXT("WhirlWindEquipSlot")));
-	m_ArySkillSpec[(int)ESkillType::EarthQuake].InitSkillSpec(skillObj->GetNumberField(TEXT("EarthQuake")),skillObj->GetNumberField(TEXT("EarthQuakeEquipSlot")));
-	m_ArySkillSpec[(int)ESkillType::WindBlade].InitSkillSpec(skillObj->GetNumberField(TEXT("WindBlade")),skillObj->GetNumberField(TEXT("WindBladeEquipSlot")));
+	m_ArySkillSpec[(int)ESkillType::DeathBlow].InitSkillSpec(skillObj->GetNumberField(TEXT("DeathBlow")),
+	                                                         skillObj->GetNumberField(TEXT("DeathBlowEquipSlot")));
+	m_ArySkillSpec[(int)ESkillType::MagicBlade].InitSkillSpec(skillObj->GetNumberField(TEXT("MagicBlade")),
+	                                                          skillObj->GetNumberField(TEXT("MagicBladeEquipSlot")));
+	m_ArySkillSpec[(int)ESkillType::WhirlWind].InitSkillSpec(skillObj->GetNumberField(TEXT("WhirlWind")),
+	                                                         skillObj->GetNumberField(TEXT("WhirlWindEquipSlot")));
+	m_ArySkillSpec[(int)ESkillType::EarthQuake].InitSkillSpec(skillObj->GetNumberField(TEXT("EarthQuake")),
+	                                                          skillObj->GetNumberField(TEXT("EarthQuakeEquipSlot")));
+	m_ArySkillSpec[(int)ESkillType::WindBlade].InitSkillSpec(skillObj->GetNumberField(TEXT("WindBlade")),
+	                                                         skillObj->GetNumberField(TEXT("WindBladeEquipSlot")));
 	//
 	m_fAttackSpeed = SkinData->m_fAttackSpeedMultiple;
 	m_BaseAttackAnim = SkinData->m_BaseAttackAnim;
@@ -226,14 +242,16 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj,UPlayFabJson
 	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
 	//
 
-	m_ArySkillEquipped.Init(FSkillSpec(),4);
-	for(auto& SkillSpec :  m_ArySkillSpec)
+	m_ArySkillEquipped.Init(nullptr, 4);
+	for (auto& SkillSpec : m_ArySkillSpec)
 	{
-		if(SkillSpec.m_nIndex>=0)
+		if (SkillSpec.m_nIndex >= 0)
 		{
-			m_ArySkillEquipped[SkillSpec.m_nIndex] = SkillSpec;	
+			m_ArySkillEquipped[SkillSpec.m_nIndex] = &SkillSpec;
 		}
 	}
+
+	UpdateRage();
 }
 
 void AOtherPlayerPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -251,7 +269,7 @@ void AOtherPlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(!m_bUseFSM)
+	if (!m_bUseFSM)
 	{
 		return;
 	}
@@ -277,6 +295,31 @@ void AOtherPlayerPawn::Tick(float DeltaTime)
 	}
 
 	m_TickFSM->TickFSM();
+
+	if (!m_CurrentCastingSkill)
+	{
+		//m_fAttackCD
+		FSkillSpec* WantUseSkill = m_AutoSkillUse->GetUsableSkill(this, m_ArySkillEquipped, m_fAttackCD / 1.f);
+
+		if (WantUseSkill)
+		{
+			PRINTF("EnemyUseSkill:%s", *WantUseSkill->m_SkillData->m_SkillShowName.ToString());
+
+			m_CurrentCastingSkill = WantUseSkill;
+
+			m_fSkillCastTime = m_CurrentCastingSkill->UseSkill(this);
+
+			SpendRagePoint(m_CurrentCastingSkill->m_SkillData->m_fRageCost);
+		}
+	}
+
+	m_fSkillCastTime -= DeltaTime;
+
+	if (m_fSkillCastTime <= 0.f)
+	{
+		m_fSkillCastTime = -1;
+		m_CurrentCastingSkill = nullptr;
+	}
 }
 
 void AOtherPlayerPawn::FocusTarget(AUnitPawn* target)
@@ -363,7 +406,7 @@ bool AOtherPlayerPawn::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 
 	if (IsBuff01Available())
 	{
-		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,m_bnAdditionalSkillDmg);
+		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, m_bnAdditionalSkillDmg);
 	}
 
 	// if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).Level>0)
@@ -371,30 +414,30 @@ bool AOtherPlayerPawn::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 	// 	outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).m_Value);
 	// }
 	//
-	if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
+	if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
 	{
 		int MultipleFactor = 5;
 
-		if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(1))
+		if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(1))
 		{
 			MultipleFactor = 10;
-			
-			if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(2))
+
+			if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(2))
 			{
 				MultipleFactor = 30;
-				
-				if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(3))
+
+				if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(3))
 				{
 					MultipleFactor = 100;
-					
-					if(UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(4))
+
+					if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(4))
 					{
 						MultipleFactor = 1000;
 					}
 				}
-			}	
+			}
 		}
-		
+
 		outDmg.Multiply(MultipleFactor);
 	}
 
@@ -407,13 +450,14 @@ bool AOtherPlayerPawn::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 	//150
 	if (Type == EDamageType::Critical01) //치명타
 	{
-		BigInt CDmg01 =m_AryUpgradeSpec[(int)EAttackType::CriticalDmg].m_Value; //백기준으로 해야함,1.5배는  1
+		BigInt CDmg01 = m_AryUpgradeSpec[(int)EAttackType::CriticalDmg].m_Value; //백기준으로 해야함,1.5배는  1
 
 		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, CDmg01);
 
-		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).Level>0)
+		if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).Level > 0)
 		{
-			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).m_Value);
+			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(
+				outDmg, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).m_Value);
 		}
 
 		pp = EDamagePopup::CritcalRight;
@@ -424,18 +468,20 @@ bool AOtherPlayerPawn::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 
 		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, CDmg01);
 
-		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).Level>0)
+		if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).Level > 0)
 		{
-			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).m_Value);
+			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(
+				outDmg, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce03).m_Value);
 		}
 
-		BigInt SDmg02 =m_AryUpgradeSpec[(int)EAttackType::SuperCriticalDmg].m_Value; //백기준으로 해야함,1.5배는  1
+		BigInt SDmg02 = m_AryUpgradeSpec[(int)EAttackType::SuperCriticalDmg].m_Value; //백기준으로 해야함,1.5배는  1
 
 		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, SDmg02);
 
-		if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce04).Level>0)
+		if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce04).Level > 0)
 		{
-			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce04).m_Value);
+			outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(
+				outDmg, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce04).m_Value);
 		}
 
 		pp = EDamagePopup::CritcalRight2;
@@ -489,10 +535,10 @@ void AOtherPlayerPawn::HideMeshWithTick()
 
 float AOtherPlayerPawn::TryAttack()
 {
-	// if (UDiabloGameInstance::Get->m_PlayerUpgradeManager->IsSkillCasting())
-	// {
-	// 	return 1.f;
-	// }
+	if (m_CurrentCastingSkill)
+	{
+		return 1.f;
+	}
 
 
 	if (m_BaseAttackAnim && m_fAttackCD < 0.f)
@@ -599,7 +645,7 @@ void AOtherPlayerPawn::SetPetPositionForBattle()
 
 void AOtherPlayerPawn::TakeDmg(BigInt amount, AUnitPawn* attacker, EDamagePopup pp)
 {
-	if(Cast<APlayerDiabloCharacter>(attacker))
+	if (Cast<APlayerDiabloCharacter>(attacker))
 	{
 		UDiabloGameInstance::Get->m_PVPManager->AddPlayerTotalDamage(amount);
 	}
@@ -665,6 +711,7 @@ void AOtherPlayerPawn::ApplyDamageToTargets(TArray<FHitResult>& aryTargets, cons
 	}
 	m_QueDmgType.Empty();
 }
+
 void AOtherPlayerPawn::ApplyDamage(AUnitPawn* target, const BigInt& finalDmg, EDamagePopup& pp)
 {
 	target->TakeDmg(finalDmg, this, pp);
@@ -684,7 +731,7 @@ void AOtherPlayerPawn::ApplyMoveSpeedToOrigin()
 void AOtherPlayerPawn::GainRagePoint()
 {
 	float GainRage = m_fGainRagePer;
-	
+
 	// if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce07).Level>0)
 	// {
 	// 	GainRage *= UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce07).m_fFloatValue;
@@ -766,7 +813,7 @@ void AOtherPlayerPawn::TriggerSkill(const FName& name, TArray<FHitResult>* aryHi
 	}
 	else if (name == "Skill01") //작은 범위 공격
 	{
-		BigInt SkillDmg =  m_ArySkillSpec[(int)ESkillType::DeathBlow].m_Value;
+		BigInt SkillDmg = m_ArySkillSpec[(int)ESkillType::DeathBlow].m_Value;
 
 		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
@@ -782,7 +829,7 @@ void AOtherPlayerPawn::TriggerSkill(const FName& name, TArray<FHitResult>* aryHi
 	}
 	else if (name == "Skill04") //데스블로우
 	{
-		BigInt SkillDmg =m_ArySkillSpec[(int)ESkillType::EarthQuake].m_Value;
+		BigInt SkillDmg = m_ArySkillSpec[(int)ESkillType::EarthQuake].m_Value;
 		ApplyDamageToTargets(*aryHits, &SkillDmg);
 	}
 	else if (name == "Skill05") //버프 공속
@@ -791,5 +838,3 @@ void AOtherPlayerPawn::TriggerSkill(const FName& name, TArray<FHitResult>* aryHi
 		StartBuff02(17);
 	}
 }
-
-

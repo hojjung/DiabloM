@@ -5,6 +5,8 @@
 #include "DiabloM.h"
 #include "WeakInterfacePtr.h"
 #include "Characters/UnitPawn.h"
+#include "Interface/SkillUseCharacter.h"
+#include "Logic/AutoSkillUse.h"
 #include "Managers/DiabloCheatManager.h"
 #include "Managers/MonsterSpawnManager.h"
 #include "Widgets/CommonElement/FloatingTextWidgetComponent.h"
@@ -49,7 +51,7 @@ enum class EDamageType :uint8
 
 
 UCLASS( BlueprintType, Blueprintable)
-class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
+class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn ,public ISkillUseCharacter
 {
 	GENERATED_BODY()
 	
@@ -58,8 +60,9 @@ class DIABLOM_API APlayerDiabloCharacter : public AUnitPawn
 	friend UDiabloGameInstance;
 public:
 	APlayerDiabloCharacter(const FObjectInitializer& objInit);
+	
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMeshChanged,APlayerDiabloCharacter*);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMeshChanged, APlayerDiabloCharacter*);
 public:
 	FOnMove m_OnMove;
 
@@ -99,6 +102,7 @@ protected:
 
 	TWeakObjectPtr<AUnitPawn> m_FocusOutlinePawn;;
 
+	bool m_bAutoUseSkill;
 
 	bool m_bIsManualMove;
 
@@ -106,6 +110,8 @@ protected:
 	
 	TQueue<EDamageType> m_QueDmgType;
 
+	UPROPERTY()
+	UAutoSkillUse* m_AutoSkillUse;
 	UPROPERTY()
 	AEquipmentActor* m_CreatedWing;
 	UPROPERTY()
@@ -213,8 +219,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void PlayColorEffect(const FLinearColor& colorWant,float effectLength);
-	
-	float PlaySkillMontageSection(FName& nameID,int nSectionIndex,float& currentCD,float maxCD);
+
+	virtual float PlaySkillMontageSection(FName& nameID,int nSectionIndex,float& currentCD,float maxCD) override;
 
 public:
 	friend UDiabloGameInstance;
@@ -246,7 +252,7 @@ public:
 	bool SpendRagePoint(float rage);
 
 
-	float GetRage()
+	virtual float GetRage() override
 	{
 		return m_fCurrentRage;
 	}
@@ -281,5 +287,9 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	void ShowNameCard(const FString& name);
+
+	void SetUseAutoSkill(bool autoSkill);
+
+	void UpdateRage();
 };
 

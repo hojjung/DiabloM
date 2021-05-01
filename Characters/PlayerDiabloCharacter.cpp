@@ -18,7 +18,9 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_fMaxRage = 100;
 	m_fGainRagePer = 3;
 	m_fCurrentRage = 0;
-
+	
+	m_bAutoUseSkill = true;
+	
 	m_bIsManualMove = false;
 
 	m_Capsule->SetCapsuleSize(55, 88);
@@ -76,6 +78,11 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_NameCard->SetVisibility(false);
 }
 
+void APlayerDiabloCharacter::UpdateRage()
+{
+	m_OnRageChanged.Broadcast(m_fCurrentRage, m_fMaxRage);
+}
+
 void APlayerDiabloCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -88,7 +95,9 @@ void APlayerDiabloCharacter::BeginPlay()
 	m_PlayerCon->SetViewTarget(this);
 
 	m_DissolveCam->Init(m_TopCamera);
-
+	
+	m_AutoSkillUse=NewObject<UAutoSkillUse>(this, UAutoSkillUse::StaticClass());
+	
 	m_TickFSM = NewObject<UFSMTick>(this, UFSMTick::StaticClass());
 	m_TickFSM->Init(this);
 	m_bUseFSM = true;
@@ -104,7 +113,7 @@ void APlayerDiabloCharacter::BeginPlay()
 	m_EquipManager->ClearSelectedIndex();
 	m_EquipManager->EquipAll();
 
-	m_OnRageChanged.Broadcast(m_fCurrentRage, m_fMaxRage);
+	UpdateRage();
 }
 
 void APlayerDiabloCharacter::SetBaseAttackData(float viewAngle, float viewRadius, float focusRange)
@@ -841,6 +850,8 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	
+
 	if (m_fBuff01MaxTime > 0)
 	{
 		m_fBuff01DeltaCount += DeltaTime;
@@ -882,6 +893,16 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 		m_bIsManualMove = false;
 		m_Movement->m_bUseRVO = true;
 		m_TickFSM->TickFSM();
+	}
+
+	if(m_bAutoUseSkill)
+	{
+		FSkillSpec* WantUseSkill =m_AutoSkillUse->GetUsableSkill(this,UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill(),m_fAttackCD / 1.f);
+
+		if (WantUseSkill)
+		{
+			UDiabloGameInstance::Get->m_PlayerUpgradeManager->UseSkill(WantUseSkill->m_nIndex);
+		}
 	}
 }
 
@@ -931,4 +952,9 @@ void APlayerDiabloCharacter::ShowNameCard(const FString& name)
 {
 	m_NameCard->SetVisibility(true);
 	m_NameCard->SetFloatingText(FText::FromString(name));
+}
+
+void APlayerDiabloCharacter::SetUseAutoSkill(bool autoSkill)
+{
+	m_bAutoUseSkill = autoSkill;
 }
