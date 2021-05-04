@@ -56,6 +56,8 @@ public:
 	BigInt m_TotalDmg;
 
 	float m_fTimer;
+
+	FDelegateHandle m_LevelLoadHandle;
 	
 public:
 	FString m_OtherPlayerDisplayName;
@@ -93,5 +95,9 @@ public:
 	void AddOtherPlayerTotalDamage(const BigInt& v);
 
 	void Tick(float deltaTime);
+	void SpawnPVPPlayer();
+
+	void OnLevelLoad(UWorld* world);
 };
+
 

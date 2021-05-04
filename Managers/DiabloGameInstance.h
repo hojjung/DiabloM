@@ -8,6 +8,7 @@
 #include "GachaManager.h"
 #include "GoldManager.h"
 #include "InboxManager.h"
+#include "MagicStoneDgManager.h"
 #include "NavigationSystem.h"
 #include "PlayerUpgradeManager.h"
 #include "PVPManager.h"
@@ -68,6 +69,8 @@ public:
 	UAdvertiseManager* m_AdverManager;
 	UPROPERTY()
 	UPVPManager* m_PVPManager;
+	UPROPERTY()
+	UMagicStoneDgManager* m_MagicDgManager;
 	
 protected:
 	virtual void Init() override;

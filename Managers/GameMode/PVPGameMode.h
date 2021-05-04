@@ -17,15 +17,6 @@ class DIABLOM_API APVPGameMode : public AGameMode
 public:
 	APVPGameMode();
 	
-
-	UPROPERTY()
-	AOtherPlayerPawn* m_OtherPlayer;
-	
-	virtual void StartPlay() override;
-
 	virtual void Tick(float DeltaSeconds) override;
 
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
-	void SpawnOtherPlayerPawn();
 };

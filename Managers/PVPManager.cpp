@@ -24,32 +24,39 @@ void UPVPManager::RequestPVPMatching()
 void UPVPManager::OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult& rslt) //만일 이게 없으면?
 {
 	//타플레이어들은 이게 안만들어짐
-	auto PlayerLeaderBoard = rslt.Leaderboard;
+	TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry> PlayerLeaderBoard = rslt.Leaderboard;
 
-	if (PlayerLeaderBoard.Num() < 1)
+	if (PlayerLeaderBoard.Num() <= 1)
 	{
-		m_OnMatchFail.ExecuteIfBound();
-		return;
+		PRINTF("Match Failed but Testing FIX");
+		//m_OnMatchFail.ExecuteIfBound();
+		//return;
+		FString TestID = TEXT("8CAA7224F3D58944");
+
+		m_OtherPlayerDisplayName = TEXT("윤빠띠");
+
+		m_OnOtherPlayerFound.ExecuteIfBound(m_OtherPlayerDisplayName);
+
+		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetOtherPlayerMainData(
+			TestID, FGetUsrDataDele::CreateUObject(this, &UPVPManager::OnGetOtherPlayerSuccess));
 	}
+	else//Successed
+	{
+		PlayFab::ClientModels::FPlayerLeaderboardEntry PlayerEntry;
 
-	PlayFab::ClientModels::FPlayerLeaderboardEntry PlayerEntry;
+		PlayerEntry.DisplayName = UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname;
 
-	PlayerEntry.DisplayName = UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname;
+		PlayerLeaderBoard.Remove(PlayerEntry);
 
-	PlayerLeaderBoard.Remove(PlayerEntry);
+		PlayFab::ClientModels::FPlayerLeaderboardEntry MatchedUser = PlayerLeaderBoard.GetRandom();
+		
+		m_OtherPlayerDisplayName = MatchedUser.DisplayName;
 
-	PlayFab::ClientModels::FPlayerLeaderboardEntry MatchedUser = PlayerLeaderBoard.GetRandom();
+		m_OnOtherPlayerFound.ExecuteIfBound(m_OtherPlayerDisplayName);
 
-
-	//m_OtherPlayerDisplayName = MatchedUser.DisplayName;
-	FString TestID = TEXT("8CAA7224F3D58944");
-
-	m_OtherPlayerDisplayName = TEXT("윤빠띠");
-
-	m_OnOtherPlayerFound.ExecuteIfBound(m_OtherPlayerDisplayName);
-
-	UDiabloGameInstance::Get->m_PlayfabManager->RequestGetOtherPlayerMainData(
-		TestID, FGetUsrDataDele::CreateUObject(this, &UPVPManager::OnGetOtherPlayerSuccess));
+		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetOtherPlayerMainData(
+			MatchedUser.PlayFabId, FGetUsrDataDele::CreateUObject(this, &UPVPManager::OnGetOtherPlayerSuccess));
+	}
 }
 
 void UPVPManager::OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserDataResult& rslt)
@@ -105,6 +112,8 @@ void UPVPManager::UpdateGauge()
 void UPVPManager::MoveStageLevelToPVP()
 {
 	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),TEXT("PVPStage"), true);
+
+	m_LevelLoadHandle = FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UPVPManager::OnLevelLoad);
 }
 
 
@@ -132,7 +141,7 @@ void UPVPManager::PVPStart()
 void UPVPManager::PVPEnd()
 {
 	m_fTimer = 0.f;
-	
+
 	m_bIsMatchStarted = false;
 
 	APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
@@ -144,7 +153,8 @@ void UPVPManager::PVPEnd()
 	m_OnBattleEnd.ExecuteIfBound(m_PlayerTotalDmg.IsGreaterOrEqual(m_OtherPlayerTotalDmg));
 
 	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,
-																	&UPVPManager::MoveStageLevelToNormalDungeon, 2.2f, false);
+	                                                                 &UPVPManager::MoveStageLevelToNormalDungeon, 2.2f,
+	                                                                 false);
 }
 
 void UPVPManager::MoveStageLevelToNormalDungeon()
@@ -184,4 +194,29 @@ void UPVPManager::Tick(float deltaTime)
 	{
 		PVPEnd();
 	}
+}
+
+void UPVPManager::SpawnPVPPlayer()
+{
+	FVector Loc = FVector(290, 290, 102);
+
+	FRotator Rot = FRotator(0, 130, 0);
+
+	FActorSpawnParameters Param;
+
+	Param.bNoFail = true;
+
+	m_PVPOtherPlayer = GetWorld()->SpawnActor<AOtherPlayerPawn>(AOtherPlayerPawn::StaticClass(), Loc, Rot, Param);
+	//
+	m_PVPOtherPlayer->SetPVPPlayerPawn(UDiabloGameInstance::Get->m_PVPManager->m_StatObj,
+	                                   UDiabloGameInstance::Get->m_PVPManager->m_SkillObj,
+	                                   UDiabloGameInstance::Get->m_PVPManager->m_EquipObj);
+}
+
+void UPVPManager::OnLevelLoad(UWorld* world)
+{
+	FCoreUObjectDelegates::PostLoadMapWithWorld.Remove(m_LevelLoadHandle);
+	PRINTF("PVPManager! World:%s", *world->GetMapName());
+	SpawnPVPPlayer();
+	PVPStart();
 }

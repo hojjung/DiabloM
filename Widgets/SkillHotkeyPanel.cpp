@@ -25,6 +25,10 @@ void USkillHotkeyPanel::NativeOnInitialized()
 
 		i++;
 	}
+
+	m_BtnAutoUseSkill->OnCheckStateChanged.AddDynamic(this,&USkillHotkeyPanel::ToggleUseAutoSkill);
+	//만일 구매 안했으면 안함.
+	//ToggleUseAutoSkill(true);
 }
 
 
@@ -40,4 +44,9 @@ void USkillHotkeyPanel::OnUpdateSkill(int index, FSkillSpec* skill_spec)
 void USkillHotkeyPanel::OnCooldownStart(int index, FSkillSpec* skill_spec)
 {
 	m_ArySkillUse[index]->TryStartCooldown();
+}
+
+void USkillHotkeyPanel::ToggleUseAutoSkill(bool isChecked)
+{
+	UDiabloGameInstance::Get->GetPlChar()->SetUseAutoSkill(isChecked);
 }

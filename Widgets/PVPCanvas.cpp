@@ -26,6 +26,7 @@ void UPVPCanvas::NativeOnInitialized()
 	UDiabloGameInstance::Get->m_PVPManager->m_PVPOtherPlayer.Get()->UpdateRage();
 
 	UDiabloGameInstance::Get->GetPlChar()->UpdateRage();
+
 }
 
 void UPVPCanvas::UpdateDmgGauge(float percentOne, BigInt playerDmg, BigInt otherPlayerDmg)

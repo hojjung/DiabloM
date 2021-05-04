@@ -136,11 +136,8 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJso
 	//
 
 	//
-	UDiabloGameInstance::Get->m_PVPManager->m_PVPOtherPlayer = this;
 	m_TickFSM = NewObject<UFSMTick>(this, UFSMTick::StaticClass());
 	m_TickFSM->Init(this);
-
-	
 	//
 	ShowMeshWithTick();
 

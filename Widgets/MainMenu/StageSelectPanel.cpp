@@ -13,14 +13,14 @@ void UStageSelectPanel::NativeOnInitialized()
 	UDiabloGameInstance::Get->m_DungeonManager->m_OnDgOpen.AddUObject(this, &UStageSelectPanel::UpdateBtnUI);
 	//
 	m_DgStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
-	m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed); //골드던전 가림
+	m_DgMagicPanel->SetVisibility(ESlateVisibility::Collapsed); //골드던전 가림
 	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
 	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
 	//
 	m_DgPVPPanel->SetVisibility(ESlateVisibility::Collapsed);
 	// //
 	m_BtnShowNormalDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenNormalDg);
-	m_BtnShowGoldDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenGoldDg);
+	m_BtnShowMagicDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenGoldDg);
 	m_BtnShowStatDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenStatDg);
 	m_BtnShowAcceDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenAcceDg);
 	m_BtnPVP->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenPVPDg);
@@ -69,7 +69,7 @@ void UStageSelectPanel::OpenNormalDg()
 
 void UStageSelectPanel::OpenGoldDg()
 {
-	m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::Visible);
+	m_DgMagicPanel->SetVisibility(ESlateVisibility::Visible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
 
@@ -109,7 +109,7 @@ void UStageSelectPanel::Back()
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible); //전체버튼 다시보여줌
 	//
 	m_DgStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
-	m_DgGoldStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed); //골드던전 가림
+	m_DgMagicPanel->SetVisibility(ESlateVisibility::Collapsed); //골드던전 가림
 	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
 	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
 	m_DgPVPPanel->SetVisibility(ESlateVisibility::Collapsed);

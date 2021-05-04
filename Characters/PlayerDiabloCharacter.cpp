@@ -19,7 +19,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_fGainRagePer = 3;
 	m_fCurrentRage = 0;
 	
-	m_bAutoUseSkill = true;
+	m_bAutoUseSkill = false;
 	
 	m_bIsManualMove = false;
 

@@ -1,0 +1,15 @@
+#include "MagicDgPanel.h"
+
+#include "Managers/DiabloGameInstance.h"
+
+void UMagicDgPanel::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	m_BtnMagicDg01->OnClicked.AddDynamic(this,&UMagicDgPanel::EnterMagicDg01);
+}
+
+void UMagicDgPanel::EnterMagicDg01()
+{
+	UDiabloGameInstance::Get->m_MagicDgManager->RequestMoveMagicStoneDg(0);
+}

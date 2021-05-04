@@ -5,25 +5,13 @@
 FSkillSpec* UAutoSkillUse::GetUsableSkill(ISkillUseCharacter* owner, TArray<FSkillSpec*>& skillSpecs,
                                           float gainRagePerSec)
 {
-	FSkillSpec* FutureWantUse = nullptr;
-
-	FSkillSpec* WantUse = nullptr;
-
 	FSkillSpec* LongestCooltime = nullptr;
 
 	for (FSkillSpec* Skill : skillSpecs)
 	{
 		float RemainCooltime = Skill->m_fCurrentCD - Skill->m_SkillData->m_fSkillCoolTime;
 
-		float FutureRage = (RemainCooltime * gainRagePerSec) + owner->GetRage();
-
-		bool bIsUsableNow = Skill->IsSkillUseable(owner);
-
 		bool bIsCooldownReady = Skill->IsCooldownReady();
-
-		bool bIsEnoughRage = owner->GetRage() >= Skill->m_SkillData->m_fRageCost;
-
-		bool bIsUsableForFuture = !bIsEnoughRage && Skill->m_SkillData->m_fRageCost <= FutureRage;
 
 		if (bIsCooldownReady)
 		{

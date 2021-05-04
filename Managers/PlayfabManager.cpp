@@ -304,7 +304,7 @@ void UPlayfabManager::RequestUploadNewPlayerData()
 void UPlayfabManager::RequestPVPMatching(int aroundCount,PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate completeDele)
 {
 	PlayFab::ClientModels::FGetLeaderboardAroundPlayerRequest Req;
-	Req.StatisticName=TEXT("StageLevel");
+	Req.StatisticName=TEXT("PVP_MMR");
 	Req.MaxResultsCount=aroundCount;
 	Req.PlayFabId = m_PlayfabID;
 	//PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetPlayerAroundRanking

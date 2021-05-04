@@ -1,39 +1,32 @@
 // My First Hack n Slash
 
 
-#include "PVPGameMode.h"
+#include "MagicDragonMode.h"
 
 #include "DiaGameState.h"
 #include "DiaPlayerState.h"
 #include "Characters/DiabloPlayerController.h"
-#include "Characters/OtherPlayerPawn.h"
 #include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Widgets/GameLevelHUD.h"
-#include "Widgets/PVP_HUD.h"
 
-APVPGameMode::APVPGameMode()
+AMagicDragonMode::AMagicDragonMode()
 {
 	PlayerControllerClass = ADiabloPlayerController::StaticClass();
 	DefaultPawnClass = APlayerDiabloCharacter::StaticClass();
 	GameStateClass = ADiaGameState::StaticClass();
 	PlayerStateClass = ADiaPlayerState::StaticClass();
-	HUDClass = APVP_HUD::StaticClass();
+	//HUDClass = APVP_HUD::StaticClass();
 
 	//m_PlayerActionManager=CreateDefaultSubobject<UActionManagerComponent>("PlayerActionManager");
 
 	PrimaryActorTick.bCanEverTick = true;
-
-	
-	//(X=947.000000,Y=1131.000000,Z=102.000000)
-	//(Pitch=0.000000,Yaw=-140.000183,Roll=0.000000)
 }
 
-void APVPGameMode::Tick(float DeltaSeconds)
+void AMagicDragonMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
-	UDiabloGameInstance::Get->m_PVPManager->Tick(DeltaSeconds);
+
+	UDiabloGameInstance::Get->m_MagicDgManager->Tick(DeltaSeconds);
 	
 	UDiabloGameInstance::Get->m_PlayerUpgradeManager->Tick(DeltaSeconds);
 }

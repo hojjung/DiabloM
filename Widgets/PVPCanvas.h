@@ -44,6 +44,7 @@ protected:
 	UDiaSkillUseButton* m_OtherPlayerSkill03;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UDiaSkillUseButton* m_OtherPlayerSkill04;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UMaterialProgressBar* m_PlayerBarRage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -70,5 +71,7 @@ public:
 	void PlayerUpdateRageBar(float cV,float mV);
 
 	void OtherPlayerUpdateRageBar(float cV,float mV);
+
+	
 };
 

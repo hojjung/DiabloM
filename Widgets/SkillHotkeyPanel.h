@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "CheckBox.h"
 #include "Blueprint/UserWidget.h"
 #include "CommonElement/DiaSkillUseButton.h"
 
@@ -29,6 +31,8 @@ protected:
 	UWidgetAnimation* m_FlashAnim;
 	UPROPERTY()
 	TArray<UDiaSkillUseButton*> m_ArySkillUse;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UCheckBox* m_BtnAutoUseSkill;
 	
 public:
 	virtual void NativeOnInitialized() override;
@@ -38,6 +42,9 @@ public:
 	void OnUpdateSkill(int index,FSkillSpec* skill_spec);
 
 	void OnCooldownStart(int index,FSkillSpec* skill_spec);
+
+	UFUNCTION()
+	void ToggleUseAutoSkill(bool isChecked);
 };
 
 
