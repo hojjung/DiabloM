@@ -67,7 +67,7 @@ protected:
 
 	FDelegateHandle m_BossDeleHandle;
 
-	TSharedPtr<FStreamableHandle> m_LoadedMonster;
+	TArray<TSharedPtr<FStreamableHandle>> m_LoadedMonsters;
 
 	TSharedPtr<FStreamableHandle> m_LoadedGoblin;
 	UPROPERTY()

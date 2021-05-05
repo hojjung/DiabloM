@@ -42,6 +42,7 @@ void UDiabloGameInstance::Init()
 	m_AdverManager->Init();
 	m_PVPManager=NewObject<UPVPManager>();
 	m_MagicDgManager=NewObject<UMagicStoneDgManager>();
+	m_MagicDgManager->Init();
     //
     m_PlayfabManager = NewObject<UPlayfabManager>();
     m_PlayfabManager->Init();

@@ -15,11 +15,6 @@
 // 	
 // }
 
-FItemDropTableHandle::FItemDropTableHandle()
-{
-	DataTable = UDungeonManager::DropDataTable;
-}
-
 FMonsterEntityHandle::FMonsterEntityHandle()
 {
 	DataTable = UDungeonManager::MonsterEntityTable;

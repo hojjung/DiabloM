@@ -6,6 +6,7 @@
 #include "SkillHotkeyPanel.h"
 #include "Blueprint/UserWidget.h"
 #include "Datas/PlayerUpgradeData.h"
+#include "Managers/GameMode/PVPGameMode.h"
 
 #include "PVPCanvas.generated.h"
 
@@ -54,9 +55,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TxtOtherPlayerRageValue;
 
-	
 public:
 	virtual void NativeOnInitialized() override;
+
+	virtual void NativeDestruct() override;
 
 	void UpdateDmgGauge(float percentOne,BigInt playerDmg,BigInt otherPlayerDmg);
 	
@@ -72,6 +74,6 @@ public:
 
 	void OtherPlayerUpdateRageBar(float cV,float mV);
 
-	
+	void OnOtherPlayerSpawned(AOtherPlayerPawn* pawn);	
 };
 

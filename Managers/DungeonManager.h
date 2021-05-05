@@ -3,22 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
-
-
-#include "GameplayTagContainer.h"
 #include "MonsterSpawnManager.h"
-#include "NavigationSystem.h"
-#include "PlayfabManager.h"
-#include "Datas/DungeonDataTable.h"
-#include "UObject/NoExportTypes.h"
 
 #include "DungeonManager.generated.h"
 
 
 class ANavigationData;
 class AMonsterPawn;
-struct FDungeonDataRow;
+
 
 USTRUCT()
 struct FDungeonDataSpec

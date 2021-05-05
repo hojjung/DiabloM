@@ -239,6 +239,7 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJso
 	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
 	//
 
+	
 	m_ArySkillEquipped.Init(nullptr, 4);
 	for (auto& SkillSpec : m_ArySkillSpec)
 	{

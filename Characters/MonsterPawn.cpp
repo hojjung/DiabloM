@@ -117,19 +117,21 @@ void AMonsterPawn::BeginPlay()
     m_PlCon = Cast<ADiabloPlayerController>( UGameplayStatics::GetPlayerController(this,0));
 }
 
-void AMonsterPawn::RequestDropItem()
+void AMonsterPawn::RequestBounty()
 {
-}
-
-void AMonsterPawn::RequestGetGoldBounty()
-{
-    UDiabloGameInstance::Get->m_GoldManager->AddGold(m_fGoldBounty);
-}
-
-void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,const FItemDropTableRow* dropTable,float statFactor ,float scaleFactor,float goldFactor)//droptable
-{
-    m_DropTable = dropTable;
+    switch (m_MonsterType)
+    {
+        case Normal:UDiabloGameInstance::Get->m_GoldManager->AddGold(m_fGoldBounty); break;
+        case Treasure: break;
+        case Boss: break;
+        case MagicDragon:UDiabloGameInstance::Get->m_MagicDgManager->AddMagicStones(m_nMagicStoneBounty); break;
+        default: ;
+    }
     
+}
+
+void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,float statFactor ,float scaleFactor,float goldFactor)//droptable
+{
     m_MonsterType = type;
 
     if(m_MonsterType == EMonsterType::Boss)
@@ -231,8 +233,7 @@ void AMonsterPawn::Die()
     UDiabloGameInstance::Get->m_QuestManager->AddQuestCount(EQuestType::MonsterKill);
     
     UDiabloGameInstance::Get->m_MonsterSpawn->AddKillCount();
-    RequestDropItem();
-    RequestGetGoldBounty();
+    RequestBounty();
     
     m_Particle->Activate(true);
     m_CoinAudio->Play();
@@ -417,5 +418,10 @@ float AMonsterPawn::TryAttack()
     // currentCd = AnimMongLen-0.1f;//-0.1f;
     // //
     // GetWorldTimerManager().ClearTimer(m_AttackTimer);
+}
+
+void AMonsterPawn::SetMagicStones(int v)
+{
+    m_nMagicStoneBounty = v;
 }
 

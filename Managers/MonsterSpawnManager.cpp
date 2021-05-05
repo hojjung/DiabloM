@@ -32,24 +32,27 @@ UMonsterSpawnManager::UMonsterSpawnManager()
 void UMonsterSpawnManager::Init()
 {
 	m_GoldGoblinEntity = m_MobEntityTable->FindRow<FMonsterEntity>("GoldGoblin","");
+
+	m_LoadedMonsters.Init(TSharedPtr<FStreamableHandle>(),12);
 }
 
 void UMonsterSpawnManager::StartSpawn(UWorld* world, const FDungeonDataTableRow* dgData)
 {
-	if(m_LoadedMonster.Get())
+	for(auto& Handle : m_LoadedMonsters)
 	{
-		m_LoadedMonster.Get()->ReleaseHandle();
+		if(Handle.Get())
+		{
+			Handle.Get()->ReleaseHandle();
+		}
 	}
 	
 	FStreamableManager& StreamableManager =  UAssetManager::Get().GetStreamableManager();
-	
-	StreamableManager.LoadSynchronous(dgData->m_Monster.GetRow<FMonsterEntity>("")->m_MonsterMeshSoft,true,&m_LoadedMonster);
 
-	if(!m_LoadedGoblin.Get())
+	for(int i=0; i<dgData->m_Monsters.Num();i++)
 	{
-		StreamableManager.LoadSynchronous(m_GoldGoblinEntity->m_MonsterMeshSoft.Get(),true,&m_LoadedGoblin);			
+		StreamableManager.LoadSynchronous(dgData->m_Monsters[i].GetRow<FMonsterEntity>("")->m_MonsterMeshSoft,true,&m_LoadedMonsters[i]);
 	}
-	
+
 	m_nKillCount=0;
 	
 	m_nGoldGoblinSpawnCount = FMath::RandRange(10,25);
@@ -208,7 +211,7 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMobToLoc(FVector loc)
 
 	FVector NewLoc = GetRandomPointFromNav(loc, 4000.f);
 
-	const FMonsterEntityHandle& MobHandle = m_DgDataTable->m_Monster;
+	const FMonsterEntityHandle& MobHandle = m_DgDataTable->m_Monsters.GetRandom();
 
 	const FMonsterEntity* MonData = MobHandle.GetRow<FMonsterEntity>("");
 
@@ -233,8 +236,7 @@ AMonsterPawn* UMonsterSpawnManager::SpawnMobToLoc(FVector loc)
 		StatScale = 5.f;
 	}
 	
-	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Normal,
-           m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""),StatScale,MonData->m_fScale,GoldScale);	
+	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Normal,StatScale,MonData->m_fScale,GoldScale);	
 	
 	return Mob;
 }
@@ -254,11 +256,13 @@ void UMonsterSpawnManager::BeginDestroy()
 {
 	Super::BeginDestroy();
 	
-	if(m_LoadedMonster.Get())
+	for(auto& Handle : m_LoadedMonsters)
 	{
-		m_LoadedMonster.Get()->ReleaseHandle();
+		if(Handle.Get())
+		{
+			Handle.Get()->ReleaseHandle();
+		}
 	}
-
 	if(m_LoadedGoblin.Get())
 	{
 		m_LoadedGoblin.Get()->ReleaseHandle();
@@ -354,7 +358,7 @@ void UMonsterSpawnManager::SpawnBossMob()
 	
 	auto* Mob = CreateMob(PlayerLoc);
 
-	const FMonsterEntityHandle& MobHandle = m_DgDataTable->m_Monster;
+	const FMonsterEntityHandle& MobHandle = m_DgDataTable->m_Monsters[0];
 
 	const FMonsterEntity* MonData = MobHandle.GetRow<FMonsterEntity>("");
 
@@ -364,13 +368,13 @@ void UMonsterSpawnManager::SpawnBossMob()
 
 	Mob->SetActorLocation(NewLoc);
 
-	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Boss,m_DgDataTable->m_NormalDropTableHandle.GetRow<FItemDropTableRow>(""),10,MonData->m_fBossMonsterRenderScale,10.f);
+	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Boss,10,MonData->m_fBossMonsterRenderScale,10.f);
 
 	m_SpawnedBoss =  Mob;
 
 	m_BossDeleHandle =m_SpawnedBoss->m_OnDead.AddUObject(this,&UMonsterSpawnManager::OnBossDead);
 	
-	APlayerDiabloCharacter* Pl = Cast<APlayerDiabloCharacter> (UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(),0));
+	APlayerDiabloCharacter* Pl = UDiabloGameInstance::Get->GetPlChar();
 
 	Pl->FocusTarget(m_SpawnedBoss);
 

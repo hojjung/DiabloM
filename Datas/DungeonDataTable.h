@@ -1,8 +1,5 @@
 #pragma once
 #include "DiabloM.h"
-#include "GameplayTagContainer.h"
-#include "Managers/PlayerUpgradeManager.h"
-#include "UObject/NoExportTypes.h"
 #include "DungeonDataTable.generated.h"
 
 
@@ -10,22 +7,6 @@ UCLASS()
 class DIABLOM_API UDungeonDataTable : public UObject
 {
 	GENERATED_BODY()
-};
-
-USTRUCT(BlueprintType)//���̵�,Ƽ��
-struct FItemDropTableRow : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	//public:
-	
-};
-USTRUCT(BlueprintType)
-struct FItemDropTableHandle :public FDataTableRowHandle
-{
-	GENERATED_USTRUCT_BODY()
-public:
-	FItemDropTableHandle();
 };
 
 USTRUCT(BlueprintType)
@@ -87,15 +68,9 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FName m_DgId;//should same with level asset name
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FMonsterEntityHandle m_Monster;
+	TArray<FMonsterEntityHandle> m_Monsters;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(UIMin = "1.0"))
 	int m_nMonsterLevel;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FItemDropTableHandle m_NormalDropTableHandle;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FItemDropTableHandle m_TreasureDropTableHandle;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FItemDropTableHandle m_BossDropTableHandle;
 
 public:
 	BigInt GetMobHp() const

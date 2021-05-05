@@ -17,16 +17,18 @@ void UPVPCanvas::NativeOnInitialized()
 
 	UDiabloGameInstance::Get->m_PVPManager->m_OnBattleEnd.BindUObject(this,&UPVPCanvas::OnBattleEnd);
 
-	OnEquipSkillSet(UDiabloGameInstance::Get->m_PVPManager->m_PVPOtherPlayer.Get()->GetEquippedSkill());
-
 	UDiabloGameInstance::Get->GetPlChar()->m_OnRageChanged.AddUObject(this,&UPVPCanvas::PlayerUpdateRageBar);
-
-	UDiabloGameInstance::Get->m_PVPManager->m_PVPOtherPlayer.Get()->m_OnRageChanged.AddUObject(this,&UPVPCanvas::OtherPlayerUpdateRageBar);
-
-	UDiabloGameInstance::Get->m_PVPManager->m_PVPOtherPlayer.Get()->UpdateRage();
+	//
+	UDiabloGameInstance::Get->m_PVPManager->m_OnOtherPlayerSpawned.BindUObject(this,&UPVPCanvas::OnOtherPlayerSpawned);
 
 	UDiabloGameInstance::Get->GetPlChar()->UpdateRage();
+}
 
+void UPVPCanvas::NativeDestruct()
+{
+	Super::NativeDestruct();
+	
+	UDiabloGameInstance::Get->m_PVPManager->m_OnOtherPlayerSpawned.Unbind();
 }
 
 void UPVPCanvas::UpdateDmgGauge(float percentOne, BigInt playerDmg, BigInt otherPlayerDmg)
@@ -128,4 +130,13 @@ void UPVPCanvas::OtherPlayerUpdateRageBar(float cV, float mV)
 	Args.Add(mV);
 	
 	m_TxtOtherPlayerRageValue->SetText(FText::Format(FormatRage,Args));	
+}
+
+void UPVPCanvas::OnOtherPlayerSpawned(AOtherPlayerPawn* pawn)
+{
+	OnEquipSkillSet(pawn->GetEquippedSkill());
+
+	pawn->m_OnRageChanged.AddUObject(this,&UPVPCanvas::OtherPlayerUpdateRageBar);
+
+	pawn->UpdateRage();
 }

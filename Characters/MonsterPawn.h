@@ -18,7 +18,8 @@ enum EMonsterType
 {
 	Normal,
 	Treasure,
-	Boss
+	Boss,
+	MagicDragon
 };
 
 
@@ -67,14 +68,12 @@ protected:
 
 	BigInt m_fGoldBounty;
 
-	const FItemDropTableRow* m_DropTable;
-
 	bool m_bDeathAnimEnd;
 
-protected:
-	void RequestDropItem();
+	int m_nMagicStoneBounty;
 
-	void RequestGetGoldBounty();
+protected:
+	void RequestBounty();
 
 public: //need more monster
 	virtual void BeginPlay() override;
@@ -104,7 +103,7 @@ public: //need more monster
 public:
     void PlayHitFlash();
 
-	void DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,const FItemDropTableRow* dropTable,float statFactor =1.f,float scaleFactor=1.f,float goldFactor=1.f);
+	void DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,float statFactor =1.f,float scaleFactor=1.f,float goldFactor=1.f);
 
 	virtual bool IsAlive() const override;
 
@@ -113,4 +112,6 @@ public:
 	void SetAcive(bool v);
 
 	virtual float TryAttack() override;
+
+	void SetMagicStones(int v);
 };

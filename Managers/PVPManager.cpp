@@ -196,7 +196,7 @@ void UPVPManager::Tick(float deltaTime)
 	}
 }
 
-void UPVPManager::SpawnPVPPlayer()
+void UPVPManager::SpawnPVPPlayer(UWorld* world)
 {
 	FVector Loc = FVector(290, 290, 102);
 
@@ -206,17 +206,19 @@ void UPVPManager::SpawnPVPPlayer()
 
 	Param.bNoFail = true;
 
-	m_PVPOtherPlayer = GetWorld()->SpawnActor<AOtherPlayerPawn>(AOtherPlayerPawn::StaticClass(), Loc, Rot, Param);
+	m_PVPOtherPlayer = world->SpawnActor<AOtherPlayerPawn>(AOtherPlayerPawn::StaticClass(), Loc, Rot, Param);
 	//
 	m_PVPOtherPlayer->SetPVPPlayerPawn(UDiabloGameInstance::Get->m_PVPManager->m_StatObj,
 	                                   UDiabloGameInstance::Get->m_PVPManager->m_SkillObj,
 	                                   UDiabloGameInstance::Get->m_PVPManager->m_EquipObj);
+
+	m_OnOtherPlayerSpawned.ExecuteIfBound(m_PVPOtherPlayer.Get());
 }
 
 void UPVPManager::OnLevelLoad(UWorld* world)
 {
 	FCoreUObjectDelegates::PostLoadMapWithWorld.Remove(m_LevelLoadHandle);
 	PRINTF("PVPManager! World:%s", *world->GetMapName());
-	SpawnPVPPlayer();
+	SpawnPVPPlayer(world);
 	PVPStart();
 }

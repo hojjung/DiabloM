@@ -24,10 +24,13 @@ public:
 	DECLARE_DELEGATE(FOnMatchFail);
 	DECLARE_DELEGATE(FOnMatchStart);
 	DECLARE_DELEGATE_ThreeParams(FOnDmgChanged,float,BigInt,BigInt);
-	DECLARE_DELEGATE_OneParam(FOnTick,float);
 	DECLARE_DELEGATE_OneParam(FOnBattleEnd,bool);
+	DECLARE_DELEGATE_OneParam(FOnOtherPlayerSpawned,AOtherPlayerPawn*);
+	DECLARE_DELEGATE_OneParam(FOnTick,float);
 
 	UPVPManager();
+
+	FOnOtherPlayerSpawned m_OnOtherPlayerSpawned;
 
 	FOnBattleEnd m_OnBattleEnd;
 	
@@ -47,7 +50,6 @@ public:
 
 	TWeakObjectPtr<AOtherPlayerPawn> m_PVPOtherPlayer;
 
-	bool m_bIsMatchStarted;
 
 	BigInt m_PlayerTotalDmg;
 	
@@ -55,6 +57,8 @@ public:
 
 	BigInt m_TotalDmg;
 
+	bool m_bIsMatchStarted;
+	
 	float m_fTimer;
 
 	FDelegateHandle m_LevelLoadHandle;
@@ -95,7 +99,8 @@ public:
 	void AddOtherPlayerTotalDamage(const BigInt& v);
 
 	void Tick(float deltaTime);
-	void SpawnPVPPlayer();
+	
+	void SpawnPVPPlayer(UWorld* world);
 
 	void OnLevelLoad(UWorld* world);
 };
