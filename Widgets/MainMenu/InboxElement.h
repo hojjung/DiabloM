@@ -10,7 +10,7 @@
 #include "Image.h"
 #include "TextBlock.h"
 #include "Blueprint/UserWidget.h"
-#include "Managers/InboxManager.h"
+#include "Managers/SystemManagers/InboxManager.h"
 
 #include "InboxElement.generated.h"
 

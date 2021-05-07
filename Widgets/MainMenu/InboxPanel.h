@@ -6,7 +6,6 @@
 #include "InboxElement.h"
 #include "VerticalBox.h"
 #include "Blueprint/UserWidget.h"
-#include "Managers/InboxManager.h"
 
 #include "InboxPanel.generated.h"
 

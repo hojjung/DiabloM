@@ -1,15 +1,21 @@
 #include "DiabloGameInstance.h"
 #include "BigInt.h"
 #include "NavigationSystem.h"
-#include "MonsterSpawnManager.h"
-#include "DungeonManager.h"
-#include "PlayfabManager.h"
-#include "Characters/PlayerDiabloCharacter.h"
+#include "Characters/DiabloPlayerController.h"
+#include "Characters/Pawns/PlayerDiabloCharacter.h"
+#include "DgContentManagers/DungeonManager.h"
+#include "DgContentManagers/MagicStoneDgManager.h"
+#include "DgContentManagers/NormalDungeonManager.h"
+#include "DgContentManagers/PVPManager.h"
 #include "GameFramework/GameUserSettings.h"
 #include "GameMode/DiabloGameMode.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
-#include "Widgets/MainCanvas.h"
-#include "Widgets/MyHUD.h"
+#include "SystemManagers/AdvertiseManager.h"
+#include "SystemManagers/ChatManager.h"
+#include "SystemManagers/DailyPrizeManager.h"
+#include "SystemManagers/InboxManager.h"
+#include "SystemManagers/PlayfabManager.h"
+#include "Widgets/HUD/MyHUD.h"
 
 
 UDiabloGameInstance* UDiabloGameInstance::Get = nullptr;
@@ -18,7 +24,7 @@ UDiabloGameInstance::UDiabloGameInstance()
 {
     UDiabloGameInstance::Get = this;
 
-    m_MonsterSpawn = nullptr;
+    m_NormalDgManager = nullptr;
 
     m_DungeonManager = nullptr;
 }
@@ -26,10 +32,10 @@ UDiabloGameInstance::UDiabloGameInstance()
 void UDiabloGameInstance::Init()
 {
     Super::Init();
-    m_MonsterSpawn = NewObject<UMonsterSpawnManager>();
-	m_MonsterSpawn->Init();
+    m_NormalDgManager = NewObject<UNormalDungeonManager>();
+	m_NormalDgManager->Init();
     m_DungeonManager = NewObject<UDungeonManager>();
-    m_DungeonManager->Init(m_MonsterSpawn);
+    m_DungeonManager->Init();
     m_PlayerUpgradeManager = NewObject<UPlayerUpgradeManager>();
     m_GoldManager = NewObject<UGoldManager>();
     m_EquipManager = NewObject<UEquipManager>();
@@ -43,9 +49,9 @@ void UDiabloGameInstance::Init()
 	m_PVPManager=NewObject<UPVPManager>();
 	m_MagicDgManager=NewObject<UMagicStoneDgManager>();
 	m_MagicDgManager->Init();
-    //
     m_PlayfabManager = NewObject<UPlayfabManager>();
     m_PlayfabManager->Init();
+	m_ChatManager = NewObject<UChatManager>();
     //
 	
 	//
@@ -63,7 +69,7 @@ void UDiabloGameInstance::Init()
     UKismetSystemLibrary::ControlScreensaver(false);
 
     //
-	m_ChatManager = NewObject<UChatManager>();
+	
 
 }
 

@@ -5,7 +5,7 @@
 #include "DiabloM.h"
 
 #include "Blueprint/UserWidget.h"
-#include "Characters/PlayerDiabloCharacter.h"
+#include "Characters/Pawns/PlayerDiabloCharacter.h"
 
 #include "DiaStatPanel.generated.h"
 

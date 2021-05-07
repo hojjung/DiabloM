@@ -1,6 +1,6 @@
 #include "DungeonDataTable.h"
-
-#include "Managers/DungeonManager.h"
+#include "Managers/DgContentManagers/DungeonManager.h"
+#include "Managers/DgContentManagers/NormalDungeonManager.h"
 
 //UDataTable* UDungeonDataTable::GetDungeonTable = nullptr;
 
@@ -17,5 +17,5 @@
 
 FMonsterEntityHandle::FMonsterEntityHandle()
 {
-	DataTable = UDungeonManager::MonsterEntityTable;
+	DataTable = UNormalDungeonManager::MonsterEntityTable;
 }

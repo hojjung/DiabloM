@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 
 #include "GameplayTagContainer.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
@@ -29,6 +29,7 @@ public:
 	TArray<TEnumAsByte<EObjectTypeQuery>> m_ObjType;
 
 protected:
+	UPROPERTY()
 	TArray<AActor*> m_IgnoreActors;
 
 public:

@@ -1,6 +1,8 @@
 #include "AnimNotify_PlayerAttack.h"
-#include "Characters/PlayerDiabloCharacter.h"
+
+#include "Characters/Pawns/UnitPawn.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Interface/SkillUseCharacter.h"
 
 
 void UAnimNotify_PlayerAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
@@ -11,7 +13,7 @@ void UAnimNotify_PlayerAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 		return;
 	}
 
-	AUnitPawn* Unit = Cast<AUnitPawn>(MeshComp->GetOwner());
+	ISkillUseCharacter* Unit = Cast<ISkillUseCharacter>(MeshComp->GetOwner());
 
 	if(!Unit)
 	{

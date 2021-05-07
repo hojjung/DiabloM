@@ -1,5 +1,4 @@
 #include "MobAnimInstance.h"
-#include "Characters/MonsterPawn.h"
 
 void FMobAnimInstanceProxy::InitializeObjects(UAnimInstance* InAnimInstance)
 {

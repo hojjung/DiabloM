@@ -4,13 +4,11 @@
 
 #include "ActionManagerComponent.h"
 #include "DiabloM.h"
-#include "Characters/OtherPlayerPawn.h"
+#include "Characters/Pawns/OtherPlayerPawn.h"
 #include "Components/PostProcessComponent.h"
 #include "GameFramework/GameMode.h"
-#include "Managers/ChatManager.h"
 #include "Managers/GoldManager.h"
-#include "Managers/MonsterSpawnManager.h"
-
+#include "Managers/SystemManagers/ChatManager.h"
 
 #include "DiabloGameMode.generated.h"
 

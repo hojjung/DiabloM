@@ -2,7 +2,6 @@
 #include "DiabloGameInstance.h"
 #include "JsonSerializer.h"
 #include "PlayFabJsonObject.h"
-#include "Characters/PlayerDiabloCharacter.h"
 
 #define LOCTEXT_NAMESPACE "PlayerUpgradeManager"
 

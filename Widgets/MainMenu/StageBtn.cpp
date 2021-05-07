@@ -1,6 +1,5 @@
 #include "StageBtn.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/DungeonManager.h"
 
 #define LOCTEXT_NAMESPACE "StageButton"
 
@@ -45,8 +44,6 @@ void UStageBtn::SetCurrent()
 
 void UStageBtn::MoveToDungeon()
 {
-	//SetCurrent();
-	UDiabloGameInstance::Get->m_DungeonManager->SelectNormalDungeon(m_nIndex);
-	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel();
+	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(UDiabloGameInstance::Get->m_NormalDgManager);
 }
 #undef LOCTEXT_NAMESPACE

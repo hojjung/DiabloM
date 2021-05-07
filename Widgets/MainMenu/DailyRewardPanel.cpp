@@ -2,11 +2,8 @@
 
 
 #include "DailyRewardPanel.h"
-
-
 #include "UniformGridSlot.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Widgets/MainCanvas.h"
 
 void UDailyRewardPanel::NativeOnInitialized()
 {

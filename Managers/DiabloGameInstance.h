@@ -1,22 +1,23 @@
 #pragma once
 
-#include "AdvertiseManager.h"
-#include "ChatManager.h"
-#include "DailyPrizeManager.h"
 #include "DiabloM.h"
 #include "EquipManager.h"
 #include "GachaManager.h"
 #include "GoldManager.h"
-#include "InboxManager.h"
-#include "MagicStoneDgManager.h"
 #include "NavigationSystem.h"
 #include "PlayerUpgradeManager.h"
-#include "PVPManager.h"
 #include "QuestManager.h"
 #include "ShopManager.h"
-#include "Characters/PlayerDiabloCharacter.h"
+#include "Characters/DiabloPlayerController.h"
+#include "Characters/Pawns/PlayerDiabloCharacter.h"
+#include "DgContentManagers/MagicStoneDgManager.h"
+#include "DgContentManagers/NormalDungeonManager.h"
+#include "DgContentManagers/PVPManager.h"
 #include "Kismet/BlueprintPlatformLibrary.h"
-#include "Widgets/GameLevelHUD.h"
+#include "SystemManagers/AdvertiseManager.h"
+#include "SystemManagers/ChatManager.h"
+#include "SystemManagers/DailyPrizeManager.h"
+#include "Widgets/HUD/GameLevelHUD.h"
 
 
 
@@ -44,7 +45,7 @@ public:
 	UPROPERTY()
 	UPlayfabManager* m_PlayfabManager;
 	UPROPERTY()
-	UMonsterSpawnManager* m_MonsterSpawn;
+	UNormalDungeonManager* m_NormalDgManager;
 	UPROPERTY()
 	UDungeonManager* m_DungeonManager;
 	UPROPERTY()

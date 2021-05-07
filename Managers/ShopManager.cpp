@@ -1,5 +1,4 @@
 #include "ShopManager.h"
-#include "Managers/DungeonManager.h"
 #include "DiabloGameInstance.h"
 #include "JsonSerializer.h"
 #include "PlayFabJsonObject.h"
@@ -14,7 +13,7 @@ void UShopManager::SetShopDataFromServer(const UPlayFabJsonObject* iapJsonStr)
 	m_PackagePurchased[3] = iapJsonStr->GetBoolField(TEXT("Package04"));
 	m_PackagePurchased[4] = iapJsonStr->GetBoolField(TEXT("Package05"));
 	
-	UDiabloGameInstance::Get->m_DungeonManager->m_OnDungeonMaxUpdate.AddUObject(this, &UShopManager::UpdateGold);
+	UDiabloGameInstance::Get->m_NormalDgManager->m_OnDungeonMaxUpdate.AddUObject(this, &UShopManager::UpdateGold);
 }
 
 #pragma region IAP
@@ -177,11 +176,9 @@ void UShopManager::PurchaseGachaAccessory55()
 
 void UShopManager::UpdateGold()
 {
-	BigInt Bounty = UDiabloGameInstance::Get->m_DungeonManager->GetCurrentDungeonBounty();
+	BigInt Bounty = UDiabloGameInstance::Get->m_NormalDgManager->GetCurrentDungeonBounty();
 
 	Bounty.Multiply(3500);
-
-	Bounty.Multiply(UDiabloGameInstance::Get->m_DungeonManager->GetLevelBonus());
 
 	m_Gold01 = Bounty;
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "DiabloM.h"
-#include "MovePointIndicator.h"
 #include "GameFramework/PlayerController.h"
+#include "Objects/MovePointIndicator.h"
 #include "Widgets/CommonElement/DamageTextWidgetComponent.h"
 
 #include "DiabloPlayerController.generated.h"

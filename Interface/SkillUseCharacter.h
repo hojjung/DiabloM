@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "Engine/EngineTypes.h"
 #include "UObject/Interface.h"
 #include "SkillUseCharacter.generated.h"
 
@@ -25,4 +27,6 @@ public:
 	virtual float PlaySkillMontageSection(FName& nameID, int nSectionIndex, float& currentCD, float maxCD)=0;
 	
 	virtual float GetRage()=0;
+
+	virtual void TriggerSkill(const FName& name,TArray<FHitResult>* aryHits=nullptr)=0;
 };

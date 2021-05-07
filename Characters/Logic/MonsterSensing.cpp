@@ -1,9 +1,8 @@
 #include "MonsterSensing.h"
 #include "NetworkingDistanceConstants.h"
-#include "Characters/UnitPawn.h"
-#include "Characters/PlayerDiabloCharacter.h"
-#include "Characters/MonsterPawn.h"
 #include "Characters/DiabloPlayerController.h"
+#include "Characters/Pawns/MonsterPawn.h"
+#include "Characters/Pawns/PlayerDiabloCharacter.h"
 
 //플레이어가 그냥 사정거리에 들어오고
 //가리는 벽이 없다면

@@ -1,11 +1,10 @@
-// My First Hack n Slash
-
-
 #include "AnimNotify_TraceBox.h"
 
-
-#include "Characters/PlayerDiabloCharacter.h"
-#include "Characters/UnitPawn.h"
+#include "Characters/Pawns/UnitPawn.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Actor.h"
+#include "Interface/SkillUseCharacter.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 UAnimNotify_TraceBox::UAnimNotify_TraceBox()
 {
@@ -31,7 +30,7 @@ void UAnimNotify_TraceBox::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 
 	PRINTF("HitCount:%d",Hits.Num());
 
-	AUnitPawn* PL = Cast<AUnitPawn>(Instigator);
+	ISkillUseCharacter* PL = Cast<ISkillUseCharacter>(Instigator);
 
 	if(!PL)
 	{

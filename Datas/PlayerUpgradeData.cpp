@@ -1,5 +1,4 @@
 #include "PlayerUpgradeData.h"
-#include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
 
 bool FSkillSpec::IsSkillUseable(ISkillUseCharacter* skillOwner)

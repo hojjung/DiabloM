@@ -1,13 +1,14 @@
 #include "DiabloPlayerController.h"
 
-#include "MonsterPawn.h"
 #include "OnlineSubsystem.h"
-#include "Characters/PlayerDiabloCharacter.h"
 #include "Kismet/KismetInputLibrary.h"
-#include "Managers/DiabloCheatManager.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Widgets/GameLevelHUD.h"
+#include "Managers/SystemManagers/DiabloCheatManager.h"
+#include "Pawns/MonsterPawn.h"
+#include "Pawns/PlayerDiabloCharacter.h"
+#include "Pawns/UnitPawn.h"
+#include "Widgets/HUD/GameLevelHUD.h"
 
 ADiabloPlayerController::ADiabloPlayerController()
 {
@@ -169,8 +170,8 @@ void ADiabloPlayerController::ClickActor()
 		return;
 	}
 
-	AMonsterPawn* Mob = Cast<AMonsterPawn>( Hits.Actor);
-	
+	AUnitPawn* Mob = Cast<AUnitPawn>( Hits.Actor);
+
 	if(!Mob)
 	{
 		if(!UDiabloGameInstance::Get->GetNavSys()->ProjectPointToNavigation(Hits.Location,Loc))

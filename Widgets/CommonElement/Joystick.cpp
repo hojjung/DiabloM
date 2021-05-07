@@ -1,10 +1,8 @@
 #include "Joystick.h"
 #include "CanvasPanelSlot.h"
 #include "Characters/DiabloPlayerController.h"
-#include "Characters/PlayerDiabloCharacter.h"
 #include "Kismet/KismetInputLibrary.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/DungeonManager.h"
 
 UJoystick::UJoystick(const FObjectInitializer& objInit):Super(objInit)
 {

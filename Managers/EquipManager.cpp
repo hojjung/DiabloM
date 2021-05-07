@@ -4,8 +4,6 @@
 #include "JsonObjectConverter.h"
 #include "PlayFabJsonObject.h"
 #include "PlayFabJsonValue.h"
-#include "PlayfabManager.h"
-#include "Characters/PlayerDiabloCharacter.h"
 
 class UPlayFabJsonValue;
 UDataTable* UEquipManager::GetPlayerSkinDataTable = nullptr;

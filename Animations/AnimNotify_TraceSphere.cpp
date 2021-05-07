@@ -1,8 +1,10 @@
 #include "AnimNotify_TraceSphere.h"
 
 
-#include "Characters/PlayerDiabloCharacter.h"
-#include "Characters/UnitPawn.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Interface/SkillUseCharacter.h"
+#include "Kismet/KismetSystemLibrary.h"
+
 
 UAnimNotify_TraceSphere::UAnimNotify_TraceSphere()
 {
@@ -30,7 +32,7 @@ void UAnimNotify_TraceSphere::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 	}
 
 
-	AUnitPawn* PL = Cast<AUnitPawn>(Instigator);
+	ISkillUseCharacter* PL = Cast<ISkillUseCharacter>(Instigator);
 
 	if(!PL)
 	{

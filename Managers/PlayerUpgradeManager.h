@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 
 #include "DiabloM.h"
-#include "PlayfabManager.h"
 #include "Datas/PlayerUpgradeData.h"
+#include "SystemManagers/PlayfabManager.h"
 #include "UObject/NoExportTypes.h"
 #include "PlayerUpgradeManager.generated.h"
 

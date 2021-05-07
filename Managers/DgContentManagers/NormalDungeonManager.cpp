@@ -1,0 +1,552 @@
+#include "NormalDungeonManager.h"
+#include "DungeonManager.h"
+#include "EngineUtils.h"
+#include "JsonSerializer.h"
+#include "Characters/DiabloPlayerController.h"
+#include "Engine/AssetManager.h"
+#include "Managers/DiabloGameInstance.h"
+
+UDataTable* UNormalDungeonManager::DungeonDataTable = nullptr;
+UDataTable* UNormalDungeonManager::DropDataTable = nullptr;
+UDataTable* UNormalDungeonManager::MonsterEntityTable = nullptr;
+UDataTable* UNormalDungeonManager::GoldDungeonDataTable = nullptr;
+
+UNormalDungeonManager::UNormalDungeonManager()
+{
+	//Blueprint'/Game/Blueprints/BP_StompShake.BP_StompShake'
+	static ConstructorHelpers::FClassFinder<UCameraShake> FoundCamshake(TEXT("Blueprint'/Game/Blueprints/BP_StompShake.BP_StompShake_C'"));
+	m_ClassShake = FoundCamshake.Class;
+	m_bBossSpawned = false;
+	m_SensingInterval = 5.f;
+	m_CurrentWorld = nullptr;
+	m_NavSys = nullptr;
+	m_fSpawnRadius = 6200.f;
+	m_IdEnemy = "enemy";
+	m_IdBossEnemy = "boss";
+	m_IdSpecialEnemy = "special";
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundData(TEXT("DataTable'/Game/DataTables/Entities/MonsterTable.MonsterTable'"));
+	m_MobEntityTable=FoundData.Object;
+	//(DataTable=DataTable'"/Game/DataTables/Entities/MonsterTable.MonsterTable"',RowName="GoldGoblin")
+
+	m_nGoldGoblinSpawnCount=0;
+	//
+	m_CurrentDg = nullptr;
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundDungeon(
+		TEXT("DataTable'/Game/DataTables/Dungeon/DungeonData.DungeonData'"));
+
+	DungeonDataTable = FoundDungeon.Object;
+
+	//DataTable'/Game/DataTables/Dungeon/GoldDungeonData.GoldDungeonData'
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGoldDungeon(
+		TEXT("DataTable'/Game/DataTables/Dungeon/GoldDungeonData.GoldDungeonData'"));
+
+	GoldDungeonDataTable = FoundGoldDungeon.Object;
+}//m_MonsterManager->StartSpawn(world, m_CurrentDg);
+
+
+void UNormalDungeonManager::Init()
+{
+	m_GoldGoblinEntity = m_MobEntityTable->FindRow<FMonsterEntity>("GoldGoblin","");
+
+	m_LoadedMonsters.Init(TSharedPtr<FStreamableHandle>(),12);
+}
+
+void UNormalDungeonManager::StartSpawn(UWorld* world, const FDungeonDataTableRow* dgData)
+{
+	for(auto& Handle : m_LoadedMonsters)
+	{
+		if(Handle.Get())
+		{
+			Handle.Get()->ReleaseHandle();
+		}
+	}
+	
+	FStreamableManager& StreamableManager =  UAssetManager::Get().GetStreamableManager();
+
+	for(int i=0; i<dgData->m_Monsters.Num();i++)
+	{
+		StreamableManager.LoadSynchronous(dgData->m_Monsters[i].GetRow<FMonsterEntity>("")->m_MonsterMeshSoft,true,&m_LoadedMonsters[i]);
+	}
+
+	m_nKillCount=0;
+	
+	m_nGoldGoblinSpawnCount = FMath::RandRange(10,25);
+
+	m_nGoldGoblinSpawnCount+=m_nKillCount;
+	
+	m_CurrentWorld = world;
+
+	m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(m_CurrentWorld);
+
+	m_DgDataTable = dgData;
+
+	if (!m_DgDataTable)
+	{
+		return;
+	}
+
+	Reset();
+
+	int i = 0;
+
+	while (i++ < MonsterPoolCount)
+	{
+		AMonsterPawn* SpawnedMob = CreateMob(FVector::ZeroVector);
+
+		m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
+
+		SpawnMobToLoc(FVector::ZeroVector);
+	}
+
+	SetSpawnMonsterOnTick(true);
+}
+
+void UNormalDungeonManager::SetSpawnMonsterOnTick(const bool bEnabled)
+{
+	if (bEnabled && m_SensingInterval > 0.f)
+	{
+		const float InitialDelay = (m_SensingInterval * FMath::SRand()) + KINDA_SMALL_NUMBER;
+
+		SetTimer(InitialDelay);
+	}
+	else
+	{
+		SetTimer(0.f);
+	}
+}
+
+
+void UNormalDungeonManager::SetTimer(const float TimeInterval)
+{
+	if (m_CurrentWorld && GEngine->GetNetMode(GetWorld()) < NM_Client)
+	{
+		m_CurrentWorld->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this, &UNormalDungeonManager::OnTimer,
+		                                           TimeInterval,
+		                                           false);
+	}
+}
+
+void UNormalDungeonManager::SetSensingInterval(const float newSensingInterval)
+{
+	if (m_SensingInterval != newSensingInterval)
+	{
+		m_SensingInterval = newSensingInterval;
+
+		if (m_CurrentWorld)
+		{
+			if (m_SensingInterval <= 0.f)
+			{
+				SetTimer(0.f);
+			}
+			else
+			{
+				float CurrentElapsed = m_CurrentWorld->GetTimerManager().GetTimerElapsed(m_TimerHandle_OnTimer);
+
+				CurrentElapsed = FMath::Max(0.f, CurrentElapsed);
+
+				if (CurrentElapsed < m_SensingInterval)
+				{
+					SetTimer(m_SensingInterval - CurrentElapsed);
+				}
+				else if (CurrentElapsed > m_SensingInterval)
+				{
+					SetTimer(KINDA_SMALL_NUMBER);
+				}
+			}
+		}
+	}
+}
+
+void UNormalDungeonManager::OnTimer()
+{
+	if (!m_CurrentWorld)
+	{
+		return;
+	}
+	//Spawn
+	for (int i = 0; i < 5; i++)
+	{
+		if (!SpawnMobToLoc(FVector::ZeroVector))
+		{
+			break;
+		}
+	}
+
+	SetTimer(m_SensingInterval);
+};
+
+
+void UNormalDungeonManager::Reset()
+{
+	for (AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
+	{
+		if (!Mob)
+		{
+			continue;
+		}
+		Mob->Destroy();
+	}
+
+	m_AryMonsterSpawnedCurrently.Reset();
+}
+
+AMonsterPawn* UNormalDungeonManager::GetReadyMonster()
+{
+	AMonsterPawn* SelectedPawn = nullptr;
+
+	for (AMonsterPawn* MPawn : m_AryMonsterSpawnedCurrently)
+	{
+		if (MPawn->IsReadyToPool()) //죽은애만 데려옴
+		{
+			SelectedPawn = MPawn;
+			break;
+		}
+	}
+
+	return SelectedPawn;
+}
+AMonsterPawn* UNormalDungeonManager::SpawnMobToLoc(FVector loc)
+{
+	AMonsterPawn* Mob = GetReadyMonster();
+
+	if (!Mob)
+	{
+		return nullptr;
+	}
+	
+	float MinX = loc.X - 500.f;
+	float MaxX = loc.X + 500.f;
+
+	float MinY = loc.Y - 500.f;
+	float MaxY = loc.Y + 500.f;
+
+	loc.X = FMath::RandRange(MinX, MaxX);
+	loc.Y = FMath::RandRange(MinY, MaxY);
+
+
+	FVector NewLoc = GetRandomPointFromNav(loc, 4000.f);
+
+	const FMonsterEntityHandle& MobHandle = m_DgDataTable->m_Monsters.GetRandom();
+
+	const FMonsterEntity* MonData = MobHandle.GetRow<FMonsterEntity>("");
+
+	NewLoc.Z += Mob->GetCapsule()->GetScaledCapsuleHalfHeight();
+
+	Mob->SetActorLocation(NewLoc);
+
+	float GoldScale = 1.f;
+
+	float StatScale = 1.f;
+	
+	if(m_nKillCount >= m_nGoldGoblinSpawnCount)
+	{
+		m_nGoldGoblinSpawnCount = FMath::RandRange(25,35);
+
+		m_nGoldGoblinSpawnCount+=m_nKillCount;
+
+		MonData = m_GoldGoblinEntity;
+
+		GoldScale = 15.f;
+
+		StatScale = 5.f;
+	}
+	
+	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Normal,StatScale,MonData->m_fScale,GoldScale);	
+	
+	return Mob;
+}
+
+void UNormalDungeonManager::OnBossDead(AMonsterPawn* pawn)
+{
+	m_SpawnedBoss->m_OnDead.Remove(m_BossDeleHandle);
+	m_bBossSpawned = false;;
+	m_SpawnedBoss=nullptr;
+	pawn->Destroy();
+	m_OnBossBattleEnd.Broadcast(true);
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->ClearCooldownAllSkill();
+	//UDiabloGameInstance::Get->m_DungeonManager->LevelUpDungeon();
+}
+
+void UNormalDungeonManager::BeginDestroy()
+{
+	Super::BeginDestroy();
+	
+	for(auto& Handle : m_LoadedMonsters)
+	{
+		if(Handle.Get())
+		{
+			Handle.Get()->ReleaseHandle();
+		}
+	}
+	if(m_LoadedGoblin.Get())
+	{
+		m_LoadedGoblin.Get()->ReleaseHandle();
+	}
+}
+
+AUnitPawn* UNormalDungeonManager::GetNearestEnemy(const FVector& wantPos)
+{
+	if(m_bBossSpawned && m_SpawnedBoss)
+	{
+		return m_SpawnedBoss;
+	}
+	
+	float Dist = FLT_MAX;
+
+	AMonsterPawn* ResultMob = nullptr;
+
+	for (AMonsterPawn* Mob : m_AryMonsterSpawnedCurrently)
+	{
+		if (!Mob || Mob->IsReadyToPool() || !Mob->IsAlive())
+		{
+			continue;
+		}
+
+		float DistNew = FVector::DistSquared2D(Mob->GetActorLocation(), wantPos);
+
+		if (Dist >= DistNew)
+		{
+			Dist = DistNew;
+
+			ResultMob = Mob;
+		}
+	}
+
+	return ResultMob;
+}
+
+FVector UNormalDungeonManager::GetRandomPointFromNav(const FVector& loc, const float& radius)
+{
+	FNavLocation ResultLoc;
+
+	if (!m_NavSys->GetRandomReachablePointInRadius(loc, radius, ResultLoc))
+	{
+		//FAIL
+		return loc;
+	}
+
+	return ResultLoc;
+}
+
+AMonsterPawn* UNormalDungeonManager::CreateMob(FVector loc)
+{
+	FActorSpawnParameters Param;
+
+	Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	Param.bNoFail = true;
+
+	//88
+	FRotator Rot;
+	Rot.Pitch = 0.f;
+	Rot.Roll = 0.f;
+	Rot.Yaw = FMath::RandRange(-360.f, 360.f);
+
+	AMonsterPawn* Mob = m_CurrentWorld->SpawnActor<AMonsterPawn>(AMonsterPawn::StaticClass(), loc, Rot, Param);
+	Mob->SetAcive(false);
+
+	check(Mob);
+
+	return Mob;
+}
+
+void UNormalDungeonManager::MakeNamedMonster(AMonsterPawn* mob)
+{
+	//material setting need
+}
+
+void UNormalDungeonManager::AddKillCount()
+{
+	m_nKillCount++;
+
+		
+}
+
+void UNormalDungeonManager::SpawnBossMob()
+{
+	//
+	UGameplayStatics::GetPlayerController(UDiabloGameInstance::Get->GetWorld(),0)->ClientPlayCameraShake(m_ClassShake);
+	//
+	FVector PlayerLoc = UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(),0)->GetActorLocation();
+
+	FVector NewLoc = GetRandomPointFromNav(PlayerLoc, 1000.f);
+	
+	auto* Mob = CreateMob(PlayerLoc);
+
+	const FMonsterEntityHandle& MobHandle = m_DgDataTable->m_Monsters[0];
+
+	const FMonsterEntity* MonData = MobHandle.GetRow<FMonsterEntity>("");
+
+	//m_fBossMonsterStatFactor
+
+	NewLoc.Z += Mob->GetCapsule()->GetScaledCapsuleHalfHeight();
+
+	Mob->SetActorLocation(NewLoc);
+
+	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Boss,10,MonData->m_fBossMonsterRenderScale,10.f);
+
+	m_SpawnedBoss =  Mob;
+
+	m_BossDeleHandle =m_SpawnedBoss->m_OnDead.AddUObject(this,&UNormalDungeonManager::OnBossDead);
+	
+	APlayerDiabloCharacter* Pl = UDiabloGameInstance::Get->GetPlChar();
+
+	Pl->FocusTarget(m_SpawnedBoss);
+
+	m_bBossSpawned = true;
+
+	m_OnBossBattleStart.Broadcast();
+}
+
+void UNormalDungeonManager::FailBossKill()
+{
+	//쿨타임 생기고
+	//보스 없애기
+	m_bBossSpawned = false;;
+	m_SpawnedBoss->Destroy();
+	m_SpawnedBoss=nullptr;
+	m_OnBossBattleEnd.Broadcast(false);
+}
+
+
+void UNormalDungeonManager::SetDungeonData(const FString& dgJsonStr)
+{
+	DungeonDataTable->GetAllRows("", m_AryDgDataTable);
+
+	TSharedPtr<FJsonObject> JsonObject;
+
+	TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(dgJsonStr);
+	
+	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		return;	
+	}
+	
+	int StageCurrentLevel = JsonObject->GetIntegerField(TEXT("CurrentStageLevel"));
+
+	SetMaxStageLevel(JsonObject->GetIntegerField(TEXT("MaxStageLevel")));
+
+	if (StageCurrentLevel < 0 || StageCurrentLevel >= m_AryDgDataTable.Num())
+	{
+		StageCurrentLevel = 0;
+	}
+
+	SelectNormalDungeon(StageCurrentLevel);
+	//
+	GoldDungeonDataTable->GetAllRows("", m_AryGoldDgDataTable);
+}
+
+void UNormalDungeonManager::OpenLevel()
+{
+	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(), m_CurrentDg->m_DgId, true);
+}
+
+void UNormalDungeonManager::SelectNormalDungeon(int index)
+{
+	SetCurrentStageLevel(index);
+	m_CurrentDg = m_AryDgDataTable[GetCurrentStage()];
+}
+
+void UNormalDungeonManager::SelectGoldDungeon(int index)
+{
+	m_CurrentGoldDg =  m_AryGoldDgDataTable[index];
+	//GoldDg Ticket Count
+	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(), m_CurrentGoldDg->m_DgId, true);
+}
+
+void UNormalDungeonManager::LevelUpDungeon()
+{
+	m_nCurrentStageLevel = GetCurrentStage();
+
+	int NextLevel = m_nCurrentStageLevel + 1;
+
+	if (NextLevel >= m_AryDgDataTable.Num())
+	{
+		return; //MAXStage
+	}
+
+	m_nCurrentStageLevel++;
+
+	SetCurrentStageLevel(m_nCurrentStageLevel);
+
+	SelectNormalDungeon(m_nCurrentStageLevel);
+
+	if (m_nCurrentStageLevel > GetMaxStage())
+	{
+		PRINTF("DgManager-LevelUpDungeon HighScore");
+
+		SetMaxStageLevel(m_nCurrentStageLevel);
+		UDiabloGameInstance::Get->m_QuestManager->AddQuestCount(EQuestType::StageLv);
+		UDiabloGameInstance::Get->m_PlayfabManager->UploadNormalDungeon();
+		m_OnDungeonMaxUpdate.Broadcast();
+	}
+
+	m_OnDgOpen.Broadcast(m_nCurrentStageLevel);
+	
+	//UDiabloGameInstance::Get->m_PlayfabManager->UploadMainData();
+	
+	OpenLevel();
+}
+
+BigInt UNormalDungeonManager::GetCurrentDungeonBounty()
+{
+	return m_CurrentDg->GetMobGold();
+}
+
+BigInt UNormalDungeonManager::GetMaxDungeonBounty()
+{
+	return m_AryDgDataTable[GetMaxStage()]->GetMobGold();
+}
+
+int UNormalDungeonManager::GetMaxStage() const
+{
+	int CachedStage = m_nSafeMaxStageLevel ^ 1423;
+
+	if (m_nMyMaxStageLevel != CachedStage)
+	{
+		PRINTF("1Cheated!!!!!");
+		UDiabloGameInstance::Get->m_PlayfabManager->RequestCheatAlert();
+		return -1;
+	}
+
+	return CachedStage;
+}
+
+int UNormalDungeonManager::GetCurrentStage() const
+{
+	int CachedStage = m_nSafeCurrentStageLevel ^ 666;
+
+	if (m_nCurrentStageLevel != CachedStage)
+	{
+		PRINTF("2Cheated!!!!!");
+		UDiabloGameInstance::Get->m_PlayfabManager->RequestCheatAlert();
+		return -1;
+	}
+
+	return CachedStage;
+}
+
+void UNormalDungeonManager::SetMaxStageLevel(int stageLv)
+{
+	m_nMyMaxStageLevel = stageLv;
+	m_nSafeMaxStageLevel = m_nMyMaxStageLevel ^ 1423;
+}
+
+void UNormalDungeonManager::SetCurrentStageLevel(int stageLv)
+{
+	m_nCurrentStageLevel = stageLv;
+	m_nSafeCurrentStageLevel = m_nCurrentStageLevel ^ 666;
+}
+
+FString UNormalDungeonManager::GetDgDataStr()
+{
+	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+
+	JsonObject->SetNumberField(TEXT("CurrentStageLevel"), GetCurrentStage());
+
+	JsonObject->SetNumberField(TEXT("MaxStageLevel"), GetMaxStage());
+
+	return PlayFab::FJsonKeeper(JsonObject).toJSONString();
+}

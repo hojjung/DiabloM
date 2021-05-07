@@ -1,8 +1,5 @@
 #include "GoldManager.h"
-
-
 #include "DiabloGameInstance.h"
-#include "DungeonManager.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 
 
@@ -121,7 +118,7 @@ void UGoldManager::SetOfflineMinutes(bool bIsNewCreatedPlayer, const FDateTime& 
 
 	m_nOfflineMinutes = FMath::Clamp(m_nOfflineMinutes, 2, 1440);
 
-	BigInt Bounty = UDiabloGameInstance::Get->m_DungeonManager->GetMaxDungeonBounty();
+	BigInt Bounty = UDiabloGameInstance::Get->m_NormalDgManager->GetMaxDungeonBounty();
 
 	Bounty.Multiply(3 * m_nOfflineMinutes);
 

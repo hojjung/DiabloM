@@ -1,24 +1,14 @@
-// My First Hack n Slash
-
-
 #include "MagicDragonMode.h"
-
-#include "DiaGameState.h"
-#include "DiaPlayerState.h"
 #include "Characters/DiabloPlayerController.h"
-#include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Widgets/HUD/MagicDgHUD.h"
 
 AMagicDragonMode::AMagicDragonMode()
 {
 	PlayerControllerClass = ADiabloPlayerController::StaticClass();
 	DefaultPawnClass = APlayerDiabloCharacter::StaticClass();
-	GameStateClass = ADiaGameState::StaticClass();
-	PlayerStateClass = ADiaPlayerState::StaticClass();
-	//HUDClass = APVP_HUD::StaticClass();
-
-	//m_PlayerActionManager=CreateDefaultSubobject<UActionManagerComponent>("PlayerActionManager");
-
+	HUDClass = AMagicDgHUD::StaticClass();
+	
 	PrimaryActorTick.bCanEverTick = true;
 }
 

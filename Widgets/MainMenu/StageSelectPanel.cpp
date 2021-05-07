@@ -1,8 +1,6 @@
 #include "StageSelectPanel.h"
-
 #include "PVPPanel.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/DungeonManager.h"
 
 void UStageSelectPanel::NativeOnInitialized()
 {
@@ -10,7 +8,7 @@ void UStageSelectPanel::NativeOnInitialized()
 
 	InitNormalDungeon();
 
-	UDiabloGameInstance::Get->m_DungeonManager->m_OnDgOpen.AddUObject(this, &UStageSelectPanel::UpdateBtnUI);
+	UDiabloGameInstance::Get->m_NormalDgManager->m_OnDgOpen.AddUObject(this, &UStageSelectPanel::UpdateBtnUI);
 	//
 	m_DgStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
 	m_DgMagicPanel->SetVisibility(ESlateVisibility::Collapsed); //골드던전 가림
@@ -31,11 +29,11 @@ void UStageSelectPanel::NativeOnInitialized()
 
 void UStageSelectPanel::InitNormalDungeon()
 {
-	int Len = UDiabloGameInstance::Get->m_DungeonManager->GetAryDgData().Num();
+	int Len = UDiabloGameInstance::Get->m_NormalDgManager->GetAryDgData().Num();
 
-	int MaxLevel = UDiabloGameInstance::Get->m_DungeonManager->GetMaxStage();
+	int MaxLevel = UDiabloGameInstance::Get->m_NormalDgManager->GetMaxStage();
 
-	int Current = UDiabloGameInstance::Get->m_DungeonManager->GetCurrentStage();
+	int Current = UDiabloGameInstance::Get->m_NormalDgManager->GetCurrentStage();
 
 	for (int i = 0; i < Len; i++)
 	{

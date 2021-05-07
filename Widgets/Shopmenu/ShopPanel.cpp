@@ -4,7 +4,6 @@
 #include "ShopPanel.h"
 
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/DungeonManager.h"
 
 void UShopPanel::NativeOnInitialized()
 {

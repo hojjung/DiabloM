@@ -1,7 +1,6 @@
 #include "FSMTick.h"
-
 #include "NavigationSystem.h"
-#include "Characters/UnitPawn.h"
+#include "Characters/Pawns/UnitPawn.h"
 
 void UFSMTick::Init(AUnitPawn* pawnUnit)
 {

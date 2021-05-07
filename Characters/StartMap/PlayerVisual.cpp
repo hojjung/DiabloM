@@ -5,7 +5,6 @@
 #include "Components/SkinnedMeshComponent.h"
 #include "Managers/DiabloGameInstance.h"
 #include "Animation/AnimSequence.h"
-#include "Characters/PlayerDiabloCharacter.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Engine/TextureRenderTarget2D.h"
 // Sets default values

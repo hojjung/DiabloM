@@ -5,10 +5,7 @@
 #include "Engine/Engine.h"
 #include "EngineUtils.h"
 #include "WeakInterfacePtr.h"
-#include "Characters/MonsterPawn.h"
-#include "Characters/PlayerDiabloCharacter.h"
 #include "Managers/DiabloGameInstance.h"
-#include "Managers/MonsterSpawnManager.h"
 
 UPlayerSensing::UPlayerSensing()
 {
@@ -111,7 +108,6 @@ bool UPlayerSensing::HasLineOfSightTo(const AActor* Other) const
 
 void UPlayerSensing::UpdateAISensing()
 {
-
 	if (m_OwnedPlayer->GetIsManualMove())
 	{
 		return;
@@ -122,14 +118,7 @@ void UPlayerSensing::UpdateAISensing()
 		return;
 	}
 
-	if(UDiabloGameInstance::Get->m_PVPManager->m_bIsMatchStarted)
-	{
-		m_OwnedPlayer->FocusTarget(UDiabloGameInstance::Get->m_PVPManager->m_PVPOtherPlayer.Get());
-
-		return;
-	}
-	
-	auto* Pawn = UDiabloGameInstance::Get->m_MonsterSpawn->GetNearestMonster(m_OwnedPlayer->GetActorLocation());
+	auto* Pawn = UDiabloGameInstance::Get->m_DungeonManager->GetNearEnemy(m_OwnedPlayer->GetActorLocation());
 
 	if (m_OwnedPlayer->GetFocusedTarget() == Pawn)
 	{
