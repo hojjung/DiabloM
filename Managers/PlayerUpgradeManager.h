@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "DiabloM.h"
+#include "SCUE4.h"
 #include "Datas/PlayerUpgradeData.h"
 #include "SystemManagers/PlayfabManager.h"
 #include "UObject/NoExportTypes.h"
@@ -76,6 +77,7 @@ protected:
 	TArray<FSkillSpec> m_AryUpgradeSkill;
 	
 	TArray<FSkillSpec*> m_AryEquippedSkillSpec;
+
 	
 public:
 	void SetUpgradeDataFromServer(const UPlayFabJsonObject* statJsonStr,const UPlayFabJsonObject* skillJsonStr);

@@ -56,7 +56,7 @@ void UMagicStoneDgManager::OnLevelLoaded(UWorld* world)
 	m_SpawnedMagicDragon->DataInject(DragonEntity, m_CurrentDgData->GetMobHp(), m_CurrentDgData->GetMobGold(),
 	                                 EMonsterType::MagicDragon, 1, 1, 1);
 
-	m_SpawnedMagicDragon->m_OnDead.AddUObject(this,&UMagicStoneDgManager::EndMagicDgSuccess);
+	m_SpawnedMagicDragon->m_OnDeathAnimAfter.AddUObject(this,&UMagicStoneDgManager::EndMagicDgSuccess);
 
 	m_nSuccessBounty = FMath::RandRange(m_CurrentDgData->m_nPrizeMagicStoneMin,m_CurrentDgData->m_nPrizeMagicStoneMax);
 

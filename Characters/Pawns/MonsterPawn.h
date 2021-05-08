@@ -34,8 +34,10 @@ public:
 	AMonsterPawn(const FObjectInitializer& objInit);
 
 	EMonsterType m_MonsterType;
+
+	FOnMonsterDead m_OnDeathAnimBefore;
 	
-	FOnMonsterDead m_OnDead;
+	FOnMonsterDead m_OnDeathAnimAfter;
 
 	FOnMonsterHit m_OnTookDmg;
 protected:
@@ -70,8 +72,6 @@ protected:
 
 	bool m_bDeathAnimEnd;
 
-protected:
-	void RequestBounty();
 
 public: //need more monster
 	virtual void BeginPlay() override;
@@ -111,4 +111,8 @@ public:
 
 	virtual float TryAttack() override;
 
+	FORCEINLINE BigInt GetGoldBounty() const
+	{
+		return m_fGoldBounty;
+	}
 };

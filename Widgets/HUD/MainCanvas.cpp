@@ -359,7 +359,8 @@ void UMainCanvas::SummonBoss()
 	{
 		return;
 	}
-	Cast<UNormalDungeonManager>( UDiabloGameInstance::Get->m_DungeonManager->GetCurrentSpawnManager())->SpawnBossMob();
+	UDiabloGameInstance::Get->m_DungeonManager->GetCurrentSpawnManager()->StartDungeon();
+	
 	ShowBossUI();
 	//시간초
 }

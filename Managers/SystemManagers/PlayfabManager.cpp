@@ -26,6 +26,8 @@ const FString UPlayfabManager::Quest = TEXT("Quest");
 const FString UPlayfabManager::Daily = TEXT("Daily");        
 const FString UPlayfabManager::Gold = TEXT("Gold");
 const FString UPlayfabManager::AdmobTime = TEXT("AdmobTime");
+
+
 //
 UPlayfabManager::UPlayfabManager()
 {
@@ -52,6 +54,20 @@ int UPlayfabManager::GetSafeRanking()
 
 	return CachecRank;
 }
+
+TSharedPtr<UPlayFabAuthenticationContext> UPlayfabManager::CreateAuthCon()
+{
+	if(!m_SessionTicket.IsEmpty())
+	{
+		PRINTF("SessionTicket Valid,Use Authcontext");
+		return TSharedPtr<UPlayFabAuthenticationContext>(NewObject<UPlayFabAuthenticationContext>(),DeleterNot());
+	}
+
+	PRINTF("No Authcontext");
+
+	return nullptr;
+}
+
 
 int UPlayfabManager::GetRanking()
 {
@@ -244,7 +260,11 @@ void UPlayfabManager::Init()
 		return;
 	}
 
+	m_SessionTicket = PlayFab::PlayFabSettings::GetClientSessionTicket();
+	
+	m_Auth = CreateAuthCon();
 
+	
 
 #if PLATFORM_WINDOWS
 	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Desktop", "Try Login With Desktop"));
@@ -255,6 +275,9 @@ void UPlayfabManager::Init()
 	request.CreateAccount = true;
 	request.CustomId = TEXT("JungPC TestID3");
 	request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
+	
+	request.AuthenticationContext =	m_Auth;
+	
 	m_bIsCustomID = true;
 	bool Result = GetClientAPI->LoginWithCustomID(request,
 	                                              PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
@@ -273,9 +296,12 @@ void UPlayfabManager::Init()
 	GetClientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
 
 	PlayFab::ClientModels::FLoginWithGoogleAccountRequest SessionRequest;
+	
 	SessionRequest.CreateAccount = false;
 	
-	request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
+	SessionRequest.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
+	
+	SessionRequest.AuthenticationContext = m_Auth;
 
 	GetClientAPI->LoginWithGoogleAccount(SessionRequest,
 													PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
@@ -283,9 +309,6 @@ void UPlayfabManager::Init()
 													PlayFab::FPlayFabErrorDelegate::CreateUObject(
 														this, &UPlayfabManager::OnSessionLoginErrorPlayfabReq)
 	);
-
-	//
-	
 #endif
 }
 
@@ -419,16 +442,13 @@ void UPlayfabManager::TryLoginPlayfabGoogle(TSharedPtr<const FUniqueNetId> uniqu
 	}
 }
 
-using namespace PlayFab; 
-
 void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginResult& Result)
 {
 	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS-Playfab Login Success", "구글 로그인 성공02"));
 
 	FString SeTicket = Result.SessionTicket;
 
-	PlayFabSettings::SetClientSessionTicket(SeTicket);
-
+	PlayFab::PlayFabSettings::SetClientSessionTicket(SeTicket);
 
 	m_PlayfabID = Result.PlayFabId;
 
@@ -598,6 +618,7 @@ void UPlayfabManager::OnSuccessGetMainData(const FGetUsrDataRslt& result)
 		PRINTF("DataNull");
 		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("FAIL-Get User Data Null01", "실패-유저 데이터 획득 없음01"));
 	}
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("SUCCESS Get User Data", "게임 준비 완료"));
 	SetMainDataToManagers(result.Data[MainData].Value);
 	
 	if(FDateTime::Parse(result.Data[AdmobTime].Value,m_LastAdmobTime))

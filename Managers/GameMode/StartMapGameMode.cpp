@@ -8,6 +8,10 @@
 AStartMapGameMode::AStartMapGameMode()
 {
 	HUDClass = AInitLevelHUD::StaticClass();
+	DefaultPawnClass = nullptr;
+	PlayerControllerClass = APlayerController::StaticClass();
+
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 void AStartMapGameMode::BeginPlay()
@@ -16,3 +20,4 @@ void AStartMapGameMode::BeginPlay()
 
 	UGameplayStatics::GetPlayerController(this,0)->bShowMouseCursor=true;
 }
+

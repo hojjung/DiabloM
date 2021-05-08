@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "SCUE4.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "UObject/NoExportTypes.h"
 #include "PlayerUpgradeData.generated.h"
@@ -117,7 +118,7 @@ struct FUpgradeSpec
 {
 	GENERATED_BODY()
 public:
-	int m_nLv;
+	FSafeInt m_nLv;
 	const FUpgradeDataRow* m_UpgradeData;
 	BigInt m_Value;
 	BigInt m_Cost;
@@ -129,15 +130,15 @@ public:
 
 	void IncreaseLevel()
 	{
-		m_nLv++;
-		SetLevel(m_nLv);
+		++m_nLv;
+		SetLevel(m_nLv.GetValue());
 	}
 
 	void SetLevel(int v)
 	{
 		m_nLv = v;
-		m_Value = m_UpgradeData->GetValue(m_nLv);
-		m_Cost = m_UpgradeData->GetCost(m_nLv);
+		m_Value = m_UpgradeData->GetValue(m_nLv.GetValue());
+		m_Cost = m_UpgradeData->GetCost(m_nLv.GetValue());
 	}
 
 	int GetMaxLv() const
@@ -261,7 +262,7 @@ struct FSkillSpec
 	GENERATED_BODY()
 public:
 	int m_nIndex = -1;
-	int m_nLv;
+	FSafeInt m_nLv;
 	const FSkillUpgradeDataRow* m_SkillData;
 	BigInt m_Value;
 	BigInt m_Cost;
@@ -273,15 +274,15 @@ public:
 
 	void IncreaseLevel()
 	{
-		m_nLv++;
-		SetLevel(m_nLv);
+		++m_nLv;
+		SetLevel(m_nLv.GetValue());
 	}
 
 	void SetLevel(int v)
 	{
 		m_nLv = v;
-		m_Value = m_SkillData->GetValue(m_nLv);
-		m_Cost = m_SkillData->GetCost(m_nLv);
+		m_Value = m_SkillData->GetValue(m_nLv.GetValue());
+		m_Cost = m_SkillData->GetCost(m_nLv.GetValue());
 	}
 
 	int GetMaxLv() const
@@ -306,7 +307,7 @@ public:
 	FString ParseToString()
 	{
 		FString StrW;
-		StrW.AppendInt(m_nLv);
+		StrW.AppendInt(m_nLv.GetValue());
 		StrW.Append(":");
 		StrW.AppendInt(m_nIndex);
 		StrW.Append(":");

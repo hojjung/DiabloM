@@ -14,6 +14,8 @@
 #include "NormalDungeonManager.generated.h"
 
 
+class APlayerVisual;
+class AOtherPlayerPawn;
 USTRUCT()
 struct FNormalDgDataSpec
 {
@@ -26,8 +28,6 @@ public:
 	int m_nMaxStage;
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnBossBattleEnd, bool);
-DECLARE_MULTICAST_DELEGATE(FOnBossBattleStart);
 UCLASS()
 class DIABLOM_API UNormalDungeonManager : public UMonsterSpawnManager
 {
@@ -36,10 +36,6 @@ class DIABLOM_API UNormalDungeonManager : public UMonsterSpawnManager
 
 public:
 	UNormalDungeonManager();
-
-	FOnBossBattleEnd m_OnBossBattleEnd;
-
-	FOnBossBattleStart m_OnBossBattleStart;
 
 protected:
 	static const int MonsterPoolCount = 12;
@@ -87,12 +83,17 @@ protected:
 	UPROPERTY()
 	UDataTable* m_MobEntityTable;
 
+public:
+	UPROPERTY()
+	AOtherPlayerPawn* m_OtherPlayer;
+	UPROPERTY()
+	APlayerVisual* m_VisualActor;
+
 protected:
 	FVector GetRandomPointFromNav(const FVector& loc, const float& radius);
 
 	AMonsterPawn* CreateMob(FVector loc);
 
-	void MakeNamedMonster(AMonsterPawn* mob);
 	//void MakeBossMonster(AMonsterPawn* mob);
 	AMonsterPawn* GetReadyMonster();
 
@@ -120,7 +121,7 @@ public:
 
 	void AddKillCount();
 
-	void SpawnBossMob();
+	
 
 	void FailBossKill();
 
@@ -140,6 +141,9 @@ public:
 	void OnBossDead(AMonsterPawn*);
 
 	virtual void BeginDestroy() override;
+
+protected:
+	void SpawnBossMob();
 	//
 
 public:
@@ -188,8 +192,6 @@ protected: //GoldDg
 public:
 	void SetDungeonData(const FString& dgJsonStr);
 
-	void OpenLevel();
-
 	FORCEINLINE const TArray<const FDungeonDataTableRow*>& GetAryDgData() const
 	{
 		return m_AryDgDataTable;
@@ -214,5 +216,23 @@ public:
 	void SetCurrentStageLevel(int stageLv);
 
 	FString GetDgDataStr();
-	//
+
+public:
+	virtual void OnLevelLoadComplete(UWorld* world) override;
+
+	virtual bool IsBattleStarted() override;
+
+	virtual FString GetOpenLevelAssetName() override;
+
+	void OnMonsterDead(AMonsterPawn* self);
+
+	virtual void StartDungeon() override;
+
+	virtual void EndDungeon(bool b) override;
+
+	void SpawnVisualActor();
+
+	void SpawnOtherPVPActor();
+
+	void OnMenuOpen(bool b);
 };

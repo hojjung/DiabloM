@@ -2,6 +2,7 @@
 
 #include "DiabloM.h"
 #include "MonsterSpawnManager.h"
+#include "Managers/PlayerUpgradeManager.h"
 
 #include "DungeonManager.generated.h"
 
@@ -23,6 +24,8 @@ public:
 	
 protected:
 	UPROPERTY()
+	UPlayerUpgradeManager* m_PlayerUpgradeManager;
+	UPROPERTY()
 	UMonsterSpawnManager* m_CurrentSpawnManager;
 
 	FDelegateHandle m_LevelDeleHandle;
@@ -38,6 +41,8 @@ public:
 	{
 		return m_CurrentSpawnManager;
 	}
+
+	void Tick(float deltaTime);
 	
 protected:
 	void OnLevelLoadComplete(UWorld* world);

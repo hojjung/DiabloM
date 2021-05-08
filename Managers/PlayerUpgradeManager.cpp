@@ -18,6 +18,7 @@ UPlayerUpgradeManager::UPlayerUpgradeManager()
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundStatTable(
 		TEXT("DataTable'/Game/DataTables/Upgrade/PlayerDefaultUpgradeTable.PlayerDefaultUpgradeTable'"));
 	StatUpgradeTable = FoundStatTable.Object;
+
 }
 
 void UPlayerUpgradeManager::SetUpgradeDataFromServer(const UPlayFabJsonObject* statJsonStr,const UPlayFabJsonObject* skillJsonStr)
@@ -74,15 +75,15 @@ void UPlayerUpgradeManager::SetUpgradeDataToJson(UPlayFabJsonObject* obj)//9
 {
 	UPlayFabJsonObject* JsonObj = UPlayFabJsonObject::ConstructJsonObject(this);
 
-	JsonObj->SetNumberField(TEXT("BaseAttack"), m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].m_nLv);
-	JsonObj->SetNumberField(TEXT("Critical"), m_AryBaseAtkUpgrade[(int)EAttackType::Critical].m_nLv);
-	JsonObj->SetNumberField(TEXT("CriticalDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].m_nLv);
-	JsonObj->SetNumberField(TEXT("SuperCritical"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].m_nLv);
-	JsonObj->SetNumberField(TEXT("SuperCriticalDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].m_nLv);
-	JsonObj->SetNumberField(TEXT("MagicBomb"), m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].m_nLv);
-	JsonObj->SetNumberField(TEXT("MagicBombDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].m_nLv);
-	JsonObj->SetNumberField(TEXT("SuperMagicBomb"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].m_nLv);
-	JsonObj->SetNumberField(TEXT("SuperMagicBombDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].m_nLv);
+	JsonObj->SetNumberField(TEXT("BaseAttack"), m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].m_nLv.GetValue());
+	JsonObj->SetNumberField(TEXT("Critical"), m_AryBaseAtkUpgrade[(int)EAttackType::Critical].m_nLv.GetValue());
+	JsonObj->SetNumberField(TEXT("CriticalDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].m_nLv.GetValue());
+	JsonObj->SetNumberField(TEXT("SuperCritical"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].m_nLv.GetValue());
+	JsonObj->SetNumberField(TEXT("SuperCriticalDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].m_nLv.GetValue());
+	JsonObj->SetNumberField(TEXT("MagicBomb"), m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].m_nLv.GetValue());
+	JsonObj->SetNumberField(TEXT("MagicBombDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].m_nLv.GetValue());
+	JsonObj->SetNumberField(TEXT("SuperMagicBomb"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].m_nLv.GetValue());
+	JsonObj->SetNumberField(TEXT("SuperMagicBombDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].m_nLv.GetValue());
 
 	obj->SetObjectField(TEXT("Upgrade"),JsonObj);
 }
@@ -91,15 +92,15 @@ void UPlayerUpgradeManager::SetSkillDataToJson(UPlayFabJsonObject* obj)
 {
 	UPlayFabJsonObject* JsonObj = UPlayFabJsonObject::ConstructJsonObject(this);
 
-	JsonObj->SetNumberField(TEXT("DeathBlow"),m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_nLv);
+	JsonObj->SetNumberField(TEXT("DeathBlow"),m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_nLv.GetValue());
 	JsonObj->SetNumberField(TEXT("DeathBlowEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_nIndex);
-	JsonObj->SetNumberField(TEXT("MagicBlade"), m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_nLv);
+	JsonObj->SetNumberField(TEXT("MagicBlade"), m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_nLv.GetValue());
 	JsonObj->SetNumberField(TEXT("MagicBladeEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_nIndex);
-	JsonObj->SetNumberField(TEXT("WhirlWind"), m_AryUpgradeSkill[(int)ESkillType::WhirlWind].m_nLv);
+	JsonObj->SetNumberField(TEXT("WhirlWind"), m_AryUpgradeSkill[(int)ESkillType::WhirlWind].m_nLv.GetValue());
 	JsonObj->SetNumberField(TEXT("WhirlWindEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::WhirlWind].m_nIndex);
-	JsonObj->SetNumberField(TEXT("EarthQuake"), m_AryUpgradeSkill[(int)ESkillType::EarthQuake].m_nLv);
+	JsonObj->SetNumberField(TEXT("EarthQuake"), m_AryUpgradeSkill[(int)ESkillType::EarthQuake].m_nLv.GetValue());
 	JsonObj->SetNumberField(TEXT("EarthQuakeEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::EarthQuake].m_nIndex);
-	JsonObj->SetNumberField(TEXT("WindBlade"), m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_nLv);
+	JsonObj->SetNumberField(TEXT("WindBlade"), m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_nLv.GetValue());
 	JsonObj->SetNumberField(TEXT("WindBladeEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_nIndex);
 
 	obj->SetObjectField(TEXT("Skill"),JsonObj);

@@ -8,6 +8,8 @@
 void UDungeonManager::Init()
 {
 	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UDungeonManager::OnLevelLoadComplete);
+
+	m_PlayerUpgradeManager = UDiabloGameInstance::Get->m_PlayerUpgradeManager;
 }
 
 void UDungeonManager::OpenLevel(UMonsterSpawnManager* currentDgManager)
@@ -29,8 +31,21 @@ AUnitPawn* UDungeonManager::GetNearEnemy(const FVector& loc)
 	return m_CurrentSpawnManager->GetNearestEnemy(loc);
 }
 
+void UDungeonManager::Tick(float deltaTime)
+{
+	m_PlayerUpgradeManager->Tick(deltaTime);
+	
+	if(!m_CurrentSpawnManager)
+	{
+		return;
+	}
+	
+	m_CurrentSpawnManager->Tick(deltaTime);
+}
+
 void UDungeonManager::OnLevelLoadComplete(UWorld* world)
 {
 	m_OnLevelLoadComplete.ExecuteIfBound(world);
 	m_OnLevelLoadComplete.Unbind();
+
 }

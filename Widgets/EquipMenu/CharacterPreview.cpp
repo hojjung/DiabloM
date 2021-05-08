@@ -1,12 +1,13 @@
 #include "CharacterPreview.h"
 
+#include "Managers/DiabloGameInstance.h"
 #include "Managers/GameMode/DiabloGameMode.h"
 
 void UCharacterPreview::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	m_PlayerVisual = Cast<ADiabloGameMode>( UGameplayStatics::GetGameMode(this))->GetVisualActor();
+	m_PlayerVisual = UDiabloGameInstance::Get->m_NormalDgManager->m_VisualActor;
 
 	m_bTouched = false;
 

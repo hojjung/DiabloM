@@ -51,7 +51,7 @@ public:
 		PRINTF("This IsParent MonsterSpawn LevelLoadComp");
 	};
 
-	bool IsBattleStarted()
+	virtual bool IsBattleStarted()
 	{
 		return false;
 	};

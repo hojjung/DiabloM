@@ -58,12 +58,12 @@ void UUpgradeButton::NativeOnInitialized()
 
 void UUpgradeButton::SetDescPreviewText(const FUpgradeSpec& data)
 {
-	m_TextDesc->SetText(data.m_UpgradeData->GetFormatDescPreview(data.m_nLv));
+	m_TextDesc->SetText(data.m_UpgradeData->GetFormatDescPreview(data.m_nLv.GetValue()));
 }
 
 void UUpgradeButton::UpdateLevelText()
 {
-	m_nCurrentLevel= m_CurrentUpgrade->m_nLv;
+	m_nCurrentLevel= m_CurrentUpgrade->m_nLv.GetValue();
 	FFormatOrderedArguments Args;
 	Args.Add(m_NameText);
 	Args.Add(m_nCurrentLevel);

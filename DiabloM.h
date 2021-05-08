@@ -122,3 +122,9 @@ typedef  TBigInt<512,true> BigInt;
 //#undef LOCTEXT_NAMESPACE
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnTick,float);
+
+class DeleterNot
+{
+public:
+	void operator()(void*) {}
+};

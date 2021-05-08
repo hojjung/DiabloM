@@ -3,8 +3,10 @@
 #include "EngineUtils.h"
 #include "JsonSerializer.h"
 #include "Characters/DiabloPlayerController.h"
+#include "Characters/StartMap/PlayerVisual.h"
 #include "Engine/AssetManager.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Widgets/HUD/MainCanvas.h"
 
 UDataTable* UNormalDungeonManager::DungeonDataTable = nullptr;
 UDataTable* UNormalDungeonManager::DropDataTable = nullptr;
@@ -53,6 +55,17 @@ void UNormalDungeonManager::Init()
 	m_LoadedMonsters.Init(TSharedPtr<FStreamableHandle>(),12);
 }
 
+void UNormalDungeonManager::OnLevelLoadComplete(UWorld* world)
+{
+	PRINTF("This IS Normal Dg");
+	StartSpawn(world,m_CurrentDg);
+	SpawnVisualActor();
+	SpawnOtherPVPActor();
+
+	AGameLevelHUD* MyHud = Cast<AGameLevelHUD>( UDiabloGameInstance::Get->GetPlCon()->GetHUD());
+	MyHud->m_Canvas->m_OnMenuVisibleChanged.AddUObject(this,&UNormalDungeonManager::OnMenuOpen);
+}
+
 void UNormalDungeonManager::StartSpawn(UWorld* world, const FDungeonDataTableRow* dgData)
 {
 	for(auto& Handle : m_LoadedMonsters)
@@ -96,6 +109,8 @@ void UNormalDungeonManager::StartSpawn(UWorld* world, const FDungeonDataTableRow
 		AMonsterPawn* SpawnedMob = CreateMob(FVector::ZeroVector);
 
 		m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
+
+		SpawnedMob->m_OnDeathAnimBefore.AddUObject(this,&UNormalDungeonManager::OnMonsterDead);
 
 		SpawnMobToLoc(FVector::ZeroVector);
 	}
@@ -260,13 +275,13 @@ AMonsterPawn* UNormalDungeonManager::SpawnMobToLoc(FVector loc)
 
 void UNormalDungeonManager::OnBossDead(AMonsterPawn* pawn)
 {
-	m_SpawnedBoss->m_OnDead.Remove(m_BossDeleHandle);
+	m_SpawnedBoss->m_OnDeathAnimAfter.Remove(m_BossDeleHandle);
 	m_bBossSpawned = false;;
 	m_SpawnedBoss=nullptr;
 	pawn->Destroy();
-	m_OnBossBattleEnd.Broadcast(true);
 	UDiabloGameInstance::Get->m_PlayerUpgradeManager->ClearCooldownAllSkill();
-	//UDiabloGameInstance::Get->m_DungeonManager->LevelUpDungeon();
+
+	EndDungeon(true);
 }
 
 void UNormalDungeonManager::BeginDestroy()
@@ -352,10 +367,6 @@ AMonsterPawn* UNormalDungeonManager::CreateMob(FVector loc)
 	return Mob;
 }
 
-void UNormalDungeonManager::MakeNamedMonster(AMonsterPawn* mob)
-{
-	//material setting need
-}
 
 void UNormalDungeonManager::AddKillCount()
 {
@@ -389,7 +400,7 @@ void UNormalDungeonManager::SpawnBossMob()
 
 	m_SpawnedBoss =  Mob;
 
-	m_BossDeleHandle =m_SpawnedBoss->m_OnDead.AddUObject(this,&UNormalDungeonManager::OnBossDead);
+	m_BossDeleHandle =m_SpawnedBoss->m_OnDeathAnimAfter.AddUObject(this,&UNormalDungeonManager::OnBossDead);
 	
 	APlayerDiabloCharacter* Pl = UDiabloGameInstance::Get->GetPlChar();
 
@@ -397,7 +408,6 @@ void UNormalDungeonManager::SpawnBossMob()
 
 	m_bBossSpawned = true;
 
-	m_OnBossBattleStart.Broadcast();
 }
 
 void UNormalDungeonManager::FailBossKill()
@@ -407,7 +417,6 @@ void UNormalDungeonManager::FailBossKill()
 	m_bBossSpawned = false;;
 	m_SpawnedBoss->Destroy();
 	m_SpawnedBoss=nullptr;
-	m_OnBossBattleEnd.Broadcast(false);
 }
 
 
@@ -436,11 +445,6 @@ void UNormalDungeonManager::SetDungeonData(const FString& dgJsonStr)
 	SelectNormalDungeon(StageCurrentLevel);
 	//
 	GoldDungeonDataTable->GetAllRows("", m_AryGoldDgDataTable);
-}
-
-void UNormalDungeonManager::OpenLevel()
-{
-	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(), m_CurrentDg->m_DgId, true);
 }
 
 void UNormalDungeonManager::SelectNormalDungeon(int index)
@@ -486,8 +490,8 @@ void UNormalDungeonManager::LevelUpDungeon()
 	m_OnDgOpen.Broadcast(m_nCurrentStageLevel);
 	
 	//UDiabloGameInstance::Get->m_PlayfabManager->UploadMainData();
-	
-	OpenLevel();
+	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(this);
+	//OpenLevel();
 }
 
 BigInt UNormalDungeonManager::GetCurrentDungeonBounty()
@@ -549,4 +553,93 @@ FString UNormalDungeonManager::GetDgDataStr()
 	JsonObject->SetNumberField(TEXT("MaxStageLevel"), GetMaxStage());
 
 	return PlayFab::FJsonKeeper(JsonObject).toJSONString();
+}
+
+
+
+bool UNormalDungeonManager::IsBattleStarted()
+{
+	return m_SpawnedBoss;
+}
+
+FString UNormalDungeonManager::GetOpenLevelAssetName()
+{
+	return  m_AryDgDataTable[GetCurrentStage()]->m_DgId.ToString();
+}
+
+void UNormalDungeonManager::OnMonsterDead(AMonsterPawn* self)
+{
+	AddKillCount();
+	
+	UDiabloGameInstance::Get->m_QuestManager->AddQuestCount(EQuestType::MonsterKill);
+	
+	UDiabloGameInstance::Get->m_GoldManager->AddGold(self->GetGoldBounty());
+}
+
+void UNormalDungeonManager::StartDungeon()
+{
+	Super::StartDungeon();
+
+	SpawnBossMob();
+
+}
+
+void UNormalDungeonManager::EndDungeon(bool b)
+{
+	Super::EndDungeon(b);
+	
+	if(b)
+	{
+		UDiabloGameInstance::Get->m_PVPManager->m_OnMatchSuccessed.Unbind();
+		LevelUpDungeon();
+	}
+	else
+	{
+		FailBossKill();
+	}
+}
+
+void UNormalDungeonManager::SpawnVisualActor()
+{
+	FRotator Rot = FRotator(0);
+	Rot.Yaw = 310.f;
+	FVector Loc = FVector(7777.f);
+	FActorSpawnParameters Param;
+	Param.bNoFail=true;
+	m_VisualActor = GetWorld()->SpawnActor<APlayerVisual>(APlayerVisual::StaticClass(),Loc,Rot,Param);
+	m_VisualActor->HideMeshWithTick();
+}
+
+void UNormalDungeonManager::SpawnOtherPVPActor()
+{
+	FRotator Rot = FRotator(0);
+	
+	Rot.Yaw = 310.f;
+	
+	FVector Loc = FVector(77777.f);
+	
+	FActorSpawnParameters Param;
+	
+	Param.bNoFail=true;
+	
+	m_OtherPlayer = GetWorld()->SpawnActor<AOtherPlayerPawn>(AOtherPlayerPawn::StaticClass(),Loc,Rot,Param);
+	
+	m_OtherPlayer->HideMeshWithTick();
+	
+	m_OtherPlayer->SetPetPositionForVisual();
+	//
+	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchSuccessed.BindUObject(m_OtherPlayer,&AOtherPlayerPawn::SetPVPPlayerPawn);
+}
+
+void UNormalDungeonManager::OnMenuOpen(bool b)
+{
+	if(b)
+	{
+		m_VisualActor->ShowMeshWithTick();
+	}
+	else
+	{
+		m_VisualActor->HideMeshWithTick();
+		m_OtherPlayer->HideMeshWithTick();
+	}
 }

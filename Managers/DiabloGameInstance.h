@@ -18,7 +18,7 @@
 #include "SystemManagers/ChatManager.h"
 #include "SystemManagers/DailyPrizeManager.h"
 #include "Widgets/HUD/GameLevelHUD.h"
-
+#include "SCUE4.h"
 
 
 #include "DiabloGameInstance.generated.h"
@@ -32,14 +32,17 @@ class UMonsterSpawnManager;
 class UDungeonManager;
 struct FItemTier;
 
+
+
 UCLASS()
-class DIABLOM_API UDiabloGameInstance : public UPlatformGameInstance
+class DIABLOM_API UDiabloGameInstance : public USafeGameInstance
 {
 	GENERATED_BODY()
 	
 public:
 	UDiabloGameInstance();//
 	static UDiabloGameInstance* Get;
+
 	
 public:
 	UPROPERTY()

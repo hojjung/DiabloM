@@ -66,12 +66,12 @@ void USkillUpgradeButton::SetCostText(const BigInt& v)
 
 void USkillUpgradeButton::SetDescPreviewText(const FSkillSpec& data)
 {
-	m_TextDesc->SetText(data.m_SkillData->GetFormatDescPreview(data.m_nLv));
+	m_TextDesc->SetText(data.m_SkillData->GetFormatDescPreview(data.m_nLv.GetValue()));
 }
 
 void USkillUpgradeButton::UpdateSkillButton()
 {
-	m_nCurrentLevel = m_EquippedSkillSpec->m_nLv;
+	m_nCurrentLevel = m_EquippedSkillSpec->m_nLv.GetValue();
 	FFormatOrderedArguments Args;
 	Args.Add(m_NameText);
 	Args.Add(m_nCurrentLevel);

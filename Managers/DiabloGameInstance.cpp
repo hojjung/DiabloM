@@ -34,9 +34,9 @@ void UDiabloGameInstance::Init()
     Super::Init();
     m_NormalDgManager = NewObject<UNormalDungeonManager>();
 	m_NormalDgManager->Init();
+    m_PlayerUpgradeManager = NewObject<UPlayerUpgradeManager>();
     m_DungeonManager = NewObject<UDungeonManager>();
     m_DungeonManager->Init();
-    m_PlayerUpgradeManager = NewObject<UPlayerUpgradeManager>();
     m_GoldManager = NewObject<UGoldManager>();
     m_EquipManager = NewObject<UEquipManager>();
 	m_GachaManager = NewObject<UGachaManager>();

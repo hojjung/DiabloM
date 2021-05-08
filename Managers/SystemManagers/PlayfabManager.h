@@ -28,6 +28,9 @@ typedef PlayFab::UPlayFabClientAPI::FGetAccountInfoDelegate FGetAccntInfoDele;
 typedef PlayFab::ClientModels::FGetAccountInfoRequest FGetAccntInfoReq;
 typedef PlayFab::ClientModels::FGetAccountInfoResult FGetAccntInfoRslt;
 //
+
+
+
 UCLASS()
 class DIABLOM_API UPlayfabManager : public UObject
 {
@@ -46,6 +49,11 @@ public://delegate
 	
 	FOnPlayfabError m_OnPlayfabError;
 
+	FString m_SessionTicket;
+
+	TSharedPtr<UPlayFabAuthenticationContext> m_Auth;
+
+	TSharedPtr<UPlayFabAuthenticationContext> CreateAuthCon();
 public://static
 	static const FString MainData;
 	static const FString MainDungeon;

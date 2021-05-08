@@ -114,17 +114,6 @@ void AMonsterPawn::BeginPlay()
     m_PlCon = Cast<ADiabloPlayerController>( UGameplayStatics::GetPlayerController(this,0));
 }
 
-void AMonsterPawn::RequestBounty()
-{
-    switch (m_MonsterType)
-    {
-        case Normal:UDiabloGameInstance::Get->m_GoldManager->AddGold(m_fGoldBounty); break;
-        case Treasure: break;
-        case Boss: break;
-        default: ;
-    }
-    
-}
 
 void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,float statFactor ,float scaleFactor,float goldFactor)//droptable
 {
@@ -222,14 +211,11 @@ void AMonsterPawn::HideStatusBar()
 
 void AMonsterPawn::Die()
 {
-    APlayerDiabloCharacter* Pawn = Cast<APlayerDiabloCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-    Pawn->FocusTarget(nullptr);
-    //Pawn->GainRagePoint();
-
-    UDiabloGameInstance::Get->m_QuestManager->AddQuestCount(EQuestType::MonsterKill);
+    auto* Player = UDiabloGameInstance::Get->GetPlChar();
     
-    //UDiabloGameInstance::Get->m_MonsterSpawn->AddKillCount();
-    RequestBounty();
+    Player->FocusTarget(nullptr);
+    
+    Player->GainRagePoint();
     
     m_Particle->Activate(true);
     m_CoinAudio->Play();
@@ -241,6 +227,8 @@ void AMonsterPawn::Die()
     GetMovementComponent()->SetActive(false);
     GetMovementComponent()->SetComponentTickEnabled(false);
     FocusTarget(nullptr);
+
+    m_OnDeathAnimBefore.Broadcast(this);
     
     if (m_DeathMontage)
     {
@@ -274,7 +262,7 @@ void AMonsterPawn::OnDeathAnimEnd()
     SetAcive(false);
     m_bDeathAnimEnd = true;
 
-    m_OnDead.Broadcast(this);
+    m_OnDeathAnimAfter.Broadcast(this);
     //Destroy();
 }
 
