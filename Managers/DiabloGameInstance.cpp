@@ -49,6 +49,11 @@ void UDiabloGameInstance::Init()
 	m_PVPManager=NewObject<UPVPManager>();
 	m_MagicDgManager=NewObject<UMagicStoneDgManager>();
 	m_MagicDgManager->Init();
+	m_PetDgManager=NewObject<UPetDgManager>();
+	m_PetDgManager->Init();
+	m_WeaponDgManager=NewObject<UWeaponScrollDgManager>();
+	m_WeaponDgManager->Init();
+	
     m_PlayfabManager = NewObject<UPlayfabManager>();
     m_PlayfabManager->Init();
 	m_ChatManager = NewObject<UChatManager>();

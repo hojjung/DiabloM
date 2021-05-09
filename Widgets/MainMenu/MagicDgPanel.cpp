@@ -1,6 +1,7 @@
 #include "MagicDgPanel.h"
 
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/DgContentManagers/DungeonManager.h"
 
 void UMagicDgPanel::NativeOnInitialized()
 {

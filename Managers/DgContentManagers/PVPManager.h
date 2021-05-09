@@ -27,13 +27,12 @@ public:
 	DECLARE_DELEGATE_ThreeParams(FOnDmgChanged,float,BigInt,BigInt);
 	DECLARE_DELEGATE_OneParam(FOnBattleEnd,bool);
 	DECLARE_DELEGATE_OneParam(FOnOtherPlayerSpawned,AOtherPlayerPawn*);
-	DECLARE_DELEGATE_OneParam(FOnTick,float);
 
 	UPVPManager();
 
 	FOnOtherPlayerSpawned m_OnOtherPlayerSpawned;
 
-	FOnTick m_OnTick;
+	
 
 	FOnDmgChanged m_OnDmgChanged;
 
@@ -101,8 +100,6 @@ public:
 	virtual AUnitPawn* GetNearestEnemy(const FVector& wantPos) override;
 
 	void MoveToPVPDungeon();
-
-	void MoveToNormalDungeon();
 
 	virtual FString GetOpenLevelAssetName() override;
 

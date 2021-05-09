@@ -19,6 +19,8 @@
 #include "SystemManagers/DailyPrizeManager.h"
 #include "Widgets/HUD/GameLevelHUD.h"
 #include "SCUE4.h"
+#include "DgContentManagers/PetDgManager.h"
+#include "DgContentManagers/WeaponScrollDgManager.h"
 
 
 #include "DiabloGameInstance.generated.h"
@@ -75,6 +77,10 @@ public:
 	UPVPManager* m_PVPManager;
 	UPROPERTY()
 	UMagicStoneDgManager* m_MagicDgManager;
+	UPROPERTY()
+	UPetDgManager* m_PetDgManager;
+	UPROPERTY()
+	UWeaponScrollDgManager* m_WeaponDgManager;
 	
 protected:
 	virtual void Init() override;

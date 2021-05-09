@@ -124,9 +124,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TAssetSubclassOf<UAnimInstance> m_AnimBP;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimSequence* m_VisualIdleAnim;
+	TSoftObjectPtr<UAnimSequence> m_VisualIdleAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_BaseAttackAnim;
+	TSoftObjectPtr<UAnimMontage> m_BaseAttackAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<USkeletalMesh> m_PlayerSkinSoft;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0", UIMax = "3.3"))

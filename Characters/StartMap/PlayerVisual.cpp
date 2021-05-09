@@ -142,7 +142,7 @@ void APlayerVisual::OnMeshChanged(APlayerDiabloCharacter* charDia)
 	{
 		const FPlayerSkinTable* EntityData = charDia->GetPlayerEntityData()->m_PlayerData; 
 		m_MeshBody->SetSkeletalMesh(EntityData->m_PlayerSkinSoft.Get());
-		m_MeshBody->PlayAnimation(EntityData->m_VisualIdleAnim,true);
+		m_MeshBody->PlayAnimation(EntityData->m_VisualIdleAnim.Get(),true);
 	}
 	
 	if(charDia->GetCreatedWeapon())

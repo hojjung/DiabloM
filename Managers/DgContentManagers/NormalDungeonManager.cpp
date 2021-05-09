@@ -436,7 +436,7 @@ void UNormalDungeonManager::SetDungeonData(const FString& dgJsonStr)
 
 	int StageCurrentLevel = JsonObject->GetIntegerField(TEXT("CurrentStageLevel"));
 
-	SetMaxStageLevel(JsonObject->GetIntegerField(TEXT("MaxStageLevel")));
+	m_nMyMaxStageLevel = JsonObject->GetIntegerField(TEXT("MaxStageLevel"));
 
 	if (StageCurrentLevel < 0 || StageCurrentLevel >= m_AryDgDataTable.Num())
 	{
@@ -449,38 +449,38 @@ void UNormalDungeonManager::SetDungeonData(const FString& dgJsonStr)
 
 void UNormalDungeonManager::SelectNormalDungeon(int index)
 {
-	SetCurrentStageLevel(index);
-	m_CurrentDg = m_AryDgDataTable[GetCurrentStage()];
+	m_nCurrentStageLevel = index;
+	m_CurrentDg = m_AryDgDataTable[m_nCurrentStageLevel.GetValue()];
 }
 
 void UNormalDungeonManager::LevelUpDungeon()
 {
-	m_nCurrentStageLevel = GetCurrentStage();
+	m_nCurrentStageLevel = m_nCurrentStageLevel.GetValue();
 
-	int NextLevel = m_nCurrentStageLevel + 1;
+	int NextLevel = (m_nCurrentStageLevel + 1).GetValue();
 
 	if (NextLevel >= m_AryDgDataTable.Num())
 	{
 		return; //MAXStage
 	}
 
-	m_nCurrentStageLevel++;
+	++m_nCurrentStageLevel;
 
-	SetCurrentStageLevel(m_nCurrentStageLevel);
+	m_nCurrentStageLevel = m_nCurrentStageLevel.GetValue();
 
-	SelectNormalDungeon(m_nCurrentStageLevel);
+	SelectNormalDungeon(m_nCurrentStageLevel.GetValue());
 
-	if (m_nCurrentStageLevel > GetMaxStage())
+	if (m_nCurrentStageLevel > m_nMyMaxStageLevel.GetValue())
 	{
 		PRINTF("DgManager-LevelUpDungeon HighScore");
 
-		SetMaxStageLevel(m_nCurrentStageLevel);
+		m_nMyMaxStageLevel = m_nCurrentStageLevel.GetValue();
 		UDiabloGameInstance::Get->m_QuestManager->AddQuestCount(EQuestType::StageLv);
 		UDiabloGameInstance::Get->m_PlayfabManager->UploadNormalDungeon();
 		m_OnDungeonMaxUpdate.Broadcast();
 	}
 
-	m_OnDgOpen.Broadcast(m_nCurrentStageLevel);
+	m_OnDgOpen.Broadcast(m_nCurrentStageLevel.GetValue());
 
 	//UDiabloGameInstance::Get->m_PlayfabManager->UploadMainData();
 	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(this);
@@ -494,56 +494,16 @@ BigInt UNormalDungeonManager::GetCurrentDungeonBounty()
 
 BigInt UNormalDungeonManager::GetMaxDungeonBounty()
 {
-	return m_AryDgDataTable[GetMaxStage()]->GetMobGold();
-}
-
-int UNormalDungeonManager::GetMaxStage() const
-{
-	int CachedStage = m_nSafeMaxStageLevel ^ 1423;
-
-	if (m_nMyMaxStageLevel != CachedStage)
-	{
-		PRINTF("1Cheated!!!!!");
-		UDiabloGameInstance::Get->m_PlayfabManager->RequestCheatAlert();
-		return -1;
-	}
-
-	return CachedStage;
-}
-
-int UNormalDungeonManager::GetCurrentStage() const
-{
-	int CachedStage = m_nSafeCurrentStageLevel ^ 666;
-
-	if (m_nCurrentStageLevel != CachedStage)
-	{
-		PRINTF("2Cheated!!!!!");
-		UDiabloGameInstance::Get->m_PlayfabManager->RequestCheatAlert();
-		return -1;
-	}
-
-	return CachedStage;
-}
-
-void UNormalDungeonManager::SetMaxStageLevel(int stageLv)
-{
-	m_nMyMaxStageLevel = stageLv;
-	m_nSafeMaxStageLevel = m_nMyMaxStageLevel ^ 1423;
-}
-
-void UNormalDungeonManager::SetCurrentStageLevel(int stageLv)
-{
-	m_nCurrentStageLevel = stageLv;
-	m_nSafeCurrentStageLevel = m_nCurrentStageLevel ^ 666;
+	return m_AryDgDataTable[m_nMyMaxStageLevel.GetValue()]->GetMobGold();
 }
 
 FString UNormalDungeonManager::GetDgDataStr()
 {
 	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 
-	JsonObject->SetNumberField(TEXT("CurrentStageLevel"), GetCurrentStage());
+	JsonObject->SetNumberField(TEXT("CurrentStageLevel"), m_nCurrentStageLevel.GetValue());
 
-	JsonObject->SetNumberField(TEXT("MaxStageLevel"), GetMaxStage());
+	JsonObject->SetNumberField(TEXT("MaxStageLevel"), m_nMyMaxStageLevel.GetValue());
 
 	return PlayFab::FJsonKeeper(JsonObject).toJSONString();
 }
@@ -556,7 +516,7 @@ bool UNormalDungeonManager::IsBattleStarted()
 
 FString UNormalDungeonManager::GetOpenLevelAssetName()
 {
-	return m_AryDgDataTable[GetCurrentStage()]->m_DgId.ToString();
+	return m_AryDgDataTable[m_nCurrentStageLevel.GetValue()]->m_DgId.ToString();
 }
 
 void UNormalDungeonManager::OnMonsterDead(AMonsterPawn* self)

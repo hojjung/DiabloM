@@ -57,6 +57,8 @@ protected:
 	TSharedPtr<FStreamableHandle>  m_PetHandle;
 
 	TSharedPtr<FStreamableHandle>  m_WingHandle;
+
+	TSharedPtr<FStreamableHandle>  m_AnimBaseAtkHandle;
 	
 	TArray<FUpgradeSpec> m_AryUpgradeSpec;
 	

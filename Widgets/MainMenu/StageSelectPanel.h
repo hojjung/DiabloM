@@ -3,10 +3,14 @@
 #include "CoreMinimal.h"
 
 #include "MagicDgPanel.h"
+#include "PetDgPanel.h"
 #include "ScrollBox.h"
 #include "StageBtn.h"
 #include "VerticalBox.h"
+#include "WeaponDgPanel.h"
 #include "Blueprint/UserWidget.h"
+#include "Widgets/CommonElement/ImageAndText.h"
+
 #include "StageSelectPanel.generated.h"
 
 class UPVPPanel;
@@ -20,13 +24,15 @@ class DIABLOM_API UStageSelectPanel : public UUserWidget
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_ImgTxtDgTicket;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnShowNormalDg;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnShowPetDg;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnShowMagicDg;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnShowStatDg;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnShowAcceDg;
+	UButton* m_BtnShowWeaponDg;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnPVP;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -38,9 +44,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UScrollBox* m_DgStageBtnListVert;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UScrollBox* m_DgAcceStageBtnListVert;
+	UPetDgPanel* m_DgPetPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UScrollBox* m_DgStatBtnListVert;
+	UWeaponDgPanel* m_DgWeaponPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UPVPPanel* m_DgPVPPanel;
 	UPROPERTY(EditAnywhere)
@@ -60,9 +66,9 @@ public:
 	UFUNCTION()
     void OpenGoldDg();
 	UFUNCTION()
-	void OpenStatDg();
+	void OpenPetDg();
 	UFUNCTION()
-    void OpenAcceDg();
+    void OpenWeaponDg();
 	UFUNCTION()
     void OpenPVPDg();
 	UFUNCTION()

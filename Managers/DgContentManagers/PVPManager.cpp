@@ -142,8 +142,6 @@ void UPVPManager::AddOtherPlayerTotalDamage(const BigInt& v)
 
 void UPVPManager::OnLevelLoadComplete(UWorld* world)
 {
-	Super::OnLevelLoadComplete(world);
-
 	PRINTF("PVPManager! World:%s", *world->GetMapName());
 	SpawnPVPPlayer(world);
 	StartDungeon();
@@ -185,12 +183,12 @@ void UPVPManager::Tick(float deltaTime)
 	{
 		return;
 	}
+	
+	Super::Tick(deltaTime);
 
 	m_fTimer += deltaTime;
 
 	float TimeRemain = PVPTIME - m_fTimer;
-
-	m_OnTick.ExecuteIfBound(TimeRemain);
 
 	if (m_fTimer > PVPTIME)
 	{
@@ -230,11 +228,6 @@ AUnitPawn* UPVPManager::GetNearestEnemy(const FVector& wantPos)
 void UPVPManager::MoveToPVPDungeon()
 {
 	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(this);
-}
-
-void UPVPManager::MoveToNormalDungeon()
-{
-	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(UDiabloGameInstance::Get->m_NormalDgManager);
 }
 
 FString UPVPManager::GetOpenLevelAssetName()

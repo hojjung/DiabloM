@@ -6,6 +6,7 @@
 #include "EngineUtils.h"
 #include "WeakInterfacePtr.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/DgContentManagers/DungeonManager.h"
 
 UPlayerSensing::UPlayerSensing()
 {

@@ -148,6 +148,8 @@ protected:
 
 	TSharedPtr<FStreamableHandle>  m_WingHandle;
 
+	TSharedPtr<FStreamableHandle>  m_AnimAtkHandle;
+
 	TSharedPtr<FStreamableHandle>  m_WeaponHandle;
 	
 protected:

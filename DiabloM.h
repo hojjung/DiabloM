@@ -68,7 +68,7 @@
 // #include "AbilitySystem/AbilityTypes.h"
 
 //
-
+#include "SCUE4.h"
 DIABLOM_API DECLARE_LOG_CATEGORY_EXTERN(DiaM, Log, All);
 
 

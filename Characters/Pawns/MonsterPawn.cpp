@@ -1,6 +1,7 @@
 #include "MonsterPawn.h"
 #include "PlayerDiabloCharacter.h"
 #include "Characters/Logic/MobUnitMovement.h"
+#include "Engine/AssetManager.h"
 #include "Lib/DiaBlueprintFunctionLibrary.h"
 #include "Managers/DiabloGameInstance.h"
 
@@ -114,6 +115,36 @@ void AMonsterPawn::BeginPlay()
     m_PlCon = Cast<ADiabloPlayerController>( UGameplayStatics::GetPlayerController(this,0));
 }
 
+void AMonsterPawn::ReleaseAssetMemory()
+{
+    if (m_HandleAnimBaseAttack.Get())
+    {
+        m_HandleAnimBaseAttack.Get()->ReleaseHandle();
+    }
+
+    if (m_HandleAnimDeath.Get())
+    {
+        m_HandleAnimDeath.Get()->ReleaseHandle();
+    }
+
+    if (m_HandleAnimSpawn.Get())
+    {
+        m_HandleAnimSpawn.Get()->ReleaseHandle();
+    }
+
+    if (m_HandleAnimTookHit.Get())
+    {
+        m_HandleAnimTookHit.Get()->ReleaseHandle();
+    }
+}
+
+void AMonsterPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    Super::EndPlay(EndPlayReason);
+
+    ReleaseAssetMemory();
+}
+
 
 void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt& hp,const BigInt& gold,EMonsterType type,float statFactor ,float scaleFactor,float goldFactor)//droptable
 {
@@ -132,13 +163,17 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
     
     m_Movement->SetMoveSpeed(UnitData->m_fMoveSpeed);
 
-    m_BaseAttackAnim =  UnitData->m_BaseAttackAnim;
+    FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
 
-    m_DeathMontage = UnitData->m_DeathMontage;
+    ReleaseAssetMemory();
 
-    m_SpawnAnim = UnitData->m_SpawnAnim;
-    
-    m_TookHitMontage = UnitData->m_TookHitMontage;
+    m_BaseAttackAnim =StreamableManager.LoadSynchronous(UnitData->m_BaseAttackAnim, true, &m_HandleAnimBaseAttack);
+
+    m_DeathMontage =StreamableManager.LoadSynchronous( UnitData->m_DeathMontage, true, &m_HandleAnimDeath);
+
+    m_SpawnAnim =StreamableManager.LoadSynchronous(UnitData->m_SpawnAnim, true, &m_HandleAnimSpawn);
+
+    m_TookHitMontage =StreamableManager.LoadSynchronous(UnitData->m_TookHitMontage, true, &m_HandleAnimTookHit);
 
     m_TextUnitName = UnitData->m_ShowingName;
 

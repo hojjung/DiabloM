@@ -6,10 +6,6 @@
 
 UMagicStoneDgManager::UMagicStoneDgManager()
 {
-	m_nDgLevel = 0;
-	static ConstructorHelpers::FClassFinder<UCameraShake> FoundCamshake(
-		TEXT("Blueprint'/Game/Blueprints/BP_StompShake.BP_StompShake_C'"));
-	m_ClassShake = FoundCamshake.Class;
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundDgTable(
 		TEXT("DataTable'/Game/DataTables/Dungeon/MagicDragonDgTable.MagicDragonDgTable'"));
 
@@ -24,10 +20,6 @@ void UMagicStoneDgManager::Init()
 void UMagicStoneDgManager::OnLevelLoadComplete(UWorld* world)
 {
 	PRINTF("MagicStoneManager! World:%s", *world->GetMapName());
-
-	FCoreUObjectDelegates::PostLoadMapWithWorld.Remove(m_LevelLoadHandle);
-
-	UGameplayStatics::GetPlayerController(UDiabloGameInstance::Get->GetWorld(), 0)->ClientPlayCameraShake(m_ClassShake);
 
 	FMonsterEntity* DragonEntity = m_CurrentDgData->m_Monsters[0].GetRow<FMonsterEntity>("");
 	//
@@ -46,7 +38,7 @@ void UMagicStoneDgManager::OnLevelLoadComplete(UWorld* world)
 
 	m_SpawnedMagicDragon->m_OnDeathAnimAfter.AddUObject(this,&UMagicStoneDgManager::EndMagicDgSuccess);
 
-	m_nSuccessBounty = FMath::RandRange(m_CurrentDgData->m_nPrizeMagicStoneMin,m_CurrentDgData->m_nPrizeMagicStoneMax);
+	m_nSuccessBounty = m_CurrentDgData->GetRandomPrize();
 
 	m_nFailBounty  = m_CurrentDgData->m_nPrizeMagicStoneMin / 4;
 
@@ -82,9 +74,7 @@ FString UMagicStoneDgManager::GetOpenLevelAssetName()
 
 void UMagicStoneDgManager::RequestMoveMagicStoneDg(int dgLevel)
 {
-	m_nDgLevel = dgLevel;
-
-	m_CurrentDgData = m_DgDataRow[m_nDgLevel];
+	m_CurrentDgData = m_DgDataRow[dgLevel];
 }
 
 
@@ -96,11 +86,11 @@ void UMagicStoneDgManager::Tick(float delta_seconds)
 		return;
 	}
 
+	Super::Tick(delta_seconds);
+
 	m_fTimer += delta_seconds;
 
 	float TimeRemain = MAGICDGTIME - m_fTimer;
-
-	m_OnTick.ExecuteIfBound(TimeRemain);
 
 	if (m_fTimer > MAGICDGTIME)
 	{
@@ -151,7 +141,3 @@ int UMagicStoneDgManager::GetFailBounty()
 	return m_nFailBounty;
 }
 
-void UMagicStoneDgManager::MoveToNormalDungeon()
-{
-	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(UDiabloGameInstance::Get->m_NormalDgManager);
-}

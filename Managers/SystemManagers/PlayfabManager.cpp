@@ -778,7 +778,7 @@ void UPlayfabManager::PurchaseFail(EInAppPurchaseState::Type completionStatus,co
 
 void UPlayfabManager::UploadNormalDungeon()
 {
-	int MaxStage = UDiabloGameInstance::Get->m_NormalDgManager->GetMaxStage();
+	int MaxStage = UDiabloGameInstance::Get->m_NormalDgManager->m_nMyMaxStageLevel.GetValue();
 
 	PRINTF("UploadMaxStage:%d",MaxStage);
 	

@@ -254,9 +254,16 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJso
 	m_ArySkillSpec[(int)ESkillType::WindBlade].InitSkillSpec(skillObj->GetNumberField(TEXT("WindBlade")),
 	                                                         skillObj->GetNumberField(TEXT("WindBladeEquipSlot")));
 	//
+	
 	m_fAttackSpeed = SkinData->m_fAttackSpeedMultiple;
-	m_BaseAttackAnim = SkinData->m_BaseAttackAnim;
 
+	if(m_AnimBaseAtkHandle.Get())
+	{
+		m_AnimBaseAtkHandle->ReleaseHandle();
+	}
+
+	m_BaseAttackAnim =StreamableManager.LoadSynchronous(SkinData->m_BaseAttackAnim, true, &m_AnimBaseAtkHandle);
+	
 	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
 	//
 	m_ArySkillEquipped.Init(nullptr, 4);
@@ -299,6 +306,11 @@ void AOtherPlayerPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if (m_WingHandle.Get())
 	{
 		m_WingHandle.Get()->ReleaseHandle();
+	}
+	
+	if(m_AnimBaseAtkHandle.Get())
+	{
+		m_AnimBaseAtkHandle->ReleaseHandle();
 	}
 }
 

@@ -7,6 +7,7 @@
 #include "NavigationPath.h"
 #include "NavigationData.h"
 #include "NavigationSystem.h"
+
 #include "Characters/Pawns/MonsterPawn.h"
 #include "Datas/DungeonDataTable.h"
 
@@ -39,13 +40,23 @@ public:
 
 	static const int MonsterPoolCount = 12;
 
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBossTimer,float,float);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBossTimer, float, float);
+	DECLARE_MULTICAST_DELEGATE(FOnDungeonMaxUpdate);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDgOpen, int);
 
 	FOnBossTimer m_OnBossBattleTick;
+
+	static UDataTable* DungeonDataTable;
+
+	static UDataTable* DropDataTable;
+
+	static UDataTable* MonsterEntityTable;
+
+	static UDataTable* GoldDungeonDataTable;
 protected:
 	UPROPERTY()
 	float m_fBossTimer;
-	
+
 	bool m_bTouched;
 
 	FRotator m_InitVisualRot;
@@ -98,51 +109,25 @@ public:
 	UPROPERTY()
 	APlayerVisual* m_VisualActor;
 
-	public:
-	DECLARE_MULTICAST_DELEGATE(FOnDungeonMaxUpdate);
-
 	FOnDungeonMaxUpdate m_OnDungeonMaxUpdate;
 
-
-	static UDataTable* DungeonDataTable;
-
-	static UDataTable* DropDataTable;
-
-	static UDataTable* MonsterEntityTable;
-
-	static UDataTable* GoldDungeonDataTable;
-
-	//FItemDropTableRow
-	//FMonsterEntity
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDgOpen, int);
-
 	FOnDgOpen m_OnDgOpen;
-	protected:
+	
+	FSafeInt m_nMyMaxStageLevel;
+	
+	FSafeInt m_nCurrentStageLevel;
+	
+protected:
 	TArray<const FDungeonDataTableRow*> m_AryDgDataTable;
-
 
 	const FDungeonDataTableRow* m_CurrentDg;
 
 
-	UPROPERTY()
-	int m_nMyMaxStageLevel;
-	UPROPERTY()
-	int m_nCurrentStageLevel;
-	UPROPERTY()
-	int m_nSafeMaxStageLevel;
-	UPROPERTY()
-	int m_nSafeCurrentStageLevel;
-	//보스는 10킬이후부터 생성?
-	//보스는 1회만 죽여야한다
-	//보스는 1회만?
-	//그럼 결국 던전이 킬카운트 가지고 있어야한다
 
-protected:
 	FVector GetRandomPointFromNav(const FVector& loc, const float& radius);
 
 	AMonsterPawn* CreateMob(FVector loc);
 
-	//void MakeBossMonster(AMonsterPawn* mob);
 	AMonsterPawn* GetReadyMonster();
 
 	void OnTimer();
@@ -153,8 +138,12 @@ protected:
 
 	void SetSpawnMonsterOnTick(const bool bEnabled);
 
-public:
 	void Reset();
+
+	void SpawnBossMob();
+
+public:
+	void Init();
 
 	FORCEINLINE TArray<AMonsterPawn*>& GetCurrentMonsters()
 	{
@@ -166,8 +155,6 @@ public:
 	void StartSpawn(UWorld* world, const FDungeonDataTableRow* dgData);
 
 	void AddKillCount();
-
-	
 
 	void FailBossKill();
 
@@ -183,14 +170,6 @@ public:
 
 	virtual void BeginDestroy() override;
 
-protected:
-	void SpawnBossMob();
-	//
-
-
-public:
-	void Init();
-	
 	void SetDungeonData(const FString& dgJsonStr);
 
 	FORCEINLINE const TArray<const FDungeonDataTableRow*>& GetAryDgData() const
@@ -206,17 +185,8 @@ public:
 
 	BigInt GetMaxDungeonBounty();
 
-	int GetMaxStage() const;
-
-	int GetCurrentStage() const;
-
-	void SetMaxStageLevel(int stageLv);
-
-	void SetCurrentStageLevel(int stageLv);
-
 	FString GetDgDataStr();
 
-public:
 	virtual void OnLevelLoadComplete(UWorld* world) override;
 
 	virtual bool IsBattleStarted() override;
@@ -240,9 +210,8 @@ public:
 	void OnTouchStart();
 
 	void OnTouchEnd();
-	
-	virtual void Tick(float delta) override;
-	
-	void CalculateVisualActorRot(float delta);
 
+	virtual void Tick(float delta) override;
+
+	void CalculateVisualActorRot(float delta);
 };

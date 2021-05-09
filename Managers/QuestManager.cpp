@@ -23,7 +23,7 @@ void UQuestManager::SetQuestDataFromServer(const FString& strQuest)
 		m_AryQuestData[i].m_Data = AryQuestRow[i];
 	}
 
-	int MaxStage = UDiabloGameInstance::Get->m_NormalDgManager->GetMaxStage();
+	int MaxStage = UDiabloGameInstance::Get->m_NormalDgManager->m_nMyMaxStageLevel.GetValue();
 	
 	if(MaxStage>m_AryQuestData[12].QuestAmount)//던전 데이터 업로드 실패 예외처리
 	{

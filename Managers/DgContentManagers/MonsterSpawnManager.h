@@ -3,15 +3,9 @@
 #pragma once
 
 #include "DiabloM.h"
-#include "NavigationPath.h"
-#include "NavigationData.h"
-#include "NavigationSystem.h"
-#include "Characters/Pawns/UnitPawn.h"
-#include "Datas/DungeonDataTable.h"
-
-
 #include "MonsterSpawnManager.generated.h"
 
+class AUnitPawn;
 UCLASS(Abstract)
 class DIABLOM_API UMonsterSpawnManager : public UObject
 {
@@ -19,6 +13,9 @@ class DIABLOM_API UMonsterSpawnManager : public UObject
 public:
 	DECLARE_MULTICAST_DELEGATE(FOnBattleStart);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBattleEnd,bool);
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnTick,float);
+	FOnTick m_OnTick;
 
 	UPROPERTY()
 	bool m_bIsMatchStarted = false;
@@ -44,7 +41,7 @@ public:
 
 	virtual void Tick(float delta)
 	{
-		
+		m_OnTick.Broadcast(delta);
 	}
 
 	virtual void OnLevelLoadComplete(UWorld* world)
@@ -61,6 +58,11 @@ public:
 	{
 		return FString();
 	}
+
+	void MoveToNormalDungeon();
+	//{
+	//	
+	//}
 };
 
 

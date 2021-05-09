@@ -159,8 +159,14 @@ void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
 	m_SkBody->SetAnimInstanceClass(LoadedAnim);
 	m_SkBody->SetForcedLOD(2);
 	m_fAttackSpeed = m_PlayerEntityData->m_PlayerData->m_fAttackSpeedMultiple;
-	m_BaseAttackAnim = m_PlayerEntityData->m_PlayerData->m_BaseAttackAnim;
 
+	if(m_AnimAtkHandle.Get())
+	{
+		m_AnimAtkHandle->ReleaseHandle();
+	}
+
+	m_BaseAttackAnim =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_BaseAttackAnim, true, &m_AnimAtkHandle);
+	
 	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
 
 	m_OnMeshChanged.Broadcast(this);
@@ -521,7 +527,11 @@ void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		m_AnimHandle.Get()->ReleaseHandle();
 	}
-
+	
+	if(m_AnimAtkHandle.Get())
+	{
+		m_AnimAtkHandle->ReleaseHandle();
+	}
 }
 
 

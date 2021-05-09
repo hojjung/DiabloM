@@ -12,15 +12,15 @@ void UStageSelectPanel::NativeOnInitialized()
 	//
 	m_DgStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
 	m_DgMagicPanel->SetVisibility(ESlateVisibility::Collapsed); //골드던전 가림
-	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
-	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
+	m_DgPetPanel->SetVisibility(ESlateVisibility::Collapsed);
+	m_DgWeaponPanel->SetVisibility(ESlateVisibility::Collapsed);
 	//
 	m_DgPVPPanel->SetVisibility(ESlateVisibility::Collapsed);
 	// //
 	m_BtnShowNormalDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenNormalDg);
 	m_BtnShowMagicDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenGoldDg);
-	m_BtnShowStatDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenStatDg);
-	m_BtnShowAcceDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenAcceDg);
+	m_BtnShowPetDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenPetDg);
+	m_BtnShowWeaponDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenWeaponDg);
 	m_BtnPVP->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenPVPDg);
 	m_BtnBack->OnClicked.AddDynamic(this, &UStageSelectPanel::Back);
 	//
@@ -31,9 +31,9 @@ void UStageSelectPanel::InitNormalDungeon()
 {
 	int Len = UDiabloGameInstance::Get->m_NormalDgManager->GetAryDgData().Num();
 
-	int MaxLevel = UDiabloGameInstance::Get->m_NormalDgManager->GetMaxStage();
+	int MaxLevel = UDiabloGameInstance::Get->m_NormalDgManager->m_nMyMaxStageLevel.GetValue();
 
-	int Current = UDiabloGameInstance::Get->m_NormalDgManager->GetCurrentStage();
+	int Current = UDiabloGameInstance::Get->m_NormalDgManager->m_nCurrentStageLevel.GetValue();
 
 	for (int i = 0; i < Len; i++)
 	{
@@ -74,18 +74,18 @@ void UStageSelectPanel::OpenGoldDg()
 	m_BtnBack->SetVisibility(ESlateVisibility::Visible);
 }
 
-void UStageSelectPanel::OpenStatDg()
+void UStageSelectPanel::OpenPetDg()
 {
-	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::Visible);
+	m_DgPetPanel->SetVisibility(ESlateVisibility::Visible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
 
 	m_BtnBack->SetVisibility(ESlateVisibility::Visible);
 }
 
-void UStageSelectPanel::OpenAcceDg()
+void UStageSelectPanel::OpenWeaponDg()
 {
-	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::Visible);
+	m_DgWeaponPanel->SetVisibility(ESlateVisibility::Visible);
 
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
 
@@ -108,8 +108,8 @@ void UStageSelectPanel::Back()
 	//
 	m_DgStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
 	m_DgMagicPanel->SetVisibility(ESlateVisibility::Collapsed); //골드던전 가림
-	m_DgAcceStageBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
-	m_DgStatBtnListVert->SetVisibility(ESlateVisibility::Collapsed);
+	m_DgPetPanel->SetVisibility(ESlateVisibility::Collapsed);
+	m_DgWeaponPanel->SetVisibility(ESlateVisibility::Collapsed);
 	m_DgPVPPanel->SetVisibility(ESlateVisibility::Collapsed);
 	//
 	m_BtnBack->SetVisibility(ESlateVisibility::Collapsed);

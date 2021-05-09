@@ -41,13 +41,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UAnimInstance> m_AnimBP;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_SpawnAnim;
+	TSoftObjectPtr<UAnimMontage> m_SpawnAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_BaseAttackAnim;
+	TSoftObjectPtr<UAnimMontage> m_BaseAttackAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_DeathMontage;
+	TSoftObjectPtr<UAnimMontage> m_DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimMontage* m_TookHitMontage;
+	TSoftObjectPtr<UAnimMontage> m_TookHitMontage;
 };
 USTRUCT(BlueprintType)
 struct FMonsterEntityHandle :public FDataTableRowHandle
@@ -63,8 +63,6 @@ struct FDungeonDataTableRow : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FText m_DgShowName;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FName m_DgId;//should same with level asset name
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)

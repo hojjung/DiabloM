@@ -1,8 +1,8 @@
 #pragma once
 
 #include "DiabloM.h"
-#include "DungeonManager.h"
 #include "MonsterSpawnManager.h"
+#include "Characters/Pawns/MonsterPawn.h"
 #include "Datas/DungeonDataTable.h"
 #include "UObject/NoExportTypes.h"
 #include "MagicStoneDgManager.generated.h"
@@ -19,6 +19,11 @@ public:
 	int m_nPrizeMagicStoneMin = 15;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	int m_nPrizeMagicStoneMax = 25;
+
+	int GetRandomPrize()
+	{
+		return FMath::RandRange(m_nPrizeMagicStoneMin,m_nPrizeMagicStoneMax);
+	}
 };
 
 
@@ -31,32 +36,21 @@ class DIABLOM_API UMagicStoneDgManager : public UMonsterSpawnManager
 public:
 	UMagicStoneDgManager();
 
-	DECLARE_DELEGATE_OneParam(FOnTick,float);
-
 	DECLARE_DELEGATE_OneParam(FOnDragonSpawned,AMonsterPawn*);
 
-	FOnTick m_OnTick;
-	
 	FOnDragonSpawned m_OnDragonSpawned;
 
 	UPROPERTY()
 	AMonsterPawn* m_SpawnedMagicDragon;
 protected:
 	UPROPERTY()
-	TSubclassOf<UCameraShake> m_ClassShake;
-	UPROPERTY()
 	UDataTable* m_MagicDgTable;
 	
-	UPROPERTY()
-	int m_nDgLevel;
 
 	TArray<FMagicDgTableRow*> m_DgDataRow;
 
 	FMagicDgTableRow* m_CurrentDgData;
 
-	FDelegateHandle m_LevelLoadHandle;
-	
-	
 	float m_fTimer;
 
 	FTimerHandle m_TimerHandle_OnTimer;
@@ -68,9 +62,9 @@ protected:
 	int m_nCurrentMagicStone;
 
 public:
-	void RequestMoveMagicStoneDg(int dgLevel);
-
 	void Init();
+	
+	void RequestMoveMagicStoneDg(int dgLevel);
 	
 	virtual void OnLevelLoadComplete(UWorld* world) override;
 
@@ -93,6 +87,4 @@ public:
 	int GetResultBounty();
 
 	int GetFailBounty();
-
-	void MoveToNormalDungeon();
 };

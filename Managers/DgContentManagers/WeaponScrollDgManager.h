@@ -1,19 +1,68 @@
-// My First Hack n Slash
-
 #pragma once
-
-#include "CoreMinimal.h"
-
+#include "DiabloM.h"
 #include "MonsterSpawnManager.h"
-#include "UObject/NoExportTypes.h"
+#include "Characters/Pawns/MonsterPawn.h"
+
 #include "WeaponScrollDgManager.generated.h"
 
-/**
- * 
- */
+
+USTRUCT(BlueprintType)//���̵�,Ƽ��
+struct FWeaponDgTableRow : public FDungeonDataTableRow
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	int m_nPrizeMagicStoneMin = 15;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	int m_nPrizeMagicStoneMax = 25;
+
+	int GetRandomPrize()
+	{
+		return FMath::RandRange(m_nPrizeMagicStoneMin,m_nPrizeMagicStoneMax);
+	}
+};
+
 UCLASS()
 class DIABLOM_API UWeaponScrollDgManager : public UMonsterSpawnManager
 {
 	GENERATED_BODY()
+
+public:
+	UWeaponScrollDgManager();
+
+	DECLARE_DELEGATE_OneParam(FOnObtainBounty,int);
+
+	FOnObtainBounty m_OnObtainBounty;
+
+protected:
+	UPROPERTY()
+	UDataTable* m_WeaponTable;
+	
+	TArray<FWeaponDgTableRow*> m_DgDataRow;
+
+	FWeaponDgTableRow* m_CurrentDgData;
+
+	FSafeInt m_WeaponStones;
+
+	float m_fTimer;
+
+public:
+	void Init();
+	
+	void RequestMoveWeaponDg(int dgLevel);
+	
+	virtual void OnLevelLoadComplete(UWorld* world) override;
+
+	virtual void StartDungeon() override;
+
+	virtual void EndDungeon(bool b) override;
+
+	virtual void Tick(float deltaTime) override;
+
+	virtual FString GetOpenLevelAssetName() override;
+
+	void OnMonsterDead(AMonsterPawn* self);
+
 	
 };
