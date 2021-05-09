@@ -11,7 +11,7 @@ void UMagicDgCanvas::NativeOnInitialized()
 	
 	UDiabloGameInstance::Get->GetPlChar()->UpdateRage();
 	
-	UDiabloGameInstance::Get->m_MagicDgManager->m_OnBattleEnd.BindUObject(this,&UMagicDgCanvas::OnBattleEnd);
+	UDiabloGameInstance::Get->m_MagicDgManager->m_OnBattleEnd.AddUObject(this,&UMagicDgCanvas::OnBattleEnd);
 	//
 	UDiabloGameInstance::Get->m_MagicDgManager->m_OnDragonSpawned.BindUObject(this,&UMagicDgCanvas::OnDragonSpawned);
 }
@@ -38,6 +38,7 @@ void UMagicDgCanvas::UpdateDragonHp(float percentOne)
 void UMagicDgCanvas::OnDragonSpawned(AMonsterPawn* pawn)
 {
 	pawn->m_OnTookDmg.AddUObject(this,&UMagicDgCanvas::UpdateDragonHp);
+	UpdateDragonHp(1.f);
 }
 
 void UMagicDgCanvas::UpdateTimer(float timer)

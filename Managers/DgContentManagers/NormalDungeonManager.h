@@ -137,11 +137,6 @@ public:
 	//보스는 1회만?
 	//그럼 결국 던전이 킬카운트 가지고 있어야한다
 
-	protected: //GoldDg
-	TArray<const FDungeonDataTableRow*> m_AryGoldDgDataTable;
-
-	const FDungeonDataTableRow* m_CurrentGoldDg;
-
 protected:
 	FVector GetRandomPointFromNav(const FVector& loc, const float& radius);
 
@@ -194,6 +189,8 @@ protected:
 
 
 public:
+	void Init();
+	
 	void SetDungeonData(const FString& dgJsonStr);
 
 	FORCEINLINE const TArray<const FDungeonDataTableRow*>& GetAryDgData() const
@@ -202,8 +199,6 @@ public:
 	}
 
 	void SelectNormalDungeon(int index);
-
-	void SelectGoldDungeon(int index);
 
 	void LevelUpDungeon(); //Call By Boss
 

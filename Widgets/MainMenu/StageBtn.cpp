@@ -44,6 +44,7 @@ void UStageBtn::SetCurrent()
 
 void UStageBtn::MoveToDungeon()
 {
+	UDiabloGameInstance::Get->m_NormalDgManager->SelectNormalDungeon(m_nIndex);
 	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(UDiabloGameInstance::Get->m_NormalDgManager);
 }
 #undef LOCTEXT_NAMESPACE

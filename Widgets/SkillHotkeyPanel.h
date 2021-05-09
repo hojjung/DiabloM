@@ -31,6 +31,7 @@ protected:
 	UWidgetAnimation* m_FlashAnim;
 	UPROPERTY()
 	TArray<UDiaSkillUseButton*> m_ArySkillUse;
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UCheckBox* m_BtnAutoUseSkill;
 	

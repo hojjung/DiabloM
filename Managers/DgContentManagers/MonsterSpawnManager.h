@@ -19,7 +19,9 @@ class DIABLOM_API UMonsterSpawnManager : public UObject
 public:
 	DECLARE_MULTICAST_DELEGATE(FOnBattleStart);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBattleEnd,bool);
-	
+
+	UPROPERTY()
+	bool m_bIsMatchStarted = false;
 
 	FOnBattleStart m_OnBattleStart;
 
@@ -52,7 +54,7 @@ public:
 
 	virtual bool IsBattleStarted()
 	{
-		return false;
+		return m_bIsMatchStarted;
 	};
 
 	virtual FString GetOpenLevelAssetName()

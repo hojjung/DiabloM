@@ -12,4 +12,6 @@ void UMagicDgPanel::NativeOnInitialized()
 void UMagicDgPanel::EnterMagicDg01()
 {
 	UDiabloGameInstance::Get->m_MagicDgManager->RequestMoveMagicStoneDg(0);
+		
+	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(UDiabloGameInstance::Get->m_MagicDgManager);
 }

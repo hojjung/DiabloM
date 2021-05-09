@@ -33,14 +33,10 @@ public:
 
 	DECLARE_DELEGATE_OneParam(FOnTick,float);
 
-	DECLARE_DELEGATE_OneParam(FOnBattleEnd,bool);
-
 	DECLARE_DELEGATE_OneParam(FOnDragonSpawned,AMonsterPawn*);
 
 	FOnTick m_OnTick;
 	
-	FOnBattleEnd m_OnBattleEnd;
-
 	FOnDragonSpawned m_OnDragonSpawned;
 
 	UPROPERTY()
@@ -59,8 +55,7 @@ protected:
 	FMagicDgTableRow* m_CurrentDgData;
 
 	FDelegateHandle m_LevelLoadHandle;
-	UPROPERTY()
-	bool m_bIsMatchStarted;
+	
 	
 	float m_fTimer;
 
@@ -75,15 +70,21 @@ protected:
 public:
 	void RequestMoveMagicStoneDg(int dgLevel);
 
-	void OnLevelLoaded(UWorld*);
-
 	void Init();
 	
-	void Tick(float delta_seconds);
+	virtual void OnLevelLoadComplete(UWorld* world) override;
+
+	virtual void StartDungeon() override;
+
+	virtual void EndDungeon(bool b) override;
+
+	virtual FString GetOpenLevelAssetName() override;
+
+	virtual void Tick(float delta_seconds) override;
+
+	virtual bool IsBattleStarted() override;
 	
 	void AddMagicStones(int magicStones);
-
-	void StartMagicDg();
 
 	void EndMagicDgSuccess(AMonsterPawn*);
 
@@ -92,4 +93,6 @@ public:
 	int GetResultBounty();
 
 	int GetFailBounty();
+
+	void MoveToNormalDungeon();
 };

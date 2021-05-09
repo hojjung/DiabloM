@@ -16,9 +16,7 @@ UPVPManager::UPVPManager()
 void UPVPManager::RequestPVPMatching()
 {
 	m_OnMatchStart.ExecuteIfBound();
-	UDiabloGameInstance::Get->m_PlayfabManager->RequestPVPMatching(
-		6, PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate::CreateUObject(
-			this, &UPVPManager::OnRequestComplete));
+	UDiabloGameInstance::Get->m_PlayfabManager->RequestPVPMatching(6, PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate::CreateUObject(this, &UPVPManager::OnRequestComplete));
 }
 
 void UPVPManager::OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult& rslt) //만일 이게 없으면?
@@ -85,6 +83,7 @@ void UPVPManager::OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserD
 
 	m_OnMatchSuccessed.ExecuteIfBound(m_StatObj, m_SkillObj, m_EquipObj);
 	//
+	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,&UPVPManager::MoveToPVPDungeon, 2.2f,false);
 }
 
 void UPVPManager::MatchFail()
@@ -109,8 +108,51 @@ void UPVPManager::UpdateGauge()
 	m_OnDmgChanged.ExecuteIfBound(PercentOne, m_PlayerTotalDmg, m_OtherPlayerTotalDmg);
 }
 
-void UPVPManager::PVPStart()
+void UPVPManager::PVPEnd()
 {
+	m_fTimer = 0.f;
+
+	m_bIsMatchStarted = false;
+
+	APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
+
+	PlChar->m_bUseFSM = false;
+
+	m_PVPOtherPlayer.Get()->m_bUseFSM = false;
+
+	bool PlayerWin = m_PlayerTotalDmg.IsGreaterOrEqual(m_OtherPlayerTotalDmg);
+
+	EndDungeon(PlayerWin);
+}
+
+
+void UPVPManager::AddPlayerTotalDamage(const BigInt& v)
+{
+	m_PlayerTotalDmg.Add(v);
+
+	UpdateGauge();
+}
+
+void UPVPManager::AddOtherPlayerTotalDamage(const BigInt& v)
+{
+	m_OtherPlayerTotalDmg.Add(v);
+
+	UpdateGauge();
+}
+
+void UPVPManager::OnLevelLoadComplete(UWorld* world)
+{
+	Super::OnLevelLoadComplete(world);
+
+	PRINTF("PVPManager! World:%s", *world->GetMapName());
+	SpawnPVPPlayer(world);
+	StartDungeon();
+}
+
+void UPVPManager::StartDungeon()
+{
+	Super::StartDungeon();
+
 	APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
 
 	PlChar->ShowNameCard(UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname);
@@ -130,34 +172,11 @@ void UPVPManager::PVPStart()
 	m_bIsMatchStarted = true;
 }
 
-void UPVPManager::PVPEnd()
+void UPVPManager::EndDungeon(bool b)
 {
-	m_fTimer = 0.f;
+	Super::EndDungeon(b);
 
-	m_bIsMatchStarted = false;
-
-	APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
-
-	PlChar->m_bUseFSM = false;
-
-	m_PVPOtherPlayer.Get()->m_bUseFSM = false;
-
-	m_OnBattleEnd.ExecuteIfBound(m_PlayerTotalDmg.IsGreaterOrEqual(m_OtherPlayerTotalDmg));
-}
-
-
-void UPVPManager::AddPlayerTotalDamage(const BigInt& v)
-{
-	m_PlayerTotalDmg.Add(v);
-
-	UpdateGauge();
-}
-
-void UPVPManager::AddOtherPlayerTotalDamage(const BigInt& v)
-{
-	m_OtherPlayerTotalDmg.Add(v);
-
-	UpdateGauge();
+	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,&UPVPManager::MoveToNormalDungeon, 2.2f,false);
 }
 
 void UPVPManager::Tick(float deltaTime)
@@ -198,14 +217,6 @@ void UPVPManager::SpawnPVPPlayer(UWorld* world)
 	m_OnOtherPlayerSpawned.ExecuteIfBound(m_PVPOtherPlayer.Get());
 }
 
-void UPVPManager::OnLevelLoad(UWorld* world)
-{
-	FCoreUObjectDelegates::PostLoadMapWithWorld.Remove(m_LevelLoadHandle);
-	PRINTF("PVPManager! World:%s", *world->GetMapName());
-	SpawnPVPPlayer(world);
-	PVPStart();
-}
-
 AUnitPawn* UPVPManager::GetNearestEnemy(const FVector& wantPos)
 {
 	if(!UDiabloGameInstance::Get->m_PVPManager->m_bIsMatchStarted)
@@ -214,4 +225,24 @@ AUnitPawn* UPVPManager::GetNearestEnemy(const FVector& wantPos)
 	}
 
 	return m_PVPOtherPlayer.Get();
+}
+
+void UPVPManager::MoveToPVPDungeon()
+{
+	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(this);
+}
+
+void UPVPManager::MoveToNormalDungeon()
+{
+	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(UDiabloGameInstance::Get->m_NormalDgManager);
+}
+
+FString UPVPManager::GetOpenLevelAssetName()
+{
+	return TEXT("PVPStage");
+}
+
+bool UPVPManager::IsBattleStarted()
+{
+	return m_bIsMatchStarted;
 }

@@ -21,19 +21,7 @@ void UMagicStoneDgManager::Init()
 	m_MagicDgTable->GetAllRows(TEXT("MagicDgManager-No Table Data"), m_DgDataRow);
 }
 
-void UMagicStoneDgManager::RequestMoveMagicStoneDg(int dgLevel)
-{
-	m_nDgLevel = dgLevel;
-
-	m_CurrentDgData = m_DgDataRow[m_nDgLevel];
-
-	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),TEXT("MagicDragonNest"), true);
-
-	m_LevelLoadHandle = FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(
-		this, &UMagicStoneDgManager::OnLevelLoaded);
-}
-
-void UMagicStoneDgManager::OnLevelLoaded(UWorld* world)
+void UMagicStoneDgManager::OnLevelLoadComplete(UWorld* world)
 {
 	PRINTF("MagicStoneManager! World:%s", *world->GetMapName());
 
@@ -54,7 +42,7 @@ void UMagicStoneDgManager::OnLevelLoaded(UWorld* world)
 	m_SpawnedMagicDragon = world->SpawnActor<AMonsterPawn>(AMonsterPawn::StaticClass(), Loc, Rot, Param);
 
 	m_SpawnedMagicDragon->DataInject(DragonEntity, m_CurrentDgData->GetMobHp(), m_CurrentDgData->GetMobGold(),
-	                                 EMonsterType::MagicDragon, 1, 1, 1);
+									EMonsterType::MagicDragon, 1, 1, 1);
 
 	m_SpawnedMagicDragon->m_OnDeathAnimAfter.AddUObject(this,&UMagicStoneDgManager::EndMagicDgSuccess);
 
@@ -62,7 +50,41 @@ void UMagicStoneDgManager::OnLevelLoaded(UWorld* world)
 
 	m_nFailBounty  = m_CurrentDgData->m_nPrizeMagicStoneMin / 4;
 
-	StartMagicDg();
+	m_OnDragonSpawned.ExecuteIfBound(m_SpawnedMagicDragon);
+	
+	StartDungeon();
+}
+
+void UMagicStoneDgManager::StartDungeon()
+{
+	Super::StartDungeon();
+
+	APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
+
+	PlChar->FocusTarget(m_SpawnedMagicDragon);
+
+	m_fTimer = 0.f;
+	
+	m_bIsMatchStarted = true;
+}
+
+void UMagicStoneDgManager::EndDungeon(bool b)
+{
+	Super::EndDungeon(b);
+
+	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,&UMagicStoneDgManager::MoveToNormalDungeon, 2.2f,false);	
+}
+
+FString UMagicStoneDgManager::GetOpenLevelAssetName()
+{
+	return m_CurrentDgData->m_DgId.ToString();
+}
+
+void UMagicStoneDgManager::RequestMoveMagicStoneDg(int dgLevel)
+{
+	m_nDgLevel = dgLevel;
+
+	m_CurrentDgData = m_DgDataRow[m_nDgLevel];
 }
 
 
@@ -86,17 +108,11 @@ void UMagicStoneDgManager::Tick(float delta_seconds)
 	}
 }
 
-
-void UMagicStoneDgManager::StartMagicDg()
+bool UMagicStoneDgManager::IsBattleStarted()
 {
-	APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
-
-	PlChar->FocusTarget(m_SpawnedMagicDragon);
-
-	m_fTimer = 0.f;
-	
-	m_bIsMatchStarted = true;
+	return m_bIsMatchStarted;
 }
+
 
 void UMagicStoneDgManager::EndMagicDgSuccess(AMonsterPawn* dragonDead)
 {
@@ -106,9 +122,7 @@ void UMagicStoneDgManager::EndMagicDgSuccess(AMonsterPawn* dragonDead)
 	
 	m_bIsMatchStarted = false;
 
-	//UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,&UMagicStoneDgManager::MoveStageLevelToNormalDungeon, 2.2f,false);
-
-	m_OnBattleEnd.ExecuteIfBound(true);	
+	EndDungeon(true);
 }
 
 void UMagicStoneDgManager::EndMagicDgFail()
@@ -119,9 +133,7 @@ void UMagicStoneDgManager::EndMagicDgFail()
 
 	m_bIsMatchStarted = false;
 	
-	//UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,&UMagicStoneDgManager::MoveStageLevelToNormalDungeon, 2.2f,false);
-
-	m_OnBattleEnd.ExecuteIfBound(false);
+	EndDungeon(false);
 }
 void UMagicStoneDgManager::AddMagicStones(int magicStones)
 {
@@ -137,4 +149,9 @@ int UMagicStoneDgManager::GetResultBounty()
 int UMagicStoneDgManager::GetFailBounty()
 {
 	return m_nFailBounty;
+}
+
+void UMagicStoneDgManager::MoveToNormalDungeon()
+{
+	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(UDiabloGameInstance::Get->m_NormalDgManager);
 }

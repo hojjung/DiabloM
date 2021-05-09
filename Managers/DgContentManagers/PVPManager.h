@@ -33,8 +33,6 @@ public:
 
 	FOnOtherPlayerSpawned m_OnOtherPlayerSpawned;
 
-	FOnBattleEnd m_OnBattleEnd;
-	
 	FOnTick m_OnTick;
 
 	FOnDmgChanged m_OnDmgChanged;
@@ -58,8 +56,6 @@ public:
 
 	BigInt m_TotalDmg;
 
-	bool m_bIsMatchStarted;
-	
 	float m_fTimer;
 
 	FDelegateHandle m_LevelLoadHandle;
@@ -73,10 +69,18 @@ public:
 	UPROPERTY()
 	UPlayFabJsonObject* m_EquipObj;
 
-protected:
+public:
+	virtual void OnLevelLoadComplete(UWorld* world) override;
+
+	virtual void StartDungeon() override;
+
+	virtual void EndDungeon(bool b) override;
+
+	virtual void Tick(float deltaTime) override;
+	
+	
 	void UpdateGauge();
 	
-public:
 	void RequestPVPMatching();
 
 	void OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult& rslt);
@@ -85,21 +89,22 @@ public:
 	
 	void MatchFail();
 
-	void PVPStart();
-
 	void PVPEnd();
 
 	void AddPlayerTotalDamage(const BigInt& v);
 
 	void AddOtherPlayerTotalDamage(const BigInt& v);
 
-	void Tick(float deltaTime);
-	
+
 	void SpawnPVPPlayer(UWorld* world);
 
-	void OnLevelLoad(UWorld* world);
-
 	virtual AUnitPawn* GetNearestEnemy(const FVector& wantPos) override;
+
+	void MoveToPVPDungeon();
+
+	void MoveToNormalDungeon();
+
+	virtual FString GetOpenLevelAssetName() override;
+
+	virtual bool IsBattleStarted() override;
 };
-
-

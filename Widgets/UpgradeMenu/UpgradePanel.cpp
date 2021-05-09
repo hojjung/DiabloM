@@ -82,7 +82,8 @@ void UUpgradePanel::NativeOnInitialized()
 
 	OnUpgradeChanged();
 	CloseSkillHotkeyPanel();
-	
+
+	m_SkillEquipBtnProxy->m_BtnAutoUseSkill->SetVisibility(ESlateVisibility::Collapsed);	
 }
 
 void UUpgradePanel::SetPanel1()

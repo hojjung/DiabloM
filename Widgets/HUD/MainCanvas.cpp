@@ -154,8 +154,8 @@ void UMainCanvas::ShowBossUI()
 	//Set Timer
 	//SetBossHp
 	UpdateBossHP(1.f);
-	Cast<UNormalDungeonManager>( UDiabloGameInstance::Get->m_DungeonManager->GetCurrentSpawnManager())->GetBossMob()->m_OnTookDmg.AddUObject(this,&UMainCanvas::UpdateBossHP);
 	
+	UDiabloGameInstance::Get->m_NormalDgManager->GetBossMob()->m_OnTookDmg.AddUObject(this,&UMainCanvas::UpdateBossHP);
 }
 
 void UMainCanvas::HideBossUI()

@@ -1,10 +1,16 @@
 #include "AutoSkillUse.h"
 
+#include "Characters/Pawns/UnitPawn.h"
 #include "Interface/SkillUseCharacter.h"
 
 FSkillSpec* UAutoSkillUse::GetUsableSkill(ISkillUseCharacter* owner, TArray<FSkillSpec*>& skillSpecs,
                                           float gainRagePerSec)
 {
+	if(!Cast<AUnitPawn> (owner)->GetFocusedTarget())
+	{
+		return nullptr;
+	}
+	
 	FSkillSpec* LongestCooltime = nullptr;
 
 	for (FSkillSpec* Skill : skillSpecs)

@@ -291,7 +291,7 @@ void AMonsterPawn::TakeDmg(BigInt amount, AUnitPawn* attacker,EDamagePopup pp)
     PlayHittenSound();
     m_HitParticle->Activate(true);
 
-    if(!IsStatusBarActive() && m_MonsterType != EMonsterType::Boss)
+    if(!IsStatusBarActive() && m_MonsterType == EMonsterType::Normal)
     {
         ShowStatusBar();
     }
@@ -348,7 +348,7 @@ void AMonsterPawn::PlayHitFlash()
 
 bool AMonsterPawn::IsAlive() const
 {
-    return m_fCurrentHP > 0 ; 
+   return !m_fCurrentHP.IsLessThanZero();
 }
 
 bool AMonsterPawn::IsReadyToPool()

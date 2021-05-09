@@ -50,15 +50,18 @@ UNormalDungeonManager::UNormalDungeonManager()
 	GoldDungeonDataTable = FoundGoldDungeon.Object;
 } //m_MonsterManager->StartSpawn(world, m_CurrentDg);
 
-void UNormalDungeonManager::OnLevelLoadComplete(UWorld* world)
+void UNormalDungeonManager::Init()
 {
 	m_GoldGoblinEntity = m_MobEntityTable->FindRow<FMonsterEntity>("GoldGoblin", "");
 	m_LoadedMonsters.Init(TSharedPtr<FStreamableHandle>(), 12);
-	
+}
+
+void UNormalDungeonManager::OnLevelLoadComplete(UWorld* world)
+{
 	StartSpawn(world, m_CurrentDg);
 	SpawnVisualActor(world);
 	SpawnOtherPVPActor(world);
-
+	
 	AGameLevelHUD* MyHud = Cast<AGameLevelHUD>(UDiabloGameInstance::Get->GetPlCon()->GetHUD());
 	MyHud->m_Canvas->m_OnMenuVisibleChanged.AddUObject(this, &UNormalDungeonManager::OnMenuOpen);
 }
@@ -442,20 +445,12 @@ void UNormalDungeonManager::SetDungeonData(const FString& dgJsonStr)
 
 	SelectNormalDungeon(StageCurrentLevel);
 	//
-	GoldDungeonDataTable->GetAllRows("", m_AryGoldDgDataTable);
 }
 
 void UNormalDungeonManager::SelectNormalDungeon(int index)
 {
 	SetCurrentStageLevel(index);
 	m_CurrentDg = m_AryDgDataTable[GetCurrentStage()];
-}
-
-void UNormalDungeonManager::SelectGoldDungeon(int index)
-{
-	m_CurrentGoldDg = m_AryGoldDgDataTable[index];
-	//GoldDg Ticket Count
-	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(), m_CurrentGoldDg->m_DgId, true);
 }
 
 void UNormalDungeonManager::LevelUpDungeon()

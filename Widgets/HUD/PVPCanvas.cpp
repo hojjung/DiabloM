@@ -15,7 +15,7 @@ void UPVPCanvas::NativeOnInitialized()
 
 	UDiabloGameInstance::Get->m_PVPManager->m_OnTick.BindUObject(this,&UPVPCanvas::UpdateTimer);
 
-	UDiabloGameInstance::Get->m_PVPManager->m_OnBattleEnd.BindUObject(this,&UPVPCanvas::OnBattleEnd);
+	UDiabloGameInstance::Get->m_PVPManager->m_OnBattleEnd.AddUObject(this,&UPVPCanvas::OnBattleEnd);
 
 	m_Handle = UDiabloGameInstance::Get->GetPlChar()->m_OnRageChanged.AddUObject(this,&UPVPCanvas::PlayerUpdateRageBar);
 	//

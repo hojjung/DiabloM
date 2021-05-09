@@ -126,7 +126,9 @@ void UAdvertiseManager::OnRewardAdsSuccess(FString item, int32 amount)
 	UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(RandomGemStones);
 	//
 	UDiabloGameInstance::Get->m_PlayfabManager->UploadAdmobTime(FDateTime::UtcNow());
+	
 	m_fRemainAdmobTime=ADSCOOL;
+	
 	m_bAdsUpdateLock=false;
 }
 
