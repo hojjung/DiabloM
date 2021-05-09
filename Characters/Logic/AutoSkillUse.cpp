@@ -9,6 +9,11 @@ FSkillSpec* UAutoSkillUse::GetUsableSkill(ISkillUseCharacter* owner, TArray<FSki
 
 	for (FSkillSpec* Skill : skillSpecs)
 	{
+		if(!Skill)
+		{
+			continue;
+		}
+		
 		float RemainCooltime = Skill->m_fCurrentCD - Skill->m_SkillData->m_fSkillCoolTime;
 
 		bool bIsCooldownReady = Skill->IsCooldownReady();

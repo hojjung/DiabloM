@@ -13,12 +13,14 @@ UDataTable* UNormalDungeonManager::DropDataTable = nullptr;
 UDataTable* UNormalDungeonManager::MonsterEntityTable = nullptr;
 UDataTable* UNormalDungeonManager::GoldDungeonDataTable = nullptr;
 
+#define BOSSDURATION 12.f
+
 UNormalDungeonManager::UNormalDungeonManager()
 {
 	//Blueprint'/Game/Blueprints/BP_StompShake.BP_StompShake'
-	static ConstructorHelpers::FClassFinder<UCameraShake> FoundCamshake(TEXT("Blueprint'/Game/Blueprints/BP_StompShake.BP_StompShake_C'"));
+	static ConstructorHelpers::FClassFinder<UCameraShake> FoundCamshake(
+		TEXT("Blueprint'/Game/Blueprints/BP_StompShake.BP_StompShake_C'"));
 	m_ClassShake = FoundCamshake.Class;
-	m_bBossSpawned = false;
 	m_SensingInterval = 5.f;
 	m_CurrentWorld = nullptr;
 	m_NavSys = nullptr;
@@ -27,11 +29,12 @@ UNormalDungeonManager::UNormalDungeonManager()
 	m_IdBossEnemy = "boss";
 	m_IdSpecialEnemy = "special";
 
-	static ConstructorHelpers::FObjectFinder<UDataTable> FoundData(TEXT("DataTable'/Game/DataTables/Entities/MonsterTable.MonsterTable'"));
-	m_MobEntityTable=FoundData.Object;
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundData(
+		TEXT("DataTable'/Game/DataTables/Entities/MonsterTable.MonsterTable'"));
+	m_MobEntityTable = FoundData.Object;
 	//(DataTable=DataTable'"/Game/DataTables/Entities/MonsterTable.MonsterTable"',RowName="GoldGoblin")
 
-	m_nGoldGoblinSpawnCount=0;
+	m_nGoldGoblinSpawnCount = 0;
 	//
 	m_CurrentDg = nullptr;
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundDungeon(
@@ -45,50 +48,45 @@ UNormalDungeonManager::UNormalDungeonManager()
 		TEXT("DataTable'/Game/DataTables/Dungeon/GoldDungeonData.GoldDungeonData'"));
 
 	GoldDungeonDataTable = FoundGoldDungeon.Object;
-}//m_MonsterManager->StartSpawn(world, m_CurrentDg);
-
-
-void UNormalDungeonManager::Init()
-{
-	m_GoldGoblinEntity = m_MobEntityTable->FindRow<FMonsterEntity>("GoldGoblin","");
-
-	m_LoadedMonsters.Init(TSharedPtr<FStreamableHandle>(),12);
-}
+} //m_MonsterManager->StartSpawn(world, m_CurrentDg);
 
 void UNormalDungeonManager::OnLevelLoadComplete(UWorld* world)
 {
-	PRINTF("This IS Normal Dg");
-	StartSpawn(world,m_CurrentDg);
-	SpawnVisualActor();
-	SpawnOtherPVPActor();
+	m_GoldGoblinEntity = m_MobEntityTable->FindRow<FMonsterEntity>("GoldGoblin", "");
+	m_LoadedMonsters.Init(TSharedPtr<FStreamableHandle>(), 12);
+	
+	StartSpawn(world, m_CurrentDg);
+	SpawnVisualActor(world);
+	SpawnOtherPVPActor(world);
 
-	AGameLevelHUD* MyHud = Cast<AGameLevelHUD>( UDiabloGameInstance::Get->GetPlCon()->GetHUD());
-	MyHud->m_Canvas->m_OnMenuVisibleChanged.AddUObject(this,&UNormalDungeonManager::OnMenuOpen);
+	AGameLevelHUD* MyHud = Cast<AGameLevelHUD>(UDiabloGameInstance::Get->GetPlCon()->GetHUD());
+	MyHud->m_Canvas->m_OnMenuVisibleChanged.AddUObject(this, &UNormalDungeonManager::OnMenuOpen);
 }
 
 void UNormalDungeonManager::StartSpawn(UWorld* world, const FDungeonDataTableRow* dgData)
 {
-	for(auto& Handle : m_LoadedMonsters)
+	for (auto& Handle : m_LoadedMonsters)
 	{
-		if(Handle.Get())
+		if (Handle.Get())
 		{
 			Handle.Get()->ReleaseHandle();
 		}
 	}
-	
-	FStreamableManager& StreamableManager =  UAssetManager::Get().GetStreamableManager();
 
-	for(int i=0; i<dgData->m_Monsters.Num();i++)
+	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
+
+	for (int i = 0; i < dgData->m_Monsters.Num(); i++)
 	{
-		StreamableManager.LoadSynchronous(dgData->m_Monsters[i].GetRow<FMonsterEntity>("")->m_MonsterMeshSoft,true,&m_LoadedMonsters[i]);
+		StreamableManager.LoadSynchronous(dgData->m_Monsters[i].GetRow<FMonsterEntity>("")->m_MonsterMeshSoft, true,
+		                                  &m_LoadedMonsters[i]);
 	}
 
-	m_nKillCount=0;
-	
-	m_nGoldGoblinSpawnCount = FMath::RandRange(10,25);
+	m_nKillCount = 0;
 
-	m_nGoldGoblinSpawnCount+=m_nKillCount;
-	
+	m_nGoldGoblinSpawnCount = FMath::RandRange(10, 25);
+
+	m_nGoldGoblinSpawnCount += m_nKillCount;
+
 	m_CurrentWorld = world;
 
 	m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(m_CurrentWorld);
@@ -110,7 +108,7 @@ void UNormalDungeonManager::StartSpawn(UWorld* world, const FDungeonDataTableRow
 
 		m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
 
-		SpawnedMob->m_OnDeathAnimBefore.AddUObject(this,&UNormalDungeonManager::OnMonsterDead);
+		SpawnedMob->m_OnDeathAnimBefore.AddUObject(this, &UNormalDungeonManager::OnMonsterDead);
 
 		SpawnMobToLoc(FVector::ZeroVector);
 	}
@@ -222,6 +220,7 @@ AMonsterPawn* UNormalDungeonManager::GetReadyMonster()
 
 	return SelectedPawn;
 }
+
 AMonsterPawn* UNormalDungeonManager::SpawnMobToLoc(FVector loc)
 {
 	AMonsterPawn* Mob = GetReadyMonster();
@@ -230,7 +229,7 @@ AMonsterPawn* UNormalDungeonManager::SpawnMobToLoc(FVector loc)
 	{
 		return nullptr;
 	}
-	
+
 	float MinX = loc.X - 500.f;
 	float MaxX = loc.X + 500.f;
 
@@ -254,12 +253,12 @@ AMonsterPawn* UNormalDungeonManager::SpawnMobToLoc(FVector loc)
 	float GoldScale = 1.f;
 
 	float StatScale = 1.f;
-	
-	if(m_nKillCount >= m_nGoldGoblinSpawnCount)
-	{
-		m_nGoldGoblinSpawnCount = FMath::RandRange(25,35);
 
-		m_nGoldGoblinSpawnCount+=m_nKillCount;
+	if (m_nKillCount >= m_nGoldGoblinSpawnCount)
+	{
+		m_nGoldGoblinSpawnCount = FMath::RandRange(25, 35);
+
+		m_nGoldGoblinSpawnCount += m_nKillCount;
 
 		MonData = m_GoldGoblinEntity;
 
@@ -267,17 +266,17 @@ AMonsterPawn* UNormalDungeonManager::SpawnMobToLoc(FVector loc)
 
 		StatScale = 5.f;
 	}
-	
-	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Normal,StatScale,MonData->m_fScale,GoldScale);	
-	
+
+	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Normal, StatScale,
+	                MonData->m_fScale, GoldScale);
+
 	return Mob;
 }
 
 void UNormalDungeonManager::OnBossDead(AMonsterPawn* pawn)
 {
 	m_SpawnedBoss->m_OnDeathAnimAfter.Remove(m_BossDeleHandle);
-	m_bBossSpawned = false;;
-	m_SpawnedBoss=nullptr;
+	m_SpawnedBoss = nullptr;
 	pawn->Destroy();
 	UDiabloGameInstance::Get->m_PlayerUpgradeManager->ClearCooldownAllSkill();
 
@@ -287,15 +286,15 @@ void UNormalDungeonManager::OnBossDead(AMonsterPawn* pawn)
 void UNormalDungeonManager::BeginDestroy()
 {
 	Super::BeginDestroy();
-	
-	for(auto& Handle : m_LoadedMonsters)
+
+	for (auto& Handle : m_LoadedMonsters)
 	{
-		if(Handle.Get())
+		if (Handle.Get())
 		{
 			Handle.Get()->ReleaseHandle();
 		}
 	}
-	if(m_LoadedGoblin.Get())
+	if (m_LoadedGoblin.Get())
 	{
 		m_LoadedGoblin.Get()->ReleaseHandle();
 	}
@@ -303,11 +302,11 @@ void UNormalDungeonManager::BeginDestroy()
 
 AUnitPawn* UNormalDungeonManager::GetNearestEnemy(const FVector& wantPos)
 {
-	if(m_bBossSpawned && m_SpawnedBoss)
+	if (m_SpawnedBoss)
 	{
 		return m_SpawnedBoss;
 	}
-	
+
 	float Dist = FLT_MAX;
 
 	AMonsterPawn* ResultMob = nullptr;
@@ -371,19 +370,17 @@ AMonsterPawn* UNormalDungeonManager::CreateMob(FVector loc)
 void UNormalDungeonManager::AddKillCount()
 {
 	m_nKillCount++;
-
-		
 }
 
 void UNormalDungeonManager::SpawnBossMob()
 {
 	//
-	UGameplayStatics::GetPlayerController(UDiabloGameInstance::Get->GetWorld(),0)->ClientPlayCameraShake(m_ClassShake);
+	UGameplayStatics::GetPlayerController(UDiabloGameInstance::Get->GetWorld(), 0)->ClientPlayCameraShake(m_ClassShake);
 	//
-	FVector PlayerLoc = UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(),0)->GetActorLocation();
+	FVector PlayerLoc = UGameplayStatics::GetPlayerPawn(UDiabloGameInstance::Get->GetWorld(), 0)->GetActorLocation();
 
 	FVector NewLoc = GetRandomPointFromNav(PlayerLoc, 1000.f);
-	
+
 	auto* Mob = CreateMob(PlayerLoc);
 
 	const FMonsterEntityHandle& MobHandle = m_DgDataTable->m_Monsters[0];
@@ -396,27 +393,28 @@ void UNormalDungeonManager::SpawnBossMob()
 
 	Mob->SetActorLocation(NewLoc);
 
-	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Boss,10,MonData->m_fBossMonsterRenderScale,10.f);
+	Mob->DataInject(MonData, m_DgDataTable->GetMobHp(), m_DgDataTable->GetMobGold(), EMonsterType::Boss, 10,
+	                MonData->m_fBossMonsterRenderScale, 10.f);
 
-	m_SpawnedBoss =  Mob;
+	m_SpawnedBoss = Mob;
 
-	m_BossDeleHandle =m_SpawnedBoss->m_OnDeathAnimAfter.AddUObject(this,&UNormalDungeonManager::OnBossDead);
-	
+	m_BossDeleHandle = m_SpawnedBoss->m_OnDeathAnimAfter.AddUObject(this, &UNormalDungeonManager::OnBossDead);
+
 	APlayerDiabloCharacter* Pl = UDiabloGameInstance::Get->GetPlChar();
 
 	Pl->FocusTarget(m_SpawnedBoss);
 
-	m_bBossSpawned = true;
-
+	m_fBossTimer=0.f;
 }
 
 void UNormalDungeonManager::FailBossKill()
 {
 	//쿨타임 생기고
 	//보스 없애기
-	m_bBossSpawned = false;;
 	m_SpawnedBoss->Destroy();
-	m_SpawnedBoss=nullptr;
+	m_SpawnedBoss = nullptr;
+
+	EndDungeon(false);
 }
 
 
@@ -426,13 +424,13 @@ void UNormalDungeonManager::SetDungeonData(const FString& dgJsonStr)
 
 	TSharedPtr<FJsonObject> JsonObject;
 
-	TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(dgJsonStr);
-	
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(dgJsonStr);
+
 	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
 	{
-		return;	
+		return;
 	}
-	
+
 	int StageCurrentLevel = JsonObject->GetIntegerField(TEXT("CurrentStageLevel"));
 
 	SetMaxStageLevel(JsonObject->GetIntegerField(TEXT("MaxStageLevel")));
@@ -455,7 +453,7 @@ void UNormalDungeonManager::SelectNormalDungeon(int index)
 
 void UNormalDungeonManager::SelectGoldDungeon(int index)
 {
-	m_CurrentGoldDg =  m_AryGoldDgDataTable[index];
+	m_CurrentGoldDg = m_AryGoldDgDataTable[index];
 	//GoldDg Ticket Count
 	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(), m_CurrentGoldDg->m_DgId, true);
 }
@@ -488,7 +486,7 @@ void UNormalDungeonManager::LevelUpDungeon()
 	}
 
 	m_OnDgOpen.Broadcast(m_nCurrentStageLevel);
-	
+
 	//UDiabloGameInstance::Get->m_PlayfabManager->UploadMainData();
 	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(this);
 	//OpenLevel();
@@ -556,7 +554,6 @@ FString UNormalDungeonManager::GetDgDataStr()
 }
 
 
-
 bool UNormalDungeonManager::IsBattleStarted()
 {
 	return m_SpawnedBoss;
@@ -564,15 +561,15 @@ bool UNormalDungeonManager::IsBattleStarted()
 
 FString UNormalDungeonManager::GetOpenLevelAssetName()
 {
-	return  m_AryDgDataTable[GetCurrentStage()]->m_DgId.ToString();
+	return m_AryDgDataTable[GetCurrentStage()]->m_DgId.ToString();
 }
 
 void UNormalDungeonManager::OnMonsterDead(AMonsterPawn* self)
 {
 	AddKillCount();
-	
+
 	UDiabloGameInstance::Get->m_QuestManager->AddQuestCount(EQuestType::MonsterKill);
-	
+
 	UDiabloGameInstance::Get->m_GoldManager->AddGold(self->GetGoldBounty());
 }
 
@@ -581,59 +578,63 @@ void UNormalDungeonManager::StartDungeon()
 	Super::StartDungeon();
 
 	SpawnBossMob();
-
 }
 
 void UNormalDungeonManager::EndDungeon(bool b)
 {
 	Super::EndDungeon(b);
-	
-	if(b)
+
+	if (b)
 	{
 		UDiabloGameInstance::Get->m_PVPManager->m_OnMatchSuccessed.Unbind();
 		LevelUpDungeon();
 	}
 	else
 	{
-		FailBossKill();
+//		FailBossKill();
 	}
 }
 
-void UNormalDungeonManager::SpawnVisualActor()
+void UNormalDungeonManager::SpawnVisualActor(UWorld* world)
 {
 	FRotator Rot = FRotator(0);
 	Rot.Yaw = 310.f;
 	FVector Loc = FVector(7777.f);
 	FActorSpawnParameters Param;
-	Param.bNoFail=true;
-	m_VisualActor = GetWorld()->SpawnActor<APlayerVisual>(APlayerVisual::StaticClass(),Loc,Rot,Param);
+	Param.bNoFail = true;
+	m_VisualActor = world->SpawnActor<APlayerVisual>(APlayerVisual::StaticClass(), Loc, Rot, Param);
 	m_VisualActor->HideMeshWithTick();
+
+	m_InitVisualRot = m_VisualActor->GetSkMesh()->GetComponentRotation();
+
+	m_VisualActor->OnMeshChanged(UDiabloGameInstance::Get->GetPlChar());
 }
 
-void UNormalDungeonManager::SpawnOtherPVPActor()
+void UNormalDungeonManager::SpawnOtherPVPActor(UWorld* world)
 {
 	FRotator Rot = FRotator(0);
-	
+
 	Rot.Yaw = 310.f;
-	
+
 	FVector Loc = FVector(77777.f);
-	
+
 	FActorSpawnParameters Param;
-	
-	Param.bNoFail=true;
-	
-	m_OtherPlayer = GetWorld()->SpawnActor<AOtherPlayerPawn>(AOtherPlayerPawn::StaticClass(),Loc,Rot,Param);
-	
+
+	Param.bNoFail = true;
+
+	m_OtherPlayer = world->SpawnActor<AOtherPlayerPawn>(AOtherPlayerPawn::StaticClass(), Loc, Rot, Param);
+
 	m_OtherPlayer->HideMeshWithTick();
-	
+
 	m_OtherPlayer->SetPetPositionForVisual();
 	//
-	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchSuccessed.BindUObject(m_OtherPlayer,&AOtherPlayerPawn::SetPVPPlayerPawn);
+	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchSuccessed.BindUObject(
+		m_OtherPlayer, &AOtherPlayerPawn::SetPVPPlayerPawn);
 }
 
 void UNormalDungeonManager::OnMenuOpen(bool b)
 {
-	if(b)
+	if (b)
 	{
 		m_VisualActor->ShowMeshWithTick();
 	}
@@ -642,4 +643,57 @@ void UNormalDungeonManager::OnMenuOpen(bool b)
 		m_VisualActor->HideMeshWithTick();
 		m_OtherPlayer->HideMeshWithTick();
 	}
+}
+
+void UNormalDungeonManager::RotatePawn(float x)
+{
+	x = -1.f * x;
+	FRotator Rot(0.f);
+	Rot.Yaw = x * 2.f;
+	m_VisualActor->GetSkMesh()->AddLocalRotation(Rot);
+}
+
+void UNormalDungeonManager::OnTouchStart()
+{
+	m_bTouched = true;
+}
+
+void UNormalDungeonManager::OnTouchEnd()
+{
+	m_bTouched = false;
+}
+
+void UNormalDungeonManager::Tick(float delta)
+{
+	Super::Tick(delta);
+
+	CalculateVisualActorRot(delta);
+
+	if(IsBattleStarted())
+	{
+		m_fBossTimer+=delta;
+
+		m_OnBossBattleTick.Broadcast( 1.f - (m_fBossTimer/BOSSDURATION),BOSSDURATION - m_fBossTimer);
+		
+		if(m_fBossTimer>BOSSDURATION)
+		{
+			FailBossKill();			
+		}
+	}
+}
+
+void UNormalDungeonManager::CalculateVisualActorRot(float delta)
+{
+	if (m_bTouched)
+	{
+		return;
+	}
+
+	FRotator NewRot = m_VisualActor->GetSkMesh()->GetComponentRotation();
+
+	NewRot.Yaw = UKismetMathLibrary::RInterpTo(NewRot, m_InitVisualRot, delta, 5.5f).Yaw;
+
+	m_VisualActor->GetSkMesh()->SetWorldRotation(NewRot);
+
+	FRotator NewRot2 = m_VisualActor->GetSkMesh()->GetComponentRotation();
 }

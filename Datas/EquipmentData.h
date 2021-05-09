@@ -23,7 +23,7 @@ struct FWeaponTable : public FGachaAbleRow
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<AEquipmentActor> m_ClassVisualActor = nullptr;
+	TAssetSubclassOf<AEquipmentActor> m_ClassVisualActor = nullptr;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	int m_nDmgLevel = 1;//1당 5배 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -122,7 +122,7 @@ struct FPlayerSkinTable : public FGachaAbleRow
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UAnimInstance> m_AnimBP;
+	TAssetSubclassOf<UAnimInstance> m_AnimBP;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimSequence* m_VisualIdleAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -160,7 +160,7 @@ struct FWingTable : public FGachaAbleRow
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<AEquipmentActor> m_ClassVisualWingActor = nullptr;
+	TAssetSubclassOf<AEquipmentActor> m_ClassVisualWingActor = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0", UIMax = "3.3"))
 	float m_fWingMoveSpeedMultiple = 1.f;
 
@@ -190,7 +190,7 @@ struct FPetTable : public FGachaAbleRow
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<AEquipmentActor> m_ClassPetSkin;
+	TAssetSubclassOf<AEquipmentActor> m_ClassPetSkin;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	int m_nFactorLevel=1;
 	

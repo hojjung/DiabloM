@@ -54,15 +54,18 @@ void UMainCanvas::NativeOnInitialized()
 	
 	OnTouchBanHide();
 	//
-	UDiabloGameInstance::Get->m_DungeonManager->GetCurrentSpawnManager()->m_OnBattleStart.AddUObject(this,&UMainCanvas::OnBossBattleStart);
-	UDiabloGameInstance::Get->m_DungeonManager->GetCurrentSpawnManager()->m_OnBattleStart.AddUObject(UDiabloGameInstance::Get->m_PlayfabManager,&UPlayfabManager::OnBossBattleStart);
-	UDiabloGameInstance::Get->m_DungeonManager->GetCurrentSpawnManager()->m_OnBattleEnd.AddUObject(this,&UMainCanvas::OnBossBattleEnd);
+	UDiabloGameInstance::Get->m_NormalDgManager->m_OnBattleStart.AddUObject(this,&UMainCanvas::OnBossBattleStart);
+	UDiabloGameInstance::Get->m_NormalDgManager->m_OnBattleStart.AddUObject(UDiabloGameInstance::Get->m_PlayfabManager,&UPlayfabManager::OnBossBattleStart);
+	UDiabloGameInstance::Get->m_NormalDgManager->m_OnBattleEnd.AddUObject(this,&UMainCanvas::OnBossBattleEnd);
 	//
 	m_fMaxBossCooldownTime=10;
 	m_fBossCooldownTimeCounter = m_fMaxBossCooldownTime;
 	m_CDBoss->StartCooldown();
 	//
 	UDiabloGameInstance::Get->m_PVPManager->m_OnMatchStart.BindUObject(this,&UMainCanvas::OnPVPBattleStart);
+
+	UDiabloGameInstance::Get->m_NormalDgManager->m_OnBossBattleTick.AddUObject(this,&UMainCanvas::UpdateTimer);
+	
 }
 
 void UMainCanvas::ShowTouchBan(float secWant)
@@ -140,11 +143,6 @@ void UMainCanvas::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		m_fBossCooldownTimeCounter-=InDeltaTime;
 		
 		m_CDBoss->SetCooldownProgress(m_fBossCooldownTimeCounter,m_fMaxBossCooldownTime);
-	}
-	
-	if(!UDiabloGameInstance::Get->m_DungeonManager->GetCurrentSpawnManager()->IsBattleStarted())
-	{
-		return;
 	}
 }
 
@@ -377,6 +375,7 @@ void UMainCanvas::OnBossBattleEnd(bool b)
 	m_BtnShop->SetIsEnabled(true);
 	m_BtnMenu->SetIsEnabled(true);
 	//
+	UpdateTimer(0,0);
 	UpdateBossText(0);
 	HideBossUI();
 	if(b)

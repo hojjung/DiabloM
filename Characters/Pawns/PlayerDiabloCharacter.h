@@ -141,6 +141,14 @@ protected:
 	float m_fAdditionalAttackSpeed;
 
 	TSharedPtr<FStreamableHandle>  m_SkinMeshHandle;
+
+	TSharedPtr<FStreamableHandle>  m_AnimHandle;
+
+	TSharedPtr<FStreamableHandle>  m_PetHandle;
+
+	TSharedPtr<FStreamableHandle>  m_WingHandle;
+
+	TSharedPtr<FStreamableHandle>  m_WeaponHandle;
 	
 protected:
 	virtual void BeginPlay() override;

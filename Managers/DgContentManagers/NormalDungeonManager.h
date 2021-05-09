@@ -37,8 +37,19 @@ class DIABLOM_API UNormalDungeonManager : public UMonsterSpawnManager
 public:
 	UNormalDungeonManager();
 
-protected:
 	static const int MonsterPoolCount = 12;
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBossTimer,float,float);
+
+	FOnBossTimer m_OnBossBattleTick;
+protected:
+	UPROPERTY()
+	float m_fBossTimer;
+	
+	bool m_bTouched;
+
+	FRotator m_InitVisualRot;
+
 	UPROPERTY()
 	UNavigationSystemV1* m_NavSys;
 	UPROPERTY()
@@ -59,8 +70,6 @@ protected:
 	FName m_IdBossEnemy;
 
 	FName m_IdSpecialEnemy;
-
-	bool m_bBossSpawned;
 
 	const FDungeonDataTableRow* m_DgDataTable;
 
@@ -89,6 +98,50 @@ public:
 	UPROPERTY()
 	APlayerVisual* m_VisualActor;
 
+	public:
+	DECLARE_MULTICAST_DELEGATE(FOnDungeonMaxUpdate);
+
+	FOnDungeonMaxUpdate m_OnDungeonMaxUpdate;
+
+
+	static UDataTable* DungeonDataTable;
+
+	static UDataTable* DropDataTable;
+
+	static UDataTable* MonsterEntityTable;
+
+	static UDataTable* GoldDungeonDataTable;
+
+	//FItemDropTableRow
+	//FMonsterEntity
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDgOpen, int);
+
+	FOnDgOpen m_OnDgOpen;
+	protected:
+	TArray<const FDungeonDataTableRow*> m_AryDgDataTable;
+
+
+	const FDungeonDataTableRow* m_CurrentDg;
+
+
+	UPROPERTY()
+	int m_nMyMaxStageLevel;
+	UPROPERTY()
+	int m_nCurrentStageLevel;
+	UPROPERTY()
+	int m_nSafeMaxStageLevel;
+	UPROPERTY()
+	int m_nSafeCurrentStageLevel;
+	//보스는 10킬이후부터 생성?
+	//보스는 1회만 죽여야한다
+	//보스는 1회만?
+	//그럼 결국 던전이 킬카운트 가지고 있어야한다
+
+	protected: //GoldDg
+	TArray<const FDungeonDataTableRow*> m_AryGoldDgDataTable;
+
+	const FDungeonDataTableRow* m_CurrentGoldDg;
+
 protected:
 	FVector GetRandomPointFromNav(const FVector& loc, const float& radius);
 
@@ -106,8 +159,6 @@ protected:
 	void SetSpawnMonsterOnTick(const bool bEnabled);
 
 public:
-	void Init();
-
 	void Reset();
 
 	FORCEINLINE TArray<AMonsterPawn*>& GetCurrentMonsters()
@@ -130,11 +181,6 @@ public:
 		return m_SpawnedBoss;
 	}
 
-	bool IsBossBattleIn()
-	{
-		return m_bBossSpawned && GetBossMob() && GetBossMob()->IsAlive();
-	}
-
 	UFUNCTION()
 	AMonsterPawn* SpawnMobToLoc(FVector loc);
 
@@ -146,49 +192,7 @@ protected:
 	void SpawnBossMob();
 	//
 
-public:
-	DECLARE_MULTICAST_DELEGATE(FOnDungeonMaxUpdate);
 
-	FOnDungeonMaxUpdate m_OnDungeonMaxUpdate;
-
-
-	static UDataTable* DungeonDataTable;
-
-	static UDataTable* DropDataTable;
-
-	static UDataTable* MonsterEntityTable;
-
-	static UDataTable* GoldDungeonDataTable;
-
-	//FItemDropTableRow
-	//FMonsterEntity
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDgOpen, int);
-
-	FOnDgOpen m_OnDgOpen;
-protected:
-	TArray<const FDungeonDataTableRow*> m_AryDgDataTable;
-
-
-	const FDungeonDataTableRow* m_CurrentDg;
-
-
-	UPROPERTY()
-	int m_nMyMaxStageLevel;
-	UPROPERTY()
-	int m_nCurrentStageLevel;
-	UPROPERTY()
-	int m_nSafeMaxStageLevel;
-	UPROPERTY()
-	int m_nSafeCurrentStageLevel;
-	//보스는 10킬이후부터 생성?
-	//보스는 1회만 죽여야한다
-	//보스는 1회만?
-	//그럼 결국 던전이 킬카운트 가지고 있어야한다
-
-protected: //GoldDg
-	TArray<const FDungeonDataTableRow*> m_AryGoldDgDataTable;
-
-	const FDungeonDataTableRow* m_CurrentGoldDg;
 public:
 	void SetDungeonData(const FString& dgJsonStr);
 
@@ -230,9 +234,20 @@ public:
 
 	virtual void EndDungeon(bool b) override;
 
-	void SpawnVisualActor();
+	void SpawnVisualActor(UWorld* world);
 
-	void SpawnOtherPVPActor();
+	void SpawnOtherPVPActor(UWorld* world);
 
 	void OnMenuOpen(bool b);
+
+	void RotatePawn(float x);
+
+	void OnTouchStart();
+
+	void OnTouchEnd();
+	
+	virtual void Tick(float delta) override;
+	
+	void CalculateVisualActorRot(float delta);
+
 };

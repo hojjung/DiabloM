@@ -144,11 +144,19 @@ void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
 		m_SkinMeshHandle.Get()->ReleaseHandle();
 	}
 
-	StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_PlayerSkinSoft, true, &m_SkinMeshHandle);
+	auto* LoadedMesh =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_PlayerSkinSoft, true, &m_SkinMeshHandle);
 	//
-	m_SkBody->SetSkeletalMesh(m_PlayerEntityData->m_PlayerData->m_PlayerSkinSoft.Get());
+	if (m_AnimHandle.Get())
+	{
+		m_AnimHandle.Get()->ReleaseHandle();
+	}
+
+	auto LoadedAnim =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_AnimBP, true, &m_AnimHandle);
+	
+	//
+	m_SkBody->SetSkeletalMesh(LoadedMesh);
 	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	m_SkBody->SetAnimInstanceClass(m_PlayerEntityData->m_PlayerData->m_AnimBP);
+	m_SkBody->SetAnimInstanceClass(LoadedAnim);
 	m_SkBody->SetForcedLOD(2);
 	m_fAttackSpeed = m_PlayerEntityData->m_PlayerData->m_fAttackSpeedMultiple;
 	m_BaseAttackAnim = m_PlayerEntityData->m_PlayerData->m_BaseAttackAnim;
@@ -177,12 +185,21 @@ void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
 	{
 		return;
 	}
+	
+	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
+
+	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_EquipData->m_ClassVisualActor, true, &m_WeaponHandle);
+	//
+	if (m_WeaponHandle.Get())
+	{
+		m_WeaponHandle.Get()->ReleaseHandle();
+	}
 
 	FActorSpawnParameters Param;
 
 	Param.bNoFail = true;
 
-	m_CreatedWeapon = GetWorld()->SpawnActor<AEquipmentActor>(spec.m_EquipData->m_ClassVisualActor, GetActorLocation(),
+	m_CreatedWeapon = GetWorld()->SpawnActor<AEquipmentActor>(LoadedEquip, GetActorLocation(),
 	                                                          GetActorRotation(), Param);
 
 	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
@@ -214,11 +231,20 @@ void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
 		return;
 	}
 
+	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
+
+	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_WingData->m_ClassVisualWingActor, true, &m_WingHandle);
+	//
+	if (m_WingHandle.Get())
+	{
+		m_WingHandle.Get()->ReleaseHandle();
+	}
+
 	FActorSpawnParameters Param;
 
 	Param.bNoFail = true;
 
-	m_CreatedWing = GetWorld()->SpawnActor<AEquipmentActor>(spec.m_WingData->m_ClassVisualWingActor, GetActorLocation(),
+	m_CreatedWing = GetWorld()->SpawnActor<AEquipmentActor>(LoadedEquip, GetActorLocation(),
 	                                                        GetActorRotation(), Param);
 
 	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
@@ -257,7 +283,16 @@ void APlayerDiabloCharacter::PetDataInject(const FPetSpec& spec)
 		return;
 	}
 
-	m_PetComp->SetChildActorClass(spec.m_PetData->m_ClassPetSkin);
+	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
+
+	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_PetData->m_ClassPetSkin, true, &m_PetHandle);
+	//
+	if (m_PetHandle.Get())
+	{
+		m_PetHandle.Get()->ReleaseHandle();
+	}
+
+	m_PetComp->SetChildActorClass(LoadedEquip);
 
 	m_OnMeshChanged.Broadcast(this);
 }
@@ -461,11 +496,32 @@ void APlayerDiabloCharacter::TriggerSkill(const FName& name, TArray<FHitResult>*
 void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
+	
+	if (m_WingHandle.Get())
+	{
+		m_WingHandle.Get()->ReleaseHandle();
+	}
 
 	if (m_SkinMeshHandle.Get())
 	{
 		m_SkinMeshHandle.Get()->ReleaseHandle();
 	}
+	
+	if (m_WeaponHandle.Get())
+	{
+		m_WeaponHandle.Get()->ReleaseHandle();
+	}
+
+	if (m_PetHandle.Get())
+	{
+		m_PetHandle.Get()->ReleaseHandle();
+	}
+
+	if (m_AnimHandle.Get())
+	{
+		m_AnimHandle.Get()->ReleaseHandle();
+	}
+
 }
 
 

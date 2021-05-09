@@ -33,7 +33,6 @@ void UDiabloGameInstance::Init()
 {
     Super::Init();
     m_NormalDgManager = NewObject<UNormalDungeonManager>();
-	m_NormalDgManager->Init();
     m_PlayerUpgradeManager = NewObject<UPlayerUpgradeManager>();
     m_DungeonManager = NewObject<UDungeonManager>();
     m_DungeonManager->Init();

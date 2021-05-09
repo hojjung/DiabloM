@@ -19,6 +19,7 @@ class DIABLOM_API UMonsterSpawnManager : public UObject
 public:
 	DECLARE_MULTICAST_DELEGATE(FOnBattleStart);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnBattleEnd,bool);
+	
 
 	FOnBattleStart m_OnBattleStart;
 
@@ -37,8 +38,6 @@ public:
 	virtual void EndDungeon(bool b)
 	{
 		m_OnBattleEnd.Broadcast(b);
-		m_OnBattleStart.Clear();
-		m_OnBattleEnd.Clear();
 	};
 
 	virtual void Tick(float delta)

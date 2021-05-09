@@ -151,13 +151,19 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJso
 		m_SkinMeshHandle.Get()->ReleaseHandle();
 	}
 
-	auto* LoadedMesh = StreamableManager.LoadSynchronous(SkinData->m_PlayerSkinSoft, true, &m_SkinMeshHandle);
+	if (m_AnimHandle.Get())
+	{
+		m_AnimHandle.Get()->ReleaseHandle();
+	}
 
-	USkeletalMesh* MeshLoadd = Cast<USkeletalMesh>(LoadedMesh);
-	//
-	m_SkBody->SetSkeletalMesh(MeshLoadd);
+	USkeletalMesh* LoadedMesh = StreamableManager.LoadSynchronous(SkinData->m_PlayerSkinSoft, true, &m_SkinMeshHandle);
+
+	m_SkBody->SetSkeletalMesh(LoadedMesh);
 	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	m_SkBody->SetAnimInstanceClass(SkinData->m_AnimBP);
+
+	TSubclassOf<UAnimInstance> LoadedAnimBP = StreamableManager.LoadSynchronous(SkinData->m_AnimBP, true, &m_AnimHandle);
+
+	m_SkBody->SetAnimInstanceClass(LoadedAnimBP);
 	//
 	m_WeaponSpec = FWeaponSpec();
 	m_WeaponSpec.m_EquipData = UDiabloGameInstance::Get->m_EquipManager->m_AryWeaponTable[equipObj->GetNumberField(
@@ -174,11 +180,19 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJso
 			m_WeaponActor->Destroy();
 		}
 
+		if (m_WeaponHandle.Get())
+		{
+			m_WeaponHandle.Get()->ReleaseHandle();
+		}
+
+		auto LoadedEquipActor = StreamableManager.LoadSynchronous(m_WeaponSpec.m_EquipData->m_ClassVisualActor, true, &m_WeaponHandle);
+
+
 		FActorSpawnParameters Param;
 
 		Param.bNoFail = true;
 
-		m_WeaponActor = GetWorld()->SpawnActor<AEquipmentActor>(m_WeaponSpec.m_EquipData->m_ClassVisualActor, Param);
+		m_WeaponActor = GetWorld()->SpawnActor<AEquipmentActor>(LoadedEquipActor, Param);
 
 		FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
 		                               EAttachmentRule::KeepRelative, false);
@@ -204,7 +218,14 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJso
 				m_Capture->ShowOnlyActors.Remove(m_PetComp->GetChildActor());
 			}
 
-			m_PetComp->SetChildActorClass(m_PetSpec.m_PetData->m_ClassPetSkin);
+			if (m_WeaponHandle.Get())
+			{
+				m_WeaponHandle.Get()->ReleaseHandle();
+			}
+
+			auto LoadedPetActor = StreamableManager.LoadSynchronous(m_PetSpec.m_PetData->m_ClassPetSkin, true, &m_PetHandle);
+
+			m_PetComp->SetChildActorClass(LoadedPetActor);
 
 			m_Capture->ShowOnlyActors.Add(m_PetComp->GetChildActor());
 		}
@@ -256,10 +277,29 @@ void AOtherPlayerPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-
 	if (m_SkinMeshHandle.Get())
 	{
 		m_SkinMeshHandle.Get()->ReleaseHandle();
+	}
+	
+	if (m_WeaponHandle.Get())
+	{
+		m_WeaponHandle.Get()->ReleaseHandle();
+	}
+
+	if (m_PetHandle.Get())
+	{
+		m_PetHandle.Get()->ReleaseHandle();
+	}
+
+	if (m_AnimHandle.Get())
+	{
+		m_AnimHandle.Get()->ReleaseHandle();
+	}
+
+	if (m_WingHandle.Get())
+	{
+		m_WingHandle.Get()->ReleaseHandle();
 	}
 }
 
