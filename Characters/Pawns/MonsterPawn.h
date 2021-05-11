@@ -49,7 +49,7 @@ protected:
 	TSharedPtr<FStreamableHandle>  m_HandleAnimSpawn;
 	
 	TSharedPtr<FStreamableHandle>  m_HandleAnimTookHit;
-	
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* m_StShadow;

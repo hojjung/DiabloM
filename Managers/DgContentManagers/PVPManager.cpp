@@ -188,6 +188,8 @@ void UPVPManager::Tick(float deltaTime)
 
 	m_fTimer += deltaTime;
 
+	m_OnTimerTick.Broadcast(m_fTimer);
+
 	float TimeRemain = PVPTIME - m_fTimer;
 
 	if (m_fTimer > PVPTIME)

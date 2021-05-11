@@ -5,7 +5,7 @@ void UMagicDgCanvas::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	UDiabloGameInstance::Get->m_MagicDgManager->m_OnTick.AddUObject(this,&UMagicDgCanvas::UpdateTimer);
+	UDiabloGameInstance::Get->m_MagicDgManager->m_OnTimerTick.AddUObject(this,&UMagicDgCanvas::UpdateTimer);
 
 	m_Handle = UDiabloGameInstance::Get->GetPlChar()->m_OnRageChanged.AddUObject(this,&UMagicDgCanvas::PlayerUpdateRageBar);
 	

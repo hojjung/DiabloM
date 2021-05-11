@@ -56,11 +56,10 @@ public:
 protected:
 	UPROPERTY()
 	float m_fBossTimer;
-
+	UPROPERTY()
 	bool m_bTouched;
-
+	UPROPERTY()
 	FRotator m_InitVisualRot;
-
 	UPROPERTY()
 	UNavigationSystemV1* m_NavSys;
 	UPROPERTY()
@@ -75,6 +74,10 @@ protected:
 	AMonsterPawn* m_SpawnedBoss;
 	UPROPERTY()
 	TSubclassOf<UCameraShake> m_ClassShake;
+	UPROPERTY()
+	float m_fSpawnRadius;
+	UPROPERTY()
+	float m_SensingInterval;
 
 	FName m_IdEnemy;
 
@@ -83,10 +86,6 @@ protected:
 	FName m_IdSpecialEnemy;
 
 	const FDungeonDataTableRow* m_DgDataTable;
-
-	float m_fSpawnRadius;
-
-	float m_SensingInterval;
 
 	FTimerHandle m_TimerHandle_OnTimer;
 

@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 
 #include "MonsterSpawnManager.h"
+#include "Characters/Pawns/MonsterPawn.h"
 #include "Datas/DungeonDataTable.h"
 #include "UObject/NoExportTypes.h"
 #include "PetDgManager.generated.h"
+#define PETDGTIME 45.f
 
-
-
+class UNavigationSystemV1;
 USTRUCT(BlueprintType)//���̵�,Ƽ��
 struct FPetDgTableRow : public FDungeonDataTableRow
 {
@@ -18,9 +19,7 @@ struct FPetDgTableRow : public FDungeonDataTableRow
 
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	int m_nPrizeMagicStoneMin = 15;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	int m_nPrizeMagicStoneMax = 25;
+	int m_nTicket = 2;
 };
 
 UCLASS()
@@ -30,16 +29,42 @@ class DIABLOM_API UPetDgManager : public UMonsterSpawnManager
 public:
 	UPetDgManager();
 
+	DECLARE_DELEGATE(FOnMonsterKilled);
+
+	FOnMonsterKilled m_OnMonsterKilled;
+
+	FOnTick m_OnTickTimer;
+
+protected:
+	UPROPERTY()
+	UWorld* m_CurrentWorld;
 	UPROPERTY()
 	UDataTable* m_PetTable;
+	UPROPERTY()
+	UNavigationSystemV1* m_NavSys;
+	UPROPERTY()
+	TArray<AMonsterPawn*> m_AryMonsterSpawnedCurrently;
+	UPROPERTY()
+	float m_fTimer;
+	UPROPERTY()
+	int m_nCurrentKillCount;
+	UPROPERTY()
+	int m_nMaxKillCount;
 
 	FPetDgTableRow* m_CurrentTable;
 
 	TArray<FPetDgTableRow*> m_AryTables;
 
-	float m_fTimer;
+	TArray<TSharedPtr<FStreamableHandle>> m_LoadedMonsters;
+	
+	FSafeInt m_PetTicket;
+	
 public:
 	void Init();
+
+	virtual void BeginDestroy() override;
+
+	void SpawnPetDgMonsters(int count);
 
 	void RequestMovePetDg(int dgLevel);
 	
@@ -52,4 +77,20 @@ public:
 	virtual void Tick(float deltaTime) override;
 
 	virtual FString GetOpenLevelAssetName() override;
+
+	FVector GetRandomPointFromNav(const FVector& loc, const float& radius);
+
+	void AddKillCount(AMonsterPawn*);
+
+	AMonsterPawn* SpawnMobToLoc(FVector loc);
+
+	AMonsterPawn* CreateMob(FVector loc);
+
+	virtual AUnitPawn* GetNearestEnemy(const FVector& wantPos) override;
+	
+	int GetCurrentReward();
+
+	float GetMobCountPercent();
+
+	FString GetMobRemainCountStr();
 };

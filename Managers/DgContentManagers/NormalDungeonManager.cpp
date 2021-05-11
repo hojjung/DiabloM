@@ -58,12 +58,18 @@ void UNormalDungeonManager::Init()
 
 void UNormalDungeonManager::OnLevelLoadComplete(UWorld* world)
 {
+	m_nGoldGoblinSpawnCount=0;
+	m_nKillCount=0;
+
 	StartSpawn(world, m_CurrentDg);
 	SpawnVisualActor(world);
 	SpawnOtherPVPActor(world);
 	
 	AGameLevelHUD* MyHud = Cast<AGameLevelHUD>(UDiabloGameInstance::Get->GetPlCon()->GetHUD());
 	MyHud->m_Canvas->m_OnMenuVisibleChanged.AddUObject(this, &UNormalDungeonManager::OnMenuOpen);
+
+	//
+
 }
 
 void UNormalDungeonManager::StartSpawn(UWorld* world, const FDungeonDataTableRow* dgData)
@@ -652,3 +658,6 @@ void UNormalDungeonManager::CalculateVisualActorRot(float delta)
 
 	FRotator NewRot2 = m_VisualActor->GetSkMesh()->GetComponentRotation();
 }
+
+
+

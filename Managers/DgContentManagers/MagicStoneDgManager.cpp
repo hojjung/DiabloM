@@ -90,7 +90,7 @@ void UMagicStoneDgManager::Tick(float delta_seconds)
 
 	m_fTimer += delta_seconds;
 
-	float TimeRemain = MAGICDGTIME - m_fTimer;
+	m_OnTimerTick.Broadcast(m_fTimer);
 
 	if (m_fTimer > MAGICDGTIME)
 	{

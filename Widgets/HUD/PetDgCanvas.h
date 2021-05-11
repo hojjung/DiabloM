@@ -6,17 +6,18 @@
 #include "Blueprint/UserWidget.h"
 #include "Characters/Pawns/MonsterPawn.h"
 #include "Widgets/SkillHotkeyPanel.h"
-#include "Widgets/CommonElement/MaterialProgressBar.h"
+#include "Managers/DgContentManagers/PetDgManager.h"
 
-#include "MagicDgCanvas.generated.h"
+#include "PetDgCanvas.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UMagicDgCanvas : public UUserWidget
+class DIABLOM_API UPetDgCanvas : public UUserWidget
 {
 	GENERATED_BODY()
+	
 protected:
 	UPROPERTY(Transient,meta = (BindWidgetAnim),meta=(AllowPrivateAccess = "true"))
 	UWidgetAnimation* ShowResult;
@@ -25,30 +26,30 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UTextBlock* m_TxtRageValue;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	USkillHotkeyPanel* m_SkillPanel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UMaterialProgressBar* m_BarTime;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UTextBlock* m_TxtTime;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
-	UMaterialProgressBar* m_BarBossHp;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
-	UTextBlock* m_TxtBossHp;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
-	USkillHotkeyPanel* m_SkillPanel;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UTextBlock* m_TxtRequestedInfo;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtReward;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UMaterialProgressBar* m_MonsterCountBar;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UTextBlock* m_TxtMonsterCountRemain;
 	
 	FDelegateHandle m_Handle;
 	
 public:
 	virtual void NativeOnInitialized() override;
 
-	void UpdateDragonHp(float percentOne);
-	
 	void UpdateTimer(float timer);
 
 	void OnBattleEnd(bool isPlayerWon);
 
 	void PlayerUpdateRageBar(float cV,float mV);
 
-	void OnDragonSpawned(AMonsterPawn* pawn);
+	void UpdateMonsterCount();
 };

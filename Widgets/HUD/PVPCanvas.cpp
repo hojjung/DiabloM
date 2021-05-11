@@ -13,7 +13,7 @@ void UPVPCanvas::NativeOnInitialized()
 	
 	m_TxtOtherPlayerName->SetText(FText::FromString(UDiabloGameInstance::Get->m_PVPManager->m_OtherPlayerDisplayName));
 
-	UDiabloGameInstance::Get->m_PVPManager->m_OnTick.AddUObject(this,&UPVPCanvas::UpdateTimer);
+	UDiabloGameInstance::Get->m_PVPManager->m_OnTimerTick.AddUObject(this,&UPVPCanvas::UpdateTimer);
 
 	UDiabloGameInstance::Get->m_PVPManager->m_OnBattleEnd.AddUObject(this,&UPVPCanvas::OnBattleEnd);
 

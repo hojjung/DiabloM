@@ -36,16 +36,15 @@ public:
 	FOnObtainBounty m_OnObtainBounty;
 
 protected:
+	FSafeInt m_WeaponStones;
+	UPROPERTY()
+	float m_fTimer;
 	UPROPERTY()
 	UDataTable* m_WeaponTable;
 	
 	TArray<FWeaponDgTableRow*> m_DgDataRow;
 
 	FWeaponDgTableRow* m_CurrentDgData;
-
-	FSafeInt m_WeaponStones;
-
-	float m_fTimer;
 
 public:
 	void Init();

@@ -30,6 +30,8 @@ public:
 
 	UPVPManager();
 
+	FOnTick m_OnTimerTick;
+
 	FOnOtherPlayerSpawned m_OnOtherPlayerSpawned;
 
 	

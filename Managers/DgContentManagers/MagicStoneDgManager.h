@@ -42,10 +42,12 @@ public:
 
 	UPROPERTY()
 	AMonsterPawn* m_SpawnedMagicDragon;
+
+	FOnTick m_OnTimerTick;
+	
 protected:
 	UPROPERTY()
 	UDataTable* m_MagicDgTable;
-	
 
 	TArray<FMagicDgTableRow*> m_DgDataRow;
 
