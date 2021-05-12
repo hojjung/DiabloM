@@ -34,16 +34,16 @@ void UMagicStoneDgManager::OnLevelLoadComplete(UWorld* world)
 	m_SpawnedMagicDragon = world->SpawnActor<AMonsterPawn>(AMonsterPawn::StaticClass(), Loc, Rot, Param);
 
 	m_SpawnedMagicDragon->DataInject(DragonEntity, m_CurrentDgData->GetMobHp(), m_CurrentDgData->GetMobGold(),
-									EMonsterType::MagicDragon, 1, 1, 1);
+	                                 EMonsterType::MagicDragon, 1, 1, 1);
 
-	m_SpawnedMagicDragon->m_OnDeathAnimAfter.AddUObject(this,&UMagicStoneDgManager::EndMagicDgSuccess);
+	m_SpawnedMagicDragon->m_OnDeathAnimAfter.AddUObject(this, &UMagicStoneDgManager::EndMagicDgSuccess);
 
 	m_nSuccessBounty = m_CurrentDgData->GetRandomPrize();
 
-	m_nFailBounty  = m_CurrentDgData->m_nPrizeMagicStoneMin / 4;
+	m_nFailBounty = m_CurrentDgData->m_nPrizeMagicStoneMin / 4;
 
 	m_OnDragonSpawned.ExecuteIfBound(m_SpawnedMagicDragon);
-	
+
 	StartDungeon();
 }
 
@@ -56,7 +56,7 @@ void UMagicStoneDgManager::StartDungeon()
 	PlChar->FocusTarget(m_SpawnedMagicDragon);
 
 	m_fTimer = 0.f;
-	
+
 	m_bIsMatchStarted = true;
 }
 
@@ -64,7 +64,15 @@ void UMagicStoneDgManager::EndDungeon(bool b)
 {
 	Super::EndDungeon(b);
 
-	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,&UMagicStoneDgManager::MoveToNormalDungeon, 2.2f,false);	
+	if (m_bIsMatchStarted)
+	{
+		m_bIsMatchStarted = false;
+
+		UDiabloGameInstance::Get->GetPlChar()->SetFSM_Enable(false);
+
+		UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(
+			m_TimerHandle_OnTimer, this, &UMagicStoneDgManager::MoveToNormalDungeon, 2.2f, false);
+	}
 }
 
 FString UMagicStoneDgManager::GetOpenLevelAssetName()
@@ -90,7 +98,7 @@ void UMagicStoneDgManager::Tick(float delta_seconds)
 
 	m_fTimer += delta_seconds;
 
-	m_OnTimerTick.Broadcast(m_fTimer);
+	m_OnTimerTick.Broadcast(MAGICDGTIME - m_fTimer);
 
 	if (m_fTimer > MAGICDGTIME)
 	{
@@ -100,16 +108,16 @@ void UMagicStoneDgManager::Tick(float delta_seconds)
 
 bool UMagicStoneDgManager::IsBattleStarted()
 {
-	return m_bIsMatchStarted;
+	return m_bIsMatchStarted && m_SpawnedMagicDragon;
 }
 
 
 void UMagicStoneDgManager::EndMagicDgSuccess(AMonsterPawn* dragonDead)
 {
 	PRINTF("사냥성공");
-	
+
 	AddMagicStones(m_nSuccessBounty);
-	
+
 	m_bIsMatchStarted = false;
 
 	EndDungeon(true);
@@ -121,13 +129,12 @@ void UMagicStoneDgManager::EndMagicDgFail()
 
 	AddMagicStones(m_nFailBounty);
 
-	m_bIsMatchStarted = false;
-	
 	EndDungeon(false);
 }
+
 void UMagicStoneDgManager::AddMagicStones(int magicStones)
 {
-	m_nCurrentMagicStone+=magicStones;
+	m_nCurrentMagicStone += magicStones;
 }
 
 
@@ -141,3 +148,17 @@ int UMagicStoneDgManager::GetFailBounty()
 	return m_nFailBounty;
 }
 
+AUnitPawn* UMagicStoneDgManager::GetNearestEnemy(const FVector& wantPos)
+{
+	if (!IsBattleStarted())
+	{
+		return nullptr;
+	}
+
+	return m_SpawnedMagicDragon;
+}
+
+float UMagicStoneDgManager::GetTimePercent()
+{
+	return m_fTimer / MAGICDGTIME;
+}

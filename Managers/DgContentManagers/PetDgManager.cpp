@@ -52,7 +52,7 @@ void UPetDgManager::StartDungeon()
 
 	m_fTimer=0.f;
 
-	SpawnPetDgMonsters(20);
+	SpawnPetDgMonsters(m_CurrentTable->m_nSpawnMobCount);
 }
 
 void UPetDgManager::SpawnPetDgMonsters(int count)
@@ -84,22 +84,24 @@ void UPetDgManager::EndDungeon(bool b)
 {
 	m_fTimer=0;
 
+	Super::EndDungeon(b);
+	
 	if(m_bIsMatchStarted)
 	{
-		Super::EndDungeon(b);
-
 		m_PetTicket+=GetCurrentReward();
 		
 		FTimerHandle m_TimerHandle_OnTimer;
 		
 		UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,&UPetDgManager::MoveToNormalDungeon, 2.2f,false);
+
+		m_bIsMatchStarted = false;
 	}
 
 	m_nCurrentKillCount=0;
 
 	m_nMaxKillCount=0;
 
-	m_bIsMatchStarted = false;
+	
 }
 
 void UPetDgManager::Tick(float deltaTime)

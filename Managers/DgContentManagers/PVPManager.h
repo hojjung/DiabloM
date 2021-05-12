@@ -11,6 +11,9 @@
 #include "UObject/NoExportTypes.h"
 #include "PVPManager.generated.h"
 
+
+#define PVPTIME 30
+
 class UPlayFabJsonObject;
 /**
  * 
@@ -20,36 +23,27 @@ class DIABLOM_API UPVPManager : public UMonsterSpawnManager
 {
 	GENERATED_BODY()
 public:
-	DECLARE_DELEGATE_ThreeParams(FOnPVPMatched,UPlayFabJsonObject*,UPlayFabJsonObject*,UPlayFabJsonObject*);
-	DECLARE_DELEGATE_OneParam(FOnOtherPlayerFound,const FString);
-	DECLARE_DELEGATE(FOnMatchFail);
-	DECLARE_DELEGATE(FOnMatchStart);
-	DECLARE_DELEGATE_ThreeParams(FOnDmgChanged,float,BigInt,BigInt);
-	DECLARE_DELEGATE_OneParam(FOnBattleEnd,bool);
-	DECLARE_DELEGATE_OneParam(FOnOtherPlayerSpawned,AOtherPlayerPawn*);
-
 	UPVPManager();
-
-	FOnTick m_OnTimerTick;
+	
+	DECLARE_DELEGATE_ThreeParams(FOnPVPMatched,UPlayFabJsonObject*,UPlayFabJsonObject*,UPlayFabJsonObject*);
+	DECLARE_DELEGATE_OneParam(FOnOtherPlayerSpawned,AOtherPlayerPawn*);
+	DECLARE_DELEGATE_ThreeParams(FOnDmgChanged,float,BigInt,BigInt);
+	DECLARE_DELEGATE_OneParam(FOnOtherPlayerFound,const FString);
+	DECLARE_DELEGATE_OneParam(FOnBattleEnd,bool);
+	DECLARE_DELEGATE(FOnMatchStart);
+	DECLARE_DELEGATE(FOnMatchFail);
 
 	FOnOtherPlayerSpawned m_OnOtherPlayerSpawned;
-
-	
-
-	FOnDmgChanged m_OnDmgChanged;
-
-	FOnPVPMatched m_OnMatchSuccessed;
-
 	FOnOtherPlayerFound m_OnOtherPlayerFound;
-
-	FOnMatchFail m_OnMatchFail;
-
+	FOnPVPMatched m_OnMatchSuccessed;
+	FOnDmgChanged m_OnDmgChanged;
 	FOnMatchStart m_OnMatchStart;
+	FOnMatchFail m_OnMatchFail;
+	FOnTick m_OnTimerTick;
 
 	FTimerHandle m_TimerHandle_OnTimer;
 
 	TWeakObjectPtr<AOtherPlayerPawn> m_PVPOtherPlayer;
-
 
 	BigInt m_PlayerTotalDmg;
 	

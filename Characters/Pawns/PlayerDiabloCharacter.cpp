@@ -18,8 +18,6 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	m_fGainRagePer = 3;
 	m_fCurrentRage = 0;
 	
-	m_bAutoUseSkill = false;
-	
 	m_bIsManualMove = false;
 
 	m_Capsule->SetCapsuleSize(55, 88);
@@ -80,6 +78,26 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 void APlayerDiabloCharacter::UpdateRage()
 {
 	m_OnRageChanged.Broadcast(m_fCurrentRage, m_fMaxRage);
+}
+
+FString APlayerDiabloCharacter::GetRageFormatStr()
+{
+	return FString::Printf(TEXT("분노 %d/%d"),(int)m_fCurrentRage,(int)m_fMaxRage);
+}
+
+float APlayerDiabloCharacter::GetRagePercent()
+{
+	return m_fCurrentRage / m_fMaxRage;
+}
+
+void APlayerDiabloCharacter::SetFSM_Enable(bool v)
+{
+	m_bUseFSM = v;
+
+	if(!m_bUseFSM)
+	{
+		FocusTarget(nullptr);
+	}
 }
 
 void APlayerDiabloCharacter::BeginPlay()
@@ -958,7 +976,7 @@ void APlayerDiabloCharacter::Tick(float DeltaTime)
 		m_TickFSM->TickFSM();
 	}
 
-	if(m_bAutoUseSkill)
+	if(UDiabloGameInstance::Get->m_ShopManager->GetUseAutoSkill())
 	{
 		FSkillSpec* WantUseSkill =m_AutoSkillUse->GetUsableSkill(this,UDiabloGameInstance::Get->m_PlayerUpgradeManager->GetAryEquippedSkill(),m_fAttackCD / 1.f);
 
@@ -1017,7 +1035,3 @@ void APlayerDiabloCharacter::ShowNameCard(const FString& name)
 	m_NameCard->SetFloatingText(FText::FromString(name));
 }
 
-void APlayerDiabloCharacter::SetUseAutoSkill(bool autoSkill)
-{
-	m_bAutoUseSkill = autoSkill;
-}

@@ -99,13 +99,7 @@ void UPVPCanvas::PlayerUpdateRageBar(float cV, float mV)
 	
 	m_PlayerBarRage->SetProgressValue(cV/mV);
 
-	FTextFormat FormatRage =FText::FromString(TEXT("분노 {0}/{1}"));
-
-	FFormatOrderedArguments Args;
-	Args.Add(cV);
-	Args.Add(mV);
-	
-	m_TxtPlayerRageValue->SetText(FText::Format(FormatRage,Args));	
+	m_TxtPlayerRageValue->SetText(FText::FromString(UDiabloGameInstance::Get->GetPlChar()->GetRageFormatStr()));
 }
 
 void UPVPCanvas::OtherPlayerUpdateRageBar(float cV, float mV)

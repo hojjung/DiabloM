@@ -9,7 +9,8 @@
 #include "Datas/DungeonDataTable.h"
 #include "UObject/NoExportTypes.h"
 #include "PetDgManager.generated.h"
-#define PETDGTIME 45.f
+
+#define PETDGTIME 40.f
 
 class UNavigationSystemV1;
 USTRUCT(BlueprintType)//���̵�,Ƽ��
@@ -20,6 +21,8 @@ struct FPetDgTableRow : public FDungeonDataTableRow
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	int m_nTicket = 2;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	int m_nSpawnMobCount = 17;
 };
 
 UCLASS()

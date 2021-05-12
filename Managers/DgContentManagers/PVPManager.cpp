@@ -4,8 +4,6 @@
 #include "PlayFabJsonObject.h"
 #include "Managers/DiabloGameInstance.h"
 
-#define PVPTIME 40
-
 UPVPManager::UPVPManager()
 {
 	m_bIsMatchStarted = false;
@@ -16,7 +14,9 @@ UPVPManager::UPVPManager()
 void UPVPManager::RequestPVPMatching()
 {
 	m_OnMatchStart.ExecuteIfBound();
-	UDiabloGameInstance::Get->m_PlayfabManager->RequestPVPMatching(6, PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate::CreateUObject(this, &UPVPManager::OnRequestComplete));
+	UDiabloGameInstance::Get->m_PlayfabManager->RequestPVPMatching(
+		6, PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate::CreateUObject(
+			this, &UPVPManager::OnRequestComplete));
 }
 
 void UPVPManager::OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult& rslt) //만일 이게 없으면?
@@ -38,7 +38,7 @@ void UPVPManager::OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboard
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetOtherPlayerMainData(
 			TestID, FGetUsrDataDele::CreateUObject(this, &UPVPManager::OnGetOtherPlayerSuccess));
 	}
-	else//Successed
+	else //Successed
 	{
 		PlayFab::ClientModels::FPlayerLeaderboardEntry PlayerEntry;
 
@@ -47,7 +47,7 @@ void UPVPManager::OnRequestComplete(const PlayFab::ClientModels::FGetLeaderboard
 		PlayerLeaderBoard.Remove(PlayerEntry);
 
 		PlayFab::ClientModels::FPlayerLeaderboardEntry MatchedUser = PlayerLeaderBoard.GetRandom();
-		
+
 		m_OtherPlayerDisplayName = MatchedUser.DisplayName;
 
 		m_OnOtherPlayerFound.ExecuteIfBound(m_OtherPlayerDisplayName);
@@ -62,7 +62,7 @@ void UPVPManager::OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserD
 	if (!rslt.Data.Find(UPlayfabManager::MainData))
 	{
 		m_OnMatchFail.ExecuteIfBound();
-		
+
 		return;
 	}
 
@@ -71,7 +71,7 @@ void UPVPManager::OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserD
 	if (!PlayfabJson->DecodeJson(rslt.Data[UPlayfabManager::MainData].Value))
 	{
 		PRINTF("FailDecode");
-		
+
 		return;
 	}
 
@@ -83,7 +83,8 @@ void UPVPManager::OnGetOtherPlayerSuccess(const PlayFab::ClientModels::FGetUserD
 
 	m_OnMatchSuccessed.ExecuteIfBound(m_StatObj, m_SkillObj, m_EquipObj);
 	//
-	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,&UPVPManager::MoveToPVPDungeon, 2.2f,false);
+	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,
+	                                                                 &UPVPManager::MoveToPVPDungeon, 2.2f, false);
 }
 
 void UPVPManager::MatchFail()
@@ -110,16 +111,6 @@ void UPVPManager::UpdateGauge()
 
 void UPVPManager::PVPEnd()
 {
-	m_fTimer = 0.f;
-
-	m_bIsMatchStarted = false;
-
-	APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
-
-	PlChar->m_bUseFSM = false;
-
-	m_PVPOtherPlayer.Get()->m_bUseFSM = false;
-
 	bool PlayerWin = m_PlayerTotalDmg.IsGreaterOrEqual(m_OtherPlayerTotalDmg);
 
 	EndDungeon(PlayerWin);
@@ -174,7 +165,22 @@ void UPVPManager::EndDungeon(bool b)
 {
 	Super::EndDungeon(b);
 
-	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this,&UPVPManager::MoveToNormalDungeon, 2.2f,false);
+	if (m_bIsMatchStarted)
+	{
+		m_fTimer = 0.f;
+
+		m_bIsMatchStarted = false;
+
+		APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
+
+		PlChar->m_bUseFSM = false;
+
+		m_PVPOtherPlayer.Get()->m_bUseFSM = false;
+
+
+		UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(
+			m_TimerHandle_OnTimer, this, &UPVPManager::MoveToNormalDungeon, 2.2f, false);
+	}
 }
 
 void UPVPManager::Tick(float deltaTime)
@@ -183,14 +189,15 @@ void UPVPManager::Tick(float deltaTime)
 	{
 		return;
 	}
-	
+
 	Super::Tick(deltaTime);
 
 	m_fTimer += deltaTime;
 
-	m_OnTimerTick.Broadcast(m_fTimer);
-
 	float TimeRemain = PVPTIME - m_fTimer;
+
+	m_OnTimerTick.Broadcast(TimeRemain);
+
 
 	if (m_fTimer > PVPTIME)
 	{
@@ -219,7 +226,7 @@ void UPVPManager::SpawnPVPPlayer(UWorld* world)
 
 AUnitPawn* UPVPManager::GetNearestEnemy(const FVector& wantPos)
 {
-	if(!UDiabloGameInstance::Get->m_PVPManager->m_bIsMatchStarted)
+	if (!IsBattleStarted())
 	{
 		return nullptr;
 	}
@@ -239,5 +246,5 @@ FString UPVPManager::GetOpenLevelAssetName()
 
 bool UPVPManager::IsBattleStarted()
 {
-	return m_bIsMatchStarted;
+	return m_PVPOtherPlayer.Get() && m_bIsMatchStarted;
 }

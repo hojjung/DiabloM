@@ -105,8 +105,6 @@ protected:
 
 	TWeakObjectPtr<AUnitPawn> m_FocusOutlinePawn;;
 
-	bool m_bAutoUseSkill;
-
 	bool m_bIsManualMove;
 
 	FTimerHandle m_AttackTimer;
@@ -301,8 +299,12 @@ public:
 
 	void ShowNameCard(const FString& name);
 
-	void SetUseAutoSkill(bool autoSkill);
-
 	void UpdateRage();
+
+	FString GetRageFormatStr();
+
+	float GetRagePercent();
+
+	void SetFSM_Enable(bool v);
 };
 

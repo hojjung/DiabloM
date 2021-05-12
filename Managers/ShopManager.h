@@ -39,6 +39,8 @@ protected:
 	
 	BigInt m_Gold03;
 
+	bool m_bUsingAutoSkill;
+
 public:
 	UFUNCTION()
 	void PurchasePacakge01();
@@ -115,6 +117,15 @@ UFUNCTION()
 	}
 
 	void ShowTouchBan();
+	
+	bool IsAbleToUseAutoSkill();
+
+	void SetUseAutoSkill(bool bUse);
+
+	FORCEINLINE bool GetUseAutoSkill()
+	{
+		return m_bUsingAutoSkill;
+	}
 };
 
 

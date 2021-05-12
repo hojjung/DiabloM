@@ -13,13 +13,14 @@ struct FWeaponDgTableRow : public FDungeonDataTableRow
 
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	int m_nPrizeMagicStoneMin = 15;
+	int m_nPrizeWeaponStoneMin = 15;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	int m_nPrizeMagicStoneMax = 25;
+	int m_nPrizeWeaponStoneMax = 25;
+	
 
 	int GetRandomPrize()
 	{
-		return FMath::RandRange(m_nPrizeMagicStoneMin,m_nPrizeMagicStoneMax);
+		return FMath::RandRange(m_nPrizeWeaponStoneMin,m_nPrizeWeaponStoneMax);
 	}
 };
 
@@ -31,20 +32,40 @@ class DIABLOM_API UWeaponScrollDgManager : public UMonsterSpawnManager
 public:
 	UWeaponScrollDgManager();
 
+	static const int MonsterPoolCount = 12;
+
 	DECLARE_DELEGATE_OneParam(FOnObtainBounty,int);
 
 	FOnObtainBounty m_OnObtainBounty;
 
+	FOnTick m_OnTimerTick;
+
 protected:
-	FSafeInt m_WeaponStones;
+	UPROPERTY()
+	float m_SensingInterval;
 	UPROPERTY()
 	float m_fTimer;
 	UPROPERTY()
 	UDataTable* m_WeaponTable;
+	UPROPERTY()
+	FSafeInt m_WeaponStones;
 	
 	TArray<FWeaponDgTableRow*> m_DgDataRow;
 
 	FWeaponDgTableRow* m_CurrentDgData;
+
+	TArray<TSharedPtr<FStreamableHandle>> m_LoadedMonsters;
+
+	FTimerHandle m_TimerHandle_OnTimer;
+
+	UPROPERTY()
+	UNavigationSystemV1* m_NavSys;
+	UPROPERTY()
+	UWorld* m_CurrentWorld;
+	UPROPERTY()
+	TArray<AMonsterPawn*> m_AryMonsterSpawnedCurrently;
+
+	
 
 public:
 	void Init();
@@ -63,5 +84,30 @@ public:
 
 	void OnMonsterDead(AMonsterPawn* self);
 
-	
+	virtual AUnitPawn* GetNearestEnemy(const FVector& wantPos) override;
+
+	virtual void BeginDestroy() override;
+	//
+protected:
+	FVector GetRandomPointFromNav(const FVector& loc, const float& radius);
+
+	AMonsterPawn* CreateMob(FVector loc);
+
+	AMonsterPawn* GetReadyMonster();
+
+	void OnTimer();
+
+	void SetTimer(const float TimeDelay);
+
+	void SetSpawnMonsterOnTick(const bool bEnabled);
+
+	void Reset();
+
+	UFUNCTION()
+	AMonsterPawn* SpawnMobToLoc(FVector loc);
+
+	void StartSpawn(UWorld* world);
+
 };
+
+

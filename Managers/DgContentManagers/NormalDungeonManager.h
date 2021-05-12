@@ -133,8 +133,6 @@ protected:
 
 	void SetTimer(const float TimeDelay);
 
-	void SetSensingInterval(const float newSensingInterval);
-
 	void SetSpawnMonsterOnTick(const bool bEnabled);
 
 	void Reset();
@@ -213,4 +211,5 @@ public:
 	virtual void Tick(float delta) override;
 
 	void CalculateVisualActorRot(float delta);
+
 };

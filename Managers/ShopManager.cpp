@@ -6,6 +6,8 @@
 
 void UShopManager::SetShopDataFromServer(const UPlayFabJsonObject* iapJsonStr)
 {
+	m_bUsingAutoSkill=false;
+	
 	m_PackagePurchased.Init(false, 5);
 	m_PackagePurchased[0] = iapJsonStr->GetBoolField(TEXT("Package01"));
 	m_PackagePurchased[1] = iapJsonStr->GetBoolField(TEXT("Package02"));
@@ -396,4 +398,14 @@ void UShopManager::SetIAPDataToJson(UPlayFabJsonObject* obj)
 void UShopManager::ShowTouchBan()
 {
 	UDiabloGameInstance::Get->GetHud()->ShowTouchBan(2.f);
+}
+
+bool UShopManager::IsAbleToUseAutoSkill()
+{
+	return m_PackagePurchased[0];
+}
+
+void UShopManager::SetUseAutoSkill(bool bUse)
+{
+	m_bUsingAutoSkill = bUse;
 }

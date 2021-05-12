@@ -5,6 +5,7 @@
 #include "DiabloM.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/Pawns/MonsterPawn.h"
+#include "Managers/DgContentManagers/MagicStoneDgManager.h"
 #include "Widgets/SkillHotkeyPanel.h"
 #include "Widgets/CommonElement/MaterialProgressBar.h"
 
@@ -38,6 +39,8 @@ protected:
 	UTextBlock* m_TxtRequestedInfo;
 	
 	FDelegateHandle m_Handle;
+
+	TWeakObjectPtr<UMagicStoneDgManager> m_MagicDgManager;
 	
 public:
 	virtual void NativeOnInitialized() override;

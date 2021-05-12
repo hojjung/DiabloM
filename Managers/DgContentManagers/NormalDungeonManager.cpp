@@ -150,37 +150,6 @@ void UNormalDungeonManager::SetTimer(const float TimeInterval)
 	}
 }
 
-void UNormalDungeonManager::SetSensingInterval(const float newSensingInterval)
-{
-	if (m_SensingInterval != newSensingInterval)
-	{
-		m_SensingInterval = newSensingInterval;
-
-		if (m_CurrentWorld)
-		{
-			if (m_SensingInterval <= 0.f)
-			{
-				SetTimer(0.f);
-			}
-			else
-			{
-				float CurrentElapsed = m_CurrentWorld->GetTimerManager().GetTimerElapsed(m_TimerHandle_OnTimer);
-
-				CurrentElapsed = FMath::Max(0.f, CurrentElapsed);
-
-				if (CurrentElapsed < m_SensingInterval)
-				{
-					SetTimer(m_SensingInterval - CurrentElapsed);
-				}
-				else if (CurrentElapsed > m_SensingInterval)
-				{
-					SetTimer(KINDA_SMALL_NUMBER);
-				}
-			}
-		}
-	}
-}
-
 void UNormalDungeonManager::OnTimer()
 {
 	if (!m_CurrentWorld)

@@ -41,6 +41,8 @@ protected:
 	UTextBlock* m_TxtMonsterCountRemain;
 	
 	FDelegateHandle m_Handle;
+
+	TWeakObjectPtr<UPetDgManager> m_PetDgManager;
 	
 public:
 	virtual void NativeOnInitialized() override;

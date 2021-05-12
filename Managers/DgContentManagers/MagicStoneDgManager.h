@@ -7,7 +7,7 @@
 #include "UObject/NoExportTypes.h"
 #include "MagicStoneDgManager.generated.h"
 
-#define MAGICDGTIME 50
+#define MAGICDGTIME 35.f
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
 struct FMagicDgTableRow : public FDungeonDataTableRow
@@ -53,9 +53,10 @@ protected:
 
 	FMagicDgTableRow* m_CurrentDgData;
 
-	float m_fTimer;
-
 	FTimerHandle m_TimerHandle_OnTimer;
+	
+	UPROPERTY()
+	float m_fTimer;
 	UPROPERTY()
 	int m_nSuccessBounty;
 	UPROPERTY()
@@ -89,4 +90,8 @@ public:
 	int GetResultBounty();
 
 	int GetFailBounty();
+
+	virtual AUnitPawn* GetNearestEnemy(const FVector& wantPos) override;
+
+	float GetTimePercent();
 };

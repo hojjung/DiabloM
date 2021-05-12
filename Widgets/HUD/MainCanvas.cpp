@@ -1,6 +1,7 @@
 #include "MainCanvas.h"
 #include "Engine/Canvas.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/DgContentManagers/DungeonManager.h"
 #include "Widgets/Shopmenu/ShopPanel.h"
 
 
@@ -173,13 +174,8 @@ void UMainCanvas::UpdateRageBar(float cV,float mV)
 	
 	m_BarRage->SetProgressValue(cV/mV);
 
-	FTextFormat FormatRage =FText::FromString(TEXT("분노 {0}/{1}"));
-
-	FFormatOrderedArguments Args;
-	Args.Add(cV);
-	Args.Add(mV);
 	
-	m_TxtRageValue->SetText(FText::Format(FormatRage,Args));
+	m_TxtRageValue->SetText(FText::FromString(UDiabloGameInstance::Get->GetPlChar()->GetRageFormatStr()));
 }
 
 void UMainCanvas::UpdateBossHP(float per)
