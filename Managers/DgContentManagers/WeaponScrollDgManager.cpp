@@ -3,7 +3,6 @@
 #include "Engine/AssetManager.h"
 #include "Managers/DiabloGameInstance.h"
 
-#define WEAPONDGLIMITTIME 70.f
 
 UWeaponScrollDgManager::UWeaponScrollDgManager()
 {
@@ -11,6 +10,8 @@ UWeaponScrollDgManager::UWeaponScrollDgManager()
 		TEXT("DataTable'/Game/DataTables/Dungeon/WeaponDgTable.WeaponDgTable'"));
 
 	m_WeaponTable = FoundDgTable.Object;
+
+	m_SensingInterval = 3.f;
 } //죽일때마다 강화석 얻음
 
 void UWeaponScrollDgManager::Init()
@@ -28,12 +29,17 @@ void UWeaponScrollDgManager::RequestMoveWeaponDg(int dgLevel)
 void UWeaponScrollDgManager::OnLevelLoadComplete(UWorld* world)
 {
 	Super::OnLevelLoadComplete(world);
-	
+
+	m_CurrentWorld = world;
+
+	m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(m_CurrentWorld);
+
 	StartDungeon();
 
 	StartSpawn(world);
+	
 
-	SetSpawnMonsterOnTick(true);
+	//SetSpawnMonsterOnTick(true);
 }
 
 void UWeaponScrollDgManager::StartDungeon()
@@ -43,6 +49,10 @@ void UWeaponScrollDgManager::StartDungeon()
 	m_bIsMatchStarted = true;
 
 	m_fTimer = 0.f;
+
+	m_ObtainStoneFromHere = 0;
+
+	m_nMobCount = 0;
 }
 
 void UWeaponScrollDgManager::EndDungeon(bool b)
@@ -53,8 +63,14 @@ void UWeaponScrollDgManager::EndDungeon(bool b)
 	{
 		m_bIsMatchStarted = false;
 
+		m_fTimer = 0.f;
+
+		m_ObtainStoneFromHere = 0;
+
+		m_nMobCount = 0;
+
 		UDiabloGameInstance::Get->GetWorld()->GetTimerManager().ClearTimer(m_TimerHandle_OnTimer);
-		
+
 		UDiabloGameInstance::Get->GetPlChar()->SetFSM_Enable(false);
 
 		FTimerHandle TimerHandle_OnTimer;
@@ -92,13 +108,25 @@ FString UWeaponScrollDgManager::GetOpenLevelAssetName()
 
 void UWeaponScrollDgManager::OnMonsterDead(AMonsterPawn* self)
 {
+	if(!m_bIsMatchStarted)
+	{
+		return;
+	}
+	
 	UDiabloGameInstance::Get->m_QuestManager->AddQuestCount(EQuestType::MonsterKill);
 
 	int Prize = m_CurrentDgData->GetRandomPrize();
 
-	m_OnObtainBounty.ExecuteIfBound(Prize);
-
 	m_WeaponStones += Prize;
+
+	m_ObtainStoneFromHere += Prize;
+
+	m_nMobCount++;
+
+	m_OnMobDead.ExecuteIfBound(m_nMobCount, m_ObtainStoneFromHere.GetValue());
+
+	UDiabloGameInstance::Get->GetPlCon()->ShowDamageText(
+		FString::Printf(TEXT("%d개 획득"), m_ObtainStoneFromHere.GetValue()), self, EDamagePopup::ObtainWeaponStone);
 }
 
 AUnitPawn* UWeaponScrollDgManager::GetNearestEnemy(const FVector& wantPos)
@@ -138,6 +166,11 @@ void UWeaponScrollDgManager::BeginDestroy()
 			Handle.Get()->ReleaseHandle();
 		}
 	}
+}
+
+float UWeaponScrollDgManager::GetTimePercent()
+{
+	return m_fTimer / WEAPONDGLIMITTIME;
 }
 
 FVector UWeaponScrollDgManager::GetRandomPointFromNav(const FVector& loc, const float& radius)
@@ -182,10 +215,10 @@ AMonsterPawn* UWeaponScrollDgManager::GetReadyMonster()
 	for (AMonsterPawn* MPawn : m_AryMonsterSpawnedCurrently)
 	{
 		if (MPawn->IsReadyToPool()) //죽은애만 데려옴
-			{
+		{
 			SelectedPawn = MPawn;
 			break;
-			}
+		}
 	}
 
 	return SelectedPawn;
@@ -214,8 +247,8 @@ void UWeaponScrollDgManager::SetTimer(const float TimeDelay)
 	if (m_CurrentWorld && GEngine->GetNetMode(GetWorld()) < NM_Client)
 	{
 		m_CurrentWorld->GetTimerManager().SetTimer(m_TimerHandle_OnTimer, this, &UWeaponScrollDgManager::OnTimer,
-												TimeDelay,
-												false);
+		                                           TimeDelay,
+		                                           false);
 	}
 }
 
@@ -280,8 +313,9 @@ AMonsterPawn* UWeaponScrollDgManager::SpawnMobToLoc(FVector loc)
 
 	float StatScale = 1.f;
 
-	Mob->DataInject(MonData, m_CurrentDgData->GetMobHp(), m_CurrentDgData->GetMobGold(), EMonsterType::Normal, StatScale,
-					MonData->m_fScale, GoldScale);
+	Mob->DataInject(MonData, m_CurrentDgData->GetMobHp(), m_CurrentDgData->GetMobGold(), EMonsterType::Normal,
+	                StatScale,
+	                MonData->m_fScale, GoldScale);
 
 	return Mob;
 }
@@ -289,39 +323,45 @@ AMonsterPawn* UWeaponScrollDgManager::SpawnMobToLoc(FVector loc)
 void UWeaponScrollDgManager::StartSpawn(UWorld* world)
 {
 	for (auto& Handle : m_LoadedMonsters)
-    	{
-    		if (Handle.Get())
-    		{
-    			Handle.Get()->ReleaseHandle();
-    		}
-    	}
-    
-    	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
-    
-    	for (int i = 0; i < m_CurrentDgData->m_Monsters.Num(); i++)
-    	{
-    		StreamableManager.LoadSynchronous(m_CurrentDgData->m_Monsters[i].GetRow<FMonsterEntity>("")->m_MonsterMeshSoft, true,
-    		                                  &m_LoadedMonsters[i]);
-    	}
-    
-    	m_CurrentWorld = world;
-    
-    	m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(m_CurrentWorld);
-    
-    	Reset();
-    
-    	int i = 0;
-    
-    	while (i++ < MonsterPoolCount)
-    	{
-    		AMonsterPawn* SpawnedMob = CreateMob(FVector::ZeroVector);
-    
-    		m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
-    
-    		SpawnedMob->m_OnDeathAnimBefore.AddUObject(this, &UWeaponScrollDgManager::OnMonsterDead);
-    
-    		SpawnMobToLoc(FVector::ZeroVector);
-    	}
-    
-    	SetSpawnMonsterOnTick(true);
+	{
+		if (Handle.Get())
+		{
+			Handle.Get()->ReleaseHandle();
+		}
+	}
+
+	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
+
+	for (int i = 0; i < m_CurrentDgData->m_Monsters.Num(); i++)
+	{
+		StreamableManager.LoadSynchronous(m_CurrentDgData->m_Monsters[i].GetRow<FMonsterEntity>("")->m_MonsterMeshSoft,
+		                                  true,
+		                                  &m_LoadedMonsters[i]);
+	}
+
+	m_CurrentWorld = world;
+
+	m_NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(m_CurrentWorld);
+
+	Reset();
+
+	int i = 0;
+
+	while (i++ < MonsterPoolCount)
+	{
+		AMonsterPawn* SpawnedMob = CreateMob(FVector::ZeroVector);
+
+		m_AryMonsterSpawnedCurrently.Add(SpawnedMob);
+
+		SpawnedMob->m_OnDeathAnimBefore.AddUObject(this, &UWeaponScrollDgManager::OnMonsterDead);
+
+		SpawnMobToLoc(FVector::ZeroVector);
+	}
+
+	SetSpawnMonsterOnTick(true);
+}
+
+int UWeaponScrollDgManager::GetObtainedStone()
+{
+	return m_ObtainStoneFromHere.GetValue();
 }

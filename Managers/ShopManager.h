@@ -11,6 +11,7 @@
  */
 
 
+class UGachaCardGridPanel;
 class UPlayFabJsonObject;
 class UGachaPanel;
 UCLASS()
@@ -25,6 +26,9 @@ public:
 	FOnItemPurchased m_OnItemPurchased;
 	
 	FOnUpdateGold m_OnUpdateShopGold;
+
+	UPROPERTY()
+	UGachaPanel* m_GachaPanel;
 	
 
 public:

@@ -73,6 +73,8 @@ public:
     void OpenPVPDg();
 	UFUNCTION()
 	void Back();
+
+	void UpdateDgKey(int kV);
 };
 
 

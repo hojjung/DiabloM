@@ -60,8 +60,6 @@ protected:
 
 	TArray<TSharedPtr<FStreamableHandle>> m_LoadedMonsters;
 	
-	FSafeInt m_PetTicket;
-	
 public:
 	void Init();
 
@@ -96,4 +94,7 @@ public:
 	float GetMobCountPercent();
 
 	FString GetMobRemainCountStr();
+
+	int GetTicket();
+
 };

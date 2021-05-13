@@ -359,6 +359,21 @@ void UPlayfabManager::RequestPVPMatching(int aroundCount,PlayFab::UPlayFabClient
         PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
+bool UPlayfabManager::CheckClientGemstone(int amount)
+{
+	return  m_nLocalGemStone >= amount;	
+}
+
+bool UPlayfabManager::CheckClientPetTicket(int amount)
+{
+	return  m_nLocalPetTicket >= amount;
+}
+
+bool UPlayfabManager::CheckClientDgKey(int amount)
+{
+	return  m_nLocalDgKey >= amount;
+}
+
 void UPlayfabManager::UploadAdmobTime(const FDateTime& date_time)
 {
 	FUpdateReq Req;
@@ -844,7 +859,15 @@ void UPlayfabManager::OnSuccessGetInven( const PlayFab::ClientModels::FGetUserIn
 {
 	m_nLocalGemStone = rslt.VirtualCurrency[TEXT("GG")];
 	
+	m_nLocalPetTicket = rslt.VirtualCurrency[TEXT("PT")];
+
+	m_nLocalDgKey = rslt.VirtualCurrency[TEXT("KK")];
+	
 	m_OnGemstoneChanged.Broadcast(m_nLocalGemStone);
+	
+	m_OnTicketChanged.Broadcast(m_nLocalPetTicket);
+	
+	m_OnDgKeyChanged.Broadcast(m_nLocalDgKey);
 }
 
 void UPlayfabManager::OnSuccessTimeGet(const PlayFab::ClientModels::FGetTimeResult& rslt)
@@ -989,6 +1012,13 @@ void UPlayfabManager::OnPurchaseWithGemStoneSuccess(const PlayFab::ClientModels:
 
 }
 
+void UPlayfabManager::OnPurchaseWithPetTicketSuccess(const PlayFab::ClientModels::FPurchaseItemResult& rslt)
+{
+	FString PurchasedItemID =  rslt.Items[0].ItemId;
+
+	UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(PurchasedItemID,true);
+}
+
 void UPlayfabManager::AddGemStone(int amount)
 {
 	PlayFab::ClientModels::FAddUserVirtualCurrencyRequest Req;
@@ -997,9 +1027,45 @@ void UPlayfabManager::AddGemStone(int amount)
 	GetClientAPI->AddUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FAddUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddGemStone),PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
+void UPlayfabManager::PurchaseWithTicket(int amount)
+{
+	FString ItemID;
+	
+	if(amount==1)
+	{
+		ItemID = TEXT("gachapet01");
+	}
+	else if(amount==11)
+	{
+		ItemID = TEXT("gachapet11");
+	}
+	
+	PlayFab::ClientModels::FPurchaseItemRequest Req;
+	Req.Price = amount;
+	Req.ItemId = ItemID;
+	Req.VirtualCurrency=TEXT("PT");
+	//Req.CharacterId = m_PlayfabID;
+	//FPurchaseItemDelegate, const ClientModels::FPurchaseItemResult&
+	GetClientAPI->PurchaseItem(Req,PlayFab::UPlayFabClientAPI::FPurchaseItemDelegate::CreateUObject(this,&UPlayfabManager::OnPurchaseWithPetTicketSuccess),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::AddTicket(int amount)
+{
+	PlayFab::ClientModels::FAddUserVirtualCurrencyRequest Req;
+	Req.Amount=amount;
+	Req.VirtualCurrency=TEXT("PT");
+	GetClientAPI->AddUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FAddUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddTicket),PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
 void UPlayfabManager::OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult& rslt)
 {
 	m_OnGemstoneChanged.Broadcast(rslt.Balance);
+}
+
+void UPlayfabManager::OnAddTicket(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult& rslt)
+{
+	m_OnTicketChanged.Broadcast(rslt.Balance);
 }
 
 void UPlayfabManager::OnBossBattleStart()

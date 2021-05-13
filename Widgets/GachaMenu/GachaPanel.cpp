@@ -25,7 +25,6 @@ void UGachaPanel::NativeOnInitialized()
 	m_BtnShowWeaponGachaRate->OnClicked.AddDynamic(this, &UGachaPanel::ShowWeaponGachaInfo);
 	m_BtnShowSkinGachaRate->OnClicked.AddDynamic(this, &UGachaPanel::ShowSkinGachaInfo);
 	m_BtnShowPetGachaRate->OnClicked.AddDynamic(this, &UGachaPanel::ShowPetGachaInfo);
-	m_BtnShowWingGachaRate->OnClicked.AddDynamic(this, &UGachaPanel::ShowWingGachaInfo);
 	//m_BtnRollGachaWingOneTime->OnClicked.AddDynamic(m_ShopManager.Get(),&UShopManager::PurchaseGachaPet01);
 	//m_BtnRollGachaWingElevenTime->OnClicked.AddDynamic(this,&UGachaPanel::RollGachaWingElevenTimes);
 	m_BtnShowAccesoryGachaRate->OnClicked.AddDynamic(this, &UGachaPanel::ShowAccessoryGachaInfo);
@@ -37,18 +36,24 @@ void UGachaPanel::NativeOnInitialized()
 	m_BtnRollGachaPetOneTime->OnClicked.AddDynamic(m_ShopManager.Get(), &UShopManager::PurchaseGachaPet01);
 	m_BtnRollGachaPetElevenTime->OnClicked.AddDynamic(m_ShopManager.Get(), &UShopManager::PurchaseGachaPet11);
 	m_BtnRollGachaAccesoryOneTime->OnClicked.AddDynamic(m_ShopManager.Get(), &UShopManager::PurchaseGachaAccessory01);
-	m_BtnRollGachaAccesoryElevenTime->OnClicked.
-	                                  AddDynamic(m_ShopManager.Get(), &UShopManager::PurchaseGachaAccessory11);
+	m_BtnRollGachaAccesoryElevenTime->OnClicked.AddDynamic(m_ShopManager.Get(), &UShopManager::PurchaseGachaAccessory11);
 	//
 	m_GachaManager->m_OnGachaRollSkin.AddUObject(this, &UGachaPanel::UpdateGachaSkinLevelCount);
 	m_GachaManager->m_OnGachaRollWeapon.AddUObject(this, &UGachaPanel::UpdateGachaWeaponLevelCount);
 
-	UpdateGachaSkinLevelCount(m_GachaManager->m_nGachaSkinCount, m_GachaManager->GetGachaSkinMaxCount(),
-	                          m_GachaManager->m_nCurrentSkinIndex);
-	UpdateGachaWeaponLevelCount(m_GachaManager->m_nGachaWeaponCount, m_GachaManager->GetGachaWeaponMaxCount(),
-	                            m_GachaManager->m_nCurrentWeaponIndex);
+	UpdateGachaSkinLevelCount(m_GachaManager->m_nGachaSkinCount, m_GachaManager->GetGachaSkinMaxCount(),m_GachaManager->m_nCurrentSkinIndex);
+	
+	UpdateGachaWeaponLevelCount(m_GachaManager->m_nGachaWeaponCount, m_GachaManager->GetGachaWeaponMaxCount(),m_GachaManager->m_nCurrentWeaponIndex);
 	                            
 	m_TimeUpdateHandle = UDiabloGameInstance::Get->m_AdverManager->m_OnAdTick.AddUObject(this,&UGachaPanel::SetAdsViewTest);
+
+	UDiabloGameInstance::Get->m_ShopManager->m_GachaPanel = this;
+
+	int Ticket = UDiabloGameInstance::Get->m_PetDgManager->GetTicket();
+	
+	UpdatePetTicket(Ticket);
+	
+	UDiabloGameInstance::Get->m_PlayfabManager->m_OnTicketChanged.AddUObject(this,&UGachaPanel::UpdatePetTicket);
 }
 
 void UGachaPanel::ClosePanel()
@@ -134,33 +139,6 @@ void UGachaPanel::RollGachaPetElevenTimes()
 void UGachaPanel::RollGachaPetFiftyTimes()
 {
 	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollPet);
-	m_GachaGridPanel->RollGachaFiftyTime();
-}
-
-
-void UGachaPanel::ShowWingGachaInfo()
-{
-	m_GachaInfoPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-
-	m_GachaInfoPanel->OpenGachaInfo(m_GachaManager->m_AryGachaWing,
-	                                m_GachaManager->m_fTotalWingGacha);
-}
-
-void UGachaPanel::RollGachaWingOneTime()
-{
-	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWing);
-	m_GachaGridPanel->RollGachaOneTime();
-}
-
-void UGachaPanel::RollGachaWingElevenTimes()
-{
-	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWing);
-	m_GachaGridPanel->RollGachaOneTime();
-}
-
-void UGachaPanel::RollGachaWingFiftyTimes()
-{
-	m_GachaGridPanel->SetRollGachaData(ERollItemType::RollWing);
 	m_GachaGridPanel->RollGachaFiftyTime();
 }
 
@@ -263,4 +241,8 @@ FReply UGachaPanel::NativeOnTouchEnded(const FGeometry& InGeometry, const FPoint
 void UGachaPanel::SetAdsViewTest(const FString& timeData)
 {
 	m_TextViewCooldown->SetText(FText::FromString(timeData));
+}
+void UGachaPanel::UpdatePetTicket(int v)
+{
+	m_TextGachaPetTicket->SetText(FText::FromString(FString::Printf(TEXT("펫 티켓 %d개"),v)));
 }

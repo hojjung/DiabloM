@@ -26,6 +26,8 @@ void UPetDgCanvas::NativeOnInitialized()
 	m_MonsterCountBar->SetProgressValue(0.f);
 	
 	m_TxtMonsterCountRemain->SetText(FText::FromString(TEXT("펫 사냥 시작")));
+
+	
 }
 
 void UPetDgCanvas::UpdateTimer(float timer)
@@ -76,5 +78,6 @@ void UPetDgCanvas::UpdateMonsterCount()
 	
 	m_TxtMonsterCountRemain->SetText(FText::FromString(m_PetDgManager->GetMobRemainCountStr()));
 }
+
 
 

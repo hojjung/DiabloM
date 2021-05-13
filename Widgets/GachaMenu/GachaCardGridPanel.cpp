@@ -42,6 +42,12 @@ void UGachaCardGridPanel::NativeOnInitialized()
 void UGachaCardGridPanel::SetRollGachaData(ERollItemType gachaTable)
 {
 	m_CurrentType = gachaTable;
+
+	if(m_CurrentType == ERollItemType::RollPet)
+	{
+		m_BtnGachaFiftyTime->SetIsEnabled(false);	
+	}
+	
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 

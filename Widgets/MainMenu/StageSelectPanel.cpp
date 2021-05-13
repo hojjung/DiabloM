@@ -1,6 +1,8 @@
 #include "StageSelectPanel.h"
 #include "PVPPanel.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/DgContentManagers/DungeonManager.h"
+#include "Widgets/GachaMenu/GachaPanel.h"
 
 void UStageSelectPanel::NativeOnInitialized()
 {
@@ -25,6 +27,13 @@ void UStageSelectPanel::NativeOnInitialized()
 	m_BtnBack->OnClicked.AddDynamic(this, &UStageSelectPanel::Back);
 	//
 	m_BtnBack->SetVisibility(ESlateVisibility::Collapsed);
+	//
+	
+	int DgKey = UDiabloGameInstance::Get->m_DungeonManager->GetDgKey();
+	
+	UpdateDgKey(DgKey);
+	
+	UDiabloGameInstance::Get->m_PlayfabManager->m_OnTicketChanged.AddUObject(this,&UStageSelectPanel::UpdateDgKey);
 }
 
 void UStageSelectPanel::InitNormalDungeon()
@@ -113,4 +122,9 @@ void UStageSelectPanel::Back()
 	m_DgPVPPanel->SetVisibility(ESlateVisibility::Collapsed);
 	//
 	m_BtnBack->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UStageSelectPanel::UpdateDgKey(int kV)
+{
+	m_ImgTxtDgTicket->SetText(FText::FromString(FString::Printf(TEXT("던전 열쇠 %d/15"),kV)));
 }

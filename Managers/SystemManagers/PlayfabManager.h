@@ -46,6 +46,10 @@ public://delegate
 	FOnRankReceived m_OnPlayerRankReceived;
 
 	FOnVirtualCurrencyChanged m_OnGemstoneChanged;
+
+	FOnVirtualCurrencyChanged m_OnTicketChanged;
+
+	FOnVirtualCurrencyChanged m_OnDgKeyChanged;
 	
 	FOnPlayfabError m_OnPlayfabError;
 
@@ -118,6 +122,10 @@ public://user data
 
 	int m_nLocalGemStone;
 
+	int m_nLocalPetTicket;
+
+	int m_nLocalDgKey;
+
 	TArray<PlayFab::ClientModels::FTitleNewsItem> m_TitleNews;
 	
 protected://rank
@@ -186,7 +194,11 @@ protected:
 
 	void OnPurchaseWithGemStoneSuccess(const PlayFab::ClientModels::FPurchaseItemResult&);
 
+	void OnPurchaseWithPetTicketSuccess(const PlayFab::ClientModels::FPurchaseItemResult&);
+
 	void OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
+
+	void OnAddTicket(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
 
 	void SetMainDataToManagers(const FString& maindataFromServer);
 	
@@ -265,6 +277,11 @@ public:
 
 	void AddGemStone(int amount);
 	//
+	void PurchaseWithTicket(int amount);
+
+	void AddTicket(int amount);
+
+	//
 	void UploadNormalDungeon();
 	
 	void UploadMainData();
@@ -278,6 +295,22 @@ public:
 	void UploadAdmobTime(const FDateTime& date_time);
 
 	void RequestPVPMatching(int aroundCount,PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate completeDele);
+
+	bool CheckClientGemstone(int amount);
+	
+	bool CheckClientPetTicket(int amount);
+
+	bool CheckClientDgKey(int amount);
+
+	int GetPetTicket()
+	{
+		return m_nLocalPetTicket;
+	}
+
+	int GetDgKey()
+	{
+		return m_nLocalDgKey;
+	}
 };
 
 

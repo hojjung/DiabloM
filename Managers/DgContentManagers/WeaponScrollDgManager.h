@@ -5,6 +5,7 @@
 
 #include "WeaponScrollDgManager.generated.h"
 
+#define WEAPONDGLIMITTIME 33.f
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
 struct FWeaponDgTableRow : public FDungeonDataTableRow
@@ -36,9 +37,13 @@ public:
 
 	DECLARE_DELEGATE_OneParam(FOnObtainBounty,int);
 
+	DECLARE_DELEGATE_TwoParams(FOnMobDead,int,int);
+
 	FOnObtainBounty m_OnObtainBounty;
 
 	FOnTick m_OnTimerTick;
+
+	FOnMobDead m_OnMobDead;
 
 protected:
 	UPROPERTY()
@@ -49,6 +54,8 @@ protected:
 	UDataTable* m_WeaponTable;
 	UPROPERTY()
 	FSafeInt m_WeaponStones;
+	UPROPERTY()
+	int m_nMobCount;
 	
 	TArray<FWeaponDgTableRow*> m_DgDataRow;
 
@@ -65,7 +72,7 @@ protected:
 	UPROPERTY()
 	TArray<AMonsterPawn*> m_AryMonsterSpawnedCurrently;
 
-	
+	FSafeInt m_ObtainStoneFromHere;
 
 public:
 	void Init();
@@ -87,6 +94,8 @@ public:
 	virtual AUnitPawn* GetNearestEnemy(const FVector& wantPos) override;
 
 	virtual void BeginDestroy() override;
+	
+	float GetTimePercent();
 	//
 protected:
 	FVector GetRandomPointFromNav(const FVector& loc, const float& radius);
@@ -107,6 +116,9 @@ protected:
 	AMonsterPawn* SpawnMobToLoc(FVector loc);
 
 	void StartSpawn(UWorld* world);
+
+public:
+	int GetObtainedStone();
 
 };
 

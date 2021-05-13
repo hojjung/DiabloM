@@ -23,7 +23,7 @@ public:
 	UImage* m_ImgGlow;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UImage* m_ImgIcon;
-	UPROPERTY(meta = (BindWidgetAnim))
+	UPROPERTY(Transient,meta = (BindWidgetAnim),meta=(AllowPrivateAccess = "true"))
 	UWidgetAnimation* m_AnimFlash;
 
 public:

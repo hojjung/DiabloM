@@ -43,6 +43,11 @@ void UDungeonManager::Tick(float deltaTime)
 	m_CurrentSpawnManager->Tick(deltaTime);
 }
 
+int UDungeonManager::GetDgKey()
+{
+	return UDiabloGameInstance::Get->m_PlayfabManager->GetDgKey();
+}
+
 void UDungeonManager::OnLevelLoadComplete(UWorld* world)
 {
 	m_OnLevelLoadComplete.ExecuteIfBound(world);

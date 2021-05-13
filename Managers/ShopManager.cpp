@@ -3,6 +3,7 @@
 #include "JsonSerializer.h"
 #include "PlayFabJsonObject.h"
 #include "Widgets/GachaMenu/GachaPanel.h"
+#include "Widgets/HUD/MainCanvas.h"
 
 void UShopManager::SetShopDataFromServer(const UPlayFabJsonObject* iapJsonStr)
 {
@@ -88,90 +89,159 @@ void UShopManager::PurchaseGemStone06()
 
 void UShopManager::PurchaseGold01()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(30))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(30, TEXT("gold01"));
 }
 
 void UShopManager::PurchaseGold02()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(300))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(300, TEXT("gold02"));
 }
 
 void UShopManager::PurchaseGold03()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(3000))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(3000, TEXT("gold03"));
 }
 
 void UShopManager::PurchaseGachaWeapon01()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(30))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(30, TEXT("gachaweapon01"));
 }
 
 void UShopManager::PurchaseGachaWeapon11()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(300))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(300, TEXT("gachaweapon11"));
 }
 
 void UShopManager::PurchaseGachaWeapon55()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(1500))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(1500, TEXT("gachaweapon55"));
 }
 
 void UShopManager::PurchaseGachaSkin01()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(30))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(30, TEXT("gachaskin01"));
 }
 
 void UShopManager::PurchaseGachaSkin11()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(300))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(300, TEXT("gachaskin11"));
 }
 
 void UShopManager::PurchaseGachaSkin55()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(1500))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(1500, TEXT("gachaskin55"));
 }
 
 void UShopManager::PurchaseGachaPet01()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientPetTicket(1))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
-	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(90, TEXT("gachapet01"));
+	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithTicket(1);
 }
 
 void UShopManager::PurchaseGachaPet11()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientPetTicket(11))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
-	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(900, TEXT("gachapet11"));
+	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithTicket(11);
 }
 
 void UShopManager::PurchaseGachaPet55()
 {
-	ShowTouchBan();
-	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(4500, TEXT("gachapet55"));
+	
 }
 
 void UShopManager::PurchaseGachaAccessory01()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(270))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(270, TEXT("gachaaccessory01"));
 }
 
 void UShopManager::PurchaseGachaAccessory11()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(2700))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(2700, TEXT("gachaaccessory11"));
 }
 
 void UShopManager::PurchaseGachaAccessory55()
 {
+	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(13500))
+	{
+		return;
+	}
+	
 	ShowTouchBan();
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(13500, TEXT("gachaaccessory55"));
 }
@@ -197,53 +267,53 @@ void UShopManager::UpdateGold()
 
 void UShopManager::RollGachaOneTime()
 {
-	// ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
-	//
-	// switch (RollType)
-	// {
-	// case RollWeapon: PurchaseGachaWeapon01();
-	// 	break;
-	// case RollSkin: PurchaseGachaSkin01();
-	// 	break;
-	// case RollPet: PurchaseGachaPet01();
-	// 	break;
-	// case RollAccessory: PurchaseGachaAccessory01();
-	// 	break;
-	// }
+	ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
+	
+	switch (RollType)
+	{
+	case RollWeapon: PurchaseGachaWeapon01();
+		break;
+	case RollSkin: PurchaseGachaSkin01();
+		break;
+	case RollPet: PurchaseGachaPet01();
+		break;
+	case RollAccessory: PurchaseGachaAccessory01();
+		break;
+	}
 }
 
 void UShopManager::RollGachaElevenTime()
 {
-	// ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
-	//
-	// switch (RollType)
-	// {
-	// case RollWeapon: PurchaseGachaWeapon11();
-	// 	break;
-	// case RollSkin: PurchaseGachaSkin11();
-	// 	break;
-	// case RollPet: PurchaseGachaPet11();
-	// 	break;
-	// case RollAccessory: PurchaseGachaAccessory11();
-	// 	break;
-	// }
+	ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
+	
+	switch (RollType)
+	{
+	case RollWeapon: PurchaseGachaWeapon11();
+		break;
+	case RollSkin: PurchaseGachaSkin11();
+		break;
+	case RollPet: PurchaseGachaPet11();
+		break;
+	case RollAccessory: PurchaseGachaAccessory11();
+		break;
+	}
 }
 
 void UShopManager::RollGachaFiftyTime()
 {
-	// ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
-	//
-	// switch (RollType)
-	// {
-	// case RollWeapon: PurchaseGachaWeapon55();
-	// 	break;
-	// case RollSkin: PurchaseGachaSkin55();
-	// 	break;
-	// case RollPet: PurchaseGachaPet55();
-	// 	break;
-	// case RollAccessory: PurchaseGachaAccessory55();
-	// 	break;
-	// }
+	ERollItemType RollType = m_GachaPanel->m_GachaGridPanel->GetCurrentType();
+	
+	switch (RollType)
+	{
+	case RollWeapon: PurchaseGachaWeapon55();
+		break;
+	case RollSkin: PurchaseGachaSkin55();
+		break;
+	case RollPet: PurchaseGachaPet55();
+		break;
+	case RollAccessory: PurchaseGachaAccessory55();
+		break;
+	}
 }
 
 void UShopManager::OnPurchasedGainItem(FString itemID,bool updateData)
@@ -321,51 +391,62 @@ void UShopManager::OnPurchasedGainItem(FString itemID,bool updateData)
 	}
 	else if (itemID == TEXT("gachaweapon01"))
 	{
-		//UDiabloGameInstance::Get->m_GachaManager->RollGachaWeaponOneTime();
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaWeaponOneTime();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaweapon11"))
 	{
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaWeaponElevenTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaweapon55"))
 	{
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaWeaponFiftyTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaskin01"))
 	{
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaSkinOneTime();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaskin11"))
 	{
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaSkinElevenTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaskin55"))
 	{
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaSkinFiftyTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachapet01"))
 	{
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaPetOneTime();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachapet11"))
 	{
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaPetElevenTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachapet55"))
 	{
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaPetFiftyTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaaccessory01"))
 	{
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaAccessoryOneTime();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaaccessory11"))
 	{
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaAccessoryElevenTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 	else if (itemID == TEXT("gachaaccessory55"))
 	{
+		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaAccessoryFiftyTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
 

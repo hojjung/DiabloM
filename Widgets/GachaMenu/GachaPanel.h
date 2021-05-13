@@ -8,6 +8,7 @@
 #include "TextBlock.h"
 #include "WidgetSwitcher.h"
 #include "Blueprint/UserWidget.h"
+#include "Widgets/CommonElement/ImageAndText.h"
 #include "Widgets/CommonElement/MaterialProgressBar.h"
 
 #include "GachaPanel.generated.h"
@@ -61,7 +62,7 @@ public:
 	UButton* m_BtnRollGachaSkinElevenTime;
 	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TextGachaPetName;
+	UImageAndText* m_TextGachaPetTicket;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnShowPetGachaRate;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -69,14 +70,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnRollGachaPetElevenTime;
 	//
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TextGachaWingName;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnShowWingGachaRate;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnRollGachaWingOneTime;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnRollGachaWingElevenTime;
 	//
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextGachaAccesoryName;
@@ -127,14 +120,6 @@ public:
 	UFUNCTION()
 	void RollGachaPetFiftyTimes();
 	//
-	UFUNCTION()
-    void ShowWingGachaInfo();
-	UFUNCTION()
-	void RollGachaWingOneTime();
-	UFUNCTION()
-	void RollGachaWingElevenTimes();
-	UFUNCTION()
-    void RollGachaWingFiftyTimes();
 	//
 	UFUNCTION()
     void ShowAccessoryGachaInfo();
@@ -159,6 +144,8 @@ public:
 	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
 
 	void SetAdsViewTest(const FString&);
+
+	void UpdatePetTicket(int v);
 };
 
 

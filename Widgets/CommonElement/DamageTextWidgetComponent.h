@@ -18,6 +18,7 @@ enum class EDamagePopup: uint8
     CritcalRight,
 	CritcalRight2,
     Miss,
+	ObtainWeaponStone,
     Length
 };
 UCLASS()

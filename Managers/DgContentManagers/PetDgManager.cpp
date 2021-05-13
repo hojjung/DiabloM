@@ -88,7 +88,7 @@ void UPetDgManager::EndDungeon(bool b)
 	
 	if(m_bIsMatchStarted)
 	{
-		m_PetTicket+=GetCurrentReward();
+		UDiabloGameInstance::Get->m_PlayfabManager->AddTicket(GetCurrentReward());
 		
 		FTimerHandle m_TimerHandle_OnTimer;
 		
@@ -259,3 +259,9 @@ FString UPetDgManager::GetMobRemainCountStr()
 {
 	return FString::Printf(TEXT("처치 몬스터 %d/%d"),m_nCurrentKillCount,m_nMaxKillCount);
 }
+
+int UPetDgManager::GetTicket()
+{
+	return UDiabloGameInstance::Get->m_PlayfabManager->GetPetTicket();
+}
+

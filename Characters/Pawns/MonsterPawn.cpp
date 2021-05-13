@@ -251,10 +251,13 @@ void AMonsterPawn::Die()
     Player->FocusTarget(nullptr);
     
     Player->GainRagePoint();
-    
-    m_Particle->Activate(true);
-    m_CoinAudio->Play();
-    m_DeathAudio->Play();
+
+    if(m_MonsterType == EMonsterType::Normal)
+    {
+        m_Particle->Activate(true);
+        m_CoinAudio->Play();
+        m_DeathAudio->Play();
+    }
     HideStatusBar();
     
     SetActorTickEnabled(false);
