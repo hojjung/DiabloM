@@ -57,7 +57,7 @@ public://delegate
 
 	TSharedPtr<UPlayFabAuthenticationContext> m_Auth;
 
-	TSharedPtr<UPlayFabAuthenticationContext> CreateAuthCon();
+	TSharedPtr<UPlayFabAuthenticationContext> CreateAuthCon(const FString* newSessonTicket = nullptr);
 public://static
 	static const FString MainData;
 	static const FString MainDungeon;
@@ -65,6 +65,8 @@ public://static
 	static const FString Daily;
 	static const FString Gold;
 	static const FString AdmobTime;
+	static const FString PVPStatus;
+	//
 
 public:
 	UPlayfabManager();
@@ -130,9 +132,7 @@ public://user data
 	
 protected://rank
 	UPROPERTY()
-	int m_nRanking;
-
-	int m_nSafeRanking;
+	FSafeInt m_nRanking;
 
 	TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry> m_TotalRanking;
 
@@ -201,7 +201,11 @@ protected:
 	void OnAddTicket(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
 
 	void SetMainDataToManagers(const FString& maindataFromServer);
-	
+
+	void OnPVPUploadSuccess(const FExeCScriptRslt& rslt);
+
+	void OnPVPGetSuccess(const FExeCScriptRslt& rslt);
+
 public:
 	void Init();
 	
@@ -255,12 +259,8 @@ public:
 
 	void RequestRetrievePlayerAroundRanking();
 	
-	int GetSafeRanking();
-
 	int GetRanking();
 
-	void SetRanking(int rank);
-	
 	void RequestCheatAlert();
 
 	FORCEINLINE const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>& GetTotalRank() const
@@ -311,6 +311,10 @@ public:
 	{
 		return m_nLocalDgKey;
 	}
+
+	void OnPvPComplete();
+
+	void RequestGetPVPData();
 };
 
 

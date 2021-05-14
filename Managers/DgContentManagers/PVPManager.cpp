@@ -11,6 +11,7 @@ UPVPManager::UPVPManager()
 	m_fTimer = 0.f;
 }
 
+
 void UPVPManager::RequestPVPMatching()
 {
 	m_OnMatchStart.ExecuteIfBound();
@@ -131,6 +132,8 @@ void UPVPManager::AddOtherPlayerTotalDamage(const BigInt& v)
 	UpdateGauge();
 }
 
+
+
 void UPVPManager::OnLevelLoadComplete(UWorld* world)
 {
 	PRINTF("PVPManager! World:%s", *world->GetMapName());
@@ -167,6 +170,15 @@ void UPVPManager::EndDungeon(bool b)
 
 	if (m_bIsMatchStarted)
 	{
+		if(b)
+		{
+			++m_nWin;
+		}
+		else
+		{
+			++m_nLose;
+		}
+		
 		m_fTimer = 0.f;
 
 		m_bIsMatchStarted = false;
@@ -177,9 +189,9 @@ void UPVPManager::EndDungeon(bool b)
 
 		m_PVPOtherPlayer.Get()->m_bUseFSM = false;
 
+		UDiabloGameInstance::Get->m_PlayfabManager->OnPvPComplete();
 
-		UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(
-			m_TimerHandle_OnTimer, this, &UPVPManager::MoveToNormalDungeon, 2.2f, false);
+
 	}
 }
 
@@ -247,4 +259,35 @@ FString UPVPManager::GetOpenLevelAssetName()
 bool UPVPManager::IsBattleStarted()
 {
 	return m_PVPOtherPlayer.Get() && m_bIsMatchStarted;
+}
+
+void UPVPManager::SetPVPData(const FString& jsonStr)//cloud return
+{
+	UPlayFabJsonObject* JsonObj = UPlayFabJsonObject::ConstructJsonObject(this);
+
+	if(!JsonObj->DecodeJson(jsonStr))
+	{
+		return;
+	}
+
+	int W = JsonObj->GetNumberField(TEXT("Win"));
+	
+	int L = JsonObj->GetNumberField(TEXT("Lose"));
+
+	int M = JsonObj->GetNumberField(TEXT("MMR"));
+
+	m_nWin.SetValue(W);//title
+	m_nLose.SetValue(L);//title
+	m_nMMR.SetValue(M);//statistic
+
+	m_OnPVPStatusChanged.ExecuteIfBound(m_nWin.GetValue(),m_nLose.GetValue(),m_nMMR.GetValue());
+}
+
+void UPVPManager::SetPVPDataBeforeUpload(const FString& jsonStr)
+{
+	SetPVPData(jsonStr);
+
+	
+	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(
+		m_TimerHandle_OnTimer, this, &UPVPManager::MoveToNormalDungeon, 2.2f, false);
 }

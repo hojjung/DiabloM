@@ -197,7 +197,7 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJso
 		FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
 		                               EAttachmentRule::KeepRelative, false);
 
-		m_WeaponActor->AttachToComponent(m_SkBody, Rule, "RightHandBottom");
+		m_WeaponActor->AttachToComponent(m_SkBody, Rule, TEXT("RightHandBottom"));
 
 		m_Capture->ShowOnlyActors.Add(m_WeaponActor);
 	}

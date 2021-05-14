@@ -59,7 +59,7 @@ void UChatText::SetChatForClient(const FString& chat)
 {
 	m_TextChat->SetDefaultColorAndOpacity(FLinearColor::White);
 	
-	int Ranking = UDiabloGameInstance::Get->m_PlayfabManager->GetSafeRanking();
+	int Ranking = UDiabloGameInstance::Get->m_PlayfabManager->GetRanking();
 	
 	FString Nickname = UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname;
 	

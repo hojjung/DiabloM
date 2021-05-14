@@ -216,7 +216,7 @@ void UChatManager::ChatPost(const FText& chatWant)
 	FilterBadWord(CachedString);
 
 	FString FormatStr = FString::Printf(
-        TEXT("ranking=%d&nickname=%s&chat=%s"), UDiabloGameInstance::Get->m_PlayfabManager->GetSafeRanking(),
+        TEXT("ranking=%d&nickname=%s&chat=%s"), UDiabloGameInstance::Get->m_PlayfabManager->GetRanking(),
         *UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname, *CachedString);
 
 	HttpCall(WebURL, "POST", &FormatStr);

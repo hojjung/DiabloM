@@ -13,5 +13,8 @@ UCLASS()
 class DIABLOM_API USessionTicket : public USaveGame
 {
 	GENERATED_BODY()
-	
+
+public:
+	UPROPERTY(EditAnywhere)
+	FString m_SessionTicket;
 };

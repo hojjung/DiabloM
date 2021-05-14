@@ -17,6 +17,7 @@
 #include "Objects/MyInAppPurchase.h"
 #include "Misc/Base64.h"
 #include "Core/PlayFabSettings.h"
+#include "Save/SessionTicket.h"
 
 #define LOCTEXT_NAMESPACE "PlayfabManager"
 //dungeon 1111200
@@ -26,12 +27,14 @@ const FString UPlayfabManager::Quest = TEXT("Quest");
 const FString UPlayfabManager::Daily = TEXT("Daily");        
 const FString UPlayfabManager::Gold = TEXT("Gold");
 const FString UPlayfabManager::AdmobTime = TEXT("AdmobTime");
+const FString UPlayfabManager::PVPStatus = TEXT("PVPStatus");
 
 
 //
 UPlayfabManager::UPlayfabManager()
+
 {
-	SetRanking(-123);
+	m_nRanking.SetValue(-123);
 	
 	m_CurrentVersionName=TEXT("0410NEEDFIX");
 
@@ -40,44 +43,42 @@ UPlayfabManager::UPlayfabManager()
 	m_fDeltaInboxUpdateCooldown =160.f;
 }
 
-
-int UPlayfabManager::GetSafeRanking()
+TSharedPtr<UPlayFabAuthenticationContext> UPlayfabManager::CreateAuthCon(const FString* newSessonTicket)
 {
-	int CachecRank = m_nSafeRanking ^ 7777;
-	
-	if(m_nRanking!=CachecRank)
+	if(newSessonTicket)//로그인후 새로 만드는거임
 	{
-		PRINTF("Cheated!!!!!");
-		RequestCheatAlert();
-		return -1;
-	}
-
-	return CachecRank;
-}
-
-TSharedPtr<UPlayFabAuthenticationContext> UPlayfabManager::CreateAuthCon()
-{
-	if(!m_SessionTicket.IsEmpty())
-	{
-		PRINTF("SessionTicket Valid,Use Authcontext");
+		PlayFab::PlayFabSettings::SetClientSessionTicket(*newSessonTicket);
+		m_SessionTicket = PlayFab::PlayFabSettings::GetClientSessionTicket();
+		
+		USessionTicket* SaveGameInstance = Cast<USessionTicket>(UGameplayStatics::CreateSaveGameObject(USessionTicket::StaticClass()));
+		SaveGameInstance->m_SessionTicket = m_SessionTicket;
+		
+		UGameplayStatics::SaveGameToSlot(SaveGameInstance,TEXT("SessionTicket"),0);
+		
+			
 		return TSharedPtr<UPlayFabAuthenticationContext>(NewObject<UPlayFabAuthenticationContext>(),DeleterNot());
 	}
+	else//로그인 하기전 로컬 로드
+	{
+		USessionTicket* LoadedSession = Cast<USessionTicket>(UGameplayStatics::LoadGameFromSlot(TEXT("SessionTicket"),0));
 
+		if(LoadedSession && !LoadedSession->m_SessionTicket.IsEmpty())//로드 성공
+		{
+			PlayFab::PlayFabSettings::SetClientSessionTicket(LoadedSession->m_SessionTicket);
+			m_SessionTicket = PlayFab::PlayFabSettings::GetClientSessionTicket();
+			
+			return TSharedPtr<UPlayFabAuthenticationContext>(NewObject<UPlayFabAuthenticationContext>(),DeleterNot());
+		}
+	}
+	
 	PRINTF("No Authcontext");
 
 	return nullptr;
 }
 
-
 int UPlayfabManager::GetRanking()
 {
-	return m_nRanking;
-}
-
-void UPlayfabManager::SetRanking(int rank)
-{
-	m_nRanking = rank;
-	m_nSafeRanking = m_nRanking ^ 7777;
+	return m_nRanking.GetValue();
 }
 
 void UPlayfabManager::UploadMainData()
@@ -186,6 +187,7 @@ void UPlayfabManager::OnVersionCheckCloudScriptSuccess(const FExeCScriptRslt& rs
 		PRINTF("Version Same");
 		RequestTitleNews();
 		RequestGetMainData();
+		RequestGetPVPData();
 	}
 	else
 	{
@@ -260,16 +262,24 @@ void UPlayfabManager::Init()
 		return;
 	}
 
-	m_SessionTicket = PlayFab::PlayFabSettings::GetClientSessionTicket();
-	
+	GetClientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
+
+
 	m_Auth = CreateAuthCon();
 
-	
+	if(m_Auth.IsValid())
+	{
+		m_LastLoginTime = m_CurrentTime;
+		m_PlayfabID = m_Auth.Get()->GetPlayFabId();
+
+		RequestGetServerTime();
+
+		return;
+	}
 
 #if PLATFORM_WINDOWS
 	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Desktop", "Try Login With Desktop"));
 	
-	GetClientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
 
 	PlayFab::ClientModels::FLoginWithCustomIDRequest request;
 	request.CreateAccount = true;
@@ -289,11 +299,10 @@ void UPlayfabManager::Init()
 
 #endif
 
+	
 #if PLATFORM_ANDROID
 	//SessionTicket 로그인 시도
 	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Session TIcket","로그인 세션 티켓 시도"));
-
-	GetClientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
 
 	PlayFab::ClientModels::FLoginWithGoogleAccountRequest SessionRequest;
 	
@@ -314,7 +323,6 @@ void UPlayfabManager::Init()
 
 void UPlayfabManager::OnSessionLoginErrorPlayfabReq(const FFailRslt& ErrorResult)
 {
-	
 	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
 
 	if (!Subsystem)
@@ -323,6 +331,7 @@ void UPlayfabManager::OnSessionLoginErrorPlayfabReq(const FFailRslt& ErrorResult
 	}
 	
 	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Android","로그인 세션 만료,구글로그인 시도"));
+	
 	IOnlineExternalUIPtr ExternalUi = Subsystem->GetExternalUIInterface();
 
 	if (!ExternalUi)
@@ -331,8 +340,7 @@ void UPlayfabManager::OnSessionLoginErrorPlayfabReq(const FFailRslt& ErrorResult
 		return;
 	}
 
-	ExternalUi->ShowLoginUI(0, false, false,
-							FOnLoginUIClosedDelegate::CreateUObject(this, &UPlayfabManager::HandleExternalUIClose));
+	ExternalUi->ShowLoginUI(0, false, false,FOnLoginUIClosedDelegate::CreateUObject(this, &UPlayfabManager::HandleExternalUIClose));
 }
 
 void UPlayfabManager::RequestUploadNewPlayerData()
@@ -373,6 +381,7 @@ bool UPlayfabManager::CheckClientDgKey(int amount)
 {
 	return  m_nLocalDgKey >= amount;
 }
+
 
 void UPlayfabManager::UploadAdmobTime(const FDateTime& date_time)
 {
@@ -463,7 +472,7 @@ void UPlayfabManager::OnSuccessPlayfabLogin(const PlayFab::ClientModels::FLoginR
 
 	FString SeTicket = Result.SessionTicket;
 
-	PlayFab::PlayFabSettings::SetClientSessionTicket(SeTicket);
+	m_Auth = CreateAuthCon(&SeTicket);
 
 	m_PlayfabID = Result.PlayFabId;
 
@@ -622,6 +631,8 @@ FString UPlayfabManager::GetMainDataJsonStr()
 	CurrentEquippedObj->SetNumberField(TEXT("EquippedPetLevel"),UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet()?UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet()->Level:-1);
 	
 	TotalMaindataJsonObj->SetObjectField(TEXT("CurrentEquipped"),CurrentEquippedObj);
+
+	//TotalMaindataJsonObj->SetStringField(TEXT("PVPStatus"),);
 	//
 	return TotalMaindataJsonObj->EncodeJson();
 }
@@ -876,6 +887,8 @@ void UPlayfabManager::OnSuccessTimeGet(const PlayFab::ClientModels::FGetTimeResu
 	FTimespan KoreanTime(9,0,0);
 	m_CurrentTime+=KoreanTime;
 
+	
+
 	RequestGetAccountInfo();
 }
 
@@ -973,8 +986,8 @@ void UPlayfabManager::UpdateInboxListToClient(FString InboxListStr)
 void UPlayfabManager::OnSuccessGetPlayerAroundRanking(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult& rslt)
 {
 	m_PlayerRanking = rslt.Leaderboard;
-	
-	SetRanking(m_PlayerRanking[0].Position+1);
+
+	m_nRanking.SetValue(m_PlayerRanking[0].Position+1);
 
 	m_OnPlayerRankReceived.Broadcast(m_PlayerRanking);
 }
@@ -1101,6 +1114,22 @@ void UPlayfabManager::SetMainDataToManagers(const FString& maindataFromServer)
 		JsonObj->GetArrayField(TEXT("Pet")));
 }
 
+void UPlayfabManager::OnPVPUploadSuccess(const FExeCScriptRslt& rslt)
+{
+	FString CachedJsonString = rslt.FunctionResult.toJSONString();
+
+	UDiabloGameInstance::Get->m_PVPManager->SetPVPDataBeforeUpload(CachedJsonString);
+
+}
+
+void UPlayfabManager::OnPVPGetSuccess(const FExeCScriptRslt& rslt)
+{
+	FString CachedJsonString = rslt.FunctionResult.toJSONString();
+
+	UDiabloGameInstance::Get->m_PVPManager->SetPVPData(CachedJsonString);
+}
+
+
 void UPlayfabManager::UploadDailyData(const FString dailyJsonStr)
 {
 	FUpdateReq Req;
@@ -1132,6 +1161,33 @@ void UPlayfabManager::UploadGold(BigInt gold)
 	GetClientAPI->UpdateUserData(Req,nullptr,
         PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
+//OnPVPComplete Win:2,Lose:3
 
+
+void UPlayfabManager::OnPvPComplete()
+{
+	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+
+	JsonObject->SetNumberField(TEXT("Win"), UDiabloGameInstance::Get->m_PVPManager->GetWin());
+
+	JsonObject->SetNumberField(TEXT("Lose"), UDiabloGameInstance::Get->m_PVPManager->GetLose());
+
+	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
+	
+	Req.FunctionParameter = PlayFab::FJsonKeeper(JsonObject);
+	
+	Req.FunctionName = TEXT("OnPVPComplete");
+	
+	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnPVPUploadSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::RequestGetPVPData()
+{
+	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
+	
+	Req.FunctionName = TEXT("GetPVPData");
+	
+	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnPVPGetSuccess),FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));	
+}//OnPVPUploadSuccess
 
 #undef LOCTEXT_NAMESPACE

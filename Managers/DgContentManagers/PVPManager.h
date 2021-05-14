@@ -32,7 +32,9 @@ public:
 	DECLARE_DELEGATE_OneParam(FOnBattleEnd,bool);
 	DECLARE_DELEGATE(FOnMatchStart);
 	DECLARE_DELEGATE(FOnMatchFail);
-
+	DECLARE_DELEGATE_ThreeParams(FOnPVPStatusChanged,int,int,int);/*w,l,mmr*/
+	
+	FOnPVPStatusChanged m_OnPVPStatusChanged;
 	FOnOtherPlayerSpawned m_OnOtherPlayerSpawned;
 	FOnOtherPlayerFound m_OnOtherPlayerFound;
 	FOnPVPMatched m_OnMatchSuccessed;
@@ -54,6 +56,12 @@ public:
 	float m_fTimer;
 
 	FDelegateHandle m_LevelLoadHandle;
+
+	FSafeInt m_nWin;
+
+	FSafeInt m_nLose;
+
+	FSafeInt m_nMMR;
 	
 public:
 	FString m_OtherPlayerDisplayName;
@@ -65,6 +73,7 @@ public:
 	UPlayFabJsonObject* m_EquipObj;
 
 public:
+	
 	virtual void OnLevelLoadComplete(UWorld* world) override;
 
 	virtual void StartDungeon() override;
@@ -90,7 +99,6 @@ public:
 
 	void AddOtherPlayerTotalDamage(const BigInt& v);
 
-
 	void SpawnPVPPlayer(UWorld* world);
 
 	virtual AUnitPawn* GetNearestEnemy(const FVector& wantPos) override;
@@ -100,4 +108,23 @@ public:
 	virtual FString GetOpenLevelAssetName() override;
 
 	virtual bool IsBattleStarted() override;
+
+	void SetPVPData(const FString& jsonStr);
+
+	void SetPVPDataBeforeUpload(const FString& jsonStr);
+
+	int GetMMR()
+	{
+		return m_nMMR.GetValue();
+	}
+
+	int GetWin()
+	{
+		return m_nWin.GetValue();
+	}
+
+	int GetLose()
+	{
+		return m_nLose.GetValue();
+	}
 };

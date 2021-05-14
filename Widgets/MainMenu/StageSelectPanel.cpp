@@ -33,7 +33,7 @@ void UStageSelectPanel::NativeOnInitialized()
 	
 	UpdateDgKey(DgKey);
 	
-	UDiabloGameInstance::Get->m_PlayfabManager->m_OnTicketChanged.AddUObject(this,&UStageSelectPanel::UpdateDgKey);
+	UDiabloGameInstance::Get->m_PlayfabManager->m_OnDgKeyChanged.AddUObject(this,&UStageSelectPanel::UpdateDgKey);
 }
 
 void UStageSelectPanel::InitNormalDungeon()
