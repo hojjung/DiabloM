@@ -269,7 +269,7 @@ void UPlayfabManager::Init()
 
 	if(m_Auth.IsValid())
 	{
-		m_LastLoginTime = m_CurrentTime;
+		//m_LastLoginTime = m_CurrentTime;
 		m_PlayfabID = m_Auth.Get()->GetPlayFabId();
 
 		RequestGetServerTime();

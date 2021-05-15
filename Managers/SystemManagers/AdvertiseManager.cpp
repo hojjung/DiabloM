@@ -8,7 +8,7 @@
 #include "ShowInterstitialProxy.h"
 #include "Managers/DiabloGameInstance.h"
 
-#define ADSCOOL 200.f
+#define ADSCOOL 720.f
 
 FString UAdvertiseManager::GetTimeToStr()
 {
@@ -21,7 +21,7 @@ FString UAdvertiseManager::GetTimeToStr()
 
 void UAdvertiseManager::Init()
 {
-	m_RewardAdID = TEXT("ca-app-pub-3940256099942544/5224354917");
+	m_RewardAdID = TEXT("ca-app-pub-2129135695247377/1075261375");
 	//
 	m_bLoadRewardAdsProcessing=false;
 
