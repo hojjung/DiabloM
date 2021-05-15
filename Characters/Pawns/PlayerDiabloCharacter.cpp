@@ -157,26 +157,11 @@ void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
 
 	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
 
-	if (m_SkinMeshHandle.Get())
-	{
-		m_SkinMeshHandle.Get()->ReleaseHandle();
-	}
-
-	if(m_AnimAtkHandle.Get())
-	{
-		m_AnimAtkHandle->ReleaseHandle();
-	}
-
-	if (m_AnimHandle.Get())
-	{
-		m_AnimHandle.Get()->ReleaseHandle();
-	}
-
-	auto* LoadedMesh =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_PlayerSkinSoft, true, &m_SkinMeshHandle);
+	auto* LoadedMesh =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_PlayerSkinSoft, false);
 	//
 
 
-	auto LoadedAnim =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_AnimBP, true, &m_AnimHandle);
+	auto LoadedAnim =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_AnimBP, false);
 	
 	//
 	m_SkBody->SetSkeletalMesh(LoadedMesh);
@@ -187,11 +172,13 @@ void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
 
 
 
-	m_BaseAttackAnim =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_BaseAttackAnim, true, &m_AnimAtkHandle);
+	m_BaseAttackAnim =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_BaseAttackAnim, false);
 	
 	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
 
 	m_OnMeshChanged.Broadcast(this);
+
+	UDiabloGameInstance::Get->GetPlCon()->ClientForceGarbageCollection();
 }
 
 void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
@@ -209,19 +196,9 @@ void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
 		m_CreatedWeapon->Destroy();
 	}
 
-	if (!spec.m_EquipData->m_ClassVisualActor)
-	{
-		return;
-	}
-
-	if (m_WeaponHandle.Get())
-	{
-		m_WeaponHandle.Get()->ReleaseHandle();
-	}
-	
 	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
 
-	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_EquipData->m_ClassVisualActor, true, &m_WeaponHandle);
+	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_EquipData->m_ClassVisualActor, false);
 	//
 
 
@@ -229,8 +206,7 @@ void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
 
 	Param.bNoFail = true;
 
-	m_CreatedWeapon = GetWorld()->SpawnActor<AEquipmentActor>(LoadedEquip, GetActorLocation(),
-	                                                          GetActorRotation(), Param);
+	m_CreatedWeapon = GetWorld()->SpawnActor<AEquipmentActor>(LoadedEquip,Param);
 
 	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
 	                               EAttachmentRule::KeepRelative, false);
@@ -261,14 +237,9 @@ void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
 		return;
 	}
 
-	if (m_WingHandle.Get())
-	{
-		m_WingHandle.Get()->ReleaseHandle();
-	}
-
 	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
 
-	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_WingData->m_ClassVisualWingActor, true, &m_WingHandle);
+	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_WingData->m_ClassVisualWingActor, false);
 	//
 
 
@@ -315,14 +286,9 @@ void APlayerDiabloCharacter::PetDataInject(const FPetSpec& spec)
 		return;
 	}
 
-	if (m_PetHandle.Get())
-	{
-		m_PetHandle.Get()->ReleaseHandle();
-	}
-
 	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
 
-	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_PetData->m_ClassPetSkin, true, &m_PetHandle);
+	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_PetData->m_ClassPetSkin, false);
 	//
 	
 
@@ -386,7 +352,7 @@ void APlayerDiabloCharacter::FocusTarget(AUnitPawn* target)
 
 	AUnitPawn* Unit = Cast<AUnitPawn>(target);
 
-	if (!Unit || target == m_FocusedEnemy) //캐스팅 실패하거나 이미 타겟팅 대상이면 스킵
+	if (!Unit || target == m_FocusedEnemy) //캐스팅 실패하거나 이미 타겟팅 대상이면 스킵a
 	{
 		return;
 	}
@@ -531,35 +497,6 @@ void APlayerDiabloCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 	
-	if (m_WingHandle.Get())
-	{
-		m_WingHandle.Get()->ReleaseHandle();
-	}
-
-	if (m_SkinMeshHandle.Get())
-	{
-		m_SkinMeshHandle.Get()->ReleaseHandle();
-	}
-	
-	if (m_WeaponHandle.Get())
-	{
-		m_WeaponHandle.Get()->ReleaseHandle();
-	}
-
-	if (m_PetHandle.Get())
-	{
-		m_PetHandle.Get()->ReleaseHandle();
-	}
-
-	if (m_AnimHandle.Get())
-	{
-		m_AnimHandle.Get()->ReleaseHandle();
-	}
-	
-	if(m_AnimAtkHandle.Get())
-	{
-		m_AnimAtkHandle->ReleaseHandle();
-	}
 }
 
 

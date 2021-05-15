@@ -277,48 +277,8 @@ void UPlayfabManager::Init()
 		return;
 	}
 
-#if PLATFORM_WINDOWS
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Desktop", "Try Login With Desktop"));
-	
+	StartPlayfabLogin();
 
-	PlayFab::ClientModels::FLoginWithCustomIDRequest request;
-	request.CreateAccount = true;
-	request.CustomId = TEXT("JungPC TestID3");
-	request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
-	
-	request.AuthenticationContext =	m_Auth;
-	
-	m_bIsCustomID = true;
-	bool Result = GetClientAPI->LoginWithCustomID(request,
-	                                              PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
-		                                              this, &UPlayfabManager::OnSuccessPlayfabLogin),
-	                                              PlayFab::FPlayFabErrorDelegate::CreateUObject(
-		                                              this, &UPlayfabManager::OnErrorPlayfabReq)
-	);
-
-
-#endif
-
-	
-#if PLATFORM_ANDROID
-	//SessionTicket 로그인 시도
-	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Session TIcket","로그인 세션 티켓 시도"));
-
-	PlayFab::ClientModels::FLoginWithGoogleAccountRequest SessionRequest;
-	
-	SessionRequest.CreateAccount = false;
-	
-	SessionRequest.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
-	
-	SessionRequest.AuthenticationContext = m_Auth;
-
-	GetClientAPI->LoginWithGoogleAccount(SessionRequest,
-													PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
-														this, &UPlayfabManager::OnSuccessPlayfabLogin),
-													PlayFab::FPlayFabErrorDelegate::CreateUObject(
-														this, &UPlayfabManager::OnSessionLoginErrorPlayfabReq)
-	);
-#endif
 }
 
 void UPlayfabManager::OnSessionLoginErrorPlayfabReq(const FFailRslt& ErrorResult)
@@ -341,6 +301,53 @@ void UPlayfabManager::OnSessionLoginErrorPlayfabReq(const FFailRslt& ErrorResult
 	}
 
 	ExternalUi->ShowLoginUI(0, false, false,FOnLoginUIClosedDelegate::CreateUObject(this, &UPlayfabManager::HandleExternalUIClose));
+}
+
+void UPlayfabManager::StartPlayfabLogin()
+{
+	
+#if PLATFORM_WINDOWS
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Desktop", "로그인 시도-PC"));
+	
+
+	PlayFab::ClientModels::FLoginWithCustomIDRequest request;
+	request.CreateAccount = true;
+	request.CustomId = TEXT("JungPC TestID3");
+	request.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
+	
+	request.AuthenticationContext =	m_Auth;
+	
+	m_bIsCustomID = true;
+	bool Result = GetClientAPI->LoginWithCustomID(request,
+												PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
+													this, &UPlayfabManager::OnSuccessPlayfabLogin),
+												PlayFab::FPlayFabErrorDelegate::CreateUObject(
+													this, &UPlayfabManager::OnErrorPlayfabReq)
+	);
+
+
+#endif
+
+	
+#if PLATFORM_ANDROID
+	//SessionTicket 로그인 시도
+	UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Try Login With Session TIcket","로그인 시도-Google"));
+
+	PlayFab::ClientModels::FLoginWithGoogleAccountRequest SessionRequest;
+	
+	SessionRequest.CreateAccount = false;
+	
+	SessionRequest.TitleId = GetDefault<UPlayFabRuntimeSettings>()->TitleId;
+	
+	SessionRequest.AuthenticationContext = m_Auth;
+
+	GetClientAPI->LoginWithGoogleAccount(SessionRequest,
+													PlayFab::UPlayFabClientAPI::FLoginWithGoogleAccountDelegate::CreateUObject(
+														this, &UPlayfabManager::OnSuccessPlayfabLogin),
+													PlayFab::FPlayFabErrorDelegate::CreateUObject(
+														this, &UPlayfabManager::OnSessionLoginErrorPlayfabReq)
+	);
+#endif
 }
 
 void UPlayfabManager::RequestUploadNewPlayerData()
@@ -585,6 +592,12 @@ void UPlayfabManager::OnErrorPlayfabReq(const FFailRslt& ErrorResult)
 	FString CodeString = UPlayFabUtilities::getErrorText(ErrorResult.ErrorCode);
 	
 	UDiabloGameInstance::Get->RequestPopupText(CodeString);
+	
+	if(1074 ==ErrorResult.ErrorCode)
+	{
+		StartPlayfabLogin();
+		return;	
+	}
 	//break;
 	m_OnPlayfabError.Broadcast(CodeString);
 }
@@ -925,7 +938,8 @@ void UPlayfabManager::RequestRetrievePlayerAroundRanking()
 void UPlayfabManager::RequestGetServerTime()
 {
 	PlayFab::ClientModels::FGetTimeRequest Req;
-	GetClientAPI->GetTime(Req,PlayFab::UPlayFabClientAPI::FGetTimeDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessTimeGet));
+	GetClientAPI->GetTime(Req,PlayFab::UPlayFabClientAPI::FGetTimeDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessTimeGet),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
 void UPlayfabManager::RequestTitleNews()

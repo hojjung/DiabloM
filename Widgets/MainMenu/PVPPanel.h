@@ -7,6 +7,8 @@
 #include "Button.h"
 #include "TextBlock.h"
 #include "Blueprint/UserWidget.h"
+#include "Widgets/CommonElement/ImageAndText.h"
+
 #include "PVPPanel.generated.h"
 
 /**
@@ -23,14 +25,21 @@ protected:
 	UTextBlock* m_TextOtherPlayerID;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnMatching;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_TextMMR;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_TextWinLose;
 
 public:
 	virtual void NativeOnInitialized() override;
+	
 	UFUNCTION()
 	void RequestMatch();
 
 	void OnNicknameFound(const FString otherPlayerName);
 
 	void OnMatchFail();
+
+	void UpdateStatusText();
 };
 

@@ -146,22 +146,12 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJso
 
 	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
 
-	if (m_SkinMeshHandle.Get())
-	{
-		m_SkinMeshHandle.Get()->ReleaseHandle();
-	}
-
-	if (m_AnimHandle.Get())
-	{
-		m_AnimHandle.Get()->ReleaseHandle();
-	}
-
-	USkeletalMesh* LoadedMesh = StreamableManager.LoadSynchronous(SkinData->m_PlayerSkinSoft, true, &m_SkinMeshHandle);
+	USkeletalMesh* LoadedMesh = StreamableManager.LoadSynchronous(SkinData->m_PlayerSkinSoft, false);
 
 	m_SkBody->SetSkeletalMesh(LoadedMesh);
 	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
-	TSubclassOf<UAnimInstance> LoadedAnimBP = StreamableManager.LoadSynchronous(SkinData->m_AnimBP, true, &m_AnimHandle);
+	TSubclassOf<UAnimInstance> LoadedAnimBP = StreamableManager.LoadSynchronous(SkinData->m_AnimBP, false);
 
 	m_SkBody->SetAnimInstanceClass(LoadedAnimBP);
 	//
@@ -180,12 +170,7 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJso
 			m_WeaponActor->Destroy();
 		}
 
-		if (m_WeaponHandle.Get())
-		{
-			m_WeaponHandle.Get()->ReleaseHandle();
-		}
-
-		auto LoadedEquipActor = StreamableManager.LoadSynchronous(m_WeaponSpec.m_EquipData->m_ClassVisualActor, true, &m_WeaponHandle);
+		auto LoadedEquipActor = StreamableManager.LoadSynchronous(m_WeaponSpec.m_EquipData->m_ClassVisualActor, false);
 
 
 		FActorSpawnParameters Param;
@@ -218,12 +203,7 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJso
 				m_Capture->ShowOnlyActors.Remove(m_PetComp->GetChildActor());
 			}
 
-			if (m_WeaponHandle.Get())
-			{
-				m_WeaponHandle.Get()->ReleaseHandle();
-			}
-
-			auto LoadedPetActor = StreamableManager.LoadSynchronous(m_PetSpec.m_PetData->m_ClassPetSkin, true, &m_PetHandle);
+			auto LoadedPetActor = StreamableManager.LoadSynchronous(m_PetSpec.m_PetData->m_ClassPetSkin, false);
 
 			m_PetComp->SetChildActorClass(LoadedPetActor);
 
@@ -257,12 +237,7 @@ void AOtherPlayerPawn::SetPVPPlayerPawn(UPlayFabJsonObject* statObj, UPlayFabJso
 	
 	m_fAttackSpeed = SkinData->m_fAttackSpeedMultiple;
 
-	if(m_AnimBaseAtkHandle.Get())
-	{
-		m_AnimBaseAtkHandle->ReleaseHandle();
-	}
-
-	m_BaseAttackAnim =StreamableManager.LoadSynchronous(SkinData->m_BaseAttackAnim, true, &m_AnimBaseAtkHandle);
+	m_BaseAttackAnim =StreamableManager.LoadSynchronous(SkinData->m_BaseAttackAnim, false);
 	
 	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
 	//
@@ -283,35 +258,6 @@ void AOtherPlayerPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	if (m_SkinMeshHandle.Get())
-	{
-		m_SkinMeshHandle.Get()->ReleaseHandle();
-	}
-	
-	if (m_WeaponHandle.Get())
-	{
-		m_WeaponHandle.Get()->ReleaseHandle();
-	}
-
-	if (m_PetHandle.Get())
-	{
-		m_PetHandle.Get()->ReleaseHandle();
-	}
-
-	if (m_AnimHandle.Get())
-	{
-		m_AnimHandle.Get()->ReleaseHandle();
-	}
-
-	if (m_WingHandle.Get())
-	{
-		m_WingHandle.Get()->ReleaseHandle();
-	}
-	
-	if(m_AnimBaseAtkHandle.Get())
-	{
-		m_AnimBaseAtkHandle->ReleaseHandle();
-	}
 }
 
 void AOtherPlayerPawn::Tick(float DeltaTime)

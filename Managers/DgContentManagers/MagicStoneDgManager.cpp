@@ -19,8 +19,6 @@ void UMagicStoneDgManager::Init()
 
 void UMagicStoneDgManager::OnLevelLoadComplete(UWorld* world)
 {
-	PRINTF("MagicStoneManager! World:%s", *world->GetMapName());
-
 	FMonsterEntity* DragonEntity = m_CurrentDgData->m_Monsters[0].GetRow<FMonsterEntity>("");
 	//
 	FVector Loc = FVector(290, 290, 102);
@@ -33,7 +31,7 @@ void UMagicStoneDgManager::OnLevelLoadComplete(UWorld* world)
 
 	m_SpawnedMagicDragon = world->SpawnActor<AMonsterPawn>(AMonsterPawn::StaticClass(), Loc, Rot, Param);
 
-	m_SpawnedMagicDragon->DataInject(DragonEntity, m_CurrentDgData->GetMobHp(), m_CurrentDgData->GetMobGold(),
+	m_SpawnedMagicDragon->DataInject(DragonEntity, m_CurrentDgData->GetMobHp(), 0,
 	                                 EMonsterType::MagicDragon, 1, 1, 1);
 
 	m_SpawnedMagicDragon->m_OnDeathAnimAfter.AddUObject(this, &UMagicStoneDgManager::EndMagicDgSuccess);
@@ -66,6 +64,8 @@ void UMagicStoneDgManager::EndDungeon(bool b)
 
 	if (m_bIsMatchStarted)
 	{
+		AddMagicStones(m_nSuccessBounty);
+
 		m_bIsMatchStarted = false;
 
 		UDiabloGameInstance::Get->GetPlChar()->SetFSM_Enable(false);
@@ -116,9 +116,7 @@ void UMagicStoneDgManager::EndMagicDgSuccess(AMonsterPawn* dragonDead)
 {
 	PRINTF("사냥성공");
 
-	AddMagicStones(m_nSuccessBounty);
-
-	m_bIsMatchStarted = false;
+	
 
 	EndDungeon(true);
 }

@@ -48,18 +48,6 @@ protected:
 	
 	FSkillSpec* m_CurrentCastingSkill;
 	
-	TSharedPtr<FStreamableHandle>  m_SkinMeshHandle;
-
-	TSharedPtr<FStreamableHandle>  m_AnimHandle;
-
-	TSharedPtr<FStreamableHandle>  m_WeaponHandle;
-
-	TSharedPtr<FStreamableHandle>  m_PetHandle;
-
-	TSharedPtr<FStreamableHandle>  m_WingHandle;
-
-	TSharedPtr<FStreamableHandle>  m_AnimBaseAtkHandle;
-	
 	TArray<FUpgradeSpec> m_AryUpgradeSpec;
 	
 	TArray<FSkillSpec> m_ArySkillSpec;

@@ -129,6 +129,9 @@ public://user data
 	int m_nLocalDgKey;
 
 	TArray<PlayFab::ClientModels::FTitleNewsItem> m_TitleNews;
+
+public:
+	void StartPlayfabLogin();
 	
 protected://rank
 	UPROPERTY()

@@ -54,6 +54,8 @@ protected:
 	UMaterialProgressBar* m_OtherPlayerBarRage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TxtOtherPlayerRageValue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_ImgTxtReward;
 
 	FDelegateHandle m_Handle;
 

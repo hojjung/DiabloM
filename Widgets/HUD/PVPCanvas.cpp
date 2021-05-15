@@ -22,6 +22,8 @@ void UPVPCanvas::NativeOnInitialized()
 	UDiabloGameInstance::Get->m_PVPManager->m_OnOtherPlayerSpawned.BindUObject(this,&UPVPCanvas::OnOtherPlayerSpawned);
 
 	UDiabloGameInstance::Get->GetPlChar()->UpdateRage();
+
+	
 }
 
 void UPVPCanvas::UpdateDmgGauge(float percentOne, BigInt playerDmg, BigInt otherPlayerDmg)
@@ -45,16 +47,21 @@ void UPVPCanvas::UpdateTimer(float timer)
 void UPVPCanvas::OnBattleEnd(bool isPlayerWon)
 {
 	PlayAnimation(ShowResult);
-	
+
+	FSafeInt Reward = 3;
+
 	if(isPlayerWon)
 	{
-		m_TxtRequestedInfo->SetText(FText::FromString(TEXT("승리")));	
+		m_TxtRequestedInfo->SetText(FText::FromString(TEXT("승리")));
 	}
 	else
 	{
 		m_TxtRequestedInfo->SetText(FText::FromString(TEXT("패배")));
+
+		Reward =1;
 	}
 	
+	m_ImgTxtReward->SetText(FText::FromString(FString::Printf(TEXT("날개 교환권 %d개 획득"),Reward.GetValue())));
 }
 
 void UPVPCanvas::OnEquipSkillSet(TArray<FSkillSpec*>& equippedSkill)
@@ -65,22 +72,22 @@ void UPVPCanvas::OnEquipSkillSet(TArray<FSkillSpec*>& equippedSkill)
 	m_OtherPlayerSkill03->Init(2);
 	m_OtherPlayerSkill04->Init(3);
 
-	if(equippedSkill[0]->m_SkillData)
+	if(equippedSkill[0])
 	{
 		m_OtherPlayerSkill01->SetSkillSpec(equippedSkill[0]);	
 	}
 
-	if(equippedSkill[1]->m_SkillData)
+	if(equippedSkill[1])
 	{
 		m_OtherPlayerSkill02->SetSkillSpec(equippedSkill[1]);	
 	}
 
-	if(equippedSkill[2]->m_SkillData)
+	if(equippedSkill[2])
 	{
 		m_OtherPlayerSkill03->SetSkillSpec(equippedSkill[2]);	
 	}
 
-	if(equippedSkill[3]->m_SkillData)
+	if(equippedSkill[3])
 	{
 		m_OtherPlayerSkill04->SetSkillSpec(equippedSkill[3]);	
 	}

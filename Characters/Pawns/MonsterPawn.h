@@ -42,15 +42,6 @@ public:
 	FOnMonsterHit m_OnTookDmg;
 
 protected:
-	TSharedPtr<FStreamableHandle>  m_HandleAnimBaseAttack;
-
-	TSharedPtr<FStreamableHandle>  m_HandleAnimDeath;
-
-	TSharedPtr<FStreamableHandle>  m_HandleAnimSpawn;
-	
-	TSharedPtr<FStreamableHandle>  m_HandleAnimTookHit;
-
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* m_StShadow;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -85,7 +76,6 @@ protected:
 
 public: //need more monster
 	virtual void BeginPlay() override;
-	void ReleaseAssetMemory();
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	

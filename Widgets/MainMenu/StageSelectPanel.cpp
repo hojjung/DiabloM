@@ -126,5 +126,5 @@ void UStageSelectPanel::Back()
 
 void UStageSelectPanel::UpdateDgKey(int kV)
 {
-	m_ImgTxtDgTicket->SetText(FText::FromString(FString::Printf(TEXT("던전 열쇠 %d/15"),kV)));
+	m_ImgTxtDgTicket->SetText(FText::FromString(FString::Printf(TEXT("던전 열쇠 %d/20"),kV)));
 }

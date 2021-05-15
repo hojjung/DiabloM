@@ -96,9 +96,6 @@ protected:
 
 	FDelegateHandle m_BossDeleHandle;
 
-	TArray<TSharedPtr<FStreamableHandle>> m_LoadedMonsters;
-
-	TSharedPtr<FStreamableHandle> m_LoadedGoblin;
 	UPROPERTY()
 	UDataTable* m_MobEntityTable;
 

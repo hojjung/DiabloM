@@ -53,7 +53,6 @@ UNormalDungeonManager::UNormalDungeonManager()
 void UNormalDungeonManager::Init()
 {
 	m_GoldGoblinEntity = m_MobEntityTable->FindRow<FMonsterEntity>("GoldGoblin", "");
-	m_LoadedMonsters.Init(TSharedPtr<FStreamableHandle>(), 12);
 }
 
 void UNormalDungeonManager::OnLevelLoadComplete(UWorld* world)
@@ -74,22 +73,6 @@ void UNormalDungeonManager::OnLevelLoadComplete(UWorld* world)
 
 void UNormalDungeonManager::StartSpawn(UWorld* world, const FDungeonDataTableRow* dgData)
 {
-	for (auto& Handle : m_LoadedMonsters)
-	{
-		if (Handle.Get())
-		{
-			Handle.Get()->ReleaseHandle();
-		}
-	}
-
-	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
-
-	for (int i = 0; i < dgData->m_Monsters.Num(); i++)
-	{
-		StreamableManager.LoadSynchronous(dgData->m_Monsters[i].GetRow<FMonsterEntity>("")->m_MonsterMeshSoft, true,
-		                                  &m_LoadedMonsters[i]);
-	}
-
 	m_nKillCount = 0;
 
 	m_nGoldGoblinSpawnCount = FMath::RandRange(10, 25);
@@ -265,17 +248,6 @@ void UNormalDungeonManager::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	for (auto& Handle : m_LoadedMonsters)
-	{
-		if (Handle.Get())
-		{
-			Handle.Get()->ReleaseHandle();
-		}
-	}
-	if (m_LoadedGoblin.Get())
-	{
-		m_LoadedGoblin.Get()->ReleaseHandle();
-	}
 }
 
 AUnitPawn* UNormalDungeonManager::GetNearestEnemy(const FVector& wantPos)

@@ -115,34 +115,10 @@ void AMonsterPawn::BeginPlay()
     m_PlCon = Cast<ADiabloPlayerController>( UGameplayStatics::GetPlayerController(this,0));
 }
 
-void AMonsterPawn::ReleaseAssetMemory()
-{
-    if (m_HandleAnimBaseAttack.Get())
-    {
-        m_HandleAnimBaseAttack.Get()->ReleaseHandle();
-    }
-
-    if (m_HandleAnimDeath.Get())
-    {
-        m_HandleAnimDeath.Get()->ReleaseHandle();
-    }
-
-    if (m_HandleAnimSpawn.Get())
-    {
-        m_HandleAnimSpawn.Get()->ReleaseHandle();
-    }
-
-    if (m_HandleAnimTookHit.Get())
-    {
-        m_HandleAnimTookHit.Get()->ReleaseHandle();
-    }
-}
-
 void AMonsterPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     Super::EndPlay(EndPlayReason);
 
-    ReleaseAssetMemory();
 }
 
 
@@ -165,21 +141,21 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
 
     FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
 
-    ReleaseAssetMemory();
+    m_BaseAttackAnim =StreamableManager.LoadSynchronous(UnitData->m_BaseAttackAnim, false);
 
-    m_BaseAttackAnim =StreamableManager.LoadSynchronous(UnitData->m_BaseAttackAnim, true, &m_HandleAnimBaseAttack);
+    m_DeathMontage =StreamableManager.LoadSynchronous( UnitData->m_DeathMontage, false);
 
-    m_DeathMontage =StreamableManager.LoadSynchronous( UnitData->m_DeathMontage, true, &m_HandleAnimDeath);
+    m_SpawnAnim =StreamableManager.LoadSynchronous(UnitData->m_SpawnAnim, false);
 
-    m_SpawnAnim =StreamableManager.LoadSynchronous(UnitData->m_SpawnAnim, true, &m_HandleAnimSpawn);
-
-    m_TookHitMontage =StreamableManager.LoadSynchronous(UnitData->m_TookHitMontage, true, &m_HandleAnimTookHit);
+    m_TookHitMontage =StreamableManager.LoadSynchronous(UnitData->m_TookHitMontage, false);
 
     m_TextUnitName = UnitData->m_ShowingName;
 
     m_SkBody->EmptyOverrideMaterials();
+
+    auto* SkMeshLoaded =StreamableManager.LoadSynchronous(UnitData->m_MonsterMeshSoft, false);
     
-    m_SkBody->SetSkeletalMesh(UnitData->m_MonsterMeshSoft.Get());
+    m_SkBody->SetSkeletalMesh(SkMeshLoaded);
 
     m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
     

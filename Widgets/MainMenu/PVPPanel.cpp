@@ -13,7 +13,7 @@ void UPVPPanel::NativeOnInitialized()
 
 	m_TextPlayerID->SetText(FText::FromString(UDiabloGameInstance::Get->m_PlayfabManager->m_LoadedNickname));
 	//
-	
+	UpdateStatusText();
 }
 
 void UPVPPanel::RequestMatch()
@@ -32,4 +32,20 @@ void UPVPPanel::OnMatchFail()
 {
 	//m_BtnMatching->SetIsEnabled(true);
 	UDiabloGameInstance::Get->m_PVPManager->MatchFail();
+}
+
+void UPVPPanel::UpdateStatusText()
+{
+	int MMR = UDiabloGameInstance::Get->m_PVPManager->GetMMR();
+
+	FText MMRTxt =FText::FromString(FString::Printf(TEXT("MMR:%d"),MMR));
+	
+	m_TextMMR->SetText(MMRTxt);
+	
+	int Win = UDiabloGameInstance::Get->m_PVPManager->GetWin();
+	int Lose = UDiabloGameInstance::Get->m_PVPManager->GetLose();
+	
+	FText WinLose =FText::FromString(FString::Printf(TEXT("%d승 %d패"),Win,Lose));
+	
+	m_TextWinLose->SetText(WinLose);
 }
