@@ -3,9 +3,12 @@
 #include "DailyRewardPanel.h"
 #include "DiabloM.h"
 #include "GridPanel.h"
+#include "OptionPanel.h"
 #include "RankingPanel.h"
 #include "StageSelectPanel.h"
 #include "Blueprint/UserWidget.h"
+#include "Widgets/DiaStatPanel.h"
+
 #include "MainMenuPanel.generated.h"
 
 class UInboxPanel;
@@ -35,7 +38,7 @@ protected:
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUserWidget* m_PanelPlayerInfo;
+	UDiaStatPanel* m_PanelPlayerInfo;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UStageSelectPanel* m_PanelStageSelect;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
@@ -45,7 +48,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UDailyRewardPanel* m_PanelDaily;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UUserWidget* m_PanelOption;
+	UOptionPanel* m_PanelOption;
 
 protected:
 	virtual void NativeOnInitialized() override;
