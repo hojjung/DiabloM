@@ -32,6 +32,7 @@ UDiabloGameInstance::UDiabloGameInstance()
 void UDiabloGameInstance::Init()
 {
     Super::Init();
+
     m_NormalDgManager = NewObject<UNormalDungeonManager>();
 	m_NormalDgManager->Init();
     m_PlayerUpgradeManager = NewObject<UPlayerUpgradeManager>();
@@ -59,6 +60,26 @@ void UDiabloGameInstance::Init()
 	m_ChatManager = NewObject<UChatManager>();
     //
 	
+}
+
+void UDiabloGameInstance::LoadOptionSaveData()
+{
+	m_LoadedOptionSave = Cast<UOptionSave>(UGameplayStatics::LoadGameFromSlot(TEXT("OptionSave"),0));
+
+	if(!m_LoadedOptionSave)
+	{
+		m_LoadedOptionSave = Cast<UOptionSave>(UGameplayStatics::CreateSaveGameObject(UOptionSave::StaticClass()));
+		UGameplayStatics::SaveGameToSlot(m_LoadedOptionSave,TEXT("OptionSave"),0);	
+	}
+}
+
+void UDiabloGameInstance::UnloadSaveOptionSaveData()
+{
+	if(m_LoadedOptionSave)
+	{
+		UGameplayStatics::SaveGameToSlot(m_LoadedOptionSave,TEXT("OptionSave"),0);	
+	}
+	m_LoadedOptionSave = nullptr;
 }
 
 

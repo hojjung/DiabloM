@@ -299,6 +299,19 @@ public:
 
 	void SetWingDataToJson(UPlayFabJsonObject*);
 
+protected:
+	int GetWeaponUnlockCount();
+
+	int GetSkinUnlockCount();
+
+	int GetPetUnlockCount();
+
+public:
+	FString GetWeaponUnlockStr();
+
+	FString GetSkinUnlockStr();
+
+	FString GetPetUnlockStr();
 };
 
 

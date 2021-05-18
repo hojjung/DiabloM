@@ -1,95 +1,72 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
 
-#include "CoreMinimal.h"
+#include "DiabloM.h"
 
-#include "MagicDgPanel.h"
-#include "PetDgPanel.h"
-#include "ScrollBox.h"
-#include "StageBtn.h"
-#include "VerticalBox.h"
-#include "WeaponDgPanel.h"
 #include "Blueprint/UserWidget.h"
-#include "Widgets/CommonElement/ImageAndText.h"
+#include "Characters/Pawns/PlayerDiabloCharacter.h"
 
-#include "StageSelectPanel.generated.h"
+#include "DiaStatPanel.generated.h"
 
-class UPVPPanel;
 /**
  * 
  */
 UCLASS()
-class DIABLOM_API UStageSelectPanel : public UUserWidget
+class DIABLOM_API UDiaStatPanel : public UUserWidget
 {
 	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UImageAndText* m_ImgTxtDgTicket;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnShowNormalDg;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnShowPetDg;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnShowMagicDg;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnShowWeaponDg;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnPVP;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnBack;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UScrollBox* m_StageTypeSelectVert;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UMagicDgPanel* m_DgMagicPanel;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UScrollBox* m_DgStageBtnListVert;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UPetDgPanel* m_DgPetPanel;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UWeaponDgPanel* m_DgWeaponPanel;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UPVPPanel* m_DgPVPPanel;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UImageAndText* m_TxtGold;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UImageAndText* m_TxtWeaponStone;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UImageAndText* m_TxtSkillStone;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UImageAndText* m_TxtPetGachaTicket;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UImageAndText* m_TxtWingTicket;
 	
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UStageBtn> m_ClassStageBtn;
-	UPROPERTY()
-	TArray<UStageBtn*> m_AryStageBtn;
-
 protected:
-	void InitNormalDungeon();
-	virtual void NativeOnInitialized() override;
+	//스텟정보
 
-	void UpdateBtnUI(int index);
+	//던전정보
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_DisplayName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_NormalStageMax;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_AttackLv;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_CriLv;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_CriDmgLv;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_SCriLv;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_SCriDmgLv;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_MagicLv;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_MagicDmgLv;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_SMagicLv;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_SMagicDmgLv;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_Skill01;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_Skill02;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_Skill03;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_Skill04;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_Skill05;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_AttackSpeed;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TotalPlayTime;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TotalSkinUnlockPercent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TotalPetUnlockPercent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TotalWeaponUnlockPercent;
 
 public:
-	UFUNCTION()
-	void OpenNormalDg();
-	UFUNCTION()
-    void OpenGoldDg();
-	UFUNCTION()
-	void OpenPetDg();
-	UFUNCTION()
-    void OpenWeaponDg();
-	UFUNCTION()
-    void OpenPVPDg();
-	UFUNCTION()
-	void Back();
-
-	void UpdateDgKey(int kV);
-
-	void UpdateResourceTxt();
+	void UpdateAll();
 
 	virtual void SetVisibility(ESlateVisibility InVisibility) override;
 };
-
 

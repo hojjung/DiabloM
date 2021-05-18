@@ -34,6 +34,8 @@ void UStageSelectPanel::NativeOnInitialized()
 	UpdateDgKey(DgKey);
 	
 	UDiabloGameInstance::Get->m_PlayfabManager->m_OnDgKeyChanged.AddUObject(this,&UStageSelectPanel::UpdateDgKey);
+
+	UpdateResourceTxt();
 }
 
 void UStageSelectPanel::InitNormalDungeon()
@@ -127,4 +129,23 @@ void UStageSelectPanel::Back()
 void UStageSelectPanel::UpdateDgKey(int kV)
 {
 	m_ImgTxtDgTicket->SetText(FText::FromString(FString::Printf(TEXT("던전 열쇠 %d/20"),kV)));
+}
+
+void UStageSelectPanel::UpdateResourceTxt()//무기강화할때,티켓돌릴때,날개소모할때,골드소모할때
+{
+	m_TxtGold->SetText(FText::FromString(FString::Printf(TEXT("보유 골드:%s"),*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(UDiabloGameInstance::Get->m_GoldManager->GetCurrentGold(),2))));
+	m_TxtWeaponStone->SetText(FText::FromString(FString::Printf(TEXT("보유 무기강화석:%d"),0)));
+	m_TxtSkillStone->SetText(FText::FromString(FString::Printf(TEXT("보유 스킬마정석:%d"),0)));
+	m_TxtPetGachaTicket->SetText(FText::FromString(FString::Printf(TEXT("보유 펫가챠티켓:%d"),0)));
+	m_TxtWingTicket->SetText(FText::FromString(FString::Printf(TEXT("보유 날개티켓:%d"),0)));
+}
+
+void UStageSelectPanel::SetVisibility(ESlateVisibility InVisibility)
+{
+	Super::SetVisibility(InVisibility);
+
+	if(InVisibility==ESlateVisibility::SelfHitTestInvisible || InVisibility==ESlateVisibility::Visible || InVisibility==ESlateVisibility::HitTestInvisible)
+	{
+		UpdateResourceTxt();
+	}
 }

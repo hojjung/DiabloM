@@ -53,4 +53,6 @@ public:
 
 	UFUNCTION()
 	void OnSFXSliderChanged(float v);
+
+	virtual void SetVisibility(ESlateVisibility InVisibility) override;
 };

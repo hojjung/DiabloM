@@ -41,9 +41,13 @@ public://delegate
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayfabError,const FString&);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRankReceived,const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>&);
 	
-	FOnRankReceived m_OnTotalRankReceived;
+	FOnRankReceived m_OnTotalStageRankReceived;
 
-	FOnRankReceived m_OnPlayerRankReceived;
+	FOnRankReceived m_OnPlayerStageRankReceived;
+
+	FOnRankReceived m_OnTotalPVPRankReceived;
+
+	FOnRankReceived m_OnPlayerPVPRankReceived;
 
 	FOnVirtualCurrencyChanged m_OnGemstoneChanged;
 
@@ -137,9 +141,16 @@ protected://rank
 	UPROPERTY()
 	FSafeInt m_nRanking;
 
-	TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry> m_TotalRanking;
+	UPROPERTY()
+	FSafeInt m_nPVPRanking;
 
-	TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry> m_PlayerRanking;
+	TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry> m_TotalStageRanking;
+
+	TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry> m_PlayerStageRanking;
+
+	TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry> m_TotalPVPRanking;
+
+	TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry> m_PlayerPVPRanking;
 
 	TMap<FString,PlayFab::ClientModels::FCatalogItem> m_MapCatalogItems;
 
@@ -179,6 +190,8 @@ protected:
 
 	void OnSuccessGetTotalRanking( const PlayFab::ClientModels::FGetLeaderboardResult&);
 
+	void OnSuccessGetTotalPVPRanking( const PlayFab::ClientModels::FGetLeaderboardResult&);
+
 	void OnNickNameSetSuccess(const  PlayFab::ClientModels::FUpdateUserTitleDisplayNameResult&);
 
 	void OnStageCompleteScriptSuccess(const FExeCScriptRslt& rslt);
@@ -192,6 +205,8 @@ protected:
 	void OnInboxRefreshSuccess(const FExeCScriptRslt& rslt);
 
 	void OnSuccessGetPlayerAroundRanking(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult&);
+
+	void OnSuccessGetPVPPlayerAroundRanking(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult&);
 
 	void OnSuccessGetTitleNews(const PlayFab::ClientModels::FGetTitleNewsResult&);
 
@@ -261,19 +276,33 @@ public:
 	void RequestRetrieveTotalRanking();
 
 	void RequestRetrievePlayerAroundRanking();
+
+	void RequestRetrieveTotalPVPRanking();
+
+	void RequestRetrievePVPPlayerAroundRanking();
 	
 	int GetRanking();
 
 	void RequestCheatAlert();
 
-	FORCEINLINE const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>& GetTotalRank() const
+	FORCEINLINE const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>& GetTotalStageRank() const
 	{
-		return m_TotalRanking;
+		return m_TotalStageRanking;
 	}
 
-	FORCEINLINE const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>& GetPlayerRank() const
+	FORCEINLINE const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>& GetStagePlayerRank() const
 	{
-		return m_PlayerRanking;
+		return m_PlayerStageRanking;
+	}
+
+	FORCEINLINE const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>& GetTotalPVPRank() const
+	{
+		return m_TotalPVPRanking;
+	}
+
+	FORCEINLINE const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>& GetPVPPlayerRank() const
+	{
+		return m_PlayerPVPRanking;
 	}
 
 	void PurchaseWithGemStone(int amount,FString itemName);

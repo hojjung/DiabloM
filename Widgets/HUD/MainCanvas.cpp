@@ -44,7 +44,7 @@ void UMainCanvas::NativeOnInitialized()
 	UDiabloGameInstance::Get->m_AdverManager->m_OnShowAdBanner.AddUObject(this,&UMainCanvas::OnShowAdBanner);
 	UDiabloGameInstance::Get->m_PlayfabManager->m_OnGemstoneChanged.AddUObject(this,&UMainCanvas::UpdateGemStone);
 	UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
-	UDiabloGameInstance::Get->m_PlayfabManager->m_OnPlayerRankReceived.AddUObject(this,&UMainCanvas::SetPlayerNicknameRankingWrap);
+	UDiabloGameInstance::Get->m_PlayfabManager->m_OnPlayerStageRankReceived.AddUObject(this,&UMainCanvas::SetPlayerNicknameRankingWrap);
 
 	m_BtnGemStone->OnClicked.AddDynamic(this,&UMainCanvas::OpenGemStoneShop);
 	m_BtnGold->OnClicked.AddDynamic(this,&UMainCanvas::OpenGoldShop);

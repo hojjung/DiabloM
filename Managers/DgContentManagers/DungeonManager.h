@@ -46,6 +46,7 @@ public:
 	
 	int GetDgKey();
 
+
 protected:
 	void OnLevelLoadComplete(UWorld* world);
 	

@@ -2,12 +2,12 @@
 
 #include "DailyRewardPanel.h"
 #include "DiabloM.h"
+#include "DiaStatPanel.h"
 #include "GridPanel.h"
 #include "OptionPanel.h"
 #include "RankingPanel.h"
 #include "StageSelectPanel.h"
 #include "Blueprint/UserWidget.h"
-#include "Widgets/DiaStatPanel.h"
 
 #include "MainMenuPanel.generated.h"
 

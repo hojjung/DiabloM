@@ -750,3 +750,63 @@ void UEquipManager::SetWingDataToJson(UPlayFabJsonObject* obj)
 
 	obj->SetObjectArrayField(TEXT("Pet"), AryPetObj);
 }
+
+int UEquipManager::GetWeaponUnlockCount()
+{
+	int Count = 0;
+
+	for(auto& WW : m_AryWeapons)
+	{
+		if(WW.Level>0)
+		{
+			Count++;
+		}
+	}
+
+	return Count;
+}
+
+int UEquipManager::GetSkinUnlockCount()
+{
+	int Count = 0;
+
+	for(auto& WW : m_AryPlayerSkin)
+	{
+		if(WW.IsUnlocked)
+		{
+			Count++;
+		}
+	}
+
+	return Count;
+}
+
+int UEquipManager::GetPetUnlockCount()
+{
+	int Count = 0;
+
+	for(auto& WW : m_AryPets)
+	{
+		if(WW.Level>0)
+		{
+			Count++;
+		}
+	}
+
+	return Count;
+}
+
+FString UEquipManager::GetWeaponUnlockStr()
+{
+	return FString::Printf(TEXT("%d/%d"),GetWeaponUnlockCount(),m_AryWeaponTable.Num());	
+}
+
+FString UEquipManager::GetSkinUnlockStr()
+{
+	return FString::Printf(TEXT("%d/%d"),GetSkinUnlockCount(),m_ArySkinsTable.Num());
+}
+
+FString UEquipManager::GetPetUnlockStr()
+{
+	return FString::Printf(TEXT("%d/%d"),GetPetUnlockCount(),m_AryPetTable.Num());
+}

@@ -21,6 +21,7 @@
 #include "SCUE4.h"
 #include "DgContentManagers/PetDgManager.h"
 #include "DgContentManagers/WeaponScrollDgManager.h"
+#include "Save/OptionSave.h"
 
 
 #include "DiabloGameInstance.generated.h"
@@ -81,11 +82,18 @@ public:
 	UPetDgManager* m_PetDgManager;
 	UPROPERTY()
 	UWeaponScrollDgManager* m_WeaponDgManager;
+	UPROPERTY()
+	UOptionSave* m_LoadedOptionSave;
 	
 protected:
 	virtual void Init() override;
+
 	
 public:
+	void LoadOptionSaveData();
+
+	void UnloadSaveOptionSaveData();
+	
 	ADiabloPlayerController* GetPlCon();
 	
 	APlayerDiabloCharacter* GetPlChar();

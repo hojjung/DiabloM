@@ -35,17 +35,13 @@ void UOptionPanel::NativeOnInitialized()
 	
 	UpdateVersionNameText();
 	
-	m_ToggleFrameLimit->SetCheckedState(ECheckBoxState::Checked);
-	
 	m_ToggleFrameLimit->OnCheckStateChanged.AddDynamic(this,&UOptionPanel::OnToggleFrameLimit);
 	
 	m_SoundControlBGM->OnValueChanged.AddDynamic(this,&UOptionPanel::OnBGMSliderChanged);
 
 	m_SoundControlSFX->OnValueChanged.AddDynamic(this,&UOptionPanel::OnSFXSliderChanged);
 
-	m_SoundControlBGM->SetValue(1);
 
-	m_SoundControlSFX->SetValue(1);
 }
 
 void UOptionPanel::OnToggleFrameLimit(bool v)
@@ -77,4 +73,52 @@ void UOptionPanel::OnSFXSliderChanged(float v)
 {
 	UGameplayStatics::SetSoundMixClassOverride(this,m_SoundMixSFX,m_SoundClassSFX,v);
 	UGameplayStatics::PushSoundMixModifier(this,m_SoundMixSFX);
+}
+
+void UOptionPanel::SetVisibility(ESlateVisibility InVisibility)
+{
+	Super::SetVisibility(InVisibility);
+
+	if(InVisibility==ESlateVisibility::Collapsed || InVisibility==ESlateVisibility::Hidden)
+	{
+		//hide
+		if(UDiabloGameInstance::Get->m_LoadedOptionSave)
+		{
+			bool Limit =  m_ToggleFrameLimit->IsChecked();
+
+			float BGMV = m_SoundControlBGM->GetValue();
+
+			float SFXV = m_SoundControlSFX->GetValue();
+			
+			UDiabloGameInstance::Get->m_LoadedOptionSave->m_bOptionFPSLimit = Limit;
+			
+			UDiabloGameInstance::Get->m_LoadedOptionSave->m_fOptionVolumeBGM = BGMV;
+			
+			UDiabloGameInstance::Get->m_LoadedOptionSave->m_fOptionVolumeSFX = SFXV;
+		}
+		
+		UDiabloGameInstance::Get->UnloadSaveOptionSaveData();
+	}
+	else
+	{
+		UDiabloGameInstance::Get->LoadOptionSaveData();
+		
+		if(UDiabloGameInstance::Get->m_LoadedOptionSave)
+		{
+			UOptionSave* OptionSave = UDiabloGameInstance::Get->m_LoadedOptionSave;
+
+			if(OptionSave->m_bOptionFPSLimit)
+			{
+				m_ToggleFrameLimit->SetCheckedState(ECheckBoxState::Checked);	
+			}
+			else
+			{
+				m_ToggleFrameLimit->SetCheckedState(ECheckBoxState::Unchecked);
+			}
+		
+			m_SoundControlBGM->SetValue(OptionSave->m_fOptionVolumeBGM);
+
+			m_SoundControlSFX->SetValue(OptionSave->m_fOptionVolumeSFX);
+		}
+	}
 }

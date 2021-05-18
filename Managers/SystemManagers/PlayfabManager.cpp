@@ -125,6 +125,8 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 		PRINTF("TryUpdateRank");
 		RequestRetrieveTotalRanking();
 		RequestRetrievePlayerAroundRanking();
+		RequestRetrieveTotalPVPRanking();
+		RequestRetrievePVPPlayerAroundRanking();
 		//나의 랭킹 업데이트가 필요
 		m_fDeltaCountRanking = 0.f;
 	}
@@ -249,6 +251,14 @@ void UPlayfabManager::Init()
 	}
 
 	m_bLoginProcessStarted = true;
+
+	m_AryIAPData.Reset();
+	m_TitleNews.Reset();
+	m_TotalStageRanking.Reset();
+	m_PlayerStageRanking.Reset();
+	m_TotalPVPRanking.Reset();
+	m_PlayerPVPRanking.Reset();
+	m_MapCatalogItems.Reset();
 
 	if (UMobileUtilsBlueprintLibrary::CheckInternetConnection())
 	{
@@ -677,6 +687,8 @@ void UPlayfabManager::OnSuccessGetMainData(const FGetUsrDataRslt& result)
 	RequestCatalogItems();
 	RequestRetrievePlayerAroundRanking();
 	RequestRetrieveTotalRanking();
+	RequestRetrieveTotalPVPRanking();
+	RequestRetrievePVPPlayerAroundRanking();
 }
 
 void UPlayfabManager::RequestCatalogItems()
@@ -919,9 +931,16 @@ void UPlayfabManager::RequestRetrieveTotalRanking()
 
 void UPlayfabManager::OnSuccessGetTotalRanking(const PlayFab::ClientModels::FGetLeaderboardResult& rslt)
 {
-	m_TotalRanking = rslt.Leaderboard;
+	m_TotalStageRanking = rslt.Leaderboard;
 
-	m_OnTotalRankReceived.Broadcast(m_TotalRanking);
+	m_OnTotalStageRankReceived.Broadcast(m_TotalStageRanking);
+}
+
+void UPlayfabManager::OnSuccessGetTotalPVPRanking(const PlayFab::ClientModels::FGetLeaderboardResult& rslt)
+{
+	m_TotalPVPRanking = rslt.Leaderboard;
+
+	m_OnTotalPVPRankReceived.Broadcast(m_TotalPVPRanking);
 }
 
 void UPlayfabManager::RequestRetrievePlayerAroundRanking()
@@ -932,6 +951,29 @@ void UPlayfabManager::RequestRetrievePlayerAroundRanking()
 	Req.PlayFabId = m_PlayfabID;
 	
 	GetClientAPI->GetLeaderboardAroundPlayer(Req,PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetPlayerAroundRanking),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::RequestRetrieveTotalPVPRanking()
+{
+	PlayFab::ClientModels::FGetLeaderboardRequest Req;
+	
+	Req.StatisticName=TEXT("PVP_MMR");
+	Req.StartPosition = 0;
+	Req.MaxResultsCount = 100;
+
+	GetClientAPI->GetLeaderboard(Req,PlayFab::UPlayFabClientAPI::FGetLeaderboardDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetTotalPVPRanking),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::RequestRetrievePVPPlayerAroundRanking()
+{
+	PlayFab::ClientModels::FGetLeaderboardAroundPlayerRequest Req;
+	Req.StatisticName=TEXT("PVP_MMR");
+	Req.MaxResultsCount=1;
+	Req.PlayFabId = m_PlayfabID;
+	
+	GetClientAPI->GetLeaderboardAroundPlayer(Req,PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetPVPPlayerAroundRanking),
 		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
@@ -999,11 +1041,21 @@ void UPlayfabManager::UpdateInboxListToClient(FString InboxListStr)
 
 void UPlayfabManager::OnSuccessGetPlayerAroundRanking(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult& rslt)
 {
-	m_PlayerRanking = rslt.Leaderboard;
+	m_PlayerStageRanking = rslt.Leaderboard;
 
-	m_nRanking.SetValue(m_PlayerRanking[0].Position+1);
+	m_nRanking.SetValue(m_PlayerStageRanking[0].Position+1);
 
-	m_OnPlayerRankReceived.Broadcast(m_PlayerRanking);
+	m_OnPlayerStageRankReceived.Broadcast(m_PlayerStageRanking);
+}
+
+void UPlayfabManager::OnSuccessGetPVPPlayerAroundRanking(
+	const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult& rslt)
+{
+	m_PlayerPVPRanking = rslt.Leaderboard;
+
+	m_nPVPRanking.SetValue(m_PlayerPVPRanking[0].Position+1);
+
+	m_OnPlayerPVPRankReceived.Broadcast(m_PlayerPVPRanking);
 }
 
 void UPlayfabManager::OnSuccessGetTitleNews(const PlayFab::ClientModels::FGetTitleNewsResult& rslt)
