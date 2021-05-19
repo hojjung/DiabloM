@@ -9,11 +9,55 @@ UGoldManager::UGoldManager()
 	m_bIsReceivedOfflineGoldThisTime = false;
 }
 
-void UGoldManager::SetCurrentGold(const FString& v, bool bIsNewCreatedPlayer, const FDateTime& currentTime,const FDateTime& lastLoginTime, const FDateTime& lastLogoutTime)
+void UGoldManager::SetCurrentGold(const FString& v, bool bIsNewCreatedPlayer, const FDateTime& currentTime,
+                                  const FDateTime& lastLoginTime, const FDateTime& lastLogoutTime)
 {
 	m_CurrentGold.Parse(v);
 	SetOfflineMinutes(bIsNewCreatedPlayer, currentTime, lastLoginTime, lastLogoutTime);
-	m_OnGoldChanged.Broadcast();
+	m_OnCurrencyChanged.Broadcast();
+}
+
+
+void UGoldManager::SetWeaponStones(int v)
+{
+	m_WeaponStone.SetValue(v);
+
+	m_OnCurrencyChanged.Broadcast();
+}
+
+void UGoldManager::SetSkillStones(int v)
+{
+	m_SkillStone.SetValue(v);
+
+	m_OnCurrencyChanged.Broadcast();
+}
+
+void UGoldManager::SetWingTickets(int v)
+{
+	m_WingTicket.SetValue(v);
+
+	m_OnCurrencyChanged.Broadcast();
+}
+
+void UGoldManager::SetGemStones(int v)
+{
+	m_GemStones.SetValue(v);
+
+	m_OnCurrencyChanged.Broadcast();
+}
+
+void UGoldManager::SetDgKeys(int v)
+{
+	m_DungeonKeys.SetValue(v);
+
+	m_OnCurrencyChanged.Broadcast();
+}
+
+void UGoldManager::SetPetTickets(int v)
+{
+	m_PetGachaTicket.SetValue(v);
+
+	m_OnCurrencyChanged.Broadcast();
 }
 
 BigInt UGoldManager::AddGold(const BigInt& v, bool useBonus)
@@ -64,7 +108,7 @@ BigInt UGoldManager::AddGold(const BigInt& v, bool useBonus)
 
 	m_CurrentGold.Add(FinalV);
 
-	m_OnGoldChanged.Broadcast();
+	m_OnCurrencyChanged.Broadcast();
 
 	return FinalV;
 }
@@ -78,7 +122,157 @@ bool UGoldManager::SubtractGold(const BigInt& v)
 
 	m_CurrentGold.Subtract(v);
 
-	m_OnGoldChanged.Broadcast();
+	m_OnCurrencyChanged.Broadcast();
+
+	return true;
+}
+
+int UGoldManager::AddWeaponStones(int v, bool useBonus)
+{
+	m_WeaponStone += v;
+	
+	UDiabloGameInstance::Get->m_PlayfabManager->AddWeaponStones(v);
+
+	m_OnCurrencyChanged.Broadcast();
+
+	return m_WeaponStone.GetValue();
+}
+
+bool UGoldManager::SubtactWeaponStones(int v)
+{
+	if (m_WeaponStone < v)
+	{
+		return false;
+	}
+
+	m_WeaponStone -= v;
+
+	m_OnCurrencyChanged.Broadcast();
+
+	return true;
+}
+
+int UGoldManager::AddSkillStones(int v, bool useBonus)
+{
+	m_SkillStone += v;
+	
+	UDiabloGameInstance::Get->m_PlayfabManager->AddSkillStones(v);
+
+	m_OnCurrencyChanged.Broadcast();
+
+	return m_SkillStone.GetValue();
+}
+
+bool UGoldManager::SubtactSkillStones(int v)
+{
+	if (m_SkillStone < v)
+	{
+		return false;
+	}
+
+	m_SkillStone -= v;
+
+	m_OnCurrencyChanged.Broadcast();
+
+	return true;
+}
+
+int UGoldManager::AddPetGachaTicket(int v, bool useBonus)
+{
+	m_PetGachaTicket += v;
+
+	UDiabloGameInstance::Get->m_PlayfabManager->AddPetTicket(v);
+
+	m_OnCurrencyChanged.Broadcast();
+
+	return m_PetGachaTicket.GetValue();
+}
+
+bool UGoldManager::SubtactPetGachaTicket(int v)
+{
+	if (m_PetGachaTicket < v)
+	{
+		return false;
+	}
+
+	m_PetGachaTicket -= v;
+
+	m_OnCurrencyChanged.Broadcast();
+
+	return true;
+}
+
+int UGoldManager::AddWingTicket(int v, bool useBonus)
+{
+	m_WingTicket += v;
+
+	UDiabloGameInstance::Get->m_PlayfabManager->AddWingTicket(v);
+
+	m_OnCurrencyChanged.Broadcast();
+
+	return m_WingTicket.GetValue();
+}
+
+bool UGoldManager::SubtactWingTicket(int v)
+{
+	if (m_WingTicket < v)
+	{
+		return false;
+	}
+
+	m_WingTicket -= v;
+
+	m_OnCurrencyChanged.Broadcast();
+
+	return true;
+}
+
+int UGoldManager::AddGemStones(int v)
+{
+	m_GemStones += v;
+
+	UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(v);
+
+	m_OnCurrencyChanged.Broadcast();
+
+	return m_GemStones.GetValue();
+}
+
+bool UGoldManager::SubtactGemStones(int v)
+{
+	if (m_GemStones < v)
+	{
+		return false;
+	}
+
+	m_GemStones -= v;
+
+	m_OnCurrencyChanged.Broadcast();
+
+	return true;
+}
+
+int UGoldManager::AddDungeonKeys(int v)
+{
+	m_DungeonKeys += v;
+	
+	UDiabloGameInstance::Get->m_PlayfabManager->AddDgKey(v);
+
+	m_OnCurrencyChanged.Broadcast();
+
+	return m_DungeonKeys.GetValue();
+}
+
+bool UGoldManager::SubtactDungeonKeys(int v)
+{
+	if (m_DungeonKeys < v)
+	{
+		return false;
+	}
+
+	m_DungeonKeys -= v;
+
+	m_OnCurrencyChanged.Broadcast();
 
 	return true;
 }

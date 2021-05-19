@@ -27,7 +27,7 @@ void UPetDgCanvas::NativeOnInitialized()
 	
 	m_TxtMonsterCountRemain->SetText(FText::FromString(TEXT("펫 사냥 시작")));
 
-	
+	m_nBeforeTickets = UDiabloGameInstance::Get->m_GoldManager->GetPetGachaTicket();
 }
 
 void UPetDgCanvas::UpdateTimer(float timer)
@@ -39,27 +39,6 @@ void UPetDgCanvas::UpdateTimer(float timer)
 	m_TxtTime->SetText(FText::FromString(FString::Printf(TEXT("남은 시간:%.1f"),PETDGTIME - timer)));
 }
 
-void UPetDgCanvas::OnBattleEnd(bool isPlayerWon)
-{
-	PlayAnimation(ShowResult);
-
-	if(isPlayerWon)
-	{
-		int ObtainedBounty = m_PetDgManager->GetCurrentReward();
-		
-		FString RewardFormat = FString::Printf(TEXT("획득%d개"),ObtainedBounty);
-		
-		m_ImgTxtReward->SetText(FText::FromString(RewardFormat));
-		
-		m_TxtRequestedInfo->SetText(FText::FromString(TEXT("펫 던전 토벌 성공")));
-	}
-	else
-	{
-		m_TxtRequestedInfo->SetText(FText::FromString(TEXT("펫 던전 토벌 실패")));
-
-		m_ImgTxtReward->SetText(FText::FromString(TEXT("획득불가")));
-	}
-}
 
 void UPetDgCanvas::PlayerUpdateRageBar(float cV, float mV)
 {
@@ -81,3 +60,32 @@ void UPetDgCanvas::UpdateMonsterCount()
 
 
 
+void UPetDgCanvas::OnBattleEnd(bool isPlayerWon)
+{
+	PlayAnimation(ShowResult);
+
+	if(isPlayerWon)
+	{
+		m_TxtRequestedInfo->SetText(FText::FromString(TEXT("펫 던전 토벌 성공")));
+		
+		int ObtainedBounty = m_PetDgManager->GetCurrentReward();
+		
+		m_ImgTxtGainedPetGachaTickets->SetText( FText::FromString(FString::Printf(TEXT("얻은 펫 티켓:%d"),ObtainedBounty)));
+
+		m_ImgTxtRemainTime->SetText(FText::FromString(FString::Printf(TEXT("남은시간:%.1f"),UDiabloGameInstance::Get->m_PetDgManager->GetRemainTime())));
+	}
+	else
+	{
+		m_TxtRequestedInfo->SetText(FText::FromString(TEXT("펫 던전 토벌 실패")));
+
+		m_ImgTxtGainedPetGachaTickets->SetText( FText::FromString(FString::Printf(TEXT("얻은 펫 티켓:0"))));
+
+		m_ImgTxtRemainTime->SetText(FText::FromString(TEXT("시간초과")));
+	}
+
+	m_ImgTxtBeforePetGachaTickets->SetText( FText::FromString(FString::Printf(TEXT("이전 펫 티켓:%d"),m_nBeforeTickets)));
+
+	int AfterTickets = UDiabloGameInstance::Get->m_GoldManager->GetPetGachaTicket();
+	
+	m_ImgTxtAfterPetGachaTickets->SetText( FText::FromString(FString::Printf(TEXT("현재 펫 티켓:%d"),AfterTickets)));
+}

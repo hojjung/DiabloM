@@ -26,7 +26,7 @@ void UMainCanvas::NativeOnInitialized()
 	m_PanelShop->SetVisibility(ESlateVisibility::Collapsed);
 	m_PanelMenu->SetVisibility(ESlateVisibility::Collapsed);
 
-	UDiabloGameInstance::Get->m_GoldManager->m_OnGoldChanged.AddUObject(this,&UMainCanvas::UpdateGoldUI);
+	UDiabloGameInstance::Get->m_GoldManager->m_OnCurrencyChanged.AddUObject(this,&UMainCanvas::UpdateGoldUI);
 	
 	UpdateGoldUI();
 
@@ -42,7 +42,7 @@ void UMainCanvas::NativeOnInitialized()
 	SetPlayerNicknameRanking();
 
 	UDiabloGameInstance::Get->m_AdverManager->m_OnShowAdBanner.AddUObject(this,&UMainCanvas::OnShowAdBanner);
-	UDiabloGameInstance::Get->m_PlayfabManager->m_OnGemstoneChanged.AddUObject(this,&UMainCanvas::UpdateGemStone);
+	UDiabloGameInstance::Get->m_GoldManager->m_OnCurrencyChanged.AddUObject(this,&UMainCanvas::UpdateGemStone);
 	UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	UDiabloGameInstance::Get->m_PlayfabManager->m_OnPlayerStageRankReceived.AddUObject(this,&UMainCanvas::SetPlayerNicknameRankingWrap);
 
@@ -424,9 +424,9 @@ void UMainCanvas::OnAnimationFinishedPlaying(UUMGSequencePlayer& Player)
 	HideTextWidget();
 }
 
-void UMainCanvas::UpdateGemStone(int v)
+void UMainCanvas::UpdateGemStone()
 {
-	m_TextGemStone->SetText(FText::AsNumber(v));
+	m_TextGemStone->SetText(FText::AsNumber(UDiabloGameInstance::Get->m_GoldManager->GetGemStones()));
 }
 
 void UMainCanvas::OpenGoldShop()

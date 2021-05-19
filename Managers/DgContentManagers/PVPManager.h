@@ -32,7 +32,7 @@ public:
 	DECLARE_DELEGATE_OneParam(FOnBattleEnd,bool);
 	DECLARE_DELEGATE(FOnMatchStart);
 	DECLARE_DELEGATE(FOnMatchFail);
-	DECLARE_DELEGATE_ThreeParams(FOnPVPStatusChanged,int,int,int);/*w,l,mmr*/
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnPVPStatusChanged,int,int,int);/*w,l,mmr*/
 	
 	FOnPVPStatusChanged m_OnPVPStatusChanged;
 	FOnOtherPlayerSpawned m_OnOtherPlayerSpawned;
@@ -62,6 +62,8 @@ public:
 	FSafeInt m_nLose;
 
 	FSafeInt m_nMMR;
+
+	
 	
 public:
 	FString m_OtherPlayerDisplayName;
@@ -72,6 +74,7 @@ public:
 	UPROPERTY()
 	UPlayFabJsonObject* m_EquipObj;
 
+	int m_nCurrentWingTicket;
 public:
 	
 	virtual void OnLevelLoadComplete(UWorld* world) override;

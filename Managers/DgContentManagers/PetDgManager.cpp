@@ -82,13 +82,12 @@ void UPetDgManager::SpawnPetDgMonsters(int count)
 
 void UPetDgManager::EndDungeon(bool b)
 {
-	m_fTimer=0;
-
-	Super::EndDungeon(b);
-	
 	if(m_bIsMatchStarted)
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->AddTicket(GetCurrentReward());
+		if(b)
+		{
+			UDiabloGameInstance::Get->m_GoldManager->AddPetGachaTicket(GetCurrentReward());
+		}
 		
 		FTimerHandle m_TimerHandle_OnTimer;
 		
@@ -101,7 +100,7 @@ void UPetDgManager::EndDungeon(bool b)
 
 	m_nMaxKillCount=0;
 
-	
+	Super::EndDungeon(b);
 }
 
 void UPetDgManager::Tick(float deltaTime)
@@ -258,10 +257,5 @@ float UPetDgManager::GetMobCountPercent()
 FString UPetDgManager::GetMobRemainCountStr()
 {
 	return FString::Printf(TEXT("처치 몬스터 %d/%d"),m_nCurrentKillCount,m_nMaxKillCount);
-}
-
-int UPetDgManager::GetTicket()
-{
-	return UDiabloGameInstance::Get->m_PlayfabManager->GetPetTicket();
 }
 

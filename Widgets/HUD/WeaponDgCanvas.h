@@ -37,10 +37,25 @@ protected:
 	UImageAndText* m_TxtMobCount;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UImageAndText* m_TxtWStoneCount;
+	//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtKilledMonsters;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtBeforeWeaponStones;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtRewardWeaponStones;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtAfterWeaponStones;
 	
 	FDelegateHandle m_Handle;
 
 	TWeakObjectPtr<UWeaponScrollDgManager> m_WeaponDgManager;
+
+	int m_nBeforeWeaponStones;
+
+	int m_nMonsterCount;
+
+	int m_nGainedWeaponStones;
 	
 public:
 	virtual void NativeOnInitialized() override;

@@ -20,6 +20,8 @@ void UWeaponDgCanvas::NativeOnInitialized()
 	m_BarTime->SetProgressValue(1.f);
 	
 	UpdateMobWeaponCount(0,0);
+
+	m_nBeforeWeaponStones =UDiabloGameInstance::Get->m_GoldManager->GetWeaponStone();
 }
 
 void UWeaponDgCanvas::UpdateMobWeaponCount(int mobCount, int earnedStoneCount)
@@ -27,7 +29,10 @@ void UWeaponDgCanvas::UpdateMobWeaponCount(int mobCount, int earnedStoneCount)
 	m_TxtMobCount->SetText(FText::FromString(FString::Printf(TEXT("%d 처치"),mobCount)));
 	
 	m_TxtWStoneCount->SetText(FText::FromString(FString::Printf(TEXT("%d 획득"),earnedStoneCount)));
-	
+
+	m_nMonsterCount = mobCount;
+
+	m_nGainedWeaponStones = earnedStoneCount;
 }
 
 void UWeaponDgCanvas::UpdateTimer(float timer)
@@ -52,7 +57,10 @@ void UWeaponDgCanvas::OnBattleEnd(bool isPlayerWon)
 {
 	PlayAnimation(ShowResult);
 
-	int ObtainedBounty = m_WeaponDgManager->GetObtainedStone();
+	int AfterWeaponStones =UDiabloGameInstance::Get->m_GoldManager->GetWeaponStone();
 
-	m_TxtRequestedInfo->SetText(FText::FromString(FString::Printf(TEXT("강화석 %d개 획득!"),ObtainedBounty)));
+	m_ImgTxtKilledMonsters->SetText(FText::FromString(FString::Printf(TEXT("처치한 몬스터 %d"),m_nMonsterCount)));
+	m_ImgTxtBeforeWeaponStones->SetText(FText::FromString(FString::Printf(TEXT("이전 강화석:%d"),m_nBeforeWeaponStones)));
+	m_ImgTxtRewardWeaponStones->SetText(FText::FromString(FString::Printf(TEXT("얻은 강화석:%d"),m_nGainedWeaponStones)));
+	m_ImgTxtAfterWeaponStones->SetText(FText::FromString(FString::Printf(TEXT("현재 강화석:%d"),AfterWeaponStones)));
 }

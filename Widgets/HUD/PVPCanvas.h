@@ -54,10 +54,21 @@ protected:
 	UMaterialProgressBar* m_OtherPlayerBarRage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TxtOtherPlayerRageValue;
+	//RewardPanel
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UImageAndText* m_ImgTxtReward;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_ImgTxtWinLose;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_ImgTxtMMRBefore;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_ImgTxtMMRAfter;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_ImgTxtMMRGained;
 
 	FDelegateHandle m_Handle;
+
+	int m_BeforeMMR;
 
 public:
 	virtual void NativeOnInitialized() override;
@@ -76,6 +87,9 @@ public:
 
 	void OtherPlayerUpdateRageBar(float cV,float mV);
 
-	void OnOtherPlayerSpawned(AOtherPlayerPawn* pawn);	
+	void OnOtherPlayerSpawned(AOtherPlayerPawn* pawn);
+
+	void UpdatePVPResult(int,int,int);
 };
+
 

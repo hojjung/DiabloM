@@ -2,14 +2,12 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-
 #include "DiabloM.h"
 #include "UObject/NoExportTypes.h"
 #include "GoldManager.generated.h"
 
 
-DECLARE_MULTICAST_DELEGATE(FOnGoldChanged);
+
 UCLASS()
 class DIABLOM_API UGoldManager : public UObject
 {
@@ -18,10 +16,24 @@ class DIABLOM_API UGoldManager : public UObject
 public:
 	UGoldManager();
 
+	DECLARE_MULTICAST_DELEGATE(FOnCurrencyChanged);
+
+	FOnCurrencyChanged m_OnCurrencyChanged;
+
 protected:
 	BigInt m_CurrentGold;
 
-	
+	FSafeInt m_WeaponStone;
+
+	FSafeInt m_SkillStone;
+
+	FSafeInt m_PetGachaTicket;
+
+	FSafeInt m_WingTicket;
+
+	FSafeInt m_GemStones;
+
+	FSafeInt m_DungeonKeys;
 
 public:
 	BigInt m_OfflineGold;
@@ -31,10 +43,32 @@ public:
 	bool m_bIsReceivedOfflineGoldThisTime;
 
 public:
-	FOnGoldChanged m_OnGoldChanged;
+	void SetCurrentGold(const FString& v,bool bIsNewCreatedPlayer,const FDateTime& currentTime,const FDateTime& lastLoginTime,const FDateTime& lastLogoutTime);
+
+	void SetWeaponStones(int v);
+
+	void SetSkillStones(int v);
+
+	void SetWingTickets(int v);
+
+	void SetGemStones(int v);
+
+	void SetDgKeys(int v);
+
+	void SetPetTickets(int v);
+
+	void SetOfflineMinutes(bool bIsNewCreatedPlayer,const FDateTime& currentTime,const FDateTime& lastLoginTime,const FDateTime& lastLogoutTime);
+
+	FString GetGoldDataStr();
+
+	bool IsOfflineGoldAvailable();
+	
+	void Confirm();
 
 public:
-	void SetCurrentGold(const FString& v,bool bIsNewCreatedPlayer,const FDateTime& currentTime,const FDateTime& lastLoginTime,const FDateTime& lastLogoutTime);
+	BigInt AddGold(const BigInt& v,bool useBonus=true);
+
+	bool SubtractGold(const BigInt& v);
 	
 	const BigInt& GetCurrentGold() const
 	{
@@ -46,17 +80,57 @@ public:
 		return m_OfflineGold;
 	}
 
+	int AddWeaponStones(int v,bool useBonus=true);
 
-	BigInt AddGold(const BigInt& v,bool useBonus=true);
+	bool SubtactWeaponStones(int v);
 
-	bool SubtractGold(const BigInt& v);
+	int GetWeaponStone() const
+	{
+		return m_WeaponStone.GetValue();
+	}
+
+	int AddSkillStones(int v,bool useBonus=true);
+
+	bool SubtactSkillStones(int v);
+
+	int GetSkillStone() const
+	{
+		return m_SkillStone.GetValue();
+	}
+
+	int AddPetGachaTicket(int v,bool useBonus=true);
 	
-	void SetOfflineMinutes(bool bIsNewCreatedPlayer,const FDateTime& currentTime,const FDateTime& lastLoginTime,const FDateTime& lastLogoutTime);
+	bool SubtactPetGachaTicket(int v);
 
+	int GetPetGachaTicket() const
+	{
+		return m_PetGachaTicket.GetValue();
+	}
 
-	FString GetGoldDataStr();
+	int AddWingTicket(int v,bool useBonus=true);
 
-	bool IsOfflineGoldAvailable();
-	
-	void Confirm();
+	bool SubtactWingTicket(int v);
+
+	int GetWingTicket() const
+	{
+		return m_WingTicket.GetValue();
+	}
+
+	int AddGemStones(int v);
+
+	bool SubtactGemStones(int v);
+
+	int GetGemStones() const
+	{
+		return m_GemStones.GetValue();
+	}
+
+	int AddDungeonKeys(int v);
+
+	bool SubtactDungeonKeys(int v);
+
+	int GetDungeonKeys() const
+	{
+		return m_DungeonKeys.GetValue();
+	}
 };

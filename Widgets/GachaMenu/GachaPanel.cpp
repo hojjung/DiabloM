@@ -49,11 +49,9 @@ void UGachaPanel::NativeOnInitialized()
 
 	UDiabloGameInstance::Get->m_ShopManager->m_GachaPanel = this;
 
-	int Ticket = UDiabloGameInstance::Get->m_PetDgManager->GetTicket();
+	UpdatePetTicket();
 	
-	UpdatePetTicket(Ticket);
-	
-	UDiabloGameInstance::Get->m_PlayfabManager->m_OnTicketChanged.AddUObject(this,&UGachaPanel::UpdatePetTicket);
+	UDiabloGameInstance::Get->m_GoldManager->m_OnCurrencyChanged.AddUObject(this,&UGachaPanel::UpdatePetTicket);
 }
 
 void UGachaPanel::ClosePanel()
@@ -242,7 +240,9 @@ void UGachaPanel::SetAdsViewTest(const FString& timeData)
 {
 	m_TextViewCooldown->SetText(FText::FromString(timeData));
 }
-void UGachaPanel::UpdatePetTicket(int v)
+void UGachaPanel::UpdatePetTicket()
 {
-	m_TextGachaPetTicket->SetText(FText::FromString(FString::Printf(TEXT("펫 티켓 %d개"),v)));
+	int Ticket = UDiabloGameInstance::Get->m_GoldManager->GetPetGachaTicket();
+	
+	m_TextGachaPetTicket->SetText(FText::FromString(FString::Printf(TEXT("펫 티켓 %d개"),Ticket)));
 }

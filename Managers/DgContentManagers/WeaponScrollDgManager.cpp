@@ -56,18 +56,16 @@ void UWeaponScrollDgManager::StartDungeon()
 }
 
 void UWeaponScrollDgManager::EndDungeon(bool b)
-{
-	Super::EndDungeon(b);
-
+{	
 	if (m_bIsMatchStarted)
 	{
 		m_bIsMatchStarted = false;
-
-		m_fTimer = 0.f;
+		
+		UDiabloGameInstance::Get->m_GoldManager->AddWeaponStones(m_ObtainStoneFromHere.GetValue());
 
 		m_ObtainStoneFromHere = 0;
 
-		m_nMobCount = 0;
+		m_nMobCount = 0;			
 
 		UDiabloGameInstance::Get->GetWorld()->GetTimerManager().ClearTimer(m_TimerHandle_OnTimer);
 
@@ -78,6 +76,8 @@ void UWeaponScrollDgManager::EndDungeon(bool b)
 		UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(
 			TimerHandle_OnTimer, this, &UWeaponScrollDgManager::MoveToNormalDungeon, 2.2f, false);
 	}
+
+	Super::EndDungeon(b);
 }
 
 void UWeaponScrollDgManager::Tick(float deltaTime)
@@ -117,8 +117,6 @@ void UWeaponScrollDgManager::OnMonsterDead(AMonsterPawn* self)
 
 	int Prize = m_CurrentDgData->GetRandomPrize();
 
-	m_WeaponStones += Prize;
-
 	m_ObtainStoneFromHere += Prize;
 
 	m_nMobCount++;
@@ -126,7 +124,7 @@ void UWeaponScrollDgManager::OnMonsterDead(AMonsterPawn* self)
 	m_OnMobDead.ExecuteIfBound(m_nMobCount, m_ObtainStoneFromHere.GetValue());
 
 	UDiabloGameInstance::Get->GetPlCon()->ShowDamageText(
-		FString::Printf(TEXT("%d개 획득"), m_ObtainStoneFromHere.GetValue()), self, EDamagePopup::ObtainWeaponStone);
+		FString::Printf(TEXT("%d개 획득"), Prize), self, EDamagePopup::ObtainWeaponStone);
 }
 
 AUnitPawn* UWeaponScrollDgManager::GetNearestEnemy(const FVector& wantPos)

@@ -7,6 +7,8 @@
 #include "Core/PlayFabError.h"
 #include "Core/PlayFabClientDataModels.h"
 #include "Core/PlayFabClientAPI.h"
+#include "Managers/GoldManager.h"
+
 #include "PlayfabManager.generated.h"
 
 typedef PlayFab::UPlayFabClientAPI::FUpdateUserDataDelegate FUpdateDele;
@@ -36,8 +38,6 @@ class DIABLOM_API UPlayfabManager : public UObject
 {
 	GENERATED_BODY()
 public://delegate
-	
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnVirtualCurrencyChanged,int);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayfabError,const FString&);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRankReceived,const TArray<PlayFab::ClientModels::FPlayerLeaderboardEntry>&);
 	
@@ -49,12 +49,6 @@ public://delegate
 
 	FOnRankReceived m_OnPlayerPVPRankReceived;
 
-	FOnVirtualCurrencyChanged m_OnGemstoneChanged;
-
-	FOnVirtualCurrencyChanged m_OnTicketChanged;
-
-	FOnVirtualCurrencyChanged m_OnDgKeyChanged;
-	
 	FOnPlayfabError m_OnPlayfabError;
 
 	FString m_SessionTicket;
@@ -125,12 +119,6 @@ public://user data
 	FString m_CurrentVersionName;//RELEASE0408
 
 	TArray<FString> m_AryIAPData;
-
-	int m_nLocalGemStone;
-
-	int m_nLocalPetTicket;
-
-	int m_nLocalDgKey;
 
 	TArray<PlayFab::ClientModels::FTitleNewsItem> m_TitleNews;
 
@@ -209,14 +197,25 @@ protected:
 	void OnSuccessGetPVPPlayerAroundRanking(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult&);
 
 	void OnSuccessGetTitleNews(const PlayFab::ClientModels::FGetTitleNewsResult&);
-
+	//
 	void OnPurchaseWithGemStoneSuccess(const PlayFab::ClientModels::FPurchaseItemResult&);
 
 	void OnPurchaseWithPetTicketSuccess(const PlayFab::ClientModels::FPurchaseItemResult&);
 
+	void OnPurchaseWithWingTicketSuccess(const PlayFab::ClientModels::FPurchaseItemResult&);
+
+	//
 	void OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
 
-	void OnAddTicket(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
+	void OnAddWeaponStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
+	
+	void OnAddSkillStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
+
+	void OnAddPetTicket(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
+
+	void OnAddWingTicket(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
+
+	void OnAddDgKeys(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
 
 	void SetMainDataToManagers(const FString& maindataFromServer);
 
@@ -307,11 +306,27 @@ public:
 
 	void PurchaseWithGemStone(int amount,FString itemName);
 
+	void PurchaseWithPetTicket(int amount);
+
+	void PurchaseWithWingTicket(int amount,FString itemName);
+
+	void SubtractWeaponStone(int amount);
+
+	void SubtractSkillStone(int amount);
+
+	void SubtractDgKey(int amount);
+	//
 	void AddGemStone(int amount);
 	//
-	void PurchaseWithTicket(int amount);
+	void AddPetTicket(int amount);
+	
+	void AddWingTicket(int amount);
 
-	void AddTicket(int amount);
+	void AddDgKey(int amount);
+
+	void AddWeaponStones(int amount);
+
+	void AddSkillStones(int amount);
 
 	//
 	void UploadNormalDungeon();
@@ -328,25 +343,11 @@ public:
 
 	void RequestPVPMatching(int aroundCount,PlayFab::UPlayFabClientAPI::FGetLeaderboardAroundPlayerDelegate completeDele);
 
-	bool CheckClientGemstone(int amount);
-	
-	bool CheckClientPetTicket(int amount);
-
-	bool CheckClientDgKey(int amount);
-
-	int GetPetTicket()
-	{
-		return m_nLocalPetTicket;
-	}
-
-	int GetDgKey()
-	{
-		return m_nLocalDgKey;
-	}
-
 	void OnPvPComplete();
 
 	void RequestGetPVPData();
+
+	friend UGoldManager;
 };
 
 

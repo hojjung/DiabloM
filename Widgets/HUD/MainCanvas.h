@@ -175,7 +175,7 @@ public:
 
 	virtual void OnAnimationFinishedPlaying(UUMGSequencePlayer& Player) override;
 
-	void UpdateGemStone(int v);
+	void UpdateGemStone();
 
 	UFUNCTION()
 	void OpenGoldShop();

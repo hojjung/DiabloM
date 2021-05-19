@@ -60,19 +60,26 @@ void UMagicStoneDgManager::StartDungeon()
 
 void UMagicStoneDgManager::EndDungeon(bool b)
 {
-	Super::EndDungeon(b);
-
 	if (m_bIsMatchStarted)
 	{
-		AddMagicStones(m_nSuccessBounty);
-
 		m_bIsMatchStarted = false;
+
+		if(b)
+		{
+			UDiabloGameInstance::Get->m_GoldManager->AddSkillStones(m_nSuccessBounty);	
+		}
+		else
+		{
+			UDiabloGameInstance::Get->m_GoldManager->AddSkillStones(m_nFailBounty);
+		}
 
 		UDiabloGameInstance::Get->GetPlChar()->SetFSM_Enable(false);
 
 		UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(
 			m_TimerHandle_OnTimer, this, &UMagicStoneDgManager::MoveToNormalDungeon, 2.2f, false);
 	}
+
+	Super::EndDungeon(b);
 }
 
 FString UMagicStoneDgManager::GetOpenLevelAssetName()
@@ -102,7 +109,7 @@ void UMagicStoneDgManager::Tick(float delta_seconds)
 
 	if (m_fTimer > MAGICDGTIME)
 	{
-		EndMagicDgFail();
+		EndDungeon(false);
 	}
 }
 
@@ -114,25 +121,7 @@ bool UMagicStoneDgManager::IsBattleStarted()
 
 void UMagicStoneDgManager::EndMagicDgSuccess(AMonsterPawn* dragonDead)
 {
-	PRINTF("사냥성공");
-
-	
-
 	EndDungeon(true);
-}
-
-void UMagicStoneDgManager::EndMagicDgFail()
-{
-	PRINTF("사냥실패");
-
-	AddMagicStones(m_nFailBounty);
-
-	EndDungeon(false);
-}
-
-void UMagicStoneDgManager::AddMagicStones(int magicStones)
-{
-	m_nCurrentMagicStone += magicStones;
 }
 
 

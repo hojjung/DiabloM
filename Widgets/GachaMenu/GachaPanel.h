@@ -145,7 +145,7 @@ public:
 
 	void SetAdsViewTest(const FString&);
 
-	void UpdatePetTicket(int v);
+	void UpdatePetTicket();
 };
 
 

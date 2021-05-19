@@ -95,6 +95,8 @@ public:
 
 	FString GetMobRemainCountStr();
 
-	int GetTicket();
-
+	float GetRemainTime()
+	{
+		return PETDGTIME - m_fTimer;
+	}
 };

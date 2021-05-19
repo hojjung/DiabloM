@@ -28,13 +28,6 @@ void UStageSelectPanel::NativeOnInitialized()
 	//
 	m_BtnBack->SetVisibility(ESlateVisibility::Collapsed);
 	//
-	
-	int DgKey = UDiabloGameInstance::Get->m_DungeonManager->GetDgKey();
-	
-	UpdateDgKey(DgKey);
-	
-	UDiabloGameInstance::Get->m_PlayfabManager->m_OnDgKeyChanged.AddUObject(this,&UStageSelectPanel::UpdateDgKey);
-
 	UpdateResourceTxt();
 }
 
@@ -126,18 +119,16 @@ void UStageSelectPanel::Back()
 	m_BtnBack->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UStageSelectPanel::UpdateDgKey(int kV)
-{
-	m_ImgTxtDgTicket->SetText(FText::FromString(FString::Printf(TEXT("던전 열쇠 %d/20"),kV)));
-}
-
 void UStageSelectPanel::UpdateResourceTxt()//무기강화할때,티켓돌릴때,날개소모할때,골드소모할때
 {
+	m_ImgTxtDgTicket->SetText(FText::FromString(FString::Printf(TEXT("던전 열쇠 %d/20"),UDiabloGameInstance::Get->m_GoldManager->GetDungeonKeys())));
 	m_TxtGold->SetText(FText::FromString(FString::Printf(TEXT("보유 골드:%s"),*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(UDiabloGameInstance::Get->m_GoldManager->GetCurrentGold(),2))));
-	m_TxtWeaponStone->SetText(FText::FromString(FString::Printf(TEXT("보유 무기강화석:%d"),0)));
-	m_TxtSkillStone->SetText(FText::FromString(FString::Printf(TEXT("보유 스킬마정석:%d"),0)));
-	m_TxtPetGachaTicket->SetText(FText::FromString(FString::Printf(TEXT("보유 펫가챠티켓:%d"),0)));
-	m_TxtWingTicket->SetText(FText::FromString(FString::Printf(TEXT("보유 날개티켓:%d"),0)));
+	m_TxtWeaponStone->SetText(FText::FromString(FString::Printf(TEXT("보유 무기강화석:%d"),UDiabloGameInstance::Get->m_GoldManager->GetWeaponStone())));
+	m_TxtSkillStone->SetText(FText::FromString(FString::Printf(TEXT("보유 스킬마정석:%d"),UDiabloGameInstance::Get->m_GoldManager->GetSkillStone())));
+	m_TxtPetGachaTicket->SetText(FText::FromString(FString::Printf(TEXT("보유 펫가챠티켓:%d"),UDiabloGameInstance::Get->m_GoldManager->GetPetGachaTicket())));
+
+	int W = UDiabloGameInstance::Get->m_GoldManager->GetWingTicket();
+	m_TxtWingTicket->SetText(FText::FromString(FString::Printf(TEXT("보유 날개티켓:%d"),W)));
 }
 
 void UStageSelectPanel::SetVisibility(ESlateVisibility InVisibility)

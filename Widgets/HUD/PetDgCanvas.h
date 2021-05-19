@@ -35,19 +35,26 @@ protected:
 	UTextBlock* m_TxtTime;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UTextBlock* m_TxtRequestedInfo;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
-	UImageAndText* m_ImgTxtReward;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UMaterialProgressBar* m_MonsterCountBar;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UTextBlock* m_TxtMonsterCountRemain;
-	
+	//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtRemainTime;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtBeforePetGachaTickets;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtGainedPetGachaTickets;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtAfterPetGachaTickets;
 	
 	FDelegateHandle m_Handle;
 
 	TWeakObjectPtr<UPetDgManager> m_PetDgManager;
 
-
+	int m_nBeforeTickets;
 	
 public:
 	virtual void NativeOnInitialized() override;

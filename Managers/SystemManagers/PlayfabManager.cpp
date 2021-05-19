@@ -217,7 +217,7 @@ void UPlayfabManager::OnServerCloseCheckScriptSuccess(const FExeCScriptRslt& rsl
 
 	if(!m_bIsServerClosed)
 	{
-		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Server Closed", "서버 사용 가능"));
+		UDiabloGameInstance::Get->RequestPopupText(LOCTEXT("Server Open", "서버 사용 가능"));
 		
 		RequestVersionCheck();
 	}
@@ -383,22 +383,6 @@ void UPlayfabManager::RequestPVPMatching(int aroundCount,PlayFab::UPlayFabClient
 	GetClientAPI->GetLeaderboardAroundPlayer(Req,completeDele,
         PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
-
-bool UPlayfabManager::CheckClientGemstone(int amount)
-{
-	return  m_nLocalGemStone >= amount;	
-}
-
-bool UPlayfabManager::CheckClientPetTicket(int amount)
-{
-	return  m_nLocalPetTicket >= amount;
-}
-
-bool UPlayfabManager::CheckClientDgKey(int amount)
-{
-	return  m_nLocalDgKey >= amount;
-}
-
 
 void UPlayfabManager::UploadAdmobTime(const FDateTime& date_time)
 {
@@ -893,17 +877,12 @@ void UPlayfabManager::RequestGetInventory()
 
 void UPlayfabManager::OnSuccessGetInven( const PlayFab::ClientModels::FGetUserInventoryResult& rslt)
 {
-	m_nLocalGemStone = rslt.VirtualCurrency[TEXT("GG")];
-	
-	m_nLocalPetTicket = rslt.VirtualCurrency[TEXT("PT")];
-
-	m_nLocalDgKey = rslt.VirtualCurrency[TEXT("KK")];
-	
-	m_OnGemstoneChanged.Broadcast(m_nLocalGemStone);
-	
-	m_OnTicketChanged.Broadcast(m_nLocalPetTicket);
-	
-	m_OnDgKeyChanged.Broadcast(m_nLocalDgKey);
+	UDiabloGameInstance::Get->m_GoldManager->SetGemStones(rslt.VirtualCurrency[TEXT("GG")]);
+	UDiabloGameInstance::Get->m_GoldManager->SetDgKeys(rslt.VirtualCurrency[TEXT("KK")]);
+	UDiabloGameInstance::Get->m_GoldManager->SetPetTickets(rslt.VirtualCurrency[TEXT("PT")]);
+	UDiabloGameInstance::Get->m_GoldManager->SetSkillStones(rslt.VirtualCurrency[TEXT("SS")]);
+	UDiabloGameInstance::Get->m_GoldManager->SetWeaponStones(rslt.VirtualCurrency[TEXT("WS")]);
+	UDiabloGameInstance::Get->m_GoldManager->SetWingTickets(rslt.VirtualCurrency[TEXT("WT")]);
 }
 
 void UPlayfabManager::OnSuccessTimeGet(const PlayFab::ClientModels::FGetTimeResult& rslt)
@@ -1077,8 +1056,6 @@ void UPlayfabManager::PurchaseWithGemStone(int amount,FString itemName)
 	Req.Price = amount;
 	Req.ItemId = itemName;
 	Req.VirtualCurrency=TEXT("GG");
-	//Req.CharacterId = m_PlayfabID;
-	//FPurchaseItemDelegate, const ClientModels::FPurchaseItemResult&
 	GetClientAPI->PurchaseItem(Req,PlayFab::UPlayFabClientAPI::FPurchaseItemDelegate::CreateUObject(this,&UPlayfabManager::OnPurchaseWithGemStoneSuccess),
 		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
@@ -1098,6 +1075,11 @@ void UPlayfabManager::OnPurchaseWithPetTicketSuccess(const PlayFab::ClientModels
 	UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(PurchasedItemID,true);
 }
 
+void UPlayfabManager::OnPurchaseWithWingTicketSuccess(const PlayFab::ClientModels::FPurchaseItemResult&)
+{
+	
+}
+
 void UPlayfabManager::AddGemStone(int amount)
 {
 	PlayFab::ClientModels::FAddUserVirtualCurrencyRequest Req;
@@ -1106,7 +1088,7 @@ void UPlayfabManager::AddGemStone(int amount)
 	GetClientAPI->AddUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FAddUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddGemStone),PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
-void UPlayfabManager::PurchaseWithTicket(int amount)
+void UPlayfabManager::PurchaseWithPetTicket(int amount)
 {
 	FString ItemID;
 	
@@ -1129,22 +1111,114 @@ void UPlayfabManager::PurchaseWithTicket(int amount)
 		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
-void UPlayfabManager::AddTicket(int amount)
+void UPlayfabManager::PurchaseWithWingTicket(int amount, FString itemName)
+{
+	PlayFab::ClientModels::FPurchaseItemRequest Req;
+	Req.Price = amount;
+	Req.ItemId = itemName;
+	Req.VirtualCurrency=TEXT("WT");
+	GetClientAPI->PurchaseItem(Req,PlayFab::UPlayFabClientAPI::FPurchaseItemDelegate::CreateUObject(this,&UPlayfabManager::OnPurchaseWithGemStoneSuccess),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::SubtractWeaponStone(int amount)
+{
+	PlayFab::ClientModels::FSubtractUserVirtualCurrencyRequest Req;
+	Req.Amount = amount;
+	Req.VirtualCurrency = TEXT("WS");
+	
+	GetClientAPI->SubtractUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FSubtractUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddWeaponStone),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::SubtractSkillStone(int amount)
+{
+	PlayFab::ClientModels::FSubtractUserVirtualCurrencyRequest Req;
+	Req.Amount = amount;
+	Req.VirtualCurrency = TEXT("SS");
+	
+	GetClientAPI->SubtractUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FSubtractUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddSkillStone),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::SubtractDgKey(int amount)
+{
+	PlayFab::ClientModels::FSubtractUserVirtualCurrencyRequest Req;
+	Req.Amount = amount;
+	Req.VirtualCurrency = TEXT("KK");
+	
+	GetClientAPI->SubtractUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FSubtractUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddDgKeys),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::AddPetTicket(int amount)
 {
 	PlayFab::ClientModels::FAddUserVirtualCurrencyRequest Req;
 	Req.Amount=amount;
 	Req.VirtualCurrency=TEXT("PT");
-	GetClientAPI->AddUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FAddUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddTicket),PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+	GetClientAPI->AddUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FAddUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddPetTicket),PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::AddWingTicket(int amount)
+{
+	PlayFab::ClientModels::FAddUserVirtualCurrencyRequest Req;
+	Req.Amount=amount;
+	Req.VirtualCurrency=TEXT("WT");
+	GetClientAPI->AddUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FAddUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddWingTicket),PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));	
+}
+
+void UPlayfabManager::AddDgKey(int amount)
+{
+	PlayFab::ClientModels::FAddUserVirtualCurrencyRequest Req;
+	Req.Amount=amount;
+	Req.VirtualCurrency=TEXT("KK");
+	GetClientAPI->AddUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FAddUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddDgKeys),PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::AddWeaponStones(int amount)
+{
+	PlayFab::ClientModels::FAddUserVirtualCurrencyRequest Req;
+	Req.Amount=amount;
+	Req.VirtualCurrency=TEXT("WS");
+	GetClientAPI->AddUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FAddUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddWeaponStone),PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
+}
+
+void UPlayfabManager::AddSkillStones(int amount)
+{
+	PlayFab::ClientModels::FAddUserVirtualCurrencyRequest Req;
+	Req.Amount=amount;
+	Req.VirtualCurrency=TEXT("SS");
+	GetClientAPI->AddUserVirtualCurrency(Req,PlayFab::UPlayFabClientAPI::FAddUserVirtualCurrencyDelegate::CreateUObject(this,&UPlayfabManager::OnAddSkillStone),PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
 void UPlayfabManager::OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult& rslt)
 {
-	m_OnGemstoneChanged.Broadcast(rslt.Balance);
+	UDiabloGameInstance::Get->m_GoldManager->SetGemStones(rslt.Balance);
 }
 
-void UPlayfabManager::OnAddTicket(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult& rslt)
+void UPlayfabManager::OnAddWeaponStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult& rslt)
 {
-	m_OnTicketChanged.Broadcast(rslt.Balance);
+	UDiabloGameInstance::Get->m_GoldManager->SetWeaponStones(rslt.Balance);
+}
+
+void UPlayfabManager::OnAddSkillStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult& rslt)
+{
+	UDiabloGameInstance::Get->m_GoldManager->SetSkillStones(rslt.Balance);
+}
+
+void UPlayfabManager::OnAddPetTicket(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult& rslt)
+{
+	UDiabloGameInstance::Get->m_GoldManager->SetPetTickets(rslt.Balance);
+}
+
+void UPlayfabManager::OnAddWingTicket(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult& rslt)
+{
+	UDiabloGameInstance::Get->m_GoldManager->SetWingTickets(rslt.Balance);
+}
+
+void UPlayfabManager::OnAddDgKeys(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult& rslt)
+{
+	UDiabloGameInstance::Get->m_GoldManager->SetDgKeys(rslt.Balance);
 }
 
 void UPlayfabManager::OnBossBattleStart()

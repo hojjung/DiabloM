@@ -37,6 +37,17 @@ protected:
 	USkillHotkeyPanel* m_SkillPanel;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
 	UTextBlock* m_TxtRequestedInfo;
+	//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtRemainTime;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtBeforeSkillStone;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtReward;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget,AllowPrivateAccess = "true"))
+	UImageAndText* m_ImgTxtAfterSkillStone;
+	
+	int m_nBeforeMagicStones;
 	
 	FDelegateHandle m_Handle;
 

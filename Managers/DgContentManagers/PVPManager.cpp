@@ -161,27 +161,33 @@ void UPVPManager::StartDungeon()
 
 	m_TotalDmg = 0;
 
+	m_nCurrentWingTicket=0;
+
+	m_fTimer = 0.f;
+
 	m_bIsMatchStarted = true;
 }
 
 void UPVPManager::EndDungeon(bool b)
 {
-	Super::EndDungeon(b);
-
 	if (m_bIsMatchStarted)
 	{
+		m_bIsMatchStarted = false;
+
 		if(b)
 		{
 			++m_nWin;
+
+			m_nCurrentWingTicket = FMath::RandRange(3,5);
 		}
 		else
 		{
 			++m_nLose;
-		}
-		
-		m_fTimer = 0.f;
 
-		m_bIsMatchStarted = false;
+			m_nCurrentWingTicket = FMath::RandRange(1,2);
+		}
+
+		UDiabloGameInstance::Get->m_GoldManager->AddWingTicket(m_nCurrentWingTicket);		
 
 		APlayerDiabloCharacter* PlChar = UDiabloGameInstance::Get->GetPlChar();
 
@@ -190,9 +196,9 @@ void UPVPManager::EndDungeon(bool b)
 		m_PVPOtherPlayer.Get()->m_bUseFSM = false;
 
 		UDiabloGameInstance::Get->m_PlayfabManager->OnPvPComplete();
-
-
 	}
+
+	Super::EndDungeon(b);
 }
 
 void UPVPManager::Tick(float deltaTime)
@@ -280,14 +286,13 @@ void UPVPManager::SetPVPData(const FString& jsonStr)//cloud return
 	m_nLose.SetValue(L);//title
 	m_nMMR.SetValue(M);//statistic
 
-	m_OnPVPStatusChanged.ExecuteIfBound(m_nWin.GetValue(),m_nLose.GetValue(),m_nMMR.GetValue());
+	m_OnPVPStatusChanged.Broadcast(m_nWin.GetValue(),m_nLose.GetValue(),m_nMMR.GetValue());
 }
 
 void UPVPManager::SetPVPDataBeforeUpload(const FString& jsonStr)
 {
 	SetPVPData(jsonStr);
 
-	
 	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(
-		m_TimerHandle_OnTimer, this, &UPVPManager::MoveToNormalDungeon, 2.2f, false);
+		m_TimerHandle_OnTimer, this, &UPVPManager::MoveToNormalDungeon, 4.2f, false);
 }

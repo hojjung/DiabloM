@@ -85,8 +85,6 @@ public:
 	UFUNCTION()
 	void Back();
 
-	void UpdateDgKey(int kV);
-
 	void UpdateResourceTxt();
 
 	virtual void SetVisibility(ESlateVisibility InVisibility) override;

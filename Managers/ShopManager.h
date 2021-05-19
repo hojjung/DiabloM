@@ -91,8 +91,6 @@ UFUNCTION()
 	UFUNCTION()
 	void PurchaseGachaPet11();
 	UFUNCTION()
-	void PurchaseGachaPet55();
-	UFUNCTION()
 	void PurchaseGachaAccessory01();
 	UFUNCTION()
 	void PurchaseGachaAccessory11();

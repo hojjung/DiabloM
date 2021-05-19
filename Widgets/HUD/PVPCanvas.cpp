@@ -23,7 +23,9 @@ void UPVPCanvas::NativeOnInitialized()
 
 	UDiabloGameInstance::Get->GetPlChar()->UpdateRage();
 
-	
+	m_BeforeMMR = UDiabloGameInstance::Get->m_PVPManager->GetMMR(); 
+
+	UDiabloGameInstance::Get->m_PVPManager->m_OnPVPStatusChanged.AddUObject(this,&UPVPCanvas::UpdatePVPResult);
 }
 
 void UPVPCanvas::UpdateDmgGauge(float percentOne, BigInt playerDmg, BigInt otherPlayerDmg)
@@ -133,4 +135,16 @@ void UPVPCanvas::OnOtherPlayerSpawned(AOtherPlayerPawn* pawn)
 	pawn->m_OnRageChanged.AddUObject(this,&UPVPCanvas::OtherPlayerUpdateRageBar);
 
 	pawn->UpdateRage();
+}
+
+void UPVPCanvas::UpdatePVPResult(int w, int l , int mmr)
+{
+	int MMRIDff = mmr - m_BeforeMMR;
+	int Reward = UDiabloGameInstance::Get->m_PVPManager->m_nCurrentWingTicket;
+
+	m_ImgTxtWinLose->SetText(FText::FromString(FString::Printf(TEXT("승:%d,패:%d"),w,l)));
+	m_ImgTxtReward->SetText(FText::FromString(FString::Printf(TEXT("획득 날개티켓:%d"),Reward)));
+	m_ImgTxtMMRBefore->SetText(FText::FromString(FString::Printf(TEXT("이전 MMR:%d"),m_BeforeMMR)));
+	m_ImgTxtMMRGained->SetText(FText::FromString(FString::Printf(TEXT("획득 MMR:%d"),MMRIDff)));
+	m_ImgTxtMMRAfter->SetText(FText::FromString(FString::Printf(TEXT("현재 MMR:%d"),mmr)));
 }

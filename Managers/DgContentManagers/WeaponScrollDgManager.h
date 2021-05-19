@@ -53,8 +53,6 @@ protected:
 	UPROPERTY()
 	UDataTable* m_WeaponTable;
 	UPROPERTY()
-	FSafeInt m_WeaponStones;
-	UPROPERTY()
 	int m_nMobCount;
 	
 	TArray<FWeaponDgTableRow*> m_DgDataRow;

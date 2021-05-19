@@ -44,8 +44,6 @@ public:
 
 	void Tick(float deltaTime);
 	
-	int GetDgKey();
-
 
 protected:
 	void OnLevelLoadComplete(UWorld* world);

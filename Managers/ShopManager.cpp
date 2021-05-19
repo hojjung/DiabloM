@@ -89,7 +89,7 @@ void UShopManager::PurchaseGemStone06()
 
 void UShopManager::PurchaseGold01()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(30))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(30))
 	{
 		return;
 	}
@@ -100,7 +100,7 @@ void UShopManager::PurchaseGold01()
 
 void UShopManager::PurchaseGold02()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(300))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(300))
 	{
 		return;
 	}
@@ -111,7 +111,7 @@ void UShopManager::PurchaseGold02()
 
 void UShopManager::PurchaseGold03()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(3000))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(3000))
 	{
 		return;
 	}
@@ -122,7 +122,7 @@ void UShopManager::PurchaseGold03()
 
 void UShopManager::PurchaseGachaWeapon01()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(30))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(30))
 	{
 		return;
 	}
@@ -133,7 +133,7 @@ void UShopManager::PurchaseGachaWeapon01()
 
 void UShopManager::PurchaseGachaWeapon11()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(300))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(300))
 	{
 		return;
 	}
@@ -144,7 +144,7 @@ void UShopManager::PurchaseGachaWeapon11()
 
 void UShopManager::PurchaseGachaWeapon55()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(1500))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(1500))
 	{
 		return;
 	}
@@ -155,7 +155,7 @@ void UShopManager::PurchaseGachaWeapon55()
 
 void UShopManager::PurchaseGachaSkin01()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(30))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(30))
 	{
 		return;
 	}
@@ -166,7 +166,7 @@ void UShopManager::PurchaseGachaSkin01()
 
 void UShopManager::PurchaseGachaSkin11()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(300))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(300))
 	{
 		return;
 	}
@@ -177,7 +177,7 @@ void UShopManager::PurchaseGachaSkin11()
 
 void UShopManager::PurchaseGachaSkin55()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(1500))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(1500))
 	{
 		return;
 	}
@@ -188,34 +188,30 @@ void UShopManager::PurchaseGachaSkin55()
 
 void UShopManager::PurchaseGachaPet01()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientPetTicket(1))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactPetGachaTicket(1))
 	{
 		return;
 	}
 	
 	ShowTouchBan();
-	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithTicket(1);
+	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithPetTicket(1);
 }
 
 void UShopManager::PurchaseGachaPet11()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientPetTicket(11))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactPetGachaTicket(11))
 	{
 		return;
 	}
 	
 	ShowTouchBan();
-	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithTicket(11);
+	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithPetTicket(11);
 }
 
-void UShopManager::PurchaseGachaPet55()
-{
-	
-}
 
 void UShopManager::PurchaseGachaAccessory01()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(270))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(270))
 	{
 		return;
 	}
@@ -226,7 +222,7 @@ void UShopManager::PurchaseGachaAccessory01()
 
 void UShopManager::PurchaseGachaAccessory11()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(2700))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(2700))
 	{
 		return;
 	}
@@ -237,7 +233,7 @@ void UShopManager::PurchaseGachaAccessory11()
 
 void UShopManager::PurchaseGachaAccessory55()
 {
-	if(!UDiabloGameInstance::Get->m_PlayfabManager->CheckClientGemstone(13500))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(13500))
 	{
 		return;
 	}
@@ -308,8 +304,6 @@ void UShopManager::RollGachaFiftyTime()
 	case RollWeapon: PurchaseGachaWeapon55();
 		break;
 	case RollSkin: PurchaseGachaSkin55();
-		break;
-	case RollPet: PurchaseGachaPet55();
 		break;
 	case RollAccessory: PurchaseGachaAccessory55();
 		break;

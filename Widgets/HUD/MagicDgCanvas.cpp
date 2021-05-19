@@ -18,6 +18,8 @@ void UMagicDgCanvas::NativeOnInitialized()
 	m_MagicDgManager->m_OnDragonSpawned.BindUObject(this,&UMagicDgCanvas::OnDragonSpawned);
 
 	m_BarTime->SetProgressValue(1.f);
+
+	m_nBeforeMagicStones = UDiabloGameInstance::Get->m_GoldManager->GetSkillStone();
 }
 
 
@@ -66,12 +68,24 @@ void UMagicDgCanvas::OnBattleEnd(bool isPlayerWon)
 	{
 		ObtainedBounty = m_MagicDgManager->GetResultBounty();
 		
-		m_TxtRequestedInfo->SetText(FText::FromString(FString::Printf(TEXT("성공-마정석 %d개 획득!"),ObtainedBounty)));	
+		m_TxtRequestedInfo->SetText(FText::FromString(FString::Printf(TEXT("성공"))));
+
+		m_ImgTxtRemainTime->SetText(FText::FromString(FString::Printf(TEXT("남은시간:%.1f"),m_MagicDgManager->GetRemainTimer())));
 	}
 	else
 	{
 		ObtainedBounty = m_MagicDgManager->GetFailBounty();
 		
-		m_TxtRequestedInfo->SetText(FText::FromString(FString::Printf(TEXT("실패-마정석 %d개 획득.."),ObtainedBounty)));
+		m_TxtRequestedInfo->SetText(FText::FromString(FString::Printf(TEXT("실패"))));
+		
+		m_ImgTxtRemainTime->SetText(FText::FromString(FString::Printf(TEXT("시간초과"))));
 	}
+
+	m_ImgTxtBeforeSkillStone->SetText(FText::FromString(FString::Printf(TEXT("이전 마정석:%d"),m_nBeforeMagicStones)));
+	
+	m_ImgTxtReward->SetText(FText::FromString(FString::Printf(TEXT("얻은 마정석:%d"),ObtainedBounty)));
+
+	int FinalMagicStones = UDiabloGameInstance::Get->m_GoldManager->GetSkillStone();
+
+	m_ImgTxtAfterSkillStone->SetText(FText::FromString(FString::Printf(TEXT("현재 마정석:%d"),FinalMagicStones)));
 }

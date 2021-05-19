@@ -61,8 +61,6 @@ protected:
 	int m_nSuccessBounty;
 	UPROPERTY()
 	int m_nFailBounty;
-	UPROPERTY()
-	int m_nCurrentMagicStone;
 
 public:
 	void Init();
@@ -81,11 +79,7 @@ public:
 
 	virtual bool IsBattleStarted() override;
 	
-	void AddMagicStones(int magicStones);
-
 	void EndMagicDgSuccess(AMonsterPawn*);
-
-	void EndMagicDgFail();
 
 	int GetResultBounty();
 
@@ -94,4 +88,9 @@ public:
 	virtual AUnitPawn* GetNearestEnemy(const FVector& wantPos) override;
 
 	float GetTimePercent();
+
+	float GetRemainTimer()
+	{
+		return MAGICDGTIME - m_fTimer;
+	}
 };
