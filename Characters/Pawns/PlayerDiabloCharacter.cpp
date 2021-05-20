@@ -157,12 +157,27 @@ void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
 
 	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
 
-	auto* LoadedMesh =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_PlayerSkinSoft, false);
-	//
 
+	if(m_SkBody->SkeletalMesh)
+	{
+		StreamableManager.Unload(m_SkBody->SkeletalMesh);
+	}
 
-	auto LoadedAnim =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_AnimBP, false);
+	if(m_SkBody->GetAnimInstance())
+	{
+		StreamableManager.Unload(m_SkBody->GetAnimInstance());
+	}
 	
+	if(m_BaseAttackAnim)
+	{
+		StreamableManager.Unload(m_BaseAttackAnim);
+	}
+	
+	auto* LoadedMesh =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_PlayerSkinSoft, true);
+	//
+	auto LoadedAnim =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_AnimBP, true);
+
+	m_BaseAttackAnim =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_BaseAttackAnim, true);
 	//
 	m_SkBody->SetSkeletalMesh(LoadedMesh);
 	m_SkBody->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -170,15 +185,16 @@ void APlayerDiabloCharacter::PlayerClassDataInject(const FPlayerClassSpec& spec)
 	m_SkBody->SetForcedLOD(2);
 	m_fAttackSpeed = m_PlayerEntityData->m_PlayerData->m_fAttackSpeedMultiple;
 
-
-
-	m_BaseAttackAnim =StreamableManager.LoadSynchronous(m_PlayerEntityData->m_PlayerData->m_BaseAttackAnim, false);
+	
 	
 	m_fAttackCDConstant = 1.f / m_fAttackSpeed;
 
 	m_OnMeshChanged.Broadcast(this);
 
-	UDiabloGameInstance::Get->GetPlCon()->ClientForceGarbageCollection();
+	FTimerHandle Timer;
+	
+	UDiabloGameInstance::Get->GetWorld()->GetTimerManager().SetTimer(
+		Timer, UDiabloGameInstance::Get->GetPlCon(), &ADiabloPlayerController::ClientForceGarbageCollection, 2.2f, false);
 }
 
 void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)

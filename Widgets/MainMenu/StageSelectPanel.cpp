@@ -29,6 +29,8 @@ void UStageSelectPanel::NativeOnInitialized()
 	m_BtnBack->SetVisibility(ESlateVisibility::Collapsed);
 	//
 	UpdateResourceTxt();
+
+	UDiabloGameInstance::Get->m_GoldManager->m_OnCurrencyChanged.AddUObject(this,&UStageSelectPanel::UpdateGoldOnly);
 }
 
 void UStageSelectPanel::InitNormalDungeon()
@@ -129,6 +131,11 @@ void UStageSelectPanel::UpdateResourceTxt()//무기강화할때,티켓돌릴때,
 
 	int W = UDiabloGameInstance::Get->m_GoldManager->GetWingTicket();
 	m_TxtWingTicket->SetText(FText::FromString(FString::Printf(TEXT("보유 날개티켓:%d"),W)));
+}
+
+void UStageSelectPanel::UpdateGoldOnly()
+{
+	m_TxtGold->SetText(FText::FromString(FString::Printf(TEXT("보유 골드:%s"),*UDiaBlueprintFunctionLibrary::GetAlphabetTextBigInt(UDiabloGameInstance::Get->m_GoldManager->GetCurrentGold(),2))));
 }
 
 void UStageSelectPanel::SetVisibility(ESlateVisibility InVisibility)

@@ -141,19 +141,44 @@ void AMonsterPawn::DataInject(const FMonsterEntity* monster_table, const BigInt&
 
     FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
 
-    m_BaseAttackAnim =StreamableManager.LoadSynchronous(UnitData->m_BaseAttackAnim, false);
+    if(m_BaseAttackAnim)
+    {
+        StreamableManager.Unload(m_BaseAttackAnim);
+    }
+    
+    if(m_DeathMontage)
+    {
+        StreamableManager.Unload(m_DeathMontage);
+    }
 
-    m_DeathMontage =StreamableManager.LoadSynchronous( UnitData->m_DeathMontage, false);
+    if(m_SpawnAnim)
+    {
+        StreamableManager.Unload(m_SpawnAnim);
+    }
 
-    m_SpawnAnim =StreamableManager.LoadSynchronous(UnitData->m_SpawnAnim, false);
+    if(m_TookHitMontage)
+    {
+        StreamableManager.Unload(m_TookHitMontage);
+    }
 
-    m_TookHitMontage =StreamableManager.LoadSynchronous(UnitData->m_TookHitMontage, false);
+    if(m_SkBody->SkeletalMesh)
+    {
+        StreamableManager.Unload(m_SkBody->SkeletalMesh);
+    }
+
+    m_BaseAttackAnim =StreamableManager.LoadSynchronous(UnitData->m_BaseAttackAnim, true);
+
+    m_DeathMontage =StreamableManager.LoadSynchronous( UnitData->m_DeathMontage, true);
+
+    m_SpawnAnim =StreamableManager.LoadSynchronous(UnitData->m_SpawnAnim, true);
+
+    m_TookHitMontage =StreamableManager.LoadSynchronous(UnitData->m_TookHitMontage, true);
 
     m_TextUnitName = UnitData->m_ShowingName;
 
     m_SkBody->EmptyOverrideMaterials();
 
-    auto* SkMeshLoaded =StreamableManager.LoadSynchronous(UnitData->m_MonsterMeshSoft, false);
+    auto* SkMeshLoaded =StreamableManager.LoadSynchronous(UnitData->m_MonsterMeshSoft, true);
     
     m_SkBody->SetSkeletalMesh(SkMeshLoaded);
 

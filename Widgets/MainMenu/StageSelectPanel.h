@@ -87,6 +87,8 @@ public:
 
 	void UpdateResourceTxt();
 
+	void UpdateGoldOnly();
+
 	virtual void SetVisibility(ESlateVisibility InVisibility) override;
 };
 
