@@ -206,20 +206,17 @@ public:
 		return Value;
 	}
 
-	BigInt GetCost(int level) const
+	int GetCost(int level) const
 	{
-		BigInt Cost = m_fBaseCost;
+		int Cost = m_fBaseCost;
 		
 		level  = FMath::Clamp(level,level,m_nMaxLevel);
 
 		if(level>1)
 		{
 			int IterMax = level-1;
-			
-			for(int i=0; i<IterMax;i++)
-			{
-				Cost = UDiaBlueprintFunctionLibrary::MultiplePercent(Cost,m_nCostMultiFactor00,0,2);
-			}
+
+			Cost*=IterMax;
 		}
 
 		return Cost;
@@ -265,7 +262,7 @@ public:
 	FSafeInt m_nLv;
 	const FSkillUpgradeDataRow* m_SkillData;
 	BigInt m_Value;
-	BigInt m_Cost;
+	int m_Cost;
 	float m_fCurrentCD;
 	float m_fDuration;
 

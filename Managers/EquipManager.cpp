@@ -518,10 +518,12 @@ bool UEquipManager::TryLvUpWeapon(int index)
 		return false;
 	}
 
-	if (!UDiabloGameInstance::Get->m_GoldManager->SubtractGold(m_AryWeapons[index].m_LvlUpCost))
+	if (!UDiabloGameInstance::Get->m_GoldManager->SubtractWeaponStones(m_AryWeapons[index].m_LvlUpCost))
 	{
 		return false;
 	}
+
+	m_nCachedWeaponStoneForServer+=m_AryWeapons[index].m_LvlUpCost;
 
 	m_AryWeapons[index].Level++;
 	m_AryWeapons[index].SetLevel(m_AryWeapons[index].Level);
@@ -809,4 +811,13 @@ FString UEquipManager::GetSkinUnlockStr()
 FString UEquipManager::GetPetUnlockStr()
 {
 	return FString::Printf(TEXT("%d/%d"),GetPetUnlockCount(),m_AryPetTable.Num());
+}
+
+void UEquipManager::UploadCachedWeaponStoneForServer()
+{
+	if(m_nCachedWeaponStoneForServer>0)
+	{
+		UDiabloGameInstance::Get->m_PlayfabManager->SubtractWeaponStone(m_nCachedWeaponStoneForServer);
+		m_nCachedWeaponStoneForServer=0;
+	}
 }

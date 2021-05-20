@@ -331,7 +331,6 @@ public:
 	//
 	void UploadNormalDungeon();
 	
-	void UploadMainData();
 
 	void UploadDailyData(const FString dailyJsonStr);
 
@@ -348,6 +347,10 @@ public:
 	void RequestGetPVPData();
 
 	friend UGoldManager;
+	
+	void UploadMainData();
+	
+	void UploadCachedDataToServer();
 };
 
 

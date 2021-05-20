@@ -20,7 +20,7 @@ class DIABLOM_API UGachaPanel : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	~UGachaPanel();
+	virtual ~UGachaPanel() override;
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UGachaCardGridPanel* m_GachaGridPanel;
@@ -85,7 +85,8 @@ public:
 	TWeakObjectPtr<UShopManager> m_ShopManager;
 
 	FDelegateHandle m_TimeUpdateHandle;
-protected:
+	
+public:
 	virtual void NativeOnInitialized() override;
 
 public:
@@ -146,6 +147,8 @@ public:
 	void SetAdsViewTest(const FString&);
 
 	void UpdatePetTicket();
+
+	virtual void SetVisibility(ESlateVisibility InVisibility) override;
 };
 
 

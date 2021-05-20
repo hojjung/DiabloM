@@ -130,7 +130,7 @@ void UEquipmentPanel::NativeOnInitialized()
 	UDiabloGameInstance::Get->m_EquipManager->m_OnWeaponChanged.AddUObject(this,&UEquipmentPanel::OnWeaponChanged);
 	UDiabloGameInstance::Get->m_EquipManager->m_OnWingChanged.AddUObject(this,&UEquipmentPanel::OnWingChanged);
 
-	//SetPanelSkin();
+	UDiabloGameInstance::Get->m_GoldManager->m_OnCurrencyChanged.AddUObject(this,&UEquipmentPanel::UpdateCurrency);
 }
 
 void UEquipmentPanel::OnSkinChanged(int pre, int next)
@@ -326,5 +326,12 @@ void UEquipmentPanel::SetPanelAccessory()
 	m_CurrentOpenedWidget=m_OverlayAccessory;
 	
 	SetHoverImage(&m_BtnAccessory);
+}
+
+void UEquipmentPanel::UpdateCurrency()
+{
+	m_TxtWeaponStones->SetText(FText::FromString(FString::Printf(TEXT("무기 강화석:%d"),UDiabloGameInstance::Get->m_GoldManager->GetWeaponStone())));
+	m_TxtPetTickets->SetText(FText::FromString(FString::Printf(TEXT("펫 가챠 티켓:%d"),UDiabloGameInstance::Get->m_GoldManager->GetPetGachaTicket())));
+	m_TxtWingTickets->SetText(FText::FromString(FString::Printf(TEXT("날개 교환 티켓:%d"),UDiabloGameInstance::Get->m_GoldManager->GetWingTicket())));
 }
 

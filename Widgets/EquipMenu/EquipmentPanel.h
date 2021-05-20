@@ -62,6 +62,14 @@ protected:
 	UOverlay* m_OverlayAccessory;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UScrollBox* m_VertiAccessory;
+	//
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_TxtWeaponStones;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_TxtPetTickets;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_TxtWingTickets;
+	//
 	UPROPERTY()
 	UOverlay* m_CurrentOpenedWidget;
 	
@@ -122,4 +130,5 @@ public:
 	UFUNCTION()
     void SetPanelAccessory();
 
+	void UpdateCurrency();
 };

@@ -14,6 +14,14 @@ void UDungeonManager::Init()
 
 void UDungeonManager::OpenLevel(UMonsterSpawnManager* currentDgManager)
 {
+	if(m_CurrentSpawnManager)
+	{
+		UDiabloGameInstance::Get->m_PlayfabManager->UploadMainData();
+
+		UDiabloGameInstance::Get->m_PlayfabManager->UploadCachedDataToServer();	
+	}
+	
+	
 	m_CurrentSpawnManager = currentDgManager;
 	
 	UGameplayStatics::OpenLevel(UDiabloGameInstance::Get->GetWorld(),*m_CurrentSpawnManager->GetOpenLevelAssetName(), true);

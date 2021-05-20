@@ -50,7 +50,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	int StackCount = 0;
 	BigInt m_Value;
-	BigInt m_LvlUpCost;
+	int m_LvlUpCost;
 	const FWeaponTable* m_EquipData;
 
 	void SetLevel(int v)
@@ -214,6 +214,8 @@ public:
 	int m_nSelectedWeapon;
 	UPROPERTY()
 	int m_nSelectedPet;
+	UPROPERTY()//손가락이 떨어질때 서버에 빼는 강화석
+	int m_nCachedWeaponStoneForServer;
 
 protected:
 	int StringSplitEachItem(const FString& equipDatas, TArray<FString>& outStrAry) const;
@@ -312,6 +314,8 @@ public:
 	FString GetSkinUnlockStr();
 
 	FString GetPetUnlockStr();
+
+	void UploadCachedWeaponStoneForServer();
 };
 
 

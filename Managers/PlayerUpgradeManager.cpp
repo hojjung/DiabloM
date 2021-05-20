@@ -18,47 +18,73 @@ UPlayerUpgradeManager::UPlayerUpgradeManager()
 	static ConstructorHelpers::FObjectFinder<UDataTable> FoundStatTable(
 		TEXT("DataTable'/Game/DataTables/Upgrade/PlayerDefaultUpgradeTable.PlayerDefaultUpgradeTable'"));
 	StatUpgradeTable = FoundStatTable.Object;
-
 }
 
-void UPlayerUpgradeManager::SetUpgradeDataFromServer(const UPlayFabJsonObject* statJsonStr,const UPlayFabJsonObject* skillJsonStr)
+void UPlayerUpgradeManager::SetUpgradeDataFromServer(const UPlayFabJsonObject* statJsonStr,
+                                                     const UPlayFabJsonObject* skillJsonStr)
 {
 	m_PlayfabManager = UDiabloGameInstance::Get->m_PlayfabManager;
 	//
 	m_AryBaseAtkUpgrade.Init(FUpgradeSpec(), (int)EAttackType::Length);
-	m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(TEXT("AtkDmg01"), ""); //
-	m_AryBaseAtkUpgrade[(int)EAttackType::Critical].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(TEXT("AtkCri01"), "");
-	m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(TEXT("AtkCDmg01"), "");
-	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(TEXT("AtkCri02"), "");
-	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(TEXT("AtkCDmg02"), "");
-	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(TEXT("AtkMagic01"), "");
-	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(TEXT("AtkMDmg01"), "");
-	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(TEXT("AtkMagic02"), "");
-	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow	>(TEXT("AtkMDmg02"), "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
+		TEXT("AtkDmg01"), ""); //
+	m_AryBaseAtkUpgrade[(int)EAttackType::Critical].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
+		TEXT("AtkCri01"), "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
+		TEXT("AtkCDmg01"), "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
+		TEXT("AtkCri02"), "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
+		TEXT("AtkCDmg02"), "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
+		TEXT("AtkMagic01"), "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
+		TEXT("AtkMDmg01"), "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
+		TEXT("AtkMagic02"), "");
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].m_UpgradeData = StatUpgradeTable->FindRow<FUpgradeDataRow>(
+		TEXT("AtkMDmg02"), "");
 
 	//
 	m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].SetLevel(statJsonStr->GetNumberField(TEXT("BaseAttack")));
 	m_AryBaseAtkUpgrade[(int)EAttackType::Critical].SetLevel(statJsonStr->GetNumberField(TEXT("Critical")));
 	m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].SetLevel(statJsonStr->GetNumberField(TEXT("CriticalDmg")));
 	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].SetLevel(statJsonStr->GetNumberField(TEXT("SuperCritical")));
-	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].SetLevel(statJsonStr->GetNumberField(TEXT("SuperCriticalDmg")));
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].SetLevel(
+		statJsonStr->GetNumberField(TEXT("SuperCriticalDmg")));
 	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].SetLevel(statJsonStr->GetNumberField(TEXT("MagicBomb")));
 	m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].SetLevel(statJsonStr->GetNumberField(TEXT("MagicBombDmg")));
 	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].SetLevel(statJsonStr->GetNumberField(TEXT("SuperMagicBomb")));
-	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].SetLevel(statJsonStr->GetNumberField(TEXT("SuperMagicBombDmg")));
+	m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].SetLevel(
+		statJsonStr->GetNumberField(TEXT("SuperMagicBombDmg")));
 	//
 	m_AryUpgradeSkill.Init(FSkillSpec(), (int)ESkillType::Length);
-	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(TEXT("Skill01"), "");
-	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(TEXT("Skill02"), "");
-	m_AryUpgradeSkill[(int)ESkillType::WhirlWind].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow	>(TEXT("Skill03"), "");
-	m_AryUpgradeSkill[(int)ESkillType::EarthQuake].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(TEXT("Skill04"), "");
-	m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(TEXT("Skill05"), "");
+	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(
+		TEXT("Skill01"), "");
+	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(
+		TEXT("Skill02"), "");
+	m_AryUpgradeSkill[(int)ESkillType::WhirlWind].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(
+		TEXT("Skill03"), "");
+	m_AryUpgradeSkill[(int)ESkillType::EarthQuake].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(
+		TEXT("Skill04"), "");
+	m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_SkillData = SkillUpgradeTable->FindRow<FSkillUpgradeDataRow>(
+		TEXT("Skill05"), "");
 	//
-	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].InitSkillSpec(skillJsonStr->GetNumberField(TEXT("DeathBlow")),skillJsonStr->GetNumberField(TEXT("DeathBlowEquipSlot")));
-	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].InitSkillSpec(skillJsonStr->GetNumberField(TEXT("MagicBlade")),skillJsonStr->GetNumberField(TEXT("MagicBladeEquipSlot")));
-	m_AryUpgradeSkill[(int)ESkillType::WhirlWind].InitSkillSpec (skillJsonStr->GetNumberField(TEXT("WhirlWind")),skillJsonStr->GetNumberField(TEXT("WhirlWindEquipSlot")));
-	m_AryUpgradeSkill[(int)ESkillType::EarthQuake].InitSkillSpec(skillJsonStr->GetNumberField(TEXT("EarthQuake")),skillJsonStr->GetNumberField(TEXT("EarthQuakeEquipSlot")));
-	m_AryUpgradeSkill[(int)ESkillType::WindBlade].InitSkillSpec (skillJsonStr->GetNumberField(TEXT("WindBlade")),skillJsonStr->GetNumberField(TEXT("WindBladeEquipSlot")));
+	m_AryUpgradeSkill[(int)ESkillType::DeathBlow].InitSkillSpec(skillJsonStr->GetNumberField(TEXT("DeathBlow")),
+	                                                            skillJsonStr->
+	                                                            GetNumberField(TEXT("DeathBlowEquipSlot")));
+	m_AryUpgradeSkill[(int)ESkillType::MagicBlade].InitSkillSpec(skillJsonStr->GetNumberField(TEXT("MagicBlade")),
+	                                                             skillJsonStr->GetNumberField(
+		                                                             TEXT("MagicBladeEquipSlot")));
+	m_AryUpgradeSkill[(int)ESkillType::WhirlWind].InitSkillSpec(skillJsonStr->GetNumberField(TEXT("WhirlWind")),
+	                                                            skillJsonStr->
+	                                                            GetNumberField(TEXT("WhirlWindEquipSlot")));
+	m_AryUpgradeSkill[(int)ESkillType::EarthQuake].InitSkillSpec(skillJsonStr->GetNumberField(TEXT("EarthQuake")),
+	                                                             skillJsonStr->GetNumberField(
+		                                                             TEXT("EarthQuakeEquipSlot")));
+	m_AryUpgradeSkill[(int)ESkillType::WindBlade].InitSkillSpec(skillJsonStr->GetNumberField(TEXT("WindBlade")),
+	                                                            skillJsonStr->
+	                                                            GetNumberField(TEXT("WindBladeEquipSlot")));
 	//
 	m_AryEquippedSkillSpec.Init(nullptr, 4);
 
@@ -71,28 +97,32 @@ void UPlayerUpgradeManager::SetUpgradeDataFromServer(const UPlayFabJsonObject* s
 	}
 }
 
-void UPlayerUpgradeManager::SetUpgradeDataToJson(UPlayFabJsonObject* obj)//9
+void UPlayerUpgradeManager::SetUpgradeDataToJson(UPlayFabJsonObject* obj) //9
 {
 	UPlayFabJsonObject* JsonObj = UPlayFabJsonObject::ConstructJsonObject(this);
 
 	JsonObj->SetNumberField(TEXT("BaseAttack"), m_AryBaseAtkUpgrade[(int)EAttackType::BaseAttack].m_nLv.GetValue());
 	JsonObj->SetNumberField(TEXT("Critical"), m_AryBaseAtkUpgrade[(int)EAttackType::Critical].m_nLv.GetValue());
 	JsonObj->SetNumberField(TEXT("CriticalDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::CriticalDmg].m_nLv.GetValue());
-	JsonObj->SetNumberField(TEXT("SuperCritical"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].m_nLv.GetValue());
-	JsonObj->SetNumberField(TEXT("SuperCriticalDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].m_nLv.GetValue());
+	JsonObj->SetNumberField(
+		TEXT("SuperCritical"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperCritical].m_nLv.GetValue());
+	JsonObj->SetNumberField(
+		TEXT("SuperCriticalDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperCriticalDmg].m_nLv.GetValue());
 	JsonObj->SetNumberField(TEXT("MagicBomb"), m_AryBaseAtkUpgrade[(int)EAttackType::MagicBomb].m_nLv.GetValue());
 	JsonObj->SetNumberField(TEXT("MagicBombDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::MagicBombDmg].m_nLv.GetValue());
-	JsonObj->SetNumberField(TEXT("SuperMagicBomb"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].m_nLv.GetValue());
-	JsonObj->SetNumberField(TEXT("SuperMagicBombDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].m_nLv.GetValue());
+	JsonObj->SetNumberField(
+		TEXT("SuperMagicBomb"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBomb].m_nLv.GetValue());
+	JsonObj->SetNumberField(
+		TEXT("SuperMagicBombDmg"), m_AryBaseAtkUpgrade[(int)EAttackType::SuperMagicBombDmg].m_nLv.GetValue());
 
-	obj->SetObjectField(TEXT("Upgrade"),JsonObj);
+	obj->SetObjectField(TEXT("Upgrade"), JsonObj);
 }
 
 void UPlayerUpgradeManager::SetSkillDataToJson(UPlayFabJsonObject* obj)
 {
 	UPlayFabJsonObject* JsonObj = UPlayFabJsonObject::ConstructJsonObject(this);
 
-	JsonObj->SetNumberField(TEXT("DeathBlow"),m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_nLv.GetValue());
+	JsonObj->SetNumberField(TEXT("DeathBlow"), m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_nLv.GetValue());
 	JsonObj->SetNumberField(TEXT("DeathBlowEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::DeathBlow].m_nIndex);
 	JsonObj->SetNumberField(TEXT("MagicBlade"), m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_nLv.GetValue());
 	JsonObj->SetNumberField(TEXT("MagicBladeEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::MagicBlade].m_nIndex);
@@ -103,7 +133,16 @@ void UPlayerUpgradeManager::SetSkillDataToJson(UPlayFabJsonObject* obj)
 	JsonObj->SetNumberField(TEXT("WindBlade"), m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_nLv.GetValue());
 	JsonObj->SetNumberField(TEXT("WindBladeEquipSlot"), m_AryUpgradeSkill[(int)ESkillType::WindBlade].m_nIndex);
 
-	obj->SetObjectField(TEXT("Skill"),JsonObj);
+	obj->SetObjectField(TEXT("Skill"), JsonObj);
+}
+
+void UPlayerUpgradeManager::UploadCachedSkillStoneForServer()
+{
+	if (m_nCachedSkillStones > 0)
+	{
+		UDiabloGameInstance::Get->m_PlayfabManager->SubtractSkillStone(m_nCachedSkillStones);
+		m_nCachedSkillStones = 0;
+	}
 }
 
 void UPlayerUpgradeManager::UpgradeAtk(EAttackType type)
@@ -114,14 +153,14 @@ void UPlayerUpgradeManager::UpgradeAtk(EAttackType type)
 	}
 	//
 	BigInt Cost = GetAtkUp(type).m_Cost;
-	
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGold(Cost))
+
+	if (!UDiabloGameInstance::Get->m_GoldManager->SubtractGold(Cost))
 	{
 		return;
 	}
-	
+
 	GetAtkUp(type).IncreaseLevel();
-	
+
 	m_OnUpgradeChanged.Broadcast();
 
 	switch (type)
@@ -153,13 +192,14 @@ void UPlayerUpgradeManager::UpgradeSkill(ESkillType type)
 	{
 		return;
 	}
-	
-	BigInt Cost = GetSkillUp(type).m_Cost;
-	
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGold(Cost))
+
+	int Cost = GetSkillUp(type).m_Cost;
+
+	if (!UDiabloGameInstance::Get->m_GoldManager->SubtractSkillStones(Cost))
 	{
 		return;
 	}
+	m_nCachedSkillStones+=Cost;
 	//
 	GetSkillUp(type).IncreaseLevel();
 	m_OnUpgradeChanged.Broadcast();
@@ -276,7 +316,6 @@ void UPlayerUpgradeManager::ClearCooldownAllSkill()
 		m_AryEquippedSkillSpec[i]->m_fCurrentCD = -1.f;
 	}
 }
-
 
 
 //1,1

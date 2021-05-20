@@ -78,6 +78,8 @@ protected:
 	
 	TArray<FSkillSpec*> m_AryEquippedSkillSpec;
 
+	UPROPERTY()
+	int m_nCachedSkillStones;
 	
 public:
 	void SetUpgradeDataFromServer(const UPlayFabJsonObject* statJsonStr,const UPlayFabJsonObject* skillJsonStr);
@@ -121,5 +123,6 @@ public:
 	void SetUpgradeDataToJson(UPlayFabJsonObject*);
 
 	void SetSkillDataToJson(UPlayFabJsonObject*);
-	
+
+	void UploadCachedSkillStoneForServer();
 };

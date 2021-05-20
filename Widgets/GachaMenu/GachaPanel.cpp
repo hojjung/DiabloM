@@ -246,3 +246,13 @@ void UGachaPanel::UpdatePetTicket()
 	
 	m_TextGachaPetTicket->SetText(FText::FromString(FString::Printf(TEXT("펫 티켓 %d개"),Ticket)));
 }
+
+void UGachaPanel::SetVisibility(ESlateVisibility InVisibility)
+{
+	Super::SetVisibility(InVisibility);
+
+	if (InVisibility == ESlateVisibility::Hidden || InVisibility == ESlateVisibility::Collapsed)
+	{
+		m_GachaGridPanel->ClosePanel();
+	}
+}

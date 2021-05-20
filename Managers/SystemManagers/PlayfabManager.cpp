@@ -83,6 +83,8 @@ int UPlayfabManager::GetRanking()
 
 void UPlayfabManager::UploadMainData()
 {
+	
+	
 	PlayFab::ClientModels::FUpdateUserDataRequest Req;
 	Req.Permission=PlayFab::ClientModels::UserDataPermission::UserDataPermissionPublic;
 	// //
@@ -93,6 +95,13 @@ void UPlayfabManager::UploadMainData()
         PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 	
 	m_fDeltaCountTitleData = 0.f;
+}
+
+void UPlayfabManager::UploadCachedDataToServer()
+{
+	UDiabloGameInstance::Get->m_QuestManager->UploadQuestData();
+	UDiabloGameInstance::Get->m_EquipManager->UploadCachedWeaponStoneForServer();
+	UDiabloGameInstance::Get->m_PlayerUpgradeManager->UploadCachedSkillStoneForServer();
 }
 
 void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
@@ -117,7 +126,7 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 	 	PRINTF("TryUpdateUserData");
 	// 	
 	 	UploadMainData();
-	 	UDiabloGameInstance::Get->m_QuestManager->UploadQuestData();
+	 	UploadCachedDataToServer();
 	 }
 
 	if (m_fDeltaCountRanking > 220.f)
@@ -587,7 +596,7 @@ void UPlayfabManager::OnErrorPlayfabReq(const FFailRslt& ErrorResult)
 	
 	UDiabloGameInstance::Get->RequestPopupText(CodeString);
 	
-	if(1074 ==ErrorResult.ErrorCode)
+	if(1074 ==ErrorResult.ErrorCode ||CodeString.IsEmpty())
 	{
 		StartPlayfabLogin();
 		return;	
@@ -869,6 +878,7 @@ void UPlayfabManager::OnIAPGoogleValidateSuccess(const PlayFab::ClientModels::FV
 
 void UPlayfabManager::RequestGetInventory()
 {
+
 	PlayFab::ClientModels::FGetUserInventoryRequest Req;
 	GetClientAPI->GetUserInventory(Req,
 		PlayFab::UPlayFabClientAPI::FGetUserInventoryDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetInven),

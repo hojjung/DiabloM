@@ -82,7 +82,7 @@ public:
 
 	int AddWeaponStones(int v,bool useBonus=true);
 
-	bool SubtactWeaponStones(int v);
+	bool SubtractWeaponStones(int v);
 
 	int GetWeaponStone() const
 	{
@@ -91,7 +91,7 @@ public:
 
 	int AddSkillStones(int v,bool useBonus=true);
 
-	bool SubtactSkillStones(int v);
+	bool SubtractSkillStones(int v);
 
 	int GetSkillStone() const
 	{
@@ -100,7 +100,7 @@ public:
 
 	int AddPetGachaTicket(int v,bool useBonus=true);
 	
-	bool SubtactPetGachaTicket(int v);
+	bool SubtractPetGachaTicket(int v);
 
 	int GetPetGachaTicket() const
 	{
@@ -109,7 +109,7 @@ public:
 
 	int AddWingTicket(int v,bool useBonus=true);
 
-	bool SubtactWingTicket(int v);
+	bool SubtractWingTicket(int v);
 
 	int GetWingTicket() const
 	{
@@ -118,7 +118,7 @@ public:
 
 	int AddGemStones(int v);
 
-	bool SubtactGemStones(int v);
+	bool SubtractGemStones(int v);
 
 	int GetGemStones() const
 	{
@@ -127,7 +127,7 @@ public:
 
 	int AddDungeonKeys(int v);
 
-	bool SubtactDungeonKeys(int v);
+	bool SubtractDungeonKeys(int v);
 
 	int GetDungeonKeys() const
 	{

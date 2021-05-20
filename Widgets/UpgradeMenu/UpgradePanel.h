@@ -73,6 +73,9 @@ protected:
 	USkillUpgradeButton* m_UpgradeSkill04;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	USkillUpgradeButton* m_UpgradeSkill05;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UImageAndText* m_TxtSkillStones;
 	//switch 대상
 	UPROPERTY()
 	UPlayerUpgradeManager* m_PlUpgrade;
@@ -132,4 +135,6 @@ public:
 	virtual FReply NativeOnTouchMoved(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
 
 	virtual FReply NativeOnTouchEnded(const FGeometry& InGeometry, const FPointerEvent& InGestureEvent) override;
+
+	void UpdateSkillStones();
 };

@@ -140,6 +140,8 @@ void UWeaponEquipButton::ChargeEnd()
 {
 	m_bChargeUpgrade = false;
 	m_fDeltaCounter = 0.f;
+
+	//UDiabloGameInstance::Get->m_EquipManager->UploadCachedWeaponStoneForServer();
 }
 
 void UWeaponEquipButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

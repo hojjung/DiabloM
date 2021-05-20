@@ -16,7 +16,7 @@ class DIABLOM_API UOptionSave : public USaveGame
 
 public:
 	UPROPERTY(EditAnywhere)
-	bool m_bOptionFPSLimit = false;
+	bool m_bOptionFPSLimit = true;
 	UPROPERTY(EditAnywhere)
 	float m_fOptionVolumeSFX = 1.0f;
 	UPROPERTY(EditAnywhere)

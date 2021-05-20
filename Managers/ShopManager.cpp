@@ -89,7 +89,7 @@ void UShopManager::PurchaseGemStone06()
 
 void UShopManager::PurchaseGold01()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(30))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(30))
 	{
 		return;
 	}
@@ -100,7 +100,7 @@ void UShopManager::PurchaseGold01()
 
 void UShopManager::PurchaseGold02()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(300))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(300))
 	{
 		return;
 	}
@@ -111,7 +111,7 @@ void UShopManager::PurchaseGold02()
 
 void UShopManager::PurchaseGold03()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(3000))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(3000))
 	{
 		return;
 	}
@@ -122,7 +122,7 @@ void UShopManager::PurchaseGold03()
 
 void UShopManager::PurchaseGachaWeapon01()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(30))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(30))
 	{
 		return;
 	}
@@ -133,7 +133,7 @@ void UShopManager::PurchaseGachaWeapon01()
 
 void UShopManager::PurchaseGachaWeapon11()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(300))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(300))
 	{
 		return;
 	}
@@ -144,7 +144,7 @@ void UShopManager::PurchaseGachaWeapon11()
 
 void UShopManager::PurchaseGachaWeapon55()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(1500))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(1500))
 	{
 		return;
 	}
@@ -155,7 +155,7 @@ void UShopManager::PurchaseGachaWeapon55()
 
 void UShopManager::PurchaseGachaSkin01()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(30))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(30))
 	{
 		return;
 	}
@@ -166,7 +166,7 @@ void UShopManager::PurchaseGachaSkin01()
 
 void UShopManager::PurchaseGachaSkin11()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(300))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(300))
 	{
 		return;
 	}
@@ -177,7 +177,7 @@ void UShopManager::PurchaseGachaSkin11()
 
 void UShopManager::PurchaseGachaSkin55()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(1500))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(1500))
 	{
 		return;
 	}
@@ -188,7 +188,7 @@ void UShopManager::PurchaseGachaSkin55()
 
 void UShopManager::PurchaseGachaPet01()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactPetGachaTicket(1))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractPetGachaTicket(1))
 	{
 		return;
 	}
@@ -199,7 +199,7 @@ void UShopManager::PurchaseGachaPet01()
 
 void UShopManager::PurchaseGachaPet11()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactPetGachaTicket(11))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractPetGachaTicket(11))
 	{
 		return;
 	}
@@ -211,7 +211,7 @@ void UShopManager::PurchaseGachaPet11()
 
 void UShopManager::PurchaseGachaAccessory01()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(270))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(270))
 	{
 		return;
 	}
@@ -222,7 +222,7 @@ void UShopManager::PurchaseGachaAccessory01()
 
 void UShopManager::PurchaseGachaAccessory11()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(2700))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(2700))
 	{
 		return;
 	}
@@ -233,7 +233,7 @@ void UShopManager::PurchaseGachaAccessory11()
 
 void UShopManager::PurchaseGachaAccessory55()
 {
-	if(!UDiabloGameInstance::Get->m_GoldManager->SubtactGemStones(13500))
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(13500))
 	{
 		return;
 	}

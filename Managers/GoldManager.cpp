@@ -138,7 +138,7 @@ int UGoldManager::AddWeaponStones(int v, bool useBonus)
 	return m_WeaponStone.GetValue();
 }
 
-bool UGoldManager::SubtactWeaponStones(int v)
+bool UGoldManager::SubtractWeaponStones(int v)
 {
 	if (m_WeaponStone < v)
 	{
@@ -163,7 +163,7 @@ int UGoldManager::AddSkillStones(int v, bool useBonus)
 	return m_SkillStone.GetValue();
 }
 
-bool UGoldManager::SubtactSkillStones(int v)
+bool UGoldManager::SubtractSkillStones(int v)
 {
 	if (m_SkillStone < v)
 	{
@@ -188,7 +188,7 @@ int UGoldManager::AddPetGachaTicket(int v, bool useBonus)
 	return m_PetGachaTicket.GetValue();
 }
 
-bool UGoldManager::SubtactPetGachaTicket(int v)
+bool UGoldManager::SubtractPetGachaTicket(int v)
 {
 	if (m_PetGachaTicket < v)
 	{
@@ -213,7 +213,7 @@ int UGoldManager::AddWingTicket(int v, bool useBonus)
 	return m_WingTicket.GetValue();
 }
 
-bool UGoldManager::SubtactWingTicket(int v)
+bool UGoldManager::SubtractWingTicket(int v)
 {
 	if (m_WingTicket < v)
 	{
@@ -238,7 +238,7 @@ int UGoldManager::AddGemStones(int v)
 	return m_GemStones.GetValue();
 }
 
-bool UGoldManager::SubtactGemStones(int v)
+bool UGoldManager::SubtractGemStones(int v)
 {
 	if (m_GemStones < v)
 	{
@@ -263,7 +263,7 @@ int UGoldManager::AddDungeonKeys(int v)
 	return m_DungeonKeys.GetValue();
 }
 
-bool UGoldManager::SubtactDungeonKeys(int v)
+bool UGoldManager::SubtractDungeonKeys(int v)
 {
 	if (m_DungeonKeys < v)
 	{

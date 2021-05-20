@@ -66,15 +66,12 @@ void UQuestManager::AddGemStones(int gemStone)
 void UQuestManager::UploadQuestData()
 {
 	UDiabloGameInstance::Get->m_PlayfabManager->UploadQuestData(GetQuestDataStr());
-}
 
-void UQuestManager::RequestGemStoneUploadToServer(bool bForce)
-{
-	if(!bForce&&m_nWaitingGemStones<1)
+	if(m_nWaitingGemStones<1)
 	{
 		return;
 	}
-	
+
 	PRINTF("UploadTemStones:%d",m_nWaitingGemStones);
 	
 	UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(m_nWaitingGemStones);

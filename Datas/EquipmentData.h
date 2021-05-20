@@ -62,21 +62,17 @@ public:
 		return Dmg;
 	}
 
-	BigInt GetCost(int level) const
+	int GetCost(int level) const
 	{
 		level  = FMath::Clamp(level,0,100);
 		
-		BigInt Cost = m_fBaseCost*level;
+		int Cost = m_fBaseCost*level;
 
 		if(m_nDmgLevel>1)
 		{
 			int IterMax = m_nDmgLevel-1;
-			
-			for(int i=0; i<IterMax;i++)
-			{
-				//Cost.MultiplyFast(2);
-				Cost = UDiaBlueprintFunctionLibrary::MultiplePercent(Cost,150,0,2);
-			}
+
+			Cost*=IterMax;
 		}
 
 		return Cost;

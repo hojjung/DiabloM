@@ -81,9 +81,12 @@ void UUpgradePanel::NativeOnInitialized()
 	m_UpgradeSkill05->m_OnClicked.AddUObject(this,&UUpgradePanel::OnSkillEquipPressed);
 
 	OnUpgradeChanged();
+	
 	CloseSkillHotkeyPanel();
 
-	m_SkillEquipBtnProxy->m_BtnAutoUseSkill->SetVisibility(ESlateVisibility::Collapsed);	
+	m_SkillEquipBtnProxy->m_BtnAutoUseSkill->SetVisibility(ESlateVisibility::Collapsed);
+
+	UDiabloGameInstance::Get->m_GoldManager->m_OnCurrencyChanged.AddUObject(this,&UUpgradePanel::UpdateSkillStones);
 }
 
 void UUpgradePanel::SetPanel1()
@@ -247,6 +250,11 @@ FReply UUpgradePanel::NativeOnTouchEnded(const FGeometry& InGeometry, const FPoi
 	FReply Re = Super::NativeOnTouchEnded(InGeometry, InGestureEvent);
 
 	return FReply::Handled();
+}
+
+void UUpgradePanel::UpdateSkillStones()
+{
+	m_TxtSkillStones->SetText(FText::FromString(FString::Printf(TEXT("스킬 마정석:%d"),UDiabloGameInstance::Get->m_GoldManager->GetSkillStone())));
 }
 
 
