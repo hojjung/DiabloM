@@ -7,7 +7,7 @@
 #include "UObject/NoExportTypes.h"
 #include "MagicStoneDgManager.generated.h"
 
-#define MAGICDGTIME 35.f
+#define MAGICDGTIME 25.f
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
 struct FMagicDgTableRow : public FDungeonDataTableRow

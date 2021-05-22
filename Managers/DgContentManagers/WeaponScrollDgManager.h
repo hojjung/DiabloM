@@ -5,7 +5,7 @@
 
 #include "WeaponScrollDgManager.generated.h"
 
-#define WEAPONDGLIMITTIME 33.f
+#define WEAPONDGLIMITTIME 35.f
 
 USTRUCT(BlueprintType)//���̵�,Ƽ��
 struct FWeaponDgTableRow : public FDungeonDataTableRow
