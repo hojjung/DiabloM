@@ -272,9 +272,20 @@ bool UGoldManager::SubtractDungeonKeys(int v)
 
 	m_DungeonKeys -= v;
 
+	m_CachedDgKeys+=v;
+
 	m_OnCurrencyChanged.Broadcast();
 
 	return true;
+}
+
+void UGoldManager::UploadCachedDgkeys()
+{
+	if(m_CachedDgKeys.GetValue()>0)
+	{
+		UDiabloGameInstance::Get->m_PlayfabManager->SubtractDgKey(m_CachedDgKeys.GetValue());
+		m_CachedDgKeys=0;
+	}
 }
 
 void UGoldManager::SetOfflineMinutes(bool bIsNewCreatedPlayer, const FDateTime& currentTime,

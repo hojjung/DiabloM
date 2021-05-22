@@ -1,5 +1,6 @@
 #include "PVPPanel.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/DgContentManagers/DungeonManager.h"
 
 void UPVPPanel::NativeOnInitialized()
 {
@@ -18,6 +19,11 @@ void UPVPPanel::NativeOnInitialized()
 
 void UPVPPanel::RequestMatch()
 {
+	if(!UDiabloGameInstance::Get->m_DungeonManager->TryOpenDgKey())
+	{
+		UDiabloGameInstance::Get->RequestPopupText(TEXT("던전 열쇠 부족"));
+		return;
+	}
 	m_BtnMatching->SetIsEnabled(false);
 	
 	UDiabloGameInstance::Get->m_PVPManager->RequestPVPMatching();	

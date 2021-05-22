@@ -51,10 +51,13 @@ void UDungeonManager::Tick(float deltaTime)
 	m_CurrentSpawnManager->Tick(deltaTime);
 }
 
+bool UDungeonManager::TryOpenDgKey()
+{
+	return UDiabloGameInstance::Get->m_GoldManager->SubtractDungeonKeys(1);
+}
 
 void UDungeonManager::OnLevelLoadComplete(UWorld* world)
 {
 	m_OnLevelLoadComplete.ExecuteIfBound(world);
 	m_OnLevelLoadComplete.Unbind();
-
 }

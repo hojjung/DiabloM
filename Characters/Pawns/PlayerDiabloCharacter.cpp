@@ -12,7 +12,7 @@
 #include "Managers/EquipManager.h"
 
 APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit)
-	: Super(objInit.SetDefaultSubobjectClass<UPlayerMovement>("Movement00"))
+	: Super(objInit.SetDefaultSubobjectClass<UPlayerMovement>(TEXT("Movement00")))
 {
 	m_fMaxRage = 100;
 	m_fGainRagePer = 3;
@@ -22,19 +22,19 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 
 	m_Capsule->SetCapsuleSize(55, 88);
 
-	m_DissolveCam = CreateDefaultSubobject<UCameraDissolve>("CamDissolve00");
+	m_DissolveCam = CreateDefaultSubobject<UCameraDissolve>(TEXT("CamDissolve00"));
 	m_DissolveCam->SetupAttachment(RootComponent);
 	m_DissolveCam->SetRelativeRotation(FRotator(-55.f, 45.f, 0.f)); //-50
 	m_DissolveCam->SetRelativeLocation(FVector(0, 0, 0.f));
 	m_DissolveCam->TargetArmLength = 1375.f; //1400
 	//
-	m_TopCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera00");
+	m_TopCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera00"));
 	m_TopCamera->SetupAttachment(m_DissolveCam);
 	m_TopCamera->FieldOfView = 35.f;
 	m_TopCamera->SetRelativeLocation(FVector(-150, 0, -150.f));
 	//m_TopCamera->SetProjectionMode(ECameraProjectionMode::Orthographic);
 	//
-	m_PetComp = CreateDefaultSubobject<UChildActorComponent>("Child01");
+	m_PetComp = CreateDefaultSubobject<UChildActorComponent>(TEXT("Child01"));
 	m_PetComp->SetupAttachment(RootComponent);
 	m_PetComp->SetRelativeLocation(FVector(0, 90, 150));
 	m_PetComp->SetRelativeRotation(FRotator(0, -90, 0));
@@ -66,7 +66,7 @@ APlayerDiabloCharacter::APlayerDiabloCharacter(const FObjectInitializer& objInit
 	// TEXT("WidgetBlueprint'/Game/Blueprints/Widget/CommonElement/WB_TextPlayerName.WB_TextPlayerName_C'"));
 	// m_NameCard = Create("asd",FoundW.Class);
 	//m_NameCard->SetWidgetClass(FoundW.Class);
-	m_NameCard = CreateDefaultSubobject<UFloatingTextWidgetComponent>("NameCard");
+	m_NameCard = CreateDefaultSubobject<UFloatingTextWidgetComponent>(TEXT("NameCard"));
 	m_NameCard->SetupAttachment(RootComponent);
 	static ConstructorHelpers::FClassFinder<UUserWidget> FoundW(
 		TEXT("WidgetBlueprint'/Game/Blueprints/Widget/CommonElement/WB_TextPlayerName.WB_TextPlayerName_C'"));
@@ -205,16 +205,18 @@ void APlayerDiabloCharacter::WeaponDataInject(const FWeaponSpec& spec)
 		return;
 	}
 
+	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
+	
 	if (m_CreatedWeapon)
 	{
+		StreamableManager.Unload(m_CreatedWeapon->GetClass());
 		FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld, false);
 		m_CreatedWeapon->DetachFromActor(Rule);
 		m_CreatedWeapon->Destroy();
 	}
 
-	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
 
-	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_EquipData->m_ClassVisualActor, false);
+	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_EquipData->m_ClassVisualActor, true);
 	//
 
 
@@ -240,22 +242,19 @@ void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
 		return;
 	}
 
+	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
+
 	if (m_CreatedWing)
 	{
+		StreamableManager.Unload(m_CreatedWing->GetClass());
 		FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld, false);
 		m_CreatedWing->DetachFromActor(Rule);
 		m_CreatedWing->Destroy();
 		m_Movement->m_fMoveSpeedMultiple = 1.f;
 	}
 
-	if (!spec.m_WingData->m_ClassVisualWingActor)
-	{
-		return;
-	}
 
-	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
-
-	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_WingData->m_ClassVisualWingActor, false);
+	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_WingData->m_ClassVisualWingActor, true);
 	//
 
 
@@ -264,13 +263,17 @@ void APlayerDiabloCharacter::WingDataInject(const FWingSpec& spec)
 	Param.bNoFail = true;
 
 	m_CreatedWing = GetWorld()->SpawnActor<AEquipmentActor>(LoadedEquip, GetActorLocation(),
-	                                                        GetActorRotation(), Param);
+	                                                        FRotator(0.f), Param);
 
 	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
 	                               EAttachmentRule::KeepRelative, false);
 
-	m_CreatedWing->AttachToComponent(m_SkBody, Rule, "Wing");
-
+	m_CreatedWing->AttachToComponent(m_SkBody, Rule, TEXT("Wing"));
+	
+	m_CreatedWing->SetActorRelativeLocation(FVector(-10,10,0));
+	
+	m_CreatedWing->SetActorRelativeRotation(FRotator(-90,0,0));
+	
 	m_Movement->m_fMoveSpeedMultiple = spec.m_WingData->GetMoveSpdBonus();
 
 	m_OnMeshChanged.Broadcast(this);
@@ -296,15 +299,20 @@ void APlayerDiabloCharacter::PetDataInject(const FPetSpec& spec)
 		return;
 	}
 
+	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
+
 
 	if (!spec.m_PetData->m_ClassPetSkin)
 	{
 		return;
 	}
 
-	FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
+	if(m_PetComp->GetChildActorTemplate())
+	{
+		StreamableManager.Unload(m_PetComp->GetChildActorTemplate());
+	}
 
-	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_PetData->m_ClassPetSkin, false);
+	auto LoadedEquip =StreamableManager.LoadSynchronous(spec.m_PetData->m_ClassPetSkin, true);
 	//
 	
 
@@ -411,9 +419,9 @@ bool APlayerDiabloCharacter::IsAlive() const
 void APlayerDiabloCharacter::PlayColorEffect(const FLinearColor& colorWant, float effectLength) //애초에 사용된적이 없음
 {
 	FVector ColorV = UKismetMathLibrary::Conv_LinearColorToVector(colorWant);
-	FName ColorParamName = "EffectColor";
-	FName TimeParamName = "StartTime";
-	FName EffectLengthParamName = "EffectLength";
+	FName ColorParamName = TEXT("EffectColor");
+	FName TimeParamName = TEXT("StartTime");
+	FName EffectLengthParamName = TEXT("EffectLength");
 
 	float TimeSec = UGameplayStatics::GetTimeSeconds(GetWorld());
 

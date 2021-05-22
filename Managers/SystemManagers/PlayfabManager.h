@@ -114,6 +114,8 @@ public://user data
 	UPROPERTY()
 	float m_fDeltaCountRanking;
 	UPROPERTY()
+	float m_fDeltaInvenUpdate;
+	UPROPERTY()
 	FString m_LoadedNickname;
 	UPROPERTY()
 	FString m_CurrentVersionName;//RELEASE0408
@@ -190,6 +192,8 @@ protected:
 
 	void OnNewPlayerDataInitSuccess(const FExeCScriptRslt& rslt);
 
+	void OnRefillDgKey(const FExeCScriptRslt& rslt);
+
 	void OnInboxRefreshSuccess(const FExeCScriptRslt& rslt);
 
 	void OnSuccessGetPlayerAroundRanking(const PlayFab::ClientModels::FGetLeaderboardAroundPlayerResult&);
@@ -198,11 +202,7 @@ protected:
 
 	void OnSuccessGetTitleNews(const PlayFab::ClientModels::FGetTitleNewsResult&);
 	//
-	void OnPurchaseWithGemStoneSuccess(const PlayFab::ClientModels::FPurchaseItemResult&);
-
-	void OnPurchaseWithPetTicketSuccess(const PlayFab::ClientModels::FPurchaseItemResult&);
-
-	void OnPurchaseWithWingTicketSuccess(const PlayFab::ClientModels::FPurchaseItemResult&);
+	void OnPurchaseWithVirtualCurrencySuccess(const PlayFab::ClientModels::FPurchaseItemResult&);
 
 	//
 	void OnAddGemStone(const PlayFab::ClientModels::FModifyUserVirtualCurrencyResult&);
@@ -315,6 +315,7 @@ public:
 	void SubtractSkillStone(int amount);
 
 	void SubtractDgKey(int amount);
+
 	//
 	void AddGemStone(int amount);
 	//
@@ -351,6 +352,8 @@ public:
 	void UploadMainData();
 	
 	void UploadCachedDataToServer();
+
+	void RequestRefillDungeonKey();
 };
 
 

@@ -14,11 +14,18 @@ UWingEquipButton::UWingEquipButton(const FObjectInitializer& objInit):Super(objI
 void UWingEquipButton::UpdateEquipWing()
 {
 	SetDescPreviewText(*m_WingSpec);
-	SetCombineText(m_WingSpec->StackCount);
 	SetEquipped(m_WingSpec->IsEquipped);
 	m_ImgTierColor->SetBrushTintColor(m_WingSpec->m_WingData->GetTier()->m_TierColor);
 
 	m_BtnEquip->SetIsEnabled(m_WingSpec->IsUnlocked);
+
+	if(m_WingSpec->IsUnlocked)
+	{
+		m_BtnBuy->SetVisibility(ESlateVisibility::Collapsed);
+	}
+
+	int Cost = m_WingSpec->m_WingData->m_nCost; 
+	m_ImgTxtCost->SetText(FText::AsNumber(Cost));
 }
 
 void UWingEquipButton::Init(const FWingSpec& data, int index)
@@ -27,7 +34,7 @@ void UWingEquipButton::Init(const FWingSpec& data, int index)
 	m_TextName->SetText(m_WingSpec->m_WingData->m_ShowingName); 
 	m_nIndex = index;
 	m_BtnEquip->OnClicked.AddDynamic(this,&UWingEquipButton::TryEquip);
-	m_BtnCombine->OnClicked.AddDynamic(this,&UWingEquipButton::TryCombine);
+	m_BtnBuy->OnClicked.AddDynamic(this,&UWingEquipButton::TryBuy);
 	m_ImgIcon->SetBrushFromTexture(data.m_WingData->m_Icon);
 	UpdateEquipWing();
 }
@@ -49,16 +56,6 @@ void UWingEquipButton::SetEquipped(bool b)
 	}
 }
 
-void UWingEquipButton::SetCombineText(int stack)
-{
-	FFormatOrderedArguments Args;
-	Args.Add(stack);
-
-	FText tt = FText::Format(m_FormatCombine,Args);
-	
-	m_TextCombine->SetText(tt);
-}
-
 void UWingEquipButton::TryEquip()
 {
 	if(m_WingSpec)
@@ -71,15 +68,11 @@ void UWingEquipButton::TryEquip()
 	}
 }
 
-void UWingEquipButton::TryCombine()
+void UWingEquipButton::TryBuy()
 {
-	if(m_WingSpec)
+	if(m_WingSpec&&!m_WingSpec->IsUnlocked)
 	{
-		UDiabloGameInstance::Get->m_EquipManager->TryCombineWing(m_nIndex);
-	}
-	else
-	{
-		PRINTF("EqBtn-NoData");
+		UDiabloGameInstance::Get->m_EquipManager->TryUnlockWing(m_nIndex);
 	}
 }
 

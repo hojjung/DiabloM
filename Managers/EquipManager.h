@@ -100,6 +100,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	int StackCount = 0;
 	
+	
 	const FWingTable* m_WingData;
 };
 
@@ -184,6 +185,8 @@ protected:
 	TMap<const FGachaAbleRow*,int> m_MapPlayerWeapon;
 
 	TMap<const FGachaAbleRow*,int> m_MapAccessory;
+
+	TMap<const FGachaAbleRow*,int> m_MapWing;
 	
 public:
 	FOnEquipChanged m_OnPlSkinChanged;
@@ -203,6 +206,7 @@ public:
 	TArray<const FWeaponTable*> m_AryWeaponTable;
 	TArray<const FPetTable*> m_AryPetTable;
 	TArray<const FAccessoryTable*> m_AryAccesTable;
+	TArray<const FWingTable*> m_AryWingTable;
 	
 	//
 
@@ -215,7 +219,7 @@ public:
 	UPROPERTY()
 	int m_nSelectedPet;
 	UPROPERTY()//손가락이 떨어질때 서버에 빼는 강화석
-	int m_nCachedWeaponStoneForServer;
+	int m_nCachedWeaponStones;
 
 protected:
 	int StringSplitEachItem(const FString& equipDatas, TArray<FString>& outStrAry) const;
@@ -228,8 +232,10 @@ protected:
 	
 	void SetStringAccesoryUnlocked(const TArray<UPlayFabJsonValue*>&  acceUnlock);
 
+	void SetStringWingUnlocked(const TArray<UPlayFabJsonValue*>&  wingUnlock);
+
 public:
-	void SetEquipDataFromServer(const TArray<UPlayFabJsonValue*>& classSkin, const TArray<UPlayFabJsonValue*>& weapon,const TArray<UPlayFabJsonValue*>& pet);
+	void SetEquipDataFromServer(const TArray<UPlayFabJsonValue*>& classSkin, const TArray<UPlayFabJsonValue*>& weapon,const TArray<UPlayFabJsonValue*>& wing,const TArray<UPlayFabJsonValue*>& pet);
 
 	void EquipAll();
 	
@@ -252,6 +258,13 @@ public:
 	bool TryCombineWeapon(int index);
 
 	bool TryCombinePet(int index);
+
+	bool TryUnlockWing(int index);
+
+public:
+	void UnlockWing(int index);
+
+	
 
 public:
 	bool TryLvUpWeapon(int index);

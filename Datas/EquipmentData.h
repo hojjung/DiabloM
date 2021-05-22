@@ -156,6 +156,8 @@ struct FWingTable : public FGachaAbleRow
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int m_nCost;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TAssetSubclassOf<AEquipmentActor> m_ClassVisualWingActor = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta=(UIMin = "1.0", UIMax = "3.3"))
 	float m_fWingMoveSpeedMultiple = 1.f;

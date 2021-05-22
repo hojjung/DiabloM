@@ -15,6 +15,11 @@ void UWeaponDgPanel::NativeOnInitialized()
 
 void UWeaponDgPanel::EnterWeaponDg01()
 {
+	if(!UDiabloGameInstance::Get->m_DungeonManager->TryOpenDgKey())
+	{
+		UDiabloGameInstance::Get->RequestPopupText(TEXT("던전 열쇠 부족"));
+		return;
+	}
 	UDiabloGameInstance::Get->m_WeaponDgManager->RequestMoveWeaponDg(0);
 	UDiabloGameInstance::Get->m_DungeonManager->OpenLevel(UDiabloGameInstance::Get->m_WeaponDgManager);
 }

@@ -25,20 +25,20 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UImage* m_ImgTierColor;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* m_TextEquip;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* m_TextDesc;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TextEquip;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UTextBlock* m_TextCombine;
+	UImageAndText* m_ImgTxtCost;
 	
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnEquip;
+	UButton* m_BtnBuy;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnCombine;
+	UButton* m_BtnEquip;
 
 protected:
 	FTextFormat m_FormatCombine;
@@ -52,8 +52,6 @@ protected:
 
 	void SetEquipped(bool b);
 
-	void SetCombineText(int stack);
-	
 public:
 	void Init(const FWingSpec& data,int index);
 
@@ -63,5 +61,5 @@ public:
     void TryEquip();
 
 	UFUNCTION()
-    void TryCombine();
+    void TryBuy();
 };

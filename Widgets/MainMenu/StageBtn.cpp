@@ -1,5 +1,6 @@
 #include "StageBtn.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/DgContentManagers/DungeonManager.h"
 
 #define LOCTEXT_NAMESPACE "StageButton"
 

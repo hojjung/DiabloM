@@ -35,6 +35,8 @@ protected:
 
 	FSafeInt m_DungeonKeys;
 
+	FSafeInt m_CachedDgKeys;
+
 public:
 	BigInt m_OfflineGold;
 	UPROPERTY()
@@ -133,4 +135,6 @@ public:
 	{
 		return m_DungeonKeys.GetValue();
 	}
+
+	void UploadCachedDgkeys();
 };

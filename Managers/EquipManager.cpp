@@ -47,11 +47,12 @@ UEquipManager::UEquipManager()
 
 void UEquipManager::SetEquipDataFromServer(const TArray<UPlayFabJsonValue*>& classSkin,
                                            const TArray<UPlayFabJsonValue*>& weapon,
+                                           const TArray<UPlayFabJsonValue*>& wing,
                                            const TArray<UPlayFabJsonValue*>& pet)
 {
 	SetStringSkinUnlocked(classSkin);
 	SetStringWeaponUnlocked(weapon);
-	//SetStringWingUnlocked(wing);
+	SetStringWingUnlocked(wing);
 	SetStringPetUnlocked(pet);
 	//SetStringAccesoryUnlocked(acce);
 }
@@ -178,6 +179,34 @@ void UEquipManager::SetStringAccesoryUnlocked(const TArray<UPlayFabJsonValue*>& 
 		m_AryAcce[i].m_AccessoryData = m_AryAccesTable[i];
 		m_AryAcce[i].SetLevel(m_AryPets[i].Level);
 		m_MapAccessory.Add(m_AryAcce[i].m_AccessoryData, i);
+	}
+}
+
+void UEquipManager::SetStringWingUnlocked(const TArray<UPlayFabJsonValue*>& wingUnlock)
+{
+	m_MapWing.Empty(30);
+	m_AryWings.Empty(30);
+	
+	UEquipManager::GetWingDataTable->GetAllRows("", m_AryWingTable);
+	//
+	TArray<TSharedPtr<FJsonValue>> AryJsonValue;
+
+	for (auto* playfabJsonV : wingUnlock)
+	{
+		AryJsonValue.Add(playfabJsonV->GetRootValue());
+	}
+
+	if (!FJsonObjectConverter::JsonArrayToUStruct(AryJsonValue, &m_AryWings, 0, 0))
+	{
+		return;
+	}
+
+	int IterMax = FMath::Min(m_AryWings.Num(), m_AryWingTable.Num());
+
+	for (int i = 0; i < IterMax; i++)
+	{
+		m_AryWings[i].m_WingData = m_AryWingTable[i];
+		m_MapWing.Add(m_AryWings[i].m_WingData, i);
 	}
 }
 
@@ -511,6 +540,32 @@ bool UEquipManager::TryCombinePet(int index)
 	return true;
 }
 
+bool UEquipManager::TryUnlockWing(int index)
+{
+	if (index >= m_AryWings.Num() || index<0)
+	{
+		return false; //full
+	}
+
+	if (!UDiabloGameInstance::Get->m_GoldManager->SubtractWingTicket(m_AryWings[index].m_WingData->m_nCost))
+	{
+		return false;
+	}
+
+	FString WingItemName = FString::Printf(TEXT("Wing%02d"),index+1);
+
+	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithWingTicket(m_AryWings[index].m_WingData->m_nCost,WingItemName);
+
+	return true;
+}
+
+void UEquipManager::UnlockWing(int index)
+{
+	m_AryWings[index].IsUnlocked = true;
+
+	m_OnWingChanged.Broadcast(index, index);
+}
+
 bool UEquipManager::TryLvUpWeapon(int index)
 {
 	if (m_AryWeapons[index].Level >= m_AryWeapons[index].GetMaxLv())
@@ -523,7 +578,7 @@ bool UEquipManager::TryLvUpWeapon(int index)
 		return false;
 	}
 
-	m_nCachedWeaponStoneForServer+=m_AryWeapons[index].m_LvlUpCost;
+	m_nCachedWeaponStones+=m_AryWeapons[index].m_LvlUpCost;
 
 	m_AryWeapons[index].Level++;
 	m_AryWeapons[index].SetLevel(m_AryWeapons[index].Level);
@@ -737,20 +792,22 @@ void UEquipManager::SetWingDataToJson(UPlayFabJsonObject* obj)
 
 	AryPetObj.Empty(30);
 
-	for (const FPetSpec& PetSpec : m_AryPets)
+	for (const FWingSpec& WingSpec : m_AryWings)
 	{
 		UPlayFabJsonObject* SkinSpecObj = UPlayFabJsonObject::ConstructJsonObject(this);
 
-		SkinSpecObj->SetNumberField(TEXT("Level"), PetSpec.Level);
+		//SkinSpecObj->SetNumberField(TEXT("Level"), WingSpec.Level);
 
-		SkinSpecObj->SetNumberField(TEXT("IsEquipped"), PetSpec.IsEquipped);
+		SkinSpecObj->SetBoolField(TEXT("IsUnlocked"), WingSpec.IsUnlocked);
 
-		SkinSpecObj->SetNumberField(TEXT("StackCount"), PetSpec.StackCount);
+		SkinSpecObj->SetBoolField(TEXT("IsEquipped"), WingSpec.IsEquipped);
+
+		SkinSpecObj->SetNumberField(TEXT("StackCount"), WingSpec.StackCount);
 
 		AryPetObj.Add(SkinSpecObj);
 	}
 
-	obj->SetObjectArrayField(TEXT("Pet"), AryPetObj);
+	obj->SetObjectArrayField(TEXT("Wing"), AryPetObj);
 }
 
 int UEquipManager::GetWeaponUnlockCount()
@@ -815,9 +872,12 @@ FString UEquipManager::GetPetUnlockStr()
 
 void UEquipManager::UploadCachedWeaponStoneForServer()
 {
-	if(m_nCachedWeaponStoneForServer>0)
+	if(m_nCachedWeaponStones>0)
 	{
-		UDiabloGameInstance::Get->m_PlayfabManager->SubtractWeaponStone(m_nCachedWeaponStoneForServer);
-		m_nCachedWeaponStoneForServer=0;
+		UDiabloGameInstance::Get->m_PlayfabManager->SubtractWeaponStone(m_nCachedWeaponStones);
+		
+		m_nCachedWeaponStones=0;
 	}
+
+		
 }

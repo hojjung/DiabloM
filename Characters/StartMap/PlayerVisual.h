@@ -39,6 +39,8 @@ protected:
 
 	UPROPERTY()
 	AEquipmentActor* m_WeaponActor;
+	UPROPERTY()
+	AEquipmentActor* m_WingActor;
 	
 protected:
 	virtual void BeginPlay() override;

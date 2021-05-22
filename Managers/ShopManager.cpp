@@ -443,6 +443,55 @@ void UShopManager::OnPurchasedGainItem(FString itemID,bool updateData)
 		UDiabloGameInstance::Get->GetHud()->m_Canvas->m_PanelGacha->RollGachaAccessoryFiftyTimes();
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestGetInventory();
 	}
+	else if(itemID == TEXT("Wing01"))
+	{
+		UDiabloGameInstance::Get->m_EquipManager->UnlockWing(0);
+	}
+	else if(itemID == TEXT("Wing02"))
+	{
+		UDiabloGameInstance::Get->m_EquipManager->UnlockWing(1);
+	}
+	else if(itemID == TEXT("Wing03"))
+	{
+		UDiabloGameInstance::Get->m_EquipManager->UnlockWing(2);
+	}
+	else if(itemID == TEXT("Wing04"))
+	{
+		UDiabloGameInstance::Get->m_EquipManager->UnlockWing(3);
+	}
+	else if(itemID == TEXT("Wing05"))
+	{
+		UDiabloGameInstance::Get->m_EquipManager->UnlockWing(4);
+	}
+	else if(itemID == TEXT("Wing06"))
+	{
+		UDiabloGameInstance::Get->m_EquipManager->UnlockWing(5);
+	}
+	else if(itemID == TEXT("Wing07"))
+	{
+		UDiabloGameInstance::Get->m_EquipManager->UnlockWing(6);
+	}
+	else if(itemID == TEXT("Wing08"))
+	{
+		UDiabloGameInstance::Get->m_EquipManager->UnlockWing(7);
+	}
+	else if(itemID == TEXT("Wing09"))
+	{
+		UDiabloGameInstance::Get->m_EquipManager->UnlockWing(8);
+	}
+	else if(itemID == TEXT("Wing10"))
+	{
+		UDiabloGameInstance::Get->m_EquipManager->UnlockWing(9);
+	}
+	else if(itemID == TEXT("Wing11"))
+	{
+		UDiabloGameInstance::Get->m_EquipManager->UnlockWing(10);
+	}
+	else if(itemID == TEXT("RefillDungeonKey"))
+	{
+		UDiabloGameInstance::Get->m_PlayfabManager->RequestRefillDungeonKey();
+	}
+	//
 
 	if(updateData)
 	{

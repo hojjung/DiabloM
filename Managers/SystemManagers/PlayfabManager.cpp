@@ -41,6 +41,7 @@ UPlayfabManager::UPlayfabManager()
 	m_bIsCustomID=false;
 	//
 	m_fDeltaInboxUpdateCooldown =160.f;
+
 }
 
 TSharedPtr<UPlayFabAuthenticationContext> UPlayfabManager::CreateAuthCon(const FString* newSessonTicket)
@@ -102,6 +103,19 @@ void UPlayfabManager::UploadCachedDataToServer()
 	UDiabloGameInstance::Get->m_QuestManager->UploadQuestData();
 	UDiabloGameInstance::Get->m_EquipManager->UploadCachedWeaponStoneForServer();
 	UDiabloGameInstance::Get->m_PlayerUpgradeManager->UploadCachedSkillStoneForServer();
+	UDiabloGameInstance::Get->m_GoldManager->UploadCachedDgkeys();
+}
+
+void UPlayfabManager::RequestRefillDungeonKey()
+{
+	PlayFab::ClientModels::FExecuteCloudScriptRequest Req;
+	
+	Req.FunctionName = TEXT("RefillDgKeys");
+	
+	Req.GeneratePlayStreamEvent = true;
+	
+	GetClientAPI->ExecuteCloudScript(Req,FExeCScriptDele::CreateUObject(this, &UPlayfabManager::OnRefillDgKey),
+		FFailDele::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
 void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
@@ -113,6 +127,8 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 	m_fDeltaCountMinutePlaytime += deltaTime;
 
 	m_fDeltaInboxUpdateCooldown += deltaTime;
+
+	m_fDeltaInvenUpdate += deltaTime;
 
 	if (m_fDeltaCountMinutePlaytime > 60.f)
 	{
@@ -138,6 +154,11 @@ void UPlayfabManager::TickTryUpdateUserData(float deltaTime)
 		RequestRetrievePVPPlayerAroundRanking();
 		//나의 랭킹 업데이트가 필요
 		m_fDeltaCountRanking = 0.f;
+	}
+
+	if(m_fDeltaInvenUpdate>100.f)
+	{
+		RequestGetInventory();
 	}
 
 	UDiabloGameInstance::Get->m_AdverManager->Tick(deltaTime);
@@ -242,6 +263,12 @@ void UPlayfabManager::OnNewPlayerDataInitSuccess(const FExeCScriptRslt& rslt)
 {
 	
 	RequestServerOpenCheck();
+}
+
+void UPlayfabManager::OnRefillDgKey(const FExeCScriptRslt& rslt)
+{
+	//Update
+	UDiabloGameInstance::Get->m_GoldManager->SetDgKeys(20);
 }
 
 void UPlayfabManager::OnInboxRefreshSuccess(const FExeCScriptRslt& rslt)
@@ -635,6 +662,8 @@ FString UPlayfabManager::GetMainDataJsonStr()
 	UDiabloGameInstance::Get->m_EquipManager->SetWeaponDataToJson(TotalMaindataJsonObj);
 	//Skin
 	UDiabloGameInstance::Get->m_EquipManager->SetSkinDataToJson(TotalMaindataJsonObj);
+
+	UDiabloGameInstance::Get->m_EquipManager->SetWingDataToJson(TotalMaindataJsonObj);
 	//Pet
 	UDiabloGameInstance::Get->m_EquipManager->SetPetDataToJson(TotalMaindataJsonObj);
 	//
@@ -878,7 +907,7 @@ void UPlayfabManager::OnIAPGoogleValidateSuccess(const PlayFab::ClientModels::FV
 
 void UPlayfabManager::RequestGetInventory()
 {
-
+	m_fDeltaInvenUpdate=0;
 	PlayFab::ClientModels::FGetUserInventoryRequest Req;
 	GetClientAPI->GetUserInventory(Req,
 		PlayFab::UPlayFabClientAPI::FGetUserInventoryDelegate::CreateUObject(this,&UPlayfabManager::OnSuccessGetInven),
@@ -1066,28 +1095,16 @@ void UPlayfabManager::PurchaseWithGemStone(int amount,FString itemName)
 	Req.Price = amount;
 	Req.ItemId = itemName;
 	Req.VirtualCurrency=TEXT("GG");
-	GetClientAPI->PurchaseItem(Req,PlayFab::UPlayFabClientAPI::FPurchaseItemDelegate::CreateUObject(this,&UPlayfabManager::OnPurchaseWithGemStoneSuccess),
+	GetClientAPI->PurchaseItem(Req,PlayFab::UPlayFabClientAPI::FPurchaseItemDelegate::CreateUObject(this,&UPlayfabManager::OnPurchaseWithVirtualCurrencySuccess),
 		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
-void UPlayfabManager::OnPurchaseWithGemStoneSuccess(const PlayFab::ClientModels::FPurchaseItemResult& rslt)
+void UPlayfabManager::OnPurchaseWithVirtualCurrencySuccess(const PlayFab::ClientModels::FPurchaseItemResult& rslt)
 {
 	FString PurchasedItemID =  rslt.Items[0].ItemId;
 
 	UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(PurchasedItemID,true);
 
-}
-
-void UPlayfabManager::OnPurchaseWithPetTicketSuccess(const PlayFab::ClientModels::FPurchaseItemResult& rslt)
-{
-	FString PurchasedItemID =  rslt.Items[0].ItemId;
-
-	UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(PurchasedItemID,true);
-}
-
-void UPlayfabManager::OnPurchaseWithWingTicketSuccess(const PlayFab::ClientModels::FPurchaseItemResult&)
-{
-	
 }
 
 void UPlayfabManager::AddGemStone(int amount)
@@ -1117,7 +1134,7 @@ void UPlayfabManager::PurchaseWithPetTicket(int amount)
 	Req.VirtualCurrency=TEXT("PT");
 	//Req.CharacterId = m_PlayfabID;
 	//FPurchaseItemDelegate, const ClientModels::FPurchaseItemResult&
-	GetClientAPI->PurchaseItem(Req,PlayFab::UPlayFabClientAPI::FPurchaseItemDelegate::CreateUObject(this,&UPlayfabManager::OnPurchaseWithPetTicketSuccess),
+	GetClientAPI->PurchaseItem(Req,PlayFab::UPlayFabClientAPI::FPurchaseItemDelegate::CreateUObject(this,&UPlayfabManager::OnPurchaseWithVirtualCurrencySuccess),
 		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
@@ -1127,7 +1144,7 @@ void UPlayfabManager::PurchaseWithWingTicket(int amount, FString itemName)
 	Req.Price = amount;
 	Req.ItemId = itemName;
 	Req.VirtualCurrency=TEXT("WT");
-	GetClientAPI->PurchaseItem(Req,PlayFab::UPlayFabClientAPI::FPurchaseItemDelegate::CreateUObject(this,&UPlayfabManager::OnPurchaseWithGemStoneSuccess),
+	GetClientAPI->PurchaseItem(Req,PlayFab::UPlayFabClientAPI::FPurchaseItemDelegate::CreateUObject(this,&UPlayfabManager::OnPurchaseWithVirtualCurrencySuccess),
 		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UPlayfabManager::OnErrorPlayfabReq));
 }
 
@@ -1261,6 +1278,7 @@ void UPlayfabManager::SetMainDataToManagers(const FString& maindataFromServer)
 	SetEquipDataFromServer(
 		JsonObj->GetArrayField(TEXT("Skin")),
 		JsonObj->GetArrayField(TEXT("Weapon")),
+		JsonObj->GetArrayField(TEXT("Wing")),
 		JsonObj->GetArrayField(TEXT("Pet")));
 }
 

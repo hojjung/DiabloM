@@ -20,8 +20,8 @@ APlayerVisual::APlayerVisual()
 	m_AnimSeq = FoundAnim.Object;
 
 	//init skMesh
-	RootComponent = CreateDefaultSubobject<USceneComponent>("Root");
-	CreateSkMeshComponent(&m_MeshBody, "SkMeshRoot", RootComponent);
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	CreateSkMeshComponent(&m_MeshBody, TEXT("SkMeshRoot"), RootComponent);
 
 	m_MeshBody->SetRelativeLocation(FVector(0, 0, -80.f));//-80
 	m_MeshBody->SetRelativeRotation(FRotator(0, -90.f, 0));
@@ -34,13 +34,13 @@ APlayerVisual::APlayerVisual()
 	m_MeshBody->SetSkeletalMesh(FoundSkMesh.Object);
 	m_MeshBody->SetAnimation(m_AnimSeq);
 	//
-	m_Spring = CreateDefaultSubobject<USpringArmComponent>("Spring");
+	m_Spring = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring"));
 	m_Spring->SetupAttachment(RootComponent);
 	m_Spring->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));
 	m_Spring->SetRelativeLocation(FVector(0.f, 0.f, 30.f));//30
 	m_Spring->TargetArmLength = 300.f;
 
-	m_Capture = CreateDefaultSubobject<USceneCaptureComponent2D>("Capture2D");
+	m_Capture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("Capture2D"));
 	m_Capture->SetupAttachment(m_Spring);
 	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> FoundTexture(
 		TEXT("TextureRenderTarget2D'/Game/03_VisualEffect/T_PlayerVisual.T_PlayerVisual'"));
@@ -58,7 +58,7 @@ APlayerVisual::APlayerVisual()
 	//ReadSurfaceDataFlags.SetLinearToGamma(false);
 	//RenderTargetResource->ReadPixels(Image, ReadSurfaceDataFlags);
 
-	m_PetComp = CreateDefaultSubobject<UChildActorComponent>("Child01");
+	m_PetComp = CreateDefaultSubobject<UChildActorComponent>(TEXT("Child01"));
 	m_PetComp->SetupAttachment(RootComponent);
 	m_PetComp->SetRelativeLocation(FVector(0, 45, 75));
 	m_PetComp->SetRelativeRotation(FRotator(0, 90, 0));
@@ -74,7 +74,7 @@ void APlayerVisual::CreateSkMeshComponent(USkeletalMeshComponent** refSkComp, FN
 	(*refSkComp)->bAffectDynamicIndirectLighting = true;
 	(*refSkComp)->PrimaryComponentTick.TickGroup = TG_PrePhysics;
 	(*refSkComp)->SetupAttachment(root);
-	(*refSkComp)->SetCollisionProfileName("CharacterMesh");
+	(*refSkComp)->SetCollisionProfileName(TEXT("CharacterMesh"));
 	(*refSkComp)->SetGenerateOverlapEvents(false);
 	(*refSkComp)->SetCanEverAffectNavigation(false);
 	(*refSkComp)->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -96,7 +96,7 @@ void APlayerVisual::BeginPlay()
 
 void APlayerVisual::ShowMesh()
 {
-	m_MeshBody->SetVisibility(true);
+	SetActorHiddenInGame(false);
 
 	m_MeshBody->SetComponentTickEnabled(true);
 
@@ -107,7 +107,7 @@ void APlayerVisual::ShowMesh()
 
 void APlayerVisual::HideMesh()
 {
-	m_MeshBody->SetVisibility(false);
+	SetActorHiddenInGame(true);
 
 	m_MeshBody->SetComponentTickEnabled(false);
 
@@ -116,7 +116,7 @@ void APlayerVisual::HideMesh()
 
 void APlayerVisual::ShowMeshWithTick()
 {
-	m_MeshBody->SetVisibility(true);
+	SetActorHiddenInGame(false);
 
 	m_MeshBody->SetComponentTickEnabled(true);
 
@@ -127,7 +127,7 @@ void APlayerVisual::ShowMeshWithTick()
 
 void APlayerVisual::HideMeshWithTick()
 {
-	m_MeshBody->SetVisibility(false);
+	SetActorHiddenInGame(true);
 
 	m_MeshBody->SetComponentTickEnabled(false);
 
@@ -165,17 +165,41 @@ void APlayerVisual::OnMeshChanged(APlayerDiabloCharacter* charDia)
 		FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
                                        EAttachmentRule::KeepRelative, false);
 
-		m_WeaponActor->AttachToComponent(m_MeshBody, Rule, "RightHandBottom");
+		m_WeaponActor->AttachToComponent(m_MeshBody, Rule, TEXT("RightHandBottom"));
 
 		m_Capture->ShowOnlyActors.Add(m_WeaponActor);
 	}
 
-	if(charDia->GetCreatedWing())
-	{
-		//const FPlayerSkinTable* EntityData = charDia->GetPlayerEntityData()->m_PlayerData; 
-		//m_MeshBody->SetSkeletalMesh(EntityData->m_PlayerSkin);
-		//m_MeshBody->PlayAnimation(EntityData->m_VisualIdleAnim,true);
-	}
+	//모바일에서 검정색 렌더링 효과있기에 무시
+	// if(charDia->GetCreatedWing())
+	// {
+	// 	if(m_WingActor)
+	// 	{
+	// 		m_Capture->ShowOnlyActors.Remove(m_WingActor);
+	// 		FDetachmentTransformRules Rule(EDetachmentRule::KeepWorld, false);
+	// 		m_WingActor->DetachFromActor(Rule);
+	// 		m_WingActor->Destroy();
+	// 	}
+	// 	
+	// 	FActorSpawnParameters Param;
+	//
+	// 	Param.bNoFail = true;
+	// 	Param.Template = charDia->GetCreatedWing();
+	//
+	// 	m_WingActor = GetWorld()->SpawnActor<AEquipmentActor>(Param);
+	//
+	// 	FAttachmentTransformRules Rule(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
+	// 								EAttachmentRule::KeepRelative, false);
+	//
+	// 	m_WingActor->AttachToComponent(m_MeshBody, Rule, "Wing");
+	//
+	// 	m_WingActor->SetActorRelativeLocation(FVector(-10,10,0));
+	//
+	// 	m_WingActor->SetActorRelativeRotation(FRotator(-90,0,0));
+	//
+	// 	m_Capture->ShowOnlyActors.Add(m_WingActor);
+	//
+	// }
 
 	if(charDia->GetPetComponent())
 	{

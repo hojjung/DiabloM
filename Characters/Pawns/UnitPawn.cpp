@@ -13,7 +13,7 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
     m_fAttackRange=450.f;
     PrimaryActorTick.bCanEverTick = true;
     m_bUseFSM = false;
-    m_Capsule = CreateDefaultSubobject<UCapsuleComponent>("Capsule00");
+    m_Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule00"));
     m_Capsule->InitCapsuleSize(34.0f, 88.0f);
     m_Capsule->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
     m_Capsule->CanCharacterStepUpOn = ECB_No;
@@ -23,10 +23,10 @@ AUnitPawn::AUnitPawn(const FObjectInitializer& objInit): Super(objInit)
     m_Capsule->AreaClass = nullptr; 
     RootComponent = m_Capsule;
 
-    m_Movement = CreateDefaultSubobject<UUnitMovement>("Movement00");
+    m_Movement = CreateDefaultSubobject<UUnitMovement>(TEXT("Movement00"));
     m_Movement->UpdatedComponent = m_Capsule;
 
-    CreateSkMeshComponent(RootComponent, &m_SkBody, "SkMesh00");
+    CreateSkMeshComponent(RootComponent, &m_SkBody, TEXT("SkMesh00"));
     m_SkBody->bCastDynamicShadow = true;
 
     m_PFComp = CreateDefaultSubobject<UPathFollowingComponent>(TEXT("PathFollowingComponent"));
@@ -51,7 +51,7 @@ void AUnitPawn::CreateSkMeshComponent(USceneComponent* rootWant, USkeletalMeshCo
     (*refSkComp)->bAffectDynamicIndirectLighting = true;
     (*refSkComp)->PrimaryComponentTick.TickGroup = TG_PrePhysics;
     (*refSkComp)->SetupAttachment(rootWant);
-    (*refSkComp)->SetCollisionProfileName("NoCollision");
+    (*refSkComp)->SetCollisionProfileName(TEXT("NoCollision"));
     (*refSkComp)->SetGenerateOverlapEvents(false);
     (*refSkComp)->SetCanEverAffectNavigation(false);
 
