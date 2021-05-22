@@ -39,6 +39,10 @@ protected:
 	UButton* m_BtnOpenPVPRank;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnBack;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnRankInfo;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UCanvasPanel* m_RankInfoPanel;
 	//
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<URankingElement> m_ClassRanking;
@@ -71,6 +75,9 @@ public:
 	void OpenStageRank();
 	UFUNCTION()
 	void OpenPVPRank();
+
+	UFUNCTION()
+	void OpenRankInfo();
 };
 
 

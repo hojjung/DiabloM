@@ -13,6 +13,10 @@ void URankingPanel::NativeOnInitialized()
 
 	m_BtnOpenPVPRank->OnClicked.AddDynamic(this,&URankingPanel::OpenPVPRank);
 
+	m_BtnRankInfo->OnClicked.AddDynamic(this,&URankingPanel::OpenRankInfo);
+
+	m_RankInfoPanel->SetVisibility(ESlateVisibility::Collapsed);
+
 	SetStageRank();
 
 	SetPVPRank();
@@ -25,6 +29,8 @@ void URankingPanel::CloseRankPanels()
 	m_RankPVPPanel->SetVisibility(ESlateVisibility::Hidden);
 	
 	m_BackBtnParent->SetVisibility(ESlateVisibility::Hidden);
+
+	m_RankInfoPanel->SetVisibility(ESlateVisibility::Hidden);
 
 	m_RankOpenVert->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
@@ -43,6 +49,15 @@ void URankingPanel::OpenPVPRank()
 	m_RankPVPPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	
 	m_BackBtnParent->SetVisibility(ESlateVisibility::Visible);
+
+	m_RankOpenVert->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void URankingPanel::OpenRankInfo()
+{
+	m_BackBtnParent->SetVisibility(ESlateVisibility::Visible);
+
+	m_RankInfoPanel->SetVisibility(ESlateVisibility::Visible);
 
 	m_RankOpenVert->SetVisibility(ESlateVisibility::Hidden);
 }

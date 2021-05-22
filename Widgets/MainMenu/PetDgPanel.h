@@ -6,6 +6,7 @@
 
 #include "Button.h"
 #include "Image.h"
+#include "PetDgBtn.h"
 #include "ScrollBox.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/CommonElement/ImageAndText.h"
@@ -18,10 +19,11 @@ UCLASS()
 class DIABLOM_API UPetDgPanel : public UUserWidget
 {
 	GENERATED_BODY()
-public:
+	public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UPetDgBtn> m_ClassPetDgBtn;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	UButton* m_BtnPetDg01;
-
+	UScrollBox* m_VertiList;
 public:
 	virtual void NativeOnInitialized() override;
 	

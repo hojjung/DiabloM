@@ -51,8 +51,6 @@ public:
 	static UDataTable* DropDataTable;
 
 	static UDataTable* MonsterEntityTable;
-
-	static UDataTable* GoldDungeonDataTable;
 protected:
 	UPROPERTY()
 	float m_fBossTimer;

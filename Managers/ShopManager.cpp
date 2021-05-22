@@ -242,6 +242,17 @@ void UShopManager::PurchaseGachaAccessory55()
 	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(13500, TEXT("gachaaccessory55"));
 }
 
+void UShopManager::PurchaseDgKey()
+{
+	if(!UDiabloGameInstance::Get->m_GoldManager->SubtractGemStones(400))
+	{
+		return;
+	}
+	
+	ShowTouchBan();
+	UDiabloGameInstance::Get->m_PlayfabManager->PurchaseWithGemStone(400, TEXT("RefillDungeonKey"));
+}
+
 void UShopManager::UpdateGold()
 {
 	BigInt Bounty = UDiabloGameInstance::Get->m_NormalDgManager->GetCurrentDungeonBounty();
@@ -489,6 +500,7 @@ void UShopManager::OnPurchasedGainItem(FString itemID,bool updateData)
 	}
 	else if(itemID == TEXT("RefillDungeonKey"))
 	{
+		UDiabloGameInstance::Get->RequestPopupText(TEXT("던전 열쇠 충전 중"));
 		UDiabloGameInstance::Get->m_PlayfabManager->RequestRefillDungeonKey();
 	}
 	//

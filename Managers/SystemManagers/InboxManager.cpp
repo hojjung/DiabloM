@@ -2,15 +2,41 @@
 
 #include "Managers/DiabloGameInstance.h"
 
+struct FInboxRewardTableRow;
+
+UInboxManager::UInboxManager()
+{
+	static ConstructorHelpers::FObjectFinder<UDataTable> FoundTable(
+	TEXT("DataTable'/Game/DataTables/InboxDataTable.InboxDataTable'"));
+
+	m_InboxRewardTable= FoundTable.Object;
+}
+
 void UInboxManager::ClaimItem(FString itemID, int amount)
 {
 	if (itemID == TEXT("GG"))
 	{
 		UDiabloGameInstance::Get->m_PlayfabManager->AddGemStone(amount);
 	}
-	else
+	else if (itemID == TEXT("KK"))
 	{
-		UDiabloGameInstance::Get->m_ShopManager->OnPurchasedGainItem(itemID,true);
+		UDiabloGameInstance::Get->m_PlayfabManager->AddDgKey(amount);
+	}
+	else if (itemID == TEXT("WS"))
+	{
+		UDiabloGameInstance::Get->m_PlayfabManager->AddWeaponStones(amount);
+	}
+	else if (itemID == TEXT("WT"))
+	{
+		UDiabloGameInstance::Get->m_PlayfabManager->AddWingTicket(amount);
+	}
+	else if (itemID == TEXT("PT"))
+	{
+		UDiabloGameInstance::Get->m_PlayfabManager->AddPetTicket(amount);
+	}
+	else if (itemID == TEXT("SS"))
+	{
+		UDiabloGameInstance::Get->m_PlayfabManager->AddSkillStones(amount);
 	}
 }
 
@@ -22,6 +48,10 @@ void UInboxManager::SetInboxManager(TArray<FInboxSpec>& inboxSpec)
 	{
 		if (!Inbox.m_bIsExpired)
 		{
+			FInboxRewardTableRow* TableRow =  m_InboxRewardTable->FindRow<FInboxRewardTableRow>(*Inbox.ItemID,"");
+
+			Inbox.m_Data = TableRow;
+			
 			m_AryInbox.Add(Inbox);
 		}
 	}

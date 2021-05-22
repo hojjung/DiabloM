@@ -268,6 +268,7 @@ void UPlayfabManager::OnNewPlayerDataInitSuccess(const FExeCScriptRslt& rslt)
 void UPlayfabManager::OnRefillDgKey(const FExeCScriptRslt& rslt)
 {
 	//Update
+	UDiabloGameInstance::Get->RequestPopupText(TEXT("던전 열쇠 충전 완료"));
 	UDiabloGameInstance::Get->m_GoldManager->SetDgKeys(20);
 }
 

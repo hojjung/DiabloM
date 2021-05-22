@@ -47,6 +47,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnPurchaseGemStone06;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnPurchaseDgKeyRefill;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnPurchaseGold01;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UButton* m_BtnPurchaseGold02;
@@ -102,6 +105,8 @@ public:
 	UFUNCTION()
     void PurchaseGold03();
 	UFUNCTION()
+	void PurchaseDgKey();
+	UFUNCTION()
 	void ClosePanel();
 	UFUNCTION()
 	void ShowPackagePanel();
@@ -110,7 +115,10 @@ public:
 	UFUNCTION()
     void ShowGoldPanel();
 
+	void ShowDgKeyPanel();
+	
 	void OnUpdateGoldShop(const BigInt&,const BigInt&,const BigInt&);
 
 	void UpdateShowPackage();
+	
 };

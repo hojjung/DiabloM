@@ -435,6 +435,12 @@ void UMainCanvas::OpenGoldShop()
 	m_PanelShop->ShowGoldPanel();
 }
 
+void UMainCanvas::OpenDgKeyRegfill()
+{
+	SetActiveShopPanel();
+	m_PanelShop->ShowDgKeyPanel();
+}
+
 void UMainCanvas::OpenGemStoneShop()
 {
 	SetActiveShopPanel();

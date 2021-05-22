@@ -19,7 +19,7 @@ void UPVPPanel::NativeOnInitialized()
 
 void UPVPPanel::RequestMatch()
 {
-	if(!UDiabloGameInstance::Get->m_DungeonManager->TryOpenDgKey())
+	if(!UDiabloGameInstance::Get->m_DungeonManager->TryOpenDgKey(1))
 	{
 		UDiabloGameInstance::Get->RequestPopupText(TEXT("던전 열쇠 부족"));
 		return;

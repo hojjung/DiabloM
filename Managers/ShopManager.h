@@ -34,6 +34,8 @@ public:
 public:
 	void SetShopDataFromServer(const UPlayFabJsonObject* iapJsonStr);
 	
+	
+
 protected:
 	TArray<bool> m_PackagePurchased;
 	
@@ -96,6 +98,8 @@ UFUNCTION()
 	void PurchaseGachaAccessory11();
 	UFUNCTION()
 	void PurchaseGachaAccessory55();
+	UFUNCTION()
+	void PurchaseDgKey();
 	UFUNCTION()
 	void UpdateGold();
 	UFUNCTION()

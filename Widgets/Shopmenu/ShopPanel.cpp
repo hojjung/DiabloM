@@ -27,6 +27,8 @@ void UShopPanel::NativeOnInitialized()
 	m_BtnPurchaseGold01->OnClicked.AddDynamic(this,&UShopPanel::PurchaseGold01);
 	m_BtnPurchaseGold02->OnClicked.AddDynamic(this,&UShopPanel::PurchaseGold02);
 	m_BtnPurchaseGold03->OnClicked.AddDynamic(this,&UShopPanel::PurchaseGold03);
+	//
+	m_BtnPurchaseDgKeyRefill->OnClicked.AddDynamic(this,&UShopPanel::PurchaseDgKey);
 
 	m_ShopManager = UDiabloGameInstance::Get->m_ShopManager; 
 	
@@ -113,6 +115,11 @@ void UShopPanel::PurchaseGold03()
 	m_ShopManager->PurchaseGold03();
 }
 
+void UShopPanel::PurchaseDgKey()
+{
+	m_ShopManager->PurchaseDgKey();
+}
+
 void UShopPanel::ClosePanel()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
@@ -132,6 +139,11 @@ void UShopPanel::ShowGemStonePanel()
 void UShopPanel::ShowGoldPanel()
 {
 	m_SwitcherPanel->SetActiveWidgetIndex(2);
+}
+
+void UShopPanel::ShowDgKeyPanel()
+{
+	m_SwitcherPanel->SetActiveWidgetIndex(1);
 }
 
 void UShopPanel::OnUpdateGoldShop(const BigInt& small,const BigInt& midium,const BigInt& large)

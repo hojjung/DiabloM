@@ -19,7 +19,9 @@ public:
 	int m_nPrizeMagicStoneMin = 15;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	int m_nPrizeMagicStoneMax = 25;
-
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	int m_nTicketCost =1;
+	
 	int GetRandomPrize()
 	{
 		return FMath::RandRange(m_nPrizeMagicStoneMin,m_nPrizeMagicStoneMax);
@@ -92,5 +94,15 @@ public:
 	float GetRemainTimer()
 	{
 		return MAGICDGTIME - m_fTimer;
+	}
+
+	FORCEINLINE const TArray<FMagicDgTableRow*>& GetMagicDgData()
+	{
+		return 	m_DgDataRow;
+	}
+
+	FORCEINLINE const FMagicDgTableRow* GetCurrentDg ()
+	{
+		return m_CurrentDgData;
 	}
 };

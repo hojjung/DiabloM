@@ -11,8 +11,6 @@
 UDataTable* UNormalDungeonManager::DungeonDataTable = nullptr;
 UDataTable* UNormalDungeonManager::DropDataTable = nullptr;
 UDataTable* UNormalDungeonManager::MonsterEntityTable = nullptr;
-UDataTable* UNormalDungeonManager::GoldDungeonDataTable = nullptr;
-
 #define BOSSDURATION 12.f
 
 UNormalDungeonManager::UNormalDungeonManager()
@@ -42,12 +40,6 @@ UNormalDungeonManager::UNormalDungeonManager()
 
 	DungeonDataTable = FoundDungeon.Object;
 
-	//DataTable'/Game/DataTables/Dungeon/GoldDungeonData.GoldDungeonData'
-
-	static ConstructorHelpers::FObjectFinder<UDataTable> FoundGoldDungeon(
-		TEXT("DataTable'/Game/DataTables/Dungeon/GoldDungeonData.GoldDungeonData'"));
-
-	GoldDungeonDataTable = FoundGoldDungeon.Object;
 } //m_MonsterManager->StartSpawn(world, m_CurrentDg);
 
 void UNormalDungeonManager::Init()

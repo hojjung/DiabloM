@@ -44,7 +44,7 @@ public:
 
 	void Tick(float deltaTime);
 	
-	bool TryOpenDgKey();
+	bool TryOpenDgKey(int cost);
 	
 protected:
 	void OnLevelLoadComplete(UWorld* world);

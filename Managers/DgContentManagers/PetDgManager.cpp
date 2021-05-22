@@ -206,7 +206,7 @@ AUnitPawn* UPetDgManager::GetNearestEnemy(const FVector& wantPos)
 
 int UPetDgManager::GetCurrentReward()
 {
-	return m_CurrentTable->m_nTicket;
+	return m_CurrentTable->m_nRewardTicket;
 }
 
 

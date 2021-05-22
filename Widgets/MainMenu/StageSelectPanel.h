@@ -59,6 +59,8 @@ public:
 	UImageAndText* m_TxtPetGachaTicket;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UImageAndText* m_TxtWingTicket;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UButton* m_BtnOpenDgKeyRefill;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UStageBtn> m_ClassStageBtn;
@@ -82,6 +84,8 @@ public:
     void OpenWeaponDg();
 	UFUNCTION()
     void OpenPVPDg();
+	UFUNCTION()
+	void OpenDgKey();
 	UFUNCTION()
 	void Back();
 

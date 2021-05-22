@@ -51,9 +51,9 @@ void UDungeonManager::Tick(float deltaTime)
 	m_CurrentSpawnManager->Tick(deltaTime);
 }
 
-bool UDungeonManager::TryOpenDgKey()
+bool UDungeonManager::TryOpenDgKey(int cost)
 {
-	return UDiabloGameInstance::Get->m_GoldManager->SubtractDungeonKeys(1);
+	return UDiabloGameInstance::Get->m_GoldManager->SubtractDungeonKeys(cost);
 }
 
 void UDungeonManager::OnLevelLoadComplete(UWorld* world)

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "DiabloM.h"
+#include "Datas/InboxData.h"
 #include "UObject/NoExportTypes.h"
 #include "InboxManager.generated.h"
 
@@ -26,6 +27,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	FString ExpireTime;
 	
+	FInboxRewardTableRow* m_Data;
+	
 	FString m_StrRemainTime;
 
 	bool m_bIsExpired = false;
@@ -38,9 +41,12 @@ class DIABLOM_API UInboxManager : public UObject
 
 public:
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnInboxUpdated,const TArray<FInboxSpec>&);
+
+	UInboxManager();
 	
 	FOnInboxUpdated m_OnInboxUpdated;
-	
+	UPROPERTY()
+	UDataTable* m_InboxRewardTable;
 protected:
 	TArray<FInboxSpec> m_AryInbox;
 

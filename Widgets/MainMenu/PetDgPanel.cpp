@@ -7,15 +7,29 @@ void UPetDgPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	m_BtnPetDg01->OnClicked.AddDynamic(this,&UPetDgPanel::EnterPetDg01);
+	
+	int Index = 0;
 
-	//m_ImgTxtPetTicket->SetText(FText::FromString(FString::Printf(TEXT("펫 티켓 %d개"),Ticket)));
+	for(const auto* PetDg :  UDiabloGameInstance::Get->m_PetDgManager->GetPetDgTables())
+	{
+		UPetDgBtn* CreatedBtn = CreateWidget<UPetDgBtn>(this, m_ClassPetDgBtn);
+
+		CreatedBtn->Init(Index,PetDg);
+
+		m_VertiList->AddChild(CreatedBtn);
+
+		CreatedBtn->SetPadding(FMargin(10, 10, 10, 10));
+
+		Index++;
+	}
 
 }
 
 void UPetDgPanel::EnterPetDg01()
 {
-	if(!UDiabloGameInstance::Get->m_DungeonManager->TryOpenDgKey())
+	int Cost = UDiabloGameInstance::Get->m_PetDgManager->GetCurrentDg()->m_nTicketCost;
+	
+	if(!UDiabloGameInstance::Get->m_DungeonManager->TryOpenDgKey(Cost))
 	{
 		UDiabloGameInstance::Get->RequestPopupText(TEXT("던전 열쇠 부족"));
 		return;

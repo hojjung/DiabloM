@@ -17,7 +17,8 @@ public:
 	int m_nPrizeWeaponStoneMin = 15;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	int m_nPrizeWeaponStoneMax = 25;
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int m_nTicketCost = 1;
 
 	int GetRandomPrize()
 	{
@@ -118,6 +119,15 @@ protected:
 public:
 	int GetObtainedStone();
 
+	FORCEINLINE const TArray<FWeaponDgTableRow*>& GetWeaponDgTables()
+	{
+		return m_DgDataRow;
+	}
+
+	FORCEINLINE const FWeaponDgTableRow* GetCurrentDg ()
+	{
+		return m_CurrentDgData;
+	}
 };
 
 

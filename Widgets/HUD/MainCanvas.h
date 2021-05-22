@@ -179,6 +179,9 @@ public:
 
 	UFUNCTION()
 	void OpenGoldShop();
+
+	UFUNCTION()
+	void OpenDgKeyRegfill();
 	
 	UFUNCTION()
     void OpenGemStoneShop();

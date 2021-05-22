@@ -15,6 +15,8 @@ void UInboxElement::SetInboxSpec(const FInboxSpec& element)
 	m_TextMailName->SetText(FText::FromString(element.MailName));
 	m_TextMailDesc->SetText(FText::FromString(element.MailDesc));
 
+	m_ImgItemIcon->SetBrushFromTexture(element.m_Data->m_RewardIcon);
+	m_TextItemName->SetText(element.m_Data->m_TextRewardName);
 	
 	m_TextExpireTime->SetText(FText::FromString(element.m_StrRemainTime));
 	m_TextItemAmount->SetText(FText::FromString(element.ItemAmount));

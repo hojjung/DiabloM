@@ -13,16 +13,18 @@
 #define PETDGTIME 40.f
 
 class UNavigationSystemV1;
-USTRUCT(BlueprintType)//���̵�,Ƽ��
+USTRUCT(BlueprintType) //���̵�,Ƽ��
 struct FPetDgTableRow : public FDungeonDataTableRow
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	int m_nTicket = 2;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int m_nRewardTicket = 2;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int m_nSpawnMobCount = 17;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int m_nTicketCost = 1;
 };
 
 UCLASS()
@@ -59,7 +61,7 @@ protected:
 	TArray<FPetDgTableRow*> m_AryTables;
 
 	TArray<TSharedPtr<FStreamableHandle>> m_LoadedMonsters;
-	
+
 public:
 	void Init();
 
@@ -68,7 +70,7 @@ public:
 	void SpawnPetDgMonsters(int count);
 
 	void RequestMovePetDg(int dgLevel);
-	
+
 	virtual void OnLevelLoadComplete(UWorld* world) override;
 
 	virtual void StartDungeon() override;
@@ -88,7 +90,7 @@ public:
 	AMonsterPawn* CreateMob(FVector loc);
 
 	virtual AUnitPawn* GetNearestEnemy(const FVector& wantPos) override;
-	
+
 	int GetCurrentReward();
 
 	float GetMobCountPercent();
@@ -98,5 +100,16 @@ public:
 	float GetRemainTime()
 	{
 		return PETDGTIME - m_fTimer;
+	}
+
+	FORCEINLINE const TArray<FPetDgTableRow*>& GetPetDgTables()
+	{
+		return m_AryTables;
+	}
+
+	
+	FORCEINLINE const FPetDgTableRow* GetCurrentDg ()
+	{
+		return m_CurrentTable;
 	}
 };

@@ -3,6 +3,7 @@
 #include "Managers/DiabloGameInstance.h"
 #include "Managers/DgContentManagers/DungeonManager.h"
 #include "Widgets/GachaMenu/GachaPanel.h"
+#include "Widgets/HUD/MainCanvas.h"
 
 void UStageSelectPanel::NativeOnInitialized()
 {
@@ -18,6 +19,8 @@ void UStageSelectPanel::NativeOnInitialized()
 	m_DgWeaponPanel->SetVisibility(ESlateVisibility::Collapsed);
 	//
 	m_DgPVPPanel->SetVisibility(ESlateVisibility::Collapsed);
+
+	m_BtnOpenDgKeyRefill->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenDgKey);
 	// //
 	m_BtnShowNormalDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenNormalDg);
 	m_BtnShowMagicDg->OnClicked.AddDynamic(this, &UStageSelectPanel::OpenGoldDg);
@@ -105,6 +108,11 @@ void UStageSelectPanel::OpenPVPDg()
 	m_StageTypeSelectVert->SetVisibility(ESlateVisibility::Collapsed);
 
 	m_BtnBack->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UStageSelectPanel::OpenDgKey()
+{
+	UDiabloGameInstance::Get->GetHud()->m_Canvas->OpenDgKeyRegfill();
 }
 
 
