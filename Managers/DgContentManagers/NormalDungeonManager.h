@@ -92,8 +92,6 @@ protected:
 	UPROPERTY()
 	int m_nGoldGoblinSpawnCount;
 
-	FDelegateHandle m_BossDeleHandle;
-
 	UPROPERTY()
 	UDataTable* m_MobEntityTable;
 
@@ -157,6 +155,8 @@ public:
 
 	UFUNCTION()
 	AMonsterPawn* SpawnMobToLoc(FVector loc);
+
+	void OnBossDeadBeforeAnim(AMonsterPawn*);
 
 	void OnBossDead(AMonsterPawn*);
 

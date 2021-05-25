@@ -660,11 +660,11 @@ bool APlayerDiabloCharacter::GetDmg(BigInt& outDmg, EDamagePopup& pp)
 		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg, m_bnAdditionalSkillDmg);
 	}
 
-	// if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).Level>0)
-	// {
-	// 	outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).m_Value);
-	// }
-	//
+	if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).Level>0)
+	{
+		outDmg = UDiaBlueprintFunctionLibrary::MultiplePercent(outDmg,UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce02).m_Value);
+	}
+	
 	if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
 	{
 		int MultipleFactor = 5;
@@ -870,10 +870,10 @@ void APlayerDiabloCharacter::GainRagePoint()
 {
 	float GainRage = m_fGainRagePer;
 
-	// if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce07).Level>0)
-	// {
-	// 	GainRage *= UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce07).m_fFloatValue;
-	// }
+	if(UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce07).Level>0)
+	{
+		GainRage *= UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce07).m_fFloatValue;
+	}
 
 	m_fCurrentRage += GainRage;
 

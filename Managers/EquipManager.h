@@ -140,8 +140,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool IsUnlocked = false;
 	UPROPERTY(EditAnywhere)
-	bool IsEquipped = false;
-	UPROPERTY(EditAnywhere)
 	int StackCount = 0;
 	
 	BigInt m_Value;
@@ -235,7 +233,7 @@ protected:
 	void SetStringWingUnlocked(const TArray<UPlayFabJsonValue*>&  wingUnlock);
 
 public:
-	void SetEquipDataFromServer(const TArray<UPlayFabJsonValue*>& classSkin, const TArray<UPlayFabJsonValue*>& weapon,const TArray<UPlayFabJsonValue*>& wing,const TArray<UPlayFabJsonValue*>& pet);
+	void SetEquipDataFromServer(const TArray<UPlayFabJsonValue*>& classSkin, const TArray<UPlayFabJsonValue*>& weapon,const TArray<UPlayFabJsonValue*>& wing,const TArray<UPlayFabJsonValue*>& pet,const TArray<UPlayFabJsonValue*>& acce);
 
 	void EquipAll();
 	

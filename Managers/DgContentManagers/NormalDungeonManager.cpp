@@ -226,11 +226,15 @@ AMonsterPawn* UNormalDungeonManager::SpawnMobToLoc(FVector loc)
 	return Mob;
 }
 
+void UNormalDungeonManager::OnBossDeadBeforeAnim(AMonsterPawn* pawn)
+{
+	m_SpawnedBoss = nullptr;
+}
+
 void UNormalDungeonManager::OnBossDead(AMonsterPawn* pawn)
 {
-	m_SpawnedBoss->m_OnDeathAnimAfter.Remove(m_BossDeleHandle);
-	m_SpawnedBoss = nullptr;
 	pawn->Destroy();
+	
 	UDiabloGameInstance::Get->m_PlayerUpgradeManager->ClearCooldownAllSkill();
 
 	EndDungeon(true);
@@ -340,7 +344,9 @@ void UNormalDungeonManager::SpawnBossMob()
 
 	m_SpawnedBoss = Mob;
 
-	m_BossDeleHandle = m_SpawnedBoss->m_OnDeathAnimAfter.AddUObject(this, &UNormalDungeonManager::OnBossDead);
+	m_SpawnedBoss->m_OnDeathAnimBefore.AddUObject(this, &UNormalDungeonManager::OnBossDeadBeforeAnim);
+	
+	m_SpawnedBoss->m_OnDeathAnimAfter.AddUObject(this, &UNormalDungeonManager::OnBossDead);
 
 	APlayerDiabloCharacter* Pl = UDiabloGameInstance::Get->GetPlChar();
 

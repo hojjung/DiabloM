@@ -72,11 +72,11 @@ BigInt UGoldManager::AddGold(const BigInt& v, bool useBonus)
 				FinalV, UDiabloGameInstance::Get->m_EquipManager->GetCurrentPet()->m_GoldBonusValue);
 		}
 
-		// if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce01).Level > 0)
-		// {
-		// 	FinalV = UDiaBlueprintFunctionLibrary::MultiplePercent(
-		// 		FinalV, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce01).m_Value);
-		// }
+		if (UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce01).Level > 0)
+		{
+			FinalV = UDiaBlueprintFunctionLibrary::MultiplePercent(
+				FinalV, UDiabloGameInstance::Get->m_EquipManager->GetAccessory(EAccessory::Acce01).m_Value);
+		}
 
 		if (UDiabloGameInstance::Get->m_ShopManager->GetPackagePurchased(0))
 		{

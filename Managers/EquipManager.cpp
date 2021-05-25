@@ -48,13 +48,14 @@ UEquipManager::UEquipManager()
 void UEquipManager::SetEquipDataFromServer(const TArray<UPlayFabJsonValue*>& classSkin,
                                            const TArray<UPlayFabJsonValue*>& weapon,
                                            const TArray<UPlayFabJsonValue*>& wing,
-                                           const TArray<UPlayFabJsonValue*>& pet)
+                                           const TArray<UPlayFabJsonValue*>& pet
+                                           ,const TArray<UPlayFabJsonValue*>& acce)
 {
 	SetStringSkinUnlocked(classSkin);
 	SetStringWeaponUnlocked(weapon);
 	SetStringWingUnlocked(wing);
 	SetStringPetUnlocked(pet);
-	//SetStringAccesoryUnlocked(acce);
+	SetStringAccesoryUnlocked(acce);
 }
 
 
@@ -710,7 +711,7 @@ void UEquipManager::SetWeaponDataToJson(UPlayFabJsonObject* obj)
 
 		WeaponSpecObj->SetNumberField(TEXT("Level"), WeaponSpec.Level);
 
-		WeaponSpecObj->SetNumberField(TEXT("IsEquipped"), WeaponSpec.IsEquipped);
+		WeaponSpecObj->SetBoolField(TEXT("IsEquipped"), WeaponSpec.IsEquipped);
 
 		WeaponSpecObj->SetNumberField(TEXT("StackCount"), WeaponSpec.StackCount);
 
@@ -730,9 +731,9 @@ void UEquipManager::SetSkinDataToJson(UPlayFabJsonObject* obj)
 	{
 		UPlayFabJsonObject* SkinSpecObj = UPlayFabJsonObject::ConstructJsonObject(this);
 
-		SkinSpecObj->SetNumberField(TEXT("IsUnlocked"), SkinSpec.IsUnlocked);
+		SkinSpecObj->SetBoolField(TEXT("IsUnlocked"), SkinSpec.IsUnlocked);
 
-		SkinSpecObj->SetNumberField(TEXT("IsEquipped"), SkinSpec.IsEquipped);
+		SkinSpecObj->SetBoolField(TEXT("IsEquipped"), SkinSpec.IsEquipped);
 
 		SkinSpecObj->SetNumberField(TEXT("StackCount"), SkinSpec.StackCount);
 
@@ -750,15 +751,15 @@ void UEquipManager::SetPetDataToJson(UPlayFabJsonObject* obj)
 
 	for (const FPetSpec& PetSpec : m_AryPets)
 	{
-		UPlayFabJsonObject* SkinSpecObj = UPlayFabJsonObject::ConstructJsonObject(this);
+		UPlayFabJsonObject* PetSpecObj = UPlayFabJsonObject::ConstructJsonObject(this);
 
-		SkinSpecObj->SetNumberField(TEXT("Level"), PetSpec.Level);
+		PetSpecObj->SetNumberField(TEXT("Level"), PetSpec.Level);
 
-		SkinSpecObj->SetNumberField(TEXT("IsEquipped"), PetSpec.IsEquipped);
+		PetSpecObj->SetBoolField(TEXT("IsEquipped"), PetSpec.IsEquipped);
 
-		SkinSpecObj->SetNumberField(TEXT("StackCount"), PetSpec.StackCount);
+		PetSpecObj->SetNumberField(TEXT("StackCount"), PetSpec.StackCount);
 
-		AryPetObj.Add(SkinSpecObj);
+		AryPetObj.Add(PetSpecObj);
 	}
 
 	obj->SetObjectArrayField(TEXT("Pet"), AryPetObj);
@@ -766,24 +767,24 @@ void UEquipManager::SetPetDataToJson(UPlayFabJsonObject* obj)
 
 void UEquipManager::SetAccessoryDataToJson(UPlayFabJsonObject* obj)
 {
-	TArray<UPlayFabJsonObject*> AryPetObj;
+	TArray<UPlayFabJsonObject*> AryAcceObj;
 
-	AryPetObj.Empty(30);
+	AryAcceObj.Empty(30);
 
-	for (const FPetSpec& PetSpec : m_AryPets)
+	for (const FAccessorySpec& Spec : m_AryAcce)
 	{
-		UPlayFabJsonObject* SkinSpecObj = UPlayFabJsonObject::ConstructJsonObject(this);
+		UPlayFabJsonObject* Obj = UPlayFabJsonObject::ConstructJsonObject(this);
 
-		SkinSpecObj->SetNumberField(TEXT("Level"), PetSpec.Level);
+		Obj->SetNumberField(TEXT("Level"), Spec.Level);
 
-		SkinSpecObj->SetNumberField(TEXT("IsEquipped"), PetSpec.IsEquipped);
+		Obj->SetBoolField(TEXT("IsUnlocked"), Spec.IsUnlocked);
 
-		SkinSpecObj->SetNumberField(TEXT("StackCount"), PetSpec.StackCount);
+		Obj->SetNumberField(TEXT("StackCount"), Spec.StackCount);
 
-		AryPetObj.Add(SkinSpecObj);
+		AryAcceObj.Add(Obj);
 	}
 
-	obj->SetObjectArrayField(TEXT("Pet"), AryPetObj);
+	obj->SetObjectArrayField(TEXT("Accessory"), AryAcceObj);
 }
 
 void UEquipManager::SetWingDataToJson(UPlayFabJsonObject* obj)
@@ -794,17 +795,17 @@ void UEquipManager::SetWingDataToJson(UPlayFabJsonObject* obj)
 
 	for (const FWingSpec& WingSpec : m_AryWings)
 	{
-		UPlayFabJsonObject* SkinSpecObj = UPlayFabJsonObject::ConstructJsonObject(this);
+		UPlayFabJsonObject* WingSpecObj = UPlayFabJsonObject::ConstructJsonObject(this);
 
 		//SkinSpecObj->SetNumberField(TEXT("Level"), WingSpec.Level);
 
-		SkinSpecObj->SetBoolField(TEXT("IsUnlocked"), WingSpec.IsUnlocked);
+		WingSpecObj->SetBoolField(TEXT("IsUnlocked"), WingSpec.IsUnlocked);
 
-		SkinSpecObj->SetBoolField(TEXT("IsEquipped"), WingSpec.IsEquipped);
+		WingSpecObj->SetBoolField(TEXT("IsEquipped"), WingSpec.IsEquipped);
 
-		SkinSpecObj->SetNumberField(TEXT("StackCount"), WingSpec.StackCount);
+		WingSpecObj->SetNumberField(TEXT("StackCount"), WingSpec.StackCount);
 
-		AryPetObj.Add(SkinSpecObj);
+		AryPetObj.Add(WingSpecObj);
 	}
 
 	obj->SetObjectArrayField(TEXT("Wing"), AryPetObj);

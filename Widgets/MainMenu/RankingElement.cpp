@@ -10,5 +10,5 @@ void URankingElement::SetRankElement(const PlayFab::ClientModels::FPlayerLeaderb
 	
 	m_TextRankPosition->SetText(FText::FromString(FormatStr));
 	m_TextRankDisplayName->SetText(FText::FromString(FString::Printf(TEXT("%s님"),*rankInfo.DisplayName)));
-	m_TextStageLevel->SetText(FText::FromString(FString::Printf(TEXT("던전:%d"),rankInfo.StatValue)));
+	m_TextStageLevel->SetText(FText::FromString(FString::Printf(TEXT(":%d"),rankInfo.StatValue)));
 }

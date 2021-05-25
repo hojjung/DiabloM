@@ -667,6 +667,8 @@ FString UPlayfabManager::GetMainDataJsonStr()
 	UDiabloGameInstance::Get->m_EquipManager->SetWingDataToJson(TotalMaindataJsonObj);
 	//Pet
 	UDiabloGameInstance::Get->m_EquipManager->SetPetDataToJson(TotalMaindataJsonObj);
+	//Accessory
+	UDiabloGameInstance::Get->m_EquipManager->SetAccessoryDataToJson(TotalMaindataJsonObj);
 	//
 	UPlayFabJsonObject* CurrentEquippedObj = UPlayFabJsonObject::ConstructJsonObject(this);
 
@@ -1280,7 +1282,8 @@ void UPlayfabManager::SetMainDataToManagers(const FString& maindataFromServer)
 		JsonObj->GetArrayField(TEXT("Skin")),
 		JsonObj->GetArrayField(TEXT("Weapon")),
 		JsonObj->GetArrayField(TEXT("Wing")),
-		JsonObj->GetArrayField(TEXT("Pet")));
+		JsonObj->GetArrayField(TEXT("Pet")),
+		JsonObj->GetArrayField(TEXT("Accessory")));
 }
 
 void UPlayfabManager::OnPVPUploadSuccess(const FExeCScriptRslt& rslt)
