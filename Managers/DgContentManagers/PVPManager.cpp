@@ -225,7 +225,7 @@ void UPVPManager::Tick(float deltaTime)
 
 void UPVPManager::SpawnPVPPlayer(UWorld* world)
 {
-	FVector Loc = FVector(290, 290, 102);
+	FVector Loc = FVector(290, 290, 65);
 
 	FRotator Rot = FRotator(0, 130, 0);
 

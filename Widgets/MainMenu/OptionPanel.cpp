@@ -27,6 +27,29 @@ UOptionPanel::UOptionPanel(const FObjectInitializer& obj):Super(obj)
 	m_SoundMixSFX = Found04.Object;
 }
 
+void UOptionPanel::ApplyLoadOption()
+{
+	UDiabloGameInstance::Get->LoadOptionSaveData();
+		
+	if(UDiabloGameInstance::Get->m_LoadedOptionSave)
+	{
+		UOptionSave* OptionSave = UDiabloGameInstance::Get->m_LoadedOptionSave;
+
+		if(OptionSave->m_bOptionFPSLimit)
+		{
+			m_ToggleFrameLimit->SetCheckedState(ECheckBoxState::Checked);
+		}
+		else
+		{
+			m_ToggleFrameLimit->SetCheckedState(ECheckBoxState::Unchecked);
+		}
+		
+		m_SoundControlBGM->SetValue(OptionSave->m_fOptionVolumeBGM);
+
+		m_SoundControlSFX->SetValue(OptionSave->m_fOptionVolumeSFX);
+	}
+}
+
 void UOptionPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -41,7 +64,7 @@ void UOptionPanel::NativeOnInitialized()
 
 	m_SoundControlSFX->OnValueChanged.AddDynamic(this,&UOptionPanel::OnSFXSliderChanged);
 
-
+	ApplyLoadOption();
 }
 
 void UOptionPanel::OnToggleFrameLimit(bool v)
@@ -101,24 +124,6 @@ void UOptionPanel::SetVisibility(ESlateVisibility InVisibility)
 	}
 	else
 	{
-		UDiabloGameInstance::Get->LoadOptionSaveData();
-		
-		if(UDiabloGameInstance::Get->m_LoadedOptionSave)
-		{
-			UOptionSave* OptionSave = UDiabloGameInstance::Get->m_LoadedOptionSave;
-
-			if(OptionSave->m_bOptionFPSLimit)
-			{
-				m_ToggleFrameLimit->SetCheckedState(ECheckBoxState::Checked);	
-			}
-			else
-			{
-				m_ToggleFrameLimit->SetCheckedState(ECheckBoxState::Unchecked);
-			}
-		
-			m_SoundControlBGM->SetValue(OptionSave->m_fOptionVolumeBGM);
-
-			m_SoundControlSFX->SetValue(OptionSave->m_fOptionVolumeSFX);
-		}
+		ApplyLoadOption();
 	}
 }

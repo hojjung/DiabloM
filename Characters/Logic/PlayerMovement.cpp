@@ -13,13 +13,13 @@ void UPlayerMovement::MoveProceed(float DeltaTime)
 	if (UDiabloGameInstance::Get->m_PlayerUpgradeManager->IsRootmotionSkillCasting())
 	{
 		Velocity = FVector::ZeroVector;
-		//StopActiveMovement()
-		return ;
+		return;
 	}
+
 	if (!Velocity.IsNearlyZero())
 	{
-		Velocity.Z = 0.f;
-		
+		//Velocity.Z = 0.f;
+
 		FVector MoveDelta = Velocity;
 
 		MoveDelta *= DeltaTime;
@@ -37,14 +37,14 @@ void UPlayerMovement::MoveProceed(float DeltaTime)
 
 		SafeMoveUpdatedComponent(MoveDelta, UpdatedComponent->GetComponentRotation(), true, Hit);
 
-		Hit.Normal.Z = 0.f;
-		
-		Hit.ImpactNormal.Z = 0.f;
-
 		if (Hit.IsValidBlockingHit())
 		{
 			SlideAlongSurface(MoveDelta, 1.f - Hit.Time, Hit.Normal, Hit);
 		}
+		FVector NewLoc = GetActorLocation();
+
+		NewLoc.Z = GetZAxis();
+
+		PawnOwner->SetActorLocation(NewLoc, true, &Hit);
 	}
 }
-

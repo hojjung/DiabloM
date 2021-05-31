@@ -117,22 +117,25 @@ void UUnitMovement::MoveProceed(float DeltaTime)
 {
     if (!Velocity.IsNearlyZero())
     {
-        Velocity.Z=0.f;
+        Velocity.Z=0;
+        
         FVector MoveDelta = Velocity;
         
         MoveDelta*=DeltaTime;
         
         FHitResult Hit;
-        
+
         SafeMoveUpdatedComponent(MoveDelta, UpdatedComponent->GetComponentRotation(), true, Hit);
 
-        Hit.Normal.Z=0.f;
-        Hit.ImpactNormal.Z=0.f;
-        
         if (Hit.IsValidBlockingHit())
         {
             SlideAlongSurface(MoveDelta, 1.f - Hit.Time, Hit.Normal, Hit);
         }
+        FVector NewLoc = GetActorLocation();
+
+        NewLoc.Z = GetZAxis();
+
+        PawnOwner->SetActorLocation(NewLoc, true, &Hit);
     }
 }
 
@@ -243,6 +246,8 @@ void UUnitMovement::CalcAvoidanceVelocity(float DeltaTime)
 
         m_bWasAvoidanceUpdated = true;
     }
+
+    
 }
 
 
@@ -256,7 +261,7 @@ void UUnitMovement::NotifyBumpedPawn(APawn* BumpedPawn)
 void UUnitMovement::StopActiveMovement()
 {
     Super::StopActiveMovement();
-    Velocity = FVector::ZeroVector;
+    //Velocity = FVector::ZeroVector;
     m_DashDelta= FVector::ZeroVector;
     m_fDashDuration =-1.f;
     //m_AvoidanceLockTimer = 0.0f;//0320
@@ -292,6 +297,39 @@ FRotator UUnitMovement::GetRotationNotMove(const FRotator& rot) const
 {
     return rot;
 }
+
+float UUnitMovement::GetZAxis()
+{
+    FVector ActorLoc = GetActorLocation();
+    
+    FVector DownVector =ActorLoc;
+
+    DownVector.Z -= 1000.f;
+
+    TArray<TEnumAsByte<EObjectTypeQuery>> TraceTypes;
+    
+    TraceTypes.Add(EObjectTypeQuery::ObjectTypeQuery1);
+    TraceTypes.Add(EObjectTypeQuery::ObjectTypeQuery2);
+
+    TArray<AActor*> AryIgnores;
+
+    FHitResult Hits;
+    
+    if(! UKismetSystemLibrary::LineTraceSingleForObjects(this,ActorLoc,DownVector,TraceTypes,
+        false,AryIgnores,EDrawDebugTrace::ForOneFrame,Hits,true))
+    {
+        return 0.0f;
+    }
+    
+    float GetCapsuleHeight = 88.f;
+
+    float HitZAxis =  Hits.ImpactPoint.Z + GetCapsuleHeight;
+
+    
+    
+    return HitZAxis;
+}
+
 
 #pragma region RVO_GETSET
 

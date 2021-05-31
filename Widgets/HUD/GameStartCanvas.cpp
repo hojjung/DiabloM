@@ -1,5 +1,6 @@
 #include "GameStartCanvas.h"
 #include "Managers/DiabloGameInstance.h"
+#include "Managers/DgContentManagers/DungeonManager.h"
 
 void UGameStartCanvas::NativeOnInitialized()
 {

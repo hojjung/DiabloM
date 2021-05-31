@@ -94,7 +94,7 @@ void UNormalDungeonManager::StartSpawn(UWorld* world, const FDungeonDataTableRow
 
 		SpawnedMob->m_OnDeathAnimBefore.AddUObject(this, &UNormalDungeonManager::OnMonsterDead);
 
-		SpawnMobToLoc(FVector::ZeroVector);
+		SpawnMobToLoc(FVector(-5010,1180,472));
 	}
 
 	SetSpawnMonsterOnTick(true);
@@ -134,7 +134,8 @@ void UNormalDungeonManager::OnTimer()
 	//Spawn
 	for (int i = 0; i < 5; i++)
 	{
-		if (!SpawnMobToLoc(FVector::ZeroVector))
+		//(X=-5010.000000,Y=1180.000000,Z=472.000000)
+		if (!SpawnMobToLoc(FVector(-5010,1180,472)))
 		{
 			break;
 		}
@@ -229,13 +230,17 @@ AMonsterPawn* UNormalDungeonManager::SpawnMobToLoc(FVector loc)
 void UNormalDungeonManager::OnBossDeadBeforeAnim(AMonsterPawn* pawn)
 {
 	m_SpawnedBoss = nullptr;
+
+	UDiabloGameInstance::Get->GetPlChar()->SetFSM_Enable(false);
 }
 
 void UNormalDungeonManager::OnBossDead(AMonsterPawn* pawn)
 {
 	pawn->Destroy();
+
 	
-	UDiabloGameInstance::Get->m_PlayerUpgradeManager->ClearCooldownAllSkill();
+	
+	//UDiabloGameInstance::Get->m_PlayerUpgradeManager->ClearCooldownAllSkill();
 
 	EndDungeon(true);
 }

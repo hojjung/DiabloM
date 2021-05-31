@@ -21,7 +21,8 @@ class DIABLOM_API UOptionPanel : public UUserWidget
 	GENERATED_BODY()
 public:
 	UOptionPanel(const FObjectInitializer& ObjectInitializer);
-	
+	void ApplyLoadOption();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	UCheckBox* m_ToggleFrameLimit;

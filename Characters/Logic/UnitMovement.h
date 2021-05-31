@@ -87,6 +87,11 @@ public:
 
 	virtual FRotator GetRotationNotMove(const FRotator& rot) const;
 	
+protected:
+	float GetZAxis();
+
+public:
+	
 #pragma region RVO
 	// IRVOAvoidanceInterface��(��) ���� ��ӵ�
 	virtual void SetRVOAvoidanceUID(int32 UID) override;
