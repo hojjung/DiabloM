@@ -42,8 +42,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	bool m_bUseRVO;
 
-protected://pathfollow
-	//FVector m_MoveVector;
+protected:
+	UPROPERTY()
+	TArray<AActor*> m_AryIgnores;
 
 	bool m_bWasAvoidanceUpdated;
 
@@ -61,9 +62,13 @@ protected://pathfollow
 
 	FVector m_DashDelta;
 
+	TArray<TEnumAsByte<EObjectTypeQuery>> m_TraceTypes;
+
 protected:
 	virtual float SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult &Hit, bool bHandleImpact = false) override;
 
+	float GetZAxis();
+	
 public:
 	virtual void BeginPlay() override;
 	
@@ -87,8 +92,7 @@ public:
 
 	virtual FRotator GetRotationNotMove(const FRotator& rot) const;
 	
-protected:
-	float GetZAxis();
+	
 
 public:
 	

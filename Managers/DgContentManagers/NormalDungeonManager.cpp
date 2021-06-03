@@ -94,7 +94,7 @@ void UNormalDungeonManager::StartSpawn(UWorld* world, const FDungeonDataTableRow
 
 		SpawnedMob->m_OnDeathAnimBefore.AddUObject(this, &UNormalDungeonManager::OnMonsterDead);
 
-		SpawnMobToLoc(FVector(-5010,1180,472));
+		SpawnMobToLoc(FVector::ZeroVector);
 	}
 
 	SetSpawnMonsterOnTick(true);
@@ -134,8 +134,7 @@ void UNormalDungeonManager::OnTimer()
 	//Spawn
 	for (int i = 0; i < 5; i++)
 	{
-		//(X=-5010.000000,Y=1180.000000,Z=472.000000)
-		if (!SpawnMobToLoc(FVector(-5010,1180,472)))
+		if (!SpawnMobToLoc(FVector::ZeroVector))
 		{
 			break;
 		}

@@ -23,6 +23,9 @@ UUnitMovement::UUnitMovement()
     m_RotateSpeed=FRotator(0,240.f,0);
 
     bConstrainToPlane = false;
+
+    m_TraceTypes.Add(EObjectTypeQuery::ObjectTypeQuery1);
+    m_TraceTypes.Add(EObjectTypeQuery::ObjectTypeQuery2);
 }
 
 float UUnitMovement::SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult& Hit,
@@ -305,18 +308,11 @@ float UUnitMovement::GetZAxis()
     FVector DownVector =ActorLoc;
 
     DownVector.Z -= 1000.f;
-
-    TArray<TEnumAsByte<EObjectTypeQuery>> TraceTypes;
     
-    TraceTypes.Add(EObjectTypeQuery::ObjectTypeQuery1);
-    TraceTypes.Add(EObjectTypeQuery::ObjectTypeQuery2);
-
-    TArray<AActor*> AryIgnores;
-
     FHitResult Hits;
     
-    if(! UKismetSystemLibrary::LineTraceSingleForObjects(this,ActorLoc,DownVector,TraceTypes,
-        false,AryIgnores,EDrawDebugTrace::ForOneFrame,Hits,true))
+    if(! UKismetSystemLibrary::LineTraceSingleForObjects(this,ActorLoc,DownVector,m_TraceTypes,
+        false,m_AryIgnores,EDrawDebugTrace::None,Hits,true))
     {
         return 0.0f;
     }
@@ -324,12 +320,9 @@ float UUnitMovement::GetZAxis()
     float GetCapsuleHeight = 88.f;
 
     float HitZAxis =  Hits.ImpactPoint.Z + GetCapsuleHeight;
-
-    
     
     return HitZAxis;
 }
-
 
 #pragma region RVO_GETSET
 
